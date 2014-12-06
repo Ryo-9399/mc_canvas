@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>まさおコンストラクション　各種設定項目初期値</title>
+
+<style type="text/css">
+table
+{
+	width : 100%;
+	border-collapse : collapse;
+}
+td:nth-child(1)
+{
+	width : 21%;
+}
+td:nth-child(2)
+{
+	width : 27%;
+}
+td:nth-child(3)
+{
+	width : 12%;
+}
+td:nth-child(4)
+{
+	width : 40%;
+}
+td:nth-child(3):first-line, td:nth-child(4):first-line, td:nth-child(1), td:nth-child(2)
+{
+	font-weight : bold;
+}
+td
+{
+	font-family : monospace;
+	font-size : 14px;
+	border : solid 1px;
+}
+th
+{
+	font-size : 14px;
+	border : solid 1px;
+	background-color : #AFA;
+}
+tr:nth-child(6n+0) td
+{ background-color : #FEF }
+tr:nth-child(6n+1) td
+{ background-color : #FEE }
+tr:nth-child(6n+2) td
+{ background-color : #FFE }
+tr:nth-child(6n+3) td
+{ background-color : #EFE }
+tr:nth-child(6n+4) td
+{ background-color : #EFF }
+tr:nth-child(6n+5) td
+{ background-color : #EEF }
+li
+{
+	font-size : x-large;
+	line-height : 170%;
+}
+strong
+{
+	color : red;
+}
+span.type_integer
+{
+	color : blue;
+}
+span.type_string
+{
+	color : purple;
+}
+</style>
+
+</head>
+
+<body>
+
+
+<p>
+※現在、説明はサンプルのまま（一部を除く）示しています。
+</p>
+
+
+<script type="text/javascript" src="InitialValue.js"></script>
+<script type="text/javascript">
+(function()
+{
+	var i, j, m, n, c;
+
+	var types = { "integer":"整数", "string":"文字列" };
+
+	// インデックスを生成する
+	document.write("<ul>");
+	for(i in INITIAL_VALUE)
+		document.write("<li><a href='javascript:;' onclick='document.getElementById(\"" + escape(i) + "\").scrollIntoView()'>" + i + "<\/a><\/li>");
+	document.write("<\/ul>");
+
+	// 説明テーブルを生成する
+	for(i in INITIAL_VALUE)
+	{
+		m = INITIAL_VALUE[i];
+		// ヘッダ書き出し
+		document.write("<h1 id='" + escape(i) + "'><a href='javascript:;' onclick='scrollTo(0, 0)' style='font-size:x-small'>▲<\/a>" + i + "<\/h1>");
+		// テーブル書き出し
+		document.write("<table><tr><th>名前<\/th><th>初期値<\/th><th>型（有効範囲）<\/th><th>説明<\/th><\/tr>");
+		c = 0;
+		for(j in m)
+		{
+			n = m[j];
+			// 設定項目名と初期値
+			document.write("<tr><td>&quot;" + j + "&quot;<\/td><td>&quot;" + n.value + "&quot;<\/td>");
+			if(!c)
+			{
+				var tt = n.type;
+				var dd = n.discription;
+				var st = undefined;
+				if(tt)
+				{
+					tt = tt.split(" ");
+					st = "<span class='type_" + tt[0] + "'>" + types[tt[0]] + "<\/span>";
+					if(tt.length >= 2)
+					{
+						st += "<br><em>（" + tt[1] + "～";
+						for(var kk = 2; kk < tt.length; kk++)
+						{
+							st += ((kk & 1) ? ", " + tt[kk] + "～" : tt[kk]);
+						}
+						st += "）<\/em>";
+					}
+				}
+				// 説明文
+				if(n.rowspan)
+				{
+					document.write("<td rowspan='" + n.rowspan + "'>");
+					document.write(st + "<\/td>");
+					document.write("<td rowspan='" + n.rowspan + "'>");
+					document.write(dd + "<\/td>");
+					c = n.rowspan - 1;
+				}
+				else
+				{
+					document.write("<td>");
+					document.write(st + "<\/td>");
+					document.write("<td>");
+					document.write(dd + "<\/td>");
+				}
+			}
+			else
+			{
+				c--;
+			}
+			document.write("<\/tr>");
+		}
+		document.write("<\/table>");
+	}
+
+})();
+</script>
+
+
+</body>
+
+</html>

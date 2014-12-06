@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>まさおソース変換器</title>
+
+<style type="text/css">
+textarea{
+	max-width : 700px;
+	max-height : 200px;
+	min-width : 700px;
+	min-height : 200px;
+}
+</style>
+	
+<script type="text/javascript">
+
+var srcInput;
+var srcOutput;
+
+function init()
+{
+	srcInput = document.getElementById("input");
+	srcOutput = document.getElementById("output");
+}
+
+function run()
+{
+	try
+	{
+		convertSource();
+	}
+	catch(e)
+	{
+		alert("コード変換中にエラーが発生しました。");
+	}
+}
+
+// paramタグで書かれたまさおソースを params={...} の形に変換する
+function convertSource()
+{
+	// ソース文字列をバッファにため込む
+	var buffer = srcInput.value;
+	var n, v;
+	var result = {};
+	var k, k2, r1, r2;
+
+	while((k = buffer.search(/<param/i)) != -1)
+	// １ループごとにタグの先頭を読む
+	{
+		buffer = buffer.substring(k);
+
+		// name属性を読む
+		k2 = buffer.search(/name=/i);
+		if(k2 == -1)
+		{
+			buffer = buffer.substring(k + 6);
+			continue;
+		}
+		// k2: 属性値開始位置
+		k2 += 5;
+		r1 = getAttributeValueIndex(buffer, k2);
+		// n: name属性値
+		n = buffer.substring(r1[0], r1[1]);
+
+		// value属性を読む
+		k2 = buffer.search(/value=/i);
+		if(k2 == -1)
+		{
+			buffer = buffer.substring(k + 6);
+			continue;
+		}
+		k2 += 6;
+		r2 = getAttributeValueIndex(buffer, k2);
+		// v: value属性値
+		v = buffer.substring(r2[0], r2[1]);
+
+		// このnameとvalueの組をresultに格納する
+		// ただし、同名のnameが含まれていると上書きされる
+		result[n] = v;
+
+		k = ((r1[1] > r2[1]) ? r1[1] : r2[1]);
+		buffer = buffer.substring(k);
+	}
+
+	var str = "";
+	var i;
+	for(i in result)
+	{
+		if(str) str += ",\n";
+		str += "\t\"" + i + "\" : \"" + result[i] + "\"";
+	}
+	var val = '';
+	val += '<scr' + 'ipt type="text/javascript" src="MasaoConstruction.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="TagDataBase.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="GameGraphicsForApplet.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="MainProgram.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="MapSystem.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="KeyboardMenu.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="IdouGamen.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="CharacterObject.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="YukaObject.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="GameMouse.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="GameKey.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="GameSoundForApplet.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="ImageBuff.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript" src="GlobalFunctions.js"></scr' + 'ipt>\n';
+	val += '<scr' + 'ipt type="text/javascript">\n';
+	val += 'var params = {\n';
+	val += str;
+	val += '\n};\n';
+	val += '</scr' + 'ipt>\n';
+	srcOutput.value = val;
+}
+
+// 属性値の始めと終わりの位置を[off,end]の配列で返す
+function getAttributeValueIndex(str, index)
+{
+	var k1, k2;
+	// ダブルクォーテーションで囲まれている場合
+	if(str.charAt(index) == "\"")
+	{
+		k1 = index + 1;
+		k2 = str.indexOf("\"", k1);
+	}
+	// シングルクォーテーションで囲まれている場合
+	else if(str.charAt(index) == "'")
+	{
+		k1 = index + 1;
+		k2 = str.indexOf("'", k1);
+	}
+	// クォーテーションで囲まれていない場合
+	else
+	{
+		k1 = index;
+		// 半角スペースまたは'>'の文字までサーチ
+		k2 = str.indexOf(" ", k1);
+		if(k2 == -1)
+		{
+			k2 = str.indexOf(">", k1);
+		}
+	}
+
+	// エラー時
+	if(k2 == -1) throw null;
+	// 正常時
+	return [k1, k2];
+}
+
+</script>
+	
+</head>
+
+<body onload="init()">
+
+	<textarea id="input"></textarea><br>
+	<input type="button" value="↓↓↓変換↓↓↓" onclick="run()"><br>
+	<textarea id="output" readonly></textarea>
+
+</body>
+
+</html>

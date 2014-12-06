@@ -2191,7 +2191,7 @@ MainProgram.prototype.drawScore = function()
 			} else
 			{
 				s = "" + this.moji_left + " " + this.j_left;
-				s = "" + s + "	" + this.moji_time + " " + i;
+				s = "" + s + "  " + this.moji_time + " " + i;
 			}
 			this.gg.os_g.drawString(s, 40, k);
 			if(this.j_hp_v && this.ml_mode == 100)
@@ -2226,10 +2226,10 @@ MainProgram.prototype.drawScore = function()
 		var s4;
 		if(this.j_left_shoki <= 0 && this.j_left <= 0)
 		{
-			s4 = "" + this.moji_score + " " + this.score + "	" + this.moji_highscore + " " + this.highscore + this.moji_time + j;
+			s4 = "" + this.moji_score + " " + this.score + "  " + this.moji_highscore + " " + this.highscore + this.moji_time + j;
 		} else
 		{
-			s4 = "" + this.moji_score + " " + this.score + "	" + this.moji_highscore + " " + this.highscore + this.moji_left + this.j_left;
+			s4 = "" + this.moji_score + " " + this.score + "  " + this.moji_highscore + " " + this.highscore + this.moji_left + this.j_left;
 			s4 = "" + s4 + this.moji_time + j;
 		}
 		this.gg.os_g.drawString(s4, 40, i1);
@@ -2245,9 +2245,9 @@ MainProgram.prototype.drawScore = function()
 		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 		var s6;
 		if(this.j_left_shoki <= 0 && this.j_left <= 0)
-			s6 = "" + this.moji_score + " " + this.score + "	" + this.moji_highscore + " " + this.highscore;
+			s6 = "" + this.moji_score + " " + this.score + "  " + this.moji_highscore + " " + this.highscore;
 		else
-			s6 = "" + this.moji_score + " " + this.score + "	" + this.moji_highscore + " " + this.highscore + this.moji_left + this.j_left;
+			s6 = "" + this.moji_score + " " + this.score + "  " + this.moji_highscore + " " + this.highscore + this.moji_left + this.j_left;
 		this.gg.os_g.drawString(s6, 40, j1);
 		if(this.j_hp_v && this.ml_mode == 100)
 		{
@@ -2277,9 +2277,9 @@ MainProgram.prototype.drawScore2 = function()
 		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 		var s1;
 		if(this.j_left_shoki <= 0 && this.j_left <= 0)
-			s1 = "" + this.moji_score + " " + this.score + "	" + this.moji_highscore + " " + this.highscore;
+			s1 = "" + this.moji_score + " " + this.score + "  " + this.moji_highscore + " " + this.highscore;
 		else
-			s1 = "" + this.moji_score + " " + this.score + "	" + this.moji_highscore + " " + this.highscore + this.moji_left + this.j_left;
+			s1 = "" + this.moji_score + " " + this.score + "  " + this.moji_highscore + " " + this.highscore + this.moji_left + this.j_left;
 		this.gg.os_g.drawString(s1, 40, j);
 	}
 }
@@ -3418,6 +3418,9 @@ MainProgram.prototype.mL100 = function()
 	{
 		this.stage_cc++;
 		if(this.stage_cc > 28)
+		{
+			if(this.time_max > 0)
+				this.addScore(Math.floor(this.time / 1000));
 			if(this.stage_select == 2)
 			{
 				if(this.stage >= 4)
@@ -3425,8 +3428,6 @@ MainProgram.prototype.mL100 = function()
 					this.ml_mode = 400;
 				} else
 				{
-					if(this.time_max > 0)
-						this.addScore(Math.floor(this.time / 1000));
 					this.ml_mode = 260;
 				}
 			} else
@@ -3436,10 +3437,9 @@ MainProgram.prototype.mL100 = function()
 			} else
 			{
 				this.stage++;
-				if(this.time_max > 0)
-					this.addScore(Math.floor(this.time / 1000));
 				this.ml_mode = 90;
 			}
+		}
 	}
 	if(this.system_draw_mode != 4)
 	{
@@ -3487,9 +3487,9 @@ MainProgram.prototype.mL100 = function()
 		var s = "" + this.moji_jet + " " + this.j_jet_fuel;
 		if(this.j_gr_kazu > 0)
 			if(this.j_gr_kazu == 1)
-				s = "" + s + "	" + this.moji_grenade;
+				s = "" + s + "  " + this.moji_grenade;
 			else
-				s = "" + s + "	" + this.moji_grenade + " " + this.j_gr_kazu;
+				s = "" + s + "  " + this.moji_grenade + " " + this.j_gr_kazu;
 		this.hg.drawString(s, 40, c1 + this.moji_size);
 	} else
 	if(this.j_gr_kazu > 0)
@@ -3802,9 +3802,9 @@ MainProgram.prototype.mainLoop = function()
 			var s = "" + this.moji_jet + " " + this.j_jet_fuel;
 			if(this.j_gr_kazu > 0)
 				if(this.j_gr_kazu == 1)
-					s = "" + s + "	" + this.moji_grenade;
+					s = "" + s + "  " + this.moji_grenade;
 				else
-					s = "" + s + "	" + this.moji_grenade + " " + this.j_gr_kazu;
+					s = "" + s + "  " + this.moji_grenade + " " + this.j_gr_kazu;
 			this.hg.drawString(s, 40, 287 + this.moji_size);
 		} else
 		if(this.j_gr_kazu > 0)
@@ -3979,15 +3979,11 @@ MainProgram.prototype.mainLoop = function()
 	case 400: 
 		if(this.mode_wait_ending == 0)
 		{
-			if(this.time_max > 0)
-				this.addScore(Math.floor(this.time / 1000));
 			this.gk.key_code = 0;
 			this.ml_mode = 50;
 			break;
 		}
 		this.gg.drawListImage(0, 0, 1);
-		if(this.time_max > 0)
-			this.addScore(Math.floor(this.time / 1000));
 		this.drawScore();
 		this.gs.playBGM(6);
 		this.sendHighscore();
@@ -3996,8 +3992,7 @@ MainProgram.prototype.mainLoop = function()
 		break;
 
 	case 410: 
-		this.gg.drawListImage(0, 0, 1);
-		this.drawScore();
+		//this.gg.drawListImage(0, 0, 1);
 		this.ml_mode_c++;
 		if(this.ml_mode_c > this.mode_wait_ending)
 		{
@@ -4039,13 +4034,13 @@ MainProgram.prototype.mainLoop = function()
 		this.hg.setFont(new Font("Dialog", 0, 46));
 		this.hg.setColor(Color.white);
 		this.hg.setFont(new Font("Dialog", 0, 20));
-		this.hg.drawString("Title		MASAO CONSTRUCTION FX", 50, 50);
-		this.hg.drawString("Version	  Update 16 Build 62", 50, 80);
-		this.hg.drawString("Language	 Java2 SDK 1.6.0 Update 16", 50, 110);
-		this.hg.drawString("OS		   Windows Vista", 50, 140);
-		this.hg.drawString("Browser	  InternetExplorer 8.0", 50, 170);
+		this.hg.drawString("Title    MASAO CONSTRUCTION FX", 50, 50);
+		this.hg.drawString("Version    Update 16 Build 62", 50, 80);
+		this.hg.drawString("Language   Java2 SDK 1.6.0 Update 16", 50, 110);
+		this.hg.drawString("OS      Windows Vista", 50, 140);
+		this.hg.drawString("Browser    InternetExplorer 8.0", 50, 170);
 		this.hg.drawString("Programing   Fukuda Naoto", 50, 200);
-		this.hg.drawString("Date		 2011/5", 50, 230);
+		this.hg.drawString("Date     2011/5", 50, 230);
 		this.ml_mode_c++;
 		if(this.ml_mode_c > 40)
 			this.ml_mode = 50;
@@ -4281,11 +4276,11 @@ MainProgram.prototype.init1 = function()
 	this.moji_score = this.tdb.getValue("moji_score");
 	this.moji_highscore = this.tdb.getValue("moji_highscore");
 	this.moji_time = this.tdb.getValue("moji_time");
-	this.moji_time = "" + "	" + this.moji_time + " ";
+	this.moji_time = "" + "  " + this.moji_time + " ";
 	this.moji_jet = this.tdb.getValue("moji_jet");
 	this.moji_grenade = this.tdb.getValue("moji_grenade");
 	this.moji_left = this.tdb.getValue("moji_left");
-	this.moji_left = "" + "	" + this.moji_left + " ";
+	this.moji_left = "" + "  " + this.moji_left + " ";
 	this.moji_size = this.tdb.getValueInt("moji_size");
 	if(this.moji_size < 10)
 		this.moji_size = 10;
