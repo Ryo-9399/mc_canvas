@@ -65,6 +65,21 @@ window.addEventListener("load",function()
 	if(!__canvas) return;
 	if(!__canvas.getContext) return;
 
+	var i;
+
+	// 従来ソースのパラメータを取得
+	// ただし、すでにparamsが定義されている場合を除く
+	if(!window.params)
+	{
+		params = {};
+		var paramScope = document.getElementById("mc_params");
+		var paramTags = (paramScope != null ? paramScope : document).getElementsByTagName("param");
+		var paramLength = paramTags.length;
+		for(i = 0; i < paramLength; i++)
+		{
+			params[paramTags[i].name] = paramTags[i].value;
+		}
+	}
 
 	// タッチスクリーン対応端末での処理
 	if(window.TouchEvent)
@@ -127,7 +142,7 @@ window.addEventListener("load",function()
 		ctx.lineWidth = 2;
 		ctx.lineCap = "round";
 		ctx.lineJoin = "round";
-		for(var i = 0; i < 8; i++)
+		for(i = 0; i < 8; i++)
 		{
 			__pad_before[i] = false;
 			__pad_after[i] = false;
@@ -245,9 +260,7 @@ function __repaint()
 {
 	__mc.update(__appimg.getGraphics());
 	var ctx = __canvas.getContext("2d");
-	//ctx.globalAlpha = 0.75;
 	ctx.drawImage(__appimg._dat, 0, 0);
-	//ctx.globalAlpha = 1.0;
 }
 
 

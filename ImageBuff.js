@@ -26,68 +26,62 @@ function ImageBuff(w, h)
 	}
 	this._loaded = false;
 	this._error = false;
-	this._h = null;
-	this._he = null;
 	this._g = null;
 }
 
 // 画像を読み込む
-ImageBuff.prototype.load = function(url, h, he)
+ImageBuff.prototype.load = function(url)
 {
 	this._loaded = false;
 	this._error = false;
 	this._width = -1;
 	this._height = -1;
 	this._dat = new Image();
+	var _this = this;
 	this._dat.onload = function()
 	{
-		ImageBuff__onload(_this);
+		ImageBuff_onload(_this);
 	};
 	this._dat.onerror = function()
 	{
-		ImageBuff__onerror(_this);
+		ImageBuff_onerror(_this);
 	};
 	this._dat.onabort = function()
 	{
-		ImageBuff__onerror(_this);
+		ImageBuff_onerror(_this);
 	};
 	this._dat.ontimeout = function()
 	{
-		ImageBuff__onerror(_this);
+		ImageBuff_onerror(_this);
 	};
-	//this._dat.src = url + "?" + new Date().getTime();
 	this._dat.src = url;
-	if(typeof h === "function") this._h = h;
-	if(typeof he === "function") this._he = he;
-	var _this = this;
+	var s = this._dat.src;
+	if(s.indexOf("file:") == 0 || s.indexOf("data:") == 0)
+	{
+		this.onload();
+	}
 }
 
-ImageBuff.prototype._onload = function()
+ImageBuff.prototype.onload = function()
 {
 	this._loaded = true;
 	this._width = this._dat.naturalWidth;
 	this._height = this._dat.naturalHeight;
-	if(this._h){
-		this._h();
-	}
 }
-function ImageBuff__onload(obj)
+function ImageBuff_onload(obj)
 {
-	obj._onload();
+	obj.onload();
 }
 
-ImageBuff.prototype._onerror = function()
+ImageBuff.prototype.onerror = function()
 {
 	this._error = true;
 	this._dat = null;
-	if(this._he){
-		this._he();
-	}
 }
 
-function ImageBuff__onerror(obj)
+function ImageBuff_onerror(obj)
 {
-	obj._onerror();
+	obj.onerror();
 }
 
 // 画像バッファを編集するためのクラスGraphicsを返す
@@ -95,7 +89,6 @@ function ImageBuff__onerror(obj)
 ImageBuff.prototype.getGraphics = function()
 {
 	if(this._width < 0) return null;
-	//if(this._g) this._g._ctx = null;
 	this._g = new Graphics(this);
 	return this._g;
 }

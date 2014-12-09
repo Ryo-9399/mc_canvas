@@ -70,15 +70,21 @@ MasaoConstruction.prototype.paint = function(paramGraphics)
 	{
 		paramGraphics.setColor(Color.black);
 		paramGraphics.fillRect(0, 0, 512, 320);
+		paramGraphics.setColor(Color.white);
+		paramGraphics.setFont(new Font("Dialog", 0, 16));
 
 		var str = this.getParameter("now_loading");
 		if (str != null)
 		{
-			paramGraphics.setColor(Color.black);
-			paramGraphics.fillRect(0, 0, 512, 320);
-			paramGraphics.setColor(Color.white);
-			paramGraphics.setFont(new Font("Dialog", 0, 16));
 			paramGraphics.drawString(this.getParameter("now_loading"), 32, 160);
+		}
+		if(this.th_jm <= 6)
+		{
+			paramGraphics.drawString("画像を読み込み中", 60, 200);
+		}
+		if(this.th_jm <= 5)
+		{
+			paramGraphics.drawString("---完了", 60, 220);
 		}
 	}
 }
@@ -104,6 +110,19 @@ MasaoConstruction.prototype.run = function()
 
 		sleepTime = 70;
 	}
+	else if(this.th_jm == 6)
+	{
+		var f1 = 0, f2 = 0;
+		if(this.gg.apt_img._loaded) f1 = 1;
+		else if(this.gg.apt_img._error) f1 = 2;
+		if(this.gg.layer_mode == 2){
+			if(this.gg.amapchip_img._loaded) f2 = 1;
+			else if(this.gg.amapchip_img._error) f2 = 2;
+		}
+		else f2 = 1;
+		__repaint();
+		if(f1 != 0 && f2 != 0) this.th_jm -= 1;
+	}
 	else if(this.th_jm == 2)
 	{
 		this.gg.cut();
@@ -115,7 +134,7 @@ MasaoConstruction.prototype.run = function()
 	else if (this.th_jm >= 2)
 	{
 		this.th_jm -= 1;
-
+		__repaint();
 
 		sleepTime = 70;
 	}
