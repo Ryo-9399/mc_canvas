@@ -1,85 +1,72 @@
+function Game(params, id){
+	var randomID = Math.random().toString(36).slice(2);
 
-
-
-
-// 要素格納Divエレメント
-var __box;
-// メインCanvasオブジェクト
-var __canvas;
-// サブImageBuffオブジェクト
-var __appimg;
-// ソフトパッド格納Divエレメント
-var __padDiv;
-// ソフトパッドエレメント(Canvas)
-var __pad;
-// DivエレメントID
-var __boxID;
-// キャンバスID
-var __canvasID;
-// ソフトパッドDivID
-var __padDivID;
-
-// ソフトウェアパッド用変数
-//var __pad_btn;
-var __pad_off;
-var __pad_before = new Array(8);
-var __pad_after = new Array(8);
-var __pad_touches = [];
-var __pad_coords = [
-	[410, 30, 490, 30, 490, 170, 410, 170],
-	[320, 30, 400, 30, 400, 170, 320, 170],
-	[250, 30, 290, 30, 290, 70, 250, 70],
-	[200, 30, 240, 30, 240, 70, 200, 70],
-	[5, 60, 87, 60, 87, 140, 5, 140],
-	[175, 60, 93, 60, 93, 140, 175, 140],
-	[30, 5, 30, 80, 150, 80, 150, 5],
-	[30, 195, 30, 120, 150, 120, 150, 195]
-	// 方向キーは重ねて縦・横同時押しができるようにする
-];
-var __pad_chars = [
-	"X", "Z", "T", "P", "←", "→", "↑", "↓"
-];
-
-var __pt = 0;
-var __st;
-
-// テストCanvas
-var __testCanvas
-// テストDIV
-var __testDiv;
-var __teo = {};
-
-
-// MasaoConstructionオブジェクト
-var __mc;
-
-// この関数をonload時に呼び出すようにする
-window.addEventListener("load",function()
-{
-	__box = document.getElementById(__boxID);
-	__canvas = document.getElementById(__canvasID);
-	__padDiv = document.getElementById(__padDivID);
-	__testDiv = document.getElementById("testdiv");
-	__testCanvas = document.getElementById("testcanvas");
-
-	if(!__canvas) return;
-	if(!__canvas.getContext) return;
-
-	var i;
-
-	// 従来ソースのパラメータを取得
-	// ただし、すでにparamsが定義されている場合を除く
-	if(!window.params)
-	{
-		params = {};
-		var paramScope = document.getElementById("mc_params");
-		var paramTags = (paramScope != null ? paramScope : document).getElementsByTagName("param");
-		var paramLength = paramTags.length;
-		for(i = 0; i < paramLength; i++)
-		{
-			params[paramTags[i].name] = paramTags[i].value;
-		}
+	// DivエレメントID
+	if(id){
+		// idを持つ要素の配下に設置する
+		this.__boxID = id;
+	}else{
+		// idが無ければ現在の場所に作る
+		// ドキュメント書き込み文
+		this.__boxID = "__mcdiv" + randomID;
+		document.write("<div id='" + this.__boxID + "'>");
 	}
+
+	// キャンバスID
+	this.__canvasID = "__mccanvas" + randomID;
+
+	// ソフトパッドDivID
+	this.__padDivID = "__mcpaddiv" + randomID;
+
+	// 要素格納Divエレメント
+	this.__box = document.getElementById(this.__boxID);
+
+	// メインCanvasオブジェクト
+	this.__canvas = document.createElement("canvas");
+	this.__canvas.id = this.__canvasID;
+	this.__canvas.width = 512;
+	this.__canvas.height = 320;
+	this.__canvas.textContent = "※お使いのブラウザはHTML5に対応していないため表示できません。";
+	this.__box.appendChild(this.__canvas);
+
+	// ソフトパッド格納Divエレメント
+	// タッチスクリーン対応の端末ではソフトウェアパッドも表示する
+	this.__padDiv = document.createElement("div");
+	this.__padDiv.id = this.__padDivID;
+	this.__box.appendChild(this.__padDiv);
+
+	// デバッグ時に下のコメントアウトを外すと便利
+	//document.write('<canvas width="700" height="700" id="testcanvas"></canvas>');
+	//document.write('<div id="testdiv"></div>');
+
+	// テストCanvas
+	this.__testCanvas = document.getElementById("testcanvas");
+	// テストDIV
+	this.__testDiv = document.getElementById("testdiv");
+	this.__teo = {};
+
+	if(!this.__canvas) return;
+	if(!this.__canvas.getContext) return;
+
+	// ソフトウェアパッド用変数
+	//var __pad_btn;
+	this.__pad_before = new Array(8);
+	this.__pad_after = new Array(8);
+	this.__pad_touches = [];
+	this.__pad_coords = [
+		[410, 30, 490, 30, 490, 170, 410, 170],
+		[320, 30, 400, 30, 400, 170, 320, 170],
+		[250, 30, 290, 30, 290, 70, 250, 70],
+		[200, 30, 240, 30, 240, 70, 200, 70],
+		[5, 60, 87, 60, 87, 140, 5, 140],
+		[175, 60, 93, 60, 93, 140, 175, 140],
+		[30, 5, 30, 80, 150, 80, 150, 5],
+		[30, 195, 30, 120, 150, 120, 150, 195]
+		// 方向キーは重ねて縦・横同時押しができるようにする
+	];
+	this.__pad_chars = [
+		"X", "Z", "T", "P", "←", "→", "↑", "↓"
+	];
 
 	// タッチスクリーン対応端末での処理
 	if(window.TouchEvent)
@@ -101,22 +88,25 @@ window.addEventListener("load",function()
 				__pad.style.display = "inline";
 		}
 		// ボタン配置
-		__padDiv.appendChild(__pad_btn);
+		this.__padDiv.appendChild(__pad_btn);
 
 		// 改行
-		__padDiv.appendChild(document.createElement("br"));
+		this.__padDiv.appendChild(document.createElement("br"));
 
 		// ソフトウェアパッド設定
-		__pad = document.createElement("canvas");
+		var __pad = this.__pad = document.createElement("canvas");
 		__pad.width = 500;
 		__pad.height = 200;
+		var __pad_event = function(e){
+			this.__pad_event(e);
+		}.bind(this);
 		__pad.addEventListener("touchstart", __pad_event, false);
 		__pad.addEventListener("touchmove", __pad_event, false);
 		__pad.addEventListener("touchend", __pad_event, false);
 		__pad.addEventListener("touchcancel", __pad_event, false);
 		__pad.style.display = "none";
 		// パッド配置
-		__padDiv.appendChild(__pad);
+		this.__padDiv.appendChild(__pad);
 
 		ss = __pad.style;
 		ss.position = "fixed";
@@ -132,29 +122,30 @@ window.addEventListener("load",function()
 			__pad.style.height = (rw*0.4) + "px";
 		}, 500);
 
-		__pad_off = document.createElement("canvas");
-		__pad_off.width = 500;
-		__pad_off.height = 200;
-		var ctx = __pad_off.getContext("2d");
+		this.__pad_off = document.createElement("canvas");
+		this.__pad_off.width = 500;
+		this.__pad_off.height = 200;
+		var ctx = this.__pad_off.getContext("2d");
 		ctx.font = "24px monospace";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 		ctx.lineWidth = 2;
 		ctx.lineCap = "round";
 		ctx.lineJoin = "round";
-		for(i = 0; i < 8; i++)
+		for(var i = 0; i < 8; i++)
 		{
-			__pad_before[i] = false;
-			__pad_after[i] = false;
+			this.__pad_before[i] = false;
+			this.__pad_after[i] = false;
 		}
-		__pad_update();
+		this.__pad_update();
 	}
 
-
-	__appimg = new ImageBuff(512, 320);
-	__mc = new MasaoConstruction();
-	__mc.start();
-	__st = __mc.getParameter("game_speed");
+	// サブImageBuffオブジェクト
+	this.__appimg = new ImageBuff(512, 320);
+	// MasaoConstructionオブジェクト
+	this.__mc = new MasaoConstruction();
+	this.__mc.start();
+	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
 	{
 		__st = parseInt(__st);
@@ -172,26 +163,55 @@ window.addEventListener("load",function()
 		}
 	}
 	else __st = 70;
-	setInterval(__loop, __st);
-});
+
+	this.__pt = 0;
+
+	setInterval(function(){
+		this.__loop();
+	}.bind(this), __st);
+}
+
+
+
+Game.replace = function(id){
+	// この関数をonload時に呼び出すようにする
+	window.addEventListener("load",function()
+	{
+		// 従来ソースのパラメータを取得
+		params = {};
+		var paramScope = document.getElementById(id);
+		var paramTags = (paramScope != null ? paramScope : document).getElementsByTagName("param");
+		var paramLength = paramTags.length;
+		for(i = 0; i < paramLength; i++)
+		{
+			params[paramTags[i].name] = paramTags[i].value;
+		}
+		// 元のappletをdivで置き換える
+		var newDiv = document.createElement("div");
+		newDiv.id = id;
+		paramScope.parentNode.replaceChild(newDiv, paramScope);
+		new Game(params, id);
+	});
+};
+
 
 // ループ関数
-function __loop()
+Game.prototype.__loop = function()
 {
 	var pt = new Date().getTime();
-	if(pt - __pt < __st) return;
-	__pt = pt - 10;
+	if(pt - this.__pt < this.__st) return;
+	this.__pt = pt - 10;
 
 
 	// デバッグ用キャンバス描画
-	if(__testCanvas)
+	if(this.__testCanvas)
 	{
-		var ctx = __testCanvas.getContext("2d");
+		var ctx = this.__testCanvas.getContext("2d");
 		ctx.fillStyle = "rgb(128,0,128)";
 		ctx.fillRect(0,0,700,700);
 		ctx.strokeStyle = "#f00";
 		var i,j;
-		if(__mc.gg){
+		if(this.__mc.gg){
 			ctx.save();
 			ctx.scale(0.5, 0.5);
 			ctx.drawImage(__mc.gg.os_img._dat,0,0);
@@ -214,11 +234,11 @@ function __loop()
 	}
 
 	// デバッグ用文字表示
-	if(__testDiv)
+	if(this.__testDiv)
 	{
-		if(__mc.mp)
+		if(this.__mc.mp)
 		{
-			var mp = __mc.mp;
+			var mp = this.__mc.mp;
 			var str = "<div style='text-align:left'>";
 			var prop;
 			var type;
@@ -228,39 +248,39 @@ function __loop()
 				type = Object.prototype.toString.call(mp[prop]);
 				if(type != "[object Array]" && type != "[object Function]")
 				{
-					if(!(prop in __teo))
+					if(!(prop in this.__teo))
 					{
-						__teo[prop] = { val:mp[prop], t:0 };
+						this.__teo[prop] = { val:mp[prop], t:0 };
 					}
-					else if(__teo[prop].t > 0)
+					else if(this.__teo[prop].t > 0)
 					{
-						str += "<span style='background-color:rgba(255,255,255,"+ (__teo[prop].t / 6) +")'>" + prop + ": " + mp[prop] + "</span> ";
-						__teo[prop].t--;
+						str += "<span style='background-color:rgba(255,255,255,"+ (this.__teo[prop].t / 6) +")'>" + prop + ": " + mp[prop] + "</span> ";
+						this.__teo[prop].t--;
 					}
 					else
 					{
 						str += prop + ": " + mp[prop] + " ";
 					}
-					if(__teo[prop].val != mp[prop])
+					if(this.__teo[prop].val != mp[prop])
 					{
-						__teo[prop].val = mp[prop];
-						__teo[prop].t = 6;
+						this.__teo[prop].val = mp[prop];
+						this.__teo[prop].t = 6;
 					}
 				}
 			}
-			__testDiv.innerHTML = str + "</div>";
+			this.__testDiv.innerHTML = str + "</div>";
 		}
 	}
 
-	var t = __mc.run();
+	var t = this.__mc.run();
 }
 
 // __appimg書き換え関数
-function __repaint()
+Game.prototype.__repaint = function()
 {
-	__mc.update(__appimg.getGraphics());
-	var ctx = __canvas.getContext("2d");
-	ctx.drawImage(__appimg._dat, 0, 0);
+	this.__mc.update(this.__appimg.getGraphics());
+	var ctx = this.__canvas.getContext("2d");
+	ctx.drawImage(this.__appimg._dat, 0, 0);
 }
 
 
@@ -268,12 +288,12 @@ function __repaint()
 
 
 // ソフトウェアパッド更新関数
-function __pad_update()
+Game.prototype.__pad_update = function()
 {
-	var r = __pad.getBoundingClientRect();
+	var r = this.__pad.getBoundingClientRect();
 	var dx = r.left;
 	var dy = r.top;
-	var c = __pad_off.getContext("2d");
+	var c = this.__pad_off.getContext("2d");
 	var i, j, k, tmp, sx, sy;
 
 	c.clearRect(0, 0, 500, 200);
@@ -283,7 +303,7 @@ function __pad_update()
 	for(i = 0; i < 8; i++)
 	{
 		c.beginPath();
-		tmp = __pad_coords[i];
+		tmp = this.__pad_coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		for(j = 0; j < k; j++)
@@ -297,7 +317,7 @@ function __pad_update()
 
 	for(i = 0; i < 8; i++)
 	{
-		__pad_after[i] = false;
+		this.__pad_after[i] = false;
 	}
 
 
@@ -307,7 +327,7 @@ function __pad_update()
 	for(i = 0; i < 8; i++)
 	{
 		c.beginPath();
-		tmp = __pad_coords[i];
+		tmp = this.__pad_coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		for(j = 0; j < k; j++)
@@ -315,13 +335,13 @@ function __pad_update()
 			c.lineTo(tmp[(j << 1)], tmp[(j << 1) + 1]);
 		}
 		c.closePath();
-		for(j in __pad_touches)
+		for(j in this.__pad_touches)
 		{
-			sx = __pad_touches[j].clientX - dx;
-			sy = __pad_touches[j].clientY - dy;
-			__pad_after[i] |= c.isPointInPath(sx/r.width*500, sy/r.height*200);
+			sx = this.__pad_touches[j].clientX - dx;
+			sy = this.__pad_touches[j].clientY - dy;
+			this.__pad_after[i] |= c.isPointInPath(sx/r.width*500, sy/r.height*200);
 		}
-		if(__pad_after[i]) c.fill();
+		if(this.__pad_after[i]) c.fill();
 	}
 
 
@@ -330,7 +350,7 @@ function __pad_update()
 	for(i = 0; i < 8; i++)
 	{
 		c.beginPath();
-		tmp = __pad_coords[i];
+		tmp = this.__pad_coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		sx = tmp[0]; sy = tmp[1];
@@ -342,49 +362,49 @@ function __pad_update()
 		}
 		c.closePath();
 		c.stroke();
-		c.fillText(__pad_chars[i], sx / k, sy / k);
+		c.fillText(this.__pad_chars[i], sx / k, sy / k);
 	}
 	c.stroke();
 
-	c = __pad.getContext("2d");
+	c = this.__pad.getContext("2d");
 	c.clearRect(0, 0, 500, 200);
-	c.drawImage(__pad_off, 0, 0);
+	c.drawImage(this.__pad_off, 0, 0);
 	for(var i = 0; i < 8; i++)
 	{
-		if(__pad_before[i] != __pad_after[i])
+		if(this.__pad_before[i] != this.__pad_after[i])
 		{
-			__pad_before[i] = __pad_after[i];
-			if(__pad_after[i]) __pad_pressed(i);
-			else __pad_released(i);
+			this.__pad_before[i] = this.__pad_after[i];
+			if(this.__pad_after[i]) this.__pad_pressed(i);
+			else this.__pad_released(i);
 		}
 	}
 }
 
-function __pad_pressed(ch)
+Game.prototype.__pad_pressed = function(ch)
 {
-	if(__mc.gk)
+	if(this.__mc.gk)
 	{
-		var co = __get_code(ch);
-		__mc.gk.keyPressed( { 
+		var co = this.__get_code(ch);
+		this.__mc.gk.keyPressed( { 
 			keyCode:co,
 			preventDefault:function(){}
 		} );
 	}
 }
 
-function __pad_released(ch)
+Game.prototype.__pad_released = function(ch)
 {
-	if(__mc.gk)
+	if(this.__mc.gk)
 	{
-		var co = __get_code(ch);
-		__mc.gk.keyReleased( { 
+		var co = this.__get_code(ch);
+		this.__mc.gk.keyReleased( { 
 			keyCode:co,
 			preventDefault:function(){}
 		} );
 	}
 }
 
-function __get_code(ch)
+Game.prototype.__get_code = function(ch)
 {
 	switch(ch)
 	{
@@ -399,15 +419,15 @@ function __get_code(ch)
 	}
 }
 
-function __pad_event(e)
+Game.prototype.__pad_event = function(e)
 {
 	e.preventDefault();
-	__pad_touches = [];
+	this.__pad_touches = [];
 	for(var i = 0; i < e.touches.length; i++)
 	{
-		__pad_touches.push(e.touches[i]);
+		this.__pad_touches.push(e.touches[i]);
 	}
-	__pad_update();
+	this.__pad_update();
 }
 
 
@@ -581,22 +601,5 @@ function rounddown(val)
 
 
 
-// ドキュメント書き込み文
-__boxID = "__mcdiv" + (new Date().getTime());
-__canvasID = "__mccanvas" + (new Date().getTime());
-__padDivID = "__mcpaddiv" + (new Date().getTime());
-document.write("<div id='" + __boxID + "'>");
-document.write("<canvas id='" + __canvasID + "' width='512' height='320'>");
-document.write("※お使いのブラウザはHTML5に対応していないため表示できません。");
-document.write("</canvas></div>");
-
-// タッチスクリーン対応の端末ではソフトウェアパッドも表示する
-document.write("<div id='" + __padDivID + "'></div>");
-
-
-
-// デバッグ時に下のコメントアウトを外すと便利
-//document.write('<canvas width="700" height="700" id="testcanvas"></canvas>');
-//document.write('<div id="testdiv"></div>');
 
 
