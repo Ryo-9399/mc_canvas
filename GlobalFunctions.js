@@ -1,5 +1,7 @@
+// idがある場合，そのidの配下に設置
+// idがない場合，呼ばれた場所にdocument.writeし設置
 function Game(params, id){
-	var randomID = Math.random().toString(36).slice(2);
+	var randomID = makeRandomString();
 
 	// DivエレメントID
 	if(id){
@@ -142,7 +144,7 @@ function Game(params, id){
 
 	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
-	this.__mc = new MasaoConstruction(this.__canvas);
+	this.__mc = new MasaoConstruction(params, this.__canvas);
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
@@ -170,27 +172,44 @@ function Game(params, id){
 	}.bind(this), __st);
 }
 
+// ページ内の全ての正男appletをcanvas正男に置換する
+Game.replaceAll = function(){
+	window.addEventListener("load",function(){
+		var applets = document.getElementsByTagName("applet");
+		for(var i=0; i<applets.length; i++){
+			var applet = applets[i];
+			if(applet.code.match(/masaoconstruction/i)){
+				// 正男であるようなら置換
+				Game.replaceByDom(applet);
+			}
+		}
+	});
+};
 
-
+// 指定されたidを持つ正男appletをcanvas正男に置換する
 Game.replace = function(id){
 	// この関数をonload時に呼び出すようにする
 	window.addEventListener("load",function()
 	{
 		// 従来ソースのパラメータを取得
-		params = {};
-		var paramScope = document.getElementById(id);
-		var paramTags = (paramScope != null ? paramScope : document).getElementsByTagName("param");
-		var paramLength = paramTags.length;
-		for(i = 0; i < paramLength; i++)
-		{
-			params[paramTags[i].name] = paramTags[i].value;
-		}
-		// 元のappletをdivで置き換える
-		var newDiv = document.createElement("div");
-		newDiv.id = id;
-		paramScope.parentNode.replaceChild(newDiv, paramScope);
-		new Game(params, id);
+		Game.replaceByDom(document.getElementById(id));
 	});
+};
+
+Game.replaceByDom = function(paramScope){
+	var paramTags = paramScope.getElementsByTagName("param");
+	var paramLength = paramTags.length;
+	var params = {};
+	for(i = 0; i < paramLength; i++)
+	{
+		params[paramTags[i].name] = paramTags[i].value;
+	}
+	// 元のappletをdivで置き換える
+	var newDiv = document.createElement("div");
+	var id = paramScope.id || makeRandomString();
+	newDiv.id = id;
+	paramScope.parentNode.replaceChild(newDiv, paramScope);
+	new Game(params, id);
 };
 
 
@@ -586,7 +605,9 @@ function rounddown(val)
 		return -Math.floor(-val);
 }
 
-
+function makeRandomString(){
+	return Math.random().toString(36).slice(2);
+}
 
 
 

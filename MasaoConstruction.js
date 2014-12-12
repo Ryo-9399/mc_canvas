@@ -1,5 +1,5 @@
 
-function MasaoConstruction(__canvas)
+function MasaoConstruction(params, __canvas)
 {
 	this.restart_f = false;
 	this.th = null;
@@ -28,6 +28,7 @@ function MasaoConstruction(__canvas)
 	this.audio_bgm_no_ogg = false;
 
 	// GlobalFunctionsより移動
+	this.params = params;
 	this.__canvas = __canvas;
 	this.__appimg = new ImageBuff(512, 320);
 }
@@ -2374,9 +2375,9 @@ MasaoConstruction.prototype.createImage = function(w, h)
 MasaoConstruction.prototype.getParameter = function(name)
 {
 	var s = (name + "").toLowerCase();
-	var p = params[s];
+	var p = this.params[s];
 	if(typeof p === "undefined") return null;
-	return params[s] + "";
+	return this.params[s] + "";
 }
 
 MasaoConstruction.prototype.getAudioClip = function(url, flag)
