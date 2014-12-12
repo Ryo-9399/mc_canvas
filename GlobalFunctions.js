@@ -172,7 +172,7 @@ function Game(params, id){
 	}.bind(this), __st);
 }
 
-// ページ内の全ての正男appletをcanvas正男に置換する
+// ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
 Game.replaceAll = function(){
 	window.addEventListener("load",function(){
 		var applets = document.getElementsByTagName("applet");
@@ -186,7 +186,7 @@ Game.replaceAll = function(){
 	});
 };
 
-// 指定されたidを持つ正男appletをcanvas正男に置換する
+// ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換する
 Game.replace = function(id){
 	// この関数をonload時に呼び出すようにする
 	window.addEventListener("load",function()

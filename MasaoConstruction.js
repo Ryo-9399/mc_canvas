@@ -320,26 +320,26 @@ MasaoConstruction.prototype.init_j = function()
 
 	this.gm = new GameMouse();
 	var _gm = this.gm;
-	this.__canvas.onmousedown = function(e)
+	this.__canvas.addEventListener("mousedown", function(e)
 	{
 		GameMouse_mousePressed(_gm, e);
-	}
-	this.__canvas.onmouseup = function(e)
+	});
+	this.__canvas.addEventListener("mouseup", function(e)
 	{
 		GameMouse_mouseReleased(_gm, e);
-	}
+	});
 
 
 	this.gk = new GameKey();
 	var _gk = this.gk;
-	document.onkeydown = function(e)
+	document.addEventListener("keydown", function(e)
 	{
 		GameKey_keyPressed(_gk, e);
-	}
-	document.onkeyup = function(e)
+	});
+	document.addEventListener("keyup", function(e)
 	{
 		GameKey_keyReleased(_gk, e);
-	}
+	});
 
 
 	if(this.tdb.getValueInt("audio_se_switch_wave") == 2)
