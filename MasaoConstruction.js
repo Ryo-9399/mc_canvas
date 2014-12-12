@@ -1,5 +1,5 @@
 
-function MasaoConstruction()
+function MasaoConstruction(__canvas)
 {
 	this.restart_f = false;
 	this.th = null;
@@ -26,6 +26,19 @@ function MasaoConstruction()
 	this.audio_bgm_no_wave = false;
 	this.audio_bgm_no_mp3 = false;
 	this.audio_bgm_no_ogg = false;
+
+	// GlobalFunctionsより移動
+	this.__canvas = __canvas;
+	this.__appimg = new ImageBuff(512, 320);
+}
+
+// GlobalFunctionsより移動
+// __appimg書き換え関数
+MasaoConstruction.prototype.__repaint = function()
+{
+	this.update(this.__appimg.getGraphics());
+	var ctx = this.__canvas.getContext("2d");
+	ctx.drawImage(this.__appimg._dat, 0, 0);
 }
 
 MasaoConstruction.prototype.init = function() {}
@@ -120,7 +133,7 @@ MasaoConstruction.prototype.run = function()
 			else if(this.gg.amapchip_img._error) f2 = 2;
 		}
 		else f2 = 1;
-		__repaint();
+		this.__repaint();
 		if(f1 != 0 && f2 != 0) this.th_jm -= 1;
 	}
 	else if(this.th_jm == 2)
@@ -134,7 +147,7 @@ MasaoConstruction.prototype.run = function()
 	else if (this.th_jm >= 2)
 	{
 		this.th_jm -= 1;
-		__repaint();
+		this.__repaint();
 
 		sleepTime = 70;
 	}
@@ -185,7 +198,7 @@ MasaoConstruction.prototype.run = function()
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
-			__repaint();
+			this.__repaint();
 
 
 			sleepTime = j;
@@ -206,7 +219,7 @@ MasaoConstruction.prototype.run = function()
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
-			__repaint();
+			this.__repaint();
 
 
 			sleepTime = this.th_interval;
@@ -306,11 +319,11 @@ MasaoConstruction.prototype.init_j = function()
 
 	this.gm = new GameMouse();
 	var _gm = this.gm;
-	__canvas.onmousedown = function(e)
+	this.__canvas.onmousedown = function(e)
 	{
 		GameMouse_mousePressed(_gm, e);
 	}
-	__canvas.onmouseup = function(e)
+	this.__canvas.onmouseup = function(e)
 	{
 		GameMouse_mouseReleased(_gm, e);
 	}
@@ -352,7 +365,7 @@ MasaoConstruction.prototype.init_j = function()
 
 
 
-	__repaint();
+	this.__repaint();
 
 	this.userInit();
 }

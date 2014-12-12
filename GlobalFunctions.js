@@ -140,10 +140,9 @@ function Game(params, id){
 		this.__pad_update();
 	}
 
-	// サブImageBuffオブジェクト
-	this.__appimg = new ImageBuff(512, 320);
+	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
-	this.__mc = new MasaoConstruction();
+	this.__mc = new MasaoConstruction(this.__canvas);
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
@@ -275,14 +274,7 @@ Game.prototype.__loop = function()
 	var t = this.__mc.run();
 }
 
-// __appimg書き換え関数
-Game.prototype.__repaint = function()
-{
-	this.__mc.update(this.__appimg.getGraphics());
-	var ctx = this.__canvas.getContext("2d");
-	ctx.drawImage(this.__appimg._dat, 0, 0);
-}
-
+// __repaintはMasaoConstructionへ移動
 
 
 
