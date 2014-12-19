@@ -322,8 +322,10 @@ MasaoConstruction.prototype.init_j = function()
 	var _gm = this.gm;
 	this.__canvas.addEventListener("mousedown", function(e)
 	{
+		// このオブジェクトにフォーカスを当てる
+		Game.focus.focus(this);
 		GameMouse_mousePressed(_gm, e);
-	});
+	}.bind(this));
 	this.__canvas.addEventListener("mouseup", function(e)
 	{
 		GameMouse_mouseReleased(_gm, e);
@@ -334,12 +336,14 @@ MasaoConstruction.prototype.init_j = function()
 	var _gk = this.gk;
 	document.addEventListener("keydown", function(e)
 	{
-		GameKey_keyPressed(_gk, e);
-	});
+		if(Game.focus.hasFocus(this))
+			GameKey_keyPressed(_gk, e);
+	}.bind(this));
 	document.addEventListener("keyup", function(e)
 	{
-		GameKey_keyReleased(_gk, e);
-	});
+		if(Game.focus.hasFocus(this))
+			GameKey_keyReleased(_gk, e);
+	}.bind(this));
 
 
 	if(this.tdb.getValueInt("audio_se_switch_wave") == 2)

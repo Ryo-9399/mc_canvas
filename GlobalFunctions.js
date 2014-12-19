@@ -179,8 +179,12 @@ function Game(params, id){
 Game.replaceAll = function(){
 	window.addEventListener("load",function(){
 		var applets = document.getElementsByTagName("applet");
+		var appletArray = [];
 		for(var i=0; i<applets.length; i++){
-			var applet = applets[i];
+			appletArray.push(applets[i]);
+		}
+		for(var i=0; i<appletArray.length; i++){
+			var applet = appletArray[i];
 			if(applet.code.match(/masaoconstruction/i)){
 				// 正男であるようなら置換
 				Game.replaceByDom(applet);
@@ -214,6 +218,24 @@ Game.replaceByDom = function(paramScope){
 	paramScope.parentNode.replaceChild(newDiv, paramScope);
 	new Game(params, id);
 };
+
+// 動作する部分を管理するオブジェクト
+// Game.focus.focus(obj) : このオブジェクトobjにフォーカスを当てる
+// Game.focus.hasFocus(obj) : このオブジェクトobjにフォーカスが当たっているならばtrueを返す
+Game.focus = (function()
+{
+	var focusedObject;
+	return {
+		focus : function(obj)
+		{
+			focusedObject = obj;
+		},
+		hasFocus : function(obj)
+		{
+			return (focusedObject === obj);
+		}
+	};
+})();
 
 
 // ループ関数
