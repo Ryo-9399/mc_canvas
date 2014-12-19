@@ -1,5 +1,5 @@
 
-function MasaoConstruction()
+function MasaoConstruction(params, __canvas)
 {
 	this.restart_f = false;
 	this.th = null;
@@ -26,6 +26,20 @@ function MasaoConstruction()
 	this.audio_bgm_no_wave = false;
 	this.audio_bgm_no_mp3 = false;
 	this.audio_bgm_no_ogg = false;
+
+	// GlobalFunctionsより移動
+	this.params = params;
+	this.__canvas = __canvas;
+	this.__appimg = new ImageBuff(512, 320);
+}
+
+// GlobalFunctionsより移動
+// __appimg書き換え関数
+MasaoConstruction.prototype.__repaint = function()
+{
+	this.update(this.__appimg.getGraphics());
+	var ctx = this.__canvas.getContext("2d");
+	ctx.drawImage(this.__appimg._dat, 0, 0);
 }
 
 MasaoConstruction.prototype.init = function() {}
@@ -120,7 +134,7 @@ MasaoConstruction.prototype.run = function()
 			else if(this.gg.amapchip_img._error) f2 = 2;
 		}
 		else f2 = 1;
-		__repaint();
+		this.__repaint();
 		if(f1 != 0 && f2 != 0) this.th_jm -= 1;
 	}
 	else if(this.th_jm == 2)
@@ -134,7 +148,7 @@ MasaoConstruction.prototype.run = function()
 	else if (this.th_jm >= 2)
 	{
 		this.th_jm -= 1;
-		__repaint();
+		this.__repaint();
 
 		sleepTime = 70;
 	}
@@ -185,7 +199,7 @@ MasaoConstruction.prototype.run = function()
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
-			__repaint();
+			this.__repaint();
 
 
 			sleepTime = j;
@@ -206,7 +220,7 @@ MasaoConstruction.prototype.run = function()
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
-			__repaint();
+			this.__repaint();
 
 
 			sleepTime = this.th_interval;
@@ -306,26 +320,26 @@ MasaoConstruction.prototype.init_j = function()
 
 	this.gm = new GameMouse();
 	var _gm = this.gm;
-	__canvas.onmousedown = function(e)
+	this.__canvas.addEventListener("mousedown", function(e)
 	{
 		GameMouse_mousePressed(_gm, e);
-	}
-	__canvas.onmouseup = function(e)
+	});
+	this.__canvas.addEventListener("mouseup", function(e)
 	{
 		GameMouse_mouseReleased(_gm, e);
-	}
+	});
 
 
 	this.gk = new GameKey();
 	var _gk = this.gk;
-	document.onkeydown = function(e)
+	document.addEventListener("keydown", function(e)
 	{
 		GameKey_keyPressed(_gk, e);
-	}
-	document.onkeyup = function(e)
+	});
+	document.addEventListener("keyup", function(e)
 	{
 		GameKey_keyReleased(_gk, e);
-	}
+	});
 
 
 	if(this.tdb.getValueInt("audio_se_switch_wave") == 2)
@@ -352,7 +366,7 @@ MasaoConstruction.prototype.init_j = function()
 
 
 
-	__repaint();
+	this.__repaint();
 
 	this.userInit();
 }
@@ -2361,9 +2375,9 @@ MasaoConstruction.prototype.createImage = function(w, h)
 MasaoConstruction.prototype.getParameter = function(name)
 {
 	var s = (name + "").toLowerCase();
-	var p = params[s];
+	var p = this.params[s];
 	if(typeof p === "undefined") return null;
-	return params[s] + "";
+	return this.params[s] + "";
 }
 
 MasaoConstruction.prototype.getAudioClip = function(url, flag)
