@@ -90,7 +90,9 @@ function Game(params, id){
 			if(__pad.style.display == "inline")
 				__pad.style.display = "none";
 			else
-				__pad.style.display = "inline";
+			{
+				Game.padAccessor.show(__pad);
+			}
 		}
 		// ボタン配置
 		this.__padDiv.appendChild(__pad_btn);
@@ -126,6 +128,9 @@ function Game(params, id){
 			__pad.style.width = w + "px";
 			__pad.style.height = (rw*0.4) + "px";
 		}, 500);
+
+		// 表示リストにパッドを登録
+		Game.padAccessor.append(__pad);
 
 		this.__pad_off = document.createElement("canvas");
 		this.__pad_off.width = 500;
@@ -233,6 +238,28 @@ Game.focus = (function()
 		hasFocus : function(obj)
 		{
 			return (focusedObject === obj);
+		}
+	};
+})();
+
+// 仮装パッドの表示リストを管理するオブジェクト
+// Game.padAccessor.append(pad) : パッドpadをリストに登録する
+// Game.padAccessor.show(pad) : パッドpadを表示し、リストの他のパッドを非表示にする
+Game.padAccessor = (function()
+{
+	var padArray = [];
+	return {
+		append : function(pad)
+		{
+			padArray.push(pad);
+		},
+		show : function(pad)
+		{
+			for(var i = 0; i < padArray.length; i++)
+			{
+				if(pad !== padArray[i]) padArray[i].style.display = "none";
+				else pad.style.display = "inline";
+			}
 		}
 	};
 })();
