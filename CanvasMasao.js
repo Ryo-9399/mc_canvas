@@ -1212,7 +1212,12 @@ function Game(params, id){
 
 // ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
 Game.replaceAll = function(){
-	window.addEventListener("load",function(){
+	if(document.readyState=="complete"){
+		onload();
+	}else{
+		window.addEventListener("load", onload);
+	}
+	function onload(){
 		var applets = document.getElementsByTagName("applet");
 		var appletArray = [];
 		for(var i=0; i<applets.length; i++){
@@ -1225,17 +1230,23 @@ Game.replaceAll = function(){
 				Game.replaceByDom(applet);
 			}
 		}
-	});
+	};
 };
 
 // ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換する
 Game.replace = function(id){
-	// この関数をonload時に呼び出すようにする
-	window.addEventListener("load",function()
+	if(document.readyState=="complete"){
+		// load済みの場合は即座に呼び出す
+		onload();
+	}else{
+		// この関数をonload時に呼び出すようにする
+		window.addEventListener("load", onload);
+	}
+	function onload()
 	{
 		// 従来ソースのパラメータを取得
 		Game.replaceByDom(document.getElementById(id));
-	});
+	};
 };
 
 Game.replaceByDom = function(paramScope){
