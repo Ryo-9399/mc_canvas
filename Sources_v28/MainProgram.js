@@ -95,6 +95,24 @@ MainProgram.prototype.paraInt = function(s)
 	return i;
 }
 
+MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler)
+{
+	this.heh = highscoreeventhandler;
+	return true;
+}
+
+MainProgram.prototype.sendHighscore = function()
+{
+	var flag = false;
+	if(Object.prototype.toString.call(this.heh) == "[object Function]")
+	{
+		var i = this.highscore;
+		if(i < this.score)
+			i = this.score;
+		this.heh(i);
+	}
+}
+
 MainProgram.prototype.moveGameCounter = function()
 {
 	switch(this.g_c3)
@@ -470,6 +488,7 @@ MainProgram.prototype.mainLoop = function()
 		{
 			this.ml_mode = 60;
 			this.g_c1 = 0;
+			this.sendHighscore();
 		}
 		break;
 
@@ -729,6 +748,7 @@ MainProgram.prototype.mainLoop = function()
 		this.gg.fill();
 		this.gg.drawListImage(0, 0, 2);
 		this.drawScore();
+		this.sendHighscore();
 		this.ml_mode = 310;
 		this.ml_mode_c = 0;
 		break;
@@ -749,6 +769,7 @@ MainProgram.prototype.mainLoop = function()
 		if(this.time_max > 0)
 			this.addScore(rounddown(this.time / 1000));
 		this.drawScore();
+		this.sendHighscore();
 		this.ml_mode = 410;
 		this.ml_mode_c = 0;
 		break;
@@ -1158,6 +1179,7 @@ MainProgram.prototype.init2 = function()
 
 MainProgram.prototype.init3 = function()
 {
+	this.sendHighscore();
 	this.g_c1 = 0;
 	this.g_c2 = 0;
 	this.g_c3 = 0;
