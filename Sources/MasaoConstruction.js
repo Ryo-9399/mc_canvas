@@ -1,5 +1,5 @@
 
-function MasaoConstruction(params, __canvas)
+function MasaoConstruction(params, __canvas, options)
 {
 	this.restart_f = false;
 	this.th = null;
@@ -31,6 +31,9 @@ function MasaoConstruction(params, __canvas)
 	this.params = params;
 	this.__canvas = __canvas;
 	this.__appimg = new ImageBuff(512, 320);
+
+	// 起動オプションの連想配列
+	this.options = options;
 }
 
 // GlobalFunctionsより移動
@@ -362,6 +365,8 @@ MasaoConstruction.prototype.init_j = function()
 
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk, this.gs, this.tdb);
+	// ハイスコアイベント用のリスナ登録
+	this.mp.addHighscoreEvent(this.options.highscoreCallback);
 	if (this.mph_start_game_f == true) {
 		this.mp.highscore = this.mph_highscore;
 	}

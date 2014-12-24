@@ -1,6 +1,6 @@
 // idがある場合，そのidの配下に設置
 // idがない場合，呼ばれた場所にdocument.writeし設置
-function Game(params, id){
+function Game(params, id, options){
 	var randomID = makeRandomString();
 
 	// DivエレメントID
@@ -152,7 +152,7 @@ function Game(params, id){
 
 	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
-	this.__mc = new MasaoConstruction(params, this.__canvas);
+	this.__mc = new MasaoConstruction(params, this.__canvas, options || {});
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
@@ -181,7 +181,7 @@ function Game(params, id){
 }
 
 // ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
-Game.replaceAll = function(){
+Game.replaceAll = function(options){
 	if(document.readyState=="complete"){
 		onload();
 	}else{
@@ -197,14 +197,14 @@ Game.replaceAll = function(){
 			var applet = appletArray[i];
 			if(applet.code.match(/masaoconstruction/i)){
 				// 正男であるようなら置換
-				Game.replaceByDom(applet);
+				Game.replaceByDom(applet, options);
 			}
 		}
 	};
 };
 
 // ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換する
-Game.replace = function(id){
+Game.replace = function(id, options){
 	if(document.readyState=="complete"){
 		// load済みの場合は即座に呼び出す
 		onload();
@@ -215,11 +215,11 @@ Game.replace = function(id){
 	function onload()
 	{
 		// 従来ソースのパラメータを取得
-		Game.replaceByDom(document.getElementById(id));
+		Game.replaceByDom(document.getElementById(id), options);
 	};
 };
 
-Game.replaceByDom = function(paramScope){
+Game.replaceByDom = function(paramScope, options){
 	var paramTags = paramScope.getElementsByTagName("param");
 	var paramLength = paramTags.length;
 	var params = {};
@@ -232,7 +232,7 @@ Game.replaceByDom = function(paramScope){
 	var id = paramScope.id || makeRandomString();
 	newDiv.id = id;
 	paramScope.parentNode.replaceChild(newDiv, paramScope);
-	new Game(params, id);
+	new Game(params, id, options);
 };
 
 // 動作する部分を管理するオブジェクト
