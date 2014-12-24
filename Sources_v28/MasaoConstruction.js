@@ -1,11 +1,14 @@
 
-function MasaoConstruction(params, __canvas)
+function MasaoConstruction(params, __canvas, options)
 {
 	this.th_interval = 70;
 	this.th_jm = 10;
 	this.params = params;
 	this.__canvas = __canvas;
 	this.__appimg = new ImageBuff(512, 320);
+
+	// 起動オプションの連想配列
+	this.options = options;
 }
 
 // __appimg書き換え関数
@@ -153,6 +156,7 @@ MasaoConstruction.prototype.init_j = function()
 
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk);
+	this.mp.addHighscoreEvent(this.options.highscoreCallback);
 }
 
 

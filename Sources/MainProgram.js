@@ -345,12 +345,12 @@ MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler)
 MainProgram.prototype.sendHighscore = function()
 {
 	var flag = false;
-	if(this.heh != null)
+	if(Object.prototype.toString.call(this.heh) == "[object Function]")
 	{
 		var i = this.highscore;
 		if(i < this.score)
 			i = this.score;
-		this.heh.highscoreEvent(i);
+		this.heh(i);
 	}
 }
 
