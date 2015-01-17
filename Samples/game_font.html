@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>まさお コンストラクション</title>
+
+<script type="text/javascript" src="../Outputs/CanvasMasao.js"></script>
+<script type="text/javascript">
+CanvasMasao.Game.replace("applet1_id", { userJSCallback: userJS });
+
+
+//  グローバル変数
+var Applet1 = 0;	//  JavaApplet
+var init_f = false;	//  JavaApplet 起動時の初期化をしたかどうかのフラグ
+
+
+//  JavaApplet から全てのモードで  描画直前に呼び出される
+function userJS(Offscreen_g,mode,view_x,view_y,ap) {
+
+
+	//  JavaApplet 起動時の初期化
+	if(init_f == false) {
+		init_f = true;
+
+		//  JavaApplet 起動時の初期化
+		userInitJS(ap);
+	}
+
+
+	if(mode == 1) {
+		//  タイトル画面
+
+		//  JavaScript タイトル画面表示中を呼び出す
+		userTitleJS(Offscreen_g);
+	}
+	else if(mode >= 100  &&  mode < 200) {
+		//  ゲーム中
+		if(Applet1.getJSMes() >= 1) {
+			//  ゲーム開始
+
+			//  JavaApplet からのメッセージをクリアー
+			Applet1.setJSMes(0);
+
+			//  JavaScript ゲーム開始
+			userGameStartJS();
+		}
+		else {
+			//  JavaScript ゲーム中
+			userGameJS(Offscreen_g,view_x,view_y);
+		}
+	}
+}
+
+
+//  JavaApplet 起動時に JavaScript から１回だけ呼び出される
+function userInitJS(ap) {
+	//  JavaApplet を取得
+	Applet1 = ap;
+}
+
+
+//  タイトル画面表示中に JavaScript から呼び出される
+function userTitleJS(Offscreen_g) {
+}
+
+
+//  ゲーム開始時に JavaScript から１回だけ呼び出される
+function userGameStartJS() {
+}
+
+
+//  ゲーム中    描画直前に JavaScript から呼び出される
+function userGameJS(Offscreen_g,view_x,view_y) {
+
+
+	//  文字の色を緑にする
+	Applet1.setOffscreenColor(0,96,0,255);
+
+
+	font1 = Applet1.newFont("ＭＳ Ｐ明朝",0,40);
+	Offscreen_g.setFont(font1);
+	Offscreen_g.drawString("ＭＳ Ｐ明朝",100,80);
+
+	font2 = Applet1.newFont("Dialog",1,40);
+	Offscreen_g.setFont(font2);
+	Offscreen_g.drawString("Dialog 太字",100,130);
+
+	font3 = Applet1.newFont("ＭＳ ゴシック",2,40);
+	Offscreen_g.setFont(font3);
+	Offscreen_g.drawString("ＭＳ ゴシック 斜体",100,180);
+}
+
+
+</script>
+
+</head>
+
+<body bgcolor="silver">
+
+<center>
+<applet code="MasaoJSS.class" width="512" height="320" archive="mc_c.jar" id="applet1_id" mayscript>
+
+<!--
+
+  ゲーム内容の変更は、
+  param タグの "" 内を書き換えて行います。
+
+  マップは、 180 * 30 個のパーツで構成されていて、
+  文字の組み合わせで表現されています。
+
+
+  文字の説明
+
+  .  空白
+  A  自分
+  B  亀              足元に空白があると向きを変える
+  C  亀              足元に空白があると落ちる
+  D  亀              足元に空白があると落ちる  ３匹連続
+  E  ピカチー        電撃
+  F  チコリン        はっぱカッター
+  G  ヒノララシ      踏めません
+  H  ポッピー        上下移動
+  I  ポッピー        直進
+  J  ポッピー        直進  ３羽連続
+  K  動く床          上下移動
+  L  動く床          左右移動
+  M  動く床          左右移動  ２個連続
+  N  ドッスンスン    落ちて来る  下に空白が５ブロック必要
+  O  マリリ          跳ねる
+  P  ヤチャモ        火の粉
+  Q  ミズタロウ      水鉄砲
+  R  エアームズ      爆撃
+  S  グラーダ        ボス  噴火
+  T  カイオール      ボス  水の波動
+  U  ファイヤーバー  左回り
+  V  ファイヤーバー  右回り
+  W  タイキング      左右移動    水中専用
+  X  クラゲッソ      バブル光線  水中専用
+  Y  水草            ただの背景
+  Z  センクウザ      ボス  グレネード
+
+  a  ブロック１      レンガ
+  b  ブロック２      岩
+  c  ブロック３      水色のレンガ
+  d  ブロック４      鉄
+  e  ブロック５      鉄の柱１
+  f  ブロック６      鉄の柱２
+  g  ブロック７      土
+  h  ブロック８      城の壁
+  i  ブロック９      黄色のブロック
+  j  ブロック１０    緑色のブロック      背景レイヤー使用時は透明
+  k  ？ブロック      コイン
+  l  ？ブロック      コイン３枚
+  m  ？ブロック      ファイヤーボール    スペースキーでファイヤーボール発射
+  n  ？ブロック      バリア              一定時間無敵
+  o  ？ブロック      タイム              制限時間延長
+  p  ？ブロック      ジェット            空中でスペースキーを押すと上昇
+  q  ？ブロック      ヘルメット          頭突きでブロック１を破壊
+  r  ？ブロック      しっぽ              Ｘキーで前方の敵を攻撃
+  s  ？ブロック      ドリル              Ｘキーで下のブロック１を破壊
+  t  ？ブロック      グレネード          Ｘキーで強力な弾を１発だけ発射
+  u  リンク土管１    他の Web ページへ移動します
+  v  リンク土管２    他の Web ページへ移動します
+  w  リンク土管３    他の Web ページへ移動します
+  x  リンク土管４    他の Web ページへ移動します
+  z  すべる床
+  [  下から通れるブロック                背景レイヤー使用時は透明
+  ]  ハシゴ                              背景レイヤー使用時は透明
+  <  上り坂                              背景レイヤー使用時は透明
+  >  下り坂                              背景レイヤー使用時は透明
+
+  +  一言メッセージ１
+  -  一言メッセージ２
+  *  一言メッセージ３
+  /  一言メッセージ４
+
+  1  雲の左側
+  2  雲の右側
+  3  草
+  4  水中            左に敵など設置するとそこも水中になる    背景レイヤー使用時は透明
+  5  上向きのトゲ
+  6  下向きのトゲ
+  7  ろうそく
+  8  星
+  9  コイン
+
+-->
+
+
+<!--  マップデーター         -->
+<!--  左側                   -->
+<!--                         0         10        20        30        40        50        -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map0-0"  value="............................................................">
+<param name="map0-1"  value="............................................................">
+<param name="map0-2"  value="............................................................">
+<param name="map0-3"  value="............................................................">
+<param name="map0-4"  value="............................................................">
+<param name="map0-5"  value="............................................................">
+<param name="map0-6"  value="............................................................">
+<param name="map0-7"  value="............................................................">
+<param name="map0-8"  value="............................................................">
+<param name="map0-9"  value="............................................................">
+<param name="map0-10" value="............................................................">
+<param name="map0-11" value="............................................................">
+<param name="map0-12" value="............................................999.............">
+<param name="map0-13" value="............................................999.............">
+<param name="map0-14" value="............................................................">
+<param name="map0-15" value="............................................aaa.............">
+<param name="map0-16" value="............................................................">
+<param name="map0-17" value="............................................................">
+<param name="map0-18" value="...............................99...........................">
+<param name="map0-19" value="............................................................">
+<param name="map0-20" value="............................................................">
+<param name="map0-21" value="............................................................">
+<param name="map0-22" value="...12...............12.....9.9...aaa.....aa.aaaaaaaa...12...">
+<param name="map0-23" value="..........................aaaaa..............9.aaaaa........">
+<param name="map0-24" value="........................................B...aaaaaaaa........">
+<param name="map0-25" value="....................................aaaaa...9.9aa999........">
+<param name="map0-26" value="....9.9...............B.............9.9.9...aaaaaaaa........">
+<param name="map0-27" value="...........aaaaaa..aaaaaa....................9.aaaaa........">
+<param name="map0-28" value=".A........aaaaaaa..aaaaaa............D......aaaaaaaa........">
+<param name="map0-29" value="bbbbbbbbbbbbbbbbb..bbbbbb.bbbbbbbbbbbbbbbbbbbbbbbbbb5bbbbbb.">
+
+
+<!--  Version 3.0 で追加された設定    ここから              -->
+
+<!--  起動中のメッセージ                                    -->
+<param name="now_loading" value="ただいまファイルを読み込み中。しばらくお待ち下さい。">
+
+<!--  Version 3.0 で追加された設定    ここまで              -->
+
+
+<!--  制限時間                                              -->
+<!--  0 を設定すると無制限                                  -->
+<param name="time_max" value="300">
+
+<!--  背景色                                                -->
+<!--  ゲーム画面の背景色を、光の３原色の成分で設定します。  -->
+<!--  赤の成分  (0-255)  -->
+<param name="backcolor_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="backcolor_green" value="192">
+<!--  青の成分  (0-255)  -->
+<param name="backcolor_blue" value="224">
+
+<!--  文字の色                                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="scorecolor_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="scorecolor_green" value="0">
+<!--  青の成分  (0-255)  -->
+<param name="scorecolor_blue" value="255">
+
+<!--  グレネードの爆発とエネルギー砲の色１                  -->
+<!--  赤の成分  (0-255)  -->
+<param name="grenade_red1" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="grenade_green1" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="grenade_blue1" value="255">
+
+<!--  グレネードの爆発とエネルギー砲の色２                  -->
+<!--  赤の成分  (0-255)  -->
+<param name="grenade_red2" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="grenade_green2" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="grenade_blue2" value="0">
+
+<!--  水の波動（カイオールの技）の色                        -->
+<!--  赤の成分  (0-255)  -->
+<param name="mizunohadou_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="mizunohadou_green" value="32">
+<!--  青の成分  (0-255)  -->
+<param name="mizunohadou_blue" value="255">
+
+<!--  ファイヤーバーの外側の色                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="firebar_red1" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="firebar_green1" value="0">
+<!--  青の成分  (0-255)  -->
+<param name="firebar_blue1" value="0">
+
+<!--  ファイヤーバーの内側の色                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="firebar_red2" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="firebar_green2" value="192">
+<!--  青の成分  (0-255)  -->
+<param name="firebar_blue2" value="0">
+
+
+<!--  効果音の設定  ここから                                       -->
+
+<!--  効果音機能          1  使う                                  -->
+<!--                      2  使わない                              -->
+<param name="se_switch" value="1">
+
+<!--  効果音の指定        1  ファイル名を記述して指定する          -->
+<!--                      2  デフォルトのファイル名と指定にする    -->
+<param name="se_filename" value="2">
+
+<!--  効果音の設定  ここまで                                       -->
+
+
+</applet>
+</center>
+
+<dl>
+<dt>Font newFont(フォント名,修飾,サイズ)</dt>
+<dd>フォント型のオブジェクトを作成します。修飾は、 0 通常、 1 太字、 2 斜体です。</dd>
+</dl>
+
+
+</body>
+
+</html>

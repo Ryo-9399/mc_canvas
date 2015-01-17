@@ -34,6 +34,12 @@ function MasaoConstruction(params, __canvas, options)
 
 	// 起動オプションの連想配列
 	this.options = options;
+
+	// 処理すべきメッセージのキュー（画像読み込みなど）
+	this.firstMessage = null;
+	this.lastMessage = null;
+	// MasaoJSSクラス再現オブジェクト
+	this.masaoJSSAppletEmulator = null;
 }
 
 // GlobalFunctionsより移動
@@ -114,7 +120,61 @@ MasaoConstruction.prototype.update = function(paramGraphics)
 MasaoConstruction.prototype.run = function()
 {
 	var k = 0;
-	var sleepTime;
+	var sleepTime, mode;
+
+	// userJSからメッセージを受け取っている場合、通常の処理を止めてこれらを処理する
+	if(this.firstMessage)
+	{
+		var oldFirstMessage = this.firstMessage;
+		var oldLastMessage = this.lastMessage;
+		this.firstMessage = null;
+		this.lastMessage = null;
+		for(var cur = oldFirstMessage; cur; cur = cur.next)
+		{
+			// ファイルロード待ちのメッセージ
+			if(cur.type == "load")
+			{
+				if(cur.target._dat.complete)
+				{
+					continue;
+				}
+				else
+				{
+					this.pushMessage(cur.type, cur.target, cur.parameters);
+				}
+			}
+			// makeChipImageメソッド呼び出し待ち
+			else if(cur.type == "makeChipImage")
+			{
+				if(cur.target._dat.complete)
+				{
+					cur.parameters.chipimage.makeChipImage();
+				}
+				else
+				{
+					this.pushMessage(cur.type, cur.target, cur.parameters);
+				}
+			}
+			// makeReverseChipImagrメソッド呼び出し待ち
+			else if(cur.type == "makeReverseChipImage")
+			{
+				if(cur.target._dat.complete)
+				{
+					cur.parameters.chipimage.makeReverseChipImage();
+				}
+				else
+				{
+					this.pushMessage(cur.type, cur.target, cur.parameters);
+				}
+			}
+		}
+		// まだメッセージが残っているようならば、以降の処理をせずに制御を返す
+		if(this.firstMessage)
+		{
+			return 70;
+		}
+	}
+
 	if (this.th_jm == 10)
 	{
 		this.init_j();
@@ -202,7 +262,6 @@ MasaoConstruction.prototype.run = function()
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
-			this.__repaint();
 
 
 			sleepTime = j;
@@ -223,7 +282,6 @@ MasaoConstruction.prototype.run = function()
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
-			this.__repaint();
 
 
 			sleepTime = this.th_interval;
@@ -231,6 +289,22 @@ MasaoConstruction.prototype.run = function()
 
 			this.process_time = new Date().getTime();
 		}
+
+		// MasaoJSS専用コールバック関数が設定されている場合、これを呼び出す
+		if(this.options.userJSCallback)
+		{
+			mode = this.getMode();
+			if(mode >= 100 && mode < 200)
+			{
+				// 引数にアプレットエミュレータを追加してuserJSを呼び出す
+				this.options.userJSCallback(this.gg.os_g, mode, this.mp.maps.wx, this.mp.maps.wy, this.masaoJSSAppletEmulator);
+			}
+			else
+			{
+				this.options.userJSCallback(this.gg.os_g, mode, -9999, -9999, this.masaoJSSAppletEmulator);
+			}
+		}
+		this.__repaint();
 	}
 	return sleepTime;
 }
@@ -373,6 +447,11 @@ MasaoConstruction.prototype.init_j = function()
 	this.mp.title_lock_f = this.mph_title_lock_f;
 	this.mp.start_game_f = this.mph_start_game_f;
 
+	// MasaoJSS専用コールバック関数が設定されている場合、エミュレータオブジェクトを作成
+	if(this.options.userJSCallback)
+	{
+		this.masaoJSSAppletEmulator = new MasaoJSS(this);
+	}
 
 
 	this.__repaint();
@@ -894,7 +973,7 @@ MasaoConstruction.prototype.equipJet = function(paramString)
 MasaoConstruction.prototype.restart = function()
 {
 	this.restart_f = true;
-	this.th_jm = 1;
+	this.th_jm = 10;
 	if (this.mp != null)
 	{
 		this.mph_title_lock_f = this.mp.title_lock_f;
@@ -2446,6 +2525,25 @@ MasaoConstruction.prototype.getAudioClip = function(url, flag)
 	}
 
 	return new AudioClip(url);
+}
+
+// メッセージを受け取ってキューの最後に追加する
+MasaoConstruction.prototype.pushMessage = function(type, target, parameters)
+{
+	var newMessage = {};
+	newMessage.type = type;
+	newMessage.target = target;
+	newMessage.parameters = parameters;
+	newMessage.next = null;
+	if(this.firstMessage == null)
+	{
+		this.firstMessage = newMessage;
+	}
+	if(this.lastMessage != null)
+	{
+		this.lastMessage.next = newMessage;
+	}
+	this.lastMessage = newMessage;
 }
 
 

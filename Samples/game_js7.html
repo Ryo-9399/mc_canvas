@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>まさお コンストラクション</title>
+
+<script type="text/javascript" src="../Outputs/CanvasMasao.js"></script>
+<script type="text/javascript">
+CanvasMasao.Game.replace("applet1_id", {
+	userJSCallback: function(Offscreen_g,mode,view_x,view_y,ap)
+	{
+		Applet1 = ap;
+	}
+});
+
+
+//  グローバル変数
+var Applet1 = 0;		//  JavaApplet
+
+var TextBossHP;
+var TextBossDirection;
+var TextIsBossAttackMode;
+
+
+function onLoadJS() {
+
+
+	//  テキストフィールドを取得
+	TextBossHP = document.getElementById("text_boss_hp_id");
+	TextBossDirection = document.getElementById("text_boss_direction_id");
+	TextIsBossAttackMode = document.getElementById("text_is_boss_attack_mode_id");
+
+	//  0.2秒毎にメインループを呼び出す
+	timerID = setInterval("mainLoop()",200);
+}
+
+
+//  メインループ
+function mainLoop() {
+	if(!Applet1) return;
+
+
+	//  ボスのＨＰを表示
+	TextBossHP.value = Applet1.getBossHP();
+
+	//  ボスの向きを表示
+	TextBossDirection.value = Applet1.getBossDirection();
+
+	//  ボスの攻撃中を表示
+	TextIsBossAttackMode.value = Applet1.isBossAttackMode();
+}
+
+
+//  ボタン  ボスＨＰを１０にする
+function buttonSetBossHP10() {
+
+
+	Applet1.setBossHP(10);
+}
+
+
+//  ボタン  ボスＨＰを５減らす
+function buttonSetBossHP5() {
+
+
+	Applet1.setBossHP(Applet1.getBossHP()-5);
+}
+
+
+//  ボタン  ボスが上へ移動
+function buttonBossUp() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  上へ移動
+	n = Applet1.getBossYReal()-32;
+
+	//  オーバーフロー
+	if(n < Applet1.getViewYReal()+16) n = Applet1.getViewYReal()+16;
+
+	//  座標を設定
+	Applet1.setBossYReal(n);
+}
+
+
+//  ボタン  ボスが下へ移動
+function buttonBossDown() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  下へ移動
+	n = Applet1.getBossYReal()+32;
+
+	//  オーバーフロー
+	if(n > Applet1.getViewYReal()+320-48) n = Applet1.getViewYReal()+320-48;
+
+	//  座標を設定
+	Applet1.setBossYReal(n);
+}
+
+
+//  ボタン  ボスが左へ移動
+function buttonBossLeft() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  左へ移動
+	n = Applet1.getBossXReal()-32;
+
+	//  オーバーフロー
+	if(n < Applet1.getViewXReal()+16) n = Applet1.getViewXReal()+16;
+
+	//  座標を設定
+	Applet1.setBossXReal(n);
+}
+
+
+//  ボタン  ボスが右へ移動
+function buttonBossRight() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  右へ移動
+	n = Applet1.getBossXReal()+32;
+
+	//  オーバーフロー
+	if(n > Applet1.getViewXReal()+512-48) n = Applet1.getViewXReal()+512-48;
+
+	//  座標を設定
+	Applet1.setBossXReal(n);
+}
+
+
+//  ボタン  ボスの画像を設定
+function buttonSetBossObjectImage() {
+
+
+	//  画像を読み込む
+	n_img = Applet1.newImageOnLoad("yuka.gif");
+
+	//  ボスの画像を設定
+	Applet1.setBossObjectImage(n_img,-16,-16);
+}
+
+
+//  ボタン  ボスの画像を戻す
+function buttonSetBossObjectImageNull() {
+
+
+	//  ボスの画像を設定
+	Applet1.setBossObjectImage(null,0,0);
+}
+
+
+//  ボタン  水の波動
+function buttonSetEnemy1() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  水の波動
+	nx = Math.floor((Applet1.getBossXReal()-32)/32);
+	ny = Math.floor((Applet1.getBossYReal()-320)/32);
+	Applet1.setEnemy(nx,ny,26);
+}
+
+
+//  ボタン  水鉄砲
+function buttonSetEnemy2() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  水鉄砲
+	nx = Math.floor((Applet1.getBossXReal()-32)/32);
+	ny = Math.floor((Applet1.getBossYReal()-320)/32);
+	if(Applet1.getBossDirection() == 1) {
+		//  右向き
+		Applet1.setEnemy(nx,ny,22);
+	}
+	else {
+		//  左向き
+		Applet1.setEnemy(nx,ny,21);
+	}
+}
+
+
+//  ボタン  火の粉
+function buttonSetEnemy3() {
+
+
+	//  攻撃中でないのでキャンセル
+	if(Applet1.isBossAttackMode() != 1) return;
+
+	//  火の粉
+	nx = Math.floor((Applet1.getBossXReal()-32)/32);
+	ny = Math.floor((Applet1.getBossYReal()-320)/32);
+	if(Applet1.getBossDirection() == 1) {
+		//  右向き
+		Applet1.setEnemy(nx,ny,20);
+	}
+	else {
+		//  左向き
+		Applet1.setEnemy(nx,ny,19);
+	}
+}
+
+
+//  ボタン  SetSystemPattern() 1
+function buttonSetSystemPattern1() {
+
+
+	Applet1.setSystemPattern(100,140);
+}
+
+
+//  ボタン  SetSystemPattern() 2
+function buttonSetSystemPattern2() {
+
+
+	Applet1.setSystemPattern(100,147);
+}
+
+
+//  ボタン  SetSystemPattern() 3
+function buttonSetSystemPattern3() {
+
+
+	Applet1.setSystemPattern(20,24);
+}
+
+
+//  ボタン  SetSystemPattern() 4
+function buttonSetSystemPattern4() {
+
+
+	Applet1.setSystemPattern(20,140);
+}
+
+
+//  ボタン  SetSystemPattern() 5
+function buttonSetSystemPattern5() {
+
+
+	//  画像を読み込む
+	n_img = Applet1.newImageOnLoad("yuka.gif");
+
+	//  画像を設定
+	Applet1.setSystemPatternImage(100,1,n_img);
+}
+
+
+//  ボタン  SetSystemPattern() 6
+function buttonSetSystemPattern6() {
+
+
+	//  画像を読み込む
+	n_img = Applet1.newImageOnLoad("yuka.gif");
+
+	//  画像を設定
+	Applet1.setSystemPatternImage(20,0,n_img);
+}
+
+
+</script>
+
+</head>
+
+<body bgcolor="silver" onLoad="onLoadJS()">
+
+<center>
+<applet code="MasaoConstruction.class" width="512" height="320" archive="mc_c.jar" id="applet1_id" mayscript>
+
+<!--
+
+  ゲーム内容の変更は、
+  param タグの "" 内を書き換えて行います。
+
+  マップは、 180 * 30 個のパーツで構成されていて、
+  文字の組み合わせで表現されています。
+
+
+  文字の説明
+
+  .  空白
+  A  自分
+  B  亀              足元に空白があると向きを変える
+  C  亀              足元に空白があると落ちる
+  D  亀              足元に空白があると落ちる  ３匹連続
+  E  ピカチー        電撃
+  F  チコリン        はっぱカッター
+  G  ヒノララシ      踏めません
+  H  ポッピー        上下移動
+  I  ポッピー        直進
+  J  ポッピー        直進  ３羽連続
+  K  動く床          上下移動
+  L  動く床          左右移動
+  M  動く床          左右移動  ２個連続
+  N  ドッスンスン    落ちて来る  下に空白が５ブロック必要
+  O  マリリ          跳ねる
+  P  ヤチャモ        火の粉
+  Q  ミズタロウ      水鉄砲
+  R  エアームズ      爆撃
+  S  グラーダ        ボス  噴火
+  T  カイオール      ボス  水の波動
+  U  ファイヤーバー  左回り
+  V  ファイヤーバー  右回り
+  W  タイキング      左右移動    水中専用
+  X  クラゲッソ      バブル光線  水中専用
+  Y  水草            ただの背景
+  Z  センクウザ      ボス  グレネード
+
+  a  ブロック１      レンガ
+  b  ブロック２      岩
+  c  ブロック３      水色のレンガ
+  d  ブロック４      鉄
+  e  ブロック５      鉄の柱１
+  f  ブロック６      鉄の柱２
+  g  ブロック７      土
+  h  ブロック８      城の壁
+  i  ブロック９      黄色のブロック
+  j  ブロック１０    緑色のブロック      背景レイヤー使用時は透明
+  k  ？ブロック      コイン
+  l  ？ブロック      コイン３枚
+  m  ？ブロック      ファイヤーボール    スペースキーでファイヤーボール発射
+  n  ？ブロック      バリア              一定時間無敵
+  o  ？ブロック      タイム              制限時間延長
+  p  ？ブロック      ジェット            空中でスペースキーを押すと上昇
+  q  ？ブロック      ヘルメット          頭突きでブロック１を破壊
+  r  ？ブロック      しっぽ              Ｘキーで前方の敵を攻撃
+  s  ？ブロック      ドリル              Ｘキーで下のブロック１を破壊
+  t  ？ブロック      グレネード          Ｘキーで強力な弾を１発だけ発射
+  u  リンク土管１    他の Web ページへ移動します
+  v  リンク土管２    他の Web ページへ移動します
+  w  リンク土管３    他の Web ページへ移動します
+  x  リンク土管４    他の Web ページへ移動します
+  z  すべる床
+  [  下から通れるブロック                背景レイヤー使用時は透明
+  ]  ハシゴ                              背景レイヤー使用時は透明
+  <  上り坂                              背景レイヤー使用時は透明
+  >  下り坂                              背景レイヤー使用時は透明
+  {  追跡亀
+  }  重力無視の追跡ピカチー等  死ぬとブロック９の文字 i から復活
+
+  +  一言メッセージ１
+  -  一言メッセージ２
+  *  一言メッセージ３
+  /  一言メッセージ４
+
+  1  雲の左側
+  2  雲の右側
+  3  草
+  4  水中            左に敵など設置するとそこも水中になる    背景レイヤー使用時は透明
+  5  上向きのトゲ
+  6  下向きのトゲ
+  7  ろうそく
+  8  星
+  9  コイン
+
+-->
+
+
+<!--  マップデーター         -->
+<!--  左側                   -->
+<!--                         0         10        20        30        40        50        -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map0-0"  value="............................................................">
+<param name="map0-1"  value="............................................................">
+<param name="map0-2"  value="............................................................">
+<param name="map0-3"  value="............................................................">
+<param name="map0-4"  value="............................................................">
+<param name="map0-5"  value="............................................................">
+<param name="map0-6"  value="............................................................">
+<param name="map0-7"  value="............................................................">
+<param name="map0-8"  value="............................................................">
+<param name="map0-9"  value="............................................................">
+<param name="map0-10" value="............................................................">
+<param name="map0-11" value="............................................................">
+<param name="map0-12" value="............................................................">
+<param name="map0-13" value="............................................................">
+<param name="map0-14" value="............................................................">
+<param name="map0-15" value="............................................................">
+<param name="map0-16" value="............................................................">
+<param name="map0-17" value="............................................................">
+<param name="map0-18" value="............................................................">
+<param name="map0-19" value="............................................................">
+<param name="map0-20" value="............................................................">
+<param name="map0-21" value="............................................................">
+<param name="map0-22" value="............................................................">
+<param name="map0-23" value="............................................................">
+<param name="map0-24" value="............................................................">
+<param name="map0-25" value="................T...........................................">
+<param name="map0-26" value="............................................................">
+<param name="map0-27" value=".A..........................................................">
+<param name="map0-28" value="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">
+<param name="map0-29" value="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">
+
+
+<!--  ファイヤーボールだけで戦う設定    ここから            -->
+
+<!--  ファイヤーボールの標準装備    1  しない               -->
+<!--                                2  する                 -->
+<param name="j_fire_equip" value="2">
+
+<!--  ファイヤーボールの種類（初期値）                      -->
+<!--                                1  跳ねる               -->
+<!--                                2  水平に飛ぶ           -->
+<!--                                3  水平に飛ぶ  短射程   -->
+<!--                                4  ダブル               -->
+<param name="j_fire_type" value="1">
+
+<!--  雑魚敵を踏めるか              1  踏める               -->
+<!--                                2  踏めない             -->
+<param name="j_enemy_press" value="2">
+
+<!--  ボスの倒し方    1  ３回踏む                           -->
+<!--                  2  ファイヤーボール，しっぽ           -->
+<param name="boss_destroy_type" value="2">
+
+<!--  上記で 2 を選択した場合  ボスのＨＰ                   -->
+<param name="boss_hp_max" value="20">
+
+<!--  しっぽの攻撃力  ボス用                                -->
+<param name="j_tail_ap_boss" value="4">
+
+<!--  ボスのＨＰゲージに表示する名前                        -->
+<param name="boss_name" value="グラーダ">
+<param name="boss2_name" value="カイオール">
+<param name="boss3_name" value="センクウザ">
+
+<!--  ファイヤーボールだけで戦う設定    ここまで            -->
+
+
+<!--  グラーダ          1  噴火                             -->
+<!--                    2  亀を投げる                       -->
+<!--                    3  ヒノララシを投げる               -->
+<!--                    4  マリリを投げる                   -->
+<!--                    5  がんせきほう                     -->
+<param name="boss_type" value="1">
+
+<!--  カイオール        1  水の波動                         -->
+<!--                    2  バブル光線                       -->
+<!--                    3  うずしお                         -->
+<!--                    4  バブル光線連射                   -->
+<!--                    5  ハリケンブラスト                 -->
+<!--                    6  バブル光線回転連射               -->
+<!--                    7  何もしない                       -->
+<param name="boss2_type" value="7">
+
+<!--  センクウザ        1  グレネード                       -->
+<!--                    2  バリアを張って体当たり           -->
+<!--                    3  バリアを張って高速体当たり       -->
+<!--                    4  バリアを張ってジャンプ           -->
+<!--                    5  りゅうせいぐん                   -->
+<!--                    6  回転体当たり                     -->
+<!--                    7  高速回転体当たり                 -->
+<!--                    8  回転ジャンプ                     -->
+<param name="boss3_type" value="1">
+
+
+<!--  制限時間                                              -->
+<!--  0 を設定すると無制限                                  -->
+<param name="time_max" value="0">
+
+<!--  効果音機能          1  使う                                  -->
+<!--                      2  使わない                              -->
+<param name="se_switch" value="1">
+
+</applet>
+</center>
+
+
+<dl>
+<dt>int getBossHP()<input type="text" size="10" id="text_boss_hp_id"></dt>
+<dd>ボスのＨＰを取得する。</dd>
+<dt>setBossHP(ボスのＨＰ)</dt>
+<dd>ボスのＨＰを設定する。耐久型のボスのみ有効。
+ <input type="button" value="setBossHP(10)" onClick="buttonSetBossHP10()">
+ <input type="button" value="setBossHP(getBossHP()-5)" onClick="buttonSetBossHP5()"></dd>
+<dt>int getBossDirection()<input type="text" size="10" id="text_boss_direction_id"></dt>
+<dd>ボスの向き取得する。左向きだと 0  、右向きだと 1 を返す。</dd>
+<dt>int isBossAttackMode()<input type="text" size="10" id="text_is_boss_attack_mode_id"></dt>
+<dd>ボスが攻撃中だと 1 を返す。</dd>
+<dt>setBossXReal(Ｘ座標) , setBossYReal(Ｙ座標)</dt>
+<dd>ボスの座標を設定する。
+ <input type="button" value="上へ移動" onClick="buttonBossUp()">
+ <input type="button" value="下へ移動" onClick="buttonBossDown()">
+ <input type="button" value="左へ移動" onClick="buttonBossLeft()">
+ <input type="button" value="右へ移動" onClick="buttonBossRight()"><br>
+
+ <input type="button" value="水の波動" onClick="buttonSetEnemy1()">
+ <input type="button" value="水鉄砲" onClick="buttonSetEnemy2()">
+ <input type="button" value="火の粉" onClick="buttonSetEnemy3()"></dd>
+<dt>setBossObjectImage(Image ボスの画像,Ｘ座標補正値,Ｙ座補正値)</dt>
+<dd>ボスの画像を設定する。 <input type="button" value="ボスの画像を変更" onClick="buttonSetBossObjectImage()">
+ <input type="button" value="戻す" onClick="buttonSetBossObjectImageNull()"></dd>
+</dl>
+
+<hr>
+
+<dl>
+<dt>setSystemPattern(変更するパターンコード(1～249),設定する画像のパターンコード(1～249))</dt>
+<dd>指定したパターンコードに、他のパターンコードの画像をコピーする。この設定は、 JavaApplet が破棄されるまで有効なので注意。<br>
+<input type="button" value="主人公の直立画像を亀にする" onClick="buttonSetSystemPattern1()">
+<input type="button" value="主人公の直立画像を鳩にする" onClick="buttonSetSystemPattern2()"><br>
+<input type="button" value="ブロック１を鉄の柱にする" onClick="buttonSetSystemPattern3()">
+<input type="button" value="ブロック１を亀にする" onClick="buttonSetSystemPattern4()">
+</dd>
+<dt>setSystemPatternImage(変更するパターンコード(1～249),反転情報(0～1),Image 設定する画像)</dt>
+<dd>指定したパターンコードに、画像を設定する。この設定は、 JavaApplet が破棄されるまで有効なので注意。<br>
+<input type="button" value="主人公の右向き直立画像をドッスンスンにする" onClick="buttonSetSystemPattern5()">
+<input type="button" value="ブロック１をドッスンスンにする" onClick="buttonSetSystemPattern6()">
+</dd>
+</dl>
+
+<hr>
+
+<dl>
+<dt>int getCoinCount()</dt>
+<dd>マップ上の、コインを数を取得する。</dd>
+<dt>int getCoinCount(左のＸ座標(0～179),上のＹ座標(0～29),右のＸ座標(0～179),下のＹ座標(0～29))</dt>
+<dd>指定範囲の、コインを数を取得する。</dd>
+</dl>
+
+</body>
+
+</html>
