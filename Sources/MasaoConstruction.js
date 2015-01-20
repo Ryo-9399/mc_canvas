@@ -916,7 +916,7 @@ MasaoConstruction.prototype.resetKeyCode = function()
 
 MasaoConstruction.prototype.equipFire = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		this.mp.j_fire_f = true;
 		return true;
@@ -1020,7 +1020,7 @@ MasaoConstruction.prototype.setParamValue = function(paramString1, paramString2)
 
 MasaoConstruction.prototype.getMyXReal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i = this.mp.co_j.x;
 		return i;
@@ -1030,7 +1030,7 @@ MasaoConstruction.prototype.getMyXReal = function()
 
 MasaoConstruction.prototype.getMyYReal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i = this.mp.co_j.y;
 		return i;
@@ -1040,7 +1040,7 @@ MasaoConstruction.prototype.getMyYReal = function()
 
 MasaoConstruction.prototype.setMyXReal = function(paramString)
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i;
 		i = parseInt(paramString);
@@ -1057,7 +1057,7 @@ MasaoConstruction.prototype.setMyXReal = function(paramString)
 
 MasaoConstruction.prototype.setMyYReal = function(paramString)
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i;
 		i = parseInt(paramString);
@@ -1074,7 +1074,7 @@ MasaoConstruction.prototype.setMyYReal = function(paramString)
 
 MasaoConstruction.prototype.getMyVX = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i = this.mp.co_j.vx;
 		return i;
@@ -1084,7 +1084,7 @@ MasaoConstruction.prototype.getMyVX = function()
 
 MasaoConstruction.prototype.getMyVY = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i = this.mp.co_j.vy;
 		return i;
@@ -1094,7 +1094,7 @@ MasaoConstruction.prototype.getMyVY = function()
 
 MasaoConstruction.prototype.getViewXReal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		var i = this.mp.maps.wx;
 		return i;
@@ -1104,7 +1104,7 @@ MasaoConstruction.prototype.getViewXReal = function()
 
 MasaoConstruction.prototype.getViewYReal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		var i = this.mp.maps.wy;
 		return i;
@@ -1114,7 +1114,7 @@ MasaoConstruction.prototype.getViewYReal = function()
 
 MasaoConstruction.prototype.getEnemyTotal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		var i = 0;
 		for (var j = 0; j <= 229; j++) {
@@ -1129,7 +1129,7 @@ MasaoConstruction.prototype.getEnemyTotal = function()
 
 MasaoConstruction.prototype.getBossXReal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		var i = this.mp.co_b.x;
 		return i;
@@ -1139,7 +1139,7 @@ MasaoConstruction.prototype.getBossXReal = function()
 
 MasaoConstruction.prototype.getBossYReal = function()
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		var i = this.mp.co_b.y;
 		return i;
@@ -1149,7 +1149,7 @@ MasaoConstruction.prototype.getBossYReal = function()
 
 MasaoConstruction.prototype.setMyMiss = function(paramString)
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i;
 		i = parseInt(paramString);
@@ -1167,7 +1167,7 @@ MasaoConstruction.prototype.setMyMiss = function(paramString)
 
 MasaoConstruction.prototype.setMyPress = function(paramString)
 {
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		var i;
 		i = parseInt(paramString);
@@ -1191,7 +1191,7 @@ MasaoConstruction.prototype.playSound = function(paramString)
 		i = -1;
 	if ((i >= 1) && (i <= 27))
 	{
-		if ((getMode() >= 100) && (getMode() < 200)) {
+		if ((this.getMode() >= 100) && (this.getMode() < 200)) {
 			this.gs.rsAddSound(i - 1);
 		} else {
 			this.gs.play(i - 1);
@@ -1204,7 +1204,7 @@ MasaoConstruction.prototype.playSound = function(paramString)
 MasaoConstruction.prototype.setScrollLock = function(paramString)
 {
 	var bool = false;
-	if ((getMode() >= 100) && (getMode() < 200)) {
+	if ((this.getMode() >= 100) && (this.getMode() < 200)) {
 		bool = this.mp.setScrollLock(paramString);
 	}
 	return bool;
@@ -1213,7 +1213,7 @@ MasaoConstruction.prototype.setScrollLock = function(paramString)
 MasaoConstruction.prototype.attackFire = function(paramString1, paramString2, paramString3, paramString4)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200)) {
+	if ((this.getMode() >= 100) && (this.getMode() < 200)) {
 		i = this.mp.attackFire(paramString1, paramString2, paramString3, paramString4);
 	}
 	return i;
@@ -1342,7 +1342,7 @@ MasaoConstruction.prototype.startGame = function()
 MasaoConstruction.prototype.equipGrenade = function(paramString)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200) && 
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && 
 		(this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		i = parseInt(paramString);
@@ -1433,7 +1433,7 @@ MasaoConstruction.prototype.setStageClear = function()
 MasaoConstruction.prototype.equipFire = function(paramString)
 {
 	var i = -1;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -1478,7 +1478,7 @@ MasaoConstruction.prototype.setFireRange = function(paramString)
 MasaoConstruction.prototype.equipTail = function(paramString)
 {
 	var i = -1;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -1505,7 +1505,7 @@ MasaoConstruction.prototype.equipTail = function(paramString)
 MasaoConstruction.prototype.attackTail = function(paramString1, paramString2, paramString3, paramString4)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200)) {
+	if ((this.getMode() >= 100) && (this.getMode() < 200)) {
 		i = this.mp.attackTail(paramString1, paramString2, paramString3, paramString4);
 	}
 	return i;
@@ -1514,7 +1514,7 @@ MasaoConstruction.prototype.attackTail = function(paramString1, paramString2, pa
 MasaoConstruction.prototype.destroyEnemy = function(paramString1, paramString2, paramString3, paramString4)
 {
 	var i = -1;
-	if ((getMode() >= 100) && (getMode() < 200)) {
+	if ((this.getMode() >= 100) && (this.getMode() < 200)) {
 		i = this.mp.destroyEnemy(paramString1, paramString2, paramString3, paramString4);
 	}
 	return i;
@@ -1550,7 +1550,7 @@ MasaoConstruction.prototype.isPressSpaceKey = function()
 MasaoConstruction.prototype.getMyDirection = function()
 {
 	var i = -1;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		if (this.mp.j_tokugi == 15) {
 			i = this.mp.j_4_muki;
@@ -1638,7 +1638,7 @@ MasaoConstruction.prototype.isRideYuka = function(paramString)
 MasaoConstruction.prototype.setMyVX = function(paramString)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -1656,7 +1656,7 @@ MasaoConstruction.prototype.setMyVX = function(paramString)
 MasaoConstruction.prototype.setMyVY = function(paramString)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -1706,7 +1706,7 @@ MasaoConstruction.prototype.setYukaImage = function(paramString, paramImage)
 MasaoConstruction.prototype.setMySpeed = function(paramString)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -1839,7 +1839,7 @@ MasaoConstruction.prototype.getMyObjectPattern = function()
 MasaoConstruction.prototype.getMyDirection4way = function()
 {
 	var i = -1;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		if (this.mp.j_tokugi == 15) {
 			i = this.mp.j_4_muki;
@@ -2194,7 +2194,7 @@ MasaoConstruction.prototype.addMyTokugi = function(paramString)
 {
 	var i = -1;
 	var bool = false;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -2211,7 +2211,7 @@ MasaoConstruction.prototype.removeMyTokugi = function(paramString)
 {
 	var i = -1;
 	var bool = false;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -2291,7 +2291,7 @@ MasaoConstruction.prototype.setAthletic = function(paramString1, paramString2, p
 	var i = -1;
 	var j = 0;
 	var k = 0;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		j = parseInt(paramString1);
 		k = parseInt(paramString2);
@@ -2351,7 +2351,7 @@ MasaoConstruction.prototype.setAthletic = function(paramString1, paramString2, p
 
 MasaoConstruction.prototype.setSecondImage = function(paramString)
 {
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		var localImage = this.gg.loadImage(paramString);
 		this.mp.second_gazou_img = localImage;
@@ -2364,7 +2364,7 @@ MasaoConstruction.prototype.setSecondImage = function(paramString)
 MasaoConstruction.prototype.setGrenadeCount = function(paramString)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200) && 
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && 
 		(this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		i = parseInt(paramString);
@@ -2383,7 +2383,7 @@ MasaoConstruction.prototype.setGrenadeCount = function(paramString)
 MasaoConstruction.prototype.setMyLeft = function(paramString)
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
@@ -2401,7 +2401,7 @@ MasaoConstruction.prototype.setMyLeft = function(paramString)
 MasaoConstruction.prototype.getGrenadeCount = function()
 {
 	var i = 0;
-	if ((getMode() >= 100) && (getMode() < 200) && 
+	if ((this.getMode() >= 100) && (this.getMode() < 200) && 
 		(this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 	{
 		i = this.mp.j_gr_kazu;
@@ -2416,7 +2416,7 @@ MasaoConstruction.prototype.getGrenadeCount = function()
 MasaoConstruction.prototype.getMyLeft = function()
 {
 	var i = -1;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = this.mp.j_left;
 
@@ -2428,7 +2428,7 @@ MasaoConstruction.prototype.getMyLeft = function()
 MasaoConstruction.prototype.setEnemyPress = function(paramString)
 {
 	var i = 1;
-	if ((getMode() >= 100) && (getMode() < 200))
+	if ((this.getMode() >= 100) && (this.getMode() < 200))
 	{
 		i = parseInt(paramString);
 		if(isNaN(i))
