@@ -3,6 +3,10 @@
 function Game(params, id, options){
 	var randomID = makeRandomString();
 
+	options = options || {};
+	options.width = options.width || 512;
+	options.height = options.height || 320;
+
 	// DivエレメントID
 	if(id){
 		// idを持つ要素の配下に設置する
@@ -26,8 +30,8 @@ function Game(params, id, options){
 	// メインCanvasオブジェクト
 	this.__canvas = document.createElement("canvas");
 	this.__canvas.id = this.__canvasID;
-	this.__canvas.width = 512;
-	this.__canvas.height = 320;
+	this.__canvas.width = options.width;
+	this.__canvas.height = options.height;
 	this.__canvas.textContent = "※お使いのブラウザはHTML5に対応していないため表示できません。";
 	this.__box.appendChild(this.__canvas);
 
@@ -195,9 +199,25 @@ Game.replaceAll = function(options){
 		}
 		for(var i=0; i<appletArray.length; i++){
 			var applet = appletArray[i];
-			if(applet.code.match(/masaoconstruction/i)){
+			if(applet.code.match(/masaoconstruction/i) || applet.code.match(/masaokani/i)){
 				// 正男であるようなら置換
 				Game.replaceByDom(applet, options);
+			}
+		}
+		var objects = document.getElementsByTagName("object");
+		var objectArray = [];
+		for(var i=0; i<objects.length; i++){
+			objectArray.push(objects[i]);
+		}
+		for(var i=0; i<objectArray; i++){
+			var object = objectArray[i];
+			var param = object.getElementsByName("code")[0];
+			// name属性に"code"を持つparam要素が
+			// value属性に"masaoconstruction"または"masaokani"を含む時にまさおアプレットと判断する
+			if(param.tagName.match(/param/i)){
+				if(param.value.match(/masaoconstruction/i) || param.value.match(/masaokani/i)){
+					Game.replaceByDom(object, options);
+				}
 			}
 		}
 	};

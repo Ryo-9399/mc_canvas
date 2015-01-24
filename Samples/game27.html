@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>まさお コンストラクション</title>
+
+<script type="text/javascript" src="../Outputs/CanvasMasao.js"></script>
+<script type="text/javascript">
+CanvasMasao.Game.replace("applet1_id", { userJSCallback: userJS });
+
+
+//  グローバル変数
+var Applet1 = 0;			//  JavaApplet
+var init_f = 0;				//  JavaApplet 起動時の初期化をしたかどうかのフラグ
+var unload_f = 0;			//  このページが閉じられると 1 になる
+
+var char_chip;				//  標準パターンのチップ画像のＩＤ
+var oriene_chip;			//  オリジナル敵のチップ画像のＩＤ
+
+var en_con = new Array(10);		//  円の状態
+var en_x = new Array(10);		//  円の中心Ｘ座標
+var en_y = new Array(10);		//  円の中心Ｙ座標
+var en_r = new Array(10);		//  円の半径
+var en_color_r = new Array(10);		//  円の色  赤
+var en_color_g = new Array(10);		//  円の色  緑
+var en_color_b = new Array(10);		//  円の色  青
+
+var oriene_con = new Array(10);		//  オリジナル敵の状態
+var oriene_x = new Array(10);		//  オリジナル敵のＸ座標
+var oriene_y = new Array(10);		//  オリジナル敵のＹ座標
+var oriene_cx = new Array(10);		//  オリジナル敵の回転の中心Ｘ座標
+var oriene_cy = new Array(10);		//  オリジナル敵の回転の中心Ｙ座標
+var oriene_r = new Array(10);		//  オリジナル敵の回転半径
+var oriene_kakudo = new Array(10);	//  オリジナル敵の角度
+var oriene_speed = new Array(10);	//  オリジナル敵の速度
+
+var my_harituki_f;		//  主人公が円に貼り付くと 1
+var my_en_id;			//  主人公が貼り付いている円のＩＤ
+var my_kakudo;			//  主人公の円上の角度
+var my_direction;		//  主人公の円上の向き
+var my_oriru_f;			//  主人公が円から降りるフラグ
+var my_ac;			//  主人公のアニメーションカウンター
+var tr1_c;			//  トリガーボタン１のカウンター
+
+
+//  JavaApplet から全てのモードで  描画直前に呼び出される
+function userJS(Offscreen_g,mode,view_x,view_y,ap) {
+
+
+	//  このページが閉じられたので終了
+	if(unload_f > 0) return;
+
+	//  JavaApplet 起動時の初期化
+	if(init_f != 1) {
+		init_f = 1;
+
+		//  JavaApplet 起動時の初期化
+		userInitJS(ap);
+	}
+
+
+	if(mode >= 100  &&  mode < 200) {
+		//  ゲーム中
+		if(Applet1.getJSMes() >= 1) {
+			//  ゲーム開始
+
+			//  JavaApplet からのメッセージをクリアー
+			Applet1.setJSMes(0);
+
+			//  JavaScript ゲーム開始
+			userGameStartJS();
+		}
+		else {
+			//  JavaScript ゲーム中
+			userGameJS(Offscreen_g,view_x,view_y);
+		}
+	}
+}
+
+
+//  JavaApplet 起動時に JavaScript から１回だけ呼び出される
+function userInitJS(ap) {
+
+
+	//  JavaApplet を取得
+	Applet1 = ap;
+
+	//  主人公を描画しない
+	Applet1.setSystemDrawMode(2);
+
+	//  標準パターンのチップ画像を作成する
+	char_chip = Applet1.newChipImage("pattern.gif",32,32,10,25);
+	Applet1.makeReverseChipImage(char_chip);
+
+	//  オリジナル敵のチップ画像を作成する
+	oriene_chip = Applet1.newChipImage("boss_l.gif",64,64,1,1);
+	Applet1.makeReverseChipImage(oriene_chip);
+}
+
+
+//  ゲーム開始時に JavaScript から１回だけ呼び出される
+function userGameStartJS() {
+
+
+	//  円の初期化
+	for(i = 0;i <= 9;i++) {
+		en_con[i] = 0;
+	}
+
+	//  敵の初期化
+	for(i = 0;i <= 9;i++) {
+		oriene_con[i] = 0;
+	}
+
+	//  円を設置する
+	setEn(10,24,96,0,0,255);
+	setEn(19,23,96,255,0,0);
+	setEn(26,19,48,0,128,0);
+	setEn(34,22,144,0,0,255);
+	setEn(45,27,48,192,0,192);
+	setEn(51,27,48,192,0,192);
+	setEn(55,18,144,0,0,255);
+	setEn(65,11,144,0,128,0);
+	setEn(75,11,48,256,0,0);
+
+	//  オリジナル敵を設置する
+	setOriene(10,24,96,3);
+	setOriene(19,23,96,-3);
+	setOriene(45,27,48,-5);
+	setOriene(51,27,48,5);
+	setOriene(65,11,144,4);
+	setOriene(65,11,144,-4);
+
+	//  主人公の初期化
+	my_harituki_f = 0;
+	my_oriru_f = 0;
+	my_kakudo = 0;
+	my_en_id = 0;
+	tr1_c = 0;
+}
+
+
+//  ゲーム中    描画直前に JavaScript から呼び出される
+function userGameJS(Offscreen_g,view_x,view_y) {
+
+
+	//  トリガーボタン１のカウンター
+	if(Applet1.isPressZKey() == 1  ||  Applet1.isPressSpaceKey() == 1) {
+		if(tr1_c < 2) tr1_c++;
+	}
+	else {
+		tr1_c = 0;
+	}
+
+	//  主人公の座標を取得
+	my_x = Applet1.getMyXReal();
+	my_y = Applet1.getMyYReal();
+
+	if(my_harituki_f == 0  &&  my_oriru_f == 0) {
+		//  主人公が円に張り付いていない
+		for(i = 0;i <= 9;i++) {
+			if(Math.sqrt(Math.pow((my_x+15)-en_x[i],2)+Math.pow((my_y+15)-en_y[i],2)) <= en_r[i]+15) {
+				//  主人公が円に貼り付く
+				my_harituki_f = 1;
+				my_en_id = i;
+				my_kakudo = Math.floor(Math.atan2(my_y+15-en_y[i],my_x+15-en_x[i])*180/Math.PI);
+				if(my_kakudo < 0) my_kakudo += 360;
+				else if(my_kakudo >= 360) my_kakudo -= 360;
+				my_direction = Applet1.getMyDirection();
+				my_ac = -1;
+				break;
+			}
+		}
+	}
+
+	if(my_harituki_f == 1) {
+		//  主人公が円に張り付いている
+
+		//  主人公の動きを停止させる
+		Applet1.setMyWait(100,100,my_direction);
+
+		if(en_r[my_en_id] <= 48) {
+			speed = 6;
+		}
+		else if(en_r[my_en_id] <= 96) {
+			speed = 4;
+		}
+		else {
+			speed = 2;
+		}
+		my_kakudo = my_kakudo-(my_kakudo % speed);
+
+		if(Applet1.isPressLeftKey() == 1) {
+			//  左回りする
+			my_kakudo -= speed;
+			if(my_kakudo < 0) my_kakudo += 360;
+			my_direction = 0;
+			my_ac++;
+			if(my_ac > 3) my_ac = 0;
+		}
+		else if(Applet1.isPressRightKey() == 1) {
+			//  右回りする
+			my_kakudo += speed;
+			if(my_kakudo >= 360) my_kakudo -= 360;
+			my_direction = 1;
+			my_ac++;
+			if(my_ac > 3) my_ac = 0;
+		}
+		else {
+			//  停止中
+			my_ac = -1;
+		}
+
+		//  主人公の座標を設定
+		my_x = en_x[my_en_id]+Math.floor(Math.cos(my_kakudo*Math.PI/180)*(en_r[my_en_id]+15))-15;
+		my_y = en_y[my_en_id]+Math.floor(Math.sin(my_kakudo*Math.PI/180)*(en_r[my_en_id]+15))-15;
+		Applet1.setMyXReal(my_x);
+		Applet1.setMyYReal(my_y);
+
+		//  トゲで死ぬ
+		n = Applet1.getMapchip(Math.floor((my_x+15)/32)-1,Math.floor((my_y+15)/32)-10);
+		if(n == 5  ||  n == 6) {
+			Applet1.setMyMiss(1);
+		}
+
+		//  円から降りる
+		if(tr1_c == 1) {
+			my_harituki_f = 0;
+			my_oriru_f = 1;
+
+			//  動き停止を解除
+			if(my_kakudo < 180) {
+				//  円の下にいた場合
+				if(my_direction == 0) {
+					Applet1.setMyWait(0,102,1);
+				}
+				else {
+					Applet1.setMyWait(0,102,0);
+				}
+				Applet1.setMyVY(20);
+			}
+			else {
+				//  円の上にいた場合
+				Applet1.setMyWait(0,101,my_direction);
+
+				//  ジャンプ
+				//  Applet1.setMyVY(-230);
+				Applet1.setMyVY(-250);
+				if(my_direction == 0) {
+
+					Applet1.setMyVX(-60);
+				}
+				else {
+
+					Applet1.setMyVX(60);
+				}
+
+				//  効果音  ジャンプ
+				Applet1.playSound(4);
+			}
+		}
+	}
+
+	//  降りるフラグをリセット
+	if(my_oriru_f == 1) {
+		if(Math.sqrt(Math.pow((my_x+15)-en_x[my_en_id],2)+Math.pow((my_y+15)-en_y[my_en_id],2)) >= en_r[my_en_id]+15+5) {
+			my_oriru_f = 0;
+		}
+	}
+
+
+	//  オリジナル敵を動かす
+	for(i = 0;i <= 9;i++) {
+		if(en_con[i] == 100) {
+			oriene_kakudo[i] += oriene_speed[i];
+			if(oriene_kakudo[i] >= 360) oriene_kakudo[i] -= 360;
+			else if(oriene_kakudo[i] < 0) oriene_kakudo[i] += 360;
+
+			oriene_x[i] = oriene_cx[i]+Math.floor(Math.cos(oriene_kakudo[i]*Math.PI/180)*(oriene_r[i]+32))-32;
+			oriene_y[i] = oriene_cy[i]+Math.floor(Math.sin(oriene_kakudo[i]*Math.PI/180)*(oriene_r[i]+32))-32;
+
+			//  主人公との当たり判定
+			if(Math.abs((my_x+15)-(oriene_x[i]+31)) < 40  &&  Math.abs((my_y+15)-(oriene_y[i]+31)) < 40) {
+				Applet1.setMyMiss(2);
+			}
+		}
+	}
+
+
+	//  円を描画する
+	for(i = 0;i <= 9;i++) {
+		if(en_con[i] == 100) {
+			nx = en_x[i]-en_r[i]-view_x;
+			ny = en_y[i]-en_r[i]-view_y;
+			if(nx+en_r[i]*2 < 0  ||  nx > 512) continue;
+
+			//  円を描画
+			Applet1.setOffscreenColor(en_color_r[i],en_color_g[i],en_color_b[i],255);
+			Offscreen_g.fillOval(nx,ny,en_r[i]*2-1,en_r[i]*2-1);
+		}
+	}
+
+
+	//  オリジナル敵を描画する
+	for(i = 0;i <= 9;i++) {
+		if(oriene_con[i] == 100) {
+			if(oriene_x[i]-view_x+64 < 0  ||  oriene_x[i]-view_x > 512) continue;
+
+			//  オリジナル敵を描画
+			if(oriene_speed[i] >= 0) {
+				img1 = Applet1.getChipImage(oriene_chip,0,1);
+			}
+			else {
+				img1 = Applet1.getChipImage(oriene_chip,0,0);
+			}
+			Applet1.drawImageRotate(img1,oriene_x[i]-view_x,oriene_y[i]-view_y,oriene_kakudo[i]+90);
+		}
+	}
+
+
+	//  主人公を描画する
+	n = Applet1.getMyObjectCondition();
+	if(my_harituki_f == 1 	&&   n >= 100  &&  n < 200) {
+		//  貼り付き中
+
+		//  画像を取得
+		if(my_ac >= 0) {
+			my_code = 103+Math.floor(my_ac/2);
+		}
+		else {
+			my_code = 100;
+		}
+
+		//  主人公を描画
+		img1 = Applet1.getChipImage(char_chip,my_code,my_direction);
+		Applet1.drawImageRotate(img1,my_x-view_x,my_y-view_y,my_kakudo+90);
+	}
+	else {
+		//  主人公を描画
+		Applet1.drawSystemObject(1);
+	}
+}
+
+
+/** 円をマップに設置する
+ *  @param x		Ｘ座標(0-179)
+ *  @param y		Ｙ座標(0-29)
+ *  @param r		半径
+ *  @param color_r	色  赤
+ *  @param color_g	色  緑
+ *  @param color_b	色  青
+ */
+function setEn(x,y,r,color_r,color_g,color_b) {
+
+
+	//  未使用の円を探す
+	for(i = 0;i <= 9;i++) {
+		if(en_con[i] == 0) break;
+	}
+	if(i > 9) return;
+
+	en_con[i] = 100;
+	en_x[i] = (x+1)*32;
+	en_y[i] = (y+10)*32;
+	en_r[i] = r;
+	en_color_r[i] = color_r;
+	en_color_g[i] = color_g;
+	en_color_b[i] = color_b;
+}
+
+
+/** オリジナル敵をマップに設置する
+ *  @param x		回転の中心Ｘ座標(0-179)
+ *  @param y		回転の中心Ｙ座標(0-29)
+ *  @param r		半径
+ *  @param speed	回転速度
+ */
+function setOriene(x,y,r,speed) {
+
+
+	//  未使用の円を探す
+	for(i = 0;i <= 9;i++) {
+		if(oriene_con[i] == 0) break;
+	}
+	if(i > 9) return;
+
+	oriene_con[i] = 100;
+	oriene_x[i] = -100;
+	oriene_y[i] = -100;
+	oriene_cx[i] = (x+1)*32;
+	oriene_cy[i] = (y+10)*32;
+	oriene_r[i] = r;
+	oriene_kakudo[i] = 0;
+	oriene_speed[i] = speed;
+}
+
+
+//  このページが閉じられると呼び出される
+function onUnloadJS() {
+
+
+	unload_f = 1;
+}
+
+
+</script>
+
+</head>
+
+<body bgcolor="silver" onUnload="onUnloadJS()">
+
+<center>
+<applet code="MasaoJSS.class" width="512" height="320" archive="mc_c.jar" id="applet1_id" mayscript>
+
+<!--
+
+  ゲーム内容の変更は、
+  param タグの "" 内を書き換えて行います。
+
+  マップは、 180 * 30 個のパーツで構成されていて、
+  文字の組み合わせで表現されています。
+
+
+  文字の説明
+
+  .  空白
+  A  自分
+  B  亀              足元に空白があると向きを変える
+  C  亀              足元に空白があると落ちる
+  D  亀              足元に空白があると落ちる  ３匹連続
+  E  ピカチー        電撃
+  F  チコリン        はっぱカッター
+  G  ヒノララシ      踏めません
+  H  ポッピー        上下移動
+  I  ポッピー        直進
+  J  ポッピー        直進  ３羽連続
+  K  動く床          上下移動
+  L  動く床          左右移動
+  M  動く床          左右移動  ２個連続
+  N  ドッスンスン    落ちて来る  下に空白が５ブロック必要
+  O  マリリ          跳ねる
+  P  ヤチャモ        火の粉
+  Q  ミズタロウ      水鉄砲
+  R  エアームズ      爆撃
+  S  グラーダ        ボス  噴火
+  T  カイオール      ボス  水の波動
+  U  ファイヤーバー  左回り
+  V  ファイヤーバー  右回り
+  W  タイキング      左右移動    水中専用
+  X  クラゲッソ      バブル光線  水中専用
+  Y  水草            ただの背景
+  Z  センクウザ      ボス  グレネード
+
+  a  ブロック１      レンガ
+  b  ブロック２      岩
+  c  ブロック３      水色のレンガ
+  d  ブロック４      鉄
+  e  ブロック５      鉄の柱１
+  f  ブロック６      鉄の柱２
+  g  ブロック７      土
+  h  ブロック８      城の壁
+  i  ブロック９      黄色のブロック
+  j  ブロック１０    緑色のブロック      背景レイヤー使用時は透明
+  k  ？ブロック      コイン
+  l  ？ブロック      コイン３枚
+  m  ？ブロック      ファイヤーボール    スペースキーでファイヤーボール発射
+  n  ？ブロック      バリア              一定時間無敵
+  o  ？ブロック      タイム              制限時間延長
+  p  ？ブロック      ジェット            空中でスペースキーを押すと上昇
+  q  ？ブロック      ヘルメット          頭突きでブロック１を破壊
+  r  ？ブロック      しっぽ              Ｘキーで前方の敵を攻撃
+  s  ？ブロック      ドリル              Ｘキーで下のブロック１を破壊
+  t  ？ブロック      グレネード          Ｘキーで強力な弾を１発だけ発射
+  u  リンク土管１    他の Web ページへ移動します
+  v  リンク土管２    他の Web ページへ移動します
+  w  リンク土管３    他の Web ページへ移動します
+  x  リンク土管４    他の Web ページへ移動します
+  z  すべる床
+  [  下から通れるブロック                背景レイヤー使用時は透明
+  ]  ハシゴ                              背景レイヤー使用時は透明
+  <  上り坂                              背景レイヤー使用時は透明
+  >  下り坂                              背景レイヤー使用時は透明
+
+  +  一言メッセージ１
+  -  一言メッセージ２
+  *  一言メッセージ３
+  /  一言メッセージ４
+
+  1  雲の左側
+  2  雲の右側
+  3  草
+  4  水中            左に敵など設置するとそこも水中になる    背景レイヤー使用時は透明
+  5  上向きのトゲ
+  6  下向きのトゲ
+  7  ろうそく
+  8  星
+  9  コイン
+
+-->
+
+
+<!--  マップデーター         -->
+<!--  左側                   -->
+<!--                         0         10        20        30        40        50        -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map0-0"  value="............................................................" >
+<param name="map0-1"  value="............................................................" >
+<param name="map0-2"  value="............................................................" >
+<param name="map0-3"  value="............................................................" >
+<param name="map0-4"  value="............................................................" >
+<param name="map0-5"  value="............................................................" >
+<param name="map0-6"  value="............................................................" >
+<param name="map0-7"  value="............................................................" >
+<param name="map0-8"  value="............................................................" >
+<param name="map0-9"  value="............................................................" >
+<param name="map0-10" value="............................................................" >
+<param name="map0-11" value="............................................................" >
+<param name="map0-12" value="....................................................H......." >
+<param name="map0-13" value="............................................................" >
+<param name="map0-14" value="..............................9.9.9.9......................." >
+<param name="map0-15" value="............................................................" >
+<param name="map0-16" value="............................................................" >
+<param name="map0-17" value="............................................................" >
+<param name="map0-18" value="............................................................" >
+<param name="map0-19" value="............................................................" >
+<param name="map0-20" value="............................................................" >
+<param name="map0-21" value="......................................5555555..............." >
+<param name="map0-22" value="......................................aaaaaaa..............." >
+<param name="map0-23" value="......................................666..................." >
+<param name="map0-24" value="............................................................" >
+<param name="map0-25" value="..A........................................................." >
+<param name="map0-26" value="aaaaa......................................................." >
+<param name="map0-27" value="aaaaa......................................................." >
+<param name="map0-28" value="aaaaa......................................................." >
+<param name="map0-29" value="aaaaaaaaaaaaaaaaa..............55555aaaaaa.................." >
+
+<!--  中央                   -->
+<!--                         60        70        80        90        100       110       -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map1-0"  value="............................................................" >
+<param name="map1-1"  value="............................................................" >
+<param name="map1-2"  value="............................................................" >
+<param name="map1-3"  value="............................................................" >
+<param name="map1-4"  value="............................................................" >
+<param name="map1-5"  value="............................................................" >
+<param name="map1-6"  value="...............8............................................" >
+<param name="map1-7"  value="............................................................" >
+<param name="map1-8"  value="............................................................" >
+<param name="map1-9"  value="............................................................" >
+<param name="map1-10" value="............................................................" >
+<param name="map1-11" value="............................................................" >
+<param name="map1-12" value="............................................................" >
+<param name="map1-13" value="............................................................" >
+<param name="map1-14" value="............................................................" >
+<param name="map1-15" value="............................................................" >
+<param name="map1-16" value="............................................................" >
+<param name="map1-17" value="............................................................" >
+<param name="map1-18" value="............................................................" >
+<param name="map1-19" value="............................................................" >
+<param name="map1-20" value="............................................................" >
+<param name="map1-21" value="............................................................" >
+<param name="map1-22" value="............................................................" >
+<param name="map1-23" value="............................................................" >
+<param name="map1-24" value="............................................................" >
+<param name="map1-25" value="............................................................" >
+<param name="map1-26" value="............................................................" >
+<param name="map1-27" value="............................................................" >
+<param name="map1-28" value="............................................................" >
+<param name="map1-29" value="............................................................" >
+
+<!--  右側                   -->
+<!--                         120       130       140       150       160       170       -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map2-0"  value="............................................................" >
+<param name="map2-1"  value="............................................................" >
+<param name="map2-2"  value="............................................................" >
+<param name="map2-3"  value="............................................................" >
+<param name="map2-4"  value="............................................................" >
+<param name="map2-5"  value="............................................................" >
+<param name="map2-6"  value="............................................................" >
+<param name="map2-7"  value="............................................................" >
+<param name="map2-8"  value="............................................................" >
+<param name="map2-9"  value="............................................................" >
+<param name="map2-10" value="............................................................" >
+<param name="map2-11" value="............................................................" >
+<param name="map2-12" value="............................................................" >
+<param name="map2-13" value="............................................................" >
+<param name="map2-14" value="............................................................" >
+<param name="map2-15" value="............................................................" >
+<param name="map2-16" value="............................................................" >
+<param name="map2-17" value="............................................................" >
+<param name="map2-18" value="............................................................" >
+<param name="map2-19" value="............................................................" >
+<param name="map2-20" value="............................................................" >
+<param name="map2-21" value="............................................................" >
+<param name="map2-22" value="............................................................" >
+<param name="map2-23" value="............................................................" >
+<param name="map2-24" value="............................................................" >
+<param name="map2-25" value="............................................................" >
+<param name="map2-26" value="............................................................" >
+<param name="map2-27" value="............................................................" >
+<param name="map2-28" value="............................................................" >
+<param name="map2-29" value="............................................................" >
+
+
+<!--  Version 3.0 で追加された設定    ここから              -->
+
+<!--  背景レイヤー      1  表示しない                       -->
+<!--                    2  表示する（処理が重いです）       -->
+<param name="layer_mode" value="1">
+
+<!--  マップチップのファイル名                              -->
+<param name="filename_mapchip" value="mapchip.gif">
+
+<!--  背景画像のファイル名                                  -->
+<!--  背景レイヤーを表示すると使えます                      -->
+<param name="filename_haikei"  value="haikei.gif"><!--  ステージ１  -->
+<param name="filename_haikei2" value="haikei.gif"><!--  ステージ２  -->
+<param name="filename_haikei3" value="haikei.gif"><!--  ステージ３  -->
+<param name="filename_haikei4" value="haikei.gif"><!--  ステージ４  -->
+
+<!--  背景画像のスクロール  1  しない                       -->
+<!--                        2  する                         -->
+<!--                        3  強制スクロール               -->
+<param name="gazou_scroll" value="2">
+
+<!--  イージーモード        1  ノーマルモード               -->
+<!--                        2  敵の端を踏んでも倒せる       -->
+<param name="easy_mode" value="1">
+
+<!--  起動中のメッセージ                                    -->
+<param name="now_loading" value="ただいまファイルを読み込み中。しばらくお待ち下さい。">
+
+<!--  Version 3.0 で追加された設定    ここまで              -->
+
+
+<!--  制限時間                                              -->
+<!--  0 を設定すると無制限                                  -->
+<param name="time_max" value="0">
+
+<!--  スクロールモード  1  全方向スクロール                 -->
+<!--                    2  強制スクロール                   -->
+<!--                    3  高速強制スクロール               -->
+<param name="scroll_mode" value="1">
+
+<!--  得点の表示        1  表示する                         -->
+<!--                    2  しない                           -->
+<param name="score_v" value="1">
+
+
+<!--  しっぽの特徴      1  敵を倒せる                       -->
+<!--                    2  ブロック１を壊せる               -->
+<!--                    3  敵を倒せてブロック１を壊せる     -->
+<param name="j_tail_type" value="1">
+
+<!--  しっぽの標準装備  1  しない                           -->
+<!--                    2  する                             -->
+<param name="j_tail_hf" value="1">
+
+<!--  ファイヤーボール  1  水中で消える                     -->
+<!--                    2  水中でも使える                   -->
+<param name="j_fire_mkf" value="1">
+
+<!--  グレネード        1  グレネード    ボスを倒せる       -->
+<!--                    2  グレネード    ボスには効かない   -->
+<!--                    3  エネルギー砲  ボスを倒せる       -->
+<!--                    4  エネルギー砲  ボスには効かない   -->
+<!--                    5  プラズマ砲    ボスを倒せる       -->
+<!--                    6  プラズマ砲    ボスには効かない   -->
+<param name="grenade_type" value="1">
+
+<!--  すべる床          1  ドリル等で破壊できる             -->
+<!--                    2  破壊できない                     -->
+<param name="suberuyuka_hkf" value="1">
+
+<!--  ピカチーの電撃    1  水中で消える                     -->
+<!--                    2  水中でも使える                   -->
+<param name="dengeki_mkf" value="1">
+
+<!--  ヤチャモ          1  火の粉で攻撃                     -->
+<!--                    2  何もしない                       -->
+<param name="yachamo_kf" value="1">
+
+<!--  エアームズ        1  壁に当たると止まる               -->
+<!--                    2  壁に当たると向きを変える         -->
+<param name="airms_kf" value="1">
+
+<!--  動く床  上下移動  1  上下移動                         -->
+<!--                    2  乗ると落ちる                     -->
+<!--                    3  ずっと乗っていると落ちる         -->
+<!--                    4  左回り                           -->
+<!--                    5  右回り                           -->
+<!--                    6  乗れるカイオール                 -->
+<!--                    7  ジャンプ台                       -->
+<param name="ugokuyuka1_type" value="1">
+
+<!--  動く床  左右移動  1  左右移動                         -->
+<!--                    2  乗ると落ちる                     -->
+<!--                    3  ずっと乗っていると落ちる         -->
+<!--                    4  左回り                           -->
+<!--                    5  右回り                           -->
+<!--                    6  乗れるカイオール                 -->
+<!--                    7  ジャンプ台                       -->
+<param name="ugokuyuka2_type" value="1">
+
+<!--  動く床                                                -->
+<!--  左右移動２個連続  1  左右移動２個連続                 -->
+<!--                    2  乗ると落ちる                     -->
+<!--                    3  ずっと乗っていると落ちる         -->
+<!--                    4  左回り                           -->
+<!--                    5  右回り                           -->
+<!--                    6  乗れるカイオール                 -->
+<!--                    7  ジャンプ台                       -->
+<param name="ugokuyuka3_type" value="1">
+
+<!--  グラーダ          1  噴火                             -->
+<!--                    2  亀を投げる                       -->
+<!--                    3  ヒノララシを投げる               -->
+<!--                    4  マリリを投げる                   -->
+<param name="boss_type" value="1">
+
+<!--  カイオール        1  水の波動                         -->
+<!--                    2  バブル光線                       -->
+<param name="boss2_type" value="1">
+
+<!--  センクウザ        1  グレネード                       -->
+<!--                    2  バリアを張って体当たり           -->
+<!--                    3  バリアを張って高速体当たり       -->
+<!--                    4  バリアを張ってジャンプ           -->
+<param name="boss3_type" value="1">
+
+
+<!--  リンク土管１の移動先                                  -->
+<param name="url1" value="http://www.t3.rim.or.jp/~naoto/naoto.html">
+
+<!--  リンク土管２の移動先                                  -->
+<param name="url2" value="http://www.t3.rim.or.jp/~naoto/j_con/index.html">
+
+<!--  リンク土管３の移動先                                  -->
+<param name="url3" value="http://www.t3.rim.or.jp/~naoto/naoto.html">
+
+<!--  リンク土管４の移動先                                  -->
+<param name="url4" value="http://www.t3.rim.or.jp/~naoto/j_con/index.html">
+
+<!--  リンク土管        1  リンク土管                       -->
+<!--                    2  ワープ土管                       -->
+<!--                       同じ番号の土管が、つながります。 -->
+<!--                       ２つずつ設置して下さい。         -->
+<param name="dokan_mode" value="2">
+
+
+<!--  一言メッセージ１  名前                                -->
+<param name="hitokoto1_name" value="浩二">
+<!--  一言メッセージ１  セリフ                              -->
+<!--  セリフの不要な行は、 "0" と指定して下さい。           -->
+<param name="hitokoto1-1" value="今日は、いい天気だなあ、なんてね。">
+<param name="hitokoto1-2" value="プレイ画面でも、こんなセリフを、">
+<param name="hitokoto1-3" value="入れられるように、なったんだ。">
+
+<!--  一言メッセージ２  名前                                -->
+<param name="hitokoto2_name" value="お姫様">
+<!--  一言メッセージ２  セリフ                              -->
+<param name="hitokoto2-1" value="ついに、ここまで来ましたね。">
+<param name="hitokoto2-2" value="ゆうきの証、ミレニアム人面星が、">
+<param name="hitokoto2-3" value="あなたを、待っていますよ。">
+
+<!--  一言メッセージ３  名前                                -->
+<param name="hitokoto3_name" value="ザトシ">
+<!--  一言メッセージ３  セリフ                              -->
+<param name="hitokoto3-1" value="オレは、世界一になる男だ。">
+<param name="hitokoto3-2" value="ぜったい、なってやるーー。">
+<param name="hitokoto3-3" value="0">
+
+<!--  一言メッセージ４  名前                                -->
+<param name="hitokoto4_name" value="クリス">
+<!--  一言メッセージ４  セリフ                              -->
+<param name="hitokoto4-1" value="あたし、クリス。ペットのピカチーが、">
+<param name="hitokoto4-2" value="どこかに行っちゃったの。">
+<param name="hitokoto4-3" value="こまったわね、ぐすん。">
+
+
+<!--  背景色                                                -->
+<!--  ゲーム画面の背景色を、光の３原色の成分で設定します。  -->
+<!--  赤の成分  (0-255)  -->
+<param name="backcolor_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="backcolor_green" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="backcolor_blue" value="255">
+
+<!--  文字の色                                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="scorecolor_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="scorecolor_green" value="0">
+<!--  青の成分  (0-255)  -->
+<param name="scorecolor_blue" value="255">
+
+<!--  グレネードの爆発とエネルギー砲の色１                  -->
+<!--  赤の成分  (0-255)  -->
+<param name="grenade_red1" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="grenade_green1" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="grenade_blue1" value="255">
+
+<!--  グレネードの爆発とエネルギー砲の色２                  -->
+<!--  赤の成分  (0-255)  -->
+<param name="grenade_red2" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="grenade_green2" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="grenade_blue2" value="0">
+
+<!--  水の波動（カイオールの技）の色                        -->
+<!--  赤の成分  (0-255)  -->
+<param name="mizunohadou_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="mizunohadou_green" value="32">
+<!--  青の成分  (0-255)  -->
+<param name="mizunohadou_blue" value="255">
+
+<!--  ファイヤーバーの外側の色                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="firebar_red1" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="firebar_green1" value="0">
+<!--  青の成分  (0-255)  -->
+<param name="firebar_blue1" value="0">
+
+<!--  ファイヤーバーの内側の色                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="firebar_red2" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="firebar_green2" value="192">
+<!--  青の成分  (0-255)  -->
+<param name="firebar_blue2" value="0">
+
+
+<!--  SCORE の文字                                          -->
+<param name="moji_score" value="SCORE">
+
+<!--  HIGHSCORE の文字                                      -->
+<param name="moji_highscore" value="HIGHSCORE">
+
+<!--  TIME の文字                                           -->
+<param name="moji_time" value="TIME">
+
+<!--  JET の文字                                            -->
+<param name="moji_jet" value="JET">
+
+<!--  GRENADE の文字                                        -->
+<param name="moji_grenade" value="GRENADE">
+
+<!--  LEFT の文字                                           -->
+<param name="moji_left" value="LEFT">
+
+<!--  文字の大きさ  (8-30)                                  -->
+<param name="moji_size" value="14">
+
+
+<!--  タイトル画面のファイル名                              -->
+<param name="filename_title" value="title.gif">
+
+<!--  エンディング画面のファイル名                          -->
+<param name="filename_ending" value="ending.gif">
+
+<!--  ゲームオーバー画面のファイル名                        -->
+<param name="filename_gameover" value="gameover.gif">
+
+<!--  キャラクターパターンのファイル名                      -->
+<param name="filename_pattern" value="pattern.gif">
+
+
+<!--  ゲームの進行スピード  (10-300)                        -->
+<!--  １フレームにおける待ち時間を、設定します。
+      数字が大きいほど遅くなり、
+      デフォルトは、 70 です。                              -->
+<param name="game_speed" value="70">
+
+
+<!--  効果音の設定  ここから                                       -->
+
+<!--  効果音機能          1  使う                                  -->
+<!--                      2  使わない                              -->
+<param name="se_switch" value="1">
+
+<!--  効果音の指定        1  ファイル名を記述して指定する          -->
+<!--                      2  デフォルトのファイル名と指定にする    -->
+<param name="se_filename" value="1">
+
+<!--  状況に応じた効果音を、ファイル名で指定して下さい。           -->
+
+<!--  ゲームスタート  -->
+<param name="filename_se_start"      value="item.au">
+<!--  ゲームオーバー  -->
+<param name="filename_se_gameover"   value="gameover.au">
+<!--  星を取る（ステージクリアー）  -->
+<param name="filename_se_clear"      value="clear.au">
+<!--  コインを取る  -->
+<param name="filename_se_coin"       value="coin.au">
+<!--  アイテムを取る  -->
+<param name="filename_se_get"        value="get.au">
+<!--  ハテナブロックからアイテムが出る  -->
+<param name="filename_se_item"       value="item.au">
+<!--  ジャンプ  -->
+<param name="filename_se_jump"       value="jump.au">
+<!--  スーパージャンプ  -->
+<param name="filename_se_sjump"      value="sjump.au">
+<!--  滑る  -->
+<param name="filename_se_kiki"       value="kiki.au">
+<!--  敵を踏む  -->
+<param name="filename_se_fumu"       value="fumu.au">
+<!--  ファイヤーボール等で敵を倒す  -->
+<param name="filename_se_tobasu"     value="tobasu.au">
+<!--  ファイヤーボール発射  -->
+<param name="filename_se_fireball"   value="shot.au">
+<!--  ジェット  -->
+<param name="filename_se_jet"        value="mgan.au">
+<!--  自分が死んだ  -->
+<param name="filename_se_miss"       value="dosun.au">
+<!--  ブロックを破壊  -->
+<param name="filename_se_block"      value="bakuhatu.au">
+<!--  水しぶき  -->
+<param name="filename_se_mizu"       value="mizu.au">
+<!--  ピカチーの電撃  -->
+<param name="filename_se_dengeki"    value="mgan.au">
+<!--  チコリンのはっぱカッター  -->
+<param name="filename_se_happa"      value="happa.au">
+<!--  ヤチャモの火の粉  -->
+<param name="filename_se_hinoko"     value="mgan.au">
+<!--  ミズタロウの水鉄砲  -->
+<param name="filename_se_mizudeppo"  value="happa.au">
+<!--  エアームズの爆弾  -->
+<param name="filename_se_bomb"       value="shot.au">
+<!--  ドッスンスンが落ちる  -->
+<param name="filename_se_dosun"      value="dosun.au">
+<!--  グラーダの噴火  -->
+<param name="filename_se_grounder"   value="mgan.au">
+<!--  カイオールの水の波動  -->
+<param name="filename_se_kaiole"     value="happa.au">
+<!--  センクウザのグレネード  -->
+<param name="filename_se_senkuuza"   value="shot.au">
+<!--  土管に入る  -->
+<param name="filename_se_dokan"      value="get.au">
+<!--  地図画面からステージへ入る  -->
+<param name="filename_se_chizugamen" value="get.au">
+
+<!--  効果音の設定  ここまで                                       -->
+
+
+</applet>
+
+</center>
+
+<hr>
+
+<h2>キーボード操作</h2>
+
+<dl>
+<dt>（←），（４）</dt>
+<dd>左へ歩く。素早く２回押すと走る。</dd>
+<dt>（→），（６）</dt>
+<dd>右へ歩く。素早く２回押すと走る。</dd>
+<dt>（スペース），（Ｚ）</dt>
+<dd>ジャンプする。</dd>
+<dt>（Ｔ）</dt>
+<dd>タイトル画面に戻る。</dd>
+</dl>
+
+<p>ゲーム画面をマウスでクリックすると、ゲーム開始です。</p>
+
+<hr>
+
+<h2>遊び方</h2>
+
+<p>ゲーム画面をマウスでクリックすると、ゲーム開始です。赤い人は正義の味方で、主人公です。カーソルキーまたはテンキーで、左右に動きます。素早く２回押すと、走ります。スペースキーで、ジャンプします。彼の趣味は、お金を拾う事です。それと、亀を踏んづける事です。彼の夢は、マップの右の方にある星を取る事です。</p>
+
+<hr>
+
+<p><a href="http://www.t3.rim.or.jp/~naoto/naoto.html">サポートページ</a>へ移動する。</p>
+
+</body>
+
+</html>

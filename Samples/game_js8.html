@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>まさお コンストラクション</title>
+
+<script type="text/javascript" src="../Outputs/CanvasMasao.js"></script>
+<script type="text/javascript">
+CanvasMasao.Game.replace("applet1_id", {
+	userJSCallback: function(Offscreen_g,mode,view_x,view_y,ap)
+	{
+		Applet1 = ap;
+	}
+});
+
+
+//  グローバル変数
+var Applet1 = 0;		//  JavaApplet
+
+var Text1;
+var Text2;
+var Text3;
+var TextTimeLimit;
+var TextBarrierTime;
+var TextGrenadeCount;
+var TextMyLeft;
+var Select1;
+var SelectTokugi;
+var SelectRemoveTokugi;
+var SelectSetAthletic;
+
+
+function onLoadJS() {
+
+
+	//  テキストフィールドを取得
+	Text1 = document.getElementById("text_1_id");
+	Text2 = document.getElementById("text_2_id");
+	Text3 = document.getElementById("text_3_id");
+	TextTimeLimit = document.getElementById("text_time_limit_id");
+	TextBarrierTime = document.getElementById("text_barrier_time_id");
+	TextGrenadeCount = document.getElementById("text_grenade_count_id");
+	TextMyLeft = document.getElementById("text_my_left_id");
+
+	Select1 = document.getElementById("select_1_id");
+	SelectTokugi = document.getElementById("select_tokugi_id");
+	SelectRemoveTokugi = document.getElementById("select_remove_tokugi_id");
+	SelectSetAthletic = document.getElementById("select_set_athletic_id");
+
+	//  0.2秒毎にメインループを呼び出す
+	timerID = setInterval("mainLoop()",200);
+}
+
+
+//  メインループ
+function mainLoop() {
+	if(!Applet1) return;
+
+
+	//  コインの数を取得
+	Text1.value = Applet1.getCoinCount();
+	Text2.value = Applet1.getCoinCount(0,0,2,29);
+	Text3.value = Applet1.getCoinCount(3,0,179,29);
+
+	//  残り時間
+	n = Applet1.getTimeLimit();
+	TextTimeLimit.value = n;
+
+	//  バリアーの残り時間
+	n = Applet1.getBarrierTime();
+	TextBarrierTime.value = n;
+
+	//  グレネードの装備数
+	n = Applet1.getGrenadeCount();
+	TextGrenadeCount.value = n;
+
+	//  主人公の残り人数
+	n = Applet1.getMyLeft();
+	TextMyLeft.value = n;
+}
+
+
+function buttonSetEnemy() {
+
+
+	n = Select1.selectedIndex + 41;
+
+	Applet1.setEnemy(8,24,n);
+}
+
+
+function buttonAddMyTokugi() {
+
+
+	n = SelectTokugi.selectedIndex + 1;
+
+	Applet1.addMyTokugi(n);
+}
+
+
+function buttonRemoveMyTokugi() {
+
+
+	n = SelectRemoveTokugi.selectedIndex + 1;
+
+	Applet1.removeMyTokugi(n);
+}
+
+
+function buttonSetScore() {
+
+
+	Applet1.setScore(123);
+}
+
+
+function buttonSetTimeLimit() {
+
+
+	Applet1.setTimeLimit(100);
+}
+
+
+function buttonSetAthletic() {
+
+
+	n = SelectSetAthletic.selectedIndex;
+
+	s = 1;
+	if(n == 1) {
+		s = 71;
+	}
+	else if(n == 2) {
+		s = 80;
+	}
+	else if(n == 3) {
+		s = 104;
+	}
+
+	//  仕掛けを設置する
+	Applet1.setAthletic(8,24,s);
+}
+
+
+function buttonSetSecondImage() {
+
+
+	Applet1.setSecondImage("ending.gif");
+}
+
+
+function buttonSetGrenadeCount() {
+
+
+	Applet1.setGrenadeCount(5);
+}
+
+
+function buttonSetMyLeft() {
+
+
+	Applet1.setMyLeft(2);
+}
+
+
+function buttonSetEnemyPress1() {
+
+
+	Applet1.setEnemyPress(1);
+}
+
+
+function buttonSetEnemyPress2() {
+
+
+	Applet1.setEnemyPress(2);
+}
+
+
+function buttonSetEnemyPress3() {
+
+
+	Applet1.setEnemyPress(3);
+}
+
+
+</script>
+
+</head>
+
+<body bgcolor="silver" onLoad="onLoadJS()">
+
+<center>
+<applet code="MasaoConstruction.class" width="512" height="320" archive="mc_c.jar" id="applet1_id" mayscript>
+
+<!--
+
+  ゲーム内容の変更は、
+  param タグの "" 内を書き換えて行います。
+
+  マップは、 180 * 30 個のパーツで構成されていて、
+  文字の組み合わせで表現されています。
+
+
+  文字の説明
+
+  .  空白
+  A  自分
+  B  亀              足元に空白があると向きを変える
+  C  亀              足元に空白があると落ちる
+  D  亀              足元に空白があると落ちる  ３匹連続
+  E  ピカチー        電撃
+  F  チコリン        はっぱカッター
+  G  ヒノララシ      踏めません
+  H  ポッピー        上下移動
+  I  ポッピー        直進
+  J  ポッピー        直進  ３羽連続
+  K  動く床          上下移動
+  L  動く床          左右移動
+  M  動く床          左右移動  ２個連続
+  N  ドッスンスン    落ちて来る  下に空白が５ブロック必要
+  O  マリリ          跳ねる
+  P  ヤチャモ        火の粉
+  Q  ミズタロウ      水鉄砲
+  R  エアームズ      爆撃
+  S  グラーダ        ボス  噴火
+  T  カイオール      ボス  水の波動
+  U  ファイヤーバー  左回り
+  V  ファイヤーバー  右回り
+  W  タイキング      左右移動    水中専用
+  X  クラゲッソ      バブル光線  水中専用
+  Y  水草            ただの背景
+  Z  センクウザ      ボス  グレネード
+
+  a  ブロック１      レンガ
+  b  ブロック２      岩
+  c  ブロック３      水色のレンガ
+  d  ブロック４      鉄
+  e  ブロック５      鉄の柱１
+  f  ブロック６      鉄の柱２
+  g  ブロック７      土
+  h  ブロック８      城の壁
+  i  ブロック９      黄色のブロック
+  j  ブロック１０    緑色のブロック      背景レイヤー使用時は透明
+  k  ？ブロック      コイン
+  l  ？ブロック      コイン３枚
+  m  ？ブロック      ファイヤーボール    スペースキーでファイヤーボール発射
+  n  ？ブロック      バリア              一定時間無敵
+  o  ？ブロック      タイム              制限時間延長
+  p  ？ブロック      ジェット            空中でスペースキーを押すと上昇
+  q  ？ブロック      ヘルメット          頭突きでブロック１を破壊
+  r  ？ブロック      しっぽ              Ｘキーで前方の敵を攻撃
+  s  ？ブロック      ドリル              Ｘキーで下のブロック１を破壊
+  t  ？ブロック      グレネード          Ｘキーで強力な弾を１発だけ発射
+  u  リンク土管１    他の Web ページへ移動します
+  v  リンク土管２    他の Web ページへ移動します
+  w  リンク土管３    他の Web ページへ移動します
+  x  リンク土管４    他の Web ページへ移動します
+  z  すべる床
+  [  下から通れるブロック                背景レイヤー使用時は透明
+  ]  ハシゴ                              背景レイヤー使用時は透明
+  <  上り坂                              背景レイヤー使用時は透明
+  >  下り坂                              背景レイヤー使用時は透明
+  {  追跡亀
+  }  重力無視の追跡ピカチー等  死ぬとブロック９の文字 i から復活
+
+  +  一言メッセージ１
+  -  一言メッセージ２
+  *  一言メッセージ３
+  /  一言メッセージ４
+
+  1  雲の左側
+  2  雲の右側
+  3  草
+  4  水中            左に敵など設置するとそこも水中になる    背景レイヤー使用時は透明
+  5  上向きのトゲ
+  6  下向きのトゲ
+  7  ろうそく
+  8  星
+  9  コイン
+
+-->
+
+
+<!--  マップデーター         -->
+<!--  左側                   -->
+<!--                         0         10        20        30        40        50        -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map0-0"  value="............................................................">
+<param name="map0-1"  value="............................................................">
+<param name="map0-2"  value="............................................................">
+<param name="map0-3"  value="............................................................">
+<param name="map0-4"  value="............................................................">
+<param name="map0-5"  value="............................................................">
+<param name="map0-6"  value="............................................................">
+<param name="map0-7"  value="............................................................">
+<param name="map0-8"  value="............................................................">
+<param name="map0-9"  value="............................................................">
+<param name="map0-10" value="............................................................">
+<param name="map0-11" value="............................................................">
+<param name="map0-12" value="............................................................">
+<param name="map0-13" value="............................................................">
+<param name="map0-14" value="............................................................">
+<param name="map0-15" value="............................................................">
+<param name="map0-16" value="............................................................">
+<param name="map0-17" value="............................................................">
+<param name="map0-18" value="............................................................">
+<param name="map0-19" value="............................................................">
+<param name="map0-20" value="............................................................">
+<param name="map0-21" value="............................................................">
+<param name="map0-22" value="............................................................">
+<param name="map0-23" value="............................................................">
+<param name="map0-24" value="...............a............................................">
+<param name="map0-25" value="..99...a.anm...a............................................">
+<param name="map0-26" value="...............a............................................">
+<param name="map0-27" value="..99.A.........a.........B..................................">
+<param name="map0-28" value="aaaaaaaaaaaaaaaaaaaaaaaaaa..................................">
+<param name="map0-29" value="aaaaaaaaaaaaaaaaaaaaaaaaaa..................................">
+
+
+<!--  セカンド画像の設定  ここから                          -->
+
+<!--  セカンド画像の使用            1  使わない             -->
+<!--                                2  使う                 -->
+<param name="second_gazou_visible"  value="2">
+
+<!--  セカンド画像のファイル名                              -->
+<param name="filename_second_haikei"  value="haikei.gif">
+
+<!--  セカンド背景画像のスクロール                          -->
+<!--                        1  しない                       -->
+<!--                        2  左右スクロール  速度１／４   -->
+<param name="second_gazou_scroll" value="1">
+
+<!--  セカンド画像の設定  ここまで                          -->
+
+
+<!--  背景画像の表示（背景レイヤーの使用に影響されない)     -->
+<!--                        0  背景レイヤー使用時に表示     -->
+<!--                        1  常に表示する                 -->
+<param name="mcs_haikei_visible" value="1">
+
+
+<!--  雑魚敵を踏めるか              1  踏める               -->
+<!--                                2  踏めない             -->
+<!--                                3  当たり判定なし       -->
+<param name="j_enemy_press" value="1">
+
+
+<!--  Version 3.0 で追加された設定    ここから              -->
+
+<!--  背景レイヤー      1  表示しない                       -->
+<!--                    2  表示する（処理が重いです）       -->
+<param name="layer_mode" value="1">
+
+<!--  マップチップのファイル名                              -->
+<param name="filename_mapchip" value="mapchip.gif">
+
+
+<!--  背景画像のファイル名                                  -->
+<!--  背景レイヤーを表示すると使えます                      -->
+<param name="filename_haikei"  value="haikei_front.gif"><!--  ステージ１  -->
+<param name="filename_haikei2" value="haikei.gif"><!--  ステージ２  -->
+<param name="filename_haikei3" value="haikei.gif"><!--  ステージ３  -->
+<param name="filename_haikei4" value="haikei.gif"><!--  ステージ４  -->
+
+<!--  背景画像のスクロール  1   しない                                           -->
+<!--                        2   左右スクロール（速度はマップの１／４）           -->
+<!--                        3   右へ強制スクロール                               -->
+<!--                        4   指定速度で強制スクロール                         -->
+<!--                        5   上下スクロール                                   -->
+<!--                        6   全方向スクロール（速度はマップの１／２）         -->
+<!--                        7   全方向スクロール（速度はマップと同じ）           -->
+<!--                        8   画像サイズ    ５１２×６４０専用                 -->
+<!--                        9   画像サイズ  １０２４×６４０専用                 -->
+<!--                        10  左右スクロール（速度はマップの１／２）           -->
+<param name="gazou_scroll" value="2">
+
+<!--  上記の設定で 4 の場合の指定速度                       -->
+<param name="gazou_scroll_speed_x" value="8"><!--  Ｘ方向（-32～32)  -->
+<param name="gazou_scroll_speed_y" value="-8"><!--  Ｙ方向（-32～32)  -->
+
+<!--  イージーモード        1  ノーマルモード               -->
+<!--                        2  敵の端を踏んでも倒せる       -->
+<param name="easy_mode" value="1">
+
+<!--  起動中のメッセージ                                    -->
+<param name="now_loading" value="ただいまファイルを読み込み中。しばらくお待ち下さい。">
+
+<!--  Version 3.0 で追加された設定    ここから              -->
+
+
+<!--  主人公の特技    1  なし                               -->
+<!--                  2  落ちるのが遅い                     -->
+<!--                  3  空中で下ボタンを押すと急降下       -->
+<!--                  4  全速体当たりで敵を倒せる           -->
+<!--                  5  空中の左右加速度が高い             -->
+<!--                  6  壁キック                           -->
+<!--                  7  ファイヤーボールが水平に飛ぶ       -->
+<!--                  8  空中でもう１回ジャンプできる       -->
+<!--                  9  速く走れる                         -->
+<!--                  10 ジャンプできない                   -->
+<!--                  11 スーパージャンプで高く跳べる       -->
+<!--                  12 ジャンプできない  Z,X キーで穴掘り -->
+<!--                  13 ジャンプできない走れない    穴掘り -->
+<!--                  14 横スクロールシューティングゲーム用 -->
+<!--                  15 ４方向移動                         -->
+<!--                  16 壁ジャンプ  以下 Update 14         -->
+<!--                  17 ＨＰ３  １ｕｐキノコで回復         -->
+<param name="j_tokugi" value="1">
+
+<!--  残りの人数  (1-)                                      -->
+<param name="jibun_left_shoki" value="1">
+
+<!--  制限時間                                              -->
+<!--  0 を設定すると無制限                                  -->
+<param name="time_max" value="300">
+
+<!--  効果音機能          1  使う                                  -->
+<!--                      2  使わない                              -->
+<param name="se_switch" value="1">
+
+</applet>
+</center>
+
+
+<dl>
+
+<dt>setEnemyPress(設定値)</dt>
+<dd>雑魚敵を踏めるかどうかを設定する。設定値は以下の種類があります。
+<ol>
+<li>踏める<input type="button" value='setEnemyPress(1)' onClick="buttonSetEnemyPress1()"></li>
+<li>踏めない<input type="button" value='setEnemyPress(2)' onClick="buttonSetEnemyPress2()"></li>
+<li>当り判定なし<input type="button" value='setEnemyPress(3)' onClick="buttonSetEnemyPress3()"></li>
+</ol>
+</dd>
+
+
+<dt>int getGrenadeCount()</dt>
+<dd>グレネードの装備数を取得する。<input type="text" size="10" id="text_grenade_count_id"></dd>
+
+<dt>int getMyLeft()</dt>
+<dd>主人公の残り人数を取得する。<input type="text" size="10" id="text_my_left_id"></dd>
+
+<dt>setGrenadeCount(装備する数(0～))</dt>
+<dd>グレネードを装備する。<input type="button" value='setGrenadeCount(5)' onClick="buttonSetGrenadeCount()"></dd>
+
+<dt>setMyLeft(残り人数(0～))</dt>
+<dd>主人公の残り人数を設定する。<input type="button" value='setMyLeft(2)' onClick="buttonSetMyLeft()"></dd>
+
+
+
+<dt>setEnemy(Ｘ座標(0～179),Ｙ座標(0～29),敵の種類(1～80))</dt>
+<dd>敵を設置する。<br>
+setEnemy(8,24,
+<select id="select_1_id">
+<option>41</option>
+<option>42</option>
+<option>43</option>
+<option>44</option>
+<option>45</option>
+<option>46</option>
+<option>47</option>
+<option>48</option>
+<option>49</option>
+<option>50</option>
+<option>51</option>
+<option>52</option>
+<option>53</option>
+<option>54</option>
+<option>55</option>
+<option>56</option>
+<option>57</option>
+<option>58</option>
+<option>59</option>
+<option>60</option>
+<option>61</option>
+<option>62</option>
+<option>63</option>
+<option>64</option>
+<option>65</option>
+<option>66</option>
+<option>67</option>
+<option>68</option>
+<option>69</option>
+<option>70</option>
+<option>71</option>
+<option>72</option>
+<option>73</option>
+<option>74</option>
+<option>75</option>
+<option>76</option>
+<option>77</option>
+<option>78</option>
+<option>79</option>
+<option>80</option>
+<option>81</option>
+<option>82</option>
+<option>83</option>
+<option>84</option>
+</select>
+)<input type="button" value="実行" onClick="buttonSetEnemy()"></dd>
+
+
+<dt>setSecondImage(ファイル名)</dt>
+<dd>セカンド画像をセットする。<input type="button" value='setSecondImage("ending.gif")' onClick="buttonSetSecondImage()"></dd>
+
+<dt>setAthletic(Ｘ座標(0～179),Ｘ座標(0～179),仕掛けの種類(1～))</dt>
+<dd>仕掛けを設置する。仕掛けの種類は、ファイヤーバー左回りと同じです。
+
+setAthletic(8,24,
+<select id="select_set_athletic_id">
+<option>1 ファイヤーバー 左回り</option>
+<option>71 人間大砲 右向き</option>
+<option>80 スポット処理 中</option>
+<option>104 画面内で右上強制スクロール</option>
+</select>
+)<input type="button" value="実行" onClick="buttonSetAthletic()"></dd>
+
+<dt>setScore(得点)</dt>
+<dd>得点を設定する。
+<input type="button" value="setScore(123)" onClick="buttonSetScore()"></dd>
+
+<dt>int getTimeLimit()</dt>
+<dd>残り時間を取得する。
+<input type="text" size="10" id="text_time_limit_id"></dd>
+
+<dt>setTimeLimit(残り時間)</dt>
+<dd>残り時間を設定する。
+<input type="button" value="setTimieLimit(100)" onClick="buttonSetTimeLimit()"></dd>
+
+<dt>int getBarrierTime()</dt>
+<dd>バリアの残り時間を取得する。
+<input type="text" size="10" id="text_barrier_time_id"></dd>
+
+<dt>addMyTokugi(特技の種類)</dt>
+<dd>主人公に特技を追加する。特技の種類は以下の値で指定します。
+
+<ol>
+<li>ヘルメット</li>
+<li>ドリル</li>
+<li>落ちるのが遅い</li>
+<li>下キーを押すと急降下</li>
+<li>全速体当たりで敵を倒せる</li>
+<li>空中の左右加速度が高い</li>
+<li>速く走れる</li>
+<li>走れない</li>
+<li>空中でもう１回ジャンプできる</li>
+<li>壁キック</li>
+<li>壁ジャンプ</li>
+<li>ジャンプ時にファイヤーボールが出ない</li>
+<li>ジャンプの高さを固定  小</li>
+<li>ジャンプの高さを固定  小中</li>
+<li>ジャンプの高さを固定  中</li>
+<li>ジャンプの高さを固定  大</li>
+<li>しっぽ 敵を倒せる</li>
+<li>しっぽ ブロック１を壊せる</li>
+<li>しっぽ 敵を倒せてブロック１を壊せる</li>
+<li>ファイヤーボール 跳ねる</li>
+<li>ファイヤーボール 水平に飛ぶ</li>
+<li>ファイヤーボール ダブル</li>
+<li>ファイヤーボール 水平に飛ぶ 短射程</li>
+<li>ファイヤーボール ホーミングアミュレット</li>
+<li>昇龍拳 ↑＋Ｚ</li>
+<li>サイコクラッシャーアタック ↓＋Ｚ</li>
+<li>ロケット頭突き ↓＋Ｚ</li>
+<li>スカイアッパー ↑＋Ｚ</li>
+</ol>
+
+addMyTokugi(
+<select id="select_tokugi_id">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+<option>13</option>
+<option>14</option>
+<option>15</option>
+<option>16</option>
+<option>17</option>
+<option>18</option>
+<option>19</option>
+<option>20</option>
+<option>21</option>
+<option>22</option>
+<option>23</option>
+<option>24</option>
+<option>25</option>
+<option>26</option>
+<option>27</option>
+<option>28</option>
+</select>
+)<input type="button" value="実行" onClick="buttonAddMyTokugi()"></dd>
+
+<dt>removeMyTokugi(特技の種類)</dt>
+<dd>主人公の特技を削除する。特技の種類は addMyTokugi() と同じです。<br>
+removeMyTokugi(
+<select id="select_remove_tokugi_id">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+<option>13</option>
+<option>14</option>
+<option>15</option>
+<option>16</option>
+<option>17</option>
+<option>18</option>
+<option>19</option>
+<option>20</option>
+<option>21</option>
+<option>22</option>
+<option>23</option>
+<option>24</option>
+<option>25</option>
+<option>26</option>
+<option>27</option>
+<option>28</option>
+</select>
+)<input type="button" value="実行" onClick="buttonRemoveMyTokugi()"></dd>
+
+</dl>
+
+<dl>
+<dt>int getCoinCount()</dt>
+<dd>マップ上の、コインを数を取得する。<br>
+getCoinCount() <input type="text" size="10" id="text_1_id"></dd>
+<dt>int getCoinCount(左のＸ座標(0～179),上のＹ座標(0～29),右のＸ座標(0～179),下のＹ座標(0～29))</dt>
+<dd>指定範囲の、コインを数を取得する。<br>
+getCoinCount(0,0,2,29)<input type="text" size="10" id="text_2_id"><br>
+getCoinCount(3,0,179,29)<input type="text" size="10" id="text_3_id"></dd>
+</dl>
+
+
+</body>
+
+</html>

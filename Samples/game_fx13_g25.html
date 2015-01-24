@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>まさお コンストラクション</title>
+
+<script type="text/javascript" src="../Outputs/CanvasMasao.js"></script>
+<script type="text/javascript">
+CanvasMasao.Game.replace("applet1_id", { userJSCallback: userJS });
+
+
+//  グローバル変数
+var Applet1 = 0;	//  JavaApplet
+var init_f = 0;		//  JavaApplet 起動時の初期化をしたかどうかのフラグ
+var unload_f = 0;	//  このページが閉じられると 1 になる
+
+//  オリジナル床
+var oriyuka_con = new Array(10);	//  状態
+var oriyuka_x = new Array(10);		//  Ｘ座標
+var oriyuka_y = new Array(10);		//  Ｙ座標
+var oriyuka_r = new Array(10);		//  半径
+var oriyuka_kakudo = new Array(10);	//  角度
+var oriyuka_vkakudo = new Array(10);	//  回転速度
+var oriyuka_yuka = new Array(100);	//  線の床
+var oriyuka_color_r =  new Array(10);	//  色  赤
+var oriyuka_color_g =  new Array(10);	//  色  緑
+var oriyuka_color_b =  new Array(10);	//  色  青
+
+
+//  計算用
+var px = new Array(4);
+var py = new Array(4);
+
+
+//  JavaApplet から全てのモードで  描画直前に呼び出される
+function userJS(Offscreen_g,mode,view_x,view_y,ap) {
+
+
+	//  このページが閉じられたので終了
+	if(unload_f > 0) return;
+
+	//  JavaApplet 起動時の初期化
+	if(init_f != 1) {
+		init_f = 1;
+
+		//  JavaApplet 起動時の初期化
+		userInitJS(ap);
+	}
+
+
+	if(mode >= 100  &&  mode < 200) {
+		//  ゲーム中
+		if(Applet1.getJSMes() >= 1) {
+			//  ゲーム開始
+
+			//  JavaApplet からのメッセージをクリアー
+			Applet1.setJSMes(0);
+
+			//  JavaScript ゲーム開始
+			userGameStartJS();
+		}
+		else {
+			//  JavaScript ゲーム中
+			userGameJS(Offscreen_g,view_x,view_y);
+		}
+	}
+}
+
+
+//  JavaApplet 起動時に JavaScript から１回だけ呼び出される
+function userInitJS(ap) {
+
+
+	//  JavaApplet を取得
+	Applet1 = ap;
+}
+
+
+//  ゲーム開始時に JavaScript から１回だけ呼び出される
+function userGameStartJS() {
+
+
+	//  オリジナル床を初期化
+	initOriyuka();
+
+	//  オリジナル床を設置する
+	setOriyuka(100,27,21,100,2,255,0,0);
+	setOriyuka(100,34,18,100,-2,255,0,0);
+	setOriyuka(200,42,18,140,2,0,192,0);
+	setOriyuka(200,65,15,140,-2,0,192,0);
+	setOriyuka(300,87,11,200,2,0,0,255);
+
+
+	//  地面を作成
+	Applet1.newYuka((0+1)*32,(25+10)*32,(2+1)*32,(25+10)*32,"mount");
+	Applet1.newYuka((2+1)*32,(25+10)*32,(5+1)*32,(26+10)*32,"mount");
+	Applet1.newYuka((5+1)*32,(26+10)*32,(7+1)*32,(28+10)*32,"mount");
+	Applet1.newYuka((7+1)*32,(28+10)*32,(12+1)*32,(29+10)*32,"mount");
+	Applet1.newYuka((12+1)*32,(29+10)*32,(15+1)*32,(27+10)*32,"mount");
+	Applet1.newYuka((15+1)*32,(27+10)*32,(19+1)*32,(20+10)*32,"mount");
+	Applet1.newYuka((19+1)*32,(20+10)*32,(22+1)*32,(19+10)*32,"mount");
+
+	Applet1.newYuka((49+1)*32,(20+10)*32,(55+1)*32,(18+10)*32,"mount");
+	Applet1.newYuka((55+1)*32,(18+10)*32,(59+1)*32,(19+10)*32,"mount");
+	Applet1.newYuka((59+1)*32,(19+10)*32,(65+1)*32,(24+10)*32,"mount");
+
+	Applet1.newYuka((71+1)*32,(9+10)*32,(80+1)*32,(7+10)*32,"triangle");
+	Applet1.newYuka((95+1)*32,(12+10)*32,(98+1)*32,(5+10)*32,"triangle");
+}
+
+
+//  オリジナル床を初期化する
+function initOriyuka() {
+
+
+	for(i = 0;i <= 9;i++) {
+		oriyuka_con[i] = 0;
+	}
+}
+
+
+/**
+ *  オリジナル床をマップに設置する
+ *  @param con		床の種類	100	回転する四角形
+ *  				200	回転する三角形
+ *  				300	回転する台形
+ *  @param x		Ｘ座標(0-179)
+ *  @param y		Ｙ座標(0-29)
+ *  @param r		半径
+ *  @param vk		回転速度
+ *  @param color_r	色  赤
+ *  @param color_g	色  緑
+ *  @param color_b	色  青
+ */
+function setOriyuka(con,x,y,r,vk,color_r,color_g,color_b) {
+
+
+	//  未使用のオリジナル床を探す
+	for(i = 0;i <= 9;i++) {
+		if(oriyuka_con[i] == 0) break;
+	}
+	if(i > 9) return;
+
+	//  値の設定
+	oriyuka_con[i] = con;
+	oriyuka_x[i] = (x+1)*32+15;
+	oriyuka_y[i] = (y+10)*32+15;
+	oriyuka_r[i] = r;
+	oriyuka_kakudo[i] = 0;
+	oriyuka_vkakudo[i] = vk;
+	oriyuka_color_r[i] = color_r;
+	oriyuka_color_g[i] = color_g;
+	oriyuka_color_b[i] = color_b;
+
+	if(con == 100  ||  con == 300) {
+		//  四角形と台形は頂点４つ
+		point = 4;
+	}
+	else {
+		point = 3;
+	}
+
+	//  線の床を作成
+	for(i2 = 0;i2 < point;i2++) {
+		oriyuka_yuka[i*10+i2] = Applet1.newYuka(0,0,0,0,"line");
+		Applet1.setYukaColor(oriyuka_yuka[i*10+i2],color_r,color_g,color_b,255);
+	}
+}
+
+
+//  ゲーム中    描画直前に JavaScript から呼び出される
+function userGameJS(Offscreen_g,view_x,view_y) {
+
+
+	//  オリジナル床
+	for(i = 0;i <= 9;i++) {
+		if(oriyuka_con[i] == 0) {
+			//  なし
+			 continue;
+		}
+		else if(oriyuka_con[i] == 100) {
+			//  回転する四角形
+
+			if(oriyuka_x[i]+oriyuka_r[i] < view_x-32  ||  oriyuka_x[i]-oriyuka_r[i] > view_x+512+32) {
+				//  表示範囲外
+
+				//  回転する
+				oriyuka_kakudo[i] += oriyuka_vkakudo[i];
+				if(oriyuka_kakudo[i] >= 360) oriyuka_kakudo[i] -= 360;
+				if(oriyuka_kakudo[i] < 0) oriyuka_kakudo[i] += 360;
+
+				continue;
+			}
+
+			px[0] = Math.floor(Math.cos(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[0] = Math.floor(Math.sin(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[1] = Math.floor(Math.cos((oriyuka_kakudo[i]+90)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[1] = Math.floor(Math.sin((oriyuka_kakudo[i]+90)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[2] = Math.floor(Math.cos((oriyuka_kakudo[i]+180)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[2] = Math.floor(Math.sin((oriyuka_kakudo[i]+180)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[3] = Math.floor(Math.cos((oriyuka_kakudo[i]+270)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[3] = Math.floor(Math.sin((oriyuka_kakudo[i]+270)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+
+			for(i2 = 0;i2 <= 3;i2++) {
+				px[i2] = px[i2]-view_x;
+				py[i2] = py[i2]-view_y;
+			}
+
+			//  ポリゴンを描画
+			Applet1.setOffscreenColor(oriyuka_color_r[i],oriyuka_color_g[i],oriyuka_color_b[i],255);
+			Applet1.fillPolygon(px[0],py[0],px[1],py[1],px[2],py[2],px[3],py[3]);
+
+			//  回転する
+			oriyuka_kakudo[i] += oriyuka_vkakudo[i];
+			if(oriyuka_kakudo[i] >= 360) oriyuka_kakudo[i] -= 360;
+			if(oriyuka_kakudo[i] < 0) oriyuka_kakudo[i] += 360;
+
+			px[0] = Math.floor(Math.cos(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[0] = Math.floor(Math.sin(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[1] = Math.floor(Math.cos((oriyuka_kakudo[i]+90)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[1] = Math.floor(Math.sin((oriyuka_kakudo[i]+90)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[2] = Math.floor(Math.cos((oriyuka_kakudo[i]+180)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[2] = Math.floor(Math.sin((oriyuka_kakudo[i]+180)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[3] = Math.floor(Math.cos((oriyuka_kakudo[i]+270)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[3] = Math.floor(Math.sin((oriyuka_kakudo[i]+270)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+
+			Applet1.setYukaPosition(oriyuka_yuka[i*10],px[0],py[0],px[1],py[1]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+1],px[1],py[1],px[2],py[2]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+2],px[2],py[2],px[3],py[3]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+3],px[3],py[3],px[0],py[0]);
+		}
+		else if(oriyuka_con[i] == 200) {
+			//  回転する三角形
+
+			if(oriyuka_x[i]+oriyuka_r[i] < view_x-32  ||  oriyuka_x[i]-oriyuka_r[i] > view_x+512+32) {
+				//  表示範囲外
+
+				//  回転する
+				oriyuka_kakudo[i] += oriyuka_vkakudo[i];
+				if(oriyuka_kakudo[i] >= 360) oriyuka_kakudo[i] -= 360;
+				if(oriyuka_kakudo[i] < 0) oriyuka_kakudo[i] += 360;
+
+				continue;
+			}
+
+			px[0] = Math.floor(Math.cos(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[0] = Math.floor(Math.sin(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[1] = Math.floor(Math.cos((oriyuka_kakudo[i]+120)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[1] = Math.floor(Math.sin((oriyuka_kakudo[i]+120)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[2] = Math.floor(Math.cos((oriyuka_kakudo[i]+240)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[2] = Math.floor(Math.sin((oriyuka_kakudo[i]+240)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+
+			for(i2 = 0;i2 <= 2;i2++) {
+				px[i2] = px[i2]-view_x;
+				py[i2] = py[i2]-view_y;
+			}
+
+			//  ポリゴンを描画
+			Applet1.setOffscreenColor(oriyuka_color_r[i],oriyuka_color_g[i],oriyuka_color_b[i],255);
+			Applet1.fillPolygon(px[0],py[0],px[1],py[1],px[2],py[2]);
+
+			//  回転する
+			oriyuka_kakudo[i] += oriyuka_vkakudo[i];
+			if(oriyuka_kakudo[i] >= 360) oriyuka_kakudo[i] -= 360;
+			if(oriyuka_kakudo[i] < 0) oriyuka_kakudo[i] += 360;
+
+			px[0] = Math.floor(Math.cos(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[0] = Math.floor(Math.sin(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[1] = Math.floor(Math.cos((oriyuka_kakudo[i]+120)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[1] = Math.floor(Math.sin((oriyuka_kakudo[i]+120)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[2] = Math.floor(Math.cos((oriyuka_kakudo[i]+240)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[2] = Math.floor(Math.sin((oriyuka_kakudo[i]+240)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+
+			Applet1.setYukaPosition(oriyuka_yuka[i*10],px[0],py[0],px[1],py[1]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+1],px[1],py[1],px[2],py[2]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+2],px[2],py[2],px[0],py[0]);
+		}
+		else if(oriyuka_con[i] == 300) {
+			//  回転する台形
+
+			if(oriyuka_x[i]+oriyuka_r[i] < view_x-32  ||  oriyuka_x[i]-oriyuka_r[i] > view_x+512+32) {
+				//  表示範囲外
+
+				//  回転する
+				oriyuka_kakudo[i] += oriyuka_vkakudo[i];
+				if(oriyuka_kakudo[i] >= 360) oriyuka_kakudo[i] -= 360;
+				if(oriyuka_kakudo[i] < 0) oriyuka_kakudo[i] += 360;
+
+				continue;
+			}
+
+			px[0] = Math.floor(Math.cos(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_x[i];
+			py[0] = Math.floor(Math.sin(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_y[i];
+			px[1] = Math.floor(Math.cos((oriyuka_kakudo[i]+50)*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_x[i];
+			py[1] = Math.floor(Math.sin((oriyuka_kakudo[i]+50)*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_y[i];
+			px[2] = Math.floor(Math.cos((oriyuka_kakudo[i]+160)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[2] = Math.floor(Math.sin((oriyuka_kakudo[i]+160)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[3] = Math.floor(Math.cos((oriyuka_kakudo[i]+250)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[3] = Math.floor(Math.sin((oriyuka_kakudo[i]+250)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+
+			for(i2 = 0;i2 <= 3;i2++) {
+				px[i2] = px[i2]-view_x;
+				py[i2] = py[i2]-view_y;
+			}
+
+			//  ポリゴンを描画
+			Applet1.setOffscreenColor(oriyuka_color_r[i],oriyuka_color_g[i],oriyuka_color_b[i],255);
+			Applet1.fillPolygon(px[0],py[0],px[1],py[1],px[2],py[2],px[3],py[3]);
+
+			//  回転する
+			oriyuka_kakudo[i] += oriyuka_vkakudo[i];
+			if(oriyuka_kakudo[i] >= 360) oriyuka_kakudo[i] -= 360;
+			if(oriyuka_kakudo[i] < 0) oriyuka_kakudo[i] += 360;
+
+			px[0] = Math.floor(Math.cos(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_x[i];
+			py[0] = Math.floor(Math.sin(oriyuka_kakudo[i]*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_y[i];
+			px[1] = Math.floor(Math.cos((oriyuka_kakudo[i]+50)*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_x[i];
+			py[1] = Math.floor(Math.sin((oriyuka_kakudo[i]+50)*3.14/180)*oriyuka_r[i]*0.5)+oriyuka_y[i];
+			px[2] = Math.floor(Math.cos((oriyuka_kakudo[i]+160)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[2] = Math.floor(Math.sin((oriyuka_kakudo[i]+160)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+			px[3] = Math.floor(Math.cos((oriyuka_kakudo[i]+250)*3.14/180)*oriyuka_r[i])+oriyuka_x[i];
+			py[3] = Math.floor(Math.sin((oriyuka_kakudo[i]+250)*3.14/180)*oriyuka_r[i])+oriyuka_y[i];
+
+			Applet1.setYukaPosition(oriyuka_yuka[i*10],px[0],py[0],px[1],py[1]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+1],px[1],py[1],px[2],py[2]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+2],px[2],py[2],px[3],py[3]);
+			Applet1.setYukaPosition(oriyuka_yuka[i*10+3],px[3],py[3],px[0],py[0]);
+		}
+	}
+}
+
+
+//  このページが閉じられると呼び出される
+function onUnloadJS() {
+
+
+	unload_f = 1;
+}
+
+
+</script>
+
+</head>
+
+<body bgcolor="silver" onUnload="onUnloadJS()">
+
+<center>
+<applet code="MasaoJSS.class" width="512" height="320" archive="mc_c.jar" id="applet1_id" mayscript>
+
+<!--
+
+  ゲーム内容の変更は、
+  param タグの "" 内を書き換えて行います。
+
+  マップは、 180 * 30 個のパーツで構成されていて、
+  文字の組み合わせで表現されています。
+
+
+  文字の説明
+
+  .  空白
+  A  自分
+  B  亀              足元に空白があると向きを変える
+  C  亀              足元に空白があると落ちる
+  D  亀              足元に空白があると落ちる  ３匹連続
+  E  ピカチー        電撃
+  F  チコリン        はっぱカッター
+  G  ヒノララシ      踏めません
+  H  ポッピー        上下移動
+  I  ポッピー        直進
+  J  ポッピー        直進  ３羽連続
+  K  動く床          上下移動
+  L  動く床          左右移動
+  M  動く床          左右移動  ２個連続
+  N  ドッスンスン    落ちて来る  下に空白が５ブロック必要
+  O  マリリ          跳ねる
+  P  ヤチャモ        火の粉
+  Q  ミズタロウ      水鉄砲
+  R  エアームズ      爆撃
+  S  グラーダ        ボス  噴火
+  T  カイオール      ボス  水の波動
+  U  ファイヤーバー  左回り
+  V  ファイヤーバー  右回り
+  W  タイキング      左右移動    水中専用
+  X  クラゲッソ      バブル光線  水中専用
+  Y  水草            ただの背景
+  Z  センクウザ      ボス  グレネード
+
+  a  ブロック１      レンガ
+  b  ブロック２      岩
+  c  ブロック３      水色のレンガ
+  d  ブロック４      鉄
+  e  ブロック５      鉄の柱１
+  f  ブロック６      鉄の柱２
+  g  ブロック７      土
+  h  ブロック８      城の壁
+  i  ブロック９      黄色のブロック
+  j  ブロック１０    緑色のブロック      背景レイヤー使用時は透明
+  k  ？ブロック      コイン
+  l  ？ブロック      コイン３枚
+  m  ？ブロック      ファイヤーボール    スペースキーでファイヤーボール発射
+  n  ？ブロック      バリア              一定時間無敵
+  o  ？ブロック      タイム              制限時間延長
+  p  ？ブロック      ジェット            空中でスペースキーを押すと上昇
+  q  ？ブロック      ヘルメット          頭突きでブロック１を破壊
+  r  ？ブロック      しっぽ              Ｘキーで前方の敵を攻撃
+  s  ？ブロック      ドリル              Ｘキーで下のブロック１を破壊
+  t  ？ブロック      グレネード          Ｘキーで強力な弾を１発だけ発射
+  u  リンク土管１    他の Web ページへ移動します
+  v  リンク土管２    他の Web ページへ移動します
+  w  リンク土管３    他の Web ページへ移動します
+  x  リンク土管４    他の Web ページへ移動します
+  z  すべる床
+  [  下から通れるブロック                背景レイヤー使用時は透明
+  ]  ハシゴ                              背景レイヤー使用時は透明
+  <  上り坂                              背景レイヤー使用時は透明
+  >  下り坂                              背景レイヤー使用時は透明
+
+  +  一言メッセージ１
+  -  一言メッセージ２
+  *  一言メッセージ３
+  /  一言メッセージ４
+
+  1  雲の左側
+  2  雲の右側
+  3  草
+  4  水中            左に敵など設置するとそこも水中になる    背景レイヤー使用時は透明
+  5  上向きのトゲ
+  6  下向きのトゲ
+  7  ろうそく
+  8  星
+  9  コイン
+
+-->
+
+
+<!--  マップデーター         -->
+<!--  左側                   -->
+<!--                         0         10        20        30        40        50        -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map0-0"  value="............................................................" >
+<param name="map0-1"  value="............................................................" >
+<param name="map0-2"  value="............................................................" >
+<param name="map0-3"  value="............................................................" >
+<param name="map0-4"  value="............................................................" >
+<param name="map0-5"  value="............................................................" >
+<param name="map0-6"  value="............................................................" >
+<param name="map0-7"  value="............................................................" >
+<param name="map0-8"  value="............................................................" >
+<param name="map0-9"  value="............................................................" >
+<param name="map0-10" value="............................................................" >
+<param name="map0-11" value="............................................................" >
+<param name="map0-12" value="............................................................" >
+<param name="map0-13" value="............................................................" >
+<param name="map0-14" value="............................................................" >
+<param name="map0-15" value="............................................................" >
+<param name="map0-16" value="............................................................" >
+<param name="map0-17" value="............................................................" >
+<param name="map0-18" value="............................................................" >
+<param name="map0-19" value="............................................................" >
+<param name="map0-20" value="............................................................" >
+<param name="map0-21" value="............................................................" >
+<param name="map0-22" value="............................................................" >
+<param name="map0-23" value="............................................................" >
+<param name="map0-24" value=".A.........................................................." >
+<param name="map0-25" value="............................................................" >
+<param name="map0-26" value="............................................................" >
+<param name="map0-27" value="............................................................" >
+<param name="map0-28" value="............................................................" >
+<param name="map0-29" value="............................................................" >
+
+<!--  中央                   -->
+<!--                         60        70        80        90        100       110       -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map1-0"  value="............................................................" >
+<param name="map1-1"  value="............................................................" >
+<param name="map1-2"  value=".....................................8......................" >
+<param name="map1-3"  value="............................................................" >
+<param name="map1-4"  value="............................................................" >
+<param name="map1-5"  value="............................................................" >
+<param name="map1-6"  value="............................................................" >
+<param name="map1-7"  value="............................................................" >
+<param name="map1-8"  value="............................................................" >
+<param name="map1-9"  value="............................................................" >
+<param name="map1-10" value="............................................................" >
+<param name="map1-11" value="............................................................" >
+<param name="map1-12" value="............................................................" >
+<param name="map1-13" value="............................................................" >
+<param name="map1-14" value="............................................................" >
+<param name="map1-15" value="............................................................" >
+<param name="map1-16" value="............................................................" >
+<param name="map1-17" value="............................................................" >
+<param name="map1-18" value="............................................................" >
+<param name="map1-19" value="............................................................" >
+<param name="map1-20" value="............................................................" >
+<param name="map1-21" value="............................................................" >
+<param name="map1-22" value="............................................................" >
+<param name="map1-23" value="............................................................" >
+<param name="map1-24" value="............................................................" >
+<param name="map1-25" value="............................................................" >
+<param name="map1-26" value="............................................................" >
+<param name="map1-27" value="............................................................" >
+<param name="map1-28" value="............................................................" >
+<param name="map1-29" value="............................................................" >
+
+<!--  右側                   -->
+<!--                         120       130       140       150       160       170       -->
+<!--                         012345678901234567890123456789012345678901234567890123456789-->
+<param name="map2-0"  value="............................................................" >
+<param name="map2-1"  value="............................................................" >
+<param name="map2-2"  value="............................................................" >
+<param name="map2-3"  value="............................................................" >
+<param name="map2-4"  value="............................................................" >
+<param name="map2-5"  value="............................................................" >
+<param name="map2-6"  value="............................................................" >
+<param name="map2-7"  value="............................................................" >
+<param name="map2-8"  value="............................................................" >
+<param name="map2-9"  value="............................................................" >
+<param name="map2-10" value="............................................................" >
+<param name="map2-11" value="............................................................" >
+<param name="map2-12" value="............................................................" >
+<param name="map2-13" value="............................................................" >
+<param name="map2-14" value="............................................................" >
+<param name="map2-15" value="............................................................" >
+<param name="map2-16" value="............................................................" >
+<param name="map2-17" value="............................................................" >
+<param name="map2-18" value="............................................................" >
+<param name="map2-19" value="............................................................" >
+<param name="map2-20" value="............................................................" >
+<param name="map2-21" value="............................................................" >
+<param name="map2-22" value="............................................................" >
+<param name="map2-23" value="............................................................" >
+<param name="map2-24" value="............................................................" >
+<param name="map2-25" value="............................................................" >
+<param name="map2-26" value="............................................................" >
+<param name="map2-27" value="............................................................" >
+<param name="map2-28" value="............................................................" >
+<param name="map2-29" value="............................................................" >
+
+
+
+
+<!--  FX Update 13 で追加された設定    ここから              -->
+
+<!--  ゲームの進行スピードを調整するスリープタイム           -->
+<!--                  0  固定                                -->
+<!--                  1  可変                                -->
+<param name="variable_sleep_time" value="1">
+
+<!--  スリープタイムの表示                                   -->
+<!--                  0  表示しない                          -->
+<!--                  1  表示する                            -->
+<param name="sleep_time_visible" value="1">
+
+<!--  FX Update 13 で追加された設定    ここまで              -->
+
+
+<!--  Version 3.0 で追加された設定    ここから              -->
+
+<!--  背景レイヤー      1  表示しない                       -->
+<!--                    2  表示する（処理が重いです）       -->
+<param name="layer_mode" value="1">
+
+<!--  マップチップのファイル名                              -->
+<param name="filename_mapchip" value="mapchip.gif">
+
+<!--  背景画像のファイル名                                  -->
+<!--  背景レイヤーを表示すると使えます                      -->
+<param name="filename_haikei"  value="haikei.gif"><!--  ステージ１  -->
+<param name="filename_haikei2" value="haikei.gif"><!--  ステージ２  -->
+<param name="filename_haikei3" value="haikei.gif"><!--  ステージ３  -->
+<param name="filename_haikei4" value="haikei.gif"><!--  ステージ４  -->
+
+<!--  背景画像のスクロール  1  しない                       -->
+<!--                        2  する                         -->
+<!--                        3  強制スクロール               -->
+<param name="gazou_scroll" value="2">
+
+<!--  イージーモード        1  ノーマルモード               -->
+<!--                        2  敵の端を踏んでも倒せる       -->
+<param name="easy_mode" value="1">
+
+<!--  起動中のメッセージ                                    -->
+<param name="now_loading" value="ただいまファイルを読み込み中。しばらくお待ち下さい。">
+
+<!--  Version 3.0 で追加された設定    ここまで              -->
+
+
+<!--  制限時間                                              -->
+<!--  0 を設定すると無制限                                  -->
+<param name="time_max" value="0">
+
+<!--  スクロールモード  1  全方向スクロール                 -->
+<!--                    2  強制スクロール                   -->
+<!--                    3  高速強制スクロール               -->
+<param name="scroll_mode" value="1">
+
+<!--  得点の表示        1  表示する                         -->
+<!--                    2  しない                           -->
+<param name="score_v" value="1">
+
+
+<!--  しっぽの特徴      1  敵を倒せる                       -->
+<!--                    2  ブロック１を壊せる               -->
+<!--                    3  敵を倒せてブロック１を壊せる     -->
+<param name="j_tail_type" value="1">
+
+<!--  しっぽの標準装備  1  しない                           -->
+<!--                    2  する                             -->
+<param name="j_tail_hf" value="1">
+
+<!--  ファイヤーボール  1  水中で消える                     -->
+<!--                    2  水中でも使える                   -->
+<param name="j_fire_mkf" value="1">
+
+<!--  グレネード        1  グレネード    ボスを倒せる       -->
+<!--                    2  グレネード    ボスには効かない   -->
+<!--                    3  エネルギー砲  ボスを倒せる       -->
+<!--                    4  エネルギー砲  ボスには効かない   -->
+<!--                    5  プラズマ砲    ボスを倒せる       -->
+<!--                    6  プラズマ砲    ボスには効かない   -->
+<param name="grenade_type" value="1">
+
+<!--  すべる床          1  ドリル等で破壊できる             -->
+<!--                    2  破壊できない                     -->
+<param name="suberuyuka_hkf" value="1">
+
+<!--  ピカチーの電撃    1  水中で消える                     -->
+<!--                    2  水中でも使える                   -->
+<param name="dengeki_mkf" value="1">
+
+<!--  ヤチャモ          1  火の粉で攻撃                     -->
+<!--                    2  何もしない                       -->
+<param name="yachamo_kf" value="1">
+
+<!--  エアームズ        1  壁に当たると止まる               -->
+<!--                    2  壁に当たると向きを変える         -->
+<param name="airms_kf" value="1">
+
+<!--  動く床  上下移動  1  上下移動                         -->
+<!--                    2  乗ると落ちる                     -->
+<!--                    3  ずっと乗っていると落ちる         -->
+<!--                    4  左回り                           -->
+<!--                    5  右回り                           -->
+<!--                    6  乗れるカイオール                 -->
+<!--                    7  ジャンプ台                       -->
+<param name="ugokuyuka1_type" value="1">
+
+<!--  動く床  左右移動  1  左右移動                         -->
+<!--                    2  乗ると落ちる                     -->
+<!--                    3  ずっと乗っていると落ちる         -->
+<!--                    4  左回り                           -->
+<!--                    5  右回り                           -->
+<!--                    6  乗れるカイオール                 -->
+<!--                    7  ジャンプ台                       -->
+<param name="ugokuyuka2_type" value="1">
+
+<!--  動く床                                                -->
+<!--  左右移動２個連続  1  左右移動２個連続                 -->
+<!--                    2  乗ると落ちる                     -->
+<!--                    3  ずっと乗っていると落ちる         -->
+<!--                    4  左回り                           -->
+<!--                    5  右回り                           -->
+<!--                    6  乗れるカイオール                 -->
+<!--                    7  ジャンプ台                       -->
+<param name="ugokuyuka3_type" value="1">
+
+<!--  グラーダ          1  噴火                             -->
+<!--                    2  亀を投げる                       -->
+<!--                    3  ヒノララシを投げる               -->
+<!--                    4  マリリを投げる                   -->
+<param name="boss_type" value="1">
+
+<!--  カイオール        1  水の波動                         -->
+<!--                    2  バブル光線                       -->
+<param name="boss2_type" value="1">
+
+<!--  センクウザ        1  グレネード                       -->
+<!--                    2  バリアを張って体当たり           -->
+<!--                    3  バリアを張って高速体当たり       -->
+<!--                    4  バリアを張ってジャンプ           -->
+<param name="boss3_type" value="1">
+
+
+<!--  リンク土管１の移動先                                  -->
+<param name="url1" value="http://www.t3.rim.or.jp/~naoto/naoto.html">
+
+<!--  リンク土管２の移動先                                  -->
+<param name="url2" value="http://www.t3.rim.or.jp/~naoto/j_con/index.html">
+
+<!--  リンク土管３の移動先                                  -->
+<param name="url3" value="http://www.t3.rim.or.jp/~naoto/naoto.html">
+
+<!--  リンク土管４の移動先                                  -->
+<param name="url4" value="http://www.t3.rim.or.jp/~naoto/j_con/index.html">
+
+<!--  リンク土管        1  リンク土管                       -->
+<!--                    2  ワープ土管                       -->
+<!--                       同じ番号の土管が、つながります。 -->
+<!--                       ２つずつ設置して下さい。         -->
+<param name="dokan_mode" value="2">
+
+
+<!--  一言メッセージ１  名前                                -->
+<param name="hitokoto1_name" value="浩二">
+<!--  一言メッセージ１  セリフ                              -->
+<!--  セリフの不要な行は、 "0" と指定して下さい。           -->
+<param name="hitokoto1-1" value="今日は、いい天気だなあ、なんてね。">
+<param name="hitokoto1-2" value="プレイ画面でも、こんなセリフを、">
+<param name="hitokoto1-3" value="入れられるように、なったんだ。">
+
+<!--  一言メッセージ２  名前                                -->
+<param name="hitokoto2_name" value="お姫様">
+<!--  一言メッセージ２  セリフ                              -->
+<param name="hitokoto2-1" value="ついに、ここまで来ましたね。">
+<param name="hitokoto2-2" value="ゆうきの証、ミレニアム人面星が、">
+<param name="hitokoto2-3" value="あなたを、待っていますよ。">
+
+<!--  一言メッセージ３  名前                                -->
+<param name="hitokoto3_name" value="ザトシ">
+<!--  一言メッセージ３  セリフ                              -->
+<param name="hitokoto3-1" value="オレは、世界一になる男だ。">
+<param name="hitokoto3-2" value="ぜったい、なってやるーー。">
+<param name="hitokoto3-3" value="0">
+
+<!--  一言メッセージ４  名前                                -->
+<param name="hitokoto4_name" value="クリス">
+<!--  一言メッセージ４  セリフ                              -->
+<param name="hitokoto4-1" value="あたし、クリス。ペットのピカチーが、">
+<param name="hitokoto4-2" value="どこかに行っちゃったの。">
+<param name="hitokoto4-3" value="こまったわね、ぐすん。">
+
+
+<!--  背景色                                                -->
+<!--  ゲーム画面の背景色を、光の３原色の成分で設定します。  -->
+<!--  赤の成分  (0-255)  -->
+<param name="backcolor_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="backcolor_green" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="backcolor_blue" value="255">
+
+<!--  文字の色                                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="scorecolor_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="scorecolor_green" value="0">
+<!--  青の成分  (0-255)  -->
+<param name="scorecolor_blue" value="255">
+
+<!--  グレネードの爆発とエネルギー砲の色１                  -->
+<!--  赤の成分  (0-255)  -->
+<param name="grenade_red1" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="grenade_green1" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="grenade_blue1" value="255">
+
+<!--  グレネードの爆発とエネルギー砲の色２                  -->
+<!--  赤の成分  (0-255)  -->
+<param name="grenade_red2" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="grenade_green2" value="255">
+<!--  青の成分  (0-255)  -->
+<param name="grenade_blue2" value="0">
+
+<!--  水の波動（カイオールの技）の色                        -->
+<!--  赤の成分  (0-255)  -->
+<param name="mizunohadou_red" value="0">
+<!--  緑の成分  (0-255)  -->
+<param name="mizunohadou_green" value="32">
+<!--  青の成分  (0-255)  -->
+<param name="mizunohadou_blue" value="255">
+
+<!--  ファイヤーバーの外側の色                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="firebar_red1" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="firebar_green1" value="0">
+<!--  青の成分  (0-255)  -->
+<param name="firebar_blue1" value="0">
+
+<!--  ファイヤーバーの内側の色                              -->
+<!--  赤の成分  (0-255)  -->
+<param name="firebar_red2" value="255">
+<!--  緑の成分  (0-255)  -->
+<param name="firebar_green2" value="192">
+<!--  青の成分  (0-255)  -->
+<param name="firebar_blue2" value="0">
+
+
+<!--  SCORE の文字                                          -->
+<param name="moji_score" value="SCORE">
+
+<!--  HIGHSCORE の文字                                      -->
+<param name="moji_highscore" value="HIGHSCORE">
+
+<!--  TIME の文字                                           -->
+<param name="moji_time" value="TIME">
+
+<!--  JET の文字                                            -->
+<param name="moji_jet" value="JET">
+
+<!--  GRENADE の文字                                        -->
+<param name="moji_grenade" value="GRENADE">
+
+<!--  LEFT の文字                                           -->
+<param name="moji_left" value="LEFT">
+
+<!--  文字の大きさ  (8-30)                                  -->
+<param name="moji_size" value="14">
+
+
+<!--  タイトル画面のファイル名                              -->
+<param name="filename_title" value="title.gif">
+
+<!--  エンディング画面のファイル名                          -->
+<param name="filename_ending" value="ending.gif">
+
+<!--  ゲームオーバー画面のファイル名                        -->
+<param name="filename_gameover" value="gameover.gif">
+
+<!--  キャラクターパターンのファイル名                      -->
+<param name="filename_pattern" value="pattern.gif">
+
+
+<!--  ゲームの進行スピード  (10-300)                        -->
+<!--  １フレームにおける待ち時間を、設定します。
+      数字が大きいほど遅くなり、
+      デフォルトは、 70 です。                              -->
+<param name="game_speed" value="70">
+
+
+<!--  効果音の設定  ここから                                       -->
+
+<!--  効果音機能          1  使う                                  -->
+<!--                      2  使わない                              -->
+<param name="se_switch" value="1">
+
+<!--  効果音の指定        1  ファイル名を記述して指定する          -->
+<!--                      2  デフォルトのファイル名と指定にする    -->
+<param name="se_filename" value="1">
+
+<!--  状況に応じた効果音を、ファイル名で指定して下さい。           -->
+
+<!--  ゲームスタート  -->
+<param name="filename_se_start"      value="item.au">
+<!--  ゲームオーバー  -->
+<param name="filename_se_gameover"   value="gameover.au">
+<!--  星を取る（ステージクリアー）  -->
+<param name="filename_se_clear"      value="clear.au">
+<!--  コインを取る  -->
+<param name="filename_se_coin"       value="coin.au">
+<!--  アイテムを取る  -->
+<param name="filename_se_get"        value="get.au">
+<!--  ハテナブロックからアイテムが出る  -->
+<param name="filename_se_item"       value="item.au">
+<!--  ジャンプ  -->
+<param name="filename_se_jump"       value="jump.au">
+<!--  スーパージャンプ  -->
+<param name="filename_se_sjump"      value="sjump.au">
+<!--  滑る  -->
+<param name="filename_se_kiki"       value="kiki.au">
+<!--  敵を踏む  -->
+<param name="filename_se_fumu"       value="fumu.au">
+<!--  ファイヤーボール等で敵を倒す  -->
+<param name="filename_se_tobasu"     value="tobasu.au">
+<!--  ファイヤーボール発射  -->
+<param name="filename_se_fireball"   value="shot.au">
+<!--  ジェット  -->
+<param name="filename_se_jet"        value="mgan.au">
+<!--  自分が死んだ  -->
+<param name="filename_se_miss"       value="dosun.au">
+<!--  ブロックを破壊  -->
+<param name="filename_se_block"      value="bakuhatu.au">
+<!--  水しぶき  -->
+<param name="filename_se_mizu"       value="mizu.au">
+<!--  ピカチーの電撃  -->
+<param name="filename_se_dengeki"    value="mgan.au">
+<!--  チコリンのはっぱカッター  -->
+<param name="filename_se_happa"      value="happa.au">
+<!--  ヤチャモの火の粉  -->
+<param name="filename_se_hinoko"     value="mgan.au">
+<!--  ミズタロウの水鉄砲  -->
+<param name="filename_se_mizudeppo"  value="happa.au">
+<!--  エアームズの爆弾  -->
+<param name="filename_se_bomb"       value="shot.au">
+<!--  ドッスンスンが落ちる  -->
+<param name="filename_se_dosun"      value="dosun.au">
+<!--  グラーダの噴火  -->
+<param name="filename_se_grounder"   value="mgan.au">
+<!--  カイオールの水の波動  -->
+<param name="filename_se_kaiole"     value="happa.au">
+<!--  センクウザのグレネード  -->
+<param name="filename_se_senkuuza"   value="shot.au">
+<!--  土管に入る  -->
+<param name="filename_se_dokan"      value="get.au">
+<!--  地図画面からステージへ入る  -->
+<param name="filename_se_chizugamen" value="get.au">
+
+<!--  効果音の設定  ここまで                                       -->
+
+
+</applet>
+
+</center>
+
+
+<h2>スレッドスリープタイムを処理速度に応じて変える</h2>
+<dl>
+<dt>VARIABLE SLEEP</dt>
+<dd>0 の場合は固定、 1 は可変。これの設定と表示は、 HTML のタグで行います。</dd>
+<dt>MAIN PROGRAM TIME</dt>
+<dd>Java と JavaScript の合計処理時間。</dd>
+<dt>SLEEP TIME</dt>
+<dd>スリープする時間。 game_speed で設定された値から、合計処理時間を引いた値。</dd>
+<dt>10 TRY MAIN PROGRAM TIME</dt>
+<dd>１０フレーム分の、処理時間の平均値。</dd>
+</dl>
+
+
+<hr>
+
+<h2>キーボード操作</h2>
+
+<dl>
+<dt>（←），（４）</dt>
+<dd>左へ歩く。素早く２回押すと走る。</dd>
+<dt>（→），（６）</dt>
+<dd>右へ歩く。素早く２回押すと走る。</dd>
+<dt>（スペース），（Ｚ）</dt>
+<dd>ジャンプする。</dd>
+<dt>（Ｔ）</dt>
+<dd>タイトル画面に戻る。</dd>
+</dl>
+
+<p>ゲーム画面をマウスでクリックすると、ゲーム開始です。</p>
+
+<hr>
+
+<h2>遊び方</h2>
+
+<p>ゲーム画面をマウスでクリックすると、ゲーム開始です。赤い人は正義の味方で、主人公です。カーソルキーまたはテンキーで、左右に動きます。素早く２回押すと、走ります。スペースキーで、ジャンプします。彼の趣味は、お金を拾う事です。それと、亀を踏んづける事です。彼の夢は、マップの右の方にある星を取る事です。</p>
+
+<hr>
+
+<p><a href="http://www.t3.rim.or.jp/~naoto/naoto.html">サポートページ</a>へ移動する。</p>
+
+</body>
+
+</html>

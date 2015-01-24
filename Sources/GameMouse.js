@@ -15,10 +15,11 @@ function GameMouse()
 
 GameMouse.prototype.mousePressed = function(paramMouseEvent)
 {
+	var target = paramMouseEvent.target;
+	var rect = target.getBoundingClientRect();
 	this.button_f = true;
-
-	this.click_x = paramMouseEvent.clientX;
-	this.click_y = paramMouseEvent.clientY;
+	this.click_x = (paramMouseEvent.clientX - rect.left) / rect.width * target.width;
+	this.click_y = (paramMouseEvent.clientY - rect.top) / rect.height * target.height;
 }
 
 GameMouse.prototype.mouseReleased = function(paramMouseEvent)
