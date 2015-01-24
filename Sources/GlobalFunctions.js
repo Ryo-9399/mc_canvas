@@ -3,6 +3,10 @@
 function Game(params, id, options){
 	var randomID = makeRandomString();
 
+	options = options || {};
+	options.width = options.width || 512;
+	options.height = options.height || 320;
+
 	// DivエレメントID
 	if(id){
 		// idを持つ要素の配下に設置する
@@ -26,8 +30,8 @@ function Game(params, id, options){
 	// メインCanvasオブジェクト
 	this.__canvas = document.createElement("canvas");
 	this.__canvas.id = this.__canvasID;
-	this.__canvas.width = 512;
-	this.__canvas.height = 320;
+	this.__canvas.width = options.width;
+	this.__canvas.height = options.height;
 	this.__canvas.textContent = "※お使いのブラウザはHTML5に対応していないため表示できません。";
 	this.__box.appendChild(this.__canvas);
 
