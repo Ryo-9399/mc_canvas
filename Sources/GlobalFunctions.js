@@ -195,9 +195,25 @@ Game.replaceAll = function(options){
 		}
 		for(var i=0; i<appletArray.length; i++){
 			var applet = appletArray[i];
-			if(applet.code.match(/masaoconstruction/i)){
+			if(applet.code.match(/masaoconstruction/i) || applet.code.match(/masaokani/i)){
 				// 正男であるようなら置換
 				Game.replaceByDom(applet, options);
+			}
+		}
+		var objects = document.getElementsByTagName("object");
+		var objectArray = [];
+		for(var i=0; i<objects.length; i++){
+			objectArray.push(objects[i]);
+		}
+		for(var i=0; i<objectArray; i++){
+			var object = objectArray[i];
+			var param = object.getElementsByName("code")[0];
+			// name属性に"code"を持つparam要素が
+			// value属性に"masaoconstruction"または"masaokani"を含む時にまさおアプレットと判断する
+			if(param.tagName.match(/param/i)){
+				if(param.value.match(/masaoconstruction/i) || param.value.match(/masaokani/i)){
+					Game.replaceByDom(object, options);
+				}
 			}
 		}
 	};
