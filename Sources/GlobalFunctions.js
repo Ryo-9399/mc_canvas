@@ -15,7 +15,7 @@ function Game(params, id, options){
 		// idが無ければ現在の場所に作る
 		// ドキュメント書き込み文
 		this.__boxID = "__mcdiv" + randomID;
-		document.write("<div id='" + this.__boxID + "'>");
+		document.write("<div id='" + this.__boxID + "'><\/div>");
 	}
 
 	// キャンバスID
