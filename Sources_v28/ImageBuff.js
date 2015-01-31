@@ -55,8 +55,7 @@ ImageBuff.prototype.load = function(url)
 		ImageBuff_onerror(_this);
 	};
 	this._dat.src = url;
-	var s = this._dat.src;
-	if(s.indexOf("file:") == 0 || s.indexOf("data:") == 0)
+	if(this._dat.complete)
 	{
 		this.onload();
 	}
@@ -129,26 +128,26 @@ Graphics.prototype.drawLine = function(x1, y1, x2, y2)
 }
 
 // 画像を描画する
-// 引数4個: ImageBuffオブジェクト, X座標, Y座標
-// 引数6個: ImageBuffオブジェクト, 描画X座標, 描画Y座標, 描画スケール幅, 描画スケール高さ
-// 引数10個: ImageBuffオブジェクト, データX座標, データY座標, データ幅, データ高さ, 描画X座標, 描画Y座標, 描画スケール幅, 描画スケール高さ
+// 引数3-4個: ImageBuffオブジェクト, X座標, Y座標
+// 引数5-6個: ImageBuffオブジェクト, 描画X座標, 描画Y座標, 描画スケール幅, 描画スケール高さ
+// 引数9-10個: ImageBuffオブジェクト, データX座標, データY座標, データ幅, データ高さ, 描画X座標, 描画Y座標, 描画スケール幅, 描画スケール高さ
 Graphics.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 {
 	if(img._dat == null) return false;
 	if(this._ctx == null) return false;
 	try
 	{
-		if(arguments.length == 4)
+		if(arguments.length <= 4)
 		{
 			this._ctx.drawImage(img._dat, a1, a2);
 			return true;
 		}
-		else if(arguments.length == 6)
+		else if(arguments.length <= 6)
 		{
 			this._ctx.drawImage(img._dat, a1, a2, a3, a4);
 			return true;
 		}
-		else if(arguments.length == 10)
+		else if(arguments.length <= 10)
 		{
 			this._ctx.drawImage(img._dat, a1, a2, a3, a4, a5, a6, a7, a8);
 			return true;
