@@ -261,6 +261,11 @@ Game.replaceByDom = function(paramScope, options){
 Game.focus = (function()
 {
 	var focusedObject;
+	document.addEventListener("mousedown", function()
+		{
+			focusedObject = null;
+		}
+	);
 	return {
 		focus : function(obj)
 		{

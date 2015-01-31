@@ -399,6 +399,7 @@ MasaoConstruction.prototype.init_j = function()
 	var _gm = this.gm;
 	this.__canvas.addEventListener("mousedown", function(e)
 	{
+		e.stopImmediatePropagation();
 		// このオブジェクトにフォーカスを当てる
 		Game.focus.focus(this);
 		GameMouse_mousePressed(_gm, e);
