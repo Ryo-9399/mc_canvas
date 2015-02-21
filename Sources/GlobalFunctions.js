@@ -59,23 +59,9 @@ function Game(params, id, options){
 
 	// ソフトウェアパッド用変数
 	//var __pad_btn;
-	this.__pad_before = new Array(8);
-	this.__pad_after = new Array(8);
+	this.__pad_before = [];
+	this.__pad_after = [];
 	this.__pad_touches = [];
-	this.__pad_coords = [
-		[410, 30, 490, 30, 490, 170, 410, 170],
-		[320, 30, 400, 30, 400, 170, 320, 170],
-		[250, 30, 290, 30, 290, 70, 250, 70],
-		[200, 30, 240, 30, 240, 70, 200, 70],
-		[5, 60, 87, 60, 87, 140, 5, 140],
-		[175, 60, 93, 60, 93, 140, 175, 140],
-		[30, 5, 30, 80, 150, 80, 150, 5],
-		[30, 195, 30, 120, 150, 120, 150, 195]
-		// 方向キーは重ねて縦・横同時押しができるようにする
-	];
-	this.__pad_chars = [
-		"X", "Z", "T", "P", "←", "→", "↑", "↓"
-	];
 
 	// タッチスクリーン対応端末での処理
 	if(window.TouchEvent)
@@ -130,8 +116,9 @@ function Game(params, id, options){
 			var h = innerHeight;
 			var rw = (w < h) ? w : h;
 			__pad.style.width = w + "px";
-			__pad.style.height = (rw*0.4) + "px";
-		}, 500);
+			__pad.style.height = (rw*Game.pad.style.rate) + "px";
+			this.__pad_update();
+			}.bind(this), 500);
 
 		// 表示リストにパッドを登録
 		Game.padAccessor.append(__pad);
@@ -394,15 +381,16 @@ Game.prototype.__pad_update = function()
 	var dy = r.top;
 	var c = this.__pad_off.getContext("2d");
 	var i, j, k, tmp, sx, sy;
+	var num = Game.pad.coords.length;
 
 	c.clearRect(0, 0, 500, 200);
-	//c.fillStyle = "rgba(255, 255, 255, 0.3)";
-	//c.fillRect(0, 0, 500, 200);
-	c.fillStyle = "rgba(128, 128, 128, 0.5)";
-	for(i = 0; i < 8; i++)
+	c.fillStyle = Game.pad.style.back;
+	c.fillRect(0, 0, 500, 200);
+	c.fillStyle = Game.pad.style.button;
+	for(i = 0; i < num; i++)
 	{
 		c.beginPath();
-		tmp = this.__pad_coords[i];
+		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		for(j = 0; j < k; j++)
@@ -414,19 +402,19 @@ Game.prototype.__pad_update = function()
 	}
 
 
-	for(i = 0; i < 8; i++)
+	for(i = 0; i < num; i++)
 	{
 		this.__pad_after[i] = false;
 	}
 
 
-	c.fillStyle = "rgba(0, 0, 0, 0.5)";
+	c.fillStyle = Game.pad.style.active;
 
 
-	for(i = 0; i < 8; i++)
+	for(i = 0; i < num; i++)
 	{
 		c.beginPath();
-		tmp = this.__pad_coords[i];
+		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		for(j = 0; j < k; j++)
@@ -444,12 +432,12 @@ Game.prototype.__pad_update = function()
 	}
 
 
-	c.strokeStyle = "black";
-	c.fillStyle = "black";
-	for(i = 0; i < 8; i++)
+	c.strokeStyle = Game.pad.style.border;
+	c.fillStyle = Game.pad.style.text;
+	for(i = 0; i < num; i++)
 	{
 		c.beginPath();
-		tmp = this.__pad_coords[i];
+		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		sx = tmp[0]; sy = tmp[1];
@@ -461,14 +449,14 @@ Game.prototype.__pad_update = function()
 		}
 		c.closePath();
 		c.stroke();
-		c.fillText(this.__pad_chars[i], sx / k, sy / k);
+		c.fillText(Game.pad.chars[i], sx / k, sy / k);
 	}
 	c.stroke();
 
 	c = this.__pad.getContext("2d");
 	c.clearRect(0, 0, 500, 200);
 	c.drawImage(this.__pad_off, 0, 0);
-	for(var i = 0; i < 8; i++)
+	for(i = 0; i < num; i++)
 	{
 		if(this.__pad_before[i] != this.__pad_after[i])
 		{
@@ -483,7 +471,7 @@ Game.prototype.__pad_pressed = function(ch)
 {
 	if(this.__mc.gk)
 	{
-		var co = this.__get_code(ch);
+		var co = Game.pad.codes[ch];
 		this.__mc.gk.keyPressed( { 
 			keyCode:co,
 			preventDefault:function(){}
@@ -495,26 +483,11 @@ Game.prototype.__pad_released = function(ch)
 {
 	if(this.__mc.gk)
 	{
-		var co = this.__get_code(ch);
+		var co = Game.pad.codes[ch];
 		this.__mc.gk.keyReleased( { 
 			keyCode:co,
 			preventDefault:function(){}
 		} );
-	}
-}
-
-Game.prototype.__get_code = function(ch)
-{
-	switch(ch)
-	{
-	case 4: return 37;
-	case 6: return 38;
-	case 5: return 39;
-	case 7: return 40;
-	case 1: return 90;
-	case 0: return 88;
-	case 2: return 84;
-	case 3: return 80;
 	}
 }
 
@@ -527,6 +500,34 @@ Game.prototype.__pad_event = function(e)
 		this.__pad_touches.push(e.touches[i]);
 	}
 	this.__pad_update();
+}
+
+
+Game.pad = {
+	coords : [
+		[410, 30, 490, 30, 490, 170, 410, 170],
+		[320, 30, 400, 30, 400, 170, 320, 170],
+		[250, 30, 290, 30, 290, 70, 250, 70],
+		[200, 30, 240, 30, 240, 70, 200, 70],
+		[5, 60, 87, 60, 87, 140, 5, 140],
+		[175, 60, 93, 60, 93, 140, 175, 140],
+		[30, 5, 30, 80, 150, 80, 150, 5],
+		[30, 195, 30, 120, 150, 120, 150, 195]
+	],
+	chars : [
+		"X", "Z", "T", "P", "←", "→", "↑", "↓"
+	],
+	codes : [
+		88, 90, 84, 80, 37, 39, 38, 40
+	],
+	style : {
+		rate : 0.4,
+		back : "rgba(0, 0, 0, 0)",
+		button : "rgba(128, 128, 128, 0.5)",
+		active : "rgba(0, 0, 0, 0.5)",
+		text : "black",
+		border : "black",
+	}
 }
 
 
