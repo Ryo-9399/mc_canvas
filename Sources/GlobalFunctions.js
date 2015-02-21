@@ -117,8 +117,10 @@ function Game(params, id, options){
 			var rw = (w < h) ? w : h;
 			__pad.style.width = w + "px";
 			__pad.style.height = (rw*Game.pad.style.rate) + "px";
+			if(Game.pad.avoidAD)
+			__pad.style.bottom = (rw*0.16) + "px";
 			this.__pad_update();
-			}.bind(this), 500);
+		}.bind(this), 500);
 
 		// 表示リストにパッドを登録
 		Game.padAccessor.append(__pad);
@@ -527,7 +529,8 @@ Game.pad = {
 		active : "rgba(0, 0, 0, 0.5)",
 		text : "black",
 		border : "black",
-	}
+	},
+	avoidAD : false
 }
 
 
