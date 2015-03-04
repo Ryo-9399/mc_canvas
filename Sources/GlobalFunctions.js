@@ -442,16 +442,14 @@ Game.prototype.__pad_update = function()
 		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
-		sx = tmp[0]; sy = tmp[1];
 		for(j = 1; j < k; j++)
 		{
 			c.lineTo(tmp[(j << 1)], tmp[(j << 1) + 1]);
-			sx += tmp[(j << 1)];
-			sy += tmp[(j << 1) + 1];
 		}
 		c.closePath();
 		c.stroke();
-		c.fillText(Game.pad.chars[i], sx / k, sy / k);
+		k = measureCenterOfGravity(tmp);
+		c.fillText(Game.pad.chars[i], k[0], k[1]);
 	}
 	c.stroke();
 
@@ -466,6 +464,49 @@ Game.prototype.__pad_update = function()
 			if(this.__pad_after[i]) this.__pad_pressed(i);
 			else this.__pad_released(i);
 		}
+	}
+
+	// 頂点の配列から重心を求める
+	function measureCenterOfGravity(p)
+	{
+		/*
+		(x1, y1) : 基本頂点の座標
+		(x2, y2) : 古い頂点の座標
+		(x3, y3) : 次の頂点の座標
+		(gx, gy) : 現時点の重心の座標
+		s : 現時点での多角形の面積（質量と比例する）
+		(gx2, gy2) : 新しい三角形の重心
+		s2 : 新しい三角形の面積（質量と比例する）
+		*/
+		var i, n = p.length >> 1;
+		var x1, y1, x2, y2, x3, y3;
+		var gx, gy, s, gx2, gy2, s2;
+		x1 = p[0];  y1 = p[1];
+		gx = x1;  gy = y1;
+		if(n == 1)
+		{
+			return [gx, gy];
+		}
+		x2 = p[2];  y2 = p[3];
+		gx = (gx+x2) / 2;  gy = (gy+y2) / 2;
+		if(n == 2)
+		{
+			return [gx, gx];
+		}
+		x3 = p[4];  y3 = p[5];
+		s = Math.abs((x2-x1)*(y3-y1) - (y2-y1)*(x3-x1)) / 2;
+		gx = (x1+x2+x3) / 3;  gy = (y1+y2+y3) / 3;
+		for(i = 3; i < n; i++) // ４頂点以上からこのループに入る
+		{
+			x2 = x3;  y2 = y3;
+			x3 = p[i << 1];  y3 = p[(i << 1) + 1];
+			s2 = Math.abs((x2-x1)*(y3-y1) - (y2-y1)*(x3-x1)) / 2;
+			gx2 = (x1+x2+x3) / 3;  gy2 = (y1+y2+y3) / 3;
+			gx = (s*gx + s2*gx2) / (s+s2);
+			gy = (s*gy + s2*gy2) / (s+s2);
+			s = s2;
+		}
+		return [gx, gy];
 	}
 }
 
