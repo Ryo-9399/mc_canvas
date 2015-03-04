@@ -15,3 +15,6 @@
 	CanvasMasao.YukaObject = YukaObject;
 	return CanvasMasao;
 }();
+
+var JSMasao = CanvasMasao.Game;
+JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;
