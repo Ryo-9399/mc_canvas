@@ -36343,7 +36343,7 @@ MainProgram.prototype.disposeYuka = function(s)
 	}
 }
 
-MainProgram.prototype.setYukaColor = function(i, color)
+MainProgram.prototype.setYukaColor = function(index, color)
 {
 	if(arguments.length == 5)
 	{
@@ -36379,16 +36379,16 @@ MainProgram.prototype.setYukaColor = function(i, color)
 	{
 		if(this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 96)
 			return false;
-		if(i < 0)
+		if(index < 0)
 			return false;
-		if(i > this.yuka_id_max)
+		if(index > this.yuka_id_max)
 			return false;
-		if((this.yo[i].con < 200 || this.yo[i].con >= 500) && this.yo[i].con != 110)
+		if((this.yo[index].con < 200 || this.yo[index].con >= 500) && this.yo[index].con != 110)
 		{
 			return false;
 		} else
 		{
-			this.yo[i].color = color;
+			this.yo[index].color = color;
 			return true;
 		}
 	}
