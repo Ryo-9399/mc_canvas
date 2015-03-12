@@ -167,6 +167,7 @@ GameGraphicsForApplet.prototype.setPatternImage = function(paramString)
 			if(n >= this.spt_h_kijyun)
 			{
 				this.spt_img[1][j] = new ImageBuff(32, 32);
+				localG = this.spt_img[1][j].getGraphics();
 				localG.scale(-1, 1);
 				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
 			}
