@@ -1904,6 +1904,17 @@ function MasaoJSS(mc)
 			return 0;
 	}
 
+	this.setBossHP = function(s)
+	{
+		var i = parseInt(s);
+		if(isNaN(i))
+			return false;
+		if(mc.mp)
+			return mc.mp.setBossHP(i);
+		else
+			return false;
+	}
+
 	this.getBossDirection = function()
 	{
 		if(mc.mp)
