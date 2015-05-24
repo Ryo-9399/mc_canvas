@@ -830,6 +830,26 @@ function MasaoJSS(mc)
 		}
 	}
 
+	this.setSound = function(s, s1)
+	{
+		if(!mc.gs)
+			return false;
+		var i;
+		i = parseInt(s);
+		if(isNaN(i))
+		{
+			i = -1;
+		}
+		if(i >= 1 && i <= 32)
+		{
+			mc.gs.setSound(i-1,s1);
+			return true;
+		} else
+		{
+			return false;
+		}
+	}
+
 	this.setScrollLock = function(s)
 	{
 		var flag = false;
