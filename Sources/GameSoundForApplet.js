@@ -15,7 +15,7 @@ function GameSoundForApplet(paramTagDataBase, paramApplet)
 
 	var k = 1;
 
-	for (var j = 0; j < 32; j++) {
+	for (var j = 0; j < this.s_data.length; j++) {
 		this.s_data[j] = null;
 	}
 	var str = this.tdb.getValue("se_switch");
@@ -205,6 +205,13 @@ function GameSoundForApplet(paramTagDataBase, paramApplet)
 	this.bgm_genzai = -1;
 }
 
+GameSoundForApplet.prototype.setSound = function(paramInt,paramString) {
+	if(paramInt < 0 || paramInt >= this.s_data.length){
+		return;
+	}
+	this.s_data[paramInt] = this.ap.getAudioClip(paramString);
+}
+
 GameSoundForApplet.prototype.resetSound = function() {}
 
 GameSoundForApplet.prototype.play = function(paramInt)
@@ -228,7 +235,7 @@ GameSoundForApplet.prototype.stopAll = function()
 	if (!this.use_f) {
 		return;
 	}
-	for (var i = 0; i <= 31; i++) {
+	for (var i = 0; i < this.s_data.length; i++) {
 		if (this.s_data[i] != null) {
 			this.s_data[i].stop();
 		}
