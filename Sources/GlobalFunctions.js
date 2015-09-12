@@ -27,6 +27,11 @@ function Game(params, id, options){
 	// 要素格納Divエレメント
 	this.__box = document.getElementById(this.__boxID);
 
+    // 後始末が必要なもの一覧 入るもの：
+    // {type: "setInterval", value: (setIntervalの返り値)}
+    // {type: "eventListener", target: (EventTarget), name: (イベント名), value: (イベントハンドラ関数)}
+    this.__resourceList = [];
+
 	// メインCanvasオブジェクト
 	this.__canvas = document.createElement("canvas");
 	this.__canvas.id = this.__canvasID;
@@ -110,7 +115,7 @@ function Game(params, id, options){
 		ss.bottom = "0px";
 		ss.left = "0px";
 		//ss.textAlign = "right";
-		setInterval(function()
+		var __interval_id=setInterval(function()
 		{
 			var w = innerWidth;
 			var h = innerHeight;
@@ -121,6 +126,10 @@ function Game(params, id, options){
 			__pad.style.bottom = (rw*0.16) + "px";
 			this.__pad_update();
 		}.bind(this), 500);
+        this.__resourceList.push({
+            type: "setInterval",
+            value: __interval_id
+        });
 
 		// 表示リストにパッドを登録
 		Game.padAccessor.append(__pad);
@@ -145,7 +154,7 @@ function Game(params, id, options){
 
 	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
-	this.__mc = new MasaoConstruction(params, this.__canvas, options || {});
+	this.__mc = new MasaoConstruction(params, this.__canvas, this, options || {});
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
@@ -168,9 +177,13 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-	setInterval(function(){
+	var __interval_id = setInterval(function(){
 		this.__loop();
 	}.bind(this), __st);
+    this.__resourceList.push({
+        type: "setInterval",
+        value: __interval_id
+    });
 }
 
 // ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
@@ -289,6 +302,20 @@ Game.padAccessor = (function()
 	};
 })();
 
+// ゲームを終了する関数
+Game.prototype.kill = function(){
+    //ゲームを止める
+    this.__mc.stop();
+    //__resourceListの中身を全部後始末してあげる
+    for(var rl=this.__resourceList,i=0,l=rl.length;i<l;i++){
+        if(rl[i].type==="setInterval"){
+            clearInterval(rl[i].value);
+        }else if(rl[i].type==="eventListener"){
+            rl[i].target.removeEventListener(rl[i].name, rl[i].value);
+        }
+    }
+    this.__resourceList=[];
+};
 
 // ループ関数
 Game.prototype.__loop = function()
