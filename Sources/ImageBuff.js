@@ -281,7 +281,7 @@ Graphics.prototype.setFont = function(font)
 	if(font._name == Font.SERIF) str += "serif";
 	else if(font._name == Font.SANS_SERIF) str += "sans-serif";
 	else if(font._name == Font.MONOSPACED) str += "monospace";
-	else if(font._name == Font.DIALOG) str += "sans-serif";
+	else if(font._name == Font.DIALOG) str += "'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
 	else str += '"' + font._name + '"';
 	this._ctx.font = str;
 	this._font = font;
