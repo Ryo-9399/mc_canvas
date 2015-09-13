@@ -315,6 +315,10 @@ Game.prototype.kill = function(){
         }
     }
     this.__resourceList=[];
+    //追加したノードを消す
+    while(this.__box.hasChildNodes()){
+        this.__box.removeChild(this.__box.firstChild);
+    }
 };
 
 // ループ関数
