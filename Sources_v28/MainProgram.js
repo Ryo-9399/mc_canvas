@@ -1,6 +1,7 @@
 
 function MainProgram(gamegraphics, gamemouse, gamekey)
 {
+    this.ran_seed = undefined;
 	this.ml_mode = 0;
 	this.ml_mode_c = 0;
 	this.score = 0;

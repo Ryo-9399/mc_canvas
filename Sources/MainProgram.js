@@ -2,6 +2,7 @@
 function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 {
 	this.ran = undefined;
+    this.ran_seed = undefined;
 	this.gamecolor_back = undefined;
 	this.gamecolor_back_s = undefined;
 	this.gamecolor_back_t = undefined;
@@ -2179,7 +2180,6 @@ MainProgram.prototype.ranInt = function(i)
     ran_seed = (ran_seed ^ (ran_seed >>> 11))>>>0;
     this.ran_seed = ran_seed = (ran_seed ^ (ran_seed << 19))>>>0;
     // * 2.3283064365386963e-10 は /0x100000000の意味
-    console.log(i, ran_seed, ((ran_seed * 2.3283064365386963e-10)*i)|0);
     return ((ran_seed * 2.3283064365386963e-10)*i)|0;
 }
 
