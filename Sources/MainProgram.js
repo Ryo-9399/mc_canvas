@@ -2167,11 +2167,20 @@ MainProgram.prototype.setMyMuteki = function()
 
 MainProgram.prototype.ranInit = function()
 {
+    //seedを初期化
+    this.ran_seed = (Math.random()*0x100000000)|0;
 }
 
 MainProgram.prototype.ranInt = function(i)
 {
-	return Math.floor(Math.random() * i);
+    //xor-shift 乱数(a=9, b=11, c=19)
+    var ran_seed = this.ran_seed;
+    ran_seed = (ran_seed ^ (ran_seed << 9))>>>0;
+    ran_seed = (ran_seed ^ (ran_seed >>> 11))>>>0;
+    this.ran_seed = ran_seed = (ran_seed ^ (ran_seed << 19))>>>0;
+    // * 2.3283064365386963e-10 は /0x100000000の意味
+    console.log(i, ran_seed, ((ran_seed * 2.3283064365386963e-10)*i)|0);
+    return ((ran_seed * 2.3283064365386963e-10)*i)|0;
 }
 
 MainProgram.prototype.drawScore = function()
