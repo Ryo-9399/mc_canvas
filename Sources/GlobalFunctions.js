@@ -158,7 +158,7 @@ function Game(params, id, options){
 	// MasaoConstructionオブジェクト
 	this.__mc = new MasaoConstruction(params, this.__canvas, this, options || {});
     for(var i=0;i<options.extensions.length;i++){
-        options.extensions[i].inject(this.__mc);
+        options.extensions[i].inject(this.__mc, options);
     }
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
