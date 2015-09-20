@@ -1,11 +1,13 @@
 
-function MasaoConstruction(params, __canvas, options)
+function MasaoConstruction(params, __canvas, __game, options)
 {
 	this.th_interval = 70;
 	this.th_jm = 10;
 	this.params = params;
 	this.__canvas = __canvas;
 	this.__appimg = new ImageBuff(512, 320);
+
+    this.__game = __game;
 
 	// 起動オプションの連想配列
 	this.options = options;
@@ -144,16 +146,29 @@ MasaoConstruction.prototype.init_j = function()
 
 	this.gk = new GameKey();
 	var _gk = this.gk;
-	document.addEventListener("keydown", function(e)
-	{
+    var _handler=function(e){
 		if(Game.focus.hasFocus(this))
 			GameKey_keyPressed(_gk, e);
-	}.bind(this));
-	document.addEventListener("keyup", function(e)
-	{
+	}.bind(this);
+	document.addEventListener("keydown", _handler);
+    this.__game.__resourceList.push({
+        type: "eventListener",
+        target: document,
+        name: "keydown",
+        value: _handler
+    });
+
+    _handler=function(e){
 		if(Game.focus.hasFocus(this))
 			GameKey_keyReleased(_gk, e);
-	}.bind(this));
+	}.bind(this);
+    document.addEventListener("keyup", _handler);
+    this.__game.__resourceList.push({
+        type: "eventListener",
+        target: document,
+        name: "keyup",
+        value: _handler
+    });
 
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk);
