@@ -6,6 +6,8 @@ function Game(params, id, options){
 	options = options || {};
 	options.width = options.width || 512;
 	options.height = options.height || 320;
+    //Extends内のものをここに入れると反映される
+    options.extensions = options.extensions || [];
 
 	// DivエレメントID
 	if(id){
@@ -26,6 +28,11 @@ function Game(params, id, options){
 
 	// 要素格納Divエレメント
 	this.__box = document.getElementById(this.__boxID);
+
+    // 後始末が必要なもの一覧 入るもの：
+    // {type: "setInterval", value: (setIntervalの返り値)}
+    // {type: "eventListener", target: (EventTarget), name: (イベント名), value: (イベントハンドラ関数)}
+    this.__resourceList = [];
 
 	// メインCanvasオブジェクト
 	this.__canvas = document.createElement("canvas");
@@ -124,7 +131,7 @@ function Game(params, id, options){
 		ss.bottom = "0px";
 		ss.left = "0px";
 		//ss.textAlign = "right";
-		setInterval(function()
+		var __interval_id=setInterval(function()
 		{
 			var w = innerWidth;
 			var h = innerHeight;
@@ -132,6 +139,10 @@ function Game(params, id, options){
 			__pad.style.width = w + "px";
 			__pad.style.height = (rw*0.4) + "px";
 		}, 500);
+        this.__resourceList.push({
+            type: "setInterval",
+            value: __interval_id
+        });
 
 		// 表示リストにパッドを登録
 		Game.padAccessor.append(__pad);
@@ -156,7 +167,10 @@ function Game(params, id, options){
 
 	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
-	this.__mc = new MasaoConstruction(params, this.__canvas, options || {});
+	this.__mc = new MasaoConstruction(params, this.__canvas, this, options || {});
+    for(var i=0;i<options.extensions.length;i++){
+        options.extensions[i].inject(this.__mc);
+    }
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
@@ -179,9 +193,13 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-	setInterval(function(){
+	var __interval_id = setInterval(function(){
 		this.__loop();
 	}.bind(this), __st);
+    this.__resourceList.push({
+        type: "setInterval",
+        value: __interval_id
+    });
 }
 
 // ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
@@ -300,6 +318,24 @@ Game.padAccessor = (function()
 	};
 })();
 
+// ゲームを終了する関数
+Game.prototype.kill = function(){
+    //ゲームを止める
+    this.__mc.stop();
+    //__resourceListの中身を全部後始末してあげる
+    for(var rl=this.__resourceList,i=0,l=rl.length;i<l;i++){
+        if(rl[i].type==="setInterval"){
+            clearInterval(rl[i].value);
+        }else if(rl[i].type==="eventListener"){
+            rl[i].target.removeEventListener(rl[i].name, rl[i].value);
+        }
+    }
+    this.__resourceList=[];
+    //追加したノードを消す
+    while(this.__box.hasChildNodes()){
+        this.__box.removeChild(this.__box.firstChild);
+    }
+};
 
 // ループ関数
 Game.prototype.__loop = function()

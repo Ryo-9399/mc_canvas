@@ -1,23 +1,4 @@
 
-// すでに出来上がっているCanvasMasao.MasaoConstructionプロトタイプの
-// プロパティメソッドuserInitとuserSubをオーバーライドして書き換える
-
-// userInit: MasaoKani2のインスタンスをMasaoConstructionのプロパティに代入する
-CanvasMasao.MasaoConstruction.prototype.userInit = function()
-{
-	this.masaoKani2 = new CanvasMasao.MasaoKani2(this);
-}
-
-// userSub: MasaoKani2のメソッドmasaoEvent(g, image)を呼び出す
-CanvasMasao.MasaoConstruction.prototype.userSub = function(g, image)
-{
-	this.masaoKani2.masaoEvent(g, image);
-}
-
-
-
-
-
 
 // MasaoKani2クラス
 CanvasMasao.MasaoKani2 = function(mc)
@@ -2502,3 +2483,13 @@ CanvasMasao.MasaoKani2 = function(mc)
 		return mc.getParameter(s);
 	}
 }
+
+//inject（MasaoConstructionのインスタンスをMasaoKani2にする）
+CanvasMasao.MasaoKani2.inject = function(mc){
+    mc.userInit = function(){
+        this.masaoKani2 = new CanvasMasao.MasaoKani2(this);
+    };
+    mc.userSub = function(g,image){
+        this.masaoKani2.masaoEvent(g, image);
+    };
+};
