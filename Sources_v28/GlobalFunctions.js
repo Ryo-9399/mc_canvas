@@ -6,6 +6,8 @@ function Game(params, id, options){
 	options = options || {};
 	options.width = options.width || 512;
 	options.height = options.height || 320;
+    //Extends内のものをここに入れると反映される
+    options.extensions = options.extensions || [];
 
 	// DivエレメントID
 	if(id){
@@ -166,6 +168,9 @@ function Game(params, id, options){
 	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
 	this.__mc = new MasaoConstruction(params, this.__canvas, this, options || {});
+    for(var i=0;i<options.extensions.length;i++){
+        options.extensions[i].inject(this.__mc);
+    }
 	this.__mc.start();
 	var __st = this.__st = this.__mc.getParameter("game_speed");
 	if(__st)
