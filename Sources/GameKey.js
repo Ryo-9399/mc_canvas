@@ -137,7 +137,7 @@ GameKey.prototype.keyReleased = function(paramKeyEvent)
 {
 	var i = paramKeyEvent.keyCode;
 	if ((i >= 0) && (i <= 255)) {
-		this.codekey_f[this.key_code] = false;
+		this.codekey_f[i] = false;
 	}
 	switch (i)
 	{
