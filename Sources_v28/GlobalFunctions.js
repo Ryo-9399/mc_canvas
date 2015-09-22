@@ -216,8 +216,8 @@ Game.replaceAll = function(options){
 			appletArray.push(applets[i]);
 		}
 		for(var i=0; i<appletArray.length; i++){
-			var applet = appletArray[i];
-			if(applet.code.match(/masaoconstruction/i)){
+			var applet = appletArray[i], code = applet.getAttribute("code") || "";
+			if(code.match(/masaoconstruction/i)){
 				// 正男であるようなら置換
 				Game.replaceByDom(applet, options);
 			}
