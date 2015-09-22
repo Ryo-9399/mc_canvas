@@ -125,9 +125,11 @@ CanvasMasao.InputRecorder = (function(){
                     status="abort";
                 }
                 var result={
+                    status: status,
                     //入力データが表すステージ(1-4)
                     stage: this.stage,
-                    status: status,
+                    //最終スコア
+                    score: mc.mp.score,
                     buffers: result_buffers
                 };
                 this.inputdataCallback(result);
