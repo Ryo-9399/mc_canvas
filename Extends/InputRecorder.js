@@ -44,7 +44,6 @@ CanvasMasao.InputRecorder = (function(){
         this.current_buffer_size=0;
     };
     InputRecorder.prototype.init = function(){
-        this.initBuffer();
         // GameKeyをフック
         var _this=this;
         var gk = this.mc.gk, _keyPressed = gk.keyPressed, _keyReleased = gk.keyReleased;
@@ -53,7 +52,7 @@ CanvasMasao.InputRecorder = (function(){
             _keyPressed.call(gk, paramKeyEvent);
             //記録
             if(fl && _this.recording){
-                _this.save(gk.key_code, true);
+                _this.save(paramKeyEvent.keyCode, true);
             }
         };
         gk.keyReleased = function(paramKeyEvent){
@@ -79,6 +78,17 @@ CanvasMasao.InputRecorder = (function(){
         }
         //キーデータ
         this.pushData(pressed, sa, keyCode);
+        this.last_frame = frame;
+    };
+    InputRecorder.prototype.saveCurrentPressing = function(){
+        //今のフレームを記録
+        var gk=this.mc.gk, codekey_f=gk.codekey_f;
+        for(var i=0; i<256; i++){
+            if(codekey_f[i]===true){
+                this.pushData(true, this.frame-this.last_frame, i);
+                this.last_frame=this.frame;
+            }
+        }
     };
     InputRecorder.prototype.pushData = function(pressed_flag, interval, keyCode){
         if(this.current_buffer_size===this.current_buffer.length){
@@ -97,11 +107,15 @@ CanvasMasao.InputRecorder = (function(){
             playing = ml_mode===100 || ml_mode===110;
         if(!prev_playing && playing){
             //ゲーム開始した
+            this.initBuffer();
             this.frame=0;
             this.last_frame=0;
             this.stage = mc.mp.stage;
             this.ran_seed = mc.mp.ran_seed;
             this.recording=true;
+
+            //0フレーム目の入力を記録
+            this.saveCurrentPressing();
         }else if(prev_playing && !playing){
             //ステージが終わった
 
@@ -181,6 +195,7 @@ CanvasMasao.InputRecorder = (function(){
             if(ml_mode===50){
                 //タイトルに戻った
                 this.allbuf = [];
+                this.buffers= [];
             }
             this.recording=false;
         }else{
