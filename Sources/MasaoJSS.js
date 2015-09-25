@@ -2753,4 +2753,16 @@ function MasaoJSS(mc)
 			return false;
 		}
 	}
+
+	this.isPaused = function()
+	{
+		if(mc.mp)
+		{
+			if(mc.mp.ml_mode == 110)
+				return 1;
+			else
+				return 0;
+		}
+		return 0;
+	}
 }
