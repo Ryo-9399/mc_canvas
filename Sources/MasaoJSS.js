@@ -1192,6 +1192,29 @@ function MasaoJSS(mc)
 		}
 	}
 
+	this.setMyDirection = function(s)
+	{
+		if(this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
+		{
+			var i = parseInt(s);
+			if(isNaN(i)) i = -1;
+			if(i < 0) return false;
+			if(mc.mp.j_tokugi == 15)
+			{
+				if(i > 3) return false;
+				mc.mp.j_4_muki = i;
+			} else
+			{
+				if(i > 1) return false;
+				mc.mp.co_j.muki = i;
+			}
+			return true;
+		} else
+		{
+			return false;
+		}
+	}
+
 	this.setHTMLText = function(s) // 使用不可
 	{
 		/*if(mc.mp)
