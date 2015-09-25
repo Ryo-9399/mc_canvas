@@ -403,7 +403,8 @@ KeyboardMenu.prototype.move = function()
 
 KeyboardMenu.prototype.drawMenus = function()
 {
-	this.hg.setFont(new Font("Dialog", 0, 12));
+	var beforeFont = this.hg._font;
+	this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
 	for (var i = 0; i <= 15; i++)
 	{
 		var k = this.c[i];
@@ -861,6 +862,7 @@ KeyboardMenu.prototype.drawMenus = function()
 			}
 		}
 	}
+	this.hg.setFont(beforeFont);
 }
 
 KeyboardMenu.prototype.drawWindowbox = function(paramInt1, paramInt2, paramInt3, paramInt4)
