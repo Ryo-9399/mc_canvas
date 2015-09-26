@@ -2765,4 +2765,25 @@ function MasaoJSS(mc)
 		}
 		return 0;
 	}
+
+	this.pause = function(s)
+	{
+		var i;
+		if(mc.mp)
+		{
+			i = parseInt(s);
+			if(isNaN(i)) i = -1;
+			if(i < 0 || i > 1)
+				return false;
+			if(i == 0 && mc.mp.ml_mode == 110)
+				mc.mp.ml_mode = 100;
+			else if(i == 1 && mc.mp.ml_mode == 100) {
+				mc.mp.ml_mode = 110;
+				mc.mp.ml_mode_c = 0;
+			}
+			else return false;
+			return true;
+		}
+		return false;
+	}
 }
