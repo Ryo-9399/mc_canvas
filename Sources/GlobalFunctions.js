@@ -110,12 +110,12 @@ function Game(params, id, options){
 		__pad.addEventListener("touchcancel", __pad_event, false);
 		__pad.style.display = "none";
 		// パッド配置
-		this.__padDiv.appendChild(__pad);
+		document.body.appendChild(__pad);
 
 		ss = __pad.style;
-		ss.position = "fixed";
-		ss.bottom = "0px";
-		ss.left = "0px";
+		ss.position = "absolute";
+		//ss.bottom = "0px";
+		//ss.left = "0px";
 		//ss.textAlign = "right";
 		var __interval_id=setInterval(function()
 		{
@@ -124,8 +124,11 @@ function Game(params, id, options){
 			var rw = (w < h) ? w : h;
 			__pad.style.width = w + "px";
 			__pad.style.height = (rw*Game.pad.style.rate) + "px";
+			__pad.style.left = scrollX + "px";
 			if(Game.pad.avoidAD)
-			__pad.style.bottom = (rw*0.16) + "px";
+				__pad.style.top = (scrollY + h - rw*Game.pad.style.rate - rw*0.16) + "px";
+			else
+				__pad.style.top = (scrollY + h - rw*Game.pad.style.rate) + "px";
 			this.__pad_update();
 		}.bind(this), 500);
         this.__resourceList.push({
