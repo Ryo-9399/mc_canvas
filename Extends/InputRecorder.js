@@ -2,7 +2,42 @@
 //
 
 /*
- * Masao Playlog Format: METADATA (HEADER BODY)*
+ * Masao Playlog Format v2: METADATA (HEADER BODY)*
+ *
+ * METADATA block:
+ *   magic: 0x4D 0x0E 0x50 0x0A
+ *   version 4 octets | MPF version in Big-Endian (0x00 0x00 0x00 0x02)
+ *   reserved: 0x00 0x00 0x00 0x0C
+ *
+ * HEADER block:
+ *   seed: 4 octets | initial ran_seed of succeeding BODY block in Big-Endian
+ *   stage: 1 octet | stage number
+ *   status: 000000zc |
+ *           c: 0 = aborted/miss, 1 = cleared
+ *           z: 0 = TR1 is space, 1 = TR1 is Z
+ *   reserved: 0x00 0x00
+ *   score: 4 octets| eventual score of this log
+ *   length: 4 octets | length in bytes of succeeding BODY block in Big-Endian
+ *
+ * BODY block:
+ *   fxxxxkkk |
+ *           f: 0 = release, 1 = press
+ *           xxxx: interval in frames
+ *           kkk: key code
+ *               0 = nop,
+ *               1 = LEFT
+ *               2 = UP
+ *               3 = RIGHT
+ *               4 = DOWN
+ *               5 = TR1
+ *               6 = X
+ *               7 = other
+ *           if kkk = 7, following octet follows:
+ *               kkkkkkkk | k: key code.
+ */
+
+/*
+ * Masao Playlog Format v1: METADATA (HEADER BODY)*
  *
  * METADATA block:
  *   magic: 0x4D 0x0E 0x50 0x0A
@@ -37,6 +72,7 @@ CanvasMasao.InputRecorder = (function(){
         this.ran_seed=null; //最初のran_seed
         this.stage=null;    //現在のステージ
         this.recording = false;
+        this.tr1_key = 0;   //TR1に該当するキー（Space or Z）
         //バッファ
         this.allbuf=[]; //全ステージ通しのデータが入ったバッファ
         this.buffers=[];
@@ -71,10 +107,10 @@ CanvasMasao.InputRecorder = (function(){
         //入力情報をバッファに保存
         var frame=this.frame, last_frame=this.last_frame;
         var sa=frame-last_frame;
-        //前の入力との差は127フレームまでしか記録できないので、それを超える場合はnopをはさむ
-        while(sa>127){
-            this.pushData(false, 127, 0);
-            sa-=127;
+        //前の入力との差は15フレームまでしか記録できないので、それを超える場合はnopをはさむ
+        while(sa>15){
+            this.pushData(false, 15, 0);
+            sa-=15;
         }
         //キーデータ
         this.pushData(pressed, sa, keyCode);
@@ -91,15 +127,25 @@ CanvasMasao.InputRecorder = (function(){
         }
     };
     InputRecorder.prototype.pushData = function(pressed_flag, interval, keyCode){
+        //3bitのキーコード
+        var k1 = this.keyBits(keyCode);
+        if(k1!==7){
+            //1 octetであらわす
+            this.addToBuffer(((+pressed_flag)<<7) | ((interval & 15)<<3) | (k1&7));
+        }else{
+            //2 octetsであらわす
+            this.addToBuffer(((+pressed_flag)<<7) | ((interval & 15)<<3) | 7);
+            this.addToBuffer(keyCode);
+        }
+    };
+    InputRecorder.prototype.addToBuffer = function(char){
+        //実際にbufferをいじる
         if(this.current_buffer_size===this.current_buffer.length){
             //満杯なので次のバッファを作る
             this.buffers.push(this.current_buffer);
             this.initBuffer();
         }
-        var sz=this.current_buffer_size, buf=this.current_buffer;
-        buf[sz] = ((+pressed_flag)<<7) | (interval & 0x7F);
-        buf[sz+1] = keyCode;
-        this.current_buffer_size=sz+2;
+        this.current_buffer[this.current_buffer_size++] = char;
     };
     InputRecorder.prototype.masaoEvent = function(g,image){
         var mc=this.mc, ml_mode=mc.mp.ml_mode;
@@ -110,8 +156,9 @@ CanvasMasao.InputRecorder = (function(){
             this.initBuffer();
             this.frame=0;
             this.last_frame=0;
-            this.stage = mc.mp.stage;
-            this.ran_seed = mc.mp.ran_seed;
+            this.stage=mc.mp.stage;
+            this.tr1_key=0;
+            this.ran_seed=mc.mp.ran_seed;
             this.recording=true;
 
             //0フレーム目の入力を記録
@@ -148,7 +195,11 @@ CanvasMasao.InputRecorder = (function(){
             //stage
             header_view.setUint8(4, this.stage);
             //status
-            header_view.setUint8(5, status==="clear" ? 1 : 0);
+            /// 1bit目（clearかどうか）
+            var status_octet = status==="clear" ? 1 : 0;
+            /// 2bit目（TR1がZかどうか）
+            status_octet |= this.tr1_key===90 ? 2 : 0;
+            header_view.setUint8(5, status_octet);
             //reserved
             header_view.setUint16(6,0);
             //score
@@ -178,7 +229,7 @@ CanvasMasao.InputRecorder = (function(){
                     //全部終わったので結果をアレする
                     //METADATA blockを作る
                     var metadata = new Uint8Array([0x4D, 0x0E, 0x50, 0x0A,
-                                                  0x00, 0x00, 0x00, 0x01,
+                                                  0x00, 0x00, 0x00, 0x02,
                                                   0x00, 0x00, 0x00, 0x0C
                     ]);
                     this.allbuf = [metadata].concat(this.allbuf);
@@ -224,6 +275,46 @@ CanvasMasao.InputRecorder = (function(){
             sum+=size;
         }
         return result;
+    };
+    InputRecorder.prototype.keyBits = function(keyCode){
+        //keyCodeをアレにする
+        if(keyCode===0){
+            //nop
+            return 0;
+        }else if(keyCode===37 || keyCode===100){
+            //LEFT
+            return 1;
+        }else if(keyCode===38 || keyCode===104){
+            //UP
+            return 2;
+        }else if(keyCode===39 || keyCode===102){
+            //RIGHT
+            return 3;
+        }else if(keyCode===40 || keyCode===98){
+            //DOWN
+            return 4;
+        }else if(keyCode===88){
+            //X
+            return 6;
+        }else if(this.tr1_key===keyCode){
+            //TR1
+            return 5;
+        }else{
+            if(this.tr1_key===0){
+                //まだTR1が定まっていない
+                if(keyCode===90){
+                    //Z
+                    this.tr1_key=90;
+                    return 5;
+                }else if(keyCode===32){
+                    //Space
+                    this.tr1_key=32;
+                    return 5;
+                }
+            }
+            //その他のキーだ
+            return 7;
+        }
     };
     InputRecorder.inject = function(mc, options){
         var _ui=mc.userInit, _us=mc.userSub;
