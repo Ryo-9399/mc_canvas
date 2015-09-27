@@ -25,6 +25,10 @@ CanvasMasao.InputPlayer = (function(){
     InputPlayer.prototype.init = function(){
         //マウスを押したか
         this.mouse_f=false;
+        //ステージの初期化フラグ
+        this.stage_f=false;
+        //再生終了フラグ
+        this.end_f=false;
         this.initReader();
 
         //GameKeyを乗っ取る
@@ -36,10 +40,9 @@ CanvasMasao.InputPlayer = (function(){
         };
     };
     InputPlayer.prototype.initReader = function(){
-        //読み取り中
-        this.playing = true;
         //データの読み取りを初期化
         var buf = new Uint8Array(this.inputdata/*,0,12*/);
+        console.log(buf);
         if(buf[0]!==0x4D || buf[1]!==0x0E || buf[2]!==0x50 || buf[3]!==0x0A){
             //マジックナンバーが合わない
             console.error("入力データの読み込みに失敗しました。不明なファイル形式です。");
@@ -61,6 +64,13 @@ CanvasMasao.InputPlayer = (function(){
             this.playing = false;
             return;
         }
+        if(this.stage_f===true){
+            return;
+        }
+        //再生中フラグ
+        this.playing = true;
+        //ステージを初期化直後である感じのフラグ
+        this.stage_f=true;
         var v=new DataView(this.inputdata), head_idx=this.head_idx;
         //seedを読む
         var ran_seed = v.getUint32(head_idx, false);
@@ -71,6 +81,7 @@ CanvasMasao.InputPlayer = (function(){
         this.keyTable[5] = status&2 ? 90 : 32;
 
         var body_size = v.getUint32(head_idx+12);
+        console.log(head_idx, body_size);
 
         //bodyを示すTypedArray
         var body_buf = this.body_buf = new Uint8Array(this.inputdata, head_idx+16, body_size);
@@ -92,7 +103,7 @@ CanvasMasao.InputPlayer = (function(){
             });
             this.mouse_f=false;
         }
-        if(ml_mode===60){
+        if(ml_mode===60 && this.end_f===false){
             //ゲーム開始準備完了。ゲームを開始する
             mc.gm.mousePressed({
                 //MouseEventをエミュレート
@@ -108,6 +119,7 @@ CanvasMasao.InputPlayer = (function(){
             this.initStage();
         }else if(this.playing && (ml_mode===100 || ml_mode===110)){
             //ゲーム中なので再生する
+            this.stage_f=false;
             var d = this.frame - this.base_frame, body_buf=this.body_buf, len=body_buf.length, body_idx = this.body_idx, c1, k, keyCode;
             while(body_idx < len){
                 c1 = body_buf[body_idx];
@@ -148,6 +160,9 @@ CanvasMasao.InputPlayer = (function(){
                 //突破した（もうデータがない）
                 this.playing = false;
             }
+        }else if(ml_mode>=400){
+            //クリアしたので再生終了
+            this.end_f = true;
         }
     };
     InputPlayer.inject = function(mc, options){
