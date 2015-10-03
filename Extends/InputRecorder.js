@@ -1,62 +1,6 @@
 // Input Recorder
 //
 
-/*
- * Masao Playlog Format v2: METADATA (HEADER BODY)*
- *
- * METADATA block:
- *   magic: 0x4D 0x0E 0x50 0x0A
- *   version 4 octets | MPF version in Big-Endian (0x00 0x00 0x00 0x02)
- *   reserved: 0x00 0x00 0x00 0x0C
- *
- * HEADER block:
- *   seed: 4 octets | initial ran_seed of succeeding BODY block in Big-Endian
- *   stage: 1 octet | stage number
- *   status: 000000zc |
- *           c: 0 = aborted/miss, 1 = cleared
- *           z: 0 = TR1 is space, 1 = TR1 is Z
- *   reserved: 0x00 0x00
- *   score: 4 octets| eventual score of this log
- *   length: 4 octets | length in bytes of succeeding BODY block in Big-Endian
- *
- * BODY block:
- *   fxxxxkkk |
- *           f: 0 = release, 1 = press
- *           xxxx: interval in frames
- *           kkk: key code
- *               0 = nop,
- *               1 = LEFT
- *               2 = UP
- *               3 = RIGHT
- *               4 = DOWN
- *               5 = TR1
- *               6 = X
- *               7 = other
- *           if kkk = 7, following octet follows:
- *               kkkkkkkk | k: key code.
- */
-
-/*
- * Masao Playlog Format v1: METADATA (HEADER BODY)*
- *
- * METADATA block:
- *   magic: 0x4D 0x0E 0x50 0x0A
- *   version 4 octets | MPF version in Big-Endian (0x00 0x00 0x00 0x01)
- *   reserved: 0x00 0x00 0x00 0x0C
- *
- * HEADER block:
- *   seed: 4 octets | initial ran_seed of succeeding BODY block in Big-Endian
- *   stage: 1 octet | stage number
- *   status:1 octet | 0x00 = aborted/miss, 0x01 = cleared
- *   reserved: 0x00 0x00
- *   score: 4 octets| eventual score of this log
- *   length: 4 octets | length in bytes of succeeding BODY block in Big-Endian
- *
- * BODY block:
- *   fxxxxxxx | f: 0 = release, 1 = press. xxxxxxx: interval in frames
- *   kkkkkkkk | k: key code. (0 = nop)
- */
-
 CanvasMasao.InputRecorder = (function(){
     var InputRecorder = function(mc, inputdataCallback){
         this.mc=mc;
@@ -73,6 +17,12 @@ CanvasMasao.InputRecorder = (function(){
         this.stage=null;    //現在のステージ
         this.recording = false;
         this.tr1_key = 0;   //TR1に該当するキー（Space or Z）
+        //最後のコンティニュー情報
+        this.prev_cpoint_con = 0;
+        this.prev_cpoint_stage = 0;
+        this.prev_cpoint_x = 32;
+        this.prev_cpoint_y = 320;
+        this.continued = false; //プレイごとに管理
         //バッファ
         this.allbuf=[]; //全ステージ通しのデータが入ったバッファ
         this.buffers=[];
@@ -97,6 +47,8 @@ CanvasMasao.InputRecorder = (function(){
                 _this.save(paramKeyEvent.keyCode, false);
             }
         };
+
+        this.reset();
     };
     InputRecorder.prototype.initBuffer = function(){
         //バッファを作成
@@ -147,8 +99,17 @@ CanvasMasao.InputRecorder = (function(){
         }
         this.current_buffer[this.current_buffer_size++] = char;
     };
+    InputRecorder.prototype.reset = function(){
+        //タイトル画面時の初期化
+        this.allbuf=[];
+        this.buffers=[];
+        this.prev_cpoint_con = 0;
+        this.prev_cpoint_stage = 0;
+        this.prev_cpoint_x = 0;
+        this.prev_cpoint_y = 0;
+    };
     InputRecorder.prototype.masaoEvent = function(g,image){
-        var mc=this.mc, ml_mode=mc.mp.ml_mode;
+        var mc=this.mc, mp=mc.mp, ml_mode=mp.ml_mode;
         var prev_playing = this.prev_ml_mode===100 || this.prev_ml_mode===110,
             playing = ml_mode===100 || ml_mode===110;
         if(!prev_playing && playing){
@@ -156,10 +117,16 @@ CanvasMasao.InputRecorder = (function(){
             this.initBuffer();
             this.frame=0;
             this.last_frame=0;
-            this.stage=mc.mp.stage;
+            this.stage=mp.stage;
             this.tr1_key=0;
-            this.ran_seed=mc.mp.ran_seed;
+            this.ran_seed=mp.ran_seed;
             this.recording=true;
+            //コンティニュー関係の初期化
+            this.continued=false;
+            this.prev_cpoint_con = mp.cpoint_con;
+            this.prev_cpoint_stage = mp.cpoint_stage;
+            this.prev_cpoint_x = mp.cpoint_x;
+            this.prev_cpoint_y = mp.cpoint_y;
 
             //0フレーム目の入力を記録
             this.saveCurrentPressing();
@@ -175,7 +142,7 @@ CanvasMasao.InputRecorder = (function(){
             });
             //種類(クリアした="clear", やられた="miss", 中断した="abort")
             var status;
-            if(mc.mp.stage !== this.stage || ml_mode===260 || ml_mode >= 400){
+            if(mp.stage !== this.stage || ml_mode===260 || ml_mode >= 400){
                 //ステージが進行した or ゲームクリア画面なのでステージクリアした
                 status="clear";
             }else if(ml_mode>=300 || ml_mode===90 || ml_mode===250){
@@ -185,7 +152,7 @@ CanvasMasao.InputRecorder = (function(){
                 status="abort";
             }
             //最終スコア
-            var score=mc.mp.score;
+            var score=mp.score;
 
             //HEADER blockを作成
             var header = new Uint8Array(16);
@@ -222,7 +189,7 @@ CanvasMasao.InputRecorder = (function(){
                 this.inputdataCallback(result);
             }
             //記録
-            if(status==="clear"){
+            if(status==="clear" || this.continued){
                 //クリアのログを残す
                 this.allbuf = this.allbuf.concat(result_buffers);
                 if(ml_mode>=400 && this.inputdataCallback != null){
@@ -245,12 +212,19 @@ CanvasMasao.InputRecorder = (function(){
             }
             if(ml_mode===50){
                 //タイトルに戻った
-                this.allbuf = [];
-                this.buffers= [];
+                this.reset();
             }
             this.recording=false;
-        }else{
+        }else if(playing){
             this.frame++;
+            if(this.prev_cpoint_con !== mp.cpoint_con || this.prev_cpoint_stage !== mp.cpoint_stage || this.prev_cpoint_x !== mp.cpoint_x || this.prev_cpoint_y != mp.cpoint_y){
+                //コンティニューされた
+                this.continued=true;
+                this.prev_cpoint_con = mp.cpoint_con;
+                this.prev_cpoint_stage = mp.cpoint_stage;
+                this.prev_cpoint_x = mp.cpoint_x;
+                this.prev_cpoint_y = mp.cpoint_y;
+            }
         }
         this.prev_ml_mode = ml_mode;
     };
