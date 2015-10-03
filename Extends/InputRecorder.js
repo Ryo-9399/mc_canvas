@@ -176,9 +176,14 @@ CanvasMasao.InputRecorder = (function(){
             //HEADER blockを結合
             result_buffers = [header].concat(result_buffers);
 
+            //クリアデータに必要か？
+            var required = status==="clear" || this.continued;
+
             //状況を表すオブジェクトを作る
             var result={
                 status: status,
+                continued: this.continued,
+                required: required,
                 //入力データが表すステージ(1-4)
                 stage: this.stage,
                 //最終スコア
@@ -189,7 +194,7 @@ CanvasMasao.InputRecorder = (function(){
                 this.inputdataCallback(result);
             }
             //記録
-            if(status==="clear" || this.continued){
+            if(required){
                 //クリアのログを残す
                 this.allbuf = this.allbuf.concat(result_buffers);
                 if(ml_mode>=400 && this.inputdataCallback != null){
