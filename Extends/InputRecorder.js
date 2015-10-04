@@ -2,10 +2,12 @@
 //
 
 CanvasMasao.InputRecorder = (function(){
-    var InputRecorder = function(mc, inputdataCallback){
+    var InputRecorder = function(mc, inputdataCallback, requiresCallback){
         this.mc=mc;
         //ひとかたまりのデータが揃ったときにコールバックする
         this.inputdataCallback = inputdataCallback;
+        //1プレイのデータが最終データに必要かどうか判断する
+        this.requiresCallback = requiresCallback;
         //前フレームのml_modeを記録
         this.prev_ml_mode=0;
         //現在のフレーム
@@ -176,20 +178,26 @@ CanvasMasao.InputRecorder = (function(){
             //HEADER blockを結合
             result_buffers = [header].concat(result_buffers);
 
-            //クリアデータに必要か？
-            var required = status==="clear" || this.continued;
-
             //状況を表すオブジェクトを作る
             var result={
                 status: status,
                 continued: this.continued,
-                required: required,
+                required: null,
                 //入力データが表すステージ(1-4)
                 stage: this.stage,
                 //最終スコア
                 score: score,
                 buffer: this.singlify(result_buffers)
             };
+            //クリアデータに必要か？
+            var required;
+            if(this.requiresCallback){
+                required = !!this.requiresCallback(result);
+            }else{
+                required= status==="clear" || this.continued;
+            }
+            result.required = required;
+
             if(this.inputdataCallback != null){
                 this.inputdataCallback(result);
             }
@@ -297,13 +305,16 @@ CanvasMasao.InputRecorder = (function(){
     };
     InputRecorder.inject = function(mc, options){
         var _ui=mc.userInit, _us=mc.userSub;
-        var inputdataCallback = null;
+        var inputdataCallback = null, requiresCallback = null;
         if("function"===typeof options.inputdataCallback){
             inputdataCallback = options.inputdataCallback;
         }
+        if("function"===typeof options.requiresCallback){
+            requiresCallback = options.requiresCallback;
+        }
         mc.userInit = function(){
             _ui.apply(mc);
-            this.inputRecorder = new CanvasMasao.InputRecorder(this, inputdataCallback);
+            this.inputRecorder = new CanvasMasao.InputRecorder(this, inputdataCallback, requiresCallback);
             this.inputRecorder.init();
         };
         mc.userSub = function(g,image){
