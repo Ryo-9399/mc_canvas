@@ -62,6 +62,7 @@ CanvasMasao.InputPlayer = (function(){
         if(this.inputdata.byteLength <= this.head_idx){
             //もうないのでは
             this.playing = false;
+            this.end_f = true;
             return;
         }
         if(this.stage_f===true){
@@ -103,20 +104,20 @@ CanvasMasao.InputPlayer = (function(){
             });
             this.mouse_f=false;
         }
-        if(ml_mode===60 && this.end_f===false){
-            //ゲーム開始準備完了。ゲームを開始する
-            mc.gm.mousePressed({
-                //MouseEventをエミュレート
-                target: mc.__canvas,
-                clientX: 0,
-                clientY: 0,
-                preventDefault: function(){}
-            });
-            this.mouse_f=true;
-        }
         if(ml_mode===60 || ml_mode===90){
             //ステージ初期化
             this.initStage();
+            if(ml_mode===60 && this.end_f===false){
+                //ゲーム開始準備完了。ゲームを開始する
+                mc.gm.mousePressed({
+                    //MouseEventをエミュレート
+                    target: mc.__canvas,
+                    clientX: 0,
+                    clientY: 0,
+                    preventDefault: function(){}
+                });
+                this.mouse_f=true;
+            }
         }else if(this.playing && (ml_mode===100 || ml_mode===110)){
             //ゲーム中なので再生する
             this.stage_f=false;
@@ -160,9 +161,6 @@ CanvasMasao.InputPlayer = (function(){
                 //突破した（もうデータがない）
                 this.playing = false;
             }
-        }else if(ml_mode>=400){
-            //クリアしたので再生終了
-            this.end_f = true;
         }
     };
     InputPlayer.inject = function(mc, options){

@@ -178,47 +178,41 @@ CanvasMasao.InputRecorder = (function(){
             //HEADER blockを結合
             result_buffers = [header].concat(result_buffers);
 
-            //状況を表すオブジェクトを作る
-            var result={
-                status: status,
-                continued: this.continued,
-                required: null,
-                //入力データが表すステージ(1-4)
-                stage: this.stage,
-                //最終スコア
-                score: score,
-                buffer: this.singlify(result_buffers)
-            };
             //クリアデータに必要か？
             var required;
             if(this.requiresCallback){
+                //状況を表すオブジェクトを作る
+                var result={
+                    status: status,
+                    continued: this.continued,
+                    //入力データが表すステージ(1-4)
+                    stage: this.stage,
+                    //これ終了時点のスコア
+                    score: score
+                };
                 required = !!this.requiresCallback(result);
             }else{
                 required= status==="clear" || this.continued;
             }
-            result.required = required;
-
-            if(this.inputdataCallback != null){
-                this.inputdataCallback(result);
-            }
+            
             //記録
             if(required){
                 //クリアのログを残す
-                this.allbuf = this.allbuf.concat(result_buffers);
-                if(ml_mode>=400 && this.inputdataCallback != null){
-                    //全部終わったので結果をアレする
+                var allbuf = this.allbuf = this.allbuf.concat(result_buffers), stage=this.stage, continued=this.continued;
+                if(this.inputdataCallback != null){
+                    //新しいのが来たのでコールバックする
                     //METADATA blockを作る
                     var metadata = new Uint8Array([0x4D, 0x0E, 0x50, 0x0A,
                                                   0x00, 0x00, 0x00, 0x02,
                                                   0x00, 0x00, 0x00, 0x0C
                     ]);
-                    this.allbuf = [metadata].concat(this.allbuf);
                     setTimeout(function(){
                         this.inputdataCallback({
-                            status: "all",
-                            stage: this.stage,
+                            stage: stage,
+                            continued: continued,
+                            cleared: status==="clear",
                             score: score,
-                            buffer: this.singlify(this.allbuf)
+                            buffer: this.singlify([metadata].concat(allbuf))
                         });
                     }.bind(this),0);
                 }
