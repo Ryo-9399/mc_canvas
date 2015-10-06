@@ -42,7 +42,7 @@ CanvasMasao.InputPlayer = (function(){
     InputPlayer.prototype.initReader = function(){
         //データの読み取りを初期化
         var buf = new Uint8Array(this.inputdata/*,0,12*/);
-        console.log(buf);
+        //console.log(buf);
         if(buf[0]!==0x4D || buf[1]!==0x0E || buf[2]!==0x50 || buf[3]!==0x0A){
             //マジックナンバーが合わない
             console.error("入力データの読み込みに失敗しました。不明なファイル形式です。");
@@ -82,7 +82,7 @@ CanvasMasao.InputPlayer = (function(){
         this.keyTable[5] = status&2 ? 90 : 32;
 
         var body_size = v.getUint32(head_idx+12);
-        console.log(head_idx, body_size);
+        //console.log(head_idx, body_size);
 
         //bodyを示すTypedArray
         var body_buf = this.body_buf = new Uint8Array(this.inputdata, head_idx+16, body_size);
