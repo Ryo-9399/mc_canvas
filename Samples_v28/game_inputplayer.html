@@ -6,21 +6,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>まさお コンストラクション  サンプルゲーム</TITLE>
 
-<script type="text/javascript" src="../Outputs/CanvasMasao.js"></script>
-<script type="text/javascript" src="../Extends/InputRecorder.js"></script>
+<script type="text/javascript" src="../Outputs/CanvasMasao_v28.js"></script>
+<script type="text/javascript" src="../Extends/InputPlayer.js"></script>
 <script type="text/javascript">
-  //InputRecorderでデータをとるためのやつ
+  //↓ ここにBase64エンコードされたMasao Playing Formatのデータ
+  var data = "TQ5QCgAAAAIAAAAMdBy9fAEDAAAAAAEuAAAAWIWDBQuLeL0VeK0deHilHXjlJXh41SV4G3iLC4udJXhb2UmTC4vVHXhjiRGTC4ulJSObC5P1C4ENMdkJuWGTC4sTg90VeHjVDXh4eP0NeP0N0QMJkRGREQA=";
+  //InputPlayerでデータを再生するサンプル
+  //まずバイナリに変換
+  var str=atob(data);
+  var view=new Uint8Array(str.length);
+  for(var i=0;i<str.length;i++){
+    view[i]=str.charCodeAt(i);
+  }
   CanvasMasao.Game.replaceAll({
-    extensions: [CanvasMasao.InputRecorder],
-    inputdataCallback: function(obj){
-        //データが得られた
-        var buf=obj.buffer;
-        var view = new Uint8Array(buf);
-        //Base64に変換
-        var chars =[].map.call(view,function(char){return String.fromCharCode(char)});
-        var b = btoa(chars.join(""));
-        document.getElementById('inputdata').textContent = b;
-    }
+    extensions: [CanvasMasao.InputPlayer],
+    inputdata: view.buffer
   });
 </script>
 
@@ -149,7 +149,7 @@
 <PARAM NAME="map0-22" VALUE="...12...............12.....9.9...aaa.....aa.aaaaaaaa...12...">
 <PARAM NAME="map0-23" VALUE=".............B............aaaaa..............9.aaaaa........">
 <PARAM NAME="map0-24" VALUE=".........aaaaa..........................B...aaaaaaaa........">
-<PARAM NAME="map0-25" VALUE="....989.............................aaaaa...9.9aa999........">
+<PARAM NAME="map0-25" VALUE="....9.9.............................aaaaa...9.9aa999........">
 <PARAM NAME="map0-26" VALUE="....aaa...............B.............9.9.9...aaaaaaaa........">
 <PARAM NAME="map0-27" VALUE="...........aaaaaa..aaaaaa....................9.aaaaa........">
 <PARAM NAME="map0-28" VALUE=".A........aaaaaaa..aaaaaa............D......aaaaaaaa........">
