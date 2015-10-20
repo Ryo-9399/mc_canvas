@@ -1,6 +1,16 @@
 // Input Player
 
 
+/*
+ *
+ * [A]--------[B]--------[C]------[D]
+ *
+ * [B] で ml_mode = 100になる
+ * [C] で 1回目のmL100が実行される
+ *
+ * ... [A]のおわりのmasaoEventでframe = 0
+ */
+
 CanvasMasao.InputPlayer = (function(){
     var InputPlayer = function(mc, inputdata){
         this.mc = mc;
@@ -27,6 +37,8 @@ CanvasMasao.InputPlayer = (function(){
         this.mouse_f=false;
         //ステージの初期化フラグ
         this.stage_f=false;
+        //Fフラグ
+        this.f_f = false;
         //再生終了フラグ
         this.end_f=false;
         this.initReader();
@@ -77,9 +89,11 @@ CanvasMasao.InputPlayer = (function(){
         var ran_seed = v.getUint32(head_idx, false);
         this.mc.mp.ran_seed = ran_seed;
         //statusも読む
-        var status = v.getUint32(head_idx+5)
+        var status = v.getUint8(head_idx+5);
         //Z flagを調べる
         this.keyTable[5] = status&2 ? 90 : 32;
+        //F flagを調べる
+        this.f_f = !!(status&4);
 
         var body_size = v.getUint32(head_idx+12);
         //console.log(head_idx, body_size);
@@ -94,7 +108,7 @@ CanvasMasao.InputPlayer = (function(){
         this.body_idx = body_idx;
     };
     InputPlayer.prototype.masaoEvent = function(g, image){
-        var mc=this.mc, ml_mode=mc.mp.ml_mode, gk=mc.gk;
+        var mc=this.mc, ml_mode=mc.mp.ml_mode;
         if(this.mouse_f===true){
             //マウスを押していたので開放
             mc.gm.mouseReleased({
@@ -107,6 +121,7 @@ CanvasMasao.InputPlayer = (function(){
         if(ml_mode===60 || ml_mode===90){
             //ステージ初期化
             this.initStage();
+            console.log(this.f_f);
             if(ml_mode===60 && this.end_f===false){
                 //ゲーム開始準備完了。ゲームを開始する
                 mc.gm.mousePressed({
@@ -117,50 +132,65 @@ CanvasMasao.InputPlayer = (function(){
                     preventDefault: function(){}
                 });
                 this.mouse_f=true;
+                if(this.f_f===true){
+                    //F flagがあるならframe 0はここで入力
+                    this.playFrame();
+                }
             }
         }else if(this.playing && (ml_mode===100 || ml_mode===110)){
             //ゲーム中なので再生する
             this.stage_f=false;
-            var d = this.frame - this.base_frame, body_buf=this.body_buf, len=body_buf.length, body_idx = this.body_idx, c1, k, keyCode;
-            while(body_idx < len){
-                c1 = body_buf[body_idx];
-                if(((c1&0x78)>>3) !== d){
-                    //もうない
-                    break;
-                }
-                d = 0;
-                body_idx++;
-                if(k = c1&7){
-                    //キーを取得した
-                    if(k===7){
-                        //次のoctetを調べてkeyCodeとする
-                        keyCode=body_buf[body_idx++];
-                    }else{
-                        //テーブルから調べる
-                        keyCode=this.keyTable[k];
-                    }
-                    if(c1&0x80){
-                        //押した
-                        this._keyPressed.call(gk, {
-                            keyCode: keyCode,
-                            preventDefault: function(){}
-                        });
-                    }else{
-                        this._keyReleased.call(gk, {
-                            keyCode: keyCode,
-                            preventDefault: function(){}
-                        });
-                    }
-                }
-                this.base_frame = this.frame;
+            if(this.f_f === true){
+                this.frame++;
+                this.playFrame();
+            }else{
+                //for backward compatibility
+                this.playFrame();
+                this.frame++;
             }
-            this.frame++;
-            //書き戻す
-            this.body_idx = body_idx;
-            if(body_idx >= len){
-                //突破した（もうデータがない）
-                this.playing = false;
+        }
+    };
+    //今のフレームのキー入力を入力
+    InputPlayer.prototype.playFrame = function(){
+        var gk = this.mc.gk;
+        var d = this.frame - this.base_frame, body_buf=this.body_buf, len=body_buf.length, body_idx = this.body_idx, c1, k, keyCode;
+        while(body_idx < len){
+            c1 = body_buf[body_idx];
+            if(((c1&0x78)>>3) !== d){
+                //もうない
+                break;
             }
+            d = 0;
+            body_idx++;
+            if(k = c1&7){
+                //キーを取得した
+                if(k===7){
+                    //次のoctetを調べてkeyCodeとする
+                    keyCode=body_buf[body_idx++];
+                }else{
+                    //テーブルから調べる
+                    keyCode=this.keyTable[k];
+                }
+                if(c1&0x80){
+                    //押した
+                    this._keyPressed.call(gk, {
+                        keyCode: keyCode,
+                        preventDefault: function(){}
+                    });
+                }else{
+                    this._keyReleased.call(gk, {
+                        keyCode: keyCode,
+                        preventDefault: function(){}
+                    });
+                }
+            }
+            this.base_frame = this.frame;
+        }
+        //書き戻す
+        this.body_idx = body_idx;
+        if(body_idx >= len){
+            //突破した（もうデータがない）
+            this.playing = false;
         }
     };
     InputPlayer.inject = function(mc, options){

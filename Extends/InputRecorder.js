@@ -36,10 +36,9 @@ CanvasMasao.InputRecorder = (function(){
         var _this=this;
         var gk = this.mc.gk, _keyPressed = gk.keyPressed, _keyReleased = gk.keyReleased;
         gk.keyPressed = function(paramKeyEvent){
-            var fl = gk.codekey_f[paramKeyEvent.keyCode]!==true;
             _keyPressed.call(gk, paramKeyEvent);
             //記録
-            if(fl && _this.recording){
+            if(_this.recording){
                 _this.save(paramKeyEvent.keyCode, true);
             }
         };
@@ -132,6 +131,8 @@ CanvasMasao.InputRecorder = (function(){
 
             //0フレーム目の入力を記録
             this.saveCurrentPressing();
+            //ここからの入力は1フレーム目
+            this.frame++;
         }else if(prev_playing && !playing){
             //ステージが終わった
 
@@ -168,6 +169,8 @@ CanvasMasao.InputRecorder = (function(){
             var status_octet = status==="clear" ? 1 : 0;
             /// 2bit目（TR1がZかどうか）
             status_octet |= this.tr1_key===90 ? 2 : 0;
+            /// 3bit目( f=1)
+            status_octet |= 4;
             header_view.setUint8(5, status_octet);
             //reserved
             header_view.setUint16(6,0);

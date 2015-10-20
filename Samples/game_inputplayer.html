@@ -10,7 +10,7 @@
 <script type="text/javascript" src="../Extends/InputPlayer.js"></script>
 <script type="text/javascript">
   //↓ ここにBase64エンコードされたMasao Playing Formatのデータ
-  var data = "TQ5QCgAAAAIAAAAMdBy9fAEDAAAAAAEuAAAAWIWDBQuLeL0VeK0deHilHXjlJXh41SV4G3iLC4udJXhb2UmTC4vVHXhjiRGTC4ulJSObC5P1C4ENMdkJuWGTC4sTg90VeHjVDXh4eP0NeP0N0QMJkRGREQA=";
+  var data = "TQ5QCgAAAAIAAAAMid8aagEFAAAAAAEmAAAAgIUVgwuLu4OLg4uDg4uDi4OLg4uDg4uDi4OLg4OLg4uDi4OLg4OLg40dlTXdvY2FhY2FjYWNhYWNhY2FjYWNhYWNhY0FeJUVeHiVFXh41S14O+sLi7uDjQ14eMUVeNW9jYWNBXh41R14eMUNeHh49RV4/RXhAxHxlRWlFXiNDSkA";
   //InputPlayerでデータを再生するサンプル
   //まずバイナリに変換
   var str=atob(data);
@@ -18,6 +18,7 @@
   for(var i=0;i<str.length;i++){
     view[i]=str.charCodeAt(i);
   }
+  console.log(view.length);
   JSMasao.replaceAll({
     extensions: [CanvasMasao.InputPlayer],
     inputdata: view.buffer
