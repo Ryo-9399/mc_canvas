@@ -110,7 +110,7 @@ function Game(params, id, options){
 		__pad.addEventListener("touchcancel", __pad_event, false);
 		__pad.style.display = "none";
 		// パッド配置
-		document.body.appendChild(__pad);
+		this.__padDiv.appendChild(__pad);
 
 		ss = __pad.style;
 		ss.position = "absolute";
