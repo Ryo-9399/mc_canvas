@@ -10,19 +10,16 @@
 <script type="text/javascript" src="../Extends/InputRecorder.js"></script>
 <script type="text/javascript">
   //InputRecorderでデータをとるためのやつ
-  JSMasao.replaceAll({
+  CanvasMasao.Game.replaceAll({
     extensions: [CanvasMasao.InputRecorder],
     inputdataCallback: function(obj){
-    console.log(obj);
-      if(obj.status==="all"){
-        //完成データが得られた
+        //データが得られた
         var buf=obj.buffer;
         var view = new Uint8Array(buf);
         //Base64に変換
         var chars =[].map.call(view,function(char){return String.fromCharCode(char)});
         var b = btoa(chars.join(""));
         document.getElementById('inputdata').textContent = b;
-      }
     }
   });
 </script>

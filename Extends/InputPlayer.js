@@ -121,7 +121,6 @@ CanvasMasao.InputPlayer = (function(){
         if(ml_mode===60 || ml_mode===90){
             //ステージ初期化
             this.initStage();
-            console.log(this.f_f);
             if(ml_mode===60 && this.end_f===false){
                 //ゲーム開始準備完了。ゲームを開始する
                 mc.gm.mousePressed({
@@ -132,10 +131,10 @@ CanvasMasao.InputPlayer = (function(){
                     preventDefault: function(){}
                 });
                 this.mouse_f=true;
-                if(this.f_f===true){
-                    //F flagがあるならframe 0はここで入力
-                    this.playFrame();
-                }
+            }
+            if(this.f_f===true){
+                //F flagがあるならframe 0はここで入力
+                this.playFrame();
             }
         }else if(this.playing && (ml_mode===100 || ml_mode===110)){
             //ゲーム中なので再生する
