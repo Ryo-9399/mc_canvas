@@ -20,6 +20,7 @@
         var chars =[].map.call(view,function(char){return String.fromCharCode(char)});
         var b = btoa(chars.join(""));
         document.getElementById('inputdata').textContent = b;
+        console.log(obj);
     }
   });
 </script>
