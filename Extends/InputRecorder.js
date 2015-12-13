@@ -1,5 +1,33 @@
-// Input Recorder
-//
+/*
+ * Input Recorder: キー入力を保存
+ *
+ * 使い方: 
+ *   CanvasMasao.Gameに以下のオプションを渡す
+ *   {
+ *     extensions: [CanvasMasao.InputRecorder],
+ *     InputRecorder: {
+ *       inputdataCallback: ...,
+ *       requiresCallback: ...
+ *     }
+ *   }
+ *
+ * オプション:
+ *   inputdataCallback: 入力データが1プレイ分まとまったときに呼び出される関数。1プレイごとに呼び出されれる。引数はPlaylogObject（後述）
+ *   requiresCallback: どの入力データに対してinputdataCallbackを呼び出すかを制御する関数。引数はResultObject（後述）、返り値はboolean。trueならinputdataCallbackが呼ばれる。省略可能。デフォルト動作はステージクリアまたはコンティニュー旗を取ったログのみ（＝ゲームに進展があったときのみ）
+ *
+ * PlaylogObject:
+ *   stage: number このログのステージ数
+ *   continued: boolean コンティニュー旗を取ったか
+ *   cleared: boolean このステージをクリアしたか
+ *   score: number このログ終了時点でのスコア
+ *   buffer: ArrayBuffer Masao Playlog Formatに従う入力データ
+ *
+ * ResultObject:
+ *   status: string このプレイログの種類（"cleared": ステージクリア, "miss": ミス, "abort": 中断）
+ *   continued: boolean コンティニュー旗を取ったか
+ *   stage: number このログのステージ数
+ *   score: number このログ終了時点でのスコア
+ */
 
 CanvasMasao.InputRecorder = (function(){
     var InputRecorder = function(mc, inputdataCallback, requiresCallback){
@@ -320,11 +348,12 @@ CanvasMasao.InputRecorder = (function(){
     InputRecorder.inject = function(mc, options){
         var _ui=mc.userInit, _us=mc.userSub;
         var inputdataCallback = null, requiresCallback = null;
-        if("function"===typeof options.inputdataCallback){
-            inputdataCallback = options.inputdataCallback;
+        var o = options.InputRecorder || {};
+        if("function"===typeof o.inputdataCallback){
+            inputdataCallback = o.inputdataCallback;
         }
-        if("function"===typeof options.requiresCallback){
-            requiresCallback = options.requiresCallback;
+        if("function"===typeof o.requiresCallback){
+            requiresCallback = o.requiresCallback;
         }
         mc.userInit = function(){
             _ui.apply(mc);

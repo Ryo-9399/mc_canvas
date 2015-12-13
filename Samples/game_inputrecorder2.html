@@ -12,7 +12,8 @@
   //InputRecorderでデータをとるためのやつ
   CanvasMasao.Game.replaceAll({
     extensions: [CanvasMasao.InputRecorder],
-    inputdataCallback: function(obj){
+    InputRecorder: {
+      inputdataCallback: function(obj){
         //データが得られた
         var buf=obj.buffer;
         var view = new Uint8Array(buf);
@@ -20,6 +21,7 @@
         var chars =[].map.call(view,function(char){return String.fromCharCode(char)});
         var b = btoa(chars.join(""));
         document.getElementById('inputdata').textContent = b;
+      }
     }
   });
 </script>

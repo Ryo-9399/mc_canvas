@@ -22,7 +22,9 @@ var data = "TQ5QCgAAAAIAAAAM7AWAnAEHAAAAAAE1AAAAWLMLi7uDi4OLg4uDg4uDi4OLg4OLg4uD
   console.log(view.length);
   JSMasao.replaceAll({
     extensions: [CanvasMasao.InputPlayer],
-    inputdata: view.buffer
+    InputPlayer: {
+      inputdata: view.buffer
+    }
   });
 </script>
 

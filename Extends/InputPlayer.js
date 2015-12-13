@@ -1,4 +1,17 @@
-// Input Player
+/*
+ * Input Player: キー入力を再製
+ *
+ * 使い方:
+ *   CanvasMasao.Gameに以下のオプションを渡す
+ *   {
+ *     extensions: [CanvasMasao.InputPlayer],
+ *     InputPlayer: {
+ *       inputdata: ArrayBuffer
+ *     }
+ *   }
+ *
+ *   ただし、inputdataはMasao Playlog Formatに従う入力データ。
+ */
 
 
 /*
@@ -194,9 +207,10 @@ CanvasMasao.InputPlayer = (function(){
     };
     InputPlayer.inject = function(mc, options){
         var _ui=mc.userInit, _us=mc.userSub;
+        var o = options.InputPlayer || {};
         var inputdata = null;
-        if(options.inputdata instanceof ArrayBuffer){
-            inputdata = options.inputdata;
+        if(o.inputdata instanceof ArrayBuffer){
+            inputdata = o.inputdata;
         }
         mc.userInit = function(){
             _ui.apply(mc);
