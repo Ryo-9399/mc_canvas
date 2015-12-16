@@ -99,10 +99,12 @@ MasaoConstruction.prototype.run = function()
 	}
 	else
 	{
-		if(this.mp.ml_mode == 100)
+		if(this.mp.ml_mode == 100) {
 			this.mp.mL100();
-		else
+        } else {
 			this.mp.mainLoop();
+        }
+        this.userSub(this.gg.os_g, this.gg.os_img);
 	}
 	this.__repaint();
 }
@@ -173,8 +175,13 @@ MasaoConstruction.prototype.init_j = function()
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk);
 	this.mp.addHighscoreEvent(this.options.highscoreCallback);
+
+	this.userInit();
 }
 
+MasaoConstruction.prototype.userInit = function() {}
+
+MasaoConstruction.prototype.userSub = function(paramGraphics, paramImage) {}
 
 MasaoConstruction.prototype.getImage = function(url)
 {
