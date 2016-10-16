@@ -27,6 +27,7 @@ function ImageBuff(w, h)
 	this._loaded = false;
 	this._error = false;
 	this._g = null;
+    this._g_bk = null;
 }
 
 // 画像を読み込む
@@ -95,6 +96,14 @@ ImageBuff.prototype.getGraphics = function()
 ImageBuff.prototype.createGraphics = function()
 {
 	return this.getGraphics();
+}
+
+// JavaのGraphicsと互換を保ったGraphicsオブジェクトを作成（JS拡張との互換性のため）
+ImageBuff.prototype.getGraphicsBk = function()
+{
+	if(this._width < 0) return null;
+	this._g_bk = new GraphicsBk(this);
+	return this._g_bk;
 }
 
 
@@ -384,6 +393,28 @@ Graphics.prototype.dispose = function()
 	this._ctx.save();
 }
 
+// JavaのGraphicsとの後方互換性を保つためのクラス (Graphicsを継承)
+function GraphicsBk(img){
+    Graphics.call(this, img);
+}
+GraphicsBk.prototype = Object.create(Graphics.prototype, {
+    constructor: {
+        configurable: true,
+        value: GraphicsBk,
+    },
+});
+GraphicsBk.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
+{
+    if(arguments.length <= 6)
+    {
+        return Graphics.prototype.drawImage.apply(this, arguments);
+    }
+    else
+    {
+        return Graphics.prototype.drawImage.call(this, img, a5, a6, a7-a5, a8-a6, a1, a2, a3-a1, a4-a2, a9);
+    }
+}
+
 
 
 
@@ -477,5 +508,3 @@ Font.SERIF = "Serif";
 Font.PLAIN = 0;
 Font.BOLD = 1;
 Font.ITALIC = 2;
-
-
