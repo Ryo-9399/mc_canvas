@@ -8909,8 +8909,9 @@ MainProgram.prototype.drawGamescreen = function()
 				k12++;
 		}
 
+		var beforeFont = this.hg._font;
 		this.km.drawWindowbox(c, byte1, c1, 30 + k12 * 14);
-		this.hg.setFont(new Font("Dialog", 0, 12));
+		this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
 		this.hg.setColor(Color.cyan);
 		if(this.hitokoto_num == 5)
 		{
@@ -8946,6 +8947,8 @@ MainProgram.prototype.drawGamescreen = function()
 				k12++;
 			}
 		}
+		// 元に戻しておく
+		this.hg.setFont(beforeFont);
 
 	}
 	this.km.drawMenus();
@@ -9181,8 +9184,9 @@ MainProgram.prototype.drawGamescreenWindow = function()
 				l1++;
 		}
 
+		var beforeFont = this.hg._font;
 		this.km.drawWindowbox(c, byte0, c1, 30 + l1 * 14);
-		this.hg.setFont(new Font("Dialog", 0, 12));
+		this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
 		this.hg.setColor(Color.cyan);
 		if(this.hitokoto_num == 5)
 		{
@@ -9218,6 +9222,8 @@ MainProgram.prototype.drawGamescreenWindow = function()
 				l1++;
 			}
 		}
+		// 元に戻しておく
+		this.hg.setFont(beforeFont);
 
 	}
 }

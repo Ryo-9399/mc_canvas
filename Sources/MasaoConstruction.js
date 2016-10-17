@@ -299,11 +299,11 @@ MasaoConstruction.prototype.run = function()
 			if(mode >= 100 && mode < 200)
 			{
 				// 引数にアプレットエミュレータを追加してuserJSを呼び出す
-				this.options.userJSCallback(this.gg.os_g, mode, this.mp.maps.wx, this.mp.maps.wy, this.masaoJSSAppletEmulator);
+				this.options.userJSCallback(this.gg.os_g_bk, mode, this.mp.maps.wx, this.mp.maps.wy, this.masaoJSSAppletEmulator);
 			}
 			else
 			{
-				this.options.userJSCallback(this.gg.os_g, mode, -9999, -9999, this.masaoJSSAppletEmulator);
+				this.options.userJSCallback(this.gg.os_g_bk, mode, -9999, -9999, this.masaoJSSAppletEmulator);
 			}
 		}
 		this.__repaint();

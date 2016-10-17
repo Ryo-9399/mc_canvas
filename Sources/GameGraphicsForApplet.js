@@ -14,6 +14,7 @@ function GameGraphicsForApplet(paramTagDataBase, paramApplet)
 	this.backcolor = Color.black;
 	this.os_img = this.ap.createImage(this.di.width, this.di.height);
 	this.os_g = this.os_img.getGraphics();
+    this.os_g_bk = this.os_img.getGraphicsBk();
 	this.os2_img = this.ap.createImage(this.di.width + 96, this.di.height + 96);
 	this.os2_g = this.os2_img.getGraphics();
 	this.os32_img = this.ap.createImage(32, 32);
