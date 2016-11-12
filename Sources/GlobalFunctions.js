@@ -1,5 +1,16 @@
-// idがある場合，そのidの配下に設置
-// idがない場合，呼ばれた場所にdocument.writeし設置
+/**
+ * 新しい正男のインスタンスを生成します。
+ * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
+ * 引数`id`なしで呼ばれた場合、その場所にdocument.writeで正男を設置します。
+ *
+ * @constructor
+ * @param {Object} params paramの一覧
+ * @param {string} [id] 正男を設置する要素のID
+ * @param {Object} [options] オプション
+ * @param {Object[]} [options.extensions] 拡張機能
+ * @param {Function} [options.userJSCallback] 毎フレーム呼び出されるコールバック関数
+ * @param {Function} [options.highscoreCallback] ハイスコア更新時に呼び出されるコールバック関数
+ */
 function Game(params, id, options){
 	var randomID = makeRandomString();
 
@@ -194,7 +205,9 @@ function Game(params, id, options){
     });
 }
 
-// ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
+/**
+ * ページ読み込み後、ページ内の全ての正男appletをcanvas正男に置換します。
+ */
 Game.replaceAll = function(options){
 	if(document.readyState=="complete"){
 		onload();
@@ -233,7 +246,12 @@ Game.replaceAll = function(options){
 	};
 };
 
-// ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換する
+/**
+ * ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換します。
+ *
+ * @param {string} id アプレットのID
+ * @param {Object} [options] オプション
+ */
 Game.replace = function(id, options){
 	if(document.readyState=="complete"){
 		// load済みの場合は即座に呼び出す

@@ -1,0 +1,26 @@
+{
+  "name": "mc_canvas",
+  "version": "4.0.0",
+  "description": "このプロジェクトは、福田直人氏の制作した「まさおコンストラクション」を、挙動をそのままに、 かつ全てのWebブラウザ上で動作するように改良するものです。",
+  "main": "Outputs/CanvasMasao.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ryo-9399/mc_canvas.git"
+  },
+  "keywords": [
+    "masao"
+  ],
+  "author": "Ryo-9399",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Ryo-9399/mc_canvas/issues"
+  },
+  "homepage": "https://github.com/Ryo-9399/mc_canvas#readme",
+  "devDependencies": {
+    "ink-docstrap": "^1.3.0",
+    "jsdoc": "^3.4.2"
+  }
+}
