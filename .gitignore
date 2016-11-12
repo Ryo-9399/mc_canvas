@@ -1,0 +1,5 @@
+# created by npm
+node_modules/
+
+# created by jsdoc
+doc/
