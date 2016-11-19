@@ -216,7 +216,7 @@ GameSoundForApplet.prototype.resetSound = function() {}
 
 GameSoundForApplet.prototype.play = function(paramInt)
 {
-	if ((!this.use_f) || (this.mute_f == true) || (this.s_data[paramInt] == null)) {
+	if ((!this.use_f) || (this.mute_f) || (this.s_data[paramInt] == null)) {
 		return;
 	}
 	this.s_data[paramInt].play();
@@ -267,7 +267,7 @@ GameSoundForApplet.prototype.rsAddSound = function(paramInt)
 
 GameSoundForApplet.prototype.rsPlay = function()
 {
-	if ((!this.use_f) || (this.mute_f == true) || (this.rs_b == -1) || (this.s_data[this.rs_b] == null)) {
+	if ((!this.use_f) || (this.mute_f) || (this.rs_b == -1) || (this.s_data[this.rs_b] == null)) {
 		return;
 	}
 	this.s_data[this.rs_b].stop();
@@ -280,7 +280,7 @@ GameSoundForApplet.prototype.rsPlay = function()
 
 GameSoundForApplet.prototype.playBGM = function(paramInt)
 {
-	if (this.mute_f == true) {
+	if (this.mute_f) {
 		return;
 	}
 	if (this.bgm_genzai == paramInt) {
@@ -288,7 +288,7 @@ GameSoundForApplet.prototype.playBGM = function(paramInt)
 	}
 	if ((this.bgm_genzai >= 0) && (paramInt >= 0)) {
 		if ((this.bgm_filename[this.bgm_genzai] != null) && (this.bgm_filename[paramInt] != null)) {
-			if (this.bgm_filename[this.bgm_genzai] == (this.bgm_filename[paramInt]) == true) {
+			if (this.bgm_filename[this.bgm_genzai] == this.bgm_filename[paramInt]) {
 				return;
 			}
 		}

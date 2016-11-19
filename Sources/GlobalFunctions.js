@@ -362,7 +362,7 @@ Game.prototype.__loop = function()
 		ctx.fillStyle = "rgb(128,0,128)";
 		ctx.fillRect(0,0,700,700);
 		ctx.strokeStyle = "#f00";
-		var i,j;
+		var i;
 		if(this.__mc.gg){
 			ctx.save();
 			ctx.scale(0.5, 0.5);
@@ -394,7 +394,6 @@ Game.prototype.__loop = function()
 			var str = "<div style='text-align:left'>";
 			var prop;
 			var type;
-			var tmp;
 			for(prop in mp)
 			{
 				type = Object.prototype.toString.call(mp[prop]);
@@ -424,7 +423,7 @@ Game.prototype.__loop = function()
 		}
 	}
 
-	var t = this.__mc.run();
+	this.__mc.run();
 }
 
 // __repaintはMasaoConstructionへ移動
@@ -772,13 +771,13 @@ function createNDimensionArray()
 	var a = new Array(arguments.length);
 	for(var i = 0; i < arguments.length; i++)
 		a[i] = arguments[i];
-	var r = (function(an)
+	var r = (function F(an)
 	{
 		var ary = new Array(an[0]);
 		if(an.length == 1) return ary;
 		var an2 = an.slice(1);
 		for(var i = 0; i < an[0]; i++)
-			ary[i] = arguments.callee(an2);
+			ary[i] = F(an2);
 		return ary;
 	})(a);
 	return r;
@@ -794,6 +793,13 @@ function rounddown(val)
 	else
 		return -Math.floor(-val);
 }
+
+// sの絶対値をnビット右シフトし、sの符号を付けた値を返す
+function rightShiftIgnoreSign(s, n)
+{
+	return s < 0 ? (-((-s) >> n)) : (s >> n);
+}
+
 
 function makeRandomString(){
 	return Math.random().toString(36).slice(2);

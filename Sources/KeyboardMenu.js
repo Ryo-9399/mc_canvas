@@ -350,7 +350,7 @@ KeyboardMenu.prototype.move = function()
 	}
 	if (this.aw >= 0)
 	{
-		if (this.gk.up_f == true)
+		if (this.gk.up_f)
 		{
 			this.gk.up_c += 1;
 			if (this.gk.up_c > 3) {
@@ -361,7 +361,7 @@ KeyboardMenu.prototype.move = function()
 		{
 			this.gk.up_c = 0;
 		}
-		if (this.gk.down_f == true)
+		if (this.gk.down_f)
 		{
 			this.gk.down_c += 1;
 			if (this.gk.down_c > 3) {
@@ -506,7 +506,7 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 14 + 0 + 2, 201, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 14 + 0 + 2, 201, 0);
 				}
 				break;
 			case 310: 
@@ -521,7 +521,7 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.item[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + 14 + 2, 71, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + 14 + 2, 71, 0);
 				}
 				break;
 			case 320: 
@@ -546,7 +546,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.hg.drawString(this.item[3][(j + 3)], this.x[3] + 6, this.y[3] + 6 + 54 + j * 14 + 12);
 				}
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + 36 + (this.item_kazu[i] - 3) * 14 + 2, 71, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + 36 + (this.item_kazu[i] - 3) * 14 + 2, 71, 0);
 				}
 				break;
 			case 321: 
@@ -573,7 +573,7 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.item[i][4], this.x[i] + 6, this.y[i] + 6 + 54 + 14 + 12);
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + 36 + 14 + 14 + 2, 71, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + 36 + 14 + 14 + 2, 71, 0);
 				}
 				break;
 			case 330: 
@@ -594,11 +594,11 @@ KeyboardMenu.prototype.drawMenus = function()
 				if (i == this.aw)
 				{
 					if (this.c_fc <= 3) {
-						this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + this.item_kazu[i] * 14 + 2, 201, 0);
+						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + this.item_kazu[i] * 14 + 2, 201, 0);
 					}
 				}
 				else {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + this.item_kazu[i] * 14 + 2, 201, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + this.item_kazu[i] * 14 + 2, 201, 0);
 				}
 				break;
 			case 350: 
@@ -675,14 +675,14 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.hg.drawString("得点", this.x[i] + 6, this.y[i] + 6 + 18 + 56 + 12);
 				this.hg.drawString("" + this.item_int[14][3] + "点", this.x[i] + 6 + 72, this.y[i] + 6 + 18 + 70 + 12);
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + 84 + 2, 71, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + 84 + 2, 71, 0);
 				}
 				break;
 			case 420: 
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 116);
 				this.hg.setColor(new Color(96, 96, 96));
 				this.hg.fillRect(this.x[i] + 12, this.y[i] + 12, this.width[i] - 24, 48);
-				this.gg.drawPT(this.x[i] + 12 + ((this.width[i] - 24 - 32) >> 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
+				this.gg.drawPT(this.x[i] + 12 + rightShiftIgnoreSign(this.width[i] - 24 - 32, 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
 
 
 				this.hg.setColor(Color.cyan);
@@ -690,7 +690,7 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.hg.setColor(Color.white);
 				this.hg.drawString("これからも、よろしくね！", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 68 + 28 + 2, 71, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 28 + 2, 71, 0);
 				}
 				break;
 			case 410: 
@@ -699,7 +699,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 116);
 					this.hg.setColor(new Color(96, 96, 96));
 					this.hg.fillRect(this.x[i] + 12, this.y[i] + 12, this.width[i] - 24, 48);
-					this.gg.drawPT(this.x[i] + 12 + ((this.width[i] - 24 - 32) >> 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
+					this.gg.drawPT(this.x[i] + 12 + rightShiftIgnoreSign(this.width[i] - 24 - 32, 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
 
 
 					this.hg.setColor(Color.yellow);
@@ -707,7 +707,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.hg.setColor(Color.white);
 					this.hg.drawString("捕獲不可能", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 					if (this.c_fc <= 3) {
-						this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 68 + 28 + 2, 71, 0);
+						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 28 + 2, 71, 0);
 					}
 				}
 				else if (this.item_int[i][0] < 0)
@@ -715,7 +715,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 116);
 					this.hg.setColor(new Color(96, 96, 96));
 					this.hg.fillRect(this.x[i] + 12, this.y[i] + 12, this.width[i] - 24, 48);
-					this.gg.drawPT(this.x[i] + 12 + ((this.width[i] - 24 - 32) >> 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
+					this.gg.drawPT(this.x[i] + 12 + rightShiftIgnoreSign(this.width[i] - 24 - 32, 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
 
 
 					this.hg.setColor(Color.yellow);
@@ -723,7 +723,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.hg.setColor(Color.white);
 					this.hg.drawString("現在調査中", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 					if (this.c_fc <= 3) {
-						this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 68 + 28 + 2, 71, 0);
+						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 28 + 2, 71, 0);
 					}
 				}
 				else
@@ -731,7 +731,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 158);
 					this.hg.setColor(new Color(96, 96, 96));
 					this.hg.fillRect(this.x[i] + 12, this.y[i] + 12, this.width[i] - 24, 48);
-					this.gg.drawPT(this.x[i] + 12 + ((this.width[i] - 24 - 32) >> 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
+					this.gg.drawPT(this.x[i] + 12 + rightShiftIgnoreSign(this.width[i] - 24 - 32, 1), this.y[i] + 12 + 8, this.item_int[i][2], 0);
 
 
 					this.hg.setColor(Color.yellow);
@@ -742,7 +742,7 @@ KeyboardMenu.prototype.drawMenus = function()
 					this.hg.drawString("最大PP", this.x[i] + 12, this.y[i] + 68 + 42 + 12);
 					this.hg.drawString("" + this.item_int[i][1], this.x[i] + 56, this.y[i] + 68 + 56 + 12);
 					if (this.c_fc <= 3) {
-						this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 68 + 70 + 2, 71, 0);
+						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 70 + 2, 71, 0);
 					}
 				}
 				break;
@@ -757,7 +757,7 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 96);
 
 				k = this.item_int[i][0];
-				var m = this.x[i] + ((this.width[i] - 64) >> 1);
+				var m = this.x[i] + rightShiftIgnoreSign(this.width[i] - 64, 1);
 				var n = this.y[i] + 16;
 				this.gg.drawPT(m, n, k, 0);
 				this.gg.drawPT(m + 32, n, k + 1, 0);
@@ -856,7 +856,7 @@ KeyboardMenu.prototype.drawMenus = function()
 				this.hg.setColor(Color.white);
 				this.hg.drawString("みんな、元気になった。", this.x[i] + 12, this.y[i] + 64 + 12);
 				if (this.c_fc <= 3) {
-					this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 64 + 14 + 2, 71, 0);
+					this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 64 + 14 + 2, 71, 0);
 				}
 				break;
 			}

@@ -128,7 +128,6 @@ MasaoConstruction.prototype.run = function()
 	if(this.firstMessage)
 	{
 		var oldFirstMessage = this.firstMessage;
-		var oldLastMessage = this.lastMessage;
 		this.firstMessage = null;
 		this.lastMessage = null;
 		for(var cur = oldFirstMessage; cur; cur = cur.next)
@@ -233,7 +232,7 @@ MasaoConstruction.prototype.run = function()
 		if (j < 3) {
 			j = 3;
 		}
-		if (this.sleep_time_visible == true)
+		if (this.sleep_time_visible)
 		{
 			this.main_time_kiroku[this.main_time_kiroku_p] = i;
 			this.main_time_kiroku_p += 1;
@@ -242,7 +241,7 @@ MasaoConstruction.prototype.run = function()
 				this.main_time_kiroku_p = 0;
 				this.main_time_kiroku_f = true;
 			}
-			if (this.main_time_kiroku_f == true)
+			if (this.main_time_kiroku_f)
 			{
 				k = 0;
 				for (var m = 0; m <= 9; m++) {
@@ -251,16 +250,16 @@ MasaoConstruction.prototype.run = function()
 				k = Math.floor(k / 10);
 			}
 		}
-		if (this.variable_sleep_time == true)
+		if (this.variable_sleep_time)
 		{
-			if (this.sleep_time_visible == true)
+			if (this.sleep_time_visible)
 			{
 				this.gg.os_g.setColor(this.mp.gamecolor_score);
 				this.gg.os_g.setFont(new Font("Dialog", 1, this.mp.moji_size));
 				this.gg.os_g.drawString("VARIABLE SLEEP  1", 40, (14 + this.mp.moji_size) * 3);
 				this.gg.os_g.drawString("MAIN PROGRAM TIME  " + i, 40, (14 + this.mp.moji_size) * 4);
 				this.gg.os_g.drawString("SLEEP TIME  " + j, 40, (14 + this.mp.moji_size) * 5);
-				if (this.main_time_kiroku_f == true) {
+				if (this.main_time_kiroku_f) {
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
@@ -273,14 +272,14 @@ MasaoConstruction.prototype.run = function()
 		}
 		else
 		{
-			if (this.sleep_time_visible == true)
+			if (this.sleep_time_visible)
 			{
 				this.gg.os_g.setColor(this.mp.gamecolor_score);
 				this.gg.os_g.setFont(new Font("Dialog", 1, this.mp.moji_size));
 				this.gg.os_g.drawString("VARIABLE SLEEP  0", 40, (14 + this.mp.moji_size) * 3);
 				this.gg.os_g.drawString("MAIN PROGRAM TIME  " + i, 40, (14 + this.mp.moji_size) * 4);
 				this.gg.os_g.drawString("SLEEP TIME  " + this.th_interval, 40, (14 + this.mp.moji_size) * 5);
-				if (this.main_time_kiroku_f == true) {
+				if (this.main_time_kiroku_f) {
 					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
@@ -313,17 +312,20 @@ MasaoConstruction.prototype.run = function()
 
 MasaoConstruction.prototype.init_j = function()
 {
-	if (this.restart_f != true)
+	if (!this.restart_f)
 	{
 		this.tdb = new TagDataBase();
 		this.tdb.setValueFromHTML(this);
 	}
 	var m = 0;
-	for (var j = 0; j < 90; j++) {
-		if ((this.tdb.value[j] != null) && (this.tdb.value[j] != ".") && (this.tdb.value[j] != ""))
-		{
-			m = 1;
-			break;
+	for (var p = 0; p < 3; p++) {
+		for (var q = 0; q < 30; q++) {
+			var str = "map" + p + "-" + q;
+			if ((this.tdb.getValue(str) != null) && (this.tdb.getValue(str) != ".") && (this.tdb.getValue(str) != ""))
+			{
+				m = 1;
+				break;
+			}
 		}
 	}
 	if (m == 0) {
@@ -337,7 +339,7 @@ MasaoConstruction.prototype.init_j = function()
 	}
 	this.process_time = new Date().getTime();
 	this.main_time_kiroku_p = 0;
-	for (j = 0; j <= 9; j++) {
+	for (var j = 0; j <= 9; j++) {
 		this.main_time_kiroku[j] = 0;
 	}
 	if (this.tdb.getValueInt("variable_sleep_time") == 1) {
@@ -457,7 +459,7 @@ MasaoConstruction.prototype.init_j = function()
 	this.mp = new MainProgram(this.gg, this.gm, this.gk, this.gs, this.tdb);
 	// ハイスコアイベント用のリスナ登録
 	this.mp.addHighscoreEvent(this.options.highscoreCallback);
-	if (this.mph_start_game_f == true) {
+	if (this.mph_start_game_f) {
 		this.mp.highscore = this.mph_highscore;
 	}
 	this.mp.title_lock_f = this.mph_title_lock_f;
@@ -585,7 +587,7 @@ MasaoConstruction.prototype.getMyX = function()
 		var i;
 		if ((this.mp.ml_mode == 100) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 		{
-			i = ((this.mp.co_j.x + 15) >> 5) - 1;
+			i = rightShiftIgnoreSign(this.mp.co_j.x + 15, 5) - 1;
 			if (i < 0) {
 				i = 0;
 			}
@@ -596,7 +598,7 @@ MasaoConstruction.prototype.getMyX = function()
 		}
 		if (this.mp.ml_mode == 200)
 		{
-			i = ((this.mp.ig.co_j.x + 15) >> 5);
+			i = rightShiftIgnoreSign(this.mp.ig.co_j.x + 15, 5);
 			return i;
 		}
 	}
@@ -610,7 +612,7 @@ MasaoConstruction.prototype.getMyY = function()
 		var i;
 		if ((this.mp.ml_mode == 100) && (this.mp.co_j.c >= 100) && (this.mp.co_j.c < 200))
 		{
-			i = ((this.mp.co_j.y + 15) >> 5) - 10;
+			i = rightShiftIgnoreSign(this.mp.co_j.y + 15, 5) - 10;
 			if (i < 0) {
 				i = 0;
 			}
@@ -621,7 +623,7 @@ MasaoConstruction.prototype.getMyY = function()
 		}
 		if (this.mp.ml_mode == 200)
 		{
-			i = ((this.mp.ig.co_j.y + 15) >> 5);
+			i = rightShiftIgnoreSign(this.mp.ig.co_j.y + 15, 5);
 			return i;
 		}
 	}
@@ -633,7 +635,7 @@ MasaoConstruction.prototype.getViewX = function()
 	if ((this.mp != null) && 
 		(this.mp.ml_mode == 100))
 	{
-		var i = (this.mp.maps.wx >> 5) - 1;
+		var i = rightShiftIgnoreSign(this.mp.maps.wx, 5) - 1;
 		if (i < 0) {
 			i = 0;
 		}
@@ -650,7 +652,7 @@ MasaoConstruction.prototype.getViewY = function()
 	if ((this.mp != null) && 
 		(this.mp.ml_mode == 100))
 	{
-		var i = (this.mp.maps.wy >> 5) - 10;
+		var i = rightShiftIgnoreSign(this.mp.maps.wy, 5) - 10;
 		if (i < 0) {
 			i = 0;
 		}
@@ -1539,7 +1541,7 @@ MasaoConstruction.prototype.destroyEnemy = function(paramString1, paramString2, 
 MasaoConstruction.prototype.isPressZKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.z_f == true)) {
+		(this.gk.z_f)) {
 		return 1;
 	}
 	return 0;
@@ -1548,7 +1550,7 @@ MasaoConstruction.prototype.isPressZKey = function()
 MasaoConstruction.prototype.isPressXKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.x_f == true)) {
+		(this.gk.x_f)) {
 		return 1;
 	}
 	return 0;
@@ -1557,7 +1559,7 @@ MasaoConstruction.prototype.isPressXKey = function()
 MasaoConstruction.prototype.isPressSpaceKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.space_f == true)) {
+		(this.gk.space_f)) {
 		return 1;
 	}
 	return 0;
@@ -1765,7 +1767,7 @@ MasaoConstruction.prototype.setScrollArea = function(paramString1, paramString2,
 MasaoConstruction.prototype.isPressUpKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.up_f == true)) {
+		(this.gk.up_f)) {
 		return 1;
 	}
 	return 0;
@@ -1774,7 +1776,7 @@ MasaoConstruction.prototype.isPressUpKey = function()
 MasaoConstruction.prototype.isPressDownKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.down_f == true)) {
+		(this.gk.down_f)) {
 		return 1;
 	}
 	return 0;
@@ -1783,7 +1785,7 @@ MasaoConstruction.prototype.isPressDownKey = function()
 MasaoConstruction.prototype.isPressLeftKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.left_f == true)) {
+		(this.gk.left_f)) {
 		return 1;
 	}
 	return 0;
@@ -1792,7 +1794,7 @@ MasaoConstruction.prototype.isPressLeftKey = function()
 MasaoConstruction.prototype.isPressRightKey = function()
 {
 	if ((this.gk != null) && 
-		(this.gk.right_f == true)) {
+		(this.gk.right_f)) {
 		return 1;
 	}
 	return 0;
@@ -2243,7 +2245,6 @@ MasaoConstruction.prototype.removeMyTokugi = function(paramString)
 MasaoConstruction.prototype.setScore = function(paramString)
 {
 	var i = 0;
-	var j = 0;
 	if (this.mp != null)
 	{
 		i = parseInt(paramString);

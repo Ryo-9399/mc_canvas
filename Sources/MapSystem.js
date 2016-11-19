@@ -80,8 +80,8 @@ MapSystem.prototype.drawMap = function(paramInt1, paramInt2)
 	this.wy = paramInt2;
 	var k = this.wx % 32;
 	var m = this.wy % 32;
-	this.os2_wx = (this.wx >> 5);
-	this.os2_wy = (this.wy >> 5);
+	this.os2_wx = rightShiftIgnoreSign(this.wx, 5);
+	this.os2_wy = rightShiftIgnoreSign(this.wy, 5);
 
 
 	this.gg.fill2();
@@ -100,7 +100,7 @@ MapSystem.prototype.drawMap = function(paramInt1, paramInt2)
 MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5)
 {
 	var localImage;
-	if (this.mp.setbacki_f == true) {
+	if (this.mp.setbacki_f) {
 		localImage = this.mp.setbacki_img;
 	} else {
 		localImage = this.gg.li[(3 + this.mp.stage_haikei)];
@@ -109,8 +109,8 @@ MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, par
 	this.wy = paramInt2;
 	var k = this.wx % 32;
 	var m = this.wy % 32;
-	this.os2_wx = (this.wx >> 5);
-	this.os2_wy = (this.wy >> 5);
+	this.os2_wx = rightShiftIgnoreSign(this.wx, 5);
+	this.os2_wy = rightShiftIgnoreSign(this.wy, 5);
 	var n;
 	if ((paramInt5 == 3) || (paramInt5 == 4))
 	{
@@ -120,17 +120,17 @@ MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, par
 	{
 		this.gg.fill2();
 		var i1;
-		if ((this.mp.second_gazou_visible == true) && (this.mp.second_gazou_priority == 1) && 
+		if ((this.mp.second_gazou_visible) && (this.mp.second_gazou_priority == 1) && 
 			(this.mp.second_gazou_img != null)) {
 			if (this.mp.second_gazou_scroll == 2)
 			{
-				n = -(((this.wx - 32) >> 2) % 512);
+				n = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n, m + 32, this.ap);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n + 512, m + 32, this.ap);
 			}
 			else if (this.mp.second_gazou_scroll == 3)
 			{
-				n = -(((this.wx - 32) >> 1) % 512);
+				n = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n, m + 32, this.ap);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n + 512, m + 32, this.ap);
 			}
@@ -157,13 +157,13 @@ MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, par
 			}
 			else if (this.mp.second_gazou_scroll == 5)
 			{
-				n = -((((this.wx - 32) * 3) >> 1) % 512);
+				n = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n, m + 32, this.ap);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n + 512, m + 32, this.ap);
 			}
 			else if (this.mp.second_gazou_scroll == 6)
 			{
-				n = -((((this.wx - 32) * 3) >> 1) % 512);
+				n = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
 				i1 = -(this.wy - 320);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n, m + 32 + i1, this.ap);
 				this.gg.os2_g.drawImage(this.mp.second_gazou_img, k + 32 + n + 512, m + 32 + i1, this.ap);
@@ -193,7 +193,7 @@ MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, par
 		if (localImage != null) {
 			if (paramInt4 == 2)
 			{
-				n = -(((this.wx - 32) >> 2) % 512);
+				n = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
 
 
 				this.gg.os2_g.drawImage(localImage, k + 32 + n, m + 32, this.ap);
@@ -231,15 +231,15 @@ MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, par
 			}
 			else if (paramInt4 == 5)
 			{
-				n = -(((this.wy - 320) >> 1) % 320);
+				n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
 
 				this.gg.os2_g.drawImage(localImage, k + 32, m + 32 + n, this.ap);
 				this.gg.os2_g.drawImage(localImage, k + 32, m + 32 + n + 320, this.ap);
 			}
 			else if (paramInt4 == 6)
 			{
-				n = -(((this.wy - 320) >> 1) % 320);
-				i1 = -(((this.wx - 32) >> 1) % 512);
+				n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
+				i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
 				this.gg.os2_g.drawImage(localImage, k + 32 + i1, m + 32 + n, this.ap);
 				this.gg.os2_g.drawImage(localImage, k + 32 + i1 + 512, m + 32 + n, this.ap);
@@ -258,23 +258,23 @@ MapSystem.prototype.drawMapLayer = function(paramInt1, paramInt2, paramInt3, par
 			}
 			else if (paramInt4 == 8)
 			{
-				n = -(((this.wy - 320) >> 1) % 640);
-				i1 = -(((this.wx - 32) >> 1) % 512);
+				n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
+				i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
 				this.gg.os2_g.drawImage(localImage, k + 32 + i1, m + 32 + n, this.ap);
 				this.gg.os2_g.drawImage(localImage, k + 32 + i1 + 512, m + 32 + n, this.ap);
 			}
 			else if (paramInt4 == 9)
 			{
-				n = -(((this.wy - 320) >> 1) % 640);
-				i1 = -(((this.wx - 32) >> 1) % 1024);
+				n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
+				i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 1024);
 
 				this.gg.os2_g.drawImage(localImage, k + 32 + i1, m + 32 + n, this.ap);
 				this.gg.os2_g.drawImage(localImage, k + 32 + i1 + 1024, m + 32 + n, this.ap);
 			}
 			else if (paramInt4 == 10)
 			{
-				n = -(((this.wx - 32) >> 1) % 512);
+				n = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
 
 				this.gg.os2_g.drawImage(localImage, k + 32 + n, m + 32, this.ap);
@@ -459,8 +459,8 @@ MapSystem.prototype.drawMapScroll = function(paramInt)
 {
 	var k = this.wx % 32;
 	var m = this.wy % 32;
-	var n = (this.wx >> 5);
-	var i1 = (this.wy >> 5);
+	var n = rightShiftIgnoreSign(this.wx, 5);
+	var i1 = rightShiftIgnoreSign(this.wy, 5);
 	var i;
 	if ((n > this.os2_wx + 1) || (n < this.os2_wx - 1) || (i1 > this.os2_wy + 1) || (i1 < this.os2_wy - 1))
 	{
@@ -769,7 +769,7 @@ MapSystem.prototype.drawMapScroll = function(paramInt)
 
 MapSystem.prototype.getBGCode = function(paramInt1, paramInt2)
 {
-	return this.map_bg[(paramInt1 >> 5)][(paramInt2 >> 5)];
+	return this.map_bg[rightShiftIgnoreSign(paramInt1, 5)][rightShiftIgnoreSign(paramInt2, 5)];
 }
 
 MapSystem.prototype.putBGCode = function(paramInt1, paramInt2, paramInt3)

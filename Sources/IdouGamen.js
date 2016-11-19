@@ -427,7 +427,7 @@ IdouGamen.prototype.checkStage = function()
 
 IdouGamen.prototype.mainProgram = function()
 {
-	if (this.gk.tr1_f == true)
+	if (this.gk.tr1_f)
 	{
 		if (this.mp.tr1_c < 2) {
 			this.mp.tr1_c += 1;
@@ -1013,7 +1013,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.ac = 0;
 			}
 		}
-		else if (this.gk.up_f == true)
+		else if (this.gk.up_f)
 		{
 			if (this.getBGZ(m, n - 32) == 221)
 			{
@@ -1021,7 +1021,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.ac = -1;
 			}
 		}
-		else if (this.gk.down_f == true)
+		else if (this.gk.down_f)
 		{
 			if (this.getBGZ(m, n + 32) == 221)
 			{
@@ -1029,7 +1029,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.ac = -1;
 			}
 		}
-		else if (this.gk.left_f == true)
+		else if (this.gk.left_f)
 		{
 			this.co_j.muki = 0;
 			if (this.getBGZ(m - 32, n) == 222)
@@ -1043,7 +1043,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.ac = -1;
 			}
 		}
-		else if (this.gk.right_f == true)
+		else if (this.gk.right_f)
 		{
 			this.co_j.muki = 1;
 			if (this.getBGZ(m + 32, n) == 222)

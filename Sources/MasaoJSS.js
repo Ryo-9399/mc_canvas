@@ -164,7 +164,7 @@ function MasaoJSS(mc)
 		{
 			if(mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 			{
-				var i = ((mc.mp.co_j.x + 15) >> 5) - 1;
+				var i = rightShiftIgnoreSign(mc.mp.co_j.x + 15, 5) - 1;
 				if(i < 0)
 					i = 0;
 				if(i > 179)
@@ -173,7 +173,7 @@ function MasaoJSS(mc)
 			}
 			if(mc.mp.ml_mode == 200)
 			{
-				var j = ((mc.mp.ig.co_j.x + 15) >> 5);
+				var j = rightShiftIgnoreSign(mc.mp.ig.co_j.x + 15, 5);
 				return j;
 			}
 		}
@@ -195,7 +195,7 @@ function MasaoJSS(mc)
 		{
 			if(mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 			{
-				var i = ((mc.mp.co_j.y + 15) >> 5) - 10;
+				var i = rightShiftIgnoreSign(mc.mp.co_j.y + 15, 5) - 10;
 				if(i < 0)
 					i = 0;
 				if(i > 29)
@@ -204,7 +204,7 @@ function MasaoJSS(mc)
 			}
 			if(mc.mp.ml_mode == 200)
 			{
-				var j = ((mc.mp.ig.co_j.y + 15) >> 5);
+				var j = rightShiftIgnoreSign(mc.mp.ig.co_j.y + 15, 5);
 				return j;
 			}
 		}
@@ -222,7 +222,7 @@ function MasaoJSS(mc)
 	{
 		if(mc.mp && mc.mp.ml_mode == 100)
 		{
-			var i = (mc.mp.maps.wx >> 5) - 1;
+			var i = rightShiftIgnoreSign(mc.mp.maps.wx, 5) - 1;
 			if(i < 0)
 				i = 0;
 			if(i > 164)
@@ -245,7 +245,7 @@ function MasaoJSS(mc)
 	{
 		if(mc.mp && mc.mp.ml_mode == 100)
 		{
-			var i = (mc.mp.maps.wy >> 5) - 10;
+			var i = rightShiftIgnoreSign(mc.mp.maps.wy, 5) - 10;
 			if(i < 0)
 				i = 0;
 			if(i > 20)
@@ -267,8 +267,6 @@ function MasaoJSS(mc)
      */
 	this.setMyPosition = function(s, s1)
 	{
-		var flag = false;
-		var flag1 = false;
 		if(mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -306,7 +304,6 @@ function MasaoJSS(mc)
      */
 	this.showMessage = function(s, s1, s2, s3, s4)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.showmSet(s, s1, s2, s3, s4);
@@ -329,7 +326,6 @@ function MasaoJSS(mc)
      */
 	this.showImage = function(s, s1, s2, s3)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.showiSet(s, s1, s2, s3);
@@ -350,7 +346,6 @@ function MasaoJSS(mc)
      */
 	this.setEnemy = function(s, s1, s2)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.sete(s, s1, s2);
@@ -370,7 +365,6 @@ function MasaoJSS(mc)
      */
 	this.setMapchip = function(s, s1, s2)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.setmapc(s, s1, s2);
@@ -405,7 +399,6 @@ function MasaoJSS(mc)
      */
 	this.setMapchip2 = function(s, s1, s2)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.setmapc2(s, s1, s2);
@@ -437,7 +430,6 @@ function MasaoJSS(mc)
      */
 	this.setBackImage = function(s)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.setbacki(s);
@@ -692,7 +684,6 @@ function MasaoJSS(mc)
 
 	this.equipFire = function(s)
 	{
-		var byte0 = -1;
 		if(typeof(s) == "undefined") s = "1";
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
@@ -725,7 +716,6 @@ function MasaoJSS(mc)
      */
 	this.equipBarrier = function(s)
 	{
-		var flag = false;
 		if(mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -754,7 +744,6 @@ function MasaoJSS(mc)
      */
 	this.setJetFuel = function(s)
 	{
-		var flag = false;
 		if(mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -1272,7 +1261,6 @@ function MasaoJSS(mc)
      */
 	this.showRect = function(s, s1, s2, s3, s4)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.showrSet(s, s1, s2, s3, s4);
@@ -1297,7 +1285,6 @@ function MasaoJSS(mc)
      */
 	this.showOval = function(s, s1, s2, s3, s4)
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var flag1 = mc.mp.showoSet(s, s1, s2, s3, s4);
@@ -1317,7 +1304,6 @@ function MasaoJSS(mc)
      */
 	this.getJSMes = function()
 	{
-		var flag = false;
 		if(mc.mp)
 		{
 			var i = mc.mp.getJSMes();
@@ -1426,7 +1412,6 @@ function MasaoJSS(mc)
      */
 	this.equipGrenade = function(s)
 	{
-		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -1586,7 +1571,6 @@ function MasaoJSS(mc)
      */
 	this.setFireRange = function(s)
 	{
-		var c = '\u270F';
 		if(mc.mp)
 		{
 			var i;
@@ -1617,7 +1601,6 @@ function MasaoJSS(mc)
      */
 	this.equipTail = function(s)
 	{
-		var byte0 = -1;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i;
@@ -1712,7 +1695,6 @@ function MasaoJSS(mc)
      */
 	this.getMyDirection = function()
 	{
-		var byte0 = -1;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i;
@@ -1909,7 +1891,6 @@ function MasaoJSS(mc)
      */
 	this.setMyVX = function(s)
 	{
-		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -1939,7 +1920,6 @@ function MasaoJSS(mc)
      */
 	this.setMyVY = function(s)
 	{
-		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -2017,7 +1997,6 @@ function MasaoJSS(mc)
      */
 	this.setMySpeed = function(s)
 	{
-		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -2133,7 +2112,6 @@ function MasaoJSS(mc)
      */
 	this.setSystemDrawMode = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			var i;
@@ -2171,7 +2149,6 @@ function MasaoJSS(mc)
      */
 	this.drawSystemObject = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			if(mc.mp.ml_mode != 100)
@@ -2284,7 +2261,6 @@ function MasaoJSS(mc)
      */
 	this.getMyDirection4way = function()
 	{
-		var byte0 = -1;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i;
@@ -2309,7 +2285,6 @@ function MasaoJSS(mc)
      */
 	this.setMyObjectPattern = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			var i;
@@ -2342,8 +2317,6 @@ function MasaoJSS(mc)
      */
 	this.setMyObjectImage = function(image, s, s1)
 	{
-		var flag = false;
-		var flag1 = false;
 		if(mc.mp)
 		{
 			var i;
@@ -2373,7 +2346,6 @@ function MasaoJSS(mc)
      */
 	this.setEnemyObjectPattern = function(s, s1)
 	{
-		var byte0 = -1;
 		var j = 0;
 		if(mc.mp)
 		{
@@ -2484,7 +2456,6 @@ function MasaoJSS(mc)
      */
 	this.getEnemyObjectCondition = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			var i;
@@ -2512,7 +2483,6 @@ function MasaoJSS(mc)
      */
 	this.getEnemyObjectPattern = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			var i;
@@ -2540,7 +2510,6 @@ function MasaoJSS(mc)
      */
 	this.getEnemyObjectX = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			var i;
@@ -2568,7 +2537,6 @@ function MasaoJSS(mc)
      */
 	this.getEnemyObjectY = function(s)
 	{
-		var byte0 = -1;
 		if(mc.mp)
 		{
 			var i;
@@ -2594,7 +2562,6 @@ function MasaoJSS(mc)
      */
 	this.getEnemyObjectLength = function()
 	{
-		var byte0 = -1;
 		if(mc.mp)
 			return mc.mp.t_kazu + 1;
 		else
@@ -2611,9 +2578,6 @@ function MasaoJSS(mc)
      */
 	this.getEnemyObjectDirection = function(s)
 	{
-		var byte0 = -1;
-		var flag = false;
-		var flag1 = false;
 		if(mc.mp)
 		{
 			var i;
@@ -2651,7 +2615,6 @@ function MasaoJSS(mc)
      */
 	this.setEnemyObjectImage = function(s, image, s1, s2)
 	{
-		var byte0 = -1;
 		var j = 0;
 		var k = 0;
 		if(mc.mp)
@@ -2849,7 +2812,6 @@ function MasaoJSS(mc)
      */
 	this.isPressCodeKey = function(s)
 	{
-		var flag = false;
 		if(mc.gk)
 		{
 			var i;
@@ -2979,7 +2941,6 @@ function MasaoJSS(mc)
      */
 	this.setBossXReal = function(s)
 	{
-		var byte0 = 32;
 		if(mc.mp)
 		{
 			var i;
@@ -3005,7 +2966,6 @@ function MasaoJSS(mc)
      */
 	this.setBossYReal = function(s)
 	{
-		var c = '\u0140';
 		if(mc.mp)
 		{
 			var i;
@@ -3034,8 +2994,6 @@ function MasaoJSS(mc)
      */
 	this.setBossObjectImage = function(image, s, s1)
 	{
-		var flag = false;
-		var flag1 = false;
 		if(mc.mp)
 		{
 			var i;
@@ -3066,7 +3024,6 @@ function MasaoJSS(mc)
      */
 	this.setSystemPattern = function(s, s1)
 	{
-		var flag = true;
 		var j = 1;
 		if(mc.mp)
 		{
@@ -3106,7 +3063,6 @@ function MasaoJSS(mc)
      */
 	this.setSystemPatternImage = function(s, s1, image)
 	{
-		var flag = true;
 		var j = 0;
 		if(mc.mp)
 		{
@@ -3132,7 +3088,6 @@ function MasaoJSS(mc)
 
 	this.setFontSize = function(s)
 	{
-		var byte0 = 14;
 		if(mc.gg)
 		{
 			var i;
@@ -3171,7 +3126,6 @@ function MasaoJSS(mc)
      */
 	this.newFont = function(s, s1, s2)
 	{
-		var byte0 = 14;
 		var j = 0;
 		if(mc.gg)
 		{
@@ -3201,7 +3155,6 @@ function MasaoJSS(mc)
 
 	this.getCoinCount = function(s, s1, s2, s3)
 	{
-		var flag = false;
 		var j = 0;
 		var k = 0;
 		var l = 0;
@@ -3256,7 +3209,6 @@ function MasaoJSS(mc)
      */
 	this.addMyTokugi = function(s)
 	{
-		var byte0 = -1;
 		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
@@ -3285,7 +3237,6 @@ function MasaoJSS(mc)
      */
 	this.removeMyTokugi = function(s)
 	{
-		var byte0 = -1;
 		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
@@ -3314,8 +3265,6 @@ function MasaoJSS(mc)
      */
 	this.setScore = function(s)
 	{
-		var flag = false;
-		var flag1 = false;
 		if(mc.mp)
 		{
 			var i;
@@ -3340,7 +3289,6 @@ function MasaoJSS(mc)
      */
 	this.getBarrierTime = function()
 	{
-		var flag = false;
 		if(mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i = mc.mp.j_v_c;
@@ -3359,7 +3307,6 @@ function MasaoJSS(mc)
      */
 	this.getTimeLimit = function()
 	{
-		var flag = false;
 		if(mc.mp && mc.mp.time_max > 0 && mc.mp.ml_mode == 100)
 		{
 			var i = Math.floor(mc.mp.time / 1000);
@@ -3378,7 +3325,6 @@ function MasaoJSS(mc)
      */
 	this.setTimeLimit = function(s)
 	{
-		var flag = false;
 		if(mc.mp && mc.mp.time_max > 0)
 		{
 			var i;
@@ -3411,7 +3357,6 @@ function MasaoJSS(mc)
      */
 	this.setAthletic = function(s, s1, s2)
 	{
-		var byte0 = -1;
 		var j = 0;
 		var k = 0;
 		if(this.getMode() >= 100 && this.getMode() < 200)
@@ -3491,7 +3436,6 @@ function MasaoJSS(mc)
      */
 	this.setGrenadeCount = function(s)
 	{
-		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200)
 		{
 			var i;
@@ -3521,7 +3465,6 @@ function MasaoJSS(mc)
      */
 	this.setMyLeft = function(s)
 	{
-		var flag = false;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i;
@@ -3595,7 +3538,6 @@ function MasaoJSS(mc)
      */
 	this.setEnemyPress = function(s)
 	{
-		var flag = true;
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i;
@@ -3627,7 +3569,6 @@ function MasaoJSS(mc)
      */
 	this.drawPattern = function(s, s1, s2, s3)
 	{
-		var flag = false;
 		var j = 0;
 		var k = 0;
 		var l = 0;
@@ -3667,7 +3608,6 @@ function MasaoJSS(mc)
      */
 	this.setOffscreenColor = function(s, s1, s2, s3)
 	{
-		var flag = false;
 		var j = 0;
 		var k = 0;
 		var l = 0;
@@ -3826,10 +3766,8 @@ function MasaoJSS(mc)
      */
 	this.drawImageRotate = function(image, s, s1, s2)
 	{
-		var flag = false;
 		var j = 0;
 		var k = 0;
-		var obj = null;
 		if(mc.gg)
 		{
 			var i;
@@ -3873,11 +3811,9 @@ function MasaoJSS(mc)
      */
 	this.drawImageScale = function(image, s, s1, s2, s3)
 	{
-		var flag = false;
 		var j = 0;
 		var k = 100;
 		var l = 100;
-		var obj = null;
 		if(mc.gg)
 		{
 			var i;
@@ -3919,10 +3855,8 @@ function MasaoJSS(mc)
      */
 	this.drawImageAlphaComposite = function(image, s, s1, s2)
 	{
-		var flag = false;
 		var j = 0;
 		var k = 100;
-		var obj = null;
 		if(mc.gg)
 		{
 			var i;
