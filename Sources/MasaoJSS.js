@@ -1009,7 +1009,7 @@ function MasaoJSS(mc)
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i = 0;
-			for(var j = 0; j <= 229; j++)
+			for(var j = 0; j <= mc.mp.t_kazu; j++)
 				if(mc.mp.co_t[j].c >= 100 || mc.mp.co_t[j].c == 10)
 					i++;
 
@@ -2356,7 +2356,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return false;
 			if(j >= 0 && j <= 249)
 			{
@@ -2464,7 +2464,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].c;
@@ -2491,7 +2491,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].pt;
@@ -2518,7 +2518,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].x;
@@ -2545,7 +2545,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].y;
@@ -2586,7 +2586,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			var k = 0;
 			var j = mc.mp.co_t[i].c;
@@ -2627,7 +2627,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 			{
 				return false;
 			} else

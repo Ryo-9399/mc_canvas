@@ -38,7 +38,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.showi_y = undefined;
 	this.time = undefined;
 	this.time_max = undefined;
-	this.t_kazu = undefined;
 	this.m_kazu = undefined;
 	this.jm_kazu = undefined;
 	this.a_kazu = undefined;
@@ -140,7 +139,7 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.right_dcc = 0;
 	this.xkey_c = 0;
 	this.map_data_option = createNDimensionArray(200, 100);
-	this.co_t = new Array(230);
+	this.co_t = [];
 	this.co_m = new Array(80);
 	this.co_a = new Array(120);
 	this.co_h = new Array(80);
@@ -297,8 +296,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.maps = new MapSystem(200, 100, this.gg, this);
 	this.km = new KeyboardMenu(this.gg, this.gk, "\u307E\u3055\u304A");
 	this.co_j = new CharacterObject();
-	for(var i = 0; i <= 229; i++)
-		this.co_t[i] = new CharacterObject();
 
 	for(var j = 0; j <= 79; j++)
 		this.co_m[j] = new CharacterObject();
@@ -336,6 +333,17 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.ap = this.gg.ap;
 	this.init1();
 }
+
+MainProgram.prototype = {
+	get t_kazu() {
+		if (this.co_t) {
+			return this.co_t.length - 1;
+		}
+		else {
+			return -1;
+		}
+	}
+};
 
 MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler)
 {
@@ -4886,10 +4894,9 @@ MainProgram.prototype.init3 = function()
 
 	this.a_kazu = -1;
 	this.a_hf = false;
-	for(var k1 = 0; k1 <= 229; k1++)
-		this.co_t[k1].init();
 
-	this.t_kazu = -1;
+	this.co_t = [];
+
 	this.co_b.init();
 	this.boss_kijyun_y = 0;
 	this.boss_attack_mode = false;
@@ -15278,8 +15285,8 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 	var i1 = 0;
 	do
 	{
-		if(i1 > 219)
-			break;
+		if(i1 > this.t_kazu)
+			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
 		{
 			this.co_t[i1].init();
@@ -15291,9 +15298,6 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			characterobject.c4 = j;
 			characterobject.x = i;
 			characterobject.y = j;
-			this.t_kazu++;
-			if(this.t_kazu > 229)
-				this.t_kazu = 229;
 			switch(k)
 			{
 			case 310: 
@@ -15392,12 +15396,11 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 
 MainProgram.prototype.tSetBoss = function(i, j, k, l)
 {
-	this.t_kazu = 229;
-	var i1 = 220;
+	var i1 = 0;
 	do
 	{
-		if(i1 > 229)
-			break;
+		if(i1 > this.t_kazu)
+			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
 		{
 			var characterobject = this.co_t[i1];
@@ -29808,7 +29811,7 @@ MainProgram.prototype.aMove = function()
 						var k1 = 0;
 						do
 						{
-							if(k1 > 229)
+							if(k1 > this.t_kazu)
 								break;
 							if((this.co_t[k1].c >= 100 || this.co_t[k1].c == 10) && this.co_t[k1].x <= k3 && this.co_t[k1].x >= k3 - 480)
 							{
