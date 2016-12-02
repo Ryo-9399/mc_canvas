@@ -167,8 +167,8 @@ function MasaoJSS(mc)
 				var i = rightShiftIgnoreSign(mc.mp.co_j.x + 15, 5) - 1;
 				if(i < 0)
 					i = 0;
-				if(i > 179)
-					i = 179;
+				if(i >= mc.mp.mapWidth)
+					i = mc.mp.mapWidth - 1;
 				return i;
 			}
 			if(mc.mp.ml_mode == 200)
@@ -198,8 +198,8 @@ function MasaoJSS(mc)
 				var i = rightShiftIgnoreSign(mc.mp.co_j.y + 15, 5) - 10;
 				if(i < 0)
 					i = 0;
-				if(i > 29)
-					i = 29;
+				if(i >= mc.mp.mapHeight)
+					i = mc.mp.mapHeight - 1;
 				return i;
 			}
 			if(mc.mp.ml_mode == 200)
@@ -225,8 +225,8 @@ function MasaoJSS(mc)
 			var i = rightShiftIgnoreSign(mc.mp.maps.wx, 5) - 1;
 			if(i < 0)
 				i = 0;
-			if(i > 164)
-				i = 179;
+			if(i > mc.mp.mapWidth - 16)
+				i = mc.mp.mapWidth - 1;  // ???
 			return i;
 		} else
 		{
@@ -248,8 +248,8 @@ function MasaoJSS(mc)
 			var i = rightShiftIgnoreSign(mc.mp.maps.wy, 5) - 10;
 			if(i < 0)
 				i = 0;
-			if(i > 20)
-				i = 20;
+			if(i > mc.mp.mapHeight - 10)
+				i = mc.mp.mapHeight - 10;
 			return i;
 		} else
 		{
@@ -278,7 +278,7 @@ function MasaoJSS(mc)
 				i = -1;
 				j = -1;
 			}
-			if(i < 0 || i > 179 || j < 0 || j > 29)
+			if(i < 0 || i >= mc.mp.mapWidth || j < 0 || j >= mc.mp.mapHeight)
 			{
 				return false;
 			} else
@@ -3162,8 +3162,8 @@ function MasaoJSS(mc)
 		{
 			s = "0";
 			s1 = "0";
-			s2 = "179";
-			s3 = "29";
+			s2 = mc.mp.mapWidth - 1;
+			s3 = mc.mp.mapHeight - 1;
 		}
 		if(mc.mp)
 		{
@@ -3194,7 +3194,7 @@ function MasaoJSS(mc)
 	this.getCoinCount = function()
 	{
 		if(mc.mp)
-			return mc.mp.getCoinCount(0, 0, 179, 29);
+			return mc.mp.getCoinCount(0, 0, mc.mp.mapWidth - 1, mc.mp.mapHeight - 1);
 		else
 			return -1;
 	}
@@ -3373,12 +3373,12 @@ function MasaoJSS(mc)
 				return false;
 			if(j < 0)
 				j = 0;
-			if(j > 179)
-				j = 179;
+			if(j >= mc.mp.mapWidth)
+				j = mc.mp.mapWidth - 1;
 			if(k < 0)
 				k = 0;
-			if(k > 29)
-				k = 29;
+			if(k >= mc.mp.mapHeight)
+				k = mc.mp.mapHeight - 1;
 			j++;
 			k += 10;
 			var l = 0;

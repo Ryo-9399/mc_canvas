@@ -1,6 +1,10 @@
 
 function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 {
+	// マップの幅と高さ（ブロック単位）。将来はここを変数にする。
+	this.mapWidth = 180;
+	this.mapHeight = 30;
+
 	this.ran = undefined;
     this.ran_seed = undefined;
 	this.gamecolor_back = undefined;
@@ -138,7 +142,7 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.left_dcc = 0;
 	this.right_dcc = 0;
 	this.xkey_c = 0;
-	this.map_data_option = createNDimensionArray(200, 100);
+	this.map_data_option = createNDimensionArray(this.mapWidth + 20, this.mapHeight + 70);
 	this.co_t = [];
 	this.co_m = new Array(80);
 	this.co_a = new Array(120);
@@ -293,7 +297,7 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.tdb = tagdatabase;
 	this.spot_img = new ImageBuff(512, 320);
 	this.spot_g = this.spot_img.createGraphics();
-	this.maps = new MapSystem(200, 100, this.gg, this);
+	this.maps = new MapSystem(this.mapWidth + 20, this.mapHeight + 70, this.gg, this);
 	this.km = new KeyboardMenu(this.gg, this.gk, "\u307E\u3055\u304A");
 	this.co_j = new CharacterObject();
 
