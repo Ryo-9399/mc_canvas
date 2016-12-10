@@ -319,7 +319,7 @@ MasaoConstruction.prototype.init_j = function()
 	}
 	var m = 0;
 	for (var p = 0; p < 3; p++) {
-		for (var q = 0; q < 30; q++) {
+		for (var q = 0; q < 30; q++) {      // マップサイズに影響
 			var str = "map" + p + "-" + q;
 			if ((this.tdb.getValue(str) != null) && (this.tdb.getValue(str) != ".") && (this.tdb.getValue(str) != ""))
 			{
@@ -331,6 +331,11 @@ MasaoConstruction.prototype.init_j = function()
 	if (m == 0) {
 		this.tdb.setValueStage1();
 	}
+
+	// 新形式マップの処理
+	if (this.tdb.getValue("advance_map") == "1") {
+	}
+
 	this.th_interval = this.tdb.getValueInt("game_speed");
 	if (this.th_interval < 1) {
 		this.th_interval = 1;
@@ -591,8 +596,8 @@ MasaoConstruction.prototype.getMyX = function()
 			if (i < 0) {
 				i = 0;
 			}
-			if (i > 179) {
-				i = 179;
+			if (i >= this.mp.mapWidth) {
+				i = this.mp.mapWidth - 1;
 			}
 			return i;
 		}
@@ -616,8 +621,8 @@ MasaoConstruction.prototype.getMyY = function()
 			if (i < 0) {
 				i = 0;
 			}
-			if (i > 29) {
-				i = 29;
+			if (i >= this.mp.mapHeight) {
+				i = this.mp.mapHeight - 1;
 			}
 			return i;
 		}
@@ -639,8 +644,8 @@ MasaoConstruction.prototype.getViewX = function()
 		if (i < 0) {
 			i = 0;
 		}
-		if (i > 164) {
-			i = 179;
+		if (i > this.mp.mapWidth - 16) {
+			i = this.mp.mapWidth - 1;  // ???
 		}
 		return i;
 	}
@@ -656,8 +661,8 @@ MasaoConstruction.prototype.getViewY = function()
 		if (i < 0) {
 			i = 0;
 		}
-		if (i > 20) {
-			i = 20;
+		if (i > this.mp.mapHeight - 10) {
+			i = this.mp.mapHeight - 10;
 		}
 		return i;
 	}
@@ -677,7 +682,7 @@ MasaoConstruction.prototype.setMyPosition = function(paramString1, paramString2)
 			i = -1;
 			j = -1;
 		}
-		if ((i < 0) || (i > 179) || (j < 0) || (j > 29)) {
+		if ((i < 0) || (i >= this.mp.mapWidth) || (j < 0) || (j >= this.mp.mapHeight)) {
 			return false;
 		}
 		this.mp.co_j.x = ((i + 1) * 32);
@@ -1900,7 +1905,7 @@ MasaoConstruction.prototype.getEnemyObjectCondition = function(paramString)
 		i = parseInt(paramString);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return 0;
 		}
 		return this.mp.co_t[i].c;
@@ -1916,7 +1921,7 @@ MasaoConstruction.prototype.getEnemyObjectPattern = function(paramString)
 		i = parseInt(paramString);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return 0;
 		}
 		return this.mp.co_t[i].pt;
@@ -1934,7 +1939,7 @@ MasaoConstruction.prototype.getEnemyObjectDirection = function(paramString)
 		i = parseInt(paramString);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return 0;
 		}
 		k = 0;
@@ -1961,7 +1966,7 @@ MasaoConstruction.prototype.setEnemyObjectImage = function(paramString1, paramIm
 		k = parseInt(paramString3);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return false;
 		}
 		this.mp.co_t[i].img = paramImage;
@@ -2203,7 +2208,7 @@ MasaoConstruction.prototype.getCoinCount = function(paramString1, paramString2, 
 MasaoConstruction.prototype.getCoinCount = function()
 {
 	if (this.mp != null) {
-		return this.mp.getCoinCount(0, 0, 179, 29);
+		return this.mp.getCoinCount(0, 0, this.mp.mapWidth - 1, this.mp.mapHeight - 1);
 	}
 	return -1;
 }
@@ -2321,14 +2326,14 @@ MasaoConstruction.prototype.setAthletic = function(paramString1, paramString2, p
 		if (j < 0) {
 			j = 0;
 		}
-		if (j > 179) {
-			j = 179;
+		if (j >= this.mp.mapWidth) {
+			j = this.mp.mapWidth - 1;
 		}
 		if (k < 0) {
 			k = 0;
 		}
-		if (k > 29) {
-			k = 29;
+		if (k >= this.mp.mapHeight) {
+			k = this.mp.mapHeight - 1;
 		}
 		j += 1;
 		k += 10;
