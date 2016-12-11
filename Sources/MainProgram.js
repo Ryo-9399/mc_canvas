@@ -1032,8 +1032,8 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 {
 	var i = 0;
 	var j = 0;
-	var k = 164;
-	var l = 20;
+	var k = this.mapWidth - 16;
+	var l = this.mapHeight - 10;
 	if(this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96)
 		return false;
 
@@ -1043,13 +1043,13 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 	l = parseInt(s3);
 	if(isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l))
 		i = -1;
-	if(i < 0 || i > 164)
+	if(i < 0 || i > this.mapWidth - 16)
 		return false;
-	if(k < 0 || k > 164)
+	if(k < 0 || k > this.mapWidth - 16)
 		return false;
-	if(j < 0 || j > 20)
+	if(j < 0 || j > this.mapHeight - 10)
 		return false;
-	if(l < 0 || l > 20)
+	if(l < 0 || l > this.mapHeight - 10)
 		return false;
 	if(i > k)
 	{
@@ -1074,8 +1074,8 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 {
 	var i = 0;
 	var j = 0;
-	var k = 164;
-	var l = 20;
+	var k = this.mapWidth - 16;
+	var l = this.mapHeight - 10;
 	if(this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96)
 		return false;
 
@@ -1085,13 +1085,13 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 	l = parseInt(s3);
 	if(isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l))
 		i = -1;
-	if(i < 32 || i > 5280)
+	if(i < 32 || i > (this.mapWidth - 15) * 32)
 		return false;
-	if(k < 32 || k > 5280)
+	if(k < 32 || k > (this.mapWidth - 15) * 32)
 		return false;
-	if(j < 320 || j > 960)
+	if(j < 320 || j > this.mapHeight * 32)
 		return false;
-	if(l < 320 || l > 960)
+	if(l < 320 || l > this.mapHeight * 32)
 		return false;
 	if(i > k)
 	{
@@ -1249,7 +1249,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		k = 0;
 	if(k <= 0)
 		return false;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 		return false;
 	i = (i + 1) * 32;
 	j = (j + 10) * 32;
@@ -1800,7 +1800,7 @@ MainProgram.prototype.setScrollLock = function(s)
 	else
 		this.sl_step = 1;
 	this.sl_wx = i;
-	this.sl_wy = 960;
+	this.sl_wy = this.mapHeight * 32;
 	return true;
 }
 
@@ -1990,7 +1990,7 @@ MainProgram.prototype.setmapc = function(s, s1, s2)
 		k = -1;
 	if(k < 0 || k > 249)
 		return false;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return false;
 	} else
@@ -2017,7 +2017,7 @@ MainProgram.prototype.getmapc = function(s, s1)
 		k = -1;
 	if(k < 0)
 		return -1;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return -1;
 	} else
@@ -2046,7 +2046,7 @@ MainProgram.prototype.setmapc2 = function(s, s1, s2)
 		k = -1;
 	if(k < 0 || k > 255)
 		return false;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return false;
 	} else
@@ -2074,7 +2074,7 @@ MainProgram.prototype.getmapc2 = function(s, s1)
 		k = -1;
 	if(k < 0)
 		return -1;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return -1;
 	} else
@@ -2319,14 +2319,14 @@ MainProgram.prototype.addScore = function(i)
 
 MainProgram.prototype.getCoinTotal = function()
 {
-	var c = 180;
+	var c = this.mapWidth;
 	var k = 0;
 	if(this.scroll_area == 2 || this.scroll_area == 4)
 		c = 16;
 	else
 	if(this.scroll_area == 3 || this.scroll_area == 5)
 		c = 32;
-	for(var j = 10; j <= 39; j++)
+	for(var j = 10; j <= this.mapHeight + 9; j++)
 	{
 		for(var i = 1; i <= c; i++)
 			if(this.maps.map_bg[i][j] == 9)
@@ -2348,20 +2348,20 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l)
 		var i2 = l + 10;
 		if(j1 < 1)
 			j1 = 1;
-		if(j1 > 180)
-			j1 = 180;
+		if(j1 > this.mapWidth)
+			j1 = this.mapWidth;
 		if(l1 < 1)
 			l1 = 1;
-		if(l1 > 180)
-			l1 = 180;
+		if(l1 > this.mapWidth)
+			l1 = this.mapWidth;
 		if(k1 < 10)
 			k1 = 10;
-		if(k1 > 39)
-			k1 = 39;
+		if(k1 > this.mapHeight + 9)
+			k1 = this.mapHeight + 9;
 		if(i2 < 10)
 			i2 = 10;
-		if(i2 > 39)
-			i2 = 39;
+		if(i2 > this.mapHeight + 9)
+			i2 = this.mapHeight + 9;
 		if(j1 > l1)
 		{
 			var j2 = j1;
@@ -2392,13 +2392,13 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l)
 
 MainProgram.prototype.showHashigo = function()
 {
-	var c = 180;
+	var c = this.mapWidth;
 	if(this.scroll_area == 2 || this.scroll_area == 4)
 		c = 16;
 	else
 	if(this.scroll_area == 3 || this.scroll_area == 5)
 		c = 32;
-	for(var j = 10; j <= 39; j++)
+	for(var j = 10; j <= this.mapHeight + 9; j++)
 	{
 		for(var i = 1; i <= c; i++)
 			if(this.maps.map_bg[i][j] == 8)
@@ -4868,14 +4868,14 @@ MainProgram.prototype.init3 = function()
 	{
 		this.sl_step = 10;
 		this.ks_wx = 32;
-		this.ks_wy = 960;
+		this.ks_wy = this.mapHeight * 32;
 		this.sl_speed = 2;
 	} else
 	if(k5 == 3)
 	{
 		this.sl_step = 10;
 		this.ks_wx = 32;
-		this.ks_wy = 960;
+		this.ks_wy = this.mapHeight * 32;
 		this.sl_speed = 4;
 	}
 	this.nkscroll_con = 0;
@@ -4947,7 +4947,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 2)
 	{
 		this.maps.wx_max = 32;
-		this.maps.wy_mini = 960;
+		this.maps.wy_mini = this.mapHeight * 32;
 		for(var i3 = 0; i3 <= this.maps.height - 1; i3++)
 			this.maps.map_bg[17][i3] = 21;
 
@@ -4961,7 +4961,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 3)
 	{
 		this.maps.wx_max = 544;
-		this.maps.wy_mini = 960;
+		this.maps.wy_mini = this.mapHeight * 32;
 		for(var k3 = 0; k3 <= this.maps.height - 1; k3++)
 			this.maps.map_bg[33][k3] = 21;
 
@@ -4975,7 +4975,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 4)
 	{
 		this.maps.wx_max = 32;
-		this.maps.wy_mini = 640;
+		this.maps.wy_mini = (this.mapHeight - 10) * 32;
 		for(var i4 = 0; i4 <= this.maps.height - 1; i4++)
 			this.maps.map_bg[17][i4] = 21;
 
@@ -4989,7 +4989,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 5)
 	{
 		this.maps.wx_max = 544;
-		this.maps.wy_mini = 640;
+		this.maps.wy_mini = (this.mapHeight - 10) * 32;
 		for(var k4 = 0; k4 <= this.maps.height - 1; k4++)
 			this.maps.map_bg[33][k4] = 21;
 
@@ -5023,12 +5023,12 @@ MainProgram.prototype.init3 = function()
 		}
 	}
 label0:
-	for(var j6 = 10; j6 <= 39; j6++)
+	for(var j6 = 10; j6 <= this.mapHeight + 9; j6++)
 	{
 		var i6 = 1;
 		do
 		{
-			if(i6 > 180)
+			if(i6 > this.mapWidth)
 				continue label0;
 			if(this.maps.map_bg[i6][j6] == 28)
 			{
@@ -5044,7 +5044,7 @@ label0:
 	this.js_mes = 1;
 }
 
-MainProgram.prototype.mapsMakeStageData = function(i)
+MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの処理
 {
 	var i3;
 	var as;
@@ -15576,8 +15576,8 @@ MainProgram.prototype.tMove = function()
 						if(l20 < 32)
 							l20 = 32;
 						else
-						if(l20 > 5760)
-							l20 = 5760;
+						if(l20 > this.mapWidth * 32)
+							l20 = this.mapWidth * 32;
 					}
 					var l36 = this.maps.getBGCode(l20 + 15, i21 + 32 + 15);
 					if(l36 <= 10 || l36 == 15)
@@ -19119,7 +19119,7 @@ MainProgram.prototype.tMove = function()
 							var k9 = 1;
 							do
 							{
-								if(k9 > 31 || i30 + k9 >= 180 || this.maps.map_bg[i30 + k9][k33] >= 19)
+								if(k9 > 31 || i30 + k9 >= this.mapWidth || this.maps.map_bg[i30 + k9][k33] >= 19)
 									break;
 								if(this.maps.map_bg[i30 + k9][k33 + 1] <= 10 || this.maps.map_bg[i30 + k9][k33 + 1] == 15)
 								{
@@ -19134,7 +19134,7 @@ MainProgram.prototype.tMove = function()
 							var l9 = 1;
 							do
 							{
-								if(l9 > 31 || i30 + l9 >= 180 || this.maps.map_bg[i30 + l9][k33] >= 19)
+								if(l9 > 31 || i30 + l9 >= this.mapWidth || this.maps.map_bg[i30 + l9][k33] >= 19)
 									break;
 								if(this.maps.map_bg[i30 + l9][k33] == 10)
 								{
@@ -19393,7 +19393,7 @@ label0:
 							var j11 = 1;
 							do
 							{
-								if(j11 > 31 || k30 + j11 >= 180 || this.maps.map_bg[k30 + j11][i34] >= 19)
+								if(j11 > 31 || k30 + j11 >= this.mapWidth || this.maps.map_bg[k30 + j11][i34] >= 19)
 									break;
 								if(this.maps.map_bg[k30 + j11][i34 + 1] <= 10 || this.maps.map_bg[k30 + j11][i34 + 1] == 15)
 								{
@@ -19408,7 +19408,7 @@ label0:
 							var k11 = 1;
 							do
 							{
-								if(k11 > 31 || k30 + k11 >= 180 || this.maps.map_bg[k30 + k11][i34] >= 19)
+								if(k11 > 31 || k30 + k11 >= this.mapWidth || this.maps.map_bg[k30 + k11][i34] >= 19)
 									break;
 								if(this.maps.map_bg[k30 + k11][i34] == 10)
 								{
@@ -19616,7 +19616,7 @@ label1:
 						var k12 = 1;
 						do
 						{
-							if(k12 > 31 || i31 + k12 >= 180 || this.maps.map_bg[i31 + k12][k34] >= 19)
+							if(k12 > 31 || i31 + k12 >= this.mapWidth || this.maps.map_bg[i31 + k12][k34] >= 19)
 								break;
 							if(this.maps.map_bg[i31 + k12][k34 + 1] <= 10 || this.maps.map_bg[i31 + k12][k34 + 1] == 15)
 							{
@@ -19631,7 +19631,7 @@ label1:
 						var l12 = 1;
 						do
 						{
-							if(l12 > 31 || i31 + l12 >= 180 || this.maps.map_bg[i31 + l12][k34] >= 19)
+							if(l12 > 31 || i31 + l12 >= this.mapWidth || this.maps.map_bg[i31 + l12][k34] >= 19)
 								break;
 							if(this.maps.map_bg[i31 + l12][k34] == 10)
 							{
@@ -19773,7 +19773,7 @@ label1:
 						var k13 = 1;
 						do
 						{
-							if(k13 > 31 || j31 + k13 >= 180 || this.maps.map_bg[j31 + k13][i35] >= 19)
+							if(k13 > 31 || j31 + k13 >= this.mapWidth || this.maps.map_bg[j31 + k13][i35] >= 19)
 								break;
 							if(this.maps.map_bg[j31 + k13][i35 + 1] <= 10 || this.maps.map_bg[j31 + k13][i35 + 1] == 15)
 							{
@@ -19789,7 +19789,7 @@ label1:
 						var l13 = 1;
 						do
 						{
-							if(l13 > 31 || j31 + l13 >= 180 || this.maps.map_bg[j31 + l13][i35] >= 19)
+							if(l13 > 31 || j31 + l13 >= this.mapWidth || this.maps.map_bg[j31 + l13][i35] >= 19)
 								break;
 							if(this.maps.map_bg[j31 + l13][i35] == 10)
 							{
@@ -19867,7 +19867,7 @@ label1:
 						var k14 = 1;
 						do
 						{
-							if(k14 > 31 || k31 + k14 >= 180 || this.maps.map_bg[k31 + k14][j35] >= 19)
+							if(k14 > 31 || k31 + k14 >= this.mapWidth || this.maps.map_bg[k31 + k14][j35] >= 19)
 								break;
 							if(this.maps.map_bg[k31 + k14][j35 + 1] <= 10 || this.maps.map_bg[k31 + k14][j35 + 1] == 15)
 							{
@@ -19883,7 +19883,7 @@ label1:
 						var l14 = 1;
 						do
 						{
-							if(l14 > 31 || k31 + l14 >= 180 || this.maps.map_bg[k31 + l14][j35] >= 19)
+							if(l14 > 31 || k31 + l14 >= this.mapWidth || this.maps.map_bg[k31 + l14][j35] >= 19)
 								break;
 							if(this.maps.map_bg[k31 + l14][j35] == 10)
 							{
@@ -20086,7 +20086,7 @@ label1:
 								var i16 = 1;
 								do
 								{
-									if(i16 > 31 || l31 + i16 >= 180 || this.maps.map_bg[l31 + i16][l35] >= 19)
+									if(i16 > 31 || l31 + i16 >= this.mapWidth || this.maps.map_bg[l31 + i16][l35] >= 19)
 										break;
 									if(this.maps.map_bg[l31 + i16][l35 + 1] <= 10 || this.maps.map_bg[l31 + i16][l35 + 1] == 15)
 									{
@@ -20101,7 +20101,7 @@ label1:
 								var j16 = 1;
 								do
 								{
-									if(j16 > 31 || l31 + j16 >= 180 || this.maps.map_bg[l31 + j16][l35] >= 19)
+									if(j16 > 31 || l31 + j16 >= this.mapWidth || this.maps.map_bg[l31 + j16][l35] >= 19)
 										break;
 									if(this.maps.map_bg[l31 + j16][l35] == 10)
 									{
