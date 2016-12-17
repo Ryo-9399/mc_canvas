@@ -23726,7 +23726,7 @@ MainProgram.prototype.jmMove = function()
 					for(var j16 = -1; j16 <= 1; j16++)
 					{
 						for(var l15 = -1; l15 <= 1; l15++)
-							if(i12 + l15 >= 1 && i12 + l15 <= 180 && l14 + j16 >= 10 && l14 + j16 <= 39 && this.maps.map_bg[i12 + l15][l14 + j16] == 20)
+							if(i12 + l15 >= 1 && i12 + l15 <= this.mapWidth && l14 + j16 >= 10 && l14 + j16 <= this.mapHeight + 9 && this.maps.map_bg[i12 + l15][l14 + j16] == 20)
 								this.gs.rsAddSound(16);
 
 					}
@@ -24308,7 +24308,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 0;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 151: 
@@ -24321,7 +24321,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 1;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 152: 
@@ -24334,7 +24334,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 160: 
@@ -24346,7 +24346,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 0;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 161: 
@@ -24359,7 +24359,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 1;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 162: 
@@ -24372,7 +24372,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 300: 
@@ -24619,7 +24619,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 11;
 				characterobject.vy = j;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c = 410;
 				break;
 
@@ -24630,7 +24630,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = i;
 				characterobject.c = 410;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 487: 
@@ -24640,7 +24640,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = i;
 				characterobject.c = 410;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 488: 
@@ -24666,7 +24666,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = j;
 				characterobject.vx = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c = 410;
 				break;
 
@@ -24833,7 +24833,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1100: 
@@ -25047,7 +25047,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = -3;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25066,7 +25066,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = 3;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25084,7 +25084,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = -2;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25103,7 +25103,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = 2;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25120,7 +25120,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1901: 
@@ -25129,7 +25129,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 1;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1902: 
@@ -25138,7 +25138,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 2;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1903: 
@@ -25147,7 +25147,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 3;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1904: 
@@ -25156,7 +25156,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 4;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1905: 
@@ -25165,7 +25165,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 5;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1906: 
@@ -25174,7 +25174,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 6;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1907: 
@@ -25183,7 +25183,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 7;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1908: 
@@ -25192,7 +25192,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 8;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1909: 
@@ -25201,7 +25201,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 9;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1910: 
@@ -25210,7 +25210,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 10;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1911: 
@@ -25219,7 +25219,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 11;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1912: 
@@ -25255,7 +25255,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 15;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1916: 
@@ -25264,7 +25264,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 16;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1917: 
@@ -25273,7 +25273,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 17;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1918: 
@@ -25282,7 +25282,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 18;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2000: 
@@ -25465,7 +25465,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2201: 
@@ -25473,7 +25473,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 120;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2202: 
@@ -25481,7 +25481,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 240;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2210: 
@@ -25489,7 +25489,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2211: 
@@ -25497,7 +25497,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 120;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2212: 
@@ -25505,7 +25505,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 240;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2250: 
@@ -25513,7 +25513,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2251: 
@@ -25521,7 +25521,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2252: 
@@ -25529,7 +25529,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -4;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2253: 
@@ -25537,7 +25537,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -4;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2260: 
@@ -25545,7 +25545,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2261: 
@@ -25553,7 +25553,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2262: 
@@ -25561,7 +25561,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 4;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2263: 
@@ -25569,7 +25569,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 4;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2300: 
@@ -25580,7 +25580,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = characterobject.y;
 				characterobject.vy = -4;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25593,7 +25593,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = j;
 				characterobject.vy = 4;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25607,7 +25607,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25621,7 +25621,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25635,7 +25635,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 1000;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25649,7 +25649,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "80", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25663,7 +25663,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "80", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25677,7 +25677,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 40;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "112", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25691,7 +25691,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = -40;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "112", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25705,7 +25705,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2801: 
@@ -25717,7 +25717,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2802: 
@@ -25729,7 +25729,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 1;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2803: 
@@ -25741,7 +25741,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 1;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2900: 
@@ -25756,7 +25756,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.pt = 3300;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3010: 
@@ -25764,7 +25764,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.pt = 3300;
 				characterobject.c3 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3100: 
@@ -25837,7 +25837,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3201: 
@@ -25850,7 +25850,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3202: 
@@ -25863,7 +25863,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3203: 
@@ -25876,7 +25876,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3300: 
@@ -25888,7 +25888,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.c5 = 96;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "96", "0", "circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25902,7 +25902,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.c5 = 128;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "128", "0", "circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25955,84 +25955,84 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3710: 
 				characterobject.c3 = 100;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3800: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3810: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3900: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3910: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4000: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4010: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4100: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4110: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4200: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4210: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4300: 
@@ -26042,7 +26042,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4301: 
@@ -26053,7 +26053,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4302: 
@@ -26064,7 +26064,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4303: 
@@ -26075,7 +26075,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4304: 
@@ -26086,7 +26086,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4305: 
@@ -26097,7 +26097,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4306: 
@@ -26108,7 +26108,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4307: 
@@ -26119,7 +26119,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4310: 
@@ -26130,7 +26130,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4311: 
@@ -26141,7 +26141,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4312: 
@@ -26152,7 +26152,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4313: 
@@ -26163,7 +26163,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4314: 
@@ -26174,7 +26174,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4315: 
@@ -26185,7 +26185,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4316: 
@@ -26196,7 +26196,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4317: 
@@ -26207,21 +26207,21 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4400: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4410: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4500: 
@@ -26233,7 +26233,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 0;
 				characterobject.vy = 322;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26248,7 +26248,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 1;
 				characterobject.vy = 218;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26263,7 +26263,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.vy = 322;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26278,7 +26278,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 3;
 				characterobject.vy = 218;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26293,7 +26293,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 10;
 				characterobject.vy = 218;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26308,7 +26308,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 11;
 				characterobject.vy = 270;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26323,7 +26323,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 12;
 				characterobject.vy = 322;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26338,7 +26338,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 13;
 				characterobject.vy = 270;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26356,7 +26356,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 0;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4701: 
@@ -26365,7 +26365,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 1;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4702: 
@@ -26374,7 +26374,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4703: 
@@ -26383,7 +26383,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 3;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4800: 
@@ -26391,7 +26391,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4801: 
@@ -26400,7 +26400,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4900: 
@@ -26437,14 +26437,14 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 5210: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 5300: 
@@ -29795,7 +29795,7 @@ MainProgram.prototype.aMove = function()
 							{
 								if(l73 > 10)
 									break;
-								if(k91 + l73 >= 1 && k91 + l73 <= 180 && j94 + l79 >= 10 && j94 + l79 <= 39 && this.maps.map_bg[k91 + l73][j94 + l79] == 9)
+								if(k91 + l73 >= 1 && k91 + l73 <= this.mapWidth && j94 + l79 >= 10 && j94 + l79 <= this.mapHeight + 9 && this.maps.map_bg[k91 + l73][j94 + l79] == 9)
 								{
 									i5++;
 									break;
@@ -31037,7 +31037,7 @@ MainProgram.prototype.aMove = function()
 							this.onASwitch(k76 - 5, j82 - 5, k76 + 5, j82 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.onASwitch(1, 10, 180, 40, 2);
+							this.onASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.onASwitch(k76 - 10, j82 - 10, k76 + 10, j82 + 10);
 					}
@@ -31062,7 +31062,7 @@ MainProgram.prototype.aMove = function()
 							this.offASwitch(l76 - 5, k82 - 5, l76 + 5, k82 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.offASwitch(1, 10, 180, 40, 2);
+							this.offASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.offASwitch(l76 - 10, k82 - 10, l76 + 10, k82 + 10);
 					}
@@ -31094,7 +31094,7 @@ MainProgram.prototype.aMove = function()
 							this.onASwitch(i77 - 5, l82 - 5, i77 + 5, l82 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.onASwitch(1, 10, 180, 40, 2);
+							this.onASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.onASwitch(i77 - 10, l82 - 10, i77 + 10, l82 + 10);
 					}
@@ -31112,7 +31112,7 @@ MainProgram.prototype.aMove = function()
 							this.offASwitch(j77 - 5, i83 - 5, j77 + 5, i83 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.offASwitch(1, 10, 180, 40, 2);
+							this.offASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.offASwitch(j77 - 10, i83 - 10, j77 + 10, i83 + 10);
 					}
@@ -31938,7 +31938,7 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			var l7 = rightShiftIgnoreSign(j, 5);
 			var l13 = rightShiftIgnoreSign(k, 5);
-			for(var l19 = 0; l19 <= 3 && l7 + l19 <= 180 && (this.maps.map_bg[l7 + l19][l13] == 0 || this.maps.map_bg[l7 + l19][l13] == 4); l19++)
+			for(var l19 = 0; l19 <= 3 && l7 + l19 <= this.mapWidth && (this.maps.map_bg[l7 + l19][l13] == 0 || this.maps.map_bg[l7 + l19][l13] == 4); l19++)
 				this.maps.putBGCode(l7 + l19, l13, 5);
 
 			characterobject.c3 = 100;
@@ -31949,7 +31949,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var i8 = rightShiftIgnoreSign(j, 5);
 			var i14 = rightShiftIgnoreSign(k, 5);
-			for(var i20 = 0; i20 <= 3 && i8 + i20 <= 180 && (this.maps.map_bg[i8 + i20][i14] == 0 || this.maps.map_bg[i8 + i20][i14] == 4 || this.maps.map_bg[i8 + i20][i14] == 5); i20++)
+			for(var i20 = 0; i20 <= 3 && i8 + i20 <= this.mapWidth && (this.maps.map_bg[i8 + i20][i14] == 0 || this.maps.map_bg[i8 + i20][i14] == 4 || this.maps.map_bg[i8 + i20][i14] == 5); i20++)
 				this.maps.putBGCode(i8 + i20, i14, 23);
 
 			characterobject.c3 = 200;
@@ -31959,7 +31959,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var j8 = rightShiftIgnoreSign(j, 5);
 		var j14 = rightShiftIgnoreSign(k, 5);
-		for(var j20 = 0; j20 <= 3 && j8 + j20 <= 180 && (this.maps.map_bg[j8 + j20][j14] == 0 || this.maps.map_bg[j8 + j20][j14] == 4 || this.maps.map_bg[j8 + j20][j14] == 23); j20++)
+		for(var j20 = 0; j20 <= 3 && j8 + j20 <= this.mapWidth && (this.maps.map_bg[j8 + j20][j14] == 0 || this.maps.map_bg[j8 + j20][j14] == 4 || this.maps.map_bg[j8 + j20][j14] == 23); j20++)
 			this.maps.putBGCode(j8 + j20, j14, 5);
 
 		characterobject.c3 = 100;
@@ -31973,7 +31973,7 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			var k8 = rightShiftIgnoreSign(j, 5);
 			var k14 = rightShiftIgnoreSign(k, 5);
-			for(var k20 = 0; k20 <= 3 && k8 + k20 <= 180 && (this.maps.map_bg[k8 + k20][k14] == 0 || this.maps.map_bg[k8 + k20][k14] == 4); k20++)
+			for(var k20 = 0; k20 <= 3 && k8 + k20 <= this.mapWidth && (this.maps.map_bg[k8 + k20][k14] == 0 || this.maps.map_bg[k8 + k20][k14] == 4); k20++)
 				this.maps.putBGCode(k8 + k20, k14, 23);
 
 			characterobject.c3 = 100;
@@ -31984,7 +31984,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var l8 = rightShiftIgnoreSign(j, 5);
 			var l14 = rightShiftIgnoreSign(k, 5);
-			for(var l20 = 0; l20 <= 3 && l8 + l20 <= 180 && (this.maps.map_bg[l8 + l20][l14] == 0 || this.maps.map_bg[l8 + l20][l14] == 4 || this.maps.map_bg[l8 + l20][l14] == 23); l20++)
+			for(var l20 = 0; l20 <= 3 && l8 + l20 <= this.mapWidth && (this.maps.map_bg[l8 + l20][l14] == 0 || this.maps.map_bg[l8 + l20][l14] == 4 || this.maps.map_bg[l8 + l20][l14] == 23); l20++)
 				this.maps.putBGCode(l8 + l20, l14, 5);
 
 			characterobject.c3 = 200;
@@ -31994,7 +31994,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var i9 = rightShiftIgnoreSign(j, 5);
 		var i15 = rightShiftIgnoreSign(k, 5);
-		for(var i21 = 0; i21 <= 3 && i9 + i21 <= 180 && (this.maps.map_bg[i9 + i21][i15] == 0 || this.maps.map_bg[i9 + i21][i15] == 4 || this.maps.map_bg[i9 + i21][i15] == 5); i21++)
+		for(var i21 = 0; i21 <= 3 && i9 + i21 <= this.mapWidth && (this.maps.map_bg[i9 + i21][i15] == 0 || this.maps.map_bg[i9 + i21][i15] == 4 || this.maps.map_bg[i9 + i21][i15] == 5); i21++)
 			this.maps.putBGCode(i9 + i21, i15, 23);
 
 		characterobject.c3 = 100;
@@ -32008,7 +32008,7 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			var j9 = rightShiftIgnoreSign(j, 5);
 			var j15 = rightShiftIgnoreSign(k, 5);
-			for(var j21 = 0; j21 <= 3 && j9 + j21 <= 180 && (this.maps.map_bg[j9 + j21][j15] == 0 || this.maps.map_bg[j9 + j21][j15] == 4); j21++)
+			for(var j21 = 0; j21 <= 3 && j9 + j21 <= this.mapWidth && (this.maps.map_bg[j9 + j21][j15] == 0 || this.maps.map_bg[j9 + j21][j15] == 4); j21++)
 				this.maps.putBGCode(j9 + j21, j15, 6);
 
 			characterobject.c3 = 100;
@@ -32019,7 +32019,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var k9 = rightShiftIgnoreSign(j, 5);
 			var k15 = rightShiftIgnoreSign(k, 5);
-			for(var k21 = 0; k21 <= 3 && k9 + k21 <= 180 && this.maps.map_bg[k9 + k21][k15] == 6; k21++)
+			for(var k21 = 0; k21 <= 3 && k9 + k21 <= this.mapWidth && this.maps.map_bg[k9 + k21][k15] == 6; k21++)
 				this.maps.putBGCode(k9 + k21, k15, 0);
 
 			characterobject.c3 = 200;
@@ -32029,7 +32029,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var l9 = rightShiftIgnoreSign(j, 5);
 		var l15 = rightShiftIgnoreSign(k, 5);
-		for(var l21 = 0; l21 <= 3 && l9 + l21 <= 180 && (this.maps.map_bg[l9 + l21][l15] == 0 || this.maps.map_bg[l9 + l21][l15] == 4); l21++)
+		for(var l21 = 0; l21 <= 3 && l9 + l21 <= this.mapWidth && (this.maps.map_bg[l9 + l21][l15] == 0 || this.maps.map_bg[l9 + l21][l15] == 4); l21++)
 			this.maps.putBGCode(l9 + l21, l15, 6);
 
 		characterobject.c3 = 100;
@@ -32045,7 +32045,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var i10 = rightShiftIgnoreSign(j, 5);
 			var i16 = rightShiftIgnoreSign(k, 5);
-			for(var i22 = 0; i22 <= 3 && i10 + i22 <= 180 && (this.maps.map_bg[i10 + i22][i16] == 0 || this.maps.map_bg[i10 + i22][i16] == 4); i22++)
+			for(var i22 = 0; i22 <= 3 && i10 + i22 <= this.mapWidth && (this.maps.map_bg[i10 + i22][i16] == 0 || this.maps.map_bg[i10 + i22][i16] == 4); i22++)
 				this.maps.putBGCode(i10 + i22, i16, 6);
 
 			characterobject.c3 = 200;
@@ -32055,7 +32055,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var j10 = rightShiftIgnoreSign(j, 5);
 		var j16 = rightShiftIgnoreSign(k, 5);
-		for(var j22 = 0; j22 <= 3 && j10 + j22 <= 180 && this.maps.map_bg[j10 + j22][j16] == 6; j22++)
+		for(var j22 = 0; j22 <= 3 && j10 + j22 <= this.mapWidth && this.maps.map_bg[j10 + j22][j16] == 6; j22++)
 			this.maps.putBGCode(j10 + j22, j16, 0);
 
 		characterobject.c3 = 100;
@@ -32069,7 +32069,7 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			var k10 = rightShiftIgnoreSign(j, 5);
 			var k16 = rightShiftIgnoreSign(k, 5);
-			for(var k22 = 0; k22 <= 9 && k16 + k22 <= 39 && (this.maps.map_bg[k10][k16 + k22] == 0 || this.maps.map_bg[k10][k16 + k22] == 4); k22++)
+			for(var k22 = 0; k22 <= 9 && k16 + k22 <= this.mapHeight + 9 && (this.maps.map_bg[k10][k16 + k22] == 0 || this.maps.map_bg[k10][k16 + k22] == 4); k22++)
 				this.maps.putBGCode(k10, k16 + k22, 10);
 
 			characterobject.c3 = 100;
@@ -32080,7 +32080,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var l10 = rightShiftIgnoreSign(j, 5);
 			var l16 = rightShiftIgnoreSign(k, 5);
-			for(var l22 = 0; l22 <= 9 && l16 + l22 <= 39 && this.maps.map_bg[l10][l16 + l22] == 10; l22++)
+			for(var l22 = 0; l22 <= 9 && l16 + l22 <= this.mapHeight + 9 && this.maps.map_bg[l10][l16 + l22] == 10; l22++)
 				this.maps.putBGCode(l10, l16 + l22, 0);
 
 			characterobject.c3 = 200;
@@ -32090,7 +32090,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var i11 = rightShiftIgnoreSign(j, 5);
 		var i17 = rightShiftIgnoreSign(k, 5);
-		for(var i23 = 0; i23 <= 9 && i17 + i23 <= 39 && (this.maps.map_bg[i11][i17 + i23] == 0 || this.maps.map_bg[i11][i17 + i23] == 4); i23++)
+		for(var i23 = 0; i23 <= 9 && i17 + i23 <= this.mapHeight + 9 && (this.maps.map_bg[i11][i17 + i23] == 0 || this.maps.map_bg[i11][i17 + i23] == 4); i23++)
 			this.maps.putBGCode(i11, i17 + i23, 10);
 
 		characterobject.c3 = 100;
@@ -32106,7 +32106,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var j11 = rightShiftIgnoreSign(j, 5);
 			var j17 = rightShiftIgnoreSign(k, 5);
-			for(var j23 = 0; j23 <= 9 && j17 + j23 <= 39 && (this.maps.map_bg[j11][j17 + j23] == 0 || this.maps.map_bg[j11][j17 + j23] == 4); j23++)
+			for(var j23 = 0; j23 <= 9 && j17 + j23 <= this.mapHeight + 9 && (this.maps.map_bg[j11][j17 + j23] == 0 || this.maps.map_bg[j11][j17 + j23] == 4); j23++)
 				this.maps.putBGCode(j11, j17 + j23, 10);
 
 			characterobject.c3 = 200;
@@ -32116,7 +32116,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var k11 = rightShiftIgnoreSign(j, 5);
 		var k17 = rightShiftIgnoreSign(k, 5);
-		for(var k23 = 0; k23 <= 9 && k17 + k23 <= 39 && this.maps.map_bg[k11][k17 + k23] == 10; k23++)
+		for(var k23 = 0; k23 <= 9 && k17 + k23 <= this.mapHeight + 9 && this.maps.map_bg[k11][k17 + k23] == 10; k23++)
 			this.maps.putBGCode(k11, k17 + k23, 0);
 
 		characterobject.c3 = 100;
@@ -32657,7 +32657,7 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			var l11 = rightShiftIgnoreSign(j, 5);
 			var l17 = rightShiftIgnoreSign(k, 5);
-			for(var l23 = 0; l23 <= 3 && l11 + l23 <= 180 && (this.maps.map_bg[l11 + l23][l17] == 0 || this.maps.map_bg[l11 + l23][l17] == 4); l23++)
+			for(var l23 = 0; l23 <= 3 && l11 + l23 <= this.mapWidth && (this.maps.map_bg[l11 + l23][l17] == 0 || this.maps.map_bg[l11 + l23][l17] == 4); l23++)
 				this.maps.putBGCode(l11 + l23, l17, 23);
 
 			characterobject.c3 = 100;
@@ -32668,7 +32668,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var i12 = rightShiftIgnoreSign(j, 5);
 			var i18 = rightShiftIgnoreSign(k, 5);
-			for(var i24 = 0; i24 <= 3 && i12 + i24 <= 180 && this.maps.map_bg[i12 + i24][i18] == 23; i24++)
+			for(var i24 = 0; i24 <= 3 && i12 + i24 <= this.mapWidth && this.maps.map_bg[i12 + i24][i18] == 23; i24++)
 				this.maps.putBGCode(i12 + i24, i18, 0);
 
 			characterobject.c3 = 200;
@@ -32678,7 +32678,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var j12 = rightShiftIgnoreSign(j, 5);
 		var j18 = rightShiftIgnoreSign(k, 5);
-		for(var j24 = 0; j24 <= 3 && j12 + j24 <= 180 && (this.maps.map_bg[j12 + j24][j18] == 0 || this.maps.map_bg[j12 + j24][j18] == 4); j24++)
+		for(var j24 = 0; j24 <= 3 && j12 + j24 <= this.mapWidth && (this.maps.map_bg[j12 + j24][j18] == 0 || this.maps.map_bg[j12 + j24][j18] == 4); j24++)
 			this.maps.putBGCode(j12 + j24, j18, 23);
 
 		characterobject.c3 = 100;
@@ -32694,7 +32694,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				break;
 			var k12 = rightShiftIgnoreSign(j, 5);
 			var k18 = rightShiftIgnoreSign(k, 5);
-			for(var k24 = 0; k24 <= 3 && k12 + k24 <= 180 && (this.maps.map_bg[k12 + k24][k18] == 0 || this.maps.map_bg[k12 + k24][k18] == 4); k24++)
+			for(var k24 = 0; k24 <= 3 && k12 + k24 <= this.mapWidth && (this.maps.map_bg[k12 + k24][k18] == 0 || this.maps.map_bg[k12 + k24][k18] == 4); k24++)
 				this.maps.putBGCode(k12 + k24, k18, 23);
 
 			characterobject.c3 = 200;
@@ -32704,7 +32704,7 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		var l12 = rightShiftIgnoreSign(j, 5);
 		var l18 = rightShiftIgnoreSign(k, 5);
-		for(var l24 = 0; l24 <= 3 && l12 + l24 <= 180 && this.maps.map_bg[l12 + l24][l18] == 23; l24++)
+		for(var l24 = 0; l24 <= 3 && l12 + l24 <= this.mapWidth && this.maps.map_bg[l12 + l24][l18] == 23; l24++)
 			this.maps.putBGCode(l12 + l24, l18, 0);
 
 		characterobject.c3 = 100;
@@ -35758,7 +35758,7 @@ MainProgram.prototype.hAttack = function(i, j)
 					if(l > 10)
 						break;
 					var k4 = i + l;
-					if(k4 > 180 || this.maps.map_bg[k4][j] != 0 && this.maps.map_bg[k4][j] != 4)
+					if(k4 > this.mapWidth || this.maps.map_bg[k4][j] != 0 && this.maps.map_bg[k4][j] != 4)
 						break;
 					this.maps.putBGCode(k4, j, 20);
 					l++;
@@ -35832,7 +35832,7 @@ MainProgram.prototype.hAttack = function(i, j)
 					if(j1 > 2)
 						break;
 					var l5 = i + j1;
-					if(l5 > 180 || this.maps.map_bg[l5][j] != 0 && this.maps.map_bg[l5][j] != 4)
+					if(l5 > this.mapWidth || this.maps.map_bg[l5][j] != 0 && this.maps.map_bg[l5][j] != 4)
 						break;
 					this.maps.putBGCode(l5, j, 20);
 					j1++;
@@ -35869,7 +35869,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var k3 = -10; k3 <= 10; k3++)
 				{
 					for(var l1 = -10; l1 <= 10; l1++)
-						if(i + l1 >= 1 && i + l1 <= 180 && j + k3 >= 10 && j + k3 <= 39 && this.maps.map_bg[i + l1][j + k3] == 5)
+						if(i + l1 >= 1 && i + l1 <= this.mapWidth && j + k3 >= 10 && j + k3 <= this.mapHeight + 9 && this.maps.map_bg[i + l1][j + k3] == 5)
 							this.maps.putBGCode(i + l1, j + k3, 9);
 
 				}
@@ -35881,7 +35881,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var l3 = -10; l3 <= 10; l3++)
 				{
 					for(var i2 = -10; i2 <= 10; i2++)
-						if(i + i2 >= 1 && i + i2 <= 180 && j + l3 >= 10 && j + l3 <= 39 && this.maps.map_bg[i + i2][j + l3] == 5)
+						if(i + i2 >= 1 && i + i2 <= this.mapWidth && j + l3 >= 10 && j + l3 <= this.mapHeight + 9 && this.maps.map_bg[i + i2][j + l3] == 5)
 							this.maps.putBGCode(i + i2, j + l3, 20);
 
 				}
@@ -35893,7 +35893,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var i4 = -10; i4 <= 10; i4++)
 				{
 					for(var j2 = -10; j2 <= 10; j2++)
-						if(i + j2 >= 1 && i + j2 <= 180 && j + i4 >= 10 && j + i4 <= 39 && this.maps.map_bg[i + j2][j + i4] == 20)
+						if(i + j2 >= 1 && i + j2 <= this.mapWidth && j + i4 >= 10 && j + i4 <= this.mapHeight + 9 && this.maps.map_bg[i + j2][j + i4] == 20)
 							this.maps.putBGCode(i + j2, j + i4, 9);
 
 				}
@@ -35905,7 +35905,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var j4 = -10; j4 <= 10; j4++)
 				{
 					for(var k2 = -10; k2 <= 10; k2++)
-						if(i + k2 >= 1 && i + k2 <= 180 && j + j4 >= 10 && j + j4 <= 39 && this.maps.map_bg[i + k2][j + j4] == 23)
+						if(i + k2 >= 1 && i + k2 <= this.mapWidth && j + j4 >= 10 && j + j4 <= this.mapHeight && this.maps.map_bg[i + k2][j + j4] == 23)
 							this.maps.putBGCode(i + k2, j + j4, 0);
 
 				}
@@ -36740,8 +36740,8 @@ MainProgram.prototype.moveYuka = function()
 					this.co_j.y = j1;
 				if(this.co_j.x < 17)
 					this.co_j.x = 17;
-				if(this.co_j.x + 15 >= 5792)
-					this.co_j.x = 5776;
+				if(this.co_j.x + 15 >= (this.mapWidth + 1) * 32)
+					this.co_j.x = this.mapWidth * 32 + 16;
 			} else
 			{
 				yukaobject.x = yukaobject.x_buff;
