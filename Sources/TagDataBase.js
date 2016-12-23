@@ -402,7 +402,7 @@ TagDataBase.prototype.getValue = function(paramString)
 	if ("undefined" !== typeof s) {
 		return s;
 	}
-	alert("Error : No param " + paramString);
+	console.warn("Error : No param " + paramString);
 	return null;
 }
 
@@ -416,7 +416,7 @@ TagDataBase.prototype.getValueInt = function(paramString)
 			j = -1;
 		return j;
 	}
-	alert("Error : No param " + paramString);
+	console.warn("Error : No param " + paramString);
 	return -1;
 }
 
