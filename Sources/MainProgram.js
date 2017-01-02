@@ -14623,8 +14623,8 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 				case 201:
 				case 202:
 				case 203:
-					characterobject.c = 200;
-					characterobject.c2 = k - 200;
+					characterobject.c2 = 200;
+					characterobject.c3 = k - 200;
 					break;
 
 				case 301:
@@ -14669,7 +14669,11 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 					break;
 
 				case 600:
+				case 601:
+				case 602:
+					characterobject.c2 = 600;
 					characterobject.c3 = 0;
+					characterobject.c4 = k - 600;
 					break;
 
 				case 660:
@@ -14684,9 +14688,40 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 					characterobject.c4 = 0;
 					break;
 
-				case 900:
-					if (this.airms_kf == 2)
-						characterobject.c2 = 950;
+				case 700:
+				case 701:
+				case 702:
+				case 703:
+				case 704:
+					characterobject.c2 = 700;
+					characterobject.c3 = k - 700;
+					break;
+
+				case 710:
+					characterobject.c3 = 0;
+					break;
+
+				case 711:
+					characterobject.c2 = 710;
+					characterobject.c3 = 1;
+					break;
+
+				case 800:
+				case 801:
+				case 802:
+				case 803:
+				case 804:
+					characterobject.c2 = 800;
+					characterobject.c4 = k - 800;
+					break;
+
+				case 920:
+					characterobject.c3 = 0;
+					break;
+
+				case 921:
+					characterobject.c2 = 920;
+					characterobject.c3 = 1;
 					break;
 
 				case 930:
@@ -15600,7 +15635,7 @@ MainProgram.prototype.tMove = function()
 			if(i21 >= this.ochiru_y)
 				characterobject.c = 0;
 			if(characterobject.vy == 0 && (Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y) && i21 >= this.maps.wy - 128 && i21 <= this.maps.wy + 320 + 128)
-				if(characterobject.c2 == 1)
+				if(characterobject.c3 == 1)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
@@ -15612,7 +15647,7 @@ MainProgram.prototype.tMove = function()
 						this.gs.rsAddSound(15);
 					}
 				} else
-				if(characterobject.c2 == 2)
+				if(characterobject.c3 == 2)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
@@ -15634,7 +15669,7 @@ MainProgram.prototype.tMove = function()
 						this.gs.rsAddSound(10);
 					}
 				} else
-				if(characterobject.c2 == 3)
+				if(characterobject.c3 == 3)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
@@ -16707,7 +16742,7 @@ MainProgram.prototype.tMove = function()
 			break;
 
 		case 600: 
-			if(i < 120 && this.mariri_attack == 3 && characterobject.c1 == 20)
+			if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
 			{
 				characterobject.c = 605;
 				characterobject.c1++;
@@ -16735,14 +16770,14 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1++;
 				characterobject.vy = -17;
 				characterobject.c3 = 0;
-				if(i < 120 && this.mariri_attack == 2)
+				if(i < 120 && characterobject.c4 == 1)
 					characterobject.vy = -22;
 				var l25 = this.maps.getBGCode(l20 + 15, i21 + 32);
 				if(l25 == 18 || l25 == 19)
 					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
 				characterobject.pt = 154;
 				characterobject.pth = 0;
-				if(i < 120 && this.mariri_attack == 2)
+				if(i < 120 && characterobject.c4 == 1)
 					if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
 						characterobject.pth = 0;
 					else
@@ -16779,7 +16814,7 @@ MainProgram.prototype.tMove = function()
 				}
 				if(characterobject.vy > 17)
 					characterobject.vy = 17;
-				if(i >= 120 || this.mariri_attack != 2)
+				if(i >= 120 || characterobject.c4 != 1)
 					l20 -= 5;
 				var k32 = i21;
 				i21 += characterobject.vy;
@@ -16894,7 +16929,7 @@ MainProgram.prototype.tMove = function()
 					if(i >= 120 && l20 < this.maps.wx - 32)
 						characterobject.c = 0;
 				}
-				if(i < 120 && this.mariri_attack == 2)
+				if(i < 120 && characterobject.c4 == 1)
 					if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
 						characterobject.pth = 0;
 					else
@@ -16905,7 +16940,7 @@ MainProgram.prototype.tMove = function()
 			break;
 
 		case 605: 
-			if(i < 120 && this.mariri_attack == 3 && characterobject.c1 == 20)
+			if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
 			{
 				characterobject.c = 600;
 				characterobject.c1++;
@@ -17238,13 +17273,13 @@ MainProgram.prototype.tMove = function()
 				if(characterobject.c == 1300)
 					break;
 			}
-			if(this.yachamo_attack != 2)
+			if(characterobject.c3 != 1)
 				if(characterobject.c1 > 0)
 				{
 					characterobject.c1++;
 					if(characterobject.c1 == 2)
 					{
-						if(this.yachamo_attack == 3)
+						if(characterobject.c3 == 2)
 						{
 							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
 								if(l20 + 8 >= this.co_j.x)
@@ -17257,7 +17292,7 @@ MainProgram.prototype.tMove = function()
 									this.gs.rsAddSound(22);
 								}
 						} else
-						if(this.yachamo_attack == 4)
+						if(characterobject.c3 == 3)
 						{
 							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
 								if(l20 + 8 >= this.co_j.x)
@@ -17280,7 +17315,7 @@ MainProgram.prototype.tMove = function()
 									this.gs.rsAddSound(11);
 								}
 						} else
-						if(this.yachamo_attack == 5)
+						if(characterobject.c3 == 4)
 						{
 							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
 								if(l20 + 8 >= this.co_j.x)
@@ -17305,7 +17340,7 @@ MainProgram.prototype.tMove = function()
 								this.gs.rsAddSound(14);
 						}
 					} else
-					if(this.yachamo_attack != 3 && this.yachamo_attack != 4 && characterobject.c1 > 40)
+					if(characterobject.c3 != 2 && characterobject.c3 != 3 && characterobject.c1 > 40)
 						characterobject.c1 = 0;
 					else
 					if(characterobject.c1 > 52)
@@ -17342,7 +17377,7 @@ MainProgram.prototype.tMove = function()
 			if(characterobject.c1 <= 0)
 			{
 				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 320 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
-					if(this.yachamo_attack == 6)
+					if(characterobject.c3 == 0)
 						characterobject.c1 = 1;
 					else
 						characterobject.c1 = 100;
@@ -17483,7 +17518,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1++;
 				if(characterobject.c1 == 2)
 				{
-					if(this.mizutaro_attack == 2)
+					if(characterobject.c4 == 1)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -17505,13 +17540,13 @@ MainProgram.prototype.tMove = function()
 							this.gs.rsAddSound(11);
 						}
 					} else
-					if(this.mizutaro_attack == 3)
+					if(characterobject.c4 == 2)
 					{
 						this.mSet(l20, i21, 100);
 						this.gs.rsAddSound(10);
 						characterobject.c1 = 12;
 					} else
-					if(this.mizutaro_attack == 4)
+					if(characterobject.c4 == 3)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -17526,7 +17561,7 @@ MainProgram.prototype.tMove = function()
 						}
 						characterobject.c1 = 12;
 					} else
-					if(this.mizutaro_attack == 5)
+					if(characterobject.c4 == 4)
 					{
 						for(var k8 = 0; k8 <= 300; k8 += 90)
 						{
@@ -17600,11 +17635,11 @@ MainProgram.prototype.tMove = function()
 				characterobject.pt = 161 + this.g_ac;
 				characterobject.pth = 1;
 			} else
-			if(this.mizutaro_attack != 5 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
+			if(characterobject.c4 != 4 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
 			{
 				characterobject.c1++;
 				if(characterobject.c1 == 15)
-					if(this.mizutaro_attack == 2)
+					if(characterobject.c4 == 1)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -17626,12 +17661,12 @@ MainProgram.prototype.tMove = function()
 							this.gs.rsAddSound(11);
 						}
 					} else
-					if(this.mizutaro_attack == 3)
+					if(characterobject.c4 == 2)
 					{
 						this.mSet(l20, i21, 100);
 						this.gs.rsAddSound(10);
 					} else
-					if(this.mizutaro_attack == 4)
+					if(characterobject.c4 == 3)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -17645,7 +17680,7 @@ MainProgram.prototype.tMove = function()
 								this.gs.rsAddSound(15);
 						}
 					} else
-					if(this.mizutaro_attack == 5)
+					if(characterobject.c4 == 4)
 					{
 						for(var i9 = 0; i9 <= 300; i9 += 90)
 						{
@@ -17773,7 +17808,7 @@ MainProgram.prototype.tMove = function()
 			} else
 			if(characterobject.c1 == 1)
 			{
-				if(this.airms_kf == 4)
+				if(characterobject.c3 == 1)
 					this.mSet2(l20, i21, 800, 0, 0);
 				else
 					this.mSet(l20, i21 + 19, 606);
@@ -37697,7 +37732,11 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 79:
-			if (this.mariri_attack == 4)
+			if (this.mariri_attack == 2)
+				this.tSet(x * 32, y * 32, 601, x * 32 - 512 - 32);
+			else if (this.mariri_attack == 3)
+				this.tSet(x * 32, y * 32, 602, x * 32 - 512 - 32);
+			else if (this.mariri_attack == 4)
 				this.tSet(x * 32, y * 32, 660, x * 32 - 512 - 32);
 			else if (this.mariri_attack == 5)
 				this.tSet(x * 32, y * 32, 670, x * 32 - 512 - 32);
@@ -37707,8 +37746,12 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 80:
-			if (this.yachamo_attack == 6 || this.yachamo_attack == 7)
+			if (this.yachamo_attack >= 1 && this.yachamo_attack <= 5)
+				this.tSet(x * 32, y * 32, 699 + this.yachamo_attack, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 6)
 				this.tSet(x * 32, y * 32, 710, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 7)
+				this.tSet(x * 32, y * 32, 711, x * 32 - 512 - 32);
 			else if (this.yachamo_attack == 8)
 				this.tSet(x * 32, y * 32, 720, x * 32 - 512 - 32);
 			else if (this.yachamo_attack == 9)
@@ -37721,14 +37764,20 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 		case 81:
 			if (this.j_tokugi == 14)
 				this.tSet(x * 32, y * 32, 850, x * 32 - 512 - 32);
+			else if (this.mizutaro_attack >= 1 && this.mizutaro_attack <= 5)
+				this.tSet(x * 32, y * 32, 799 + this.mizutaro_attack, x * 32 - 512 - 32);
 			else
 				this.tSet(x * 32, y * 32, 800, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 82:
-			if (this.airms_kf == 3 || this.airms_kf == 4)
+			if (this.airms_kf == 2)
+				this.tSet(x * 32, y * 32, 950, x * 32 - 512 - 32);
+			else if (this.airms_kf == 3)
 				this.tSet(x * 32, y * 32, 920, x * 32 - 512 - 32);
+			else if (this.airms_kf == 4)
+				this.tSet(x * 32, y * 32, 921, x * 32 - 512 - 32);
 			else if (this.airms_kf == 5)
 				this.tSet(x * 32, y * 32, 930, x * 32 - 512 - 32);
 			else
@@ -37887,6 +37936,8 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			else if (id >= 5000 && id < 10000) {
 				this.tSet(x * 32, y * 32, id - 5000, x * 32 - 512 - 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
 			}
 			break;
 	}
