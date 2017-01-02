@@ -103,14 +103,6 @@ MasaoConstruction.prototype.paint = function(paramGraphics)
 		{
 			paramGraphics.drawString(this.getParameter("now_loading"), 32, 160);
 		}
-		if(this.th_jm <= 6)
-		{
-			paramGraphics.drawString("画像を読み込み中", 60, 200);
-		}
-		if(this.th_jm <= 5)
-		{
-			paramGraphics.drawString("---完了", 60, 220);
-		}
 	}
 }
 
@@ -133,38 +125,38 @@ MasaoConstruction.prototype.run = function()
 		for(var cur = oldFirstMessage; cur; cur = cur.next)
 		{
 			// ファイルロード待ちのメッセージ
-			if(cur.type == "load")
-			{
-				if(cur.target._dat.complete)
-				{
+			if (cur.type == "load") {
+				if (cur.target._dat.complete) {
 					continue;
 				}
-				else
-				{
+				else {
 					this.pushMessage(cur.type, cur.target, cur.parameters);
 				}
 			}
 			// makeChipImageメソッド呼び出し待ち
-			else if(cur.type == "makeChipImage")
-			{
-				if(cur.target._dat.complete)
-				{
+			else if (cur.type == "makeChipImage") {
+				if (cur.target._dat.complete) {
 					cur.parameters.chipimage.makeChipImage();
 				}
-				else
-				{
+				else {
 					this.pushMessage(cur.type, cur.target, cur.parameters);
 				}
 			}
 			// makeReverseChipImagrメソッド呼び出し待ち
-			else if(cur.type == "makeReverseChipImage")
-			{
-				if(cur.target._dat.complete)
-				{
+			else if (cur.type == "makeReverseChipImage") {
+				if (cur.target._dat.complete) {
 					cur.parameters.chipimage.makeReverseChipImage();
 				}
-				else
-				{
+				else {
+					this.pushMessage(cur.type, cur.target, cur.parameters);
+				}
+			}
+			// JSON読み込み待ち
+			else if (cur.type == "loadAdvanceMapJson") {
+				if (cur.target.complete) {
+					continue;
+				}
+				else {
 					this.pushMessage(cur.type, cur.target, cur.parameters);
 				}
 			}
@@ -316,10 +308,11 @@ MasaoConstruction.prototype.init_j = function()
 	{
 		this.tdb = new TagDataBase();
 		this.tdb.setValueFromHTML(this);
+		this.tdb.options = this.options;
 	}
 	var m = 0;
 	for (var p = 0; p < 3; p++) {
-		for (var q = 0; q < 30; q++) {      // マップサイズに影響
+		for (var q = 0; q < 30; q++) {
 			var str = "map" + p + "-" + q;
 			if ((this.tdb.getValue(str) != null) && (this.tdb.getValue(str) != ".") && (this.tdb.getValue(str) != ""))
 			{
@@ -332,8 +325,9 @@ MasaoConstruction.prototype.init_j = function()
 		this.tdb.setValueStage1();
 	}
 
-	// 新形式マップの処理
-	if (this.tdb.getValue("advance_map") == "1") {
+	// 新形式マップデータがJSONファイルのURLで設定されているときはJSONを読み込む
+	if (typeof(this.options["advance-map"]) === "string") {
+		this.loadAdvanceMapJson(this.options["advance-map"]);
 	}
 
 	this.th_interval = this.tdb.getValueInt("game_speed");
@@ -2568,5 +2562,27 @@ MasaoConstruction.prototype.pushMessage = function(type, target, parameters)
 	this.lastMessage = newMessage;
 }
 
+
+MasaoConstruction.prototype.loadAdvanceMapJson = function (url) {
+	var xhr = new XMLHttpRequest();
+	var stateObj = { complete: false };
+	xhr.open("GET", url, true);
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4) {
+			try {
+				this.options["advance-map"] = JSON.parse(xhr.responseText);
+			}
+			catch (ex) {
+				console.error("Failed to load JSON: " + url);
+			}
+			stateObj.complete = true;
+			xhr.onreadystatechange = null;
+		}
+	}.bind(this);
+
+	this.pushMessage("loadAdvanceMapJson", stateObj, null);
+
+	xhr.send(null);
+}
 
 

@@ -5054,12 +5054,37 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 	var s9;
 	s8 = "0123456789abcdef";
 	s9 = "0123456789ABCDEF";
-	this.maps.init();
-	for(var l1 = 0; l1 < 50; l1++)
-	{
-		for(var k = 0; k < 200; k++)
-			this.map_data_option[k][l1] = false;
 
+	var advance_map = this.tdb.options["advance-map"];
+	var stage = null;
+	var mainLayer = null;
+	var mapchipLayer = null;
+
+	if (advance_map) {
+		stage = advance_map.stages[i - 101];
+		this.mapWidth = stage.size.x;
+		this.mapHeight = stage.size.y;
+		stage.layers.forEach(function (layer) {
+			if (layer.type === "main") {
+				mainLayer = layer;
+			}
+			else if (layer.type === "mapchip") {
+				mapchipLayer = layer;
+			}
+		});
+	}
+	else {
+		this.mapWidth = 180;
+		this.mapHeight = 30;
+	}
+
+	this.maps = new MapSystem(this.mapWidth + 20, this.mapHeight + 70, this.gg, this);
+	this.maps.init();
+	this.map_data_option = createNDimensionArray(this.mapWidth + 20, this.mapHeight + 70);
+	for(var l1 = 0; l1 < this.mapHeight + 70; l1++)
+	{
+		for(var k = 0; k < this.mapWidth + 20; k++)
+			this.map_data_option[k][l1] = false;
 	}
 
 	as = this.maps.map_string;
@@ -5068,127 +5093,101 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 	this.maps.wy = 32;
 	this.maps.wx_mini = 32;
 	this.maps.wy_mini = 320;
-	this.maps.wx_max = 5856;
-	this.maps.wy_max = 6048;
-	c2 = 199;
+	this.maps.wx_max = (this.mapWidth - 15) * 32;
+	this.maps.wy_max = this.mapHeight * 32;
+	c2 = this.mapWidth + 19;
 	this.gg.setBackcolor(Color.blue);
-label0:
-	switch(i)
-	{
-	default:
-		break;
 
-	case 101:
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		for(var i2 = 0; i2 <= 29; i2++)
-		{
-			var s = "" + "." + this.tdb.getValue("" + "map0-" + i2);
-			s = "" + s + this.tdb.getValue("" + "map1-" + i2);
-			s = "" + s + this.tdb.getValue("" + "map2-" + i2);
-			as[i2 + 10] = s;
-			if(this.gg.layer_mode == 2)
-			{
-				var s1 = "" + "00" + this.tdb.getValue("" + "layer0-" + i2);
-				s1 = "" + s1 + this.tdb.getValue("" + "layer1-" + i2);
-				s1 = "" + s1 + this.tdb.getValue("" + "layer2-" + i2);
-				as1[i2 + 10] = s1;
-			}
+	if (!advance_map) {
+		switch (i) {
+			default:
+				break;
+
+			case 101:
+				for (var i2 = 0; i2 < this.mapHeight; i2++) {
+					var s = "" + "." + this.tdb.getValue("" + "map0-" + i2);
+					s = "" + s + this.tdb.getValue("" + "map1-" + i2);
+					s = "" + s + this.tdb.getValue("" + "map2-" + i2);
+					as[i2 + 10] = s;
+					if (this.gg.layer_mode == 2) {
+						var s1 = "" + "00" + this.tdb.getValue("" + "layer0-" + i2);
+						s1 = "" + s1 + this.tdb.getValue("" + "layer1-" + i2);
+						s1 = "" + s1 + this.tdb.getValue("" + "layer2-" + i2);
+						as1[i2 + 10] = s1;
+					}
+				}
+				break;
+
+			case 102:
+				for (var j2 = 0; j2 < this.mapHeight; j2++) {
+					var s2 = "" + "." + this.tdb.getValue("" + "map0-" + j2 + "-s");
+					s2 = "" + s2 + this.tdb.getValue("" + "map1-" + j2 + "-s");
+					s2 = "" + s2 + this.tdb.getValue("" + "map2-" + j2 + "-s");
+					as[j2 + 10] = s2;
+					if (this.gg.layer_mode == 2) {
+						var s3 = "" + "00" + this.tdb.getValue("" + "layer0-" + j2 + "-s");
+						s3 = "" + s3 + this.tdb.getValue("" + "layer1-" + j2 + "-s");
+						s3 = "" + s3 + this.tdb.getValue("" + "layer2-" + j2 + "-s");
+						as1[j2 + 10] = s3;
+					}
+				}
+				break;
+
+			case 103:
+				for (var k2 = 0; k2 < this.mapHeight; k2++) {
+					var s4 = "" + "." + this.tdb.getValue("" + "map0-" + k2 + "-t");
+					s4 = "" + s4 + this.tdb.getValue("" + "map1-" + k2 + "-t");
+					s4 = "" + s4 + this.tdb.getValue("" + "map2-" + k2 + "-t");
+					as[k2 + 10] = s4;
+					if (this.gg.layer_mode == 2) {
+						var s5 = "" + "00" + this.tdb.getValue("" + "layer0-" + k2 + "-t");
+						s5 = "" + s5 + this.tdb.getValue("" + "layer1-" + k2 + "-t");
+						s5 = "" + s5 + this.tdb.getValue("" + "layer2-" + k2 + "-t");
+						as1[k2 + 10] = s5;
+					}
+				}
+				break;
+
+			case 104:
+				for (var l2 = 0; l2 < this.mapHeight; l2++) {
+					var s6 = "" + "." + this.tdb.getValue("" + "map0-" + l2 + "-f");
+					s6 = "" + s6 + this.tdb.getValue("" + "map1-" + l2 + "-f");
+					s6 = "" + s6 + this.tdb.getValue("" + "map2-" + l2 + "-f");
+					as[l2 + 10] = s6;
+					if (this.gg.layer_mode == 2) {
+						var s7 = "" + "00" + this.tdb.getValue("" + "layer0-" + l2 + "-f");
+						s7 = "" + s7 + this.tdb.getValue("" + "layer1-" + l2 + "-f");
+						s7 = "" + s7 + this.tdb.getValue("" + "layer2-" + l2 + "-f");
+						as1[l2 + 10] = s7;
+					}
+				}
+				break;
 		}
-
-		break;
-
-	case 102:
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back_s);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		var j2 = 0;
-		do
-		{
-			if(j2 > 29)
-				break label0;
-			var s2 = "" + "." + this.tdb.getValue("" + "map0-" + j2 + "-s");
-			s2 = "" + s2 + this.tdb.getValue("" + "map1-" + j2 + "-s");
-			s2 = "" + s2 + this.tdb.getValue("" + "map2-" + j2 + "-s");
-			as[j2 + 10] = s2;
-			if(this.gg.layer_mode == 2)
-			{
-				var s3 = "" + "00" + this.tdb.getValue("" + "layer0-" + j2 + "-s");
-				s3 = "" + s3 + this.tdb.getValue("" + "layer1-" + j2 + "-s");
-				s3 = "" + s3 + this.tdb.getValue("" + "layer2-" + j2 + "-s");
-				as1[j2 + 10] = s3;
-			}
-			j2++;
-		} while(true);
-
-	case 103:
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back_t);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		var k2 = 0;
-		do
-		{
-			if(k2 > 29)
-				break label0;
-			var s4 = "" + "." + this.tdb.getValue("" + "map0-" + k2 + "-t");
-			s4 = "" + s4 + this.tdb.getValue("" + "map1-" + k2 + "-t");
-			s4 = "" + s4 + this.tdb.getValue("" + "map2-" + k2 + "-t");
-			as[k2 + 10] = s4;
-			if(this.gg.layer_mode == 2)
-			{
-				var s5 = "" + "00" + this.tdb.getValue("" + "layer0-" + k2 + "-t");
-				s5 = "" + s5 + this.tdb.getValue("" + "layer1-" + k2 + "-t");
-				s5 = "" + s5 + this.tdb.getValue("" + "layer2-" + k2 + "-t");
-				as1[k2 + 10] = s5;
-			}
-			k2++;
-		} while(true);
-
-	case 104:
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back_f);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		for(var l2 = 0; l2 <= 29; l2++)
-		{
-			var s6 = "" + "." + this.tdb.getValue("" + "map0-" + l2 + "-f");
-			s6 = "" + s6 + this.tdb.getValue("" + "map1-" + l2 + "-f");
-			s6 = "" + s6 + this.tdb.getValue("" + "map2-" + l2 + "-f");
-			as[l2 + 10] = s6;
-			if(this.gg.layer_mode == 2)
-			{
-				var s7 = "" + "00" + this.tdb.getValue("" + "layer0-" + l2 + "-f");
-				s7 = "" + s7 + this.tdb.getValue("" + "layer1-" + l2 + "-f");
-				s7 = "" + s7 + this.tdb.getValue("" + "layer2-" + l2 + "-f");
-				as1[l2 + 10] = s7;
-			}
-		}
-
-		break;
 	}
+	this.maps.setBank(0);
+	if (i == 101)
+		this.gg.setBackcolor(this.gamecolor_back);
+	else if (i == 102)
+		this.gg.setBackcolor(this.gamecolor_back_s);
+	else if (i == 103)
+		this.gg.setBackcolor(this.gamecolor_back_t);
+	else if (i == 104)
+		this.gg.setBackcolor(this.gamecolor_back_f);
 	var tmp1866_1864;
 	var tmp1866_1862;
 	var tmp1937_1935;
 	var tmp1937_1933;
 	for (i3 = 0; i3 < this.maps.height; i3++) {
-		if (as[i3].length < this.maps.width)
-		{
+		if (as[i3].length < this.maps.width) {
 			var n = as[i3].length;
-			for (k = n; k < this.maps.width; k++)
-			{
+			for (k = n; k < this.maps.width; k++) {
 				tmp1866_1864 = i3;
 				tmp1866_1862 = as;
 				tmp1866_1862[tmp1866_1864] = (tmp1866_1862[tmp1866_1864] + ".");
 			}
-			if (this.gg.layer_mode == 2)
-			{
+			if (this.gg.layer_mode == 2) {
 				n = as1[i3].length;
-				for (k = n; k < this.maps.width * 2; k++)
-				{
+				for (k = n; k < this.maps.width * 2; k++) {
 					tmp1937_1935 = i3;
 					tmp1937_1933 = as1;
 					tmp1937_1933[tmp1937_1935] = (tmp1937_1933[tmp1937_1935] + "0");
@@ -5202,45 +5201,50 @@ label0:
 		{
 			for(var i1 = 0; i1 < this.maps.width; i1++)
 			{
-				var c = as1[j3].charAt(i1 * 2);
-				if(c == '.')
-					continue;
 				var word0 = 0;
-				var j = 0;
-				do
-				{
-					if(j > 15)
-						break;
-					if(c == s8.charAt(j))
-					{
-						word0 = Math.floor(j * 16);
-						break;
+				if (mapchipLayer) {
+					try {
+						word0 = mapchipLayer.map[j3 - 10][i1 - 1];
+						if (!word0) {
+							word0 = 0;
+						}
 					}
-					if(c == s9.charAt(j))
-					{
-						word0 = Math.floor(j * 16);
-						break;
-					}
-					j++;
-				} while(true);
-				c = as1[j3].charAt(i1 * 2 + 1);
-				j = 0;
-				do
-				{
-					if(j > 15)
-						break;
-					if(c == s8.charAt(j))
-					{
-						word0 += j;
-						break;
-					}
-					if(c == s9.charAt(j))
-					{
-						word0 += j;
-						break;
-					}
-					j++;
-				} while(true);
+					catch (ex) { }
+				}
+				else {
+					var c = as1[j3].charAt(i1 * 2);
+					if (c == '.')
+						continue;
+					var j = 0;
+					do {
+						if (j > 15)
+							break;
+						if (c == s8.charAt(j)) {
+							word0 = Math.floor(j * 16);
+							break;
+						}
+						if (c == s9.charAt(j)) {
+							word0 = Math.floor(j * 16);
+							break;
+						}
+						j++;
+					} while (true);
+					c = as1[j3].charAt(i1 * 2 + 1);
+					j = 0;
+					do {
+						if (j > 15)
+							break;
+						if (c == s8.charAt(j)) {
+							word0 += j;
+							break;
+						}
+						if (c == s9.charAt(j)) {
+							word0 += j;
+							break;
+						}
+						j++;
+					} while (true);
+				}
 				this.maps.map_bg_layer[i1][j3] = word0;
 			}
 
@@ -5251,708 +5255,20 @@ label0:
 	{
 		for(var j1 = 0; j1 < this.maps.width; j1++)
 		{
-			var c1 = as[k3].charAt(j1);
-			var word1 = -1;
-			if(c1 == '.')
-				continue;
-			if(c1 == '1')
-				word1 = 1;
-			else
-			if(c1 == '2')
-				word1 = 2;
-			else
-			if(c1 == '3')
-				word1 = 3;
-			else
-			if(c1 == '4')
-				word1 = 4;
-			else
-			if(c1 == '5')
-				word1 = 5;
-			else
-			if(c1 == '6')
-				word1 = 6;
-			else
-			if(c1 == '7')
-				word1 = 7;
-			else
-			if(c1 == '8')
-				word1 = 8;
-			else
-			if(c1 == '9')
-				word1 = 9;
-			else
-			if(c1 == 'a')
-				word1 = 20;
-			else
-			if(c1 == 'b')
-				word1 = 21;
-			else
-			if(c1 == 'c')
-				word1 = 22;
-			else
-			if(c1 == 'd')
-				word1 = 23;
-			else
-			if(c1 == 'e')
-				word1 = 24;
-			else
-			if(c1 == 'f')
-				word1 = 25;
-			else
-			if(c1 == 'g')
-				word1 = 26;
-			else
-			if(c1 == 'h')
-				word1 = 27;
-			else
-			if(c1 == 'i')
-				word1 = 28;
-			else
-			if(c1 == '[')
-				word1 = 15;
-			else
-			if(c1 == ']')
-				word1 = 10;
-			else
-			if(c1 == '<')
-				word1 = 18;
-			else
-			if(c1 == '>')
-				word1 = 19;
-			else
-			if(c1 == 'j')
-				word1 = 29;
-			else
-			if(c1 == 'k')
-			{
-				if(this.coin1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.coin1_type, j1, k3);
-					if(word1 == -99)
-					{
-						word1 = 40;
-						this.hSet(j1, k3, 100);
+			var c1 = 0;
+			if (mainLayer) {
+				try {
+					c1 = mainLayer.map[k3 - 10][j1 - 1];
+					if (!c1) {
+						c1 = 0;
 					}
-				} else
-				if(this.j_tokugi == 14)
-					this.mSet(j1 * 32, k3 * 32, 2181);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2000);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 100);
 				}
-			} else
-			if(c1 == 'l')
-			{
-				if(this.coin3_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.coin3_type, j1, k3);
-					if(word1 == -99)
-					{
-						word1 = 40;
-						this.hSet(j1, k3, 200);
-					}
-				} else
-				if(this.j_tokugi == 14)
-					this.mSet(j1 * 32, k3 * 32, 2182);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2010);
-					this.mSet(j1 * 32, k3 * 32, 2020);
-					this.mSet(j1 * 32, k3 * 32, 2000);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 200);
-				}
-			} else
-			if(c1 == 'm')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2100);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 300);
-				}
-			} else
-			if(c1 == 'n')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2110);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 400);
-				}
-			} else
-			if(c1 == 'o')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2120);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 500);
-				}
-			} else
-			if(c1 == 'p')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2130);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 600);
-				}
-			} else
-			if(c1 == 'q')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2140);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 700);
-				}
-			} else
-			if(c1 == 'r')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2150);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 800);
-				}
-			} else
-			if(c1 == 's')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2160);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 900);
-				}
-			} else
-			if(c1 == 't')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2170);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 1000);
-				}
-			} else
-			if(c1 == 'u')
-			{
-				if(this.dokan1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan1_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 300, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 300, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'v')
-			{
-				if(this.dokan2_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan2_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 310, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 310, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'w')
-			{
-				if(this.dokan3_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan3_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 320, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 320, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'x')
-			{
-				if(this.dokan4_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan4_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 330, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 330, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'y')
-			{
-				if(this.stage_1up_f[this.stage - 1] || this.j_tokugi == 17)
-				{
-					if(this.j_tokugi == 14 || this.j_tokugi == 15)
-					{
-						this.mSet(j1 * 32, k3 * 32, 2180);
-					} else
-					{
-						word1 = 40;
-						this.hSet(j1, k3, 1100);
-					}
-				} else
-				{
-					word1 = 41;
-				}
-			} else
-			if(c1 == 'z')
-				word1 = 69;
-			else
-			if(c1 == '+')
-			{
-				this.aSet(j1 * 32, k3 * 32, 80, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '-')
-			{
-				this.aSet(j1 * 32, k3 * 32, 81, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '*')
-			{
-				this.aSet(j1 * 32, k3 * 32, 82, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '/')
-			{
-				this.aSet(j1 * 32, k3 * 32, 83, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'A')
-			{
-				this.co_j.x = j1 * 32;
-				this.co_j.y = k3 * 32;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'B')
-			{
-				this.tSet(j1 * 32, k3 * 32, 100, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'C')
-			{
-				this.tSet(j1 * 32, k3 * 32, 110, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'D')
-			{
-				this.tSet(j1 * 32, k3 * 32, 110, j1 * 32 - 512 - 32);
-				this.tSet(j1 * 32 + 75, k3 * 32, 110, j1 * 32 - 512 - 32);
-				this.tSet(j1 * 32 + 150, k3 * 32, 110, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'E')
-			{
-				this.tSet(j1 * 32, k3 * 32, 200, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'F')
-			{
-				if(this.chikorin_attack == 2 || this.chikorin_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 310, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 3 || this.chikorin_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 311, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 7)
-					this.tSet(j1 * 32, k3 * 32, 320, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 8)
-					this.tSet(j1 * 32, k3 * 32, 330, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 9)
-					this.tSet(j1 * 32, k3 * 32, 335, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 300, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'G')
-			{
-				this.tSet(j1 * 32, k3 * 32, 400, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'H')
-			{
-				this.tSet(j1 * 32, k3 * 32, 500, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'I')
-			{
-				if(this.poppie_attack == 2)
-					this.tSet(j1 * 32, k3 * 32, 520, j1 * 32 - 512 - 32);
-				else
-				if(this.poppie_attack == 3)
-					this.tSet(j1 * 32, k3 * 32, 530, j1 * 32 - 512 - 32);
-				else
-				if(this.poppie_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 540, j1 * 32 - 512 - 32);
-				else
-				if(this.poppie_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 550, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 510, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'J')
-			{
-				this.tSet(j1 * 32, k3 * 32, 510, j1 * 32 - 512 - 32 - 32);
-				this.tSet(j1 * 32 + 80, k3 * 32 - 40, 510, j1 * 32 - 512 - 32 - 32);
-				this.tSet(j1 * 32 + 140, k3 * 32 + 38, 510, j1 * 32 - 512 - 32 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'K')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.ugokuyuka1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.ugokuyuka1_type, j1, k3);
-					if(word1 == -99)
-						this.aSet(j1 * 32, k3 * 32, 100, j1 * 32);
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 100, j1 * 32);
-				}
-			} else
-			if(c1 == 'L')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.ugokuyuka2_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.ugokuyuka2_type, j1, k3);
-					if(word1 == -99)
-						this.aSet(j1 * 32, k3 * 32 + 9, 110, j1 * 32 - 16);
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32 + 9, 110, j1 * 32 - 16);
-				}
-			} else
-			if(c1 == 'M')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.ugokuyuka3_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.ugokuyuka3_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32 + 9, 115, j1 * 32 - 16);
-						this.aSet(j1 * 32, k3 * 32 + 9, 116, j1 * 32 - 16);
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32 + 9, 115, j1 * 32 - 16);
-					this.aSet(j1 * 32, k3 * 32 + 9, 116, j1 * 32 - 16);
-				}
-			} else
-			if(c1 == 'N')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.dossunsun_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dossunsun_type, j1, k3);
-					if(word1 == -99)
-						this.aSet(j1 * 32 - 32, k3 * 32, 400, j1 * 32);
-				} else
-				{
-					this.aSet(j1 * 32 - 32, k3 * 32, 400, j1 * 32);
-				}
-			} else
-			if(c1 == 'O')
-			{
-				if(this.mariri_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 660, j1 * 32 - 512 - 32);
-				else
-				if(this.mariri_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 670, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 600, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'P')
-			{
-				if(this.yachamo_attack == 6 || this.yachamo_attack == 7)
-					this.tSet(j1 * 32, k3 * 32, 710, j1 * 32 - 512 - 32);
-				else
-				if(this.yachamo_attack == 8)
-					this.tSet(j1 * 32, k3 * 32, 720, j1 * 32 - 512 - 32);
-				else
-				if(this.yachamo_attack == 9)
-					this.tSet(j1 * 32, k3 * 32, 725, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 700, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'Q')
-			{
-				if(this.j_tokugi == 14)
-					this.tSet(j1 * 32, k3 * 32, 850, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 800, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'R')
-			{
-				if(this.airms_kf == 3 || this.airms_kf == 4)
-					this.tSet(j1 * 32, k3 * 32, 920, j1 * 32 - 512 - 32);
-				else
-				if(this.airms_kf == 5)
-					this.tSet(j1 * 32, k3 * 32, 930, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 900, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'S')
-			{
-				this.co_b.c = 100;
-				this.co_b.c4 = 3;
-				this.co_b.x = j1 * 32;
-				this.co_b.y = k3 * 32 - 16;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.co_b.x < 448)
-					this.co_b.x = 448;
-				else
-				if(this.co_b.x > 5664)
-					this.co_b.x = 5664;
-				if(this.sl_step == 10)
-					this.sl_step = 11;
-				else
-					this.sl_step = 1;
-				this.sl_wx = this.co_b.x - 384;
-				this.sl_wy = 960;
-				if(this.boss_destroy_type == 2)
-					this.co_b.x += 160;
-			} else
-			if(c1 == 'T')
-			{
-				this.co_b.c = 200;
-				this.co_b.c4 = 3;
-				this.co_b.x = j1 * 32;
-				this.co_b.y = k3 * 32 - 16;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.co_b.x < 448)
-					this.co_b.x = 448;
-				else
-				if(this.co_b.x > 5664)
-					this.co_b.x = 5664;
-				if(this.sl_step == 10)
-					this.sl_step = 11;
-				else
-					this.sl_step = 1;
-				this.sl_wx = this.co_b.x - 384;
-				this.sl_wy = 960;
-				if(this.boss_destroy_type == 2)
-					this.co_b.x += 160;
-			} else
-			if(c1 == 'U')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.firebar1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.firebar1_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32 + 16, k3 * 32 + 16, 70, j1 * 32);
-						word1 = 50;
-					}
-				} else
-				{
-					this.aSet(j1 * 32 + 16, k3 * 32 + 16, 70, j1 * 32);
-					word1 = 50;
-				}
-			} else
-			if(c1 == 'V')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.firebar2_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.firebar2_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32 + 16, k3 * 32 + 16, 71, j1 * 32);
-						word1 = 50;
-					}
-				} else
-				{
-					this.aSet(j1 * 32 + 16, k3 * 32 + 16, 71, j1 * 32);
-					word1 = 50;
-				}
-			} else
-			if(c1 == 'W')
-			{
-				if(this.taiking_attack == 2)
-					this.tSet(j1 * 32, k3 * 32, 1050, j1 * 32 - 512 - 32);
-				else
-				if(this.taiking_attack == 3)
-					this.tSet(j1 * 32, k3 * 32, 1060, j1 * 32 - 512 - 32);
-				else
-				if(this.taiking_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 1070, j1 * 32 - 512 - 32);
-				else
-				if(this.taiking_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 1080, j1 * 32 - 512 - 32 - 32);
-				else
-				if(this.j_tokugi == 14)
-					this.tSet(j1 * 32, k3 * 32, 1002, j1 * 32 - 512 - 32 - 32);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.tSet(j1 * 32, k3 * 32, 1003, j1 * 32 - 512 - 32);
-				} else
-				{
-					this.tSet(j1 * 32, k3 * 32 - 16, 1000, j1 * 32 - 512 - 32 - 32);
-					word1 = 4;
-				}
-				if(this.maps.map_bg[j1 - 1][k3] == 4 || this.maps.map_bg[j1][k3 - 1] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'X')
-			{
-				if(this.kuragesso_attack == 2)
-					this.tSet(j1 * 32, k3 * 32, 1150, j1 * 32 - 512 - 32);
-				else
-				if(this.kuragesso_attack == 3)
-					this.tSet(j1 * 32, k3 * 32, 1160, j1 * 32 - 512 - 32);
-				else
-				if(this.kuragesso_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 1170, j1 * 32 - 512 - 32);
-				else
-				if(this.kuragesso_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 1180, j1 * 32 - 512 - 32 - 32);
-				else
-				if(this.j_tokugi == 14)
-					this.tSet(j1 * 32, k3 * 32, 1102, j1 * 32 - 512 - 32);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.tSet(j1 * 32, k3 * 32, 1103, j1 * 32 - 512 - 32);
-				} else
-				{
-					this.tSet(j1 * 32, k3 * 32, 1100, j1 * 32 - 512 - 32);
-					word1 = 4;
-				}
-				if(this.maps.map_bg[j1 - 1][k3] == 4 || this.maps.map_bg[j1][k3 - 1] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'Y')
-			{
-				this.aSet(j1 * 32, k3 * 32, 60, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'Z')
-			{
-				this.co_b.c = 300;
-				this.co_b.c4 = 3;
-				this.co_b.x = j1 * 32;
-				this.co_b.y = k3 * 32 - 16;
-				this.boss_kijyun_y = this.co_b.y;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.co_b.x < 448)
-					this.co_b.x = 448;
-				else
-				if(this.co_b.x > 5664)
-					this.co_b.x = 5664;
-				if(this.sl_step == 10)
-					this.sl_step = 11;
-				else
-					this.sl_step = 1;
-				this.sl_wx = this.co_b.x - 384;
-				this.sl_wy = 960;
-				if(this.boss_destroy_type == 2)
-					this.co_b.x += 160;
-			} else
-			if(c1 == '{')
-			{
-				this.tSet(j1 * 32, k3 * 32, 1200, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '}')
-			{
-				this.tSet(j1 * 32, k3 * 32, 1400, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
+				catch (ex) { }
 			}
+			else {
+				c1 = as[k3].charCodeAt(j1);
+			}
+			var word1 = this.setChipValue(j1, k3, c1);
 			if(word1 >= 0)
 				this.maps.map_bg[j1][k3] = word1;
 		}
@@ -5968,7 +5284,7 @@ label0:
 	for(var l3 = 0; l3 <= this.maps.height - 1; l3++)
 	{
 		this.maps.map_bg[0][l3] = 21;
-		this.maps.map_bg[181][l3] = 21;
+		this.maps.map_bg[this.mapWidth + 1][l3] = 21;
 		this.maps.map_bg[c2][l3] = 21;
 	}
 
@@ -15302,95 +14618,113 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			characterobject.c4 = j;
 			characterobject.x = i;
 			characterobject.y = j;
-			switch(k)
-			{
-			case 310: 
-				characterobject.c3 = 8;
-				break;
+			switch (k) {
+				case 301:
+					characterobject.c2 = 300;
+					characterobject.c3 = 1;
+					break;
 
-			case 311: 
-				characterobject.c2 = 310;
-				characterobject.c3 = 999;
-				break;
+				case 310:
+					characterobject.c3 = 8;
+					characterobject.c4 = 0;
+					break;
 
-			case 500: 
-				characterobject.y = j - 12;
-				characterobject.c3 = j - 52;
-				characterobject.c4 = j - 12;
-				characterobject.vy = -4;
-				break;
+				case 311:
+					characterobject.c2 = 310;
+					characterobject.c3 = 999;
+					characterobject.c4 = 0;
+					break;
 
-			case 530: 
-				characterobject.y = j;
-				characterobject.c3 = j;
-				characterobject.c4 = 0;
-				break;
+				case 312:
+					characterobject.c2 = 310;
+					characterobject.c3 = 8;
+					characterobject.c4 = 1;
+					break;
 
-			case 600: 
-				characterobject.c3 = 0;
-				break;
+				case 313:
+					characterobject.c2 = 310;
+					characterobject.c3 = 999;
+					characterobject.c4 = 1;
+					break;
 
-			case 660: 
-				characterobject.y = j;
-				characterobject.c3 = i;
-				characterobject.c4 = 10;
-				break;
+				case 500:
+					characterobject.y = j - 12;
+					characterobject.c3 = j - 52;
+					characterobject.c4 = j - 12;
+					characterobject.vy = -4;
+					break;
 
-			case 670: 
-				characterobject.y = j;
-				characterobject.c3 = i;
-				characterobject.c4 = 0;
-				break;
+				case 530:
+					characterobject.y = j;
+					characterobject.c3 = j;
+					characterobject.c4 = 0;
+					break;
 
-			case 900: 
-				if(this.airms_kf == 2)
-					characterobject.c2 = 950;
-				break;
+				case 600:
+					characterobject.c3 = 0;
+					break;
 
-			case 930: 
-				characterobject.y = j;
-				characterobject.c3 = i;
-				characterobject.c4 = 20;
-				break;
+				case 660:
+					characterobject.y = j;
+					characterobject.c3 = i;
+					characterobject.c4 = 10;
+					break;
 
-			case 1070: 
-				characterobject.c3 = i - 64;
-				break;
+				case 670:
+					characterobject.y = j;
+					characterobject.c3 = i;
+					characterobject.c4 = 0;
+					break;
 
-			case 1080: 
-				characterobject.c3 = i - 64;
-				break;
+				case 900:
+					if (this.airms_kf == 2)
+						characterobject.c2 = 950;
+					break;
 
-			case 1170: 
-				characterobject.c3 = i - 64;
-				break;
+				case 930:
+					characterobject.y = j;
+					characterobject.c3 = i;
+					characterobject.c4 = 20;
+					break;
 
-			case 1180: 
-				characterobject.c3 = i - 64;
-				break;
+				case 1070:
+					characterobject.c3 = i - 64;
+					break;
 
-			case 1190: 
-				characterobject.c3 = i - 64;
-				characterobject.c5 = 0;
-				break;
+				case 1080:
+					characterobject.c3 = i - 64;
+					break;
 
-			case 1191: 
-				characterobject.c2 = 1190;
-				characterobject.c3 = i - 64;
-				characterobject.c5 = 1;
-				break;
+				case 1170:
+					characterobject.c3 = i - 64;
+					break;
 
-			case 1200: 
-				characterobject.c = 1220;
-				break;
+				case 1180:
+					characterobject.c3 = i - 64;
+					break;
 
-			case 1400: 
-				characterobject.c = 1430;
-				characterobject.c2 = this.tpika_p;
-				this.tpika_p++;
-				if(this.tpika_p > 2)
-					this.tpika_p = 2;
-				break;
+				case 1190:
+					characterobject.c3 = i - 64;
+					characterobject.c5 = 0;
+					break;
+
+				case 1191:
+					characterobject.c2 = 1190;
+					characterobject.c3 = i - 64;
+					characterobject.c5 = 1;
+					break;
+
+				case 1200:
+					characterobject.c = 1220;
+					break;
+
+				case 1400:
+					characterobject.c = 1430;
+					characterobject.c2 = this.tpika_p;
+					this.tpika_p++;
+					if (this.tpika_p > 2)
+						this.tpika_p = 2;
+					break;
 			}
 			break;
 		}
@@ -16344,12 +15678,12 @@ MainProgram.prototype.tMove = function()
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
-						if(this.chikorin_attack == 6)
+						if(characterobject.c3 == 1)
 							this.mSet(l20, i21, 201);
 						else
 							this.mSet(l20, i21, 200);
 					} else
-					if(this.chikorin_attack == 6)
+					if(characterobject.c3 == 1)
 						this.mSet(l20, i21, 206);
 					else
 						this.mSet(l20, i21, 205);
@@ -16400,7 +15734,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1++;
 				if(characterobject.c1 == 101)
 				{
-					if(this.chikorin_attack == 4 || this.chikorin_attack == 5)
+					if(characterobject.c4 == 1)
 						this.tSetBoss(l20, i21, 650, -3);
 					else
 						this.tSetBoss(l20, i21, 450, -3);
@@ -37958,4 +37292,594 @@ MainProgram.prototype.getSWDownOY = function(i, j, k, l, i1)
 		k2 = ((j - 32) + j2) - 32;
 	}
 	return k2;
+}
+
+
+MainProgram.prototype.setChipValue = function (x, y, id) {
+	var word1 = -1;
+	switch (id) {
+		case 46:
+		case 0:
+			break;
+		case 49:
+			word1 = 1;
+			break;
+		case 50:
+			word1 = 2;
+			break;
+		case 51:
+			word1 = 3;
+			break;
+		case 52:
+			word1 = 4;
+			break;
+		case 53:
+			word1 = 5;
+			break;
+		case 54:
+			word1 = 6;
+			break;
+		case 55:
+			word1 = 7;
+			break;
+		case 56:
+			word1 = 8;
+			break;
+		case 57:
+			word1 = 9;
+			break;
+		case 97:
+			word1 = 20;
+			break;
+		case 98:
+			word1 = 21;
+			break;
+		case 99:
+			word1 = 22;
+			break;
+		case 100:
+			word1 = 23;
+			break;
+		case 101:
+			word1 = 24;
+			break;
+		case 102:
+			word1 = 25;
+			break;
+		case 103:
+			word1 = 26;
+			break;
+		case 104:
+			word1 = 27;
+			break;
+		case 105:
+			word1 = 28;
+			break;
+		case 91:
+			word1 = 15;
+			break;
+		case 93:
+			word1 = 10;
+			break;
+		case 60:
+			word1 = 18;
+			break;
+		case 62:
+			word1 = 19;
+			break;
+		case 106:
+			word1 = 29;
+			break;
+		case 107:
+			if (this.coin1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.coin1_type, x, y);
+				if (word1 == -99) {
+					word1 = 40;
+					this.hSet(x, y, 100);
+				}
+			} else if (this.j_tokugi == 14)
+				this.mSet(x * 32, y * 32, 2181);
+			else if (this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2000);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 100);
+			}
+			break;
+		case 108:
+			if (this.coin3_type >= 2) {
+				word1 = this.setAthleticOnMap(this.coin3_type, x, y);
+				if (word1 == -99) {
+					word1 = 40;
+					this.hSet(x, y, 200);
+				}
+			} else if (this.j_tokugi == 14)
+				this.mSet(x * 32, y * 32, 2182);
+			else if (this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2010);
+				this.mSet(x * 32, y * 32, 2020);
+				this.mSet(x * 32, y * 32, 2000);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 200);
+			}
+			break;
+		case 109:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2100);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 300);
+			}
+			break;
+		case 110:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2110);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 400);
+			}
+			break;
+		case 111:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2120);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 500);
+			}
+			break;
+		case 112:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2130);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 600);
+			}
+			break;
+		case 113:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2140);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 700);
+			}
+			break;
+		case 114:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2150);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 800);
+			}
+			break;
+		case 115:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2160);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 900);
+			}
+			break;
+		case 116:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2170);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 1000);
+			}
+			break;
+		case 117:
+			if (this.dokan1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan1_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 300, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 300, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 118:
+			if (this.dokan2_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan2_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 310, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 310, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 119:
+			if (this.dokan3_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan3_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 320, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 320, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 120:
+			if (this.dokan4_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan4_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 330, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 330, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 121:
+			if (this.stage_1up_f[this.stage - 1] || this.j_tokugi == 17) {
+				if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+					this.mSet(x * 32, y * 32, 2180);
+				} else {
+					word1 = 40;
+					this.hSet(x, y, 1100);
+				}
+			} else {
+				word1 = 41;
+			}
+			break;
+		case 122:
+			word1 = 69;
+			break;
+		case 43:
+			this.aSet(x * 32, y * 32, 80, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 45:
+			this.aSet(x * 32, y * 32, 81, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 42:
+			this.aSet(x * 32, y * 32, 82, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 47:
+			this.aSet(x * 32, y * 32, 83, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 65:
+			this.co_j.x = x * 32;
+			this.co_j.y = y * 32;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 66:
+			this.tSet(x * 32, y * 32, 100, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 67:
+			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 68:
+			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
+			this.tSet(x * 32 + 75, y * 32, 110, x * 32 - 512 - 32);
+			this.tSet(x * 32 + 150, y * 32, 110, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 69:
+			this.tSet(x * 32, y * 32, 200, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 70:
+			if (this.chikorin_attack == 2)
+				this.tSet(x * 32, y * 32, 310, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 3)
+				this.tSet(x * 32, y * 32, 311, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 4)
+				this.tSet(x * 32, y * 32, 312, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 5)
+				this.tSet(x * 32, y * 32, 313, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 6)
+				this.tSet(x * 32, y * 32, 301, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 7)
+				this.tSet(x * 32, y * 32, 320, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 8)
+				this.tSet(x * 32, y * 32, 330, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 9)
+				this.tSet(x * 32, y * 32, 335, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 300, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 71:
+			this.tSet(x * 32, y * 32, 400, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 72:
+			this.tSet(x * 32, y * 32, 500, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 73:
+			if (this.poppie_attack == 2)
+				this.tSet(x * 32, y * 32, 520, x * 32 - 512 - 32);
+			else if (this.poppie_attack == 3)
+				this.tSet(x * 32, y * 32, 530, x * 32 - 512 - 32);
+			else if (this.poppie_attack == 4)
+				this.tSet(x * 32, y * 32, 540, x * 32 - 512 - 32);
+			else if (this.poppie_attack == 5)
+				this.tSet(x * 32, y * 32, 550, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 74:
+			this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32 - 32);
+			this.tSet(x * 32 + 80, y * 32 - 40, 510, x * 32 - 512 - 32 - 32);
+			this.tSet(x * 32 + 140, y * 32 + 38, 510, x * 32 - 512 - 32 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 75:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.ugokuyuka1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.ugokuyuka1_type, x, y);
+				if (word1 == -99)
+					this.aSet(x * 32, y * 32, 100, x * 32);
+			} else {
+				this.aSet(x * 32, y * 32, 100, x * 32);
+			}
+			break;
+		case 76:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.ugokuyuka2_type >= 2) {
+				word1 = this.setAthleticOnMap(this.ugokuyuka2_type, x, y);
+				if (word1 == -99)
+					this.aSet(x * 32, y * 32 + 9, 110, x * 32 - 16);
+			} else {
+				this.aSet(x * 32, y * 32 + 9, 110, x * 32 - 16);
+			}
+			break;
+		case 77:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.ugokuyuka3_type >= 2) {
+				word1 = this.setAthleticOnMap(this.ugokuyuka3_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32 + 9, 115, x * 32 - 16);
+					this.aSet(x * 32, y * 32 + 9, 116, x * 32 - 16);
+				}
+			} else {
+				this.aSet(x * 32, y * 32 + 9, 115, x * 32 - 16);
+				this.aSet(x * 32, y * 32 + 9, 116, x * 32 - 16);
+			}
+			break;
+		case 78:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.dossunsun_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dossunsun_type, x, y);
+				if (word1 == -99)
+					this.aSet(x * 32 - 32, y * 32, 400, x * 32);
+			} else {
+				this.aSet(x * 32 - 32, y * 32, 400, x * 32);
+			}
+			break;
+		case 79:
+			if (this.mariri_attack == 4)
+				this.tSet(x * 32, y * 32, 660, x * 32 - 512 - 32);
+			else if (this.mariri_attack == 5)
+				this.tSet(x * 32, y * 32, 670, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 600, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 80:
+			if (this.yachamo_attack == 6 || this.yachamo_attack == 7)
+				this.tSet(x * 32, y * 32, 710, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 8)
+				this.tSet(x * 32, y * 32, 720, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 9)
+				this.tSet(x * 32, y * 32, 725, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 700, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 81:
+			if (this.j_tokugi == 14)
+				this.tSet(x * 32, y * 32, 850, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 800, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 82:
+			if (this.airms_kf == 3 || this.airms_kf == 4)
+				this.tSet(x * 32, y * 32, 920, x * 32 - 512 - 32);
+			else if (this.airms_kf == 5)
+				this.tSet(x * 32, y * 32, 930, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 900, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 83:
+			this.co_b.c = 100;
+			this.co_b.c4 = 3;
+			this.co_b.x = x * 32;
+			this.co_b.y = y * 32 - 16;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.co_b.x < 448)
+				this.co_b.x = 448;
+			else if (this.co_b.x > (this.mapWidth - 3) * 32)
+				this.co_b.x = (this.mapWidth - 3) * 32;
+			if (this.sl_step == 10)
+				this.sl_step = 11;
+			else
+				this.sl_step = 1;
+			this.sl_wx = this.co_b.x - 384;
+			this.sl_wy = this.mapHeight * 32;
+			if (this.boss_destroy_type == 2)
+				this.co_b.x += 160;
+			break;
+		case 84:
+			this.co_b.c = 200;
+			this.co_b.c4 = 3;
+			this.co_b.x = x * 32;
+			this.co_b.y = y * 32 - 16;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.co_b.x < 448)
+				this.co_b.x = 448;
+			else if (this.co_b.x > (this.mapWidth - 3) * 32)
+				this.co_b.x = (this.mapWidth - 3) * 32;
+			if (this.sl_step == 10)
+				this.sl_step = 11;
+			else
+				this.sl_step = 1;
+			this.sl_wx = this.co_b.x - 384;
+			this.sl_wy = this.mapHeight * 32;
+			if (this.boss_destroy_type == 2)
+				this.co_b.x += 160;
+			break;
+		case 85:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.firebar1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.firebar1_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32 + 16, y * 32 + 16, 70, x * 32);
+					word1 = 50;
+				}
+			} else {
+				this.aSet(x * 32 + 16, y * 32 + 16, 70, x * 32);
+				word1 = 50;
+			}
+			break;
+		case 86:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.firebar2_type >= 2) {
+				word1 = this.setAthleticOnMap(this.firebar2_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32 + 16, y * 32 + 16, 71, x * 32);
+					word1 = 50;
+				}
+			} else {
+				this.aSet(x * 32 + 16, y * 32 + 16, 71, x * 32);
+				word1 = 50;
+			}
+			break;
+		case 87:
+			if (this.taiking_attack == 2)
+				this.tSet(x * 32, y * 32, 1050, x * 32 - 512 - 32);
+			else if (this.taiking_attack == 3)
+				this.tSet(x * 32, y * 32, 1060, x * 32 - 512 - 32);
+			else if (this.taiking_attack == 4)
+				this.tSet(x * 32, y * 32, 1070, x * 32 - 512 - 32);
+			else if (this.taiking_attack == 5)
+				this.tSet(x * 32, y * 32, 1080, x * 32 - 512 - 32 - 32);
+			else if (this.j_tokugi == 14)
+				this.tSet(x * 32, y * 32, 1002, x * 32 - 512 - 32 - 32);
+			else if (this.j_tokugi == 15)
+				this.tSet(x * 32, y * 32, 1003, x * 32 - 512 - 32);
+			else {
+				this.tSet(x * 32, y * 32 - 16, 1000, x * 32 - 512 - 32 - 32);
+				word1 = 4;
+			}
+			if (this.maps.map_bg[x - 1][y] == 4 || this.maps.map_bg[x][y - 1] == 4)
+				word1 = 4;
+			break;
+		case 88:
+			if (this.kuragesso_attack == 2)
+				this.tSet(x * 32, y * 32, 1150, x * 32 - 512 - 32);
+			else if (this.kuragesso_attack == 3)
+				this.tSet(x * 32, y * 32, 1160, x * 32 - 512 - 32);
+			else if (this.kuragesso_attack == 4)
+				this.tSet(x * 32, y * 32, 1170, x * 32 - 512 - 32);
+			else if (this.kuragesso_attack == 5)
+				this.tSet(x * 32, y * 32, 1180, x * 32 - 512 - 32 - 32);
+			else if (this.j_tokugi == 14)
+				this.tSet(x * 32, y * 32, 1102, x * 32 - 512 - 32);
+			else if (this.j_tokugi == 15)
+				this.tSet(x * 32, y * 32, 1103, x * 32 - 512 - 32);
+			else {
+				this.tSet(x * 32, y * 32, 1100, x * 32 - 512 - 32);
+				word1 = 4;
+			}
+			if (this.maps.map_bg[x - 1][y] == 4 || this.maps.map_bg[x][y - 1] == 4)
+				word1 = 4;
+			break;
+		case 89:
+			this.aSet(x * 32, y * 32, 60, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 90:
+			this.co_b.c = 300;
+			this.co_b.c4 = 3;
+			this.co_b.x = x * 32;
+			this.co_b.y = y * 32 - 16;
+			this.boss_kijyun_y = this.co_b.y;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.co_b.x < 448)
+				this.co_b.x = 448;
+			else if (this.co_b.x > (this.mapWidth - 3) * 32)
+				this.co_b.x = (this.mapWidth - 3) * 32;
+			if (this.sl_step == 10)
+				this.sl_step = 11;
+			else
+				this.sl_step = 1;
+			this.sl_wx = this.co_b.x - 384;
+			this.sl_wy = this.mapWidth * 32;
+			if (this.boss_destroy_type == 2)
+				this.co_b.x += 160;
+			break;
+		case 123:
+			this.tSet(x * 32, y * 32, 1200, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 125:
+			this.tSet(x * 32, y * 32, 1400, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+
+		default:
+			if (id >= 1000 && id < 5000) {
+				word1 = this.setAthleticOnMap(id - 1000, x, y);
+			}
+			else if (id >= 5000 && id < 10000) {
+				this.tSet(x * 32, y * 32, id - 5000, x * 32 - 512 - 32);
+			}
+			break;
+	}
+	return word1;
 }

@@ -271,7 +271,7 @@ Game.replaceByDom = function(paramScope, options){
 	var paramTags = paramScope.getElementsByTagName("param");
 	var paramLength = paramTags.length;
 	var params = {};
-	for(i = 0; i < paramLength; i++)
+	for(var i = 0; i < paramLength; i++)
 	{
 		params[paramTags[i].name] = paramTags[i].value;
 	}
