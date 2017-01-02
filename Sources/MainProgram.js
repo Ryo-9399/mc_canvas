@@ -14619,6 +14619,14 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			characterobject.x = i;
 			characterobject.y = j;
 			switch (k) {
+				case 200:
+				case 201:
+				case 202:
+				case 203:
+					characterobject.c = 200;
+					characterobject.c2 = k - 200;
+					break;
+
 				case 301:
 					characterobject.c2 = 300;
 					characterobject.c3 = 1;
@@ -15592,7 +15600,7 @@ MainProgram.prototype.tMove = function()
 			if(i21 >= this.ochiru_y)
 				characterobject.c = 0;
 			if(characterobject.vy == 0 && (Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y) && i21 >= this.maps.wy - 128 && i21 <= this.maps.wy + 320 + 128)
-				if(this.dengeki_mkf == 3)
+				if(characterobject.c2 == 1)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
@@ -15604,7 +15612,7 @@ MainProgram.prototype.tMove = function()
 						this.gs.rsAddSound(15);
 					}
 				} else
-				if(this.dengeki_mkf == 4)
+				if(characterobject.c2 == 2)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
@@ -15626,7 +15634,7 @@ MainProgram.prototype.tMove = function()
 						this.gs.rsAddSound(10);
 					}
 				} else
-				if(this.dengeki_mkf == 5)
+				if(characterobject.c2 == 3)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
@@ -37583,19 +37591,20 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 69:
-			this.tSet(x * 32, y * 32, 200, x * 32 - 512 - 32);
+			if (this.dengeki_mkf == 3)
+				this.tSet(x * 32, y * 32, 201, x * 32 - 512 - 32);
+			else if (this.dengeki_mkf == 4)
+				this.tSet(x * 32, y * 32, 202, x * 32 - 512 - 32);
+			else if (this.dengeki_mkf == 5)
+				this.tSet(x * 32, y * 32, 203, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 200, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 70:
-			if (this.chikorin_attack == 2)
-				this.tSet(x * 32, y * 32, 310, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 3)
-				this.tSet(x * 32, y * 32, 311, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 4)
-				this.tSet(x * 32, y * 32, 312, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 5)
-				this.tSet(x * 32, y * 32, 313, x * 32 - 512 - 32);
+			if (this.chikorin_attack >= 2 && this.chikorin_attack <= 4)
+				this.tSet(x * 32, y * 32, 308 + this.chikorin_attack, x * 32 - 512 - 32);
 			else if (this.chikorin_attack == 6)
 				this.tSet(x * 32, y * 32, 301, x * 32 - 512 - 32);
 			else if (this.chikorin_attack == 7)
