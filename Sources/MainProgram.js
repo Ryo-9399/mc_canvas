@@ -44,7 +44,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.time_max = undefined;
 	this.m_kazu = undefined;
 	this.jm_kazu = undefined;
-	this.a_kazu = undefined;
 	this.a_hf = undefined;
 	this.j_fire_f = undefined;
 	this.j_v_c = undefined;
@@ -145,13 +144,13 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.map_data_option = createNDimensionArray(this.mapWidth + 20, this.mapHeight + 70);
 	this.co_t = [];
 	this.co_m = new Array(80);
-	this.co_a = new Array(120);
+	this.co_a = [];
 	this.co_h = new Array(80);
 	this.co_jm = new Array(9);
 	this.co_mu = new Array(2);
-	this.yo = new Array(128);
-	this.vo_x = createNDimensionArray(120, 4);
-	this.vo_y = createNDimensionArray(120, 4);
+	this.yo = [];
+	this.vo_x = [];
+	this.vo_y = [];
 	this.ana_c = new Array(12);
 	this.ana_x = new Array(12);
 	this.ana_y = new Array(12);
@@ -240,7 +239,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.mhouse_c = 0;
 	this.mhouse_x = 0;
 	this.mhouse_y = 0;
-	this.yuka_id_max = -1;
 	this.yuka_ride_id = -1;
 	this.dso_cf = false;
 	this.spot_c = 0;
@@ -304,9 +302,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	for(var j = 0; j <= 79; j++)
 		this.co_m[j] = new CharacterObject();
 
-	for(var k = 0; k <= 119; k++)
-		this.co_a[k] = new CharacterObject();
-
 	for(var l = 0; l <= 79; l++)
 		this.co_h[l] = new CharacterObject();
 
@@ -316,9 +311,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.co_b = new CharacterObject();
 	for(var j1 = 0; j1 <= 1; j1++)
 		this.co_mu[j1] = new CharacterObject();
-
-	for(var k1 = 0; k1 <= 127; k1++)
-		this.yo[k1] = new YukaObject();
 
 	var l1 = this.tdb.getValueInt("stage_select");
 	if(l1 == 2)
@@ -342,6 +334,22 @@ MainProgram.prototype = {
 	get t_kazu() {
 		if (this.co_t) {
 			return this.co_t.length - 1;
+		}
+		else {
+			return -1;
+		}
+	},
+	get a_kazu() {
+		if (this.co_a) {
+			return this.co_a.length - 1;
+		}
+		else {
+			return -1;
+		}
+	},
+	get yuka_id_max() {
+		if (this.yo) {
+			return this.yo.length - 1;
 		}
 		else {
 			return -1;
@@ -4827,10 +4835,8 @@ MainProgram.prototype.init3 = function()
 	this.souko_count1 = 0;
 	this.souko_count2 = 0;
 	this.souko_count3 = 0;
-	this.yuka_id_max = -1;
 	this.yuka_ride_id = -1;
-	for(var l = 0; l <= 127; l++)
-		this.yo[l].init();
+	this.yo = [];
 
 	this.sl_step = 0;
 	this.sl_speed = 0;
@@ -4885,18 +4891,10 @@ MainProgram.prototype.init3 = function()
 	this.nkscroll_vx = 0;
 	this.nkscroll_vy = 0;
 	this.nkscroll_zsc = false;
-	for(var j1 = 0; j1 <= 119; j1++)
-	{
-		this.co_a[j1].init();
-		for(var j5 = 0; j5 <= 3; j5++)
-		{
-			this.vo_x[j1][j5] = 0;
-			this.vo_y[j1][j5] = 0;
-		}
 
-	}
-
-	this.a_kazu = -1;
+	this.co_a = [new CharacterObject()];  // 例外落ち回避用要素
+	this.vo_x = [[0, 0, 0, 0]];
+	this.vo_y = [[0, 0, 0, 0]];
 	this.a_hf = false;
 
 	this.co_t = [];
@@ -23331,8 +23329,11 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 	var i1 = 0;
 	do
 	{
-		if(i1 > 119)
-			break;
+		if (i1 > this.a_kazu) {
+			this.co_a.push(new CharacterObject());
+			this.vo_x.push([0, 0, 0, 0]);
+			this.vo_y.push([0, 0, 0, 0]);
+		}
 		if(this.co_a[i1].c <= 0)
 		{
 			var characterobject = this.co_a[i1];
@@ -23341,9 +23342,6 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 			characterobject.c2 = l + 128;
 			characterobject.x = i;
 			characterobject.y = j;
-			this.a_kazu++;
-			if(this.a_kazu > 119)
-				this.a_kazu = 119;
 			switch(k)
 			{
 			case 60:
@@ -35282,7 +35280,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var j4 = -10; j4 <= 10; j4++)
 				{
 					for(var k2 = -10; k2 <= 10; k2++)
-						if(i + k2 >= 1 && i + k2 <= this.mapWidth && j + j4 >= 10 && j + j4 <= this.mapHeight && this.maps.map_bg[i + k2][j + j4] == 23)
+						if(i + k2 >= 1 && i + k2 <= this.mapWidth && j + j4 >= 10 && j + j4 <= this.mapHeight + 9 && this.maps.map_bg[i + k2][j + j4] == 23)
 							this.maps.putBGCode(i + k2, j + j4, 0);
 
 				}
@@ -35423,8 +35421,8 @@ MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 	var i = 0;
 	do
 	{
-		if(i > 127)
-			break;
+		if (i > this.yuka_id_max)
+			this.yo.push(new YukaObject());
 		if(this.yo[i].con == 0)
 		{
 			if(s4 == "line")
@@ -35557,16 +35555,11 @@ MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 				this.yo[i].height = i1;
 				this.yo[i].img = this.gg.loadImage(s4);
 			}
-			if(i > this.yuka_id_max)
-				this.yuka_id_max = i;
 			break;
 		}
 		i++;
 	} while(true);
-	if(i > 127)
-		return -1;
-	else
-		return i;
+	return i;
 }
 
 MainProgram.prototype.setYukaPosition = function(s, s1, s2, s3, s4)
