@@ -37631,7 +37631,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 70:
-			if (this.chikorin_attack >= 2 && this.chikorin_attack <= 4)
+			if (this.chikorin_attack >= 2 && this.chikorin_attack <= 5)
 				this.tSet(x * 32, y * 32, 308 + this.chikorin_attack, x * 32 - 512 - 32);
 			else if (this.chikorin_attack == 6)
 				this.tSet(x * 32, y * 32, 301, x * 32 - 512 - 32);
