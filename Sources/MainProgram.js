@@ -5053,7 +5053,7 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 	s8 = "0123456789abcdef";
 	s9 = "0123456789ABCDEF";
 
-	var advance_map = this.tdb.options["advance-map"];
+	var advance_map = this.tdb.options["advanced-map"];
 	var stage = null;
 	var mainLayer = null;
 	var mapchipLayer = null;

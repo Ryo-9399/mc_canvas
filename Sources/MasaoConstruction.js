@@ -326,8 +326,18 @@ MasaoConstruction.prototype.init_j = function()
 	}
 
 	// 新形式マップデータがJSONファイルのURLで設定されているときはJSONを読み込む
-	if (typeof(this.options["advance-map"]) === "string") {
-		this.loadAdvanceMapJson(this.options["advance-map"]);
+	var advancedMap = this.options["advanced-map"];
+	var advanceMap = this.options["advance-map"];
+	if (typeof advancedMap === "string") {
+		this.loadAdvanceMapJson(advancedMap);
+	}
+	else if (typeof advancedMap === "undefined") {
+		if (typeof advanceMap === "string") {
+			this.loadAdvanceMapJson(advanceMap);
+		}
+		else if (typeof advanceMap === "object") {
+			this.options["advanced-map"] = advanceMap;
+		}
 	}
 
 	this.th_interval = this.tdb.getValueInt("game_speed");
@@ -2570,7 +2580,7 @@ MasaoConstruction.prototype.loadAdvanceMapJson = function (url) {
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState === 4) {
 			try {
-				this.options["advance-map"] = JSON.parse(xhr.responseText);
+				this.options["advanced-map"] = JSON.parse(xhr.responseText);
 			}
 			catch (ex) {
 				console.error("Failed to load JSON: " + url);
