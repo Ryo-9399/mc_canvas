@@ -3932,4 +3932,36 @@ function MasaoJSS(mc)
 		}
 		return false;
 	}
+
+    /**
+     * [0.0, 1.0)の範囲の乱数を返します。
+     *
+     * @returns {number} ゲーム内シードに依存した乱数。ゲームが開始されていないときにはMath.random()を返す。
+     * @since canvas正男
+     */
+	this.getRandomF = function () {
+		if (mc.mp) {
+			return mc.mp.ranInt(0x80000000) / 0x80000000;
+		}
+		else {
+			return Math.random();
+		}
+	}
+
+    /**
+     * [0, max)の範囲の整数乱数を返します。
+     *
+     * @param {number} max 返される乱数の最大値。
+     *
+     * @returns {number} ゲーム内シードに依存した乱数。ゲームが開始されていないときにはMath.random()を使用した乱数を返す。
+     * @since canvas正男
+     */
+	this.getRandom = function (max) {
+		if (mc.mp) {
+			return mc.mp.ranInt(max);
+		}
+		else {
+			return Math.floor(Math.random() * max);
+		}
+	}
 }
