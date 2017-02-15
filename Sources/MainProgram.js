@@ -22271,7 +22271,7 @@ MainProgram.prototype.jmMove = function()
 				for(var i16 = -1; i16 <= 1; i16++)
 				{
 					for(var k15 = -1; k15 <= 1; k15++)
-						if(i9 + k15 >= 1 && i9 + k15 <= 180 && k12 + i16 >= 10 && k12 + i16 <= 39 && this.maps.map_bg[i9 + k15][k12 + i16] == 20)
+						if(i9 + k15 >= 1 && i9 + k15 <= this.mapWidth && k12 + i16 >= 10 && k12 + i16 <= this.mapHeight + 9 && this.maps.map_bg[i9 + k15][k12 + i16] == 20)
 							this.maps.putBGCode(i9 + k15, k12 + i16, 0);
 
 				}
