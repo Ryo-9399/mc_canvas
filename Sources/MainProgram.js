@@ -37908,7 +37908,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			else
 				this.sl_step = 1;
 			this.sl_wx = this.co_b.x - 384;
-			this.sl_wy = this.mapWidth * 32;
+			this.sl_wy = this.mapHeight * 32;
 			if (this.boss_destroy_type == 2)
 				this.co_b.x += 160;
 			break;
