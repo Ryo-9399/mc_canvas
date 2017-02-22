@@ -14600,9 +14600,13 @@ MainProgram.prototype.checkWater = function(i, j)
 
 MainProgram.prototype.tSet = function(i, j, k, l)
 {
+    // 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
+    var t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
 	var i1 = 0;
 	do
 	{
+        if(i1 > t_limit)
+            break;
 		if(i1 > this.t_kazu)
 			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
@@ -14775,10 +14779,20 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 
 MainProgram.prototype.tSetBoss = function(i, j, k, l)
 {
-	var i1 = 0;
+    var t_limit, i1;
+    // 敵の個数に関する後方互換性オプション
+    if(this.tdb.options["bc-enemy-number"]){
+        t_limit = 229;
+        i1 = 220;
+    }else{
+        t_limit = Infinity;
+        i1 = 0;
+    }
 	do
 	{
-		if(i1 > this.t_kazu)
+        if(i1 > t_limit)
+            break;
+		while(i1 > this.t_kazu)
 			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
 		{
