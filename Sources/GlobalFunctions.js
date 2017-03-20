@@ -10,6 +10,8 @@
  * @param {Object[]} [options.extensions] 拡張機能
  * @param {Function} [options.userJSCallback] 毎フレーム呼び出されるコールバック関数
  * @param {Function} [options.highscoreCallback] ハイスコア更新時に呼び出されるコールバック関数
+ * @param {Object} [options."advance-map"] 第3版マップデータ
+ * @param {boolean} [options."bc-enemy-number"] 敵の数制限の後方互換性を保つ
  */
 function Game(params, id, options){
 	var randomID = makeRandomString();
