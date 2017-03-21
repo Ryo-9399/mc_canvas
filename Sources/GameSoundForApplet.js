@@ -1,4 +1,4 @@
-
+;
 function GameSoundForApplet(paramTagDataBase, paramApplet)
 {
 	this.ap = paramApplet;
@@ -13,197 +13,147 @@ function GameSoundForApplet(paramTagDataBase, paramApplet)
 	this.bgm_filename = new Array(20);
 	this.bgm_genzai = -1;
 
-	var k = 1;
-
 	for (var j = 0; j < this.s_data.length; j++) {
 		this.s_data[j] = null;
 	}
-	var str = this.tdb.getValue("se_switch");
-	var i;
-	i = parseInt(str);
-	if(isNaN(i))
-		i = -1;
-	if (i == 2) {
+	if (parseInt(this.tdb.getValue("se_switch")) === 2) {
 		this.use_f = false;
 	}
-	str = this.tdb.getValue("se_filename");
-	i = parseInt(str);
-	if(isNaN(i))
-		i = -1;
-	if (i == 1) {
-		k = 0;
-	} else {
-		k = 1;
-	}
-	if (this.use_f) {
-		if (k == 0)
-		{
-			str = this.tdb.getValue("filename_se_start");
-			this.s_data[0] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_gameover");
-			this.s_data[1] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_clear");
-			this.s_data[2] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_jump");
-			this.s_data[3] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_sjump");
-			this.s_data[4] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_kiki");
-			this.s_data[5] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_coin");
-			this.s_data[6] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_get");
-			this.s_data[7] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_fumu");
-			this.s_data[8] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_tobasu");
-			this.s_data[9] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_dengeki");
-			this.s_data[10] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_happa");
-			this.s_data[11] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_dosun");
-			this.s_data[12] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_item");
-			this.s_data[13] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_hinoko");
-			this.s_data[14] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_mizudeppo");
-			this.s_data[15] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_block");
-			this.s_data[16] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_grounder");
-			this.s_data[17] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_kaiole");
-			this.s_data[18] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_bomb");
-			this.s_data[19] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_mizu");
-			this.s_data[20] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_dokan");
-			this.s_data[21] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_senkuuza");
-			this.s_data[22] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_fireball");
-			this.s_data[23] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_miss");
-			this.s_data[24] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_chizugamen");
-			this.s_data[25] = this.ap.getAudioClip(str);
-
-			str = this.tdb.getValue("filename_se_jet");
-			this.s_data[26] = this.ap.getAudioClip(str);
-		}
-		else
-		{
-			this.s_data[0] = this.ap.getAudioClip("item.au");
-			this.s_data[1] = this.ap.getAudioClip("gameover.au");
-			this.s_data[2] = this.ap.getAudioClip("clear.au");
-			this.s_data[3] = this.ap.getAudioClip("jump.au");
-			this.s_data[4] = this.ap.getAudioClip("sjump.au");
-			this.s_data[5] = this.ap.getAudioClip("kiki.au");
-			this.s_data[6] = this.ap.getAudioClip("coin.au");
-			this.s_data[7] = this.ap.getAudioClip("get.au");
-			this.s_data[8] = this.ap.getAudioClip("fumu.au");
-			this.s_data[9] = this.ap.getAudioClip("tobasu.au");
-			this.s_data[10] = this.ap.getAudioClip("mgan.au");
-			this.s_data[11] = this.ap.getAudioClip("happa.au");
-			this.s_data[12] = this.ap.getAudioClip("dosun.au");
-			this.s_data[13] = this.ap.getAudioClip("item.au");
-			this.s_data[14] = this.ap.getAudioClip("mgan.au");
-			this.s_data[15] = this.ap.getAudioClip("happa.au");
-			this.s_data[16] = this.ap.getAudioClip("bakuhatu.au");
-			this.s_data[17] = this.ap.getAudioClip("mgan.au");
-			this.s_data[18] = this.ap.getAudioClip("happa.au");
-			this.s_data[19] = this.ap.getAudioClip("shot.au");
-			this.s_data[20] = this.ap.getAudioClip("mizu.au");
-			this.s_data[21] = this.ap.getAudioClip("get.au");
-			this.s_data[22] = this.ap.getAudioClip("shot.au");
-			this.s_data[23] = this.ap.getAudioClip("shot.au");
-			this.s_data[24] = this.ap.getAudioClip("dosun.au");
-			this.s_data[25] = this.ap.getAudioClip("get.au");
-			this.s_data[26] = this.ap.getAudioClip("mgan.au");
-		}
-	}
-	str = this.tdb.getValue("fx_bgm_switch");
-	i = parseInt(str);
-	if(isNaN(i))
-		i = -1;
-	if (i == 1) {
+	if (parseInt(this.tdb.getValue("fx_bgm_switch")) === 1) {
 		this.bgm_switch = true;
 	} else {
 		this.bgm_switch = false;
 	}
-	str = this.tdb.getValue("fx_bgm_loop");
-	i = parseInt(str);
-	if(isNaN(i))
-		i = -1;
-	if (i == 1) {
+	if (parseInt(this.tdb.getValue("fx_bgm_loop")) === 1) {
 		this.bgm_loop = true;
 	} else {
 		this.bgm_loop = false;
 	}
+	this.bgm_genzai = -1;
+
+    this._init();
+    this._load();
+}
+
+/**
+ * _loadに必要なものをinitする
+ * @private
+ */
+GameSoundForApplet.prototype._init = function(){
+};
+
+/**
+ * se_filename フラグに応じてファイル名の配列を返す
+ * @private
+ * @returns {string[]}
+ */
+GameSoundForApplet.prototype._getSEFilenames = function(){
+    var tdb = this.tdb;
+    var se_filename = parseInt(tdb.getValue('se_filename'));
+    var k;
+    if (se_filename === 1){
+        return [
+            'item.au',
+            'gameover.au',
+            'clear.au',
+            'jump.au',
+            'sjump.au',
+            'kiki.au',
+            'coin.au',
+            'get.au',
+            'fumu.au',
+            'tobasu.au',
+            'mgan.au',
+            'happa.au',
+            'dosun.au',
+            'item.au',
+            'mgan.au',
+            'happa.au',
+            'bakuhatu.au',
+            'mgan.au',
+            'happa.au',
+            'shot.au',
+            'mizu.au',
+            'get.au',
+            'shot.au',
+            'shot.au',
+            'dosun.au',
+            'get.au',
+            'mgan.au',
+        ];
+    }else{
+        return [
+            tdb.getValue('filename_se_start'),
+            tdb.getValue('filename_se_gameover'),
+            tdb.getValue('filename_se_clear'),
+            tdb.getValue('filename_se_jump'),
+            tdb.getValue('filename_se_sjump'),
+            tdb.getValue('filename_se_kiki'),
+            tdb.getValue('filename_se_coin'),
+            tdb.getValue('filename_se_get'),
+            tdb.getValue('filename_se_fumu'),
+            tdb.getValue('filename_se_tobasu'),
+            tdb.getValue('filename_se_dengeki'),
+            tdb.getValue('filename_se_happa'),
+            tdb.getValue('filename_se_dosun'),
+            tdb.getValue('filename_se_item'),
+            tdb.getValue('filename_se_hinoko'),
+            tdb.getValue('filename_se_mizudeppo'),
+            tdb.getValue('filename_se_block'),
+            tdb.getValue('filename_se_grounder'),
+            tdb.getValue('filename_se_kaiole'),
+            tdb.getValue('filename_se_bomb'),
+            tdb.getValue('filename_se_mizu'),
+            tdb.getValue('filename_se_dokan'),
+            tdb.getValue('filename_se_senkuuza'),
+            tdb.getValue('filename_se_fireball'),
+            tdb.getValue('filename_se_miss'),
+            tdb.getValue('filename_se_chizugamen'),
+            tdb.getValue('filename_se_jet'),
+        ];
+    }
+}
+
+/**
+ * BGMのファイル名の配列を返す
+ * @private
+ * @returns {string[]}
+ */
+GameSoundForApplet.prototype._getBGMFilenames = function() {
+    var tdb = this.tdb;
+    return [
+        tdb.getValue('filename_fx_bgm_stage1'),
+        tdb.getValue('filename_fx_bgm_stage2'),
+        tdb.getValue('filename_fx_bgm_stage3'),
+        tdb.getValue('filename_fx_bgm_stage4'),
+        tdb.getValue('filename_fx_bgm_boss'),
+        tdb.getValue('filename_fx_bgm_title'),
+        tdb.getValue('filename_fx_bgm_ending'),
+        tdb.getValue('filename_fx_bgm_chizu'),
+    ];
+};
+
+/**
+ * 音声ファイルを読み込み
+ * @private
+ */
+GameSoundForApplet.prototype._load = function() {
+    var i;
+	if (this.use_f) {
+        var se_filenames = this._getSEFilenames();
+        for (i = 0; i < se_filenames.length; i++){
+            this.s_data[i] = this.ap.getAudioClip(se_filenames[i]);
+        }
+	}
 	if (this.bgm_switch)
 	{
-		str = this.tdb.getValue("filename_fx_bgm_stage1");
-		this.bgm[0] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[0] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_stage2");
-		this.bgm[1] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[1] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_stage3");
-		this.bgm[2] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[2] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_stage4");
-		this.bgm[3] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[3] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_boss");
-		this.bgm[4] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[4] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_title");
-		this.bgm[5] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[5] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_ending");
-		this.bgm[6] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[6] = str;
-
-		str = this.tdb.getValue("filename_fx_bgm_chizu");
-		this.bgm[7] = this.ap.getAudioClip(str, true);
-		this.bgm_filename[7] = str;
+        var bgm_filenames = this._getBGMFilenames();
+        for (i = 0; i < bgm_filenames.length; i++){
+            this.bgm[i] = this.ap.getAudioClip(bgm_filenames[i], true);
+            this.bgm_filename[i] = bgm_filenames[i];
+        }
 	}
-	this.bgm_genzai = -1;
-}
+};
 
 GameSoundForApplet.prototype.setSound = function(paramInt,paramString) {
 	if(paramInt < 0 || paramInt >= this.s_data.length){
@@ -358,3 +308,194 @@ GameSoundForApplet.prototype.playUserBGMFileLoop = function(paramString)
 	}
 	return false;
 }
+
+/**
+ * WebAudioを用いたゲーム音声
+ */
+function GameSoundWebAudio(paramTagDataBase, paramApplet){
+    GameSoundForApplet.call(this, paramTagDataBase, paramApplet);
+}
+// 継承
+GameSoundWebAudio.prototype = Object.create(GameSoundForApplet.prototype, {
+    constructor: {
+        configurable: true,
+        value: GameSoundWebAudio,
+    },
+});
+
+GameSoundWebAudio.prototype._init = function(){
+    this.context = new AudioContext();
+    // sourceとなるAudioNodeを格納（止めるため）
+    this.sourceNodes = {};
+    this.bgmSourceNodes = {};
+};
+GameSoundWebAudio.prototype._load = function() {
+    var ap = this.ap;
+    var i;
+    if (this.use_f){
+        var se_filenames = this._getSEFilenames();
+        for (i = 0; i < se_filenames.length; i++){
+            this._loadAudioBufferInto(ap.getAudioURL(se_filenames[i], false), this.s_data, i);
+        }
+    }
+	if (this.bgm_switch)
+	{
+        var bgm_filenames = this._getBGMFilenames();
+        for (i = 0; i < bgm_filenames.length; i++){
+            var url = ap.getAudioURL(bgm_filenames[i], true);
+            this.bgm_filename[i] = url;
+            this._loadAudioBufferInto(url, this.bgm, i);
+        }
+	}
+
+};
+/**
+ * ファイルをXHRで読み込みcontextAudioClipに変換
+ * @private
+ */
+GameSoundWebAudio.prototype._loadAudioBufferInto = function(url, target, index, callback){
+    var context = this.context;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+        var buf = xhr.response;
+        if (buf == null || xhr.status === 0 || xhr.status >= 400){
+            return;
+        }
+        context.decodeAudioData(buf).then(function(audiobuf){
+            target[index] = audiobuf;
+            if ('function' === typeof callback){
+                callback(audiobuf);
+            }
+        })
+        .catch(function(err){
+            console.error(err);
+            if ('function' === typeof callback){
+                callback(null);
+            }
+        });
+    };
+    xhr.onerror = function(err) {
+        console.error(err);
+        if ('function' === typeof callback){
+            callback(null);
+        }
+    };
+
+    xhr.send();
+}
+
+GameSoundWebAudio.prototype.play = function(paramInt)
+{
+	if ((!this.use_f) || (this.mute_f) || (this.s_data[paramInt] == null)) {
+		return;
+	}
+    var source = this.context.createBufferSource();
+    source.buffer = this.s_data[paramInt];
+    source.connect(this.context.destination);
+    this.sourceNodes[paramInt] = source;
+    source.start(0);
+};
+GameSoundWebAudio.prototype.stop = function(paramInt)
+{
+	if (!this.use_f) {
+		return;
+	}
+    var source = this.sourceNodes[paramInt];
+    if (source == null){
+        return;
+    }
+    source.disconnect();
+    this.sourceNodes[paramInt] = void 0;
+};
+GameSoundWebAudio.prototype.stopAll = function(paramInt)
+{
+	if (!this.use_f) {
+		return;
+	}
+	for (var i = 0; i < this.s_data.length; i++) {
+        this.stop(i);
+	}
+};
+GameSoundWebAudio.prototype.rsAddSound = function(paramInt)
+{
+    this.play(paramInt);
+};
+GameSoundWebAudio.prototype.playBGM = function(paramInt, loopflg)
+{
+	if (this.mute_f) {
+		return;
+	}
+	if (this.bgm_genzai === paramInt) {
+		return;
+	}
+	if ((this.bgm_genzai >= 0) && (paramInt >= 0)) {
+		if ((this.bgm_filename[this.bgm_genzai] != null) && (this.bgm_filename[paramInt] != null)) {
+			if (this.bgm_filename[this.bgm_genzai] == this.bgm_filename[paramInt]) {
+				return;
+			}
+		}
+	}
+	if (this.bgm_genzai >= 0) {
+		if (this.bgmSourceNodes[this.bgm_genzai] != null) {
+			this.bgmSourceNodes[this.bgm_genzai].disconnect();
+		}
+	}
+	if (this.bgm[paramInt] == null) {
+        return;
+    }
+    var source = this.context.createBufferSource();
+    source.buffer = this.bgm[paramInt];
+    source.connect(this.context.destination);
+    if (loopflg || this.bgm_loop) {
+        source.loop = true;
+        source.loopStart = 0;
+        source.loopEnd = source.buffer.duration;
+    }
+    source.start(0);
+
+    this.bgmSourceNodes[paramInt] = source;
+    this.bgm_genzai = paramInt;
+};
+GameSoundWebAudio.prototype.stopBGM = function()
+{
+    var source = this.bgmSourceNodes[this.bgm_genzai];
+    if (source != null){
+        source.disconnect();
+    }
+    this.bgmSourceNodes[this.bgm_genzai] = void 0;
+    this.bgm_genzai = -1;
+};
+GameSoundWebAudio.prototype.playUserBGMFile = function(paramString, loopflg)
+{
+    var url = this.ap.getAudioURL(paramString, true);
+    this._loadAudioBufferInto(url, this.bgm, 19, function(buf){
+        this.stopBGM();
+        if (buf != null){
+            this.bgm_filename[19] = url;
+
+            this.playBGM(19, loopflg);
+        }
+    });
+
+    return false;
+};
+GameSoundWebAudio.prototype.playUserBGMFileLoop = function(paramString)
+{
+    this.playUserBGMFile(paramString, true);
+};
+
+/**
+ * Web Audio APIを使えるかどうか判定
+ * 
+ * @static
+ */
+GameSoundForApplet.factory = function(tdb){
+    if ('undefined' !== typeof AudioContext && /^https?:$/i.test(location.protocol) && !tdb.options['bc-no-webaudio']){
+        return GameSoundWebAudio;
+    }else{
+        return GameSoundForApplet;
+    }
+};
