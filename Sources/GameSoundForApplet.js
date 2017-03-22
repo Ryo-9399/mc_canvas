@@ -334,6 +334,9 @@ GameSoundWebAudio.prototype._init = function(){
     // sourceとなるAudioNodeを格納（止めるため）
     this.sourceNodes = {};
     this.bgmSourceNodes = {};
+
+    // オーディオデータのキャッシュ
+    this.audioCache = {};
 };
 GameSoundWebAudio.prototype._load = function() {
     var ap = this.ap;
@@ -360,6 +363,30 @@ GameSoundWebAudio.prototype._load = function() {
  * @protected
  */
 GameSoundWebAudio.prototype._loadAudioBufferInto = function(url, target, index, callback){
+    // まずcacheをまさぐる
+    var audioCache = this.audioCache;
+    if (audioCache[url] != null){
+        if (audioCache[url] instanceof Array){
+            audioCache[url].push(function(result){
+                target[index] = result;
+                if ('function' === typeof callback){
+                    callback(result);
+                }
+            });
+        }else{
+            setTimeout(function(){
+                target[index] = result;
+                if ('function' === typeof callback){
+                    callback(result);
+                }
+            }, 0);
+        }
+        return;
+    }
+
+    audioCache[url] = [];
+
+
     var context = this.context;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
@@ -375,6 +402,11 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(url, target, index, 
             if ('function' === typeof callback){
                 callback(audiobuf);
             }
+            // cache
+            audioCache[url].forEach(function(func){
+                func(audiobuf);
+            });
+            audioCache[url] = audiobuf;
         })
         .catch(function(err){
             console.error(err);
