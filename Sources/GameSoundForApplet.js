@@ -37,14 +37,14 @@ function GameSoundForApplet(paramTagDataBase, paramApplet)
 
 /**
  * _loadに必要なものをinitする
- * @private
+ * @protected
  */
 GameSoundForApplet.prototype._init = function(){
 };
 
 /**
  * se_filename フラグに応じてファイル名の配列を返す
- * @private
+ * @protected
  * @returns {string[]}
  */
 GameSoundForApplet.prototype._getSEFilenames = function(){
@@ -116,7 +116,7 @@ GameSoundForApplet.prototype._getSEFilenames = function(){
 
 /**
  * BGMのファイル名の配列を返す
- * @private
+ * @protected
  * @returns {string[]}
  */
 GameSoundForApplet.prototype._getBGMFilenames = function() {
@@ -135,7 +135,7 @@ GameSoundForApplet.prototype._getBGMFilenames = function() {
 
 /**
  * 音声ファイルを読み込み
- * @private
+ * @protected
  */
 GameSoundForApplet.prototype._load = function() {
     var i;
@@ -314,6 +314,8 @@ GameSoundForApplet.prototype.playUserBGMFileLoop = function(paramString)
  */
 function GameSoundWebAudio(paramTagDataBase, paramApplet){
     GameSoundForApplet.call(this, paramTagDataBase, paramApplet);
+
+    this.noOverlapFlag = paramTagDataBase.options['bc-no-overlap-sound'];
 }
 // 継承
 GameSoundWebAudio.prototype = Object.create(GameSoundForApplet.prototype, {
@@ -325,6 +327,10 @@ GameSoundWebAudio.prototype = Object.create(GameSoundForApplet.prototype, {
 
 GameSoundWebAudio.prototype._init = function(){
     this.context = new AudioContext();
+    // DynamicComporessorをかませる
+    this.dest = this.context.createDynamicsCompressor();
+    this.dest.connect(this.context.destination);
+
     // sourceとなるAudioNodeを格納（止めるため）
     this.sourceNodes = {};
     this.bgmSourceNodes = {};
@@ -351,7 +357,7 @@ GameSoundWebAudio.prototype._load = function() {
 };
 /**
  * ファイルをXHRで読み込みcontextAudioClipに変換
- * @private
+ * @protected
  */
 GameSoundWebAudio.prototype._loadAudioBufferInto = function(url, target, index, callback){
     var context = this.context;
@@ -392,9 +398,20 @@ GameSoundWebAudio.prototype.play = function(paramInt)
 	if ((!this.use_f) || (this.mute_f) || (this.s_data[paramInt] == null)) {
 		return;
 	}
+    if (this.noOverlapFlag === true){
+        var currentSource = this.sourceNodes[paramInt];
+        if (currentSource != null){
+            var gain = this.context.createGain();
+            gain.connect(this.dest);
+            gain.gain.value = 1;
+            gain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.15);
+            currentSource.disconnect();
+            currentSource.connect(gain);
+        }
+    }
     var source = this.context.createBufferSource();
     source.buffer = this.s_data[paramInt];
-    source.connect(this.context.destination);
+    source.connect(this.dest);
     this.sourceNodes[paramInt] = source;
     source.start(0);
 };
@@ -448,7 +465,7 @@ GameSoundWebAudio.prototype.playBGM = function(paramInt, loopflg)
     }
     var source = this.context.createBufferSource();
     source.buffer = this.bgm[paramInt];
-    source.connect(this.context.destination);
+    source.connect(this.dest);
     if (loopflg || this.bgm_loop) {
         source.loop = true;
         source.loopStart = 0;
