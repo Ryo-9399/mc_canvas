@@ -326,7 +326,8 @@ GameSoundWebAudio.prototype = Object.create(GameSoundForApplet.prototype, {
 });
 
 GameSoundWebAudio.prototype._init = function(){
-    this.context = new AudioContext();
+    const ac = 'undefined' !== typeof AudioContext ? AudioContext : webkitAudioContext;
+    this.context = new ac();
     // DynamicComporessorをかませる
     this.dest = this.context.createDynamicsCompressor();
     this.dest.connect(this.context.destination);
@@ -436,7 +437,7 @@ GameSoundWebAudio.prototype.play = function(paramInt)
             var gain = this.context.createGain();
             gain.connect(this.dest);
             gain.gain.value = 1;
-            gain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.15);
+            gain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.1);
             currentSource.disconnect();
             currentSource.connect(gain);
         }
@@ -542,7 +543,7 @@ GameSoundWebAudio.prototype.playUserBGMFileLoop = function(paramString)
  * @static
  */
 GameSoundForApplet.factory = function(tdb){
-    if ('undefined' !== typeof AudioContext && /^https?:$/i.test(location.protocol) && !tdb.options['bc-no-webaudio']){
+    if (('undefined' !== typeof AudioContext || 'undefined' !== typeof webkitAudioContext) && /^https?:$/i.test(location.protocol) && !tdb.options['bc-no-webaudio']){
         return GameSoundWebAudio;
     }else{
         return GameSoundForApplet;
