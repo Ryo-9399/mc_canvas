@@ -4,6 +4,7 @@
 	CanvasMasao.GameKey = GameKey;
 	CanvasMasao.GameMouse = GameMouse;
 	CanvasMasao.GameSoundForApplet = GameSoundForApplet;
+	CanvasMasao.GameSoundWebAudio = GameSoundWebAudio;
 	CanvasMasao.Game = Game;
 	CanvasMasao.IdouGamen = IdouGamen;
 	CanvasMasao.ImageBuff = ImageBuff;

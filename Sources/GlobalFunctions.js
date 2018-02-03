@@ -12,6 +12,8 @@
  * @param {Function} [options.highscoreCallback] ハイスコア更新時に呼び出されるコールバック関数
  * @param {Object} [options."advance-map"] 第3版マップデータ
  * @param {boolean} [options."bc-enemy-number"] 敵の数制限の後方互換性を保つ
+ * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
+ * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
  */
 function Game(params, id, options){
 	var randomID = makeRandomString();
