@@ -462,7 +462,7 @@ MasaoConstruction.prototype.init_j = function()
 		this.audio_bgm_no_mp3 = true;
 	if(this.tdb.getValueInt("audio_bgm_switch_ogg") == 2)
 		this.audio_bgm_no_ogg = true;
-	this.gs = new GameSoundForApplet(this.tdb, this);
+	this.gs = new (GameSoundForApplet.factory(this.tdb))(this.tdb, this);
 
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk, this.gs, this.tdb);
@@ -2494,10 +2494,17 @@ MasaoConstruction.prototype.getParameter = function(name)
 	return this.params[s] + "";
 }
 
-MasaoConstruction.prototype.getAudioClip = function(url, flag)
+/**
+ * 音声ファイルのURLの拡張子を適切につけかえる
+ *
+ * @param {string} url 音声ファイルのURL
+ * @param {boolean} bgmflag ファイルがBGM用か
+ * @returns {string}
+ */
+MasaoConstruction.prototype.getAudioURL = function(url, bgmflag)
 {
-	var i1, i2;
-	url = url + "";
+    var i1, i2;
+    url = url + "";
 
 	// 拡張子を取り除く作業
 	i1 = url.lastIndexOf(".");
@@ -2521,7 +2528,7 @@ MasaoConstruction.prototype.getAudioClip = function(url, flag)
 	}
 
 	var audio = new Audio();
-	if(flag)
+	if(bgmflag)
 	{
 		// Wave形式
 		if(audio.canPlayType("audio/wav") && !this.audio_bgm_no_wave)
@@ -2549,8 +2556,12 @@ MasaoConstruction.prototype.getAudioClip = function(url, flag)
 		else
 			url = "";
 	}
+    return url;
+}
 
-	return new AudioClip(url);
+MasaoConstruction.prototype.getAudioClip = function(url, flag)
+{
+	return new AudioClip(this.getAudioURL(url, flag));
 }
 
 // メッセージを受け取ってキューの最後に追加する
