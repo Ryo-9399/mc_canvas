@@ -326,7 +326,7 @@ GameSoundWebAudio.prototype = Object.create(GameSoundForApplet.prototype, {
 });
 
 GameSoundWebAudio.prototype._init = function(){
-    const ac = 'undefined' !== typeof AudioContext ? AudioContext : webkitAudioContext;
+    var ac = 'undefined' !== typeof AudioContext ? AudioContext : webkitAudioContext;
     this.context = new ac();
     // DynamicComporessorをかませる
     this.dest = this.context.createDynamicsCompressor();
