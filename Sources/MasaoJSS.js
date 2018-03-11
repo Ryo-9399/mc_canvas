@@ -4,8 +4,10 @@
  * 正男にuserJSCallbackが提供された場合、自動的に生成されます。
  *
  * @constructor
+ * @param mc {MasaoConstruction} 親のMasaoConstructionオブジェクト
+ * @param caseInsensitive {boolean} メソッド名の大文字・小文字の違いを無視する
  */
-function MasaoJSS(mc)
+function MasaoJSS(mc, caseInsensitive)
 {
 	this.my_offscreen_img = null;
 	this.oci = new Array(256);
@@ -3964,4 +3966,33 @@ function MasaoJSS(mc)
 			return Math.floor(Math.random() * max);
 		}
 	}
+
+    if (caseInsensitive && 'undefined' !== typeof Proxy) {
+        // メソッドの大文字小文字の違いを無視するフラグが立っている
+        // 関数名を集める
+        var functions = Object.keys(this).filter(function(key){
+            return 'function' === typeof this[key];
+        }, this);
+        // 小文字化した関数を追加
+        functions.forEach(function(key) {
+            this[key.toLowerCase()] = this[key];
+        }, this);
+        // Proxyを間にはさむ
+        var proxy = new Proxy(this, {
+            get: function(target, prop, receiver) {
+                if (prop in target) {
+                    return target[prop];
+                } else {
+                    // maybe undefined
+                    return target[prop.toLowerCase()];
+                }
+            },
+        });
+        // 最適化のための通常の関数はProxyを通さない
+        var result = Object.create(proxy);
+        functions.forEach(function(key){
+            result[key] = this[key];
+        }, this);
+        return result;
+    }
 }

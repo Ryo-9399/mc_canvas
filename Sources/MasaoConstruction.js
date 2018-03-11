@@ -477,7 +477,7 @@ MasaoConstruction.prototype.init_j = function()
 	// MasaoJSS専用コールバック関数が設定されている場合、エミュレータオブジェクトを作成
 	if(this.options.userJSCallback)
 	{
-		this.masaoJSSAppletEmulator = new MasaoJSS(this);
+		this.masaoJSSAppletEmulator = new MasaoJSS(this, !!this.options['bc-case-insensitive']);
 	}
 
 
