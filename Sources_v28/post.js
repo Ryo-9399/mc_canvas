@@ -11,4 +11,4 @@
 	CanvasMasao.MapSystem = MapSystem;
 	CanvasMasao.MasaoConstruction = MasaoConstruction;
 	return CanvasMasao;
-}();
+}(window, document, Math);

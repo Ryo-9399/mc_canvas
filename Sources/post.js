@@ -15,7 +15,7 @@
 	CanvasMasao.TagDataBase = TagDataBase;
 	CanvasMasao.YukaObject = YukaObject;
 	return CanvasMasao;
-}();
+}(window, document, Math);
 
 var JSMasao = CanvasMasao.Game;
 JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;
