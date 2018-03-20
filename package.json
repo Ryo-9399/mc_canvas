@@ -1,18 +1,17 @@
 {
   "name": "mc_canvas",
   "version": "4.0.0",
-  "description": "このプロジェクトは、福田直人氏の制作した「まさおコンストラクション」を、挙動をそのままに、 かつ全てのWebブラウザ上で動作するように改良するものです。",
+  "description":
+    "このプロジェクトは、福田直人氏の制作した「まさおコンストラクション」を、挙動をそのままに、 かつ全てのWebブラウザ上で動作するように改良するものです。",
   "main": "Outputs/CanvasMasao.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start test/karma.conf.js --single-run"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ryo-9399/mc_canvas.git"
   },
-  "keywords": [
-    "masao"
-  ],
+  "keywords": ["masao"],
   "author": "Ryo-9399",
   "license": "UNLICENSED",
   "bugs": {
@@ -20,7 +19,19 @@
   },
   "homepage": "https://github.com/Ryo-9399/mc_canvas#readme",
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-karma-snapshot": "^0.6.1",
     "ink-docstrap": "^1.3.0",
-    "jsdoc": "^3.4.2"
+    "jsdoc": "^3.4.2",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-cli": "^1.0.1",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-snapshot": "^0.2.1",
+    "karma-snapshot": "^0.5.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^3.0.0",
+    "mocha": "^5.0.4",
+    "webpack": "^4.1.1"
   }
 }
