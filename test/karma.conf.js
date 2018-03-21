@@ -1,24 +1,40 @@
 // Configuration for karma
 module.exports = function(config) {
   config.set({
-    browsers: ["ChromeHeadless"],
-    frameworks: ["mocha", "snapshot", "mocha-snapshot"],
+    // logLevel: config.LOG_DEBUG,
+    browserNoActivityTimeout: 60000,
+    browserDisconnectTimeout: 10000,
+    browsers: ['ChromeHeadless'],
+    frameworks: ['mocha', 'snapshot', 'mocha-snapshot'],
     preprocessors: {
-      "**/__snapshots__/**/*.md": ["snapshot"],
-      "__tests__/index.js": ["webpack", "sourcemap"]
+      '**/__snapshots__/**/*.md': ['snapshot'],
+      '__tests__/index.js': ['webpack', 'sourcemap'],
+      '__tests__/**/*.json': ['json'],
     },
     files: [
-      "**/__snapshots__/**/*.md",
-      "__tests__/index.js",
-      "__tests__/**/*.masao.json"
+      '**/__snapshots__/**/*.md',
+      '../Outputs/CanvasMasao.js',
+      {
+        pattern: '../Samples/*.gif',
+        watched: false,
+        included: false,
+      },
+      '__tests__/**/*.masao.json',
+      '__tests__/index.js',
     ],
+    client: {
+      captureConsole: true,
+      mocha: {
+        timeout: 60000,
+      },
+    },
     // setting for mocha-snapshot
     snapshot: {
-      update: !!process.env.UPDATE
+      update: !!process.env.UPDATE,
     },
     // setting for karma-webpack
     webpack: {
-      mode: "development"
-    }
+      mode: 'development',
+    },
   });
 };

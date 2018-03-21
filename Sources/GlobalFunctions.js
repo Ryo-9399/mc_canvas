@@ -370,7 +370,6 @@ Game.prototype.__loop = function()
 	if(pt - this.__pt < this.__st) return;
 	this.__pt = pt - 10;
 
-
 	// デバッグ用キャンバス描画
 	if(this.__testCanvas)
 	{
