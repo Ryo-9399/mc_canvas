@@ -15,13 +15,13 @@ use(matchSnapshot);
  * _ran_seed: 乱数のseed値
  */
 
-describe('自動正男テスト', () => {
-  for (const key in window.__json__) {
-    if (!/\.masao\.json$/.test(key)) {
-      // 正男以外は除く
-      continue;
-    }
-    it(key, async () => {
+for (const key in window.__json__) {
+  if (!/\.masao\.json$/.test(key)) {
+    // 正男以外は除く
+    continue;
+  }
+  describe(key, () => {
+    it('スナップショットテスト', async () => {
       const stage = window.__json__[key];
       // 正男を設置する場所を容易
       const div = document.createElement('div');
@@ -68,5 +68,5 @@ describe('自動正男テスト', () => {
       game.kill();
       document.body.removeChild(div);
     });
-  }
-});
+  });
+}

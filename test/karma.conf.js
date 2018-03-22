@@ -31,6 +31,7 @@ module.exports = function(config) {
     // setting for mocha-snapshot
     snapshot: {
       update: !!process.env.UPDATE,
+      prune: !!process.env.PRUNE,
     },
     // setting for karma-webpack
     webpack: {
