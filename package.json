@@ -4,6 +4,7 @@
   "description": "このプロジェクトは、福田直人氏の制作した「まさおコンストラクション」を、挙動をそのままに、 かつ全てのWebブラウザ上で動作するように改良するものです。",
   "main": "Outputs/CanvasMasao.js",
   "scripts": {
+    "inspect-test": "node test/inspect/index.js",
     "test": "karma start test/karma.conf.js --single-run"
   },
   "repository": {
@@ -22,6 +23,8 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-karma-snapshot": "^0.6.1",
+    "express": "^4.16.3",
+    "globby": "^8.0.1",
     "ink-docstrap": "^1.3.0",
     "jsdoc": "^3.4.2",
     "karma": "^2.0.0",
@@ -34,6 +37,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^3.0.0",
     "mocha": "^5.0.4",
+    "nunjucks": "^3.1.2",
     "webpack": "^4.1.1"
   }
 }
