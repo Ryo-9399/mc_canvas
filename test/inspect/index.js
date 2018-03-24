@@ -6,6 +6,7 @@
 const path = require('path');
 const fs = require('fs');
 const globby = require('globby');
+const open = require('open');
 const express = require('express');
 const nunjucks = require('nunjucks');
 const PORT = parseInt(process.env.PORT, 10) || 8080;
@@ -63,3 +64,17 @@ app.get('/__tests__/*', (req, res, next) => {
 
 app.listen(PORT);
 console.log(`Listening on port ${PORT}`);
+
+// コマンドライン引数でJSONファイルが指定されていたらそれを開く
+const arg = process.argv[2];
+if (arg) {
+  const rel = path.relative(
+    path.join(__dirname, '../__tests__'),
+    path.resolve(process.env.INIT_CWD, arg),
+  );
+  if (rel.slice(0, 3) !== '..' + path.sep) {
+    // この中にありそうなので開く
+    console.log(`opening ${arg}`);
+    open(`http://localhost:${PORT}/__tests__/${rel}`);
+  }
+}
