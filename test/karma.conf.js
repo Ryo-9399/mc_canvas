@@ -6,6 +6,7 @@ module.exports = function(config) {
     browserDisconnectTimeout: 10000,
     browsers: ['ChromeHeadless'],
     frameworks: ['mocha', 'snapshot', 'mocha-snapshot'],
+    reporters: ['mocha'],
     preprocessors: {
       '**/__snapshots__/**/*.md': ['snapshot'],
       '__tests__/index.js': ['webpack', 'sourcemap'],
@@ -27,6 +28,9 @@ module.exports = function(config) {
       mocha: {
         timeout: 60000,
       },
+    },
+    mochaReporter: {
+      showDiff: !!process.env.DIFF,
     },
     // setting for mocha-snapshot
     snapshot: {

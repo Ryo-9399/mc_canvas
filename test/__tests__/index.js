@@ -35,19 +35,21 @@ for (const key in window.__json__) {
       });
       // XXX 時間間隔を無効化
       game.__st = -100;
+      // 乱数のseed値を固定
+      game.__mc.userInit = function() {
+        this.mp.ran_seed = isFinite(stage._ran_seed)
+          ? Number(stage._ran_seed)
+          : 0x12345;
+      };
       // 最初のループで初期化
       game.__loop();
-      // 乱数のseed値を固定
-      game.__mc.mp.ran_seed = isFinite(stage.ran_seed)
-        ? stage.ran_seed
-        : 0x12345;
       // リソースの読み込み完了まで待つ
       while (game.__mc.th_jm >= 6) {
         await sleep(20);
         game.__loop();
       }
       // 読み込み完了したので開始直前まで進める
-      while (game.__mc.th_jm > 1) {
+      while (game.__mc.mp.ml_mode !== 60) {
         game.__loop();
       }
       // ゲーム開始（これが0フレーム目）
@@ -58,7 +60,7 @@ for (const key in window.__json__) {
           game.__loop();
           currentFrame++;
         }
-        console.log('frame', targetFrame);
+        // console.log('frame', targetFrame);
         await sleep(0);
         // スナップショットを取る
         expect(game.__mc.getSnapshot()).to.matchSnapshot();

@@ -34,12 +34,17 @@
         {{options | safe}},
         {userJSCallback});
       var game = new CanvasMasao.Game(params, 'game', options);
+      // 乱数を固定
+      game.__mc.userInit = function() {
+        this.mp.ran_seed = {{ran_seed}};
+      };
 
       var flag = true;
       var count = -1;
       function userJSCallback(os_g, mode, x, y, app) {
         if (count < 0) {
           // さっそくゲームを開始
+          console.log(mode, game.__mc.mp.ml_mode);
           app.startGame();
         }
         if (flag) {

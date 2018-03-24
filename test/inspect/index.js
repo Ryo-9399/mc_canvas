@@ -15,6 +15,7 @@ const app = express();
 
 // nunjucksをexpressで使用するための設定
 nunjucks.configure(path.join(__dirname, 'views'), {
+  watch: true,
   express: app,
 });
 
@@ -57,6 +58,7 @@ app.get('/__tests__/*', (req, res, next) => {
         options: JSON.stringify({
           'advanced-map': data['advanced-map'],
         }),
+        ran_seed: stage._ran_seed || 0x12345,
       });
     },
   );
