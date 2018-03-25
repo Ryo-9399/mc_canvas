@@ -4,6 +4,8 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	// マップの幅と高さ（ブロック単位）。将来はここを変数にする。
 	this.mapWidth = 180;
 	this.mapHeight = 30;
+    // カスタムパーツの定義
+    this.customParts = null;
 
 	this.ran = undefined;
     this.ran_seed = undefined;
@@ -5057,11 +5059,14 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 	var stage = null;
 	var mainLayer = null;
 	var mapchipLayer = null;
+    var customParts = null;
 
 	if (advance_map) {
+        // 現在のステージのサイズを取得
 		stage = advance_map.stages[i - 101];
 		this.mapWidth = stage.size.x;
 		this.mapHeight = stage.size.y;
+        // レイヤー定義の中からメインレイヤーと背景レイヤーを抽出
 		stage.layers.forEach(function (layer) {
 			if (layer.type === "main") {
 				mainLayer = layer;
@@ -5070,6 +5075,10 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 				mapchipLayer = layer;
 			}
 		});
+        // カスタムチップの定義を解析
+        if (advance_map.customParts != null) {
+            this.customParts = this.readCustomParts(advance_map.customParts);
+        }
 	}
 	else {
 		this.mapWidth = 180;
@@ -5305,6 +5314,82 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	return;
+}
+
+/**
+ * 第3版マップデータのカスタムチップ定義を解析
+ * @private
+ */
+MainProgram.prototype.readCustomParts = function(customParts)
+{
+    // 依存される側が上に来ている場合に速いアルゴリズム
+    var result = {};
+    var pending = Object.keys(customParts);
+    var pending2;
+    while(pending.length > 0) {
+        var flag = false;
+        pending2 = [];
+        for(var i = 0; i < pending.length; i++) {
+            var key = pending[i];
+            var obj = customParts[key];
+            if("number" === typeof obj.extends) {
+                // ネイティブパーツを拡張している
+                var native =
+                    5000 <= obj.extends && obj.extends < 10000 ?
+                    // 敵コードの場合
+                    EnemyController.available[obj.extends] :
+                    null;
+                if(!native) {
+                    // 拡張不可能
+                    console.warn("パーツコード" + obj.extends + "は拡張できません");
+                    continue;
+                }
+                // 拡張可能なネイティブパーツ
+                result[key] = {
+                    properties: assign({}, native.properties, obj.properties),
+                    native: native,
+                };
+            } else if(obj.extends in result) {
+                // 継承可能なのでコピー
+                result[key] = {
+                    properties: assign({}, result[obj.extends].properties, obj.properties),
+                    native: result[obj.extends].native,
+                };
+            } else {
+                // 継承元がまだ見つからない
+                pending2.push(key);
+                continue;
+            }
+            // 新しい定義が追加できた
+            flag = true;
+        }
+        // 次のループへ
+        pending = pending2;
+        if (!flag) {
+            // 何も更新されていない
+            break;
+        }
+    }
+    if (pending.length > 0) {
+        // 解決されなかった関係がある
+        pending.forEach(function(key){
+            console.warn("カスタムパーツコード" + key + "を解決できませんでした");
+        });
+    }
+    return result;
+    /**
+     * ES6のObject.assignっぽい関数
+     * 1番目移行の引数のオブジェクトのプロパティを0番目の引数に書き込む
+     */
+    function assign(target) {
+        for (var i = 1; i < arguments.length; i++) {
+            var from = arguments[i];
+            for (var key in from) {
+                target[key] = from[key];
+            }
+        }
+        return target;
+    }
 }
 
 MainProgram.prototype.setAthleticOnMap = function(i, j, k)
@@ -14598,10 +14683,19 @@ MainProgram.prototype.checkWater = function(i, j)
 	return false;
 }
 
+/**
+ * 指定された位置に敵を配置します。
+ * @param i {number} X座標
+ * @param j {number} Y座標
+ * @param k {(string|number)} 敵コード
+ * @param l {number} ?
+ * @private
+ */
 MainProgram.prototype.tSet = function(i, j, k, l)
 {
     // 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
     var t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
+
 	var i1 = 0;
 	do
 	{
@@ -14611,6 +14705,8 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
 		{
+            // 未使用の敵オブジェクトがあったのでこれを利用
+
 			this.co_t[i1].init();
 			var characterobject = this.co_t[i1];
 			characterobject.c = 10;
@@ -14620,15 +14716,25 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			characterobject.c4 = j;
 			characterobject.x = i;
 			characterobject.y = j;
+            // カスタムパーツかEnemyControllerに定義があれば利用
+            var partsDefinition = undefined;
+            if(this.customParts && this.customParts[k]) {
+                partsDefinition = this.customParts[k];
+            } else if(EnemyController.available[k]) {
+                partsDefinition = {
+                    properties: EnemyController.available[k].properties,
+                    native: EnemyController.available[k]
+                };
+            }
+            if(partsDefinition != null) {
+                // オブジェクトの初期化
+                partsDefinition.native.initFactory(k, partsDefinition.properties)(characterobject);
+                // コントローラーを設定
+                characterobject.controller = partsDefinition.native.controllerFactory(partsDefinition.properties);
+                break;
+            }
+            // EnemyController未対応の敵コードの処理
 			switch (k) {
-				case 200:
-				case 201:
-				case 202:
-				case 203:
-					characterobject.c2 = 200;
-					characterobject.c3 = k - 200;
-					break;
-
 				case 301:
 					characterobject.c2 = 300;
 					characterobject.c3 = 1;
@@ -14849,5003 +14955,4870 @@ MainProgram.prototype.tMove = function()
 		if(this.co_t[i].c == 0 || this.co_t[i].x < this.maps.wx - 512 && this.co_t[i].c < 1200)
 			continue;
 		var characterobject = this.co_t[i];
-		var l20 = characterobject.x;
-		var i21 = characterobject.y;
-		switch(characterobject.c)
-		{
-		case 1310: 
-		default:
-			break;
-
-		case 10:
-			if(this.maps.wx >= characterobject.c1)
-			{
-				characterobject.c = characterobject.c2;
-				characterobject.c1 = 0;
-				characterobject.c2 = 0;
-			}
-			break;
-
-		case 50:
-			characterobject.c1++;
-			if(characterobject.c2 >= 0 && this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
-				i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			if(characterobject.c1 > 14)
-			{
-				characterobject.c = 0;
-				this.addScore(10);
-			}
-			break;
-
-		case 52:
-			l20 += characterobject.vx;
-			characterobject.vy += 5;
-			if(characterobject.vy > 25)
-				characterobject.vy = 25;
-			i21 += characterobject.vy;
-			if(i21 > this.maps.wy + 320)
-			{
-				characterobject.c = 0;
-				this.addScore(10);
-			}
-			break;
-
-		case 54:
-			l20 += characterobject.vx;
-			characterobject.vy += 5;
-			if(characterobject.vy > 25)
-				characterobject.vy = 25;
-			i21 += characterobject.vy;
-			if(i21 > this.maps.wy + 320)
-			{
-				characterobject.c = 60;
-				characterobject.c1 = 0;
-			}
-			break;
-
-		case 55:
-			characterobject.c1++;
-			if(characterobject.c1 == 1)
-				this.addScore(10);
-			characterobject.pth = 0;
-			if(characterobject.c1 <= 3)
-				characterobject.pt = 172;
-			else
-			if(characterobject.c1 <= 6)
-				characterobject.pt = 173;
-			else
-			if(characterobject.c1 <= 9)
-			{
-				characterobject.pt = 174;
-			} else
-			{
-				characterobject.pt = 174;
-				characterobject.c = 0;
-			}
-			break;
-
-		case 57:
-			characterobject.c1++;
-			characterobject.pth = 0;
-			if(characterobject.c1 <= 3)
-				characterobject.pt = 172;
-			else
-			if(characterobject.c1 <= 6)
-				characterobject.pt = 173;
-			else
-			if(characterobject.c1 <= 9)
-			{
-				characterobject.pt = 174;
-			} else
-			{
-				characterobject.pt = 174;
-				characterobject.c = 65;
-				characterobject.c1 = 0;
-			}
-			break;
-
-		case 60:
-			if(characterobject.c1 == 1)
-			{
-				i21 = this.maps.wy_mini - 32;
-				var j = 0;
-				do
-				{
-					if(j > 15)
-						break;
-					if(this.scroll_area == 2 || this.scroll_area == 4)
-						l20 = 32 + this.ranInt(16) * 32;
-					else
-					if(this.scroll_area == 3 || this.scroll_area == 5)
-					{
-						l20 = 32 + this.ranInt(32) * 32;
-					} else
-					{
-						l20 = ((rightShiftIgnoreSign(this.co_j.x, 5) + this.ranInt(17)) - 8) * 32;
-						if(l20 < 32)
-							l20 = 32;
-						else
-						if(l20 > this.mapWidth * 32)
-							l20 = this.mapWidth * 32;
-					}
-					var l36 = this.maps.getBGCode(l20 + 15, i21 + 32 + 15);
-					if(l36 <= 10 || l36 == 15)
-					{
-						characterobject.muki = this.ranInt(2);
-						characterobject.c1 = 2;
-						break;
-					}
-					j++;
-				} while(true);
-				characterobject.pt = 0;
-			} else
-			if(characterobject.c1 < 50)
-			{
-				characterobject.c1++;
-				characterobject.pt = 0;
-			} else
-			if(characterobject.c1 >= 50)
-			{
-				if(++i21 >= this.maps.wy_mini)
-					characterobject.c = 1220;
-				characterobject.pt = 140;
-				characterobject.pth = characterobject.muki;
-			}
-			break;
-
-		case 65:
-			characterobject.c1++;
-			if(characterobject.c1 < 50)
-			{
-				i21 = this.maps.wy_mini - 32;
-				characterobject.pt = 0;
-			} else
-			if(characterobject.c1 >= 50)
-				if(this.mhouse_c == 100)
-				{
-					characterobject.c = 1430;
-					l20 = this.mhouse_x * 32;
-					i21 = this.mhouse_y * 32;
-					characterobject.pt = 0;
-					characterobject.pth = 0;
-				} else
-				{
-					characterobject.c = 0;
-				}
-			break;
-
-		case 100:
-			if(this.ana_kazu > 0)
-			{
-				var j21 = this.anaCheckNormal(l20, i21);
-				if(j21 >= 0)
-				{
-					characterobject.c = 1300;
-					l20 = this.ana_x[j21] * 32;
-					break;
-				}
-			}
-			var j44 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(j44 != 18 && j44 != 19)
-				j44 = 0;
-			if(j44 == 0 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 || j44 > 0 && this.getSakamichiY(l20 + 15, i21 + 31) > i21)
-			{
-				i21 += 5;
-				if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-				if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				characterobject.pt = 140;
-				characterobject.pth = 0;
-				if(this.yuka_id_max >= 0)
-				{
-					var k = 0;
-					do
-					{
-						if(k > this.yuka_id_max)
-							break;
-						if(this.yo[k].con >= 300 && this.yo[k].con < 350)
-						{
-							var k21 = this.getSCOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
-							if(k21 >= 0 && k21 <= i21 && k21 + 31 >= i21)
-							{
-								i21 = k21;
-								characterobject.c = 104;
-								characterobject.c2 = k;
-								characterobject.vx = -1;
-								break;
-							}
-						} else
-						if(this.yo[k].con >= 350 && this.yo[k].con < 400)
-						{
-							var l21 = this.getSHCOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
-							if(l21 >= 0 && l21 - 192 <= i21 && l21 + 31 + 192 >= i21)
-							{
-								i21 = l21;
-								characterobject.c = 104;
-								characterobject.c2 = k;
-								characterobject.vx = -1;
-								break;
-							}
-						} else
-						if(this.yo[k].con >= 400 && this.yo[k].con < 450)
-						{
-							var i22 = this.getSWUpOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
-							if(i22 >= 0 && i22 <= i21 && i22 + 31 >= i21)
-							{
-								i21 = i22;
-								characterobject.c = 104;
-								characterobject.c2 = k;
-								characterobject.vx = -1;
-								break;
-							}
-						} else
-						if(this.yo[k].con >= 450 && this.yo[k].con < 500)
-						{
-							var j22 = this.getSWDownOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
-							if(j22 >= 0 && j22 <= i21 && j22 + 31 >= i21)
-							{
-								i21 = j22;
-								characterobject.c = 104;
-								characterobject.c2 = k;
-								characterobject.vx = -1;
-								break;
-							}
-						}
-						k++;
-					} while(true);
-				}
-			} else
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
-				{
-					if(j44 == 18)
-						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-					else
-					if(j44 == 19)
-						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-					if(this.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
-						i21++;
-				}
-				l20 -= 3;
-				var i37 = this.maps.getBGCode(l20 + 15, i21 + 31);
-				if(i37 == 18 || i37 == 19)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				i37 = this.maps.getBGCode(l20, i21);
-				if(i37 >= 20 || i37 == 15 || i37 == 18)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 105;
-				}
-				if(j44 == 18)
-				{
-					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					{
-						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
-						characterobject.c = 105;
-					}
-				} else
-				if(j44 == 19)
-				{
-					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
-					{
-						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
-						i21++;
-						characterobject.c = 105;
-					}
-				} else
-				if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20, i21 + 31) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 105;
-				}
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = 0;
-			}
-			break;
-
-		case 104:
-			characterobject.pt = 140 + this.g_ac;
-			characterobject.pth = 0;
-			if(this.yo[characterobject.c2].con >= 300 && this.yo[characterobject.c2].con < 350)
-			{
-				var l28 = rounddown((this.yo[characterobject.c2].x2 * 80) / 100);
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 3) <= this.yo[characterobject.c2].x - l28 - 15)
-					{
-						l20 = this.yo[characterobject.c2].x - l28 - 15;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 3) >= (this.yo[characterobject.c2].x + l28) - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + l28) - 15;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			} else
-			if(this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
-			{
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 3) <= (this.yo[characterobject.c2].x - 15) + 8)
-					{
-						l20 = (this.yo[characterobject.c2].x - 15) + 8;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 3) >= (this.yo[characterobject.c2].x + 239) - 15 - 8)
-					{
-						l20 = (this.yo[characterobject.c2].x + 239) - 15 - 8;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			} else
-			if(this.yo[characterobject.c2].con >= 400 && this.yo[characterobject.c2].con < 450)
-			{
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 3) <= (this.yo[characterobject.c2].x + 8) - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 8) - 15;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 3) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSWUpOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			} else
-			if(this.yo[characterobject.c2].con >= 450 && this.yo[characterobject.c2].con < 500)
-			{
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 3) <= (this.yo[characterobject.c2].x + 8) - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 8) - 15;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 3) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSWDownOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			}
-			break;
-
-		case 105:
-			if(this.ana_kazu > 0)
-			{
-				var k22 = this.anaCheckNormal(l20, i21);
-				if(k22 >= 0)
-				{
-					characterobject.c = 1300;
-					l20 = this.ana_x[k22] * 32;
-					break;
-				}
-			}
-			var k44 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(k44 != 18 && k44 != 19)
-				k44 = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
-			{
-				if(k44 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				else
-				if(k44 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				if(this.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
-					i21++;
-			}
-			l20 += 3;
-			var j37 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(j37 == 18 || j37 == 19)
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-			j37 = this.maps.getBGCode(l20 + 31, i21);
-			if(j37 >= 20 || j37 == 15 || j37 == 19)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.c = 100;
-			}
-			if(k44 == 19)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
-					characterobject.c = 100;
-				}
-			} else
-			if(k44 == 18)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
-					i21++;
-					characterobject.c = 100;
-				}
-			} else
-			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.c = 100;
-			}
-			characterobject.pt = 140 + this.g_ac;
-			characterobject.pth = 1;
-			break;
-
-		case 110:
-			if(this.ana_kazu > 0)
-			{
-				var l22 = this.anaCheckNormal(l20, i21);
-				if(l22 >= 0)
-				{
-					characterobject.c = 1300;
-					l20 = this.ana_x[l22] * 32;
-					break;
-				}
-			}
-			var l44 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(l44 != 18 && l44 != 19)
-				l44 = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
-			{
-				if(l44 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				else
-				if(l44 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				if(this.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
-					i21++;
-			}
-			l20 -= 3;
-			var k37 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(k37 == 18 || k37 == 19)
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-			if(l20 < 32)
-			{
-				if(l20 <= 3)
-					characterobject.c = 0;
-			} else
-			{
-				var l37 = this.maps.getBGCode(l20, i21);
-				if(l37 >= 20 || l37 == 15 || l37 == 18)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 115;
-				}
-			}
-			if(i >= 120 && l20 < this.maps.wx - 32)
-				characterobject.c = 0;
-			if(l44 == 18)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
-			} else
-			if(l44 == 19)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
-			} else
-			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
-				characterobject.c = 120;
-			}
-			characterobject.pt = 140 + this.g_ac;
-			characterobject.pth = 0;
-			break;
-
-		case 115:
-			if(this.ana_kazu > 0)
-			{
-				var i23 = this.anaCheckNormal(l20, i21);
-				if(i23 >= 0)
-				{
-					characterobject.c = 1300;
-					l20 = this.ana_x[i23] * 32;
-					break;
-				}
-			}
-			var i45 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(i45 != 18 && i45 != 19)
-				i45 = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
-			{
-				if(i45 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				else
-				if(i45 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				if(this.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
-					i21++;
-			}
-			l20 += 3;
-			var i38 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(i38 == 18 || i38 == 19)
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-			i38 = this.maps.getBGCode(l20 + 31, i21);
-			if(i38 >= 20 || i38 == 15 || i38 == 19)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.c = 110;
-			}
-			if(i >= 120 && l20 > this.maps.wx + 512)
-				characterobject.c = 0;
-			if(i45 == 19)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
-			} else
-			if(i45 == 18)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
-			} else
-			if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
-			{
-				l20 = rightShiftIgnoreSign(l20, 5) * 32;
-				characterobject.c = 125;
-			}
-			characterobject.pt = 140 + this.g_ac;
-			characterobject.pth = 1;
-			break;
-
-		case 120:
-			if(this.ana_kazu > 0)
-			{
-				var l = 0;
-				do
-				{
-					if(l > 11)
-						break;
-					if(this.ana_c[l] > 0 && this.ana_y[l] * 32 == i21 + 32 && Math.abs(this.ana_x[l] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[l] * 32;
-						break;
-					}
-					l++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			i21 += 5;
-			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-			{
-				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-				characterobject.c = 110;
-			}
-			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-			{
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				characterobject.c = 110;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			characterobject.pt = 140;
-			characterobject.pth = 0;
-			break;
-
-		case 125:
-			if(this.ana_kazu > 0)
-			{
-				var i1 = 0;
-				do
-				{
-					if(i1 > 11)
-						break;
-					if(this.ana_c[i1] > 0 && this.ana_y[i1] * 32 == i21 + 32 && Math.abs(this.ana_x[i1] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[i1] * 32;
-						break;
-					}
-					i1++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			i21 += 5;
-			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-			{
-				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-				characterobject.c = 115;
-			}
-			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-			{
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				characterobject.c = 115;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			characterobject.pt = 140;
-			characterobject.pth = 1;
-			break;
-
-		case 150: 
-			if(this.ana_kazu > 0)
-			{
-				var j1 = 0;
-				do
-				{
-					if(j1 > 11)
-						break;
-					if(this.ana_c[j1] > 0 && this.ana_y[j1] * 32 == i21 + 32 && Math.abs(this.ana_x[j1] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j1] * 32;
-						break;
-					}
-					j1++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
-			{
-				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-				characterobject.vx = 0;
-			}
-			if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.vx = 0;
-			}
-			l20 += characterobject.vx;
-			characterobject.vy += 2;
-			if(characterobject.vy > 18)
-				characterobject.vy = 18;
-			i21 += characterobject.vy;
-			var j23 = rightShiftIgnoreSign(i21 + 31, 5);
-			var word0 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][j23];
-			var word3 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][j23];
-			if(word0 >= 15 || word3 >= 15)
-			{
-				i21 = j23 * 32 - 32;
-				if(characterobject.muki == 1)
-					characterobject.c = 115;
-				else
-					characterobject.c = 110;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			characterobject.pt = 140;
-			characterobject.pth = characterobject.muki;
-			break;
-
-		case 200: 
-			if(this.ana_kazu > 0)
-			{
-				var k1 = 0;
-				do
-				{
-					if(k1 > 11)
-						break;
-					if(this.ana_c[k1] > 0 && this.ana_y[k1] * 32 == i21 + 32 && Math.abs(this.ana_x[k1] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[k1] * 32;
-						break;
-					}
-					k1++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(this.co_j.x >= l20 - 240 && this.co_j.x <= l20 + 240)
-				{
-					characterobject.c = 210;
-					characterobject.vy = -14;
-				}
-			} else
-			{
-				characterobject.c1--;
-			}
-			characterobject.pt = 143;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 210: 
-			if(this.ana_kazu > 0 && characterobject.vy > 0)
-			{
-				var l1 = 0;
-				do
-				{
-					if(l1 > 11)
-						break;
-					if(this.ana_c[l1] > 0 && this.ana_y[l1] * 32 <= i21 + 32 && this.ana_y[l1] * 32 >= i21 + 16 && Math.abs(this.ana_x[l1] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[l1] * 32;
-						i21 = this.ana_y[l1] * 32 - 32;
-						break;
-					}
-					l1++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			characterobject.vy++;
-			if(characterobject.vy > 14)
-				characterobject.vy = 14;
-			i21 += characterobject.vy;
-			if(this.maps.getBGCode(l20 + 15, i21 + 31) >= 10)
-			{
-				i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				characterobject.c = 200;
-				characterobject.c1 = 30;
-			}
-			if(this.yuka_id_max >= 0)
-			{
-				for(var i2 = 0; i2 <= this.yuka_id_max; i2++)
-				{
-					if(this.yo[i2].con >= 300 && this.yo[i2].con < 350)
-					{
-						var k23 = this.getSCOY(this.yo[i2].x, this.yo[i2].y, this.yo[i2].x2, this.yo[i2].y2, l20 + 15);
-						if(k23 >= 0 && k23 <= i21 && k23 + 31 >= i21)
-						{
-							i21 = k23;
-							characterobject.c = 200;
-							characterobject.c1 = 30;
-						}
-						continue;
-					}
-					if(this.yo[i2].con >= 350 && this.yo[i2].con < 400)
-					{
-						var l23 = this.getSHCOY(this.yo[i2].x, this.yo[i2].y, this.yo[i2].x2, this.yo[i2].y2, l20 + 15);
-						if(l23 >= 0 && l23 <= i21 && l23 + 31 >= i21)
-						{
-							i21 = l23;
-							characterobject.c = 200;
-							characterobject.c1 = 30;
-						}
-						continue;
-					}
-					if(this.yo[i2].con >= 400 && this.yo[i2].con < 450)
-					{
-						var i24 = this.getSWUpOY(this.yo[i2].x, this.yo[i2].y, this.yo[i2].x2, this.yo[i2].y2, l20 + 15);
-						if(i24 >= 0 && i24 <= i21 && i24 + 31 >= i21)
-						{
-							i21 = i24;
-							characterobject.c = 200;
-							characterobject.c1 = 30;
-						}
-						continue;
-					}
-					if(this.yo[i2].con < 450 || this.yo[i2].con >= 500)
-						continue;
-					var j24 = this.getSWDownOY(this.yo[i2].x, this.yo[i2].y, this.yo[i2].x2, this.yo[i2].y2, l20 + 15);
-					if(j24 >= 0 && j24 <= i21 && j24 + 31 >= i21)
-					{
-						i21 = j24;
-						characterobject.c = 200;
-						characterobject.c1 = 30;
-					}
-				}
-
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			if(characterobject.vy == 0 && (Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y) && i21 >= this.maps.wy - 128 && i21 <= this.maps.wy + 320 + 128)
-				if(characterobject.c3 == 1)
-				{
-					if(l20 + 8 >= this.co_j.x)
-					{
-						this.mSet2(l20 - 16, rightShiftIgnoreSign(i21, 5) * 32, 732, -10, 0);
-						this.gs.rsAddSound(15);
-					} else
-					{
-						this.mSet2(l20 + 16, rightShiftIgnoreSign(i21, 5) * 32, 732, 10, 0);
-						this.gs.rsAddSound(15);
-					}
-				} else
-				if(characterobject.c3 == 2)
-				{
-					if(l20 + 8 >= this.co_j.x)
-					{
-						var d = 3.1400001049041748;
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
-						d = 3.6633334159851074;
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
-						d = 2.6166667938232422;
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
-						this.gs.rsAddSound(10);
-					} else
-					{
-						var d1 = 0.0;
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
-						d1 = 5.7566671371459961;
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
-						d1 = 0.52333337068557739;
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
-						this.gs.rsAddSound(10);
-					}
-				} else
-				if(characterobject.c3 == 3)
-				{
-					if(l20 + 8 >= this.co_j.x)
-					{
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 810, -12, 0);
-						this.gs.rsAddSound(22);
-					} else
-					{
-						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 810, 12, 0);
-						this.gs.rsAddSound(22);
-					}
-				} else
-				{
-					this.mSet(l20, i21, 100);
-					this.gs.rsAddSound(10);
-				}
-			if(characterobject.vy <= -1)
-				characterobject.pt = 144;
-			else
-				characterobject.pt = 145;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 300: 
-			if(this.ana_kazu > 0)
-			{
-				var j2 = 0;
-				do
-				{
-					if(j2 > 11)
-						break;
-					if(this.ana_c[j2] > 0 && this.ana_y[j2] * 32 == i21 + 32 && Math.abs(this.ana_x[j2] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j2] * 32;
-						break;
-					}
-					j2++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 > 0)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 2 || characterobject.c1 == 10 || characterobject.c1 == 18 || characterobject.c1 == 26)
-				{
-					if(l20 + 8 >= this.co_j.x)
-					{
-						if(characterobject.c3 == 1)
-							this.mSet(l20, i21, 201);
-						else
-							this.mSet(l20, i21, 200);
-					} else
-					if(characterobject.c3 == 1)
-						this.mSet(l20, i21, 206);
-					else
-						this.mSet(l20, i21, 205);
-					if(characterobject.c1 == 2 && Math.abs(i21 - this.co_j.y) <= 288)
-						this.gs.rsAddSound(11);
-				} else
-				if(characterobject.c1 > 86)
-					characterobject.c1 = 0;
-			} else
-			if(this.co_j.x >= l20 - 256 && this.co_j.x <= l20 + 256)
-				characterobject.c1 = 1;
-			characterobject.pt = 150;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 310: 
-			if(this.ana_kazu > 0)
-			{
-				var k2 = 0;
-				do
-				{
-					if(k2 > 11)
-						break;
-					if(this.ana_c[k2] > 0 && this.ana_y[k2] * 32 == i21 + 32 && Math.abs(this.ana_x[k2] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[k2] * 32;
-						break;
-					}
-					k2++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32)
-				{
-					characterobject.c1 = 100;
-					this.gs.rsAddSound(17);
-				}
-			} else
-			if(characterobject.c1 >= 100 && characterobject.c1 < 200)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 101)
-				{
-					if(characterobject.c4 == 1)
-						this.tSetBoss(l20, i21, 650, -3);
-					else
-						this.tSetBoss(l20, i21, 450, -3);
-					if(characterobject.c3 < 999)
-						characterobject.c3--;
-					if(characterobject.c3 <= 0)
-						characterobject.c1 = 500;
-				} else
-				if(characterobject.c1 >= 140)
-					characterobject.c1 = 100;
-				if(l20 < this.maps.wx)
-					characterobject.c1 = 500;
-			}
-			characterobject.pt = 150;
-			characterobject.pth = 0;
-			break;
-
-		case 320: 
-			if(this.ana_kazu > 0)
-			{
-				var l2 = 0;
-				do
-				{
-					if(l2 > 11)
-						break;
-					if(this.ana_c[l2] > 0 && this.ana_y[l2] * 32 == i21 + 32 && Math.abs(this.ana_x[l2] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[l2] * 32;
-						break;
-					}
-					l2++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx - 16 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 288 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 88 && this.co_j.y <= i21 + 128)
-					if(this.co_j.x <= l20 + 8)
-						characterobject.c1 = 100;
-					else
-						characterobject.c1 = 200;
-			} else
-			if(characterobject.c1 >= 100 && characterobject.c1 < 200)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 101)
-				{
-					var d2 = 4.7100000381469727;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d2) * 10), Math.floor(Math.sin(d2) * 10));
-					this.gs.rsAddSound(11);
-				} else
-				if(characterobject.c1 == 105)
-				{
-					var d3 = 3.9249999523162842;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d3) * 10), Math.floor(Math.sin(d3) * 10));
-				} else
-				if(characterobject.c1 == 109)
-				{
-					var d4 = 3.1400001049041748;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d4) * 10), Math.floor(Math.sin(d4) * 10));
-				} else
-				if(characterobject.c1 == 113)
-				{
-					var d5 = 3.6633334159851074;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d5) * 10), Math.floor(Math.sin(d5) * 10));
-				} else
-				if(characterobject.c1 >= 121)
-				{
-					var d6 = 4.1866669654846191;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d6) * 10), Math.floor(Math.sin(d6) * 10));
-					characterobject.c1 = 300;
-				}
-			} else
-			if(characterobject.c1 >= 200 && characterobject.c1 < 300)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 201)
-				{
-					var d7 = 4.7100000381469727;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d7) * 10), Math.floor(Math.sin(d7) * 10));
-					this.gs.rsAddSound(11);
-				} else
-				if(characterobject.c1 == 205)
-				{
-					var d8 = 5.4950003623962402;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d8) * 10), Math.floor(Math.sin(d8) * 10));
-				} else
-				if(characterobject.c1 == 209)
-				{
-					var d9 = 0.0;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d9) * 10), Math.floor(Math.sin(d9) * 10));
-				} else
-				if(characterobject.c1 == 213)
-				{
-					var d10 = 5.7566671371459961;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d10) * 10), Math.floor(Math.sin(d10) * 10));
-				} else
-				if(characterobject.c1 >= 221)
-				{
-					var d11 = 5.2333335876464844;
-					this.mSet2(l20, i21, 731, Math.floor(Math.cos(d11) * 10), Math.floor(Math.sin(d11) * 10));
-					characterobject.c1 = 300;
-				}
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 350)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 150;
-			if(this.co_j.x <= l20 + 8)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 330: 
-			if(this.ana_kazu > 0)
-			{
-				var i3 = 0;
-				do
-				{
-					if(i3 > 11)
-						break;
-					if(this.ana_c[i3] > 0 && this.ana_y[i3] * 32 == i21 + 32 && Math.abs(this.ana_x[i3] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[i3] * 32;
-						break;
-					}
-					i3++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx - 16 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 352 && this.co_j.x <= l20 - 72 && Math.abs(this.co_j.y - i21) < 32)
-				{
-					this.mSet2(l20, i21, 75, i, 0);
-					this.gs.rsAddSound(11);
-					characterobject.c1 = 300;
-				}
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 420)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 150;
-			characterobject.pth = 0;
-			break;
-
-		case 335: 
-			if(this.ana_kazu > 0)
-			{
-				var j3 = 0;
-				do
-				{
-					if(j3 > 11)
-						break;
-					if(this.ana_c[j3] > 0 && this.ana_y[j3] * 32 == i21 + 32 && Math.abs(this.ana_x[j3] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j3] * 32;
-						break;
-					}
-					j3++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx - 16 - 144 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x <= l20 + 352 && this.co_j.x >= l20 + 72 && Math.abs(this.co_j.y - i21) < 32)
-				{
-					this.mSet2(l20, i21, 85, i, 0);
-					this.gs.rsAddSound(11);
-					characterobject.c1 = 300;
-				}
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 420)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 150;
-			characterobject.pth = 1;
-			break;
-
-		case 400: 
-			if(this.ana_kazu > 0)
-			{
-				var k3 = 0;
-				do
-				{
-					if(k3 > 11)
-						break;
-					if(this.ana_c[k3] > 0 && this.ana_y[k3] * 32 == i21 + 32 && Math.abs(this.ana_x[k3] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[k3] * 32;
-						break;
-					}
-					k3++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(this.j_tokugi == 14)
-			{
-				characterobject.c2++;
-				if(characterobject.c2 > 24)
-				{
-					characterobject.c2 = 0;
-					if(this.co_j.y < i21 + 8)
-						this.mSet(l20, i21, 150);
-				}
-			}
-			var j45 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(j45 != 18 && j45 != 19)
-				j45 = 0;
-			if(j45 == 0 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 || j45 > 0 && this.getSakamichiY(l20 + 15, i21 + 31) > i21)
-			{
-				i21 += 5;
-				if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-				if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				characterobject.pt = 152;
-				characterobject.pth = 0;
-				if(this.yuka_id_max >= 0)
-				{
-					var l3 = 0;
-					do
-					{
-						if(l3 > this.yuka_id_max)
-							break;
-						if(this.yo[l3].con >= 300 && this.yo[l3].con < 350)
-						{
-							var k24 = this.getSCOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
-							if(k24 >= 0 && k24 <= i21 && k24 + 31 >= i21)
-							{
-								i21 = k24;
-								characterobject.c = 404;
-								characterobject.c2 = l3;
-								characterobject.vx = -1;
-								break;
-							}
-						} else
-						if(this.yo[l3].con >= 350 && this.yo[l3].con < 400)
-						{
-							var l24 = this.getSHCOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
-							if(l24 >= 0 && l24 - 192 <= i21 && l24 + 31 + 192 >= i21)
-							{
-								i21 = l24;
-								characterobject.c = 404;
-								characterobject.c2 = l3;
-								characterobject.vx = -1;
-								break;
-							}
-						} else
-						if(this.yo[l3].con >= 400 && this.yo[l3].con < 450)
-						{
-							var i25 = this.getSWUpOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
-							if(i25 >= 0 && i25 <= i21 && i25 + 31 >= i21)
-							{
-								i21 = i25;
-								characterobject.c = 404;
-								characterobject.c2 = l3;
-								characterobject.vx = -1;
-								break;
-							}
-						} else
-						if(this.yo[l3].con >= 450 && this.yo[l3].con < 500)
-						{
-							var j25 = this.getSWDownOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
-							if(j25 >= 0 && j25 <= i21 && j25 + 31 >= i21)
-							{
-								i21 = j25;
-								characterobject.c = 404;
-								characterobject.c2 = l3;
-								characterobject.vx = -1;
-								break;
-							}
-						}
-						l3++;
-					} while(true);
-				}
-			} else
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
-				{
-					if(j45 == 18)
-						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-					else
-					if(j45 == 19)
-						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-					if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
-						i21++;
-				}
-				l20 -= 4;
-				var j38 = this.maps.getBGCode(l20 + 15, i21 + 31);
-				if(j38 == 18 || j38 == 19)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				j38 = this.maps.getBGCode(l20, i21);
-				if(j38 >= 20 || j38 == 15 || j38 == 18)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 405;
-				}
-				if(j45 == 18)
-				{
-					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					{
-						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
-						characterobject.c = 405;
-					}
-				} else
-				if(j45 == 19)
-				{
-					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
-					{
-						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
-						i21++;
-						characterobject.c = 405;
-					}
-				} else
-				if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20, i21 + 31) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 405;
-				}
-				characterobject.pt = 152 + this.g_ac;
-				characterobject.pth = 0;
-			}
-			break;
-
-		case 404: 
-			characterobject.pt = 152 + this.g_ac;
-			characterobject.pth = 0;
-			if(this.yo[characterobject.c2].con >= 300 && this.yo[characterobject.c2].con < 350)
-			{
-				var i29 = rounddown((this.yo[characterobject.c2].x2 * 80) / 100);
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 4) <= this.yo[characterobject.c2].x - i29 - 15)
-					{
-						l20 = this.yo[characterobject.c2].x - i29 - 15;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 4) >= (this.yo[characterobject.c2].x + i29) - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + i29) - 15;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			} else
-			if(this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
-			{
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 4) <= (this.yo[characterobject.c2].x - 15) + 8)
-					{
-						l20 = (this.yo[characterobject.c2].x - 15) + 8;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 4) >= (this.yo[characterobject.c2].x + 239) - 15 - 8)
-					{
-						l20 = (this.yo[characterobject.c2].x + 239) - 15 - 8;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			} else
-			if(this.yo[characterobject.c2].con >= 400 && this.yo[characterobject.c2].con < 450)
-			{
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 4) <= (this.yo[characterobject.c2].x + 8) - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 8) - 15;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 4) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSWUpOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			} else
-			if(this.yo[characterobject.c2].con >= 450 && this.yo[characterobject.c2].con < 500)
-			{
-				if(characterobject.vx < 0)
-				{
-					if((l20 -= 4) <= (this.yo[characterobject.c2].x + 8) - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 8) - 15;
-						characterobject.vx = 1;
-					}
-				} else
-				{
-					characterobject.pth = 1;
-					if((l20 += 4) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
-					{
-						l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
-						characterobject.vx = -1;
-					}
-				}
-				i21 = this.getSWDownOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
-			}
-			break;
-
-		case 405: 
-			if(this.ana_kazu > 0)
-			{
-				var i4 = 0;
-				do
-				{
-					if(i4 > 11)
-						break;
-					if(this.ana_c[i4] > 0 && this.ana_y[i4] * 32 == i21 + 32 && Math.abs(this.ana_x[i4] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[i4] * 32;
-						break;
-					}
-					i4++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(this.j_tokugi == 14)
-			{
-				characterobject.c2++;
-				if(characterobject.c2 > 24)
-				{
-					characterobject.c2 = 0;
-					if(this.co_j.y < i21 + 8)
-						this.mSet(l20, i21, 150);
-				}
-			}
-			var k45 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(k45 != 18 && k45 != 19)
-				k45 = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
-			{
-				if(k45 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				else
-				if(k45 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
-					i21++;
-			}
-			l20 += 4;
-			var k38 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(k38 == 18 || k38 == 19)
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-			k38 = this.maps.getBGCode(l20 + 31, i21);
-			if(k38 >= 20 || k38 == 15 || k38 == 19)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.c = 400;
-			}
-			if(k45 == 19)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
-					characterobject.c = 400;
-				}
-			} else
-			if(k45 == 18)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
-					i21++;
-					characterobject.c = 400;
-				}
-			} else
-			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.c = 400;
-			}
-			characterobject.pt = 152 + this.g_ac;
-			characterobject.pth = 1;
-			break;
-
-		case 410: 
-			if(this.ana_kazu > 0)
-			{
-				var j4 = 0;
-				do
-				{
-					if(j4 > 11)
-						break;
-					if(this.ana_c[j4] > 0 && this.ana_y[j4] * 32 == i21 + 32 && Math.abs(this.ana_x[j4] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j4] * 32;
-						break;
-					}
-					j4++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			var l45 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(l45 != 18 && l45 != 19)
-				l45 = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
-			{
-				if(l45 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				else
-				if(l45 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
-					i21++;
-			}
-			l20 -= 4;
-			var l38 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(l38 == 18 || l38 == 19)
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-			if(l20 < 32)
-			{
-				if(l20 <= 3)
-					characterobject.c = 0;
-			} else
-			{
-				var i39 = this.maps.getBGCode(l20, i21);
-				if(i39 >= 20 || i39 == 15 || i39 == 18)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 415;
-				}
-			}
-			if(i >= 120 && l20 < this.maps.wx - 32)
-				characterobject.c = 0;
-			if(l45 == 18)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
-			} else
-			if(l45 == 19)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
-			} else
-			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
-				characterobject.c = 420;
-			}
-			characterobject.pt = 152 + this.g_ac;
-			characterobject.pth = 0;
-			break;
-
-		case 415: 
-			if(this.ana_kazu > 0)
-			{
-				var k4 = 0;
-				do
-				{
-					if(k4 > 11)
-						break;
-					if(this.ana_c[k4] > 0 && this.ana_y[k4] * 32 == i21 + 32 && Math.abs(this.ana_x[k4] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[k4] * 32;
-						break;
-					}
-					k4++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			var i46 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(i46 != 18 && i46 != 19)
-				i46 = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
-			{
-				if(i46 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				else
-				if(i46 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
-					i21++;
-			}
-			l20 += 4;
-			var j39 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if(j39 == 18 || j39 == 19)
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-			j39 = this.maps.getBGCode(l20 + 31, i21);
-			if(j39 >= 20 || j39 == 15 || j39 == 19)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.c = 410;
-			}
-			if(i >= 120 && l20 > this.maps.wx + 512)
-				characterobject.c = 0;
-			if(i46 == 19)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
-			} else
-			if(i46 == 18)
-			{
-				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
-			} else
-			if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
-			{
-				l20 = rightShiftIgnoreSign(l20, 5) * 32;
-				characterobject.c = 425;
-			}
-			characterobject.pt = 152 + this.g_ac;
-			characterobject.pth = 1;
-			break;
-
-		case 420: 
-			if(this.ana_kazu > 0)
-			{
-				var l4 = 0;
-				do
-				{
-					if(l4 > 11)
-						break;
-					if(this.ana_c[l4] > 0 && this.ana_y[l4] * 32 == i21 + 32 && Math.abs(this.ana_x[l4] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[l4] * 32;
-						break;
-					}
-					l4++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			i21 += 5;
-			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-			{
-				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-				characterobject.c = 410;
-			}
-			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-			{
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				characterobject.c = 410;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			characterobject.pt = 152;
-			characterobject.pth = 0;
-			break;
-
-		case 425: 
-			if(this.ana_kazu > 0)
-			{
-				var i5 = 0;
-				do
-				{
-					if(i5 > 11)
-						break;
-					if(this.ana_c[i5] > 0 && this.ana_y[i5] * 32 == i21 + 32 && Math.abs(this.ana_x[i5] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[i5] * 32;
-						break;
-					}
-					i5++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			i21 += 5;
-			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-			{
-				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-				characterobject.c = 415;
-			}
-			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-			{
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				characterobject.c = 415;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			characterobject.pt = 152;
-			characterobject.pth = 1;
-			break;
-
-		case 450: 
-			if(this.ana_kazu > 0)
-			{
-				var j5 = 0;
-				do
-				{
-					if(j5 > 11)
-						break;
-					if(this.ana_c[j5] > 0 && this.ana_y[j5] * 32 == i21 + 32 && Math.abs(this.ana_x[j5] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j5] * 32;
-						break;
-					}
-					j5++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
-			{
-				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-				characterobject.vx = 0;
-			}
-			if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.vx = 0;
-			}
-			l20 += characterobject.vx;
-			characterobject.vy += 2;
-			if(characterobject.vy > 18)
-				characterobject.vy = 18;
-			i21 += characterobject.vy;
-			var k25 = rightShiftIgnoreSign(i21 + 31, 5);
-			var word1 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][k25];
-			var word4 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][k25];
-			if(word1 >= 10 || word4 >= 10)
-			{
-				i21 = k25 * 32 - 32;
-				if(characterobject.muki == 1)
-					characterobject.c = 415;
-				else
-					characterobject.c = 410;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			characterobject.pt = 152;
-			characterobject.pth = characterobject.muki;
-			break;
-
-		case 500: 
-			if(i21 <= characterobject.c3)
-			{
-				characterobject.vy++;
-				if(characterobject.vy > 4)
-					characterobject.vy = 4;
-			} else
-			if(i21 >= characterobject.c4)
-			{
-				characterobject.vy--;
-				if(characterobject.vy < -4)
-					characterobject.vy = -4;
-			}
-			i21 += characterobject.vy;
-			characterobject.pt = 147 + this.g_ac;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 510: 
-			if((l20 -= 3) < 48)
-			{
-				if(l20 <= 3)
-					characterobject.c = 0;
-			} else
-			if(this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
-			{
-				l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
-				characterobject.c = 515;
-			}
-			characterobject.pt = 147 + this.g_ac;
-			characterobject.pth = 0;
-			break;
-
-		case 515: 
-			l20 += 3;
-			if(this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
-				characterobject.c = 510;
-			}
-			characterobject.pt = 147 + this.g_ac;
-			characterobject.pth = 1;
-			break;
-
-		case 520: 
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 288 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
-					characterobject.c1 = 1;
-			} else
-			if(characterobject.c1 == 1)
-			{
-				if(l20 + 8 >= this.co_j.x)
-				{
-					this.mSet(l20, i21, 300);
-					this.gs.rsAddSound(14);
-				} else
-				{
-					this.mSet(l20, i21, 305);
-					this.gs.rsAddSound(14);
-				}
-				characterobject.c1 = 2;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 40)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 147 + this.g_ac;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 530: 
-			if(characterobject.c4 <= 0)
-			{
-				if((i21 -= 2) <= characterobject.c3 - 64)
-				{
-					i21 = characterobject.c3 - 64;
-					characterobject.c4 = 10;
-					if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 320 && this.co_j.x <= l20 + 256 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 160)
-						characterobject.c4 = 20;
-				}
-			} else
-			if(characterobject.c4 == 10)
-			{
-				if((i21 += 2) >= characterobject.c3)
-				{
-					i21 = characterobject.c3;
-					characterobject.c4 = 0;
-				}
-			} else
-			if(characterobject.c4 == 20)
-			{
-				if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
-				{
-					if(i21 == characterobject.c3 - 64)
-						if(l20 + 8 >= this.co_j.x)
-						{
-							this.mSet(l20, i21, 300);
-							this.gs.rsAddSound(14);
-						} else
-						{
-							this.mSet(l20, i21, 305);
-							this.gs.rsAddSound(14);
-						}
-					if(i21 == characterobject.c3 - 32)
-						if(l20 + 8 >= this.co_j.x)
-							this.mSet(l20, i21, 300);
-						else
-							this.mSet(l20, i21, 305);
-				}
-				if((i21 += 2) >= characterobject.c3)
-				{
-					i21 = characterobject.c3;
-					characterobject.c4 = 0;
-					if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
-						if(l20 + 8 >= this.co_j.x)
-							this.mSet(l20, i21, 300);
-						else
-							this.mSet(l20, i21, 305);
-				}
-			}
-			characterobject.pt = 147 + this.g_ac;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 540: 
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 288 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
-					characterobject.c1 = 1;
-			} else
-			if(characterobject.c1 == 1)
-			{
-				if(l20 + 8 >= this.co_j.x)
-				{
-					var d12 = 3.1400001049041748;
-					this.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
-					d12 = 3.6633334159851074;
-					this.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
-					d12 = 2.6166667938232422;
-					this.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
-					this.gs.rsAddSound(18);
-				} else
-				{
-					var d13 = 0.0;
-					this.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
-					d13 = 5.7566671371459961;
-					this.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
-					d13 = 0.52333337068557739;
-					this.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
-					this.gs.rsAddSound(18);
-				}
-				characterobject.c1 = 2;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 40)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 147 + this.g_ac;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 550: 
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 228 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
-					characterobject.c1 = 1;
-			} else
-			if(characterobject.c1 == 1)
-			{
-				for(var k5 = 0; k5 <= 300; k5 += 90)
-				{
-					this.mSet2(l20, i21, 950, k5, 0);
-					this.mSet2(l20, i21, 960, 300 - k5, 0);
-					this.gs.rsAddSound(18);
-				}
-
-				characterobject.c1 = 2;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 80)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 147 + this.g_ac;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 600: 
-			if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
-			{
-				characterobject.c = 605;
-				characterobject.c1++;
-			}
-			if(characterobject.c1 < 25)
-			{
-				if(this.ana_kazu > 0)
-				{
-					var l5 = 0;
-					do
-					{
-						if(l5 > 11)
-							break;
-						if(this.ana_c[l5] > 0 && this.ana_y[l5] * 32 == i21 + 32 && Math.abs(this.ana_x[l5] * 32 - l20) < 32)
-						{
-							characterobject.c = 1300;
-							l20 = this.ana_x[l5] * 32;
-							break;
-						}
-						l5++;
-					} while(true);
-					if(characterobject.c == 1300)
-						break;
-				}
-				characterobject.c1++;
-				characterobject.vy = -17;
-				characterobject.c3 = 0;
-				if(i < 120 && characterobject.c4 == 1)
-					characterobject.vy = -22;
-				var l25 = this.maps.getBGCode(l20 + 15, i21 + 32);
-				if(l25 == 18 || l25 == 19)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
-				characterobject.pt = 154;
-				characterobject.pth = 0;
-				if(i < 120 && characterobject.c4 == 1)
-					if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-						characterobject.pth = 0;
-					else
-						characterobject.pth = 1;
-			} else
-			{
-				if(this.ana_kazu > 0 && characterobject.vy > 0)
-				{
-					var i6 = 0;
-					do
-					{
-						if(i6 > 11)
-							break;
-						if(this.ana_c[i6] > 0 && this.ana_y[i6] * 32 <= i21 + 32 && this.ana_y[i6] * 32 >= i21 + 16 && Math.abs(this.ana_x[i6] * 32 - l20) < 32)
-						{
-							characterobject.c = 1300;
-							l20 = this.ana_x[i6] * 32;
-							i21 = this.ana_y[i6] * 32 - 32;
-							break;
-						}
-						i6++;
-					} while(true);
-					if(characterobject.c == 1300)
-						break;
-				}
-				if(characterobject.c3 == 0)
-				{
-					characterobject.vy++;
-					characterobject.c3 = 1;
-				} else
-				{
-					characterobject.vy += 2;
-					characterobject.c3 = 0;
-				}
-				if(characterobject.vy > 17)
-					characterobject.vy = 17;
-				if(i >= 120 || characterobject.c4 != 1)
-					l20 -= 5;
-				var k32 = i21;
-				i21 += characterobject.vy;
-				if(characterobject.vy < 4)
-				{
-					characterobject.pt = 155;
-					characterobject.pth = 0;
-				} else
-				{
-					characterobject.pt = 156;
-					characterobject.pth = 0;
-				}
-				if(l20 < 32)
-				{
-					if(l20 <= 3)
-						characterobject.c = 0;
-				} else
-				{
-					if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
-					{
-						i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
-						characterobject.vy = 0;
-					}
-					var k39 = this.maps.getBGCode(l20 + 15, i21 + 31);
-					if(k39 >= 20 || k39 == 10 || k39 == 15)
-					{
-						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-						characterobject.c1 = 15;
-						characterobject.pt = 154;
-						characterobject.pth = 0;
-					}
-					if(k39 == 18 || k39 == 19)
-					{
-						if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-						{
-							i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-							characterobject.c1 = 15;
-							characterobject.pt = 154;
-							characterobject.pth = 0;
-						}
-					} else
-					if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(k32 + 31, 5))
-					{
-						var l39 = this.maps.getBGCode(l20 + 15, k32 + 31);
-						if(l39 == 18 || l39 == 19)
-						{
-							i21 = rightShiftIgnoreSign(k32 + 31, 5) * 32;
-							i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-							characterobject.c1 = 15;
-							characterobject.pt = 154;
-							characterobject.pth = 0;
-						}
-					}
-					if(this.yuka_id_max >= 0)
-					{
-						for(var j6 = 0; j6 <= this.yuka_id_max; j6++)
-						{
-							if(this.yo[j6].con >= 300 && this.yo[j6].con < 350)
-							{
-								var i26 = this.getSCOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-								if(i26 >= 0 && i26 <= i21 && i26 + 31 >= i21)
-								{
-									i21 = i26;
-									characterobject.c1 = 15;
-									characterobject.pt = 154;
-									characterobject.pth = 0;
-								}
-								continue;
-							}
-							if(this.yo[j6].con >= 350 && this.yo[j6].con < 400)
-							{
-								var j26 = this.getSHCOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-								if(j26 >= 0 && j26 <= i21 && j26 + 31 >= i21)
-								{
-									i21 = j26;
-									characterobject.c1 = 15;
-									characterobject.pt = 154;
-									characterobject.pth = 0;
-								}
-								continue;
-							}
-							if(this.yo[j6].con >= 400 && this.yo[j6].con < 450)
-							{
-								var k26 = this.getSWUpOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-								if(k26 >= 0 && k26 <= i21 && k26 + 31 >= i21)
-								{
-									i21 = k26;
-									characterobject.c1 = 15;
-									characterobject.pt = 154;
-									characterobject.pth = 0;
-								}
-								continue;
-							}
-							if(this.yo[j6].con < 450 || this.yo[j6].con >= 500)
-								continue;
-							var l26 = this.getSWDownOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-							if(l26 >= 0 && l26 <= i21 && l26 + 31 >= i21)
-							{
-								i21 = l26;
-								characterobject.c1 = 15;
-								characterobject.pt = 154;
-								characterobject.pth = 0;
-							}
-						}
-
-					}
-					if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20, i21 + 31) >= 20 || this.maps.getBGCode(l20, i21 + 8) >= 20))
-					{
-						l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-						characterobject.c = 605;
-					}
-					if(i >= 120 && l20 < this.maps.wx - 32)
-						characterobject.c = 0;
-				}
-				if(i < 120 && characterobject.c4 == 1)
-					if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-						characterobject.pth = 0;
-					else
-						characterobject.pth = 1;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			break;
-
-		case 605: 
-			if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
-			{
-				characterobject.c = 600;
-				characterobject.c1++;
-			}
-			if(characterobject.c1 < 25)
-			{
-				if(this.ana_kazu > 0)
-				{
-					var k6 = 0;
-					do
-					{
-						if(k6 > 11)
-							break;
-						if(this.ana_c[k6] > 0 && this.ana_y[k6] * 32 == i21 + 32 && Math.abs(this.ana_x[k6] * 32 - l20) < 32)
-						{
-							characterobject.c = 1300;
-							l20 = this.ana_x[k6] * 32;
-							break;
-						}
-						k6++;
-					} while(true);
-					if(characterobject.c == 1300)
-						break;
-				}
-				characterobject.c1++;
-				characterobject.vy = -17;
-				characterobject.c3 = 0;
-				characterobject.pt = 154;
-				characterobject.pth = 1;
-			} else
-			{
-				if(this.ana_kazu > 0 && characterobject.vy > 0)
-				{
-					var l6 = 0;
-					do
-					{
-						if(l6 > 11)
-							break;
-						if(this.ana_c[l6] > 0 && this.ana_y[l6] * 32 <= i21 + 32 && this.ana_y[l6] * 32 >= i21 + 16 && Math.abs(this.ana_x[l6] * 32 - l20) < 32)
-						{
-							characterobject.c = 1300;
-							l20 = this.ana_x[l6] * 32;
-							i21 = this.ana_y[l6] * 32 - 32;
-							break;
-						}
-						l6++;
-					} while(true);
-					if(characterobject.c == 1300)
-						break;
-				}
-				if(characterobject.c3 == 0)
-				{
-					characterobject.vy++;
-					characterobject.c3 = 1;
-				} else
-				{
-					characterobject.vy += 2;
-					characterobject.c3 = 0;
-				}
-				if(characterobject.vy > 17)
-					characterobject.vy = 17;
-				l20 += 5;
-				var l32 = i21;
-				i21 += characterobject.vy;
-				if(characterobject.vy < 4)
-				{
-					characterobject.pt = 155;
-					characterobject.pth = 1;
-				} else
-				{
-					characterobject.pt = 156;
-					characterobject.pth = 1;
-				}
-				if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
-				{
-					i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
-					characterobject.vy = 0;
-				}
-				var i40 = this.maps.getBGCode(l20 + 15, i21 + 31);
-				if(i40 >= 20 || i40 == 10 || i40 == 15)
-				{
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-					characterobject.c1 = 15;
-					characterobject.pt = 154;
-					characterobject.pth = 1;
-				}
-				if(i40 == 18 || i40 == 19)
-				{
-					if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-					{
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-						characterobject.c1 = 15;
-						characterobject.pt = 154;
-						characterobject.pth = 1;
-					}
-				} else
-				if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(l32 + 31, 5))
-				{
-					var j40 = this.maps.getBGCode(l20 + 15, l32 + 31);
-					if(j40 == 18 || j40 == 19)
-					{
-						i21 = rightShiftIgnoreSign(l32 + 31, 5) * 32;
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-						characterobject.c1 = 15;
-						characterobject.pt = 154;
-						characterobject.pth = 1;
-					}
-				}
-				if(this.yuka_id_max >= 0)
-				{
-					for(var i7 = 0; i7 <= this.yuka_id_max; i7++)
-					{
-						if(this.yo[i7].con >= 300 && this.yo[i7].con < 350)
-						{
-							var i27 = this.getSCOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-							if(i27 >= 0 && i27 <= i21 && i27 + 31 >= i21)
-							{
-								i21 = i27;
-								characterobject.c1 = 15;
-								characterobject.pt = 154;
-								characterobject.pth = 1;
-							}
-							continue;
-						}
-						if(this.yo[i7].con >= 350 && this.yo[i7].con < 400)
-						{
-							var j27 = this.getSHCOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-							if(j27 >= 0 && j27 <= i21 && j27 + 31 >= i21)
-							{
-								i21 = j27;
-								characterobject.c1 = 15;
-								characterobject.pt = 154;
-								characterobject.pth = 1;
-							}
-							continue;
-						}
-						if(this.yo[i7].con >= 400 && this.yo[i7].con < 450)
-						{
-							var k27 = this.getSWUpOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-							if(k27 >= 0 && k27 <= i21 && k27 + 31 >= i21)
-							{
-								i21 = k27;
-								characterobject.c1 = 15;
-								characterobject.pt = 154;
-								characterobject.pth = 1;
-							}
-							continue;
-						}
-						if(this.yo[i7].con < 450 || this.yo[i7].con >= 500)
-							continue;
-						var l27 = this.getSWDownOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-						if(l27 >= 0 && l27 <= i21 && l27 + 31 >= i21)
-						{
-							i21 = l27;
-							characterobject.c1 = 15;
-							characterobject.pt = 154;
-							characterobject.pth = 1;
-						}
-					}
-
-				}
-				if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20 + 31, i21 + 31) >= 20 || this.maps.getBGCode(l20 + 31, i21 + 8) >= 20))
-				{
-					l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-					characterobject.c = 600;
-				}
-				if(i >= 120 && l20 > this.maps.wx + 512)
-					characterobject.c = 0;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			break;
-
-		case 650: 
-			if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
-			{
-				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-				characterobject.vx = 0;
-			}
-			if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				characterobject.vx = 0;
-			}
-			l20 += characterobject.vx;
-			characterobject.vy += 2;
-			if(characterobject.vy > 18)
-				characterobject.vy = 18;
-			i21 += characterobject.vy;
-			var i28 = rightShiftIgnoreSign(i21 + 31, 5);
-			var word2 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][i28];
-			var word5 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][i28];
-			if(word2 >= 10 || word5 >= 10)
-			{
-				i21 = i28 * 32 - 32;
-				if(characterobject.muki == 1)
-					characterobject.c = 605;
-				else
-					characterobject.c = 600;
-				characterobject.c1 = 15;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			if(characterobject.vy < 4)
-				characterobject.pt = 155;
-			else
-				characterobject.pt = 156;
-			characterobject.pth = characterobject.muki;
-			break;
-
-		case 660: 
-			if(characterobject.c4 < 20)
-			{
-				characterobject.c4++;
-				characterobject.pt = 154;
-				characterobject.pth = 0;
-				if(characterobject.c4 < 10)
-					characterobject.pth = 1;
-			} else
-			if(characterobject.c4 == 20)
-			{
-				if((l20 -= 8) <= characterobject.c3 - 128)
-				{
-					l20 = characterobject.c3 - 128;
-					characterobject.c4 = 30;
-				}
-				characterobject.pt = 155 + this.g_ac;
-				characterobject.pth = 0;
-			} else
-			if(characterobject.c4 < 50)
-			{
-				characterobject.c4++;
-				characterobject.pt = 154;
-				characterobject.pth = 1;
-				if(characterobject.c4 < 40)
-					characterobject.pth = 0;
-			} else
-			if(characterobject.c4 == 50)
-			{
-				if((l20 += 8) >= characterobject.c3)
-				{
-					l20 = characterobject.c3;
-					characterobject.c4 = 0;
-				}
-				characterobject.pt = 155 + this.g_ac;
-				characterobject.pth = 1;
-			}
-			break;
-
-		case 670: 
-			if(characterobject.c4 < 10)
-			{
-				characterobject.c4++;
-				characterobject.pt = 154;
-				if(l20 + 8 >= this.co_j.x)
-					characterobject.pth = 0;
-				else
-					characterobject.pth = 1;
-			} else
-			if(characterobject.c4 == 10)
-			{
-				if(l20 - 128 - 16 <= this.co_j.x && l20 - 48 >= this.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
-					characterobject.c4 = 100;
-				if(l20 + 128 + 16 >= this.co_j.x && l20 + 48 <= this.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
-					characterobject.c4 = 200;
-				characterobject.pt = 154;
-				if(l20 + 8 >= this.co_j.x)
-					characterobject.pth = 0;
-				else
-					characterobject.pth = 1;
-			} else
-			if(characterobject.c4 == 100)
-			{
-				if((l20 -= 10) <= characterobject.c3 - 160)
-				{
-					l20 = characterobject.c3 - 160;
-					characterobject.c4 = 150;
-				}
-				characterobject.pt = 155 + this.g_ac;
-				characterobject.pth = 0;
-			} else
-			if(characterobject.c4 == 150)
-			{
-				if((l20 += 4) >= characterobject.c3)
-				{
-					l20 = characterobject.c3;
-					characterobject.c4 = 0;
-				}
-				characterobject.pt = 155 + this.g_ac;
-				characterobject.pth = 1;
-			} else
-			if(characterobject.c4 == 200)
-			{
-				if((l20 += 10) >= characterobject.c3 + 160)
-				{
-					l20 = characterobject.c3 + 160;
-					characterobject.c4 = 250;
-				}
-				characterobject.pt = 155 + this.g_ac;
-				characterobject.pth = 1;
-			} else
-			if(characterobject.c4 == 250)
-			{
-				if((l20 -= 4) <= characterobject.c3)
-				{
-					l20 = characterobject.c3;
-					characterobject.c4 = 0;
-				}
-				characterobject.pt = 155 + this.g_ac;
-				characterobject.pth = 0;
-			}
-			break;
-
-		case 700: 
-			if(this.ana_kazu > 0)
-			{
-				var j7 = 0;
-				do
-				{
-					if(j7 > 11)
-						break;
-					if(this.ana_c[j7] > 0 && this.ana_y[j7] * 32 == i21 + 32 && Math.abs(this.ana_x[j7] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j7] * 32;
-						break;
-					}
-					j7++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c3 != 1)
-				if(characterobject.c1 > 0)
-				{
-					characterobject.c1++;
-					if(characterobject.c1 == 2)
-					{
-						if(characterobject.c3 == 2)
-						{
-							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
-								if(l20 + 8 >= this.co_j.x)
-								{
-									this.mSet2(l20, i21, 800, -10, -32);
-									this.gs.rsAddSound(22);
-								} else
-								{
-									this.mSet2(l20, i21, 800, 10, -32);
-									this.gs.rsAddSound(22);
-								}
-						} else
-						if(characterobject.c3 == 3)
-						{
-							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
-								if(l20 + 8 >= this.co_j.x)
-								{
-									var d14 = 3.1400001049041748;
-									this.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
-									d14 = 3.6633334159851074;
-									this.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
-									d14 = 4.1866669654846191;
-									this.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
-									this.gs.rsAddSound(11);
-								} else
-								{
-									var d15 = 0.0;
-									this.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
-									d15 = 5.7566671371459961;
-									this.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
-									d15 = 5.2333335876464844;
-									this.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
-									this.gs.rsAddSound(11);
-								}
-						} else
-						if(characterobject.c3 == 4)
-						{
-							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
-								if(l20 + 8 >= this.co_j.x)
-								{
-									this.mSet2(l20, i21, 810, -12, 0);
-									this.gs.rsAddSound(22);
-								} else
-								{
-									this.mSet2(l20, i21, 810, 12, 0);
-									this.gs.rsAddSound(22);
-								}
-						} else
-						if(l20 + 8 >= this.co_j.x)
-						{
-							this.mSet(l20, i21, 300);
-							if(Math.abs(i21 - this.co_j.y) <= 288)
-								this.gs.rsAddSound(14);
-						} else
-						{
-							this.mSet(l20, i21, 305);
-							if(Math.abs(i21 - this.co_j.y) <= 288)
-								this.gs.rsAddSound(14);
-						}
-					} else
-					if(characterobject.c3 != 2 && characterobject.c3 != 3 && characterobject.c1 > 40)
-						characterobject.c1 = 0;
-					else
-					if(characterobject.c1 > 52)
-						characterobject.c1 = 0;
-				} else
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && this.co_j.x >= l20 - 256 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 96)
-					characterobject.c1 = 1;
-			characterobject.pt = 158;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 710: 
-			if(this.ana_kazu > 0)
-			{
-				var k7 = 0;
-				do
-				{
-					if(k7 > 11)
-						break;
-					if(this.ana_c[k7] > 0 && this.ana_y[k7] * 32 == i21 + 32 && Math.abs(this.ana_x[k7] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[k7] * 32;
-						break;
-					}
-					k7++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 320 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
-					if(characterobject.c3 == 0)
-						characterobject.c1 = 1;
-					else
-						characterobject.c1 = 100;
-			} else
-			if(characterobject.c1 == 1)
-			{
-				if(l20 + 8 >= this.co_j.x)
-				{
-					this.mSet(l20, i21, 300);
-					this.gs.rsAddSound(14);
-				} else
-				{
-					this.mSet(l20, i21, 305);
-					this.gs.rsAddSound(14);
-				}
-				characterobject.c1 = 300;
-			} else
-			if(characterobject.c1 >= 100 && characterobject.c1 < 200)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 101)
-					this.gs.rsAddSound(14);
-				if(Math.abs(this.co_j.x - l20) >= 48 && (characterobject.c1 == 101 || characterobject.c1 == 109 || characterobject.c1 == 117))
-					if(l20 + 8 >= this.co_j.x)
-						this.mSet(l20, i21, 300);
-					else
-						this.mSet(l20, i21, 305);
-				if(characterobject.c1 >= 125)
-					characterobject.c1 = 300;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 335)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 158;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 720: 
-			if(this.ana_kazu > 0)
-			{
-				var l7 = 0;
-				do
-				{
-					if(l7 > 11)
-						break;
-					if(this.ana_c[l7] > 0 && this.ana_y[l7] * 32 == i21 + 32 && Math.abs(this.ana_x[l7] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[l7] * 32;
-						break;
-					}
-					l7++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx - 16 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 352 && this.co_j.x <= l20 - 72 && Math.abs(this.co_j.y - i21) < 64)
-				{
-					this.mSet2(l20, i21, 77, i, 0);
-					this.gs.rsAddSound(14);
-					characterobject.c1 = 300;
-				}
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 380)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 158;
-			characterobject.pth = 0;
-			break;
-
-		case 725: 
-			if(this.ana_kazu > 0)
-			{
-				var i8 = 0;
-				do
-				{
-					if(i8 > 11)
-						break;
-					if(this.ana_c[i8] > 0 && this.ana_y[i8] * 32 == i21 + 32 && Math.abs(this.ana_x[i8] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[i8] * 32;
-						break;
-					}
-					i8++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx - 16 - 144 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x <= l20 + 352 && this.co_j.x >= l20 + 72 && Math.abs(this.co_j.y - i21) < 32)
-				{
-					this.mSet2(l20, i21, 87, i, 0);
-					this.gs.rsAddSound(14);
-					characterobject.c1 = 300;
-				}
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 380)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 158;
-			characterobject.pth = 1;
-			break;
-
-		case 800: 
-			if(this.ana_kazu > 0)
-			{
-				var j8 = 0;
-				do
-				{
-					if(j8 > 11)
-						break;
-					if(this.ana_c[j8] > 0 && this.ana_y[j8] * 32 == i21 + 32 && Math.abs(this.ana_x[j8] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[j8] * 32;
-						break;
-					}
-					j8++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 > 0)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 2)
-				{
-					if(characterobject.c4 == 1)
-					{
-						if(l20 + 8 >= this.co_j.x)
-						{
-							var d16 = 3.1400001049041748;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
-							d16 = 3.6633334159851074;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
-							d16 = 4.1866669654846191;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
-							this.gs.rsAddSound(11);
-						} else
-						{
-							var d17 = 0.0;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
-							d17 = 5.7566671371459961;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
-							d17 = 5.2333335876464844;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
-							this.gs.rsAddSound(11);
-						}
-					} else
-					if(characterobject.c4 == 2)
-					{
-						this.mSet(l20, i21, 100);
-						this.gs.rsAddSound(10);
-						characterobject.c1 = 12;
-					} else
-					if(characterobject.c4 == 3)
-					{
-						if(l20 + 8 >= this.co_j.x)
-						{
-							this.mSet2(l20 - 16, i21, 732, -10, 0);
-							if(Math.abs(i21 - this.co_j.y) <= 288)
-								this.gs.rsAddSound(15);
-						} else
-						{
-							this.mSet2(l20 + 16, i21, 732, 10, 0);
-							if(Math.abs(i21 - this.co_j.y) <= 288)
-								this.gs.rsAddSound(15);
-						}
-						characterobject.c1 = 12;
-					} else
-					if(characterobject.c4 == 4)
-					{
-						for(var k8 = 0; k8 <= 300; k8 += 90)
-						{
-							this.mSet2(l20, i21, 950, k8, 0);
-							this.mSet2(l20, i21, 960, 300 - k8, 0);
-							this.gs.rsAddSound(18);
-						}
-
-					} else
-					if(l20 + 8 >= this.co_j.x)
-					{
-						this.mSet(l20, i21, 400);
-						if(Math.abs(i21 - this.co_j.y) <= 288)
-							this.gs.rsAddSound(15);
-					} else
-					{
-						this.mSet(l20, i21, 405);
-						if(Math.abs(i21 - this.co_j.y) <= 288)
-							this.gs.rsAddSound(15);
-					}
-				} else
-				if(characterobject.c1 > 20)
-				{
-					characterobject.c = 810;
-					characterobject.c1 = 0;
-				}
-			} else
-			if(characterobject.c1 < 0)
-				characterobject.c1++;
-			else
-			if(this.co_j.x >= l20 - 240 && this.co_j.x <= l20 + 240)
-				characterobject.c1 = 1;
-			characterobject.pt = 160;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 810: 
-			if(this.ana_kazu > 0)
-			{
-				var l8 = 0;
-				do
-				{
-					if(l8 > 11)
-						break;
-					if(this.ana_c[l8] > 0 && this.ana_y[l8] * 32 == i21 + 32 && Math.abs(this.ana_x[l8] * 32 - l20) < 32)
-					{
-						characterobject.c = 1300;
-						l20 = this.ana_x[l8] * 32;
-						break;
-					}
-					l8++;
-				} while(true);
-				if(characterobject.c == 1300)
-					break;
-			}
-			if(characterobject.c1 <= 0)
-			{
-				if((l20 += 3) >= characterobject.c3 + 96)
-				{
-					l20 = characterobject.c3 + 96;
-					characterobject.c1 = 10;
-				}
-				if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-					characterobject.c1 = 10;
-				}
-				characterobject.pt = 161 + this.g_ac;
-				characterobject.pth = 1;
-			} else
-			if(characterobject.c4 != 4 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 15)
-					if(characterobject.c4 == 1)
-					{
-						if(l20 + 8 >= this.co_j.x)
-						{
-							var d18 = 3.1400001049041748;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
-							d18 = 3.6633334159851074;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
-							d18 = 4.1866669654846191;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
-							this.gs.rsAddSound(11);
-						} else
-						{
-							var d19 = 0.0;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
-							d19 = 5.7566671371459961;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
-							d19 = 5.2333335876464844;
-							this.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
-							this.gs.rsAddSound(11);
-						}
-					} else
-					if(characterobject.c4 == 2)
-					{
-						this.mSet(l20, i21, 100);
-						this.gs.rsAddSound(10);
-					} else
-					if(characterobject.c4 == 3)
-					{
-						if(l20 + 8 >= this.co_j.x)
-						{
-							this.mSet2(l20 - 16, i21, 732, -10, 0);
-							if(Math.abs(i21 - this.co_j.y) <= 288)
-								this.gs.rsAddSound(15);
-						} else
-						{
-							this.mSet2(l20 + 16, i21, 732, 10, 0);
-							if(Math.abs(i21 - this.co_j.y) <= 288)
-								this.gs.rsAddSound(15);
-						}
-					} else
-					if(characterobject.c4 == 4)
-					{
-						for(var i9 = 0; i9 <= 300; i9 += 90)
-						{
-							this.mSet2(l20, i21, 950, i9, 0);
-							this.mSet2(l20, i21, 960, 300 - i9, 0);
-							this.gs.rsAddSound(18);
-						}
-
-					} else
-					if(l20 + 8 >= this.co_j.x)
-					{
-						this.mSet(l20, i21, 400);
-						this.gs.rsAddSound(15);
-					} else
-					{
-						this.mSet(l20, i21, 405);
-						this.gs.rsAddSound(15);
-					}
-				characterobject.pt = 160;
-				if(l20 + 8 >= this.co_j.x)
-					characterobject.pth = 0;
-				else
-					characterobject.pth = 1;
-			} else
-			{
-				if((l20 -= 3) <= characterobject.c3)
-				{
-					l20 = characterobject.c3;
-					characterobject.c = 800;
-					characterobject.c1 = -20;
-				}
-				if(this.maps.getBGCode(l20, i21 + 32) <= 9)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 800;
-					characterobject.c1 = -20;
-				}
-				characterobject.pt = 161 + this.g_ac;
-				characterobject.pth = 0;
-			}
-			break;
-
-		case 850: 
-			characterobject.pt = 160;
-			characterobject.pth = 0;
-			if(characterobject.c1 <= 0)
-			{
-				if((l20 -= 4) - this.maps.wx <= 400)
-				{
-					l20 = this.maps.wx + 384 + 16;
-					characterobject.c1 = 2;
-				}
-				characterobject.pt = 161 + this.g_ac;
-				characterobject.pth = 0;
-			} else
-			if(characterobject.c1 <= 20)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 8)
-				{
-					var d20 = 3.1400001049041748;
-					var k29 = Math.floor(Math.cos(d20) * 12);
-					var i33 = Math.floor(Math.sin(d20) * 12) * -1;
-					this.mSet2(l20, i21, 730, k29, i33);
-					d20 = 2.7038888931274414;
-					k29 = Math.floor(Math.cos(d20) * 12);
-					i33 = Math.floor(Math.sin(d20) * 12) * -1;
-					this.mSet2(l20, i21, 730, k29, i33);
-					d20 = 2.2677779197692871;
-					k29 = Math.floor(Math.cos(d20) * 12);
-					i33 = Math.floor(Math.sin(d20) * 12) * -1;
-					this.mSet2(l20, i21, 730, k29, i33);
-					d20 = 3.5761110782623291;
-					k29 = Math.floor(Math.cos(d20) * 12);
-					i33 = Math.floor(Math.sin(d20) * 12) * -1;
-					this.mSet2(l20, i21, 730, k29, i33);
-					d20 = 4.0122222900390625;
-					k29 = Math.floor(Math.cos(d20) * 12);
-					i33 = Math.floor(Math.sin(d20) * 12) * -1;
-					this.mSet2(l20, i21, 730, k29, i33);
-					this.gs.rsAddSound(18);
-				}
-			} else
-			{
-				if((l20 += 6) - this.maps.wx >= 512)
-					characterobject.c = 0;
-				characterobject.pt = 161 + this.g_ac;
-				characterobject.pth = 1;
-			}
-			break;
-
-		case 900: 
-			if((l20 -= 4) < 48)
-			{
-				if(l20 <= 4)
-					characterobject.c = 0;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 1)
-					this.mSet(l20, i21 + 19, 600);
-				else
-				if(characterobject.c1 > 26)
-					characterobject.c1 = 0;
-				if(this.maps.getBGCode(l20, i21 + 31) >= 15)
-				{
-					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-					characterobject.c = 910;
-				}
-			}
-			characterobject.pt = 164;
-			characterobject.pth = 0;
-			break;
-
-		case 910: 
-			characterobject.pt = 164;
-			characterobject.pth = 0;
-			break;
-
-		case 920: 
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 256 && this.co_j.x <= l20 + 256 && this.co_j.y >= i21 + 16)
-					characterobject.c1 = 1;
-			} else
-			if(characterobject.c1 == 1)
-			{
-				if(characterobject.c3 == 1)
-					this.mSet2(l20, i21, 800, 0, 0);
-				else
-					this.mSet(l20, i21 + 19, 606);
-				characterobject.c1 = 2;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 30)
-					characterobject.c1 = 0;
-			}
-			characterobject.pt = 164;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 930: 
-			if(characterobject.c4 < 20)
-			{
-				characterobject.c4++;
-				characterobject.pt = 164;
-				characterobject.pth = 0;
-				if(characterobject.c4 < 10)
-					characterobject.pth = 1;
-			} else
-			if(characterobject.c4 == 20)
-			{
-				if(((l20 -= 4) == characterobject.c3 - 4 || l20 == characterobject.c3 - 4 - 64 || l20 == characterobject.c3 - 4 - 128) && l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 <= (this.maps.wy + 320) - 32 && this.co_j.y >= i21 + 16)
-					this.mSet(l20 + 2, i21, 600);
-				if(l20 <= characterobject.c3 - 160)
-				{
-					l20 = characterobject.c3 - 160;
-					characterobject.c4 = 30;
-				}
-				characterobject.pt = 164;
-				characterobject.pth = 0;
-			} else
-			if(characterobject.c4 < 50)
-			{
-				characterobject.c4++;
-				characterobject.pt = 164;
-				characterobject.pth = 1;
-				if(characterobject.c4 < 40)
-					characterobject.pth = 0;
-			} else
-			if(characterobject.c4 == 50)
-			{
-				if(((l20 += 4) == (characterobject.c3 + 4) - 32 || l20 == (characterobject.c3 + 4) - 96) && l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 <= (this.maps.wy + 320) - 32 && this.co_j.y >= i21 + 16)
-					this.mSet(l20 - 2, i21, 605);
-				if(l20 >= characterobject.c3)
-				{
-					l20 = characterobject.c3;
-					characterobject.c4 = 0;
-				}
-				characterobject.pt = 164;
-				characterobject.pth = 1;
-			}
-			break;
-
-		case 950: 
-			if((l20 -= 4) < 48)
-			{
-				if(l20 <= 4)
-					characterobject.c = 0;
-			} else
-			{
-				characterobject.c1++;
-				if(characterobject.c1 == 1)
-					this.mSet(l20, i21 + 19, 600);
-				else
-				if(characterobject.c1 > 26)
-					characterobject.c1 = 0;
-				if(this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
-				{
-					l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
-					characterobject.c = 960;
-					characterobject.c1 = 16;
-				}
-			}
-			characterobject.pt = 164;
-			characterobject.pth = 0;
-			break;
-
-		case 960: 
-			l20 += 4;
-			characterobject.c1++;
-			if(characterobject.c1 == 1)
-				this.mSet(l20, i21 + 19, 605);
-			else
-			if(characterobject.c1 > 26)
-				characterobject.c1 = 0;
-			if(this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
-				characterobject.c = 950;
-				characterobject.c1 = 16;
-			}
-			characterobject.pt = 164;
-			characterobject.pth = 1;
-			break;
-
-		case 1000: 
-			if((l20 -= 3) <= (characterobject.c3 - 256) + 16)
-				characterobject.c = 1005;
-			if(this.maps.getBGCode(l20 - 16, i21) >= 15 || this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
-			{
-				l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
-				characterobject.c = 1005;
-			}
-			characterobject.pt = 166;
-			characterobject.pth = 0;
-			break;
-
-		case 1002: 
-			if((l20 -= 3) <= this.maps.wx - 32)
-				characterobject.c = 0;
-			if(l20 >= this.maps.wx + 64 + 24 && l20 <= (this.maps.wx + 512) - 64)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 30)
-					characterobject.c1 = 0;
-				if(characterobject.c1 == 1)
-					this.mSet(l20, i21, 150);
-			}
-			characterobject.pt = 166;
-			characterobject.pth = 0;
-			break;
-
-		case 1003: 
-			if(l20 >= this.maps.wx + 64 + 24 && l20 <= (this.maps.wx + 512) - 64)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 30)
-					characterobject.c1 = 0;
-				if(characterobject.c1 == 1)
-					this.mSet(l20, i21, 150);
-			}
-			characterobject.pt = 166;
-			characterobject.pth = 0;
-			break;
-
-		case 1005: 
-			if((l20 += 3) >= characterobject.c3 + 16)
-				characterobject.c = 1000;
-			if(this.maps.getBGCode(l20 + 31 + 16, i21) >= 15 || this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
-				characterobject.c = 1000;
-			}
-			characterobject.pt = 166;
-			characterobject.pth = 1;
-			break;
-
-		case 1050: 
-			characterobject.pt = 166;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			if(characterobject.c1 <= 0)
-			{
-				var j28 = this.maps.getBGCode(l20 + 15, i21 + 32);
-				if(j28 == 18 || j28 == 19)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
-				if(this.co_j.x >= l20 - 136 && this.co_j.x <= l20 + 136)
-				{
-					characterobject.vy = -26;
-					characterobject.c1 = 100;
-				}
-			} else
-			if(characterobject.c1 == 100)
-			{
-				characterobject.vy += 2;
-				if(characterobject.vy > 18)
-					characterobject.vy = 18;
-				if(characterobject.vy < -22)
-					i21 -= 22;
-				else
-					i21 += characterobject.vy;
-				if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21) >= 18)
-				{
-					i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
-					characterobject.vy = 0;
-				}
-				var k40 = this.maps.getBGCode(l20 + 15, i21 + 31);
-				if(k40 >= 20 || k40 == 10 || k40 == 15)
-				{
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-					characterobject.c1 = 200;
-				}
-				if(k40 == 18 || k40 == 19)
-				{
-					if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-					{
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-						characterobject.c1 = 200;
-					}
-				} else
-				if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
-				{
-					var l40 = this.maps.getBGCode(l20 + 15, characterobject.y + 31);
-					if(l40 == 18 || l40 == 19)
-					{
-						i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-						characterobject.c1 = 200;
-					}
-				}
-			} else
-			if(characterobject.c1 >= 200)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 210)
-					characterobject.c1 = 0;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			break;
-
-		case 1060: 
-			characterobject.pt = 166;
-			characterobject.pth = 0;
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 < this.co_j.x)
-					characterobject.pth = 1;
-				if(this.co_j.c >= 100 && this.co_j.c < 200 && (characterobject.c3 - 160) + 16 <= this.co_j.x && (characterobject.c3 + 128) - 16 >= this.co_j.x && (characterobject.c4 - 128) + 16 <= this.co_j.y && (characterobject.c4 + 128) - 16 >= this.co_j.y)
-				{
-					characterobject.c1 = 100;
-					if(l20 > this.co_j.x)
-					{
-						if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
-							characterobject.c1 = 0;
-					} else
-					if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
-						characterobject.c1 = 0;
-					if(i21 > this.co_j.y)
-					{
-						if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
-							characterobject.c1 = 0;
-					} else
-					if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
-						characterobject.c1 = 0;
-				}
-			} else
-			if(characterobject.c1 == 100)
-			{
-				if(l20 > this.co_j.x)
-				{
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
-						characterobject.c1 = 200;
-				} else
-				if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
-					characterobject.c1 = 200;
-				if(i21 > this.co_j.y)
-				{
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
-						characterobject.c1 = 200;
-				} else
-				if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
-					characterobject.c1 = 200;
-				if(characterobject.c1 == 200)
-				{
-					if(l20 < characterobject.c3)
-						characterobject.pth = 1;
-					if(l20 == characterobject.c3 && l20 < this.co_j.x)
-						characterobject.pth = 1;
-				} else
-				{
-					if(l20 < this.co_j.x)
-						characterobject.pth = 1;
-					if(Math.abs(l20 - this.co_j.x) <= 3)
-						l20 = this.co_j.x;
-					else
-					if(l20 < this.co_j.x)
-						l20 += 3;
-					else
-					if(l20 > this.co_j.x)
-						l20 -= 3;
-					if(Math.abs(i21 - this.co_j.y) <= 2)
-						i21 = this.co_j.y;
-					else
-					if(i21 < this.co_j.y)
-						i21 += 2;
-					else
-					if(i21 > this.co_j.y)
-						i21 -= 2;
-					if(characterobject.c3 - 160 > this.co_j.x || characterobject.c3 + 128 < this.co_j.x || characterobject.c4 - 128 > this.co_j.y || characterobject.c4 + 128 < this.co_j.y)
-						characterobject.c1 = 200;
-					if(this.co_j.c < 100 || this.co_j.c >= 200)
-						characterobject.c1 = 200;
-				}
-			} else
-			if(characterobject.c1 == 200)
-			{
-				if(l20 < characterobject.c3)
-					characterobject.pth = 1;
-				if(l20 == characterobject.c3 && l20 < this.co_j.x)
-					characterobject.pth = 1;
-				if(Math.abs(l20 - characterobject.c3) <= 3)
-					l20 = characterobject.c3;
-				else
-				if(l20 < characterobject.c3)
-					l20 += 3;
-				else
-				if(l20 > characterobject.c3)
-					l20 -= 3;
-				if(Math.abs(i21 - characterobject.c4) <= 2)
-					i21 = characterobject.c4;
-				else
-				if(i21 < characterobject.c4)
-					i21 += 2;
-				else
-				if(i21 > characterobject.c4)
-					i21 -= 2;
-				if(l20 == characterobject.c3 && i21 == characterobject.c4)
-					characterobject.c1 = 0;
-			}
-			break;
-
-		case 1070: 
-			characterobject.c1 -= 5;
-			if(characterobject.c1 < 0)
-				characterobject.c1 += 360;
-			l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
-			i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
-			characterobject.pt = 166;
-			if(characterobject.c1 < 180)
-				characterobject.pth = 1;
-			else
-				characterobject.pth = 0;
-			break;
-
-		case 1080: 
-			characterobject.c1 += 5;
-			if(characterobject.c1 >= 360)
-				characterobject.c1 -= 360;
-			l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
-			i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
-			characterobject.pt = 166;
-			if(characterobject.c1 < 180)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 1100: 
-			if(characterobject.c1 > 0)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 77)
-					characterobject.c1 = 0;
-			} else
-			if(Math.abs(this.co_j.x - l20) <= 144 && Math.abs(this.co_j.y - i21) <= 144)
-			{
-				characterobject.c1 = 1;
-				this.mSet2(l20, i21, 700, -3, -3);
-				this.mSet2(l20, i21, 700, 3, -3);
-				this.mSet2(l20, i21, 700, -3, 3);
-				this.mSet2(l20, i21, 700, 3, 3);
-				this.mSet2(l20, i21, 700, -4, 0);
-				this.mSet2(l20, i21, 700, 4, 0);
-				this.mSet2(l20, i21, 700, 0, -4);
-				this.mSet2(l20, i21, 700, 0, 4);
-			}
-			characterobject.pt = 167;
-			if(l20 + 8 >= this.co_j.x)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 1102: 
-			if(l20 <= this.maps.wx - 32)
-				characterobject.c = 0;
-			if(l20 >= this.maps.wx + 112 && l20 <= (this.maps.wx + 512) - 64)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 50)
-					characterobject.c1 = 0;
-				if(characterobject.c1 == 1 && (this.maps.getBGCode(l20 + 15, i21 + 32) < 20 || this.co_j.y <= i21 + 8) && (this.maps.getBGCode(l20 + 15, i21 - 1) < 20 || this.co_j.y >= i21 - 8))
-					this.mSet(l20, i21, 150);
-			}
-			characterobject.pt = 167;
-			characterobject.pth = 0;
-			break;
-
-		case 1103: 
-			if(l20 <= this.maps.wx - 32)
-				characterobject.c = 0;
-			if(l20 >= this.maps.wx + 112 && l20 <= (this.maps.wx + 512) - 64)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 50)
-					characterobject.c1 = 0;
-				if(characterobject.c1 == 1)
-				{
-					for(var j9 = 0; j9 <= 315; j9 += 45)
-					{
-						var d21 = (j9 * 3.14) / 180;
-						var l29 = Math.floor(Math.cos(d21) * 12);
-						var j33 = Math.floor(Math.sin(d21) * 12) * -1;
-						this.mSet2(l20, i21, 730, l29, j33);
-					}
-
-				}
-			}
-			characterobject.pt = 167;
-			characterobject.pth = 0;
-			break;
-
-		case 1150: 
-			characterobject.pt = 167;
-			if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			if(characterobject.c1 <= 0)
-			{
-				var k28 = this.maps.getBGCode(l20 + 15, i21 + 32);
-				if(k28 == 18 || k28 == 19)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
-				if(this.co_j.x >= l20 - 128 && this.co_j.x <= l20 + 128 && i21 + 32 <= this.co_j.y)
-				{
-					characterobject.vy = 2;
-					characterobject.c1 = 100;
-				}
-			} else
-			if(characterobject.c1 == 100)
-			{
-				characterobject.vy++;
-				if(characterobject.vy > 16)
-					characterobject.vy = 16;
-				if(characterobject.vy < -22)
-					i21 -= 22;
-				else
-					i21 += characterobject.vy;
-				if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21) >= 18)
-				{
-					i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
-					characterobject.vy = 0;
-				}
-				var i41 = this.maps.getBGCode(l20 + 15, i21 + 31);
-				if(i41 >= 20 || i41 == 10 || i41 == 15)
-				{
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-					characterobject.c1 = 200;
-				}
-				if(i41 == 18 || i41 == 19)
-				{
-					if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-					{
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-						characterobject.c1 = 200;
-					}
-				} else
-				if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
-				{
-					var j41 = this.maps.getBGCode(l20 + 15, characterobject.y + 31);
-					if(j41 == 18 || j41 == 19)
-					{
-						i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-						characterobject.c1 = 200;
-					}
-				}
-			} else
-			if(characterobject.c1 >= 200)
-			{
-				characterobject.c1++;
-				if(characterobject.c1 > 210)
-					characterobject.c1 = 0;
-			}
-			if(i21 >= this.ochiru_y)
-				characterobject.c = 0;
-			break;
-
-		case 1160: 
-			characterobject.pt = 167;
-			characterobject.pth = 0;
-			if(characterobject.c1 <= 0)
-			{
-				if(l20 < this.co_j.x)
-					characterobject.pth = 1;
-				if(this.co_j.c >= 100 && this.co_j.c < 200 && (characterobject.c3 - 160) + 16 <= this.co_j.x && (characterobject.c3 + 128) - 16 >= this.co_j.x && (characterobject.c4 - 128) + 16 <= this.co_j.y && (characterobject.c4 + 128) - 16 >= this.co_j.y)
-				{
-					characterobject.c1 = 100;
-					if(l20 > this.co_j.x)
-					{
-						if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
-							characterobject.c1 = 0;
-					} else
-					if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
-						characterobject.c1 = 0;
-					if(i21 > this.co_j.y)
-					{
-						if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
-							characterobject.c1 = 0;
-					} else
-					if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
-						characterobject.c1 = 0;
-				}
-			} else
-			if(characterobject.c1 == 100)
-			{
-				if(l20 > this.co_j.x)
-				{
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
-						characterobject.c1 = 200;
-				} else
-				if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
-					characterobject.c1 = 200;
-				if(i21 > this.co_j.y)
-				{
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
-						characterobject.c1 = 200;
-				} else
-				if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
-					characterobject.c1 = 200;
-				if(characterobject.c1 == 200)
-				{
-					if(l20 < characterobject.c3)
-						characterobject.pth = 1;
-					if(l20 == characterobject.c3 && l20 < this.co_j.x)
-						characterobject.pth = 1;
-				} else
-				{
-					if(l20 < this.co_j.x)
-						characterobject.pth = 1;
-					if(Math.abs(l20 - this.co_j.x) <= 3)
-						l20 = this.co_j.x;
-					else
-					if(l20 < this.co_j.x)
-						l20 += 3;
-					else
-					if(l20 > this.co_j.x)
-						l20 -= 3;
-					if(Math.abs(i21 - this.co_j.y) <= 2)
-						i21 = this.co_j.y;
-					else
-					if(i21 < this.co_j.y)
-						i21 += 2;
-					else
-					if(i21 > this.co_j.y)
-						i21 -= 2;
-					if(characterobject.c3 - 160 > this.co_j.x || characterobject.c3 + 128 < this.co_j.x || characterobject.c4 - 128 > this.co_j.y || characterobject.c4 + 128 < this.co_j.y)
-						characterobject.c1 = 200;
-					if(this.co_j.c < 100 || this.co_j.c >= 200)
-						characterobject.c1 = 200;
-				}
-			} else
-			if(characterobject.c1 == 200)
-			{
-				if(l20 < characterobject.c3)
-					characterobject.pth = 1;
-				if(l20 == characterobject.c3 && l20 < this.co_j.x)
-					characterobject.pth = 1;
-				if(Math.abs(l20 - characterobject.c3) <= 3)
-					l20 = characterobject.c3;
-				else
-				if(l20 < characterobject.c3)
-					l20 += 3;
-				else
-				if(l20 > characterobject.c3)
-					l20 -= 3;
-				if(Math.abs(i21 - characterobject.c4) <= 2)
-					i21 = characterobject.c4;
-				else
-				if(i21 < characterobject.c4)
-					i21 += 2;
-				else
-				if(i21 > characterobject.c4)
-					i21 -= 2;
-				if(l20 == characterobject.c3 && i21 == characterobject.c4)
-					characterobject.c1 = 0;
-			}
-			break;
-
-		case 1170: 
-			characterobject.c1 -= 5;
-			if(characterobject.c1 < 0)
-				characterobject.c1 += 360;
-			l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
-			i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
-			characterobject.pt = 167;
-			if(characterobject.c1 < 180)
-				characterobject.pth = 1;
-			else
-				characterobject.pth = 0;
-			break;
-
-		case 1180: 
-			characterobject.c1 += 5;
-			if(characterobject.c1 >= 360)
-				characterobject.c1 -= 360;
-			l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
-			i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
-			characterobject.pt = 167;
-			if(characterobject.c1 < 180)
-				characterobject.pth = 0;
-			else
-				characterobject.pth = 1;
-			break;
-
-		case 1190: 
-			characterobject.pt = 167;
-			characterobject.pth = 0;
-			break;
-
-		case 1200: 
-			l20 -= 4;
-			characterobject.muki = 0;
-			characterobject.direction = 0;
-			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
-			{
-				var k41 = this.maps.getBGCode(l20 + 4 + 15, i21 + 31);
-				if(k41 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				else
-				if(k41 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				k41 = this.maps.getBGCode(l20 + 15, i21 + 32);
-				if(k41 == 18)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
-			}
-			var l41 = this.maps.getBGCode(l20, i21 + 8);
-			if(l41 >= 20 || l41 == 18)
-			{
-				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-				if(Math.abs(i21 - this.co_j.y) >= 32 || l20 <= this.co_j.x)
-				{
-					var i42 = this.maps.getBGCode(l20 + 32, i21 + 15);
-					if(i42 <= 10 || i42 == 15)
-					{
-						characterobject.c = 1210;
-						characterobject.muki = 1;
-						characterobject.direction = 1;
-						characterobject.pt = 140 + this.g_ac;
-						var i17 = 0;
-						do
-						{
-							if(i17 > this.t_kazu)
-								break;
-							if(this.co_t[i17].c > 1200 && this.co_t[i17].c <= 1210 && this.co_t[i17].x == l20 + 32 && Math.abs(this.co_t[i17].y - i21) < 32)
-							{
-								characterobject.c = 1200;
-								break;
-							}
-							i17++;
-						} while(true);
-						break;
-					}
-				}
-			}
-			if(Math.abs(i21 - this.co_j.y) < 32 && l20 < this.co_j.x)
-			{
-				characterobject.c = 1210;
-				characterobject.pt = 140 + this.g_ac;
-			} else
-			{
-				var flag1 = false;
-				for(var j17 = 0; j17 <= this.t_kazu; j17++)
-				{
-					if((this.co_t[j17].c < 1200 || this.co_t[j17].c >= 1300) && this.co_t[j17].c != 60 || j17 == i || Math.abs(this.co_t[j17].x - l20) >= 32 || Math.abs(this.co_t[j17].y - i21) >= 32)
-						continue;
-					if(this.co_t[j17].c == 1210)
-					{
-						var k33 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-						if(k33 <= 1 || k33 >= 5)
-						{
-							if(l20 > this.co_j.x)
-								characterobject.c = 1200;
-							else
-								characterobject.c = 1210;
-						} else
-						if(l20 < this.co_j.x)
-							characterobject.c = 1200;
-						else
-							characterobject.c = 1210;
-						var i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-						k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-						if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var k9 = 1;
-							do
-							{
-								if(k9 > 31 || i30 + k9 >= this.mapWidth || this.maps.map_bg[i30 + k9][k33] >= 19)
-									break;
-								if(this.maps.map_bg[i30 + k9][k33 + 1] <= 10 || this.maps.map_bg[i30 + k9][k33 + 1] == 15)
-								{
-									characterobject.c = 1210;
-									break;
-								}
-								k9++;
-							} while(true);
-						} else
-						if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var l9 = 1;
-							do
-							{
-								if(l9 > 31 || i30 + l9 >= this.mapWidth || this.maps.map_bg[i30 + l9][k33] >= 19)
-									break;
-								if(this.maps.map_bg[i30 + l9][k33] == 10)
-								{
-									characterobject.c = 1210;
-									break;
-								}
-								l9++;
-							} while(true);
-						}
-						i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-						k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-						if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var i10 = 1;
-							do
-							{
-								if(i10 > 31 || i30 - i10 <= 0 || this.maps.map_bg[i30 - i10][k33] >= 20 || this.maps.map_bg[i30 - i10][k33] == 18)
-									break;
-								if(this.maps.map_bg[i30 - i10][k33 + 1] <= 10 || this.maps.map_bg[i30 - i10][k33 + 1] == 15)
-								{
-									characterobject.c = 1200;
-									break;
-								}
-								i10++;
-							} while(true);
-						} else
-						if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var j10 = 1;
-							do
-							{
-								if(j10 > 31 || i30 - j10 <= 0 || this.maps.map_bg[i30 - j10][k33] >= 20 || this.maps.map_bg[i30 - j10][k33] == 18)
-									break;
-								if(this.maps.map_bg[i30 - j10][k33] == 10)
-								{
-									characterobject.c = 1200;
-									break;
-								}
-								j10++;
-							} while(true);
-						}
-						if(j17 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
-							characterobject.c = 1210;
-						if(characterobject.c == 1200 && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
-							if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
-							{
-								characterobject.c = 1210;
-								for(var k10 = 0; k10 <= this.t_kazu; k10++)
-									if(this.co_t[k10].c == 1200 && Math.abs(this.co_t[k10].y - characterobject.y) <= 16 && characterobject.x <= this.co_t[k10].x)
-									{
-										var j20 = 0;
-										do
-										{
-											if(j20 > this.t_kazu)
-												break;
-											if(this.co_t[j20].c >= 1200 && this.co_t[j20].c < 1300 && Math.abs(this.co_t[j20].y - this.co_t[k10].y) <= 16 && this.co_t[j20].x >= this.co_t[k10].x - 32 && this.co_t[j20].x < this.co_t[k10].x && k10 != j20)
-											{
-												this.co_t[k10].c = 1210;
-												break;
-											}
-											j20++;
-										} while(true);
-									}
-
-							} else
-							if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32 + 15) == 10)
-							{
-								characterobject.c = 1210;
+        if(characterobject.controller != null) {
+            // この敵の挙動を制御する関数がある
+            characterobject.controller(characterobject, this);
+        }
+        var l20 = characterobject.x;
+        var i21 = characterobject.y;
+        switch(characterobject.c)
+        {
+        case 1310: 
+        default:
+            break;
+
+        case 10:
+            if(this.maps.wx >= characterobject.c1)
+            {
+                characterobject.c = characterobject.c2;
+                characterobject.c1 = 0;
+                characterobject.c2 = 0;
+            }
+            break;
+
+        case 50:
+            characterobject.c1++;
+            if(characterobject.c2 >= 0 && this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
+                i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            if(characterobject.c1 > 14)
+            {
+                characterobject.c = 0;
+                this.addScore(10);
+            }
+            break;
+
+        case 52:
+            l20 += characterobject.vx;
+            characterobject.vy += 5;
+            if(characterobject.vy > 25)
+                characterobject.vy = 25;
+            i21 += characterobject.vy;
+            if(i21 > this.maps.wy + 320)
+            {
+                characterobject.c = 0;
+                this.addScore(10);
+            }
+            break;
+
+        case 54:
+            l20 += characterobject.vx;
+            characterobject.vy += 5;
+            if(characterobject.vy > 25)
+                characterobject.vy = 25;
+            i21 += characterobject.vy;
+            if(i21 > this.maps.wy + 320)
+            {
+                characterobject.c = 60;
+                characterobject.c1 = 0;
+            }
+            break;
+
+        case 55:
+            characterobject.c1++;
+            if(characterobject.c1 == 1)
+                this.addScore(10);
+            characterobject.pth = 0;
+            if(characterobject.c1 <= 3)
+                characterobject.pt = 172;
+            else
+            if(characterobject.c1 <= 6)
+                characterobject.pt = 173;
+            else
+            if(characterobject.c1 <= 9)
+            {
+                characterobject.pt = 174;
+            } else
+            {
+                characterobject.pt = 174;
+                characterobject.c = 0;
+            }
+            break;
+
+        case 57:
+            characterobject.c1++;
+            characterobject.pth = 0;
+            if(characterobject.c1 <= 3)
+                characterobject.pt = 172;
+            else
+            if(characterobject.c1 <= 6)
+                characterobject.pt = 173;
+            else
+            if(characterobject.c1 <= 9)
+            {
+                characterobject.pt = 174;
+            } else
+            {
+                characterobject.pt = 174;
+                characterobject.c = 65;
+                characterobject.c1 = 0;
+            }
+            break;
+
+        case 60:
+            if(characterobject.c1 == 1)
+            {
+                i21 = this.maps.wy_mini - 32;
+                var j = 0;
+                do
+                {
+                    if(j > 15)
+                        break;
+                    if(this.scroll_area == 2 || this.scroll_area == 4)
+                        l20 = 32 + this.ranInt(16) * 32;
+                    else
+                    if(this.scroll_area == 3 || this.scroll_area == 5)
+                    {
+                        l20 = 32 + this.ranInt(32) * 32;
+                    } else
+                    {
+                        l20 = ((rightShiftIgnoreSign(this.co_j.x, 5) + this.ranInt(17)) - 8) * 32;
+                        if(l20 < 32)
+                            l20 = 32;
+                        else
+                        if(l20 > this.mapWidth * 32)
+                            l20 = this.mapWidth * 32;
+                    }
+                    var l36 = this.maps.getBGCode(l20 + 15, i21 + 32 + 15);
+                    if(l36 <= 10 || l36 == 15)
+                    {
+                        characterobject.muki = this.ranInt(2);
+                        characterobject.c1 = 2;
+                        break;
+                    }
+                    j++;
+                } while(true);
+                characterobject.pt = 0;
+            } else
+            if(characterobject.c1 < 50)
+            {
+                characterobject.c1++;
+                characterobject.pt = 0;
+            } else
+            if(characterobject.c1 >= 50)
+            {
+                if(++i21 >= this.maps.wy_mini)
+                    characterobject.c = 1220;
+                characterobject.pt = 140;
+                characterobject.pth = characterobject.muki;
+            }
+            break;
+
+        case 65:
+            characterobject.c1++;
+            if(characterobject.c1 < 50)
+            {
+                i21 = this.maps.wy_mini - 32;
+                characterobject.pt = 0;
+            } else
+            if(characterobject.c1 >= 50)
+                if(this.mhouse_c == 100)
+                {
+                    characterobject.c = 1430;
+                    l20 = this.mhouse_x * 32;
+                    i21 = this.mhouse_y * 32;
+                    characterobject.pt = 0;
+                    characterobject.pth = 0;
+                } else
+                {
+                    characterobject.c = 0;
+                }
+            break;
+
+        case 100:
+            if(this.ana_kazu > 0)
+            {
+                var j21 = this.anaCheckNormal(l20, i21);
+                if(j21 >= 0)
+                {
+                    characterobject.c = 1300;
+                    l20 = this.ana_x[j21] * 32;
+                    break;
+                }
+            }
+            var j44 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(j44 != 18 && j44 != 19)
+                j44 = 0;
+            if(j44 == 0 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 || j44 > 0 && this.getSakamichiY(l20 + 15, i21 + 31) > i21)
+            {
+                i21 += 5;
+                if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+                    i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                characterobject.pt = 140;
+                characterobject.pth = 0;
+                if(this.yuka_id_max >= 0)
+                {
+                    var k = 0;
+                    do
+                    {
+                        if(k > this.yuka_id_max)
+                            break;
+                        if(this.yo[k].con >= 300 && this.yo[k].con < 350)
+                        {
+                            var k21 = this.getSCOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
+                            if(k21 >= 0 && k21 <= i21 && k21 + 31 >= i21)
+                            {
+                                i21 = k21;
+                                characterobject.c = 104;
+                                characterobject.c2 = k;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        } else
+                        if(this.yo[k].con >= 350 && this.yo[k].con < 400)
+                        {
+                            var l21 = this.getSHCOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
+                            if(l21 >= 0 && l21 - 192 <= i21 && l21 + 31 + 192 >= i21)
+                            {
+                                i21 = l21;
+                                characterobject.c = 104;
+                                characterobject.c2 = k;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        } else
+                        if(this.yo[k].con >= 400 && this.yo[k].con < 450)
+                        {
+                            var i22 = this.getSWUpOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
+                            if(i22 >= 0 && i22 <= i21 && i22 + 31 >= i21)
+                            {
+                                i21 = i22;
+                                characterobject.c = 104;
+                                characterobject.c2 = k;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        } else
+                        if(this.yo[k].con >= 450 && this.yo[k].con < 500)
+                        {
+                            var j22 = this.getSWDownOY(this.yo[k].x, this.yo[k].y, this.yo[k].x2, this.yo[k].y2, l20 + 15);
+                            if(j22 >= 0 && j22 <= i21 && j22 + 31 >= i21)
+                            {
+                                i21 = j22;
+                                characterobject.c = 104;
+                                characterobject.c2 = k;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        }
+                        k++;
+                    } while(true);
+                }
+            } else
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
+                {
+                    if(j44 == 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    else
+                    if(j44 == 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    if(this.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
+                        i21++;
+                }
+                l20 -= 3;
+                var i37 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                if(i37 == 18 || i37 == 19)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                i37 = this.maps.getBGCode(l20, i21);
+                if(i37 >= 20 || i37 == 15 || i37 == 18)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 105;
+                }
+                if(j44 == 18)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    {
+                        l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
+                        characterobject.c = 105;
+                    }
+                } else
+                if(j44 == 19)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+                    {
+                        l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
+                        i21++;
+                        characterobject.c = 105;
+                    }
+                } else
+                if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20, i21 + 31) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 105;
+                }
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = 0;
+            }
+            break;
+
+        case 104:
+            characterobject.pt = 140 + this.g_ac;
+            characterobject.pth = 0;
+            if(this.yo[characterobject.c2].con >= 300 && this.yo[characterobject.c2].con < 350)
+            {
+                var l28 = rounddown((this.yo[characterobject.c2].x2 * 80) / 100);
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 3) <= this.yo[characterobject.c2].x - l28 - 15)
+                    {
+                        l20 = this.yo[characterobject.c2].x - l28 - 15;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 3) >= (this.yo[characterobject.c2].x + l28) - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + l28) - 15;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            } else
+            if(this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
+            {
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 3) <= (this.yo[characterobject.c2].x - 15) + 8)
+                    {
+                        l20 = (this.yo[characterobject.c2].x - 15) + 8;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 3) >= (this.yo[characterobject.c2].x + 239) - 15 - 8)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 239) - 15 - 8;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            } else
+            if(this.yo[characterobject.c2].con >= 400 && this.yo[characterobject.c2].con < 450)
+            {
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 3) <= (this.yo[characterobject.c2].x + 8) - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 8) - 15;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 3) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSWUpOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            } else
+            if(this.yo[characterobject.c2].con >= 450 && this.yo[characterobject.c2].con < 500)
+            {
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 3) <= (this.yo[characterobject.c2].x + 8) - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 8) - 15;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 3) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSWDownOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            }
+            break;
+
+        case 105:
+            if(this.ana_kazu > 0)
+            {
+                var k22 = this.anaCheckNormal(l20, i21);
+                if(k22 >= 0)
+                {
+                    characterobject.c = 1300;
+                    l20 = this.ana_x[k22] * 32;
+                    break;
+                }
+            }
+            var k44 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(k44 != 18 && k44 != 19)
+                k44 = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
+            {
+                if(k44 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                else
+                if(k44 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(this.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
+                    i21++;
+            }
+            l20 += 3;
+            var j37 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(j37 == 18 || j37 == 19)
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+            j37 = this.maps.getBGCode(l20 + 31, i21);
+            if(j37 >= 20 || j37 == 15 || j37 == 19)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.c = 100;
+            }
+            if(k44 == 19)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
+                    characterobject.c = 100;
+                }
+            } else
+            if(k44 == 18)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
+                    i21++;
+                    characterobject.c = 100;
+                }
+            } else
+            if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.c = 100;
+            }
+            characterobject.pt = 140 + this.g_ac;
+            characterobject.pth = 1;
+            break;
+
+        case 110:
+            if(this.ana_kazu > 0)
+            {
+                var l22 = this.anaCheckNormal(l20, i21);
+                if(l22 >= 0)
+                {
+                    characterobject.c = 1300;
+                    l20 = this.ana_x[l22] * 32;
+                    break;
+                }
+            }
+            var l44 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(l44 != 18 && l44 != 19)
+                l44 = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
+            {
+                if(l44 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                else
+                if(l44 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(this.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
+                    i21++;
+            }
+            l20 -= 3;
+            var k37 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(k37 == 18 || k37 == 19)
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+            if(l20 < 32)
+            {
+                if(l20 <= 3)
+                    characterobject.c = 0;
+            } else
+            {
+                var l37 = this.maps.getBGCode(l20, i21);
+                if(l37 >= 20 || l37 == 15 || l37 == 18)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 115;
+                }
+            }
+            if(i >= 120 && l20 < this.maps.wx - 32)
+                characterobject.c = 0;
+            if(l44 == 18)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
+            } else
+            if(l44 == 19)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+            } else
+            if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
+                characterobject.c = 120;
+            }
+            characterobject.pt = 140 + this.g_ac;
+            characterobject.pth = 0;
+            break;
+
+        case 115:
+            if(this.ana_kazu > 0)
+            {
+                var i23 = this.anaCheckNormal(l20, i21);
+                if(i23 >= 0)
+                {
+                    characterobject.c = 1300;
+                    l20 = this.ana_x[i23] * 32;
+                    break;
+                }
+            }
+            var i45 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(i45 != 18 && i45 != 19)
+                i45 = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
+            {
+                if(i45 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                else
+                if(i45 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(this.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
+                    i21++;
+            }
+            l20 += 3;
+            var i38 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(i38 == 18 || i38 == 19)
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+            i38 = this.maps.getBGCode(l20 + 31, i21);
+            if(i38 >= 20 || i38 == 15 || i38 == 19)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.c = 110;
+            }
+            if(i >= 120 && l20 > this.maps.wx + 512)
+                characterobject.c = 0;
+            if(i45 == 19)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
+            } else
+            if(i45 == 18)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+            } else
+            if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
+            {
+                l20 = rightShiftIgnoreSign(l20, 5) * 32;
+                characterobject.c = 125;
+            }
+            characterobject.pt = 140 + this.g_ac;
+            characterobject.pth = 1;
+            break;
+
+        case 120:
+            if(this.ana_kazu > 0)
+            {
+                var l = 0;
+                do
+                {
+                    if(l > 11)
+                        break;
+                    if(this.ana_c[l] > 0 && this.ana_y[l] * 32 == i21 + 32 && Math.abs(this.ana_x[l] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[l] * 32;
+                        break;
+                    }
+                    l++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            i21 += 5;
+            if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+            {
+                i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                characterobject.c = 110;
+            }
+            if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
+            {
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                characterobject.c = 110;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            characterobject.pt = 140;
+            characterobject.pth = 0;
+            break;
+
+        case 125:
+            if(this.ana_kazu > 0)
+            {
+                var i1 = 0;
+                do
+                {
+                    if(i1 > 11)
+                        break;
+                    if(this.ana_c[i1] > 0 && this.ana_y[i1] * 32 == i21 + 32 && Math.abs(this.ana_x[i1] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[i1] * 32;
+                        break;
+                    }
+                    i1++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            i21 += 5;
+            if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+            {
+                i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                characterobject.c = 115;
+            }
+            if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
+            {
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                characterobject.c = 115;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            characterobject.pt = 140;
+            characterobject.pth = 1;
+            break;
+
+        case 150: 
+            if(this.ana_kazu > 0)
+            {
+                var j1 = 0;
+                do
+                {
+                    if(j1 > 11)
+                        break;
+                    if(this.ana_c[j1] > 0 && this.ana_y[j1] * 32 == i21 + 32 && Math.abs(this.ana_x[j1] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j1] * 32;
+                        break;
+                    }
+                    j1++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
+            {
+                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                characterobject.vx = 0;
+            }
+            if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.vx = 0;
+            }
+            l20 += characterobject.vx;
+            characterobject.vy += 2;
+            if(characterobject.vy > 18)
+                characterobject.vy = 18;
+            i21 += characterobject.vy;
+            var j23 = rightShiftIgnoreSign(i21 + 31, 5);
+            var word0 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][j23];
+            var word3 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][j23];
+            if(word0 >= 15 || word3 >= 15)
+            {
+                i21 = j23 * 32 - 32;
+                if(characterobject.muki == 1)
+                    characterobject.c = 115;
+                else
+                    characterobject.c = 110;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            characterobject.pt = 140;
+            characterobject.pth = characterobject.muki;
+            break;
+
+        case 200: 
+            /*
+            if(this.ana_kazu > 0)
+            {
+                var k1 = 0;
+                do
+                {
+                    if(k1 > 11)
+                        break;
+                    if(this.ana_c[k1] > 0 && this.ana_y[k1] * 32 == i21 + 32 && Math.abs(this.ana_x[k1] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[k1] * 32;
+                        break;
+                    }
+                    k1++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(this.co_j.x >= l20 - 240 && this.co_j.x <= l20 + 240)
+                {
+                    characterobject.c = 210;
+                    characterobject.vy = -14;
+                }
+            } else
+            {
+                characterobject.c1--;
+            }
+            characterobject.pt = 143;
+            if(l20 + 8 >= this.co_j.x)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+               */
+            break;
+
+        case 210: 
+            break;
+
+        case 300: 
+            if(this.ana_kazu > 0)
+            {
+                var j2 = 0;
+                do
+                {
+                    if(j2 > 11)
+                        break;
+                    if(this.ana_c[j2] > 0 && this.ana_y[j2] * 32 == i21 + 32 && Math.abs(this.ana_x[j2] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j2] * 32;
+                        break;
+                    }
+                    j2++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 > 0)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 2 || characterobject.c1 == 10 || characterobject.c1 == 18 || characterobject.c1 == 26)
+                {
+                    if(l20 + 8 >= this.co_j.x)
+                    {
+                        if(characterobject.c3 == 1)
+                            this.mSet(l20, i21, 201);
+                        else
+                            this.mSet(l20, i21, 200);
+                    } else
+                    if(characterobject.c3 == 1)
+                        this.mSet(l20, i21, 206);
+                    else
+                        this.mSet(l20, i21, 205);
+                    if(characterobject.c1 == 2 && Math.abs(i21 - this.co_j.y) <= 288)
+                        this.gs.rsAddSound(11);
+                } else
+                if(characterobject.c1 > 86)
+                    characterobject.c1 = 0;
+            } else
+            if(this.co_j.x >= l20 - 256 && this.co_j.x <= l20 + 256)
+                characterobject.c1 = 1;
+            characterobject.pt = 150;
+            if(l20 + 8 >= this.co_j.x)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 310: 
+            if(this.ana_kazu > 0)
+            {
+                var k2 = 0;
+                do
+                {
+                    if(k2 > 11)
+                        break;
+                    if(this.ana_c[k2] > 0 && this.ana_y[k2] * 32 == i21 + 32 && Math.abs(this.ana_x[k2] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[k2] * 32;
+                        break;
+                    }
+                    k2++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32)
+                {
+                    characterobject.c1 = 100;
+                    this.gs.rsAddSound(17);
+                }
+            } else
+            if(characterobject.c1 >= 100 && characterobject.c1 < 200)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 101)
+                {
+                    if(characterobject.c4 == 1)
+                        this.tSetBoss(l20, i21, 650, -3);
+                    else
+                        this.tSetBoss(l20, i21, 450, -3);
+                    if(characterobject.c3 < 999)
+                        characterobject.c3--;
+                    if(characterobject.c3 <= 0)
+                        characterobject.c1 = 500;
+                } else
+                if(characterobject.c1 >= 140)
+                    characterobject.c1 = 100;
+                if(l20 < this.maps.wx)
+                    characterobject.c1 = 500;
+            }
+            characterobject.pt = 150;
+            characterobject.pth = 0;
+            break;
+
+        case 320: 
+            if(this.ana_kazu > 0)
+            {
+                var l2 = 0;
+                do
+                {
+                    if(l2 > 11)
+                        break;
+                    if(this.ana_c[l2] > 0 && this.ana_y[l2] * 32 == i21 + 32 && Math.abs(this.ana_x[l2] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[l2] * 32;
+                        break;
+                    }
+                    l2++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx - 16 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 288 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 88 && this.co_j.y <= i21 + 128)
+                    if(this.co_j.x <= l20 + 8)
+                        characterobject.c1 = 100;
+                    else
+                        characterobject.c1 = 200;
+            } else
+            if(characterobject.c1 >= 100 && characterobject.c1 < 200)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 101)
+                {
+                    var d2 = 4.7100000381469727;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d2) * 10), Math.floor(Math.sin(d2) * 10));
+                    this.gs.rsAddSound(11);
+                } else
+                if(characterobject.c1 == 105)
+                {
+                    var d3 = 3.9249999523162842;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d3) * 10), Math.floor(Math.sin(d3) * 10));
+                } else
+                if(characterobject.c1 == 109)
+                {
+                    var d4 = 3.1400001049041748;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d4) * 10), Math.floor(Math.sin(d4) * 10));
+                } else
+                if(characterobject.c1 == 113)
+                {
+                    var d5 = 3.6633334159851074;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d5) * 10), Math.floor(Math.sin(d5) * 10));
+                } else
+                if(characterobject.c1 >= 121)
+                {
+                    var d6 = 4.1866669654846191;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d6) * 10), Math.floor(Math.sin(d6) * 10));
+                    characterobject.c1 = 300;
+                }
+            } else
+            if(characterobject.c1 >= 200 && characterobject.c1 < 300)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 201)
+                {
+                    var d7 = 4.7100000381469727;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d7) * 10), Math.floor(Math.sin(d7) * 10));
+                    this.gs.rsAddSound(11);
+                } else
+                if(characterobject.c1 == 205)
+                {
+                    var d8 = 5.4950003623962402;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d8) * 10), Math.floor(Math.sin(d8) * 10));
+                } else
+                if(characterobject.c1 == 209)
+                {
+                    var d9 = 0.0;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d9) * 10), Math.floor(Math.sin(d9) * 10));
+                } else
+                if(characterobject.c1 == 213)
+                {
+                    var d10 = 5.7566671371459961;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d10) * 10), Math.floor(Math.sin(d10) * 10));
+                } else
+                if(characterobject.c1 >= 221)
+                {
+                    var d11 = 5.2333335876464844;
+                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d11) * 10), Math.floor(Math.sin(d11) * 10));
+                    characterobject.c1 = 300;
+                }
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 350)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 150;
+            if(this.co_j.x <= l20 + 8)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 330: 
+            if(this.ana_kazu > 0)
+            {
+                var i3 = 0;
+                do
+                {
+                    if(i3 > 11)
+                        break;
+                    if(this.ana_c[i3] > 0 && this.ana_y[i3] * 32 == i21 + 32 && Math.abs(this.ana_x[i3] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[i3] * 32;
+                        break;
+                    }
+                    i3++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx - 16 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 352 && this.co_j.x <= l20 - 72 && Math.abs(this.co_j.y - i21) < 32)
+                {
+                    this.mSet2(l20, i21, 75, i, 0);
+                    this.gs.rsAddSound(11);
+                    characterobject.c1 = 300;
+                }
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 420)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 150;
+            characterobject.pth = 0;
+            break;
+
+        case 335: 
+            if(this.ana_kazu > 0)
+            {
+                var j3 = 0;
+                do
+                {
+                    if(j3 > 11)
+                        break;
+                    if(this.ana_c[j3] > 0 && this.ana_y[j3] * 32 == i21 + 32 && Math.abs(this.ana_x[j3] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j3] * 32;
+                        break;
+                    }
+                    j3++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx - 16 - 144 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x <= l20 + 352 && this.co_j.x >= l20 + 72 && Math.abs(this.co_j.y - i21) < 32)
+                {
+                    this.mSet2(l20, i21, 85, i, 0);
+                    this.gs.rsAddSound(11);
+                    characterobject.c1 = 300;
+                }
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 420)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 150;
+            characterobject.pth = 1;
+            break;
+
+        case 400: 
+            if(this.ana_kazu > 0)
+            {
+                var k3 = 0;
+                do
+                {
+                    if(k3 > 11)
+                        break;
+                    if(this.ana_c[k3] > 0 && this.ana_y[k3] * 32 == i21 + 32 && Math.abs(this.ana_x[k3] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[k3] * 32;
+                        break;
+                    }
+                    k3++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(this.j_tokugi == 14)
+            {
+                characterobject.c2++;
+                if(characterobject.c2 > 24)
+                {
+                    characterobject.c2 = 0;
+                    if(this.co_j.y < i21 + 8)
+                        this.mSet(l20, i21, 150);
+                }
+            }
+            var j45 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(j45 != 18 && j45 != 19)
+                j45 = 0;
+            if(j45 == 0 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 || j45 > 0 && this.getSakamichiY(l20 + 15, i21 + 31) > i21)
+            {
+                i21 += 5;
+                if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+                    i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                characterobject.pt = 152;
+                characterobject.pth = 0;
+                if(this.yuka_id_max >= 0)
+                {
+                    var l3 = 0;
+                    do
+                    {
+                        if(l3 > this.yuka_id_max)
+                            break;
+                        if(this.yo[l3].con >= 300 && this.yo[l3].con < 350)
+                        {
+                            var k24 = this.getSCOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
+                            if(k24 >= 0 && k24 <= i21 && k24 + 31 >= i21)
+                            {
+                                i21 = k24;
+                                characterobject.c = 404;
+                                characterobject.c2 = l3;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        } else
+                        if(this.yo[l3].con >= 350 && this.yo[l3].con < 400)
+                        {
+                            var l24 = this.getSHCOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
+                            if(l24 >= 0 && l24 - 192 <= i21 && l24 + 31 + 192 >= i21)
+                            {
+                                i21 = l24;
+                                characterobject.c = 404;
+                                characterobject.c2 = l3;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        } else
+                        if(this.yo[l3].con >= 400 && this.yo[l3].con < 450)
+                        {
+                            var i25 = this.getSWUpOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
+                            if(i25 >= 0 && i25 <= i21 && i25 + 31 >= i21)
+                            {
+                                i21 = i25;
+                                characterobject.c = 404;
+                                characterobject.c2 = l3;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        } else
+                        if(this.yo[l3].con >= 450 && this.yo[l3].con < 500)
+                        {
+                            var j25 = this.getSWDownOY(this.yo[l3].x, this.yo[l3].y, this.yo[l3].x2, this.yo[l3].y2, l20 + 15);
+                            if(j25 >= 0 && j25 <= i21 && j25 + 31 >= i21)
+                            {
+                                i21 = j25;
+                                characterobject.c = 404;
+                                characterobject.c2 = l3;
+                                characterobject.vx = -1;
+                                break;
+                            }
+                        }
+                        l3++;
+                    } while(true);
+                }
+            } else
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
+                {
+                    if(j45 == 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    else
+                    if(j45 == 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
+                        i21++;
+                }
+                l20 -= 4;
+                var j38 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                if(j38 == 18 || j38 == 19)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                j38 = this.maps.getBGCode(l20, i21);
+                if(j38 >= 20 || j38 == 15 || j38 == 18)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 405;
+                }
+                if(j45 == 18)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    {
+                        l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
+                        characterobject.c = 405;
+                    }
+                } else
+                if(j45 == 19)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+                    {
+                        l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
+                        i21++;
+                        characterobject.c = 405;
+                    }
+                } else
+                if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20, i21 + 31) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 405;
+                }
+                characterobject.pt = 152 + this.g_ac;
+                characterobject.pth = 0;
+            }
+            break;
+
+        case 404: 
+            characterobject.pt = 152 + this.g_ac;
+            characterobject.pth = 0;
+            if(this.yo[characterobject.c2].con >= 300 && this.yo[characterobject.c2].con < 350)
+            {
+                var i29 = rounddown((this.yo[characterobject.c2].x2 * 80) / 100);
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 4) <= this.yo[characterobject.c2].x - i29 - 15)
+                    {
+                        l20 = this.yo[characterobject.c2].x - i29 - 15;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 4) >= (this.yo[characterobject.c2].x + i29) - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + i29) - 15;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            } else
+            if(this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
+            {
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 4) <= (this.yo[characterobject.c2].x - 15) + 8)
+                    {
+                        l20 = (this.yo[characterobject.c2].x - 15) + 8;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 4) >= (this.yo[characterobject.c2].x + 239) - 15 - 8)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 239) - 15 - 8;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            } else
+            if(this.yo[characterobject.c2].con >= 400 && this.yo[characterobject.c2].con < 450)
+            {
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 4) <= (this.yo[characterobject.c2].x + 8) - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 8) - 15;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 4) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSWUpOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            } else
+            if(this.yo[characterobject.c2].con >= 450 && this.yo[characterobject.c2].con < 500)
+            {
+                if(characterobject.vx < 0)
+                {
+                    if((l20 -= 4) <= (this.yo[characterobject.c2].x + 8) - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 8) - 15;
+                        characterobject.vx = 1;
+                    }
+                } else
+                {
+                    characterobject.pth = 1;
+                    if((l20 += 4) >= (this.yo[characterobject.c2].x + 256) - 8 - 15)
+                    {
+                        l20 = (this.yo[characterobject.c2].x + 256) - 8 - 15;
+                        characterobject.vx = -1;
+                    }
+                }
+                i21 = this.getSWDownOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
+            }
+            break;
+
+        case 405: 
+            if(this.ana_kazu > 0)
+            {
+                var i4 = 0;
+                do
+                {
+                    if(i4 > 11)
+                        break;
+                    if(this.ana_c[i4] > 0 && this.ana_y[i4] * 32 == i21 + 32 && Math.abs(this.ana_x[i4] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[i4] * 32;
+                        break;
+                    }
+                    i4++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(this.j_tokugi == 14)
+            {
+                characterobject.c2++;
+                if(characterobject.c2 > 24)
+                {
+                    characterobject.c2 = 0;
+                    if(this.co_j.y < i21 + 8)
+                        this.mSet(l20, i21, 150);
+                }
+            }
+            var k45 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(k45 != 18 && k45 != 19)
+                k45 = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
+            {
+                if(k45 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                else
+                if(k45 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
+                    i21++;
+            }
+            l20 += 4;
+            var k38 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(k38 == 18 || k38 == 19)
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+            k38 = this.maps.getBGCode(l20 + 31, i21);
+            if(k38 >= 20 || k38 == 15 || k38 == 19)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.c = 400;
+            }
+            if(k45 == 19)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
+                    characterobject.c = 400;
+                }
+            } else
+            if(k45 == 18)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
+                    i21++;
+                    characterobject.c = 400;
+                }
+            } else
+            if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.c = 400;
+            }
+            characterobject.pt = 152 + this.g_ac;
+            characterobject.pth = 1;
+            break;
+
+        case 410: 
+            if(this.ana_kazu > 0)
+            {
+                var j4 = 0;
+                do
+                {
+                    if(j4 > 11)
+                        break;
+                    if(this.ana_c[j4] > 0 && this.ana_y[j4] * 32 == i21 + 32 && Math.abs(this.ana_x[j4] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j4] * 32;
+                        break;
+                    }
+                    j4++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            var l45 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(l45 != 18 && l45 != 19)
+                l45 = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
+            {
+                if(l45 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                else
+                if(l45 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
+                    i21++;
+            }
+            l20 -= 4;
+            var l38 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(l38 == 18 || l38 == 19)
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+            if(l20 < 32)
+            {
+                if(l20 <= 3)
+                    characterobject.c = 0;
+            } else
+            {
+                var i39 = this.maps.getBGCode(l20, i21);
+                if(i39 >= 20 || i39 == 15 || i39 == 18)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 415;
+                }
+            }
+            if(i >= 120 && l20 < this.maps.wx - 32)
+                characterobject.c = 0;
+            if(l45 == 18)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
+            } else
+            if(l45 == 19)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+            } else
+            if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
+                characterobject.c = 420;
+            }
+            characterobject.pt = 152 + this.g_ac;
+            characterobject.pth = 0;
+            break;
+
+        case 415: 
+            if(this.ana_kazu > 0)
+            {
+                var k4 = 0;
+                do
+                {
+                    if(k4 > 11)
+                        break;
+                    if(this.ana_c[k4] > 0 && this.ana_y[k4] * 32 == i21 + 32 && Math.abs(this.ana_x[k4] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[k4] * 32;
+                        break;
+                    }
+                    k4++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            var i46 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(i46 != 18 && i46 != 19)
+                i46 = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
+            {
+                if(i46 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                else
+                if(i46 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
+                    i21++;
+            }
+            l20 += 4;
+            var j39 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if(j39 == 18 || j39 == 19)
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+            j39 = this.maps.getBGCode(l20 + 31, i21);
+            if(j39 >= 20 || j39 == 15 || j39 == 19)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.c = 410;
+            }
+            if(i >= 120 && l20 > this.maps.wx + 512)
+                characterobject.c = 0;
+            if(i46 == 19)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
+            } else
+            if(i46 == 18)
+            {
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+            } else
+            if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
+            {
+                l20 = rightShiftIgnoreSign(l20, 5) * 32;
+                characterobject.c = 425;
+            }
+            characterobject.pt = 152 + this.g_ac;
+            characterobject.pth = 1;
+            break;
+
+        case 420: 
+            if(this.ana_kazu > 0)
+            {
+                var l4 = 0;
+                do
+                {
+                    if(l4 > 11)
+                        break;
+                    if(this.ana_c[l4] > 0 && this.ana_y[l4] * 32 == i21 + 32 && Math.abs(this.ana_x[l4] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[l4] * 32;
+                        break;
+                    }
+                    l4++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            i21 += 5;
+            if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+            {
+                i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                characterobject.c = 410;
+            }
+            if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
+            {
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                characterobject.c = 410;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            characterobject.pt = 152;
+            characterobject.pth = 0;
+            break;
+
+        case 425: 
+            if(this.ana_kazu > 0)
+            {
+                var i5 = 0;
+                do
+                {
+                    if(i5 > 11)
+                        break;
+                    if(this.ana_c[i5] > 0 && this.ana_y[i5] * 32 == i21 + 32 && Math.abs(this.ana_x[i5] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[i5] * 32;
+                        break;
+                    }
+                    i5++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            i21 += 5;
+            if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+            {
+                i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                characterobject.c = 415;
+            }
+            if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
+            {
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                characterobject.c = 415;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            characterobject.pt = 152;
+            characterobject.pth = 1;
+            break;
+
+        case 450: 
+            if(this.ana_kazu > 0)
+            {
+                var j5 = 0;
+                do
+                {
+                    if(j5 > 11)
+                        break;
+                    if(this.ana_c[j5] > 0 && this.ana_y[j5] * 32 == i21 + 32 && Math.abs(this.ana_x[j5] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j5] * 32;
+                        break;
+                    }
+                    j5++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
+            {
+                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                characterobject.vx = 0;
+            }
+            if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.vx = 0;
+            }
+            l20 += characterobject.vx;
+            characterobject.vy += 2;
+            if(characterobject.vy > 18)
+                characterobject.vy = 18;
+            i21 += characterobject.vy;
+            var k25 = rightShiftIgnoreSign(i21 + 31, 5);
+            var word1 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][k25];
+            var word4 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][k25];
+            if(word1 >= 10 || word4 >= 10)
+            {
+                i21 = k25 * 32 - 32;
+                if(characterobject.muki == 1)
+                    characterobject.c = 415;
+                else
+                    characterobject.c = 410;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            characterobject.pt = 152;
+            characterobject.pth = characterobject.muki;
+            break;
+
+        case 500: 
+            if(i21 <= characterobject.c3)
+            {
+                characterobject.vy++;
+                if(characterobject.vy > 4)
+                    characterobject.vy = 4;
+            } else
+            if(i21 >= characterobject.c4)
+            {
+                characterobject.vy--;
+                if(characterobject.vy < -4)
+                    characterobject.vy = -4;
+            }
+            i21 += characterobject.vy;
+            characterobject.pt = 147 + this.g_ac;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 510: 
+            if((l20 -= 3) < 48)
+            {
+                if(l20 <= 3)
+                    characterobject.c = 0;
+            } else
+            if(this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
+            {
+                l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
+                characterobject.c = 515;
+            }
+            characterobject.pt = 147 + this.g_ac;
+            characterobject.pth = 0;
+            break;
+
+        case 515: 
+            l20 += 3;
+            if(this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
+                characterobject.c = 510;
+            }
+            characterobject.pt = 147 + this.g_ac;
+            characterobject.pth = 1;
+            break;
+
+        case 520: 
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 288 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
+                    characterobject.c1 = 1;
+            } else
+            if(characterobject.c1 == 1)
+            {
+                if(l20 + 8 >= this.co_j.x)
+                {
+                    this.mSet(l20, i21, 300);
+                    this.gs.rsAddSound(14);
+                } else
+                {
+                    this.mSet(l20, i21, 305);
+                    this.gs.rsAddSound(14);
+                }
+                characterobject.c1 = 2;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 40)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 147 + this.g_ac;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 530: 
+            if(characterobject.c4 <= 0)
+            {
+                if((i21 -= 2) <= characterobject.c3 - 64)
+                {
+                    i21 = characterobject.c3 - 64;
+                    characterobject.c4 = 10;
+                    if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 320 && this.co_j.x <= l20 + 256 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 160)
+                        characterobject.c4 = 20;
+                }
+            } else
+            if(characterobject.c4 == 10)
+            {
+                if((i21 += 2) >= characterobject.c3)
+                {
+                    i21 = characterobject.c3;
+                    characterobject.c4 = 0;
+                }
+            } else
+            if(characterobject.c4 == 20)
+            {
+                if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
+                {
+                    if(i21 == characterobject.c3 - 64)
+                        if(l20 + 8 >= this.co_j.x)
+                        {
+                            this.mSet(l20, i21, 300);
+                            this.gs.rsAddSound(14);
+                        } else
+                        {
+                            this.mSet(l20, i21, 305);
+                            this.gs.rsAddSound(14);
+                        }
+                    if(i21 == characterobject.c3 - 32)
+                        if(l20 + 8 >= this.co_j.x)
+                            this.mSet(l20, i21, 300);
+                        else
+                            this.mSet(l20, i21, 305);
+                }
+                if((i21 += 2) >= characterobject.c3)
+                {
+                    i21 = characterobject.c3;
+                    characterobject.c4 = 0;
+                    if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
+                        if(l20 + 8 >= this.co_j.x)
+                            this.mSet(l20, i21, 300);
+                        else
+                            this.mSet(l20, i21, 305);
+                }
+            }
+            characterobject.pt = 147 + this.g_ac;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 540: 
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 288 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
+                    characterobject.c1 = 1;
+            } else
+            if(characterobject.c1 == 1)
+            {
+                if(l20 + 8 >= this.co_j.x)
+                {
+                    var d12 = 3.1400001049041748;
+                    this.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+                    d12 = 3.6633334159851074;
+                    this.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+                    d12 = 2.6166667938232422;
+                    this.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+                    this.gs.rsAddSound(18);
+                } else
+                {
+                    var d13 = 0.0;
+                    this.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+                    d13 = 5.7566671371459961;
+                    this.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+                    d13 = 0.52333337068557739;
+                    this.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+                    this.gs.rsAddSound(18);
+                }
+                characterobject.c1 = 2;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 40)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 147 + this.g_ac;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 550: 
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 228 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
+                    characterobject.c1 = 1;
+            } else
+            if(characterobject.c1 == 1)
+            {
+                for(var k5 = 0; k5 <= 300; k5 += 90)
+                {
+                    this.mSet2(l20, i21, 950, k5, 0);
+                    this.mSet2(l20, i21, 960, 300 - k5, 0);
+                    this.gs.rsAddSound(18);
+                }
+
+                characterobject.c1 = 2;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 80)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 147 + this.g_ac;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 600: 
+            if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
+            {
+                characterobject.c = 605;
+                characterobject.c1++;
+            }
+            if(characterobject.c1 < 25)
+            {
+                if(this.ana_kazu > 0)
+                {
+                    var l5 = 0;
+                    do
+                    {
+                        if(l5 > 11)
+                            break;
+                        if(this.ana_c[l5] > 0 && this.ana_y[l5] * 32 == i21 + 32 && Math.abs(this.ana_x[l5] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = this.ana_x[l5] * 32;
+                            break;
+                        }
+                        l5++;
+                    } while(true);
+                    if(characterobject.c == 1300)
+                        break;
+                }
+                characterobject.c1++;
+                characterobject.vy = -17;
+                characterobject.c3 = 0;
+                if(i < 120 && characterobject.c4 == 1)
+                    characterobject.vy = -22;
+                var l25 = this.maps.getBGCode(l20 + 15, i21 + 32);
+                if(l25 == 18 || l25 == 19)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 32);
+                characterobject.pt = 154;
+                characterobject.pth = 0;
+                if(i < 120 && characterobject.c4 == 1)
+                    if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                        characterobject.pth = 0;
+                    else
+                        characterobject.pth = 1;
+            } else
+            {
+                if(this.ana_kazu > 0 && characterobject.vy > 0)
+                {
+                    var i6 = 0;
+                    do
+                    {
+                        if(i6 > 11)
+                            break;
+                        if(this.ana_c[i6] > 0 && this.ana_y[i6] * 32 <= i21 + 32 && this.ana_y[i6] * 32 >= i21 + 16 && Math.abs(this.ana_x[i6] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = this.ana_x[i6] * 32;
+                            i21 = this.ana_y[i6] * 32 - 32;
+                            break;
+                        }
+                        i6++;
+                    } while(true);
+                    if(characterobject.c == 1300)
+                        break;
+                }
+                if(characterobject.c3 == 0)
+                {
+                    characterobject.vy++;
+                    characterobject.c3 = 1;
+                } else
+                {
+                    characterobject.vy += 2;
+                    characterobject.c3 = 0;
+                }
+                if(characterobject.vy > 17)
+                    characterobject.vy = 17;
+                if(i >= 120 || characterobject.c4 != 1)
+                    l20 -= 5;
+                var k32 = i21;
+                i21 += characterobject.vy;
+                if(characterobject.vy < 4)
+                {
+                    characterobject.pt = 155;
+                    characterobject.pth = 0;
+                } else
+                {
+                    characterobject.pt = 156;
+                    characterobject.pth = 0;
+                }
+                if(l20 < 32)
+                {
+                    if(l20 <= 3)
+                        characterobject.c = 0;
+                } else
+                {
+                    if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
+                    {
+                        i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
+                        characterobject.vy = 0;
+                    }
+                    var k39 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(k39 >= 20 || k39 == 10 || k39 == 15)
+                    {
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                        characterobject.c1 = 15;
+                        characterobject.pt = 154;
+                        characterobject.pth = 0;
+                    }
+                    if(k39 == 18 || k39 == 19)
+                    {
+                        if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
+                        {
+                            i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 15;
+                            characterobject.pt = 154;
+                            characterobject.pth = 0;
+                        }
+                    } else
+                    if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(k32 + 31, 5))
+                    {
+                        var l39 = this.maps.getBGCode(l20 + 15, k32 + 31);
+                        if(l39 == 18 || l39 == 19)
+                        {
+                            i21 = rightShiftIgnoreSign(k32 + 31, 5) * 32;
+                            i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 15;
+                            characterobject.pt = 154;
+                            characterobject.pth = 0;
+                        }
+                    }
+                    if(this.yuka_id_max >= 0)
+                    {
+                        for(var j6 = 0; j6 <= this.yuka_id_max; j6++)
+                        {
+                            if(this.yo[j6].con >= 300 && this.yo[j6].con < 350)
+                            {
+                                var i26 = this.getSCOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
+                                if(i26 >= 0 && i26 <= i21 && i26 + 31 >= i21)
+                                {
+                                    i21 = i26;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 0;
+                                }
+                                continue;
+                            }
+                            if(this.yo[j6].con >= 350 && this.yo[j6].con < 400)
+                            {
+                                var j26 = this.getSHCOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
+                                if(j26 >= 0 && j26 <= i21 && j26 + 31 >= i21)
+                                {
+                                    i21 = j26;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 0;
+                                }
+                                continue;
+                            }
+                            if(this.yo[j6].con >= 400 && this.yo[j6].con < 450)
+                            {
+                                var k26 = this.getSWUpOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
+                                if(k26 >= 0 && k26 <= i21 && k26 + 31 >= i21)
+                                {
+                                    i21 = k26;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 0;
+                                }
+                                continue;
+                            }
+                            if(this.yo[j6].con < 450 || this.yo[j6].con >= 500)
+                                continue;
+                            var l26 = this.getSWDownOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
+                            if(l26 >= 0 && l26 <= i21 && l26 + 31 >= i21)
+                            {
+                                i21 = l26;
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 0;
+                            }
+                        }
+
+                    }
+                    if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20, i21 + 31) >= 20 || this.maps.getBGCode(l20, i21 + 8) >= 20))
+                    {
+                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                        characterobject.c = 605;
+                    }
+                    if(i >= 120 && l20 < this.maps.wx - 32)
+                        characterobject.c = 0;
+                }
+                if(i < 120 && characterobject.c4 == 1)
+                    if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                        characterobject.pth = 0;
+                    else
+                        characterobject.pth = 1;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            break;
+
+        case 605: 
+            if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
+            {
+                characterobject.c = 600;
+                characterobject.c1++;
+            }
+            if(characterobject.c1 < 25)
+            {
+                if(this.ana_kazu > 0)
+                {
+                    var k6 = 0;
+                    do
+                    {
+                        if(k6 > 11)
+                            break;
+                        if(this.ana_c[k6] > 0 && this.ana_y[k6] * 32 == i21 + 32 && Math.abs(this.ana_x[k6] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = this.ana_x[k6] * 32;
+                            break;
+                        }
+                        k6++;
+                    } while(true);
+                    if(characterobject.c == 1300)
+                        break;
+                }
+                characterobject.c1++;
+                characterobject.vy = -17;
+                characterobject.c3 = 0;
+                characterobject.pt = 154;
+                characterobject.pth = 1;
+            } else
+            {
+                if(this.ana_kazu > 0 && characterobject.vy > 0)
+                {
+                    var l6 = 0;
+                    do
+                    {
+                        if(l6 > 11)
+                            break;
+                        if(this.ana_c[l6] > 0 && this.ana_y[l6] * 32 <= i21 + 32 && this.ana_y[l6] * 32 >= i21 + 16 && Math.abs(this.ana_x[l6] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = this.ana_x[l6] * 32;
+                            i21 = this.ana_y[l6] * 32 - 32;
+                            break;
+                        }
+                        l6++;
+                    } while(true);
+                    if(characterobject.c == 1300)
+                        break;
+                }
+                if(characterobject.c3 == 0)
+                {
+                    characterobject.vy++;
+                    characterobject.c3 = 1;
+                } else
+                {
+                    characterobject.vy += 2;
+                    characterobject.c3 = 0;
+                }
+                if(characterobject.vy > 17)
+                    characterobject.vy = 17;
+                l20 += 5;
+                var l32 = i21;
+                i21 += characterobject.vy;
+                if(characterobject.vy < 4)
+                {
+                    characterobject.pt = 155;
+                    characterobject.pth = 1;
+                } else
+                {
+                    characterobject.pt = 156;
+                    characterobject.pth = 1;
+                }
+                if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
+                {
+                    i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
+                    characterobject.vy = 0;
+                }
+                var i40 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                if(i40 >= 20 || i40 == 10 || i40 == 15)
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    characterobject.c1 = 15;
+                    characterobject.pt = 154;
+                    characterobject.pth = 1;
+                }
+                if(i40 == 18 || i40 == 19)
+                {
+                    if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
+                    {
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.c1 = 15;
+                        characterobject.pt = 154;
+                        characterobject.pth = 1;
+                    }
+                } else
+                if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(l32 + 31, 5))
+                {
+                    var j40 = this.maps.getBGCode(l20 + 15, l32 + 31);
+                    if(j40 == 18 || j40 == 19)
+                    {
+                        i21 = rightShiftIgnoreSign(l32 + 31, 5) * 32;
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.c1 = 15;
+                        characterobject.pt = 154;
+                        characterobject.pth = 1;
+                    }
+                }
+                if(this.yuka_id_max >= 0)
+                {
+                    for(var i7 = 0; i7 <= this.yuka_id_max; i7++)
+                    {
+                        if(this.yo[i7].con >= 300 && this.yo[i7].con < 350)
+                        {
+                            var i27 = this.getSCOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
+                            if(i27 >= 0 && i27 <= i21 && i27 + 31 >= i21)
+                            {
+                                i21 = i27;
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 1;
+                            }
+                            continue;
+                        }
+                        if(this.yo[i7].con >= 350 && this.yo[i7].con < 400)
+                        {
+                            var j27 = this.getSHCOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
+                            if(j27 >= 0 && j27 <= i21 && j27 + 31 >= i21)
+                            {
+                                i21 = j27;
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 1;
+                            }
+                            continue;
+                        }
+                        if(this.yo[i7].con >= 400 && this.yo[i7].con < 450)
+                        {
+                            var k27 = this.getSWUpOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
+                            if(k27 >= 0 && k27 <= i21 && k27 + 31 >= i21)
+                            {
+                                i21 = k27;
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 1;
+                            }
+                            continue;
+                        }
+                        if(this.yo[i7].con < 450 || this.yo[i7].con >= 500)
+                            continue;
+                        var l27 = this.getSWDownOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
+                        if(l27 >= 0 && l27 <= i21 && l27 + 31 >= i21)
+                        {
+                            i21 = l27;
+                            characterobject.c1 = 15;
+                            characterobject.pt = 154;
+                            characterobject.pth = 1;
+                        }
+                    }
+
+                }
+                if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20 + 31, i21 + 31) >= 20 || this.maps.getBGCode(l20 + 31, i21 + 8) >= 20))
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.c = 600;
+                }
+                if(i >= 120 && l20 > this.maps.wx + 512)
+                    characterobject.c = 0;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            break;
+
+        case 650: 
+            if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
+            {
+                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                characterobject.vx = 0;
+            }
+            if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                characterobject.vx = 0;
+            }
+            l20 += characterobject.vx;
+            characterobject.vy += 2;
+            if(characterobject.vy > 18)
+                characterobject.vy = 18;
+            i21 += characterobject.vy;
+            var i28 = rightShiftIgnoreSign(i21 + 31, 5);
+            var word2 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][i28];
+            var word5 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][i28];
+            if(word2 >= 10 || word5 >= 10)
+            {
+                i21 = i28 * 32 - 32;
+                if(characterobject.muki == 1)
+                    characterobject.c = 605;
+                else
+                    characterobject.c = 600;
+                characterobject.c1 = 15;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            if(characterobject.vy < 4)
+                characterobject.pt = 155;
+            else
+                characterobject.pt = 156;
+            characterobject.pth = characterobject.muki;
+            break;
+
+        case 660: 
+            if(characterobject.c4 < 20)
+            {
+                characterobject.c4++;
+                characterobject.pt = 154;
+                characterobject.pth = 0;
+                if(characterobject.c4 < 10)
+                    characterobject.pth = 1;
+            } else
+            if(characterobject.c4 == 20)
+            {
+                if((l20 -= 8) <= characterobject.c3 - 128)
+                {
+                    l20 = characterobject.c3 - 128;
+                    characterobject.c4 = 30;
+                }
+                characterobject.pt = 155 + this.g_ac;
+                characterobject.pth = 0;
+            } else
+            if(characterobject.c4 < 50)
+            {
+                characterobject.c4++;
+                characterobject.pt = 154;
+                characterobject.pth = 1;
+                if(characterobject.c4 < 40)
+                    characterobject.pth = 0;
+            } else
+            if(characterobject.c4 == 50)
+            {
+                if((l20 += 8) >= characterobject.c3)
+                {
+                    l20 = characterobject.c3;
+                    characterobject.c4 = 0;
+                }
+                characterobject.pt = 155 + this.g_ac;
+                characterobject.pth = 1;
+            }
+            break;
+
+        case 670: 
+            if(characterobject.c4 < 10)
+            {
+                characterobject.c4++;
+                characterobject.pt = 154;
+                if(l20 + 8 >= this.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+            } else
+            if(characterobject.c4 == 10)
+            {
+                if(l20 - 128 - 16 <= this.co_j.x && l20 - 48 >= this.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
+                    characterobject.c4 = 100;
+                if(l20 + 128 + 16 >= this.co_j.x && l20 + 48 <= this.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
+                    characterobject.c4 = 200;
+                characterobject.pt = 154;
+                if(l20 + 8 >= this.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+            } else
+            if(characterobject.c4 == 100)
+            {
+                if((l20 -= 10) <= characterobject.c3 - 160)
+                {
+                    l20 = characterobject.c3 - 160;
+                    characterobject.c4 = 150;
+                }
+                characterobject.pt = 155 + this.g_ac;
+                characterobject.pth = 0;
+            } else
+            if(characterobject.c4 == 150)
+            {
+                if((l20 += 4) >= characterobject.c3)
+                {
+                    l20 = characterobject.c3;
+                    characterobject.c4 = 0;
+                }
+                characterobject.pt = 155 + this.g_ac;
+                characterobject.pth = 1;
+            } else
+            if(characterobject.c4 == 200)
+            {
+                if((l20 += 10) >= characterobject.c3 + 160)
+                {
+                    l20 = characterobject.c3 + 160;
+                    characterobject.c4 = 250;
+                }
+                characterobject.pt = 155 + this.g_ac;
+                characterobject.pth = 1;
+            } else
+            if(characterobject.c4 == 250)
+            {
+                if((l20 -= 4) <= characterobject.c3)
+                {
+                    l20 = characterobject.c3;
+                    characterobject.c4 = 0;
+                }
+                characterobject.pt = 155 + this.g_ac;
+                characterobject.pth = 0;
+            }
+            break;
+
+        case 700: 
+            if(this.ana_kazu > 0)
+            {
+                var j7 = 0;
+                do
+                {
+                    if(j7 > 11)
+                        break;
+                    if(this.ana_c[j7] > 0 && this.ana_y[j7] * 32 == i21 + 32 && Math.abs(this.ana_x[j7] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j7] * 32;
+                        break;
+                    }
+                    j7++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c3 != 1)
+                if(characterobject.c1 > 0)
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 == 2)
+                    {
+                        if(characterobject.c3 == 2)
+                        {
+                            if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
+                                if(l20 + 8 >= this.co_j.x)
+                                {
+                                    this.mSet2(l20, i21, 800, -10, -32);
+                                    this.gs.rsAddSound(22);
+                                } else
+                                {
+                                    this.mSet2(l20, i21, 800, 10, -32);
+                                    this.gs.rsAddSound(22);
+                                }
+                        } else
+                        if(characterobject.c3 == 3)
+                        {
+                            if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
+                                if(l20 + 8 >= this.co_j.x)
+                                {
+                                    var d14 = 3.1400001049041748;
+                                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+                                    d14 = 3.6633334159851074;
+                                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+                                    d14 = 4.1866669654846191;
+                                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+                                    this.gs.rsAddSound(11);
+                                } else
+                                {
+                                    var d15 = 0.0;
+                                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+                                    d15 = 5.7566671371459961;
+                                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+                                    d15 = 5.2333335876464844;
+                                    this.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+                                    this.gs.rsAddSound(11);
+                                }
+                        } else
+                        if(characterobject.c3 == 4)
+                        {
+                            if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
+                                if(l20 + 8 >= this.co_j.x)
+                                {
+                                    this.mSet2(l20, i21, 810, -12, 0);
+                                    this.gs.rsAddSound(22);
+                                } else
+                                {
+                                    this.mSet2(l20, i21, 810, 12, 0);
+                                    this.gs.rsAddSound(22);
+                                }
+                        } else
+                        if(l20 + 8 >= this.co_j.x)
+                        {
+                            this.mSet(l20, i21, 300);
+                            if(Math.abs(i21 - this.co_j.y) <= 288)
+                                this.gs.rsAddSound(14);
+                        } else
+                        {
+                            this.mSet(l20, i21, 305);
+                            if(Math.abs(i21 - this.co_j.y) <= 288)
+                                this.gs.rsAddSound(14);
+                        }
+                    } else
+                    if(characterobject.c3 != 2 && characterobject.c3 != 3 && characterobject.c1 > 40)
+                        characterobject.c1 = 0;
+                    else
+                    if(characterobject.c1 > 52)
+                        characterobject.c1 = 0;
+                } else
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && this.co_j.x >= l20 - 256 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 96)
+                    characterobject.c1 = 1;
+            characterobject.pt = 158;
+            if(l20 + 8 >= this.co_j.x)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 710: 
+            if(this.ana_kazu > 0)
+            {
+                var k7 = 0;
+                do
+                {
+                    if(k7 > 11)
+                        break;
+                    if(this.ana_c[k7] > 0 && this.ana_y[k7] * 32 == i21 + 32 && Math.abs(this.ana_x[k7] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[k7] * 32;
+                        break;
+                    }
+                    k7++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 320 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
+                    if(characterobject.c3 == 0)
+                        characterobject.c1 = 1;
+                    else
+                        characterobject.c1 = 100;
+            } else
+            if(characterobject.c1 == 1)
+            {
+                if(l20 + 8 >= this.co_j.x)
+                {
+                    this.mSet(l20, i21, 300);
+                    this.gs.rsAddSound(14);
+                } else
+                {
+                    this.mSet(l20, i21, 305);
+                    this.gs.rsAddSound(14);
+                }
+                characterobject.c1 = 300;
+            } else
+            if(characterobject.c1 >= 100 && characterobject.c1 < 200)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 101)
+                    this.gs.rsAddSound(14);
+                if(Math.abs(this.co_j.x - l20) >= 48 && (characterobject.c1 == 101 || characterobject.c1 == 109 || characterobject.c1 == 117))
+                    if(l20 + 8 >= this.co_j.x)
+                        this.mSet(l20, i21, 300);
+                    else
+                        this.mSet(l20, i21, 305);
+                if(characterobject.c1 >= 125)
+                    characterobject.c1 = 300;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 335)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 158;
+            if(l20 + 8 >= this.co_j.x)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 720: 
+            if(this.ana_kazu > 0)
+            {
+                var l7 = 0;
+                do
+                {
+                    if(l7 > 11)
+                        break;
+                    if(this.ana_c[l7] > 0 && this.ana_y[l7] * 32 == i21 + 32 && Math.abs(this.ana_x[l7] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[l7] * 32;
+                        break;
+                    }
+                    l7++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx - 16 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 352 && this.co_j.x <= l20 - 72 && Math.abs(this.co_j.y - i21) < 64)
+                {
+                    this.mSet2(l20, i21, 77, i, 0);
+                    this.gs.rsAddSound(14);
+                    characterobject.c1 = 300;
+                }
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 380)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 158;
+            characterobject.pth = 0;
+            break;
+
+        case 725: 
+            if(this.ana_kazu > 0)
+            {
+                var i8 = 0;
+                do
+                {
+                    if(i8 > 11)
+                        break;
+                    if(this.ana_c[i8] > 0 && this.ana_y[i8] * 32 == i21 + 32 && Math.abs(this.ana_x[i8] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[i8] * 32;
+                        break;
+                    }
+                    i8++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx - 16 - 144 && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x <= l20 + 352 && this.co_j.x >= l20 + 72 && Math.abs(this.co_j.y - i21) < 32)
+                {
+                    this.mSet2(l20, i21, 87, i, 0);
+                    this.gs.rsAddSound(14);
+                    characterobject.c1 = 300;
+                }
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 380)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 158;
+            characterobject.pth = 1;
+            break;
+
+        case 800: 
+            if(this.ana_kazu > 0)
+            {
+                var j8 = 0;
+                do
+                {
+                    if(j8 > 11)
+                        break;
+                    if(this.ana_c[j8] > 0 && this.ana_y[j8] * 32 == i21 + 32 && Math.abs(this.ana_x[j8] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[j8] * 32;
+                        break;
+                    }
+                    j8++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 > 0)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 2)
+                {
+                    if(characterobject.c4 == 1)
+                    {
+                        if(l20 + 8 >= this.co_j.x)
+                        {
+                            var d16 = 3.1400001049041748;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+                            d16 = 3.6633334159851074;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+                            d16 = 4.1866669654846191;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+                            this.gs.rsAddSound(11);
+                        } else
+                        {
+                            var d17 = 0.0;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+                            d17 = 5.7566671371459961;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+                            d17 = 5.2333335876464844;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+                            this.gs.rsAddSound(11);
+                        }
+                    } else
+                    if(characterobject.c4 == 2)
+                    {
+                        this.mSet(l20, i21, 100);
+                        this.gs.rsAddSound(10);
+                        characterobject.c1 = 12;
+                    } else
+                    if(characterobject.c4 == 3)
+                    {
+                        if(l20 + 8 >= this.co_j.x)
+                        {
+                            this.mSet2(l20 - 16, i21, 732, -10, 0);
+                            if(Math.abs(i21 - this.co_j.y) <= 288)
+                                this.gs.rsAddSound(15);
+                        } else
+                        {
+                            this.mSet2(l20 + 16, i21, 732, 10, 0);
+                            if(Math.abs(i21 - this.co_j.y) <= 288)
+                                this.gs.rsAddSound(15);
+                        }
+                        characterobject.c1 = 12;
+                    } else
+                    if(characterobject.c4 == 4)
+                    {
+                        for(var k8 = 0; k8 <= 300; k8 += 90)
+                        {
+                            this.mSet2(l20, i21, 950, k8, 0);
+                            this.mSet2(l20, i21, 960, 300 - k8, 0);
+                            this.gs.rsAddSound(18);
+                        }
+
+                    } else
+                    if(l20 + 8 >= this.co_j.x)
+                    {
+                        this.mSet(l20, i21, 400);
+                        if(Math.abs(i21 - this.co_j.y) <= 288)
+                            this.gs.rsAddSound(15);
+                    } else
+                    {
+                        this.mSet(l20, i21, 405);
+                        if(Math.abs(i21 - this.co_j.y) <= 288)
+                            this.gs.rsAddSound(15);
+                    }
+                } else
+                if(characterobject.c1 > 20)
+                {
+                    characterobject.c = 810;
+                    characterobject.c1 = 0;
+                }
+            } else
+            if(characterobject.c1 < 0)
+                characterobject.c1++;
+            else
+            if(this.co_j.x >= l20 - 240 && this.co_j.x <= l20 + 240)
+                characterobject.c1 = 1;
+            characterobject.pt = 160;
+            if(l20 + 8 >= this.co_j.x)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 810: 
+            if(this.ana_kazu > 0)
+            {
+                var l8 = 0;
+                do
+                {
+                    if(l8 > 11)
+                        break;
+                    if(this.ana_c[l8] > 0 && this.ana_y[l8] * 32 == i21 + 32 && Math.abs(this.ana_x[l8] * 32 - l20) < 32)
+                    {
+                        characterobject.c = 1300;
+                        l20 = this.ana_x[l8] * 32;
+                        break;
+                    }
+                    l8++;
+                } while(true);
+                if(characterobject.c == 1300)
+                    break;
+            }
+            if(characterobject.c1 <= 0)
+            {
+                if((l20 += 3) >= characterobject.c3 + 96)
+                {
+                    l20 = characterobject.c3 + 96;
+                    characterobject.c1 = 10;
+                }
+                if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.c1 = 10;
+                }
+                characterobject.pt = 161 + this.g_ac;
+                characterobject.pth = 1;
+            } else
+            if(characterobject.c4 != 4 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 15)
+                    if(characterobject.c4 == 1)
+                    {
+                        if(l20 + 8 >= this.co_j.x)
+                        {
+                            var d18 = 3.1400001049041748;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+                            d18 = 3.6633334159851074;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+                            d18 = 4.1866669654846191;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+                            this.gs.rsAddSound(11);
+                        } else
+                        {
+                            var d19 = 0.0;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+                            d19 = 5.7566671371459961;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+                            d19 = 5.2333335876464844;
+                            this.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+                            this.gs.rsAddSound(11);
+                        }
+                    } else
+                    if(characterobject.c4 == 2)
+                    {
+                        this.mSet(l20, i21, 100);
+                        this.gs.rsAddSound(10);
+                    } else
+                    if(characterobject.c4 == 3)
+                    {
+                        if(l20 + 8 >= this.co_j.x)
+                        {
+                            this.mSet2(l20 - 16, i21, 732, -10, 0);
+                            if(Math.abs(i21 - this.co_j.y) <= 288)
+                                this.gs.rsAddSound(15);
+                        } else
+                        {
+                            this.mSet2(l20 + 16, i21, 732, 10, 0);
+                            if(Math.abs(i21 - this.co_j.y) <= 288)
+                                this.gs.rsAddSound(15);
+                        }
+                    } else
+                    if(characterobject.c4 == 4)
+                    {
+                        for(var i9 = 0; i9 <= 300; i9 += 90)
+                        {
+                            this.mSet2(l20, i21, 950, i9, 0);
+                            this.mSet2(l20, i21, 960, 300 - i9, 0);
+                            this.gs.rsAddSound(18);
+                        }
+
+                    } else
+                    if(l20 + 8 >= this.co_j.x)
+                    {
+                        this.mSet(l20, i21, 400);
+                        this.gs.rsAddSound(15);
+                    } else
+                    {
+                        this.mSet(l20, i21, 405);
+                        this.gs.rsAddSound(15);
+                    }
+                characterobject.pt = 160;
+                if(l20 + 8 >= this.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+            } else
+            {
+                if((l20 -= 3) <= characterobject.c3)
+                {
+                    l20 = characterobject.c3;
+                    characterobject.c = 800;
+                    characterobject.c1 = -20;
+                }
+                if(this.maps.getBGCode(l20, i21 + 32) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 800;
+                    characterobject.c1 = -20;
+                }
+                characterobject.pt = 161 + this.g_ac;
+                characterobject.pth = 0;
+            }
+            break;
+
+        case 850: 
+            characterobject.pt = 160;
+            characterobject.pth = 0;
+            if(characterobject.c1 <= 0)
+            {
+                if((l20 -= 4) - this.maps.wx <= 400)
+                {
+                    l20 = this.maps.wx + 384 + 16;
+                    characterobject.c1 = 2;
+                }
+                characterobject.pt = 161 + this.g_ac;
+                characterobject.pth = 0;
+            } else
+            if(characterobject.c1 <= 20)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 8)
+                {
+                    var d20 = 3.1400001049041748;
+                    var k29 = Math.floor(Math.cos(d20) * 12);
+                    var i33 = Math.floor(Math.sin(d20) * 12) * -1;
+                    this.mSet2(l20, i21, 730, k29, i33);
+                    d20 = 2.7038888931274414;
+                    k29 = Math.floor(Math.cos(d20) * 12);
+                    i33 = Math.floor(Math.sin(d20) * 12) * -1;
+                    this.mSet2(l20, i21, 730, k29, i33);
+                    d20 = 2.2677779197692871;
+                    k29 = Math.floor(Math.cos(d20) * 12);
+                    i33 = Math.floor(Math.sin(d20) * 12) * -1;
+                    this.mSet2(l20, i21, 730, k29, i33);
+                    d20 = 3.5761110782623291;
+                    k29 = Math.floor(Math.cos(d20) * 12);
+                    i33 = Math.floor(Math.sin(d20) * 12) * -1;
+                    this.mSet2(l20, i21, 730, k29, i33);
+                    d20 = 4.0122222900390625;
+                    k29 = Math.floor(Math.cos(d20) * 12);
+                    i33 = Math.floor(Math.sin(d20) * 12) * -1;
+                    this.mSet2(l20, i21, 730, k29, i33);
+                    this.gs.rsAddSound(18);
+                }
+            } else
+            {
+                if((l20 += 6) - this.maps.wx >= 512)
+                    characterobject.c = 0;
+                characterobject.pt = 161 + this.g_ac;
+                characterobject.pth = 1;
+            }
+            break;
+
+        case 900: 
+            if((l20 -= 4) < 48)
+            {
+                if(l20 <= 4)
+                    characterobject.c = 0;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 1)
+                    this.mSet(l20, i21 + 19, 600);
+                else
+                if(characterobject.c1 > 26)
+                    characterobject.c1 = 0;
+                if(this.maps.getBGCode(l20, i21 + 31) >= 15)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.c = 910;
+                }
+            }
+            characterobject.pt = 164;
+            characterobject.pth = 0;
+            break;
+
+        case 910: 
+            characterobject.pt = 164;
+            characterobject.pth = 0;
+            break;
+
+        case 920: 
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 256 && this.co_j.x <= l20 + 256 && this.co_j.y >= i21 + 16)
+                    characterobject.c1 = 1;
+            } else
+            if(characterobject.c1 == 1)
+            {
+                if(characterobject.c3 == 1)
+                    this.mSet2(l20, i21, 800, 0, 0);
+                else
+                    this.mSet(l20, i21 + 19, 606);
+                characterobject.c1 = 2;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 30)
+                    characterobject.c1 = 0;
+            }
+            characterobject.pt = 164;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 930: 
+            if(characterobject.c4 < 20)
+            {
+                characterobject.c4++;
+                characterobject.pt = 164;
+                characterobject.pth = 0;
+                if(characterobject.c4 < 10)
+                    characterobject.pth = 1;
+            } else
+            if(characterobject.c4 == 20)
+            {
+                if(((l20 -= 4) == characterobject.c3 - 4 || l20 == characterobject.c3 - 4 - 64 || l20 == characterobject.c3 - 4 - 128) && l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 <= (this.maps.wy + 320) - 32 && this.co_j.y >= i21 + 16)
+                    this.mSet(l20 + 2, i21, 600);
+                if(l20 <= characterobject.c3 - 160)
+                {
+                    l20 = characterobject.c3 - 160;
+                    characterobject.c4 = 30;
+                }
+                characterobject.pt = 164;
+                characterobject.pth = 0;
+            } else
+            if(characterobject.c4 < 50)
+            {
+                characterobject.c4++;
+                characterobject.pt = 164;
+                characterobject.pth = 1;
+                if(characterobject.c4 < 40)
+                    characterobject.pth = 0;
+            } else
+            if(characterobject.c4 == 50)
+            {
+                if(((l20 += 4) == (characterobject.c3 + 4) - 32 || l20 == (characterobject.c3 + 4) - 96) && l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 <= (this.maps.wy + 320) - 32 && this.co_j.y >= i21 + 16)
+                    this.mSet(l20 - 2, i21, 605);
+                if(l20 >= characterobject.c3)
+                {
+                    l20 = characterobject.c3;
+                    characterobject.c4 = 0;
+                }
+                characterobject.pt = 164;
+                characterobject.pth = 1;
+            }
+            break;
+
+        case 950: 
+            if((l20 -= 4) < 48)
+            {
+                if(l20 <= 4)
+                    characterobject.c = 0;
+            } else
+            {
+                characterobject.c1++;
+                if(characterobject.c1 == 1)
+                    this.mSet(l20, i21 + 19, 600);
+                else
+                if(characterobject.c1 > 26)
+                    characterobject.c1 = 0;
+                if(this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
+                {
+                    l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
+                    characterobject.c = 960;
+                    characterobject.c1 = 16;
+                }
+            }
+            characterobject.pt = 164;
+            characterobject.pth = 0;
+            break;
+
+        case 960: 
+            l20 += 4;
+            characterobject.c1++;
+            if(characterobject.c1 == 1)
+                this.mSet(l20, i21 + 19, 605);
+            else
+            if(characterobject.c1 > 26)
+                characterobject.c1 = 0;
+            if(this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
+                characterobject.c = 950;
+                characterobject.c1 = 16;
+            }
+            characterobject.pt = 164;
+            characterobject.pth = 1;
+            break;
+
+        case 1000: 
+            if((l20 -= 3) <= (characterobject.c3 - 256) + 16)
+                characterobject.c = 1005;
+            if(this.maps.getBGCode(l20 - 16, i21) >= 15 || this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
+            {
+                l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
+                characterobject.c = 1005;
+            }
+            characterobject.pt = 166;
+            characterobject.pth = 0;
+            break;
+
+        case 1002: 
+            if((l20 -= 3) <= this.maps.wx - 32)
+                characterobject.c = 0;
+            if(l20 >= this.maps.wx + 64 + 24 && l20 <= (this.maps.wx + 512) - 64)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 30)
+                    characterobject.c1 = 0;
+                if(characterobject.c1 == 1)
+                    this.mSet(l20, i21, 150);
+            }
+            characterobject.pt = 166;
+            characterobject.pth = 0;
+            break;
+
+        case 1003: 
+            if(l20 >= this.maps.wx + 64 + 24 && l20 <= (this.maps.wx + 512) - 64)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 30)
+                    characterobject.c1 = 0;
+                if(characterobject.c1 == 1)
+                    this.mSet(l20, i21, 150);
+            }
+            characterobject.pt = 166;
+            characterobject.pth = 0;
+            break;
+
+        case 1005: 
+            if((l20 += 3) >= characterobject.c3 + 16)
+                characterobject.c = 1000;
+            if(this.maps.getBGCode(l20 + 31 + 16, i21) >= 15 || this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
+                characterobject.c = 1000;
+            }
+            characterobject.pt = 166;
+            characterobject.pth = 1;
+            break;
+
+        case 1050: 
+            characterobject.pt = 166;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            if(characterobject.c1 <= 0)
+            {
+                var j28 = this.maps.getBGCode(l20 + 15, i21 + 32);
+                if(j28 == 18 || j28 == 19)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 32);
+                if(this.co_j.x >= l20 - 136 && this.co_j.x <= l20 + 136)
+                {
+                    characterobject.vy = -26;
+                    characterobject.c1 = 100;
+                }
+            } else
+            if(characterobject.c1 == 100)
+            {
+                characterobject.vy += 2;
+                if(characterobject.vy > 18)
+                    characterobject.vy = 18;
+                if(characterobject.vy < -22)
+                    i21 -= 22;
+                else
+                    i21 += characterobject.vy;
+                if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21) >= 18)
+                {
+                    i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                    characterobject.vy = 0;
+                }
+                var k40 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                if(k40 >= 20 || k40 == 10 || k40 == 15)
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    characterobject.c1 = 200;
+                }
+                if(k40 == 18 || k40 == 19)
+                {
+                    if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
+                    {
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.c1 = 200;
+                    }
+                } else
+                if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
+                {
+                    var l40 = this.maps.getBGCode(l20 + 15, characterobject.y + 31);
+                    if(l40 == 18 || l40 == 19)
+                    {
+                        i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.c1 = 200;
+                    }
+                }
+            } else
+            if(characterobject.c1 >= 200)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 210)
+                    characterobject.c1 = 0;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            break;
+
+        case 1060: 
+            characterobject.pt = 166;
+            characterobject.pth = 0;
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 < this.co_j.x)
+                    characterobject.pth = 1;
+                if(this.co_j.c >= 100 && this.co_j.c < 200 && (characterobject.c3 - 160) + 16 <= this.co_j.x && (characterobject.c3 + 128) - 16 >= this.co_j.x && (characterobject.c4 - 128) + 16 <= this.co_j.y && (characterobject.c4 + 128) - 16 >= this.co_j.y)
+                {
+                    characterobject.c1 = 100;
+                    if(l20 > this.co_j.x)
+                    {
+                        if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                            characterobject.c1 = 0;
+                    } else
+                    if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                        characterobject.c1 = 0;
+                    if(i21 > this.co_j.y)
+                    {
+                        if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                            characterobject.c1 = 0;
+                    } else
+                    if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                        characterobject.c1 = 0;
+                }
+            } else
+            if(characterobject.c1 == 100)
+            {
+                if(l20 > this.co_j.x)
+                {
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                        characterobject.c1 = 200;
+                } else
+                if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                    characterobject.c1 = 200;
+                if(i21 > this.co_j.y)
+                {
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                        characterobject.c1 = 200;
+                } else
+                if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                    characterobject.c1 = 200;
+                if(characterobject.c1 == 200)
+                {
+                    if(l20 < characterobject.c3)
+                        characterobject.pth = 1;
+                    if(l20 == characterobject.c3 && l20 < this.co_j.x)
+                        characterobject.pth = 1;
+                } else
+                {
+                    if(l20 < this.co_j.x)
+                        characterobject.pth = 1;
+                    if(Math.abs(l20 - this.co_j.x) <= 3)
+                        l20 = this.co_j.x;
+                    else
+                    if(l20 < this.co_j.x)
+                        l20 += 3;
+                    else
+                    if(l20 > this.co_j.x)
+                        l20 -= 3;
+                    if(Math.abs(i21 - this.co_j.y) <= 2)
+                        i21 = this.co_j.y;
+                    else
+                    if(i21 < this.co_j.y)
+                        i21 += 2;
+                    else
+                    if(i21 > this.co_j.y)
+                        i21 -= 2;
+                    if(characterobject.c3 - 160 > this.co_j.x || characterobject.c3 + 128 < this.co_j.x || characterobject.c4 - 128 > this.co_j.y || characterobject.c4 + 128 < this.co_j.y)
+                        characterobject.c1 = 200;
+                    if(this.co_j.c < 100 || this.co_j.c >= 200)
+                        characterobject.c1 = 200;
+                }
+            } else
+            if(characterobject.c1 == 200)
+            {
+                if(l20 < characterobject.c3)
+                    characterobject.pth = 1;
+                if(l20 == characterobject.c3 && l20 < this.co_j.x)
+                    characterobject.pth = 1;
+                if(Math.abs(l20 - characterobject.c3) <= 3)
+                    l20 = characterobject.c3;
+                else
+                if(l20 < characterobject.c3)
+                    l20 += 3;
+                else
+                if(l20 > characterobject.c3)
+                    l20 -= 3;
+                if(Math.abs(i21 - characterobject.c4) <= 2)
+                    i21 = characterobject.c4;
+                else
+                if(i21 < characterobject.c4)
+                    i21 += 2;
+                else
+                if(i21 > characterobject.c4)
+                    i21 -= 2;
+                if(l20 == characterobject.c3 && i21 == characterobject.c4)
+                    characterobject.c1 = 0;
+            }
+            break;
+
+        case 1070: 
+            characterobject.c1 -= 5;
+            if(characterobject.c1 < 0)
+                characterobject.c1 += 360;
+            l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
+            i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
+            characterobject.pt = 166;
+            if(characterobject.c1 < 180)
+                characterobject.pth = 1;
+            else
+                characterobject.pth = 0;
+            break;
+
+        case 1080: 
+            characterobject.c1 += 5;
+            if(characterobject.c1 >= 360)
+                characterobject.c1 -= 360;
+            l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
+            i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
+            characterobject.pt = 166;
+            if(characterobject.c1 < 180)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 1100: 
+            if(characterobject.c1 > 0)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 77)
+                    characterobject.c1 = 0;
+            } else
+            if(Math.abs(this.co_j.x - l20) <= 144 && Math.abs(this.co_j.y - i21) <= 144)
+            {
+                characterobject.c1 = 1;
+                this.mSet2(l20, i21, 700, -3, -3);
+                this.mSet2(l20, i21, 700, 3, -3);
+                this.mSet2(l20, i21, 700, -3, 3);
+                this.mSet2(l20, i21, 700, 3, 3);
+                this.mSet2(l20, i21, 700, -4, 0);
+                this.mSet2(l20, i21, 700, 4, 0);
+                this.mSet2(l20, i21, 700, 0, -4);
+                this.mSet2(l20, i21, 700, 0, 4);
+            }
+            characterobject.pt = 167;
+            if(l20 + 8 >= this.co_j.x)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 1102: 
+            if(l20 <= this.maps.wx - 32)
+                characterobject.c = 0;
+            if(l20 >= this.maps.wx + 112 && l20 <= (this.maps.wx + 512) - 64)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 50)
+                    characterobject.c1 = 0;
+                if(characterobject.c1 == 1 && (this.maps.getBGCode(l20 + 15, i21 + 32) < 20 || this.co_j.y <= i21 + 8) && (this.maps.getBGCode(l20 + 15, i21 - 1) < 20 || this.co_j.y >= i21 - 8))
+                    this.mSet(l20, i21, 150);
+            }
+            characterobject.pt = 167;
+            characterobject.pth = 0;
+            break;
+
+        case 1103: 
+            if(l20 <= this.maps.wx - 32)
+                characterobject.c = 0;
+            if(l20 >= this.maps.wx + 112 && l20 <= (this.maps.wx + 512) - 64)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 50)
+                    characterobject.c1 = 0;
+                if(characterobject.c1 == 1)
+                {
+                    for(var j9 = 0; j9 <= 315; j9 += 45)
+                    {
+                        var d21 = (j9 * 3.14) / 180;
+                        var l29 = Math.floor(Math.cos(d21) * 12);
+                        var j33 = Math.floor(Math.sin(d21) * 12) * -1;
+                        this.mSet2(l20, i21, 730, l29, j33);
+                    }
+
+                }
+            }
+            characterobject.pt = 167;
+            characterobject.pth = 0;
+            break;
+
+        case 1150: 
+            characterobject.pt = 167;
+            if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            if(characterobject.c1 <= 0)
+            {
+                var k28 = this.maps.getBGCode(l20 + 15, i21 + 32);
+                if(k28 == 18 || k28 == 19)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 32);
+                if(this.co_j.x >= l20 - 128 && this.co_j.x <= l20 + 128 && i21 + 32 <= this.co_j.y)
+                {
+                    characterobject.vy = 2;
+                    characterobject.c1 = 100;
+                }
+            } else
+            if(characterobject.c1 == 100)
+            {
+                characterobject.vy++;
+                if(characterobject.vy > 16)
+                    characterobject.vy = 16;
+                if(characterobject.vy < -22)
+                    i21 -= 22;
+                else
+                    i21 += characterobject.vy;
+                if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21) >= 18)
+                {
+                    i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                    characterobject.vy = 0;
+                }
+                var i41 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                if(i41 >= 20 || i41 == 10 || i41 == 15)
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    characterobject.c1 = 200;
+                }
+                if(i41 == 18 || i41 == 19)
+                {
+                    if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
+                    {
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.c1 = 200;
+                    }
+                } else
+                if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
+                {
+                    var j41 = this.maps.getBGCode(l20 + 15, characterobject.y + 31);
+                    if(j41 == 18 || j41 == 19)
+                    {
+                        i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.c1 = 200;
+                    }
+                }
+            } else
+            if(characterobject.c1 >= 200)
+            {
+                characterobject.c1++;
+                if(characterobject.c1 > 210)
+                    characterobject.c1 = 0;
+            }
+            if(i21 >= this.ochiru_y)
+                characterobject.c = 0;
+            break;
+
+        case 1160: 
+            characterobject.pt = 167;
+            characterobject.pth = 0;
+            if(characterobject.c1 <= 0)
+            {
+                if(l20 < this.co_j.x)
+                    characterobject.pth = 1;
+                if(this.co_j.c >= 100 && this.co_j.c < 200 && (characterobject.c3 - 160) + 16 <= this.co_j.x && (characterobject.c3 + 128) - 16 >= this.co_j.x && (characterobject.c4 - 128) + 16 <= this.co_j.y && (characterobject.c4 + 128) - 16 >= this.co_j.y)
+                {
+                    characterobject.c1 = 100;
+                    if(l20 > this.co_j.x)
+                    {
+                        if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                            characterobject.c1 = 0;
+                    } else
+                    if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                        characterobject.c1 = 0;
+                    if(i21 > this.co_j.y)
+                    {
+                        if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                            characterobject.c1 = 0;
+                    } else
+                    if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                        characterobject.c1 = 0;
+                }
+            } else
+            if(characterobject.c1 == 100)
+            {
+                if(l20 > this.co_j.x)
+                {
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                        characterobject.c1 = 200;
+                } else
+                if(l20 < this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                    characterobject.c1 = 200;
+                if(i21 > this.co_j.y)
+                {
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                        characterobject.c1 = 200;
+                } else
+                if(i21 < this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                    characterobject.c1 = 200;
+                if(characterobject.c1 == 200)
+                {
+                    if(l20 < characterobject.c3)
+                        characterobject.pth = 1;
+                    if(l20 == characterobject.c3 && l20 < this.co_j.x)
+                        characterobject.pth = 1;
+                } else
+                {
+                    if(l20 < this.co_j.x)
+                        characterobject.pth = 1;
+                    if(Math.abs(l20 - this.co_j.x) <= 3)
+                        l20 = this.co_j.x;
+                    else
+                    if(l20 < this.co_j.x)
+                        l20 += 3;
+                    else
+                    if(l20 > this.co_j.x)
+                        l20 -= 3;
+                    if(Math.abs(i21 - this.co_j.y) <= 2)
+                        i21 = this.co_j.y;
+                    else
+                    if(i21 < this.co_j.y)
+                        i21 += 2;
+                    else
+                    if(i21 > this.co_j.y)
+                        i21 -= 2;
+                    if(characterobject.c3 - 160 > this.co_j.x || characterobject.c3 + 128 < this.co_j.x || characterobject.c4 - 128 > this.co_j.y || characterobject.c4 + 128 < this.co_j.y)
+                        characterobject.c1 = 200;
+                    if(this.co_j.c < 100 || this.co_j.c >= 200)
+                        characterobject.c1 = 200;
+                }
+            } else
+            if(characterobject.c1 == 200)
+            {
+                if(l20 < characterobject.c3)
+                    characterobject.pth = 1;
+                if(l20 == characterobject.c3 && l20 < this.co_j.x)
+                    characterobject.pth = 1;
+                if(Math.abs(l20 - characterobject.c3) <= 3)
+                    l20 = characterobject.c3;
+                else
+                if(l20 < characterobject.c3)
+                    l20 += 3;
+                else
+                if(l20 > characterobject.c3)
+                    l20 -= 3;
+                if(Math.abs(i21 - characterobject.c4) <= 2)
+                    i21 = characterobject.c4;
+                else
+                if(i21 < characterobject.c4)
+                    i21 += 2;
+                else
+                if(i21 > characterobject.c4)
+                    i21 -= 2;
+                if(l20 == characterobject.c3 && i21 == characterobject.c4)
+                    characterobject.c1 = 0;
+            }
+            break;
+
+        case 1170: 
+            characterobject.c1 -= 5;
+            if(characterobject.c1 < 0)
+                characterobject.c1 += 360;
+            l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
+            i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
+            characterobject.pt = 167;
+            if(characterobject.c1 < 180)
+                characterobject.pth = 1;
+            else
+                characterobject.pth = 0;
+            break;
+
+        case 1180: 
+            characterobject.c1 += 5;
+            if(characterobject.c1 >= 360)
+                characterobject.c1 -= 360;
+            l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * 64);
+            i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * 64);
+            characterobject.pt = 167;
+            if(characterobject.c1 < 180)
+                characterobject.pth = 0;
+            else
+                characterobject.pth = 1;
+            break;
+
+        case 1190: 
+            characterobject.pt = 167;
+            characterobject.pth = 0;
+            break;
+
+        case 1200: 
+            l20 -= 4;
+            characterobject.muki = 0;
+            characterobject.direction = 0;
+            if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
+            {
+                var k41 = this.maps.getBGCode(l20 + 4 + 15, i21 + 31);
+                if(k41 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                else
+                if(k41 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                k41 = this.maps.getBGCode(l20 + 15, i21 + 32);
+                if(k41 == 18)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 32);
+            }
+            var l41 = this.maps.getBGCode(l20, i21 + 8);
+            if(l41 >= 20 || l41 == 18)
+            {
+                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                if(Math.abs(i21 - this.co_j.y) >= 32 || l20 <= this.co_j.x)
+                {
+                    var i42 = this.maps.getBGCode(l20 + 32, i21 + 15);
+                    if(i42 <= 10 || i42 == 15)
+                    {
+                        characterobject.c = 1210;
+                        characterobject.muki = 1;
+                        characterobject.direction = 1;
+                        characterobject.pt = 140 + this.g_ac;
+                        var i17 = 0;
+                        do
+                        {
+                            if(i17 > this.t_kazu)
+                                break;
+                            if(this.co_t[i17].c > 1200 && this.co_t[i17].c <= 1210 && this.co_t[i17].x == l20 + 32 && Math.abs(this.co_t[i17].y - i21) < 32)
+                            {
+                                characterobject.c = 1200;
+                                break;
+                            }
+                            i17++;
+                        } while(true);
+                        break;
+                    }
+                }
+            }
+            if(Math.abs(i21 - this.co_j.y) < 32 && l20 < this.co_j.x)
+            {
+                characterobject.c = 1210;
+                characterobject.pt = 140 + this.g_ac;
+            } else
+            {
+                var flag1 = false;
+                for(var j17 = 0; j17 <= this.t_kazu; j17++)
+                {
+                    if((this.co_t[j17].c < 1200 || this.co_t[j17].c >= 1300) && this.co_t[j17].c != 60 || j17 == i || Math.abs(this.co_t[j17].x - l20) >= 32 || Math.abs(this.co_t[j17].y - i21) >= 32)
+                        continue;
+                    if(this.co_t[j17].c == 1210)
+                    {
+                        var k33 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                        if(k33 <= 1 || k33 >= 5)
+                        {
+                            if(l20 > this.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                        } else
+                        if(l20 < this.co_j.x)
+                            characterobject.c = 1200;
+                        else
+                            characterobject.c = 1210;
+                        var i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var k9 = 1;
+                            do
+                            {
+                                if(k9 > 31 || i30 + k9 >= this.mapWidth || this.maps.map_bg[i30 + k9][k33] >= 19)
+                                    break;
+                                if(this.maps.map_bg[i30 + k9][k33 + 1] <= 10 || this.maps.map_bg[i30 + k9][k33 + 1] == 15)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                k9++;
+                            } while(true);
+                        } else
+                        if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var l9 = 1;
+                            do
+                            {
+                                if(l9 > 31 || i30 + l9 >= this.mapWidth || this.maps.map_bg[i30 + l9][k33] >= 19)
+                                    break;
+                                if(this.maps.map_bg[i30 + l9][k33] == 10)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                l9++;
+                            } while(true);
+                        }
+                        i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var i10 = 1;
+                            do
+                            {
+                                if(i10 > 31 || i30 - i10 <= 0 || this.maps.map_bg[i30 - i10][k33] >= 20 || this.maps.map_bg[i30 - i10][k33] == 18)
+                                    break;
+                                if(this.maps.map_bg[i30 - i10][k33 + 1] <= 10 || this.maps.map_bg[i30 - i10][k33 + 1] == 15)
+                                {
+                                    characterobject.c = 1200;
+                                    break;
+                                }
+                                i10++;
+                            } while(true);
+                        } else
+                        if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var j10 = 1;
+                            do
+                            {
+                                if(j10 > 31 || i30 - j10 <= 0 || this.maps.map_bg[i30 - j10][k33] >= 20 || this.maps.map_bg[i30 - j10][k33] == 18)
+                                    break;
+                                if(this.maps.map_bg[i30 - j10][k33] == 10)
+                                {
+                                    characterobject.c = 1200;
+                                    break;
+                                }
+                                j10++;
+                            } while(true);
+                        }
+                        if(j17 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
+                            characterobject.c = 1210;
+                        if(characterobject.c == 1200 && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
+                            if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
+                            {
+                                characterobject.c = 1210;
+                                for(var k10 = 0; k10 <= this.t_kazu; k10++)
+                                    if(this.co_t[k10].c == 1200 && Math.abs(this.co_t[k10].y - characterobject.y) <= 16 && characterobject.x <= this.co_t[k10].x)
+                                    {
+                                        var j20 = 0;
+                                        do
+                                        {
+                                            if(j20 > this.t_kazu)
+                                                break;
+                                            if(this.co_t[j20].c >= 1200 && this.co_t[j20].c < 1300 && Math.abs(this.co_t[j20].y - this.co_t[k10].y) <= 16 && this.co_t[j20].x >= this.co_t[k10].x - 32 && this.co_t[j20].x < this.co_t[k10].x && k10 != j20)
+                                            {
+                                                this.co_t[k10].c = 1210;
+                                                break;
+                                            }
+                                            j20++;
+                                        } while(true);
+                                    }
+
+                            } else
+                            if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32 + 15) == 10)
+                            {
+                                characterobject.c = 1210;
 label0:
-								for(var l10 = 0; l10 <= this.t_kazu; l10++)
-								{
-									if(this.co_t[l10].c != 1200 || Math.abs(this.co_t[l10].y - characterobject.y) > 16 || characterobject.x > this.co_t[l10].x)
-										continue;
-									var k20 = 0;
-									do
-									{
-										if(k20 > this.t_kazu)
-											continue label0;
-										if(this.co_t[k20].c >= 1200 && this.co_t[k20].c < 1300 && Math.abs(this.co_t[k20].y - this.co_t[l10].y) <= 16 && this.co_t[k20].x >= this.co_t[l10].x - 32 && this.co_t[k20].x < this.co_t[l10].x && l10 != k20)
-										{
-											this.co_t[l10].c = 1210;
-											continue label0;
-										}
-										k20++;
-									} while(true);
-								}
+                                for(var l10 = 0; l10 <= this.t_kazu; l10++)
+                                {
+                                    if(this.co_t[l10].c != 1200 || Math.abs(this.co_t[l10].y - characterobject.y) > 16 || characterobject.x > this.co_t[l10].x)
+                                        continue;
+                                    var k20 = 0;
+                                    do
+                                    {
+                                        if(k20 > this.t_kazu)
+                                            continue label0;
+                                        if(this.co_t[k20].c >= 1200 && this.co_t[k20].c < 1300 && Math.abs(this.co_t[k20].y - this.co_t[l10].y) <= 16 && this.co_t[k20].x >= this.co_t[l10].x - 32 && this.co_t[k20].x < this.co_t[l10].x && l10 != k20)
+                                        {
+                                            this.co_t[l10].c = 1210;
+                                            continue label0;
+                                        }
+                                        k20++;
+                                    } while(true);
+                                }
 
-							}
-						if(rightShiftIgnoreSign(characterobject.x, 5) * 32 == characterobject.x)
-							if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
-								characterobject.c = 1230;
-							else
-							if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5) && (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 10 || this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 15))
-								characterobject.c = 1220;
-						l20 = characterobject.x;
-						flag1 = true;
-						break;
-					}
-					if(this.co_t[j17].x < characterobject.x)
-					{
-						l20 = characterobject.x;
-						flag1 = true;
-						break;
-					}
-					if(this.co_t[j17].x != characterobject.x || j17 >= i)
-						continue;
-					l20 = characterobject.x;
-					flag1 = true;
-					break;
-				}
+                            }
+                        if(rightShiftIgnoreSign(characterobject.x, 5) * 32 == characterobject.x)
+                            if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
+                                characterobject.c = 1230;
+                            else
+                            if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5) && (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 10 || this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 15))
+                                characterobject.c = 1220;
+                        l20 = characterobject.x;
+                        flag1 = true;
+                        break;
+                    }
+                    if(this.co_t[j17].x < characterobject.x)
+                    {
+                        l20 = characterobject.x;
+                        flag1 = true;
+                        break;
+                    }
+                    if(this.co_t[j17].x != characterobject.x || j17 >= i)
+                        continue;
+                    l20 = characterobject.x;
+                    flag1 = true;
+                    break;
+                }
 
-				if(flag1)
-				{
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-				} else
-				{
-					if(rightShiftIgnoreSign(l20, 5) * 32 == l20)
-					{
-						var j30 = rightShiftIgnoreSign(l20 + 15, 5);
-						var l33 = rightShiftIgnoreSign(i21 + 15, 5);
-						if(this.maps.map_bg[j30][l33 + 1] <= 9 && this.maps.map_bg[j30][l33] != 10 || (this.maps.map_bg[j30][l33 + 1] <= 10 || this.maps.map_bg[j30][l33 + 1] == 15) && l33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var flag2 = false;
-							for(var i11 = 0; i11 <= 11; i11++)
-							{
-								if(this.ana_c[i11] <= 0 || this.ana_x[i11] * 32 != l20 || i21 + 32 != this.ana_y[i11] * 32)
-									continue;
-								var k17 = 0;
-								do
-								{
-									if(k17 > this.t_kazu)
-										break;
-									if((this.co_t[k17].c >= 1200 && this.co_t[k17].c < 1300 || this.co_t[k17].c == 60) && k17 != i && l20 == this.co_t[k17].x && i21 <= this.co_t[k17].y && i21 + 32 >= this.co_t[k17].y)
-									{
-										flag2 = true;
-										break;
-									}
-									k17++;
-								} while(true);
-								if(flag2)
-									break;
-							}
+                if(flag1)
+                {
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                } else
+                {
+                    if(rightShiftIgnoreSign(l20, 5) * 32 == l20)
+                    {
+                        var j30 = rightShiftIgnoreSign(l20 + 15, 5);
+                        var l33 = rightShiftIgnoreSign(i21 + 15, 5);
+                        if(this.maps.map_bg[j30][l33 + 1] <= 9 && this.maps.map_bg[j30][l33] != 10 || (this.maps.map_bg[j30][l33 + 1] <= 10 || this.maps.map_bg[j30][l33 + 1] == 15) && l33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var flag2 = false;
+                            for(var i11 = 0; i11 <= 11; i11++)
+                            {
+                                if(this.ana_c[i11] <= 0 || this.ana_x[i11] * 32 != l20 || i21 + 32 != this.ana_y[i11] * 32)
+                                    continue;
+                                var k17 = 0;
+                                do
+                                {
+                                    if(k17 > this.t_kazu)
+                                        break;
+                                    if((this.co_t[k17].c >= 1200 && this.co_t[k17].c < 1300 || this.co_t[k17].c == 60) && k17 != i && l20 == this.co_t[k17].x && i21 <= this.co_t[k17].y && i21 + 32 >= this.co_t[k17].y)
+                                    {
+                                        flag2 = true;
+                                        break;
+                                    }
+                                    k17++;
+                                } while(true);
+                                if(flag2)
+                                    break;
+                            }
 
-							var l17 = 0;
-							do
-							{
-								if(l17 > this.t_kazu)
-									break;
-								if(this.co_t[l17].c >= 1200 && this.co_t[l17].c <= 1210 && l17 != i && rightShiftIgnoreSign(this.co_t[l17].x, 5) * 32 == this.co_t[l17].x && l20 == this.co_t[l17].x && i21 <= this.co_t[l17].y && i21 + 32 >= this.co_t[l17].y && this.maps.getBGCode(this.co_t[l17].x + 15, this.co_t[l17].y + 32) >= 20)
-								{
-									flag2 = true;
-									break;
-								}
-								l17++;
-							} while(true);
-							if(!flag2)
-							{
-								characterobject.c = 1220;
-								characterobject.c1 = 0;
-							}
-						} else
-						if(this.maps.map_bg[j30][l33] == 10 && l33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-							characterobject.c = 1230;
-						else
-						if((this.maps.map_bg[j30 - 1][l33] >= 20 || this.maps.map_bg[j30 - 1][l33] >= 18) && (Math.abs(i21 - this.co_j.y) >= 32 || l20 <= this.co_j.x))
-						{
-							characterobject.c = 1210;
-							var j42 = this.maps.getBGCode(l20 + 32, i21 + 15);
-							if(j42 >= 19)
-								characterobject.c = 1200;
-						}
-					}
-					var k42 = this.maps.getBGCode(l20 + 15, i21 + 31);
-					if(k42 == 18 || k42 == 19)
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-				}
-			}
-			break;
+                            var l17 = 0;
+                            do
+                            {
+                                if(l17 > this.t_kazu)
+                                    break;
+                                if(this.co_t[l17].c >= 1200 && this.co_t[l17].c <= 1210 && l17 != i && rightShiftIgnoreSign(this.co_t[l17].x, 5) * 32 == this.co_t[l17].x && l20 == this.co_t[l17].x && i21 <= this.co_t[l17].y && i21 + 32 >= this.co_t[l17].y && this.maps.getBGCode(this.co_t[l17].x + 15, this.co_t[l17].y + 32) >= 20)
+                                {
+                                    flag2 = true;
+                                    break;
+                                }
+                                l17++;
+                            } while(true);
+                            if(!flag2)
+                            {
+                                characterobject.c = 1220;
+                                characterobject.c1 = 0;
+                            }
+                        } else
+                        if(this.maps.map_bg[j30][l33] == 10 && l33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                            characterobject.c = 1230;
+                        else
+                        if((this.maps.map_bg[j30 - 1][l33] >= 20 || this.maps.map_bg[j30 - 1][l33] >= 18) && (Math.abs(i21 - this.co_j.y) >= 32 || l20 <= this.co_j.x))
+                        {
+                            characterobject.c = 1210;
+                            var j42 = this.maps.getBGCode(l20 + 32, i21 + 15);
+                            if(j42 >= 19)
+                                characterobject.c = 1200;
+                        }
+                    }
+                    var k42 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(k42 == 18 || k42 == 19)
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                }
+            }
+            break;
 
-		case 1210: 
-			l20 += 4;
-			characterobject.muki = 1;
-			characterobject.direction = 1;
-			if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
-			{
-				var l42 = this.maps.getBGCode((l20 - 4) + 15, i21 + 31);
-				if(l42 == 18)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-				else
-				if(l42 == 19)
-					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-				l42 = this.maps.getBGCode(l20 + 15, i21 + 32);
-				if(l42 == 19)
-					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
-			}
-			if(this.maps.getBGCode(l20 + 31, i21 + 8) >= 19)
-			{
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-				if(Math.abs(i21 - this.co_j.y) >= 32 || l20 >= this.co_j.x)
-				{
-					var i43 = this.maps.getBGCode(l20 - 1, i21 + 15);
-					if(i43 <= 10 || i43 == 15)
-					{
-						characterobject.c = 1200;
-						characterobject.pt = 140 + this.g_ac;
-						characterobject.pth = characterobject.muki;
-						var i18 = 0;
-						do
-						{
-							if(i18 > this.t_kazu)
-								break;
-							if(this.co_t[i18].c > 1200 && this.co_t[i18].c <= 1210 && this.co_t[i18].x == l20 - 32 && Math.abs(this.co_t[i18].y - i21) < 32)
-							{
-								characterobject.c = 1210;
-								break;
-							}
-							i18++;
-						} while(true);
-						break;
-					}
-				}
-			}
-			if(Math.abs(i21 - this.co_j.y) < 32 && l20 > this.co_j.x)
-			{
-				characterobject.c = 1200;
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = characterobject.muki;
-			} else
-			{
-				var flag3 = false;
-				for(var j18 = 0; j18 <= this.t_kazu; j18++)
-				{
-					if((this.co_t[j18].c < 1200 || this.co_t[j18].c >= 1300) && this.co_t[j18].c != 60 || j18 == i || Math.abs(this.co_t[j18].x - l20) >= 32 || Math.abs(this.co_t[j18].y - i21) >= 32)
-						continue;
-					if(this.co_t[j18].c == 1200)
-					{
-						var i34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-						if(i34 <= 1 || i34 >= 5)
-						{
-							if(l20 > this.co_j.x)
-								characterobject.c = 1200;
-							else
-								characterobject.c = 1210;
-						} else
-						if(l20 < this.co_j.x)
-							characterobject.c = 1200;
-						else
-							characterobject.c = 1210;
-						var k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-						i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-						if(i34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var j11 = 1;
-							do
-							{
-								if(j11 > 31 || k30 + j11 >= this.mapWidth || this.maps.map_bg[k30 + j11][i34] >= 19)
-									break;
-								if(this.maps.map_bg[k30 + j11][i34 + 1] <= 10 || this.maps.map_bg[k30 + j11][i34 + 1] == 15)
-								{
-									characterobject.c = 1210;
-									break;
-								}
-								j11++;
-							} while(true);
-						} else
-						if(i34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var k11 = 1;
-							do
-							{
-								if(k11 > 31 || k30 + k11 >= this.mapWidth || this.maps.map_bg[k30 + k11][i34] >= 19)
-									break;
-								if(this.maps.map_bg[k30 + k11][i34] == 10)
-								{
-									characterobject.c = 1210;
-									break;
-								}
-								k11++;
-							} while(true);
-						}
-						k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-						i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-						if(i34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var l11 = 1;
-							do
-							{
-								if(l11 > 31 || k30 - l11 <= 0 || this.maps.map_bg[k30 - l11][i34] >= 20 || this.maps.map_bg[k30 - l11][i34] == 18)
-									break;
-								if(this.maps.map_bg[k30 - l11][i34 + 1] <= 10 || this.maps.map_bg[k30 - l11][i34 + 1] == 15)
-								{
-									characterobject.c = 1200;
-									break;
-								}
-								l11++;
-							} while(true);
-						} else
-						if(i34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var i12 = 1;
-							do
-							{
-								if(i12 > 31 || k30 - i12 <= 0 || this.maps.map_bg[k30 - i12][i34] >= 20 || this.maps.map_bg[k30 - i12][i34] == 18)
-									break;
-								if(this.maps.map_bg[k30 - i12][i34] == 10)
-								{
-									characterobject.c = 1200;
-									break;
-								}
-								i12++;
-							} while(true);
-						}
-						if(j18 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
-							characterobject.c = 1200;
-						l20 = characterobject.x;
-						flag3 = true;
-						break;
-					}
-					if(this.co_t[j18].x > characterobject.x)
-					{
-						l20 = characterobject.x;
-						flag3 = true;
-						break;
-					}
-					if(this.co_t[j18].x != characterobject.x || j18 >= i)
-						continue;
-					l20 = characterobject.x;
-					flag3 = true;
-					break;
-				}
+        case 1210: 
+            l20 += 4;
+            characterobject.muki = 1;
+            characterobject.direction = 1;
+            if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
+            {
+                var l42 = this.maps.getBGCode((l20 - 4) + 15, i21 + 31);
+                if(l42 == 18)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                else
+                if(l42 == 19)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                l42 = this.maps.getBGCode(l20 + 15, i21 + 32);
+                if(l42 == 19)
+                    i21 = this.getSakamichiY(l20 + 15, i21 + 32);
+            }
+            if(this.maps.getBGCode(l20 + 31, i21 + 8) >= 19)
+            {
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                if(Math.abs(i21 - this.co_j.y) >= 32 || l20 >= this.co_j.x)
+                {
+                    var i43 = this.maps.getBGCode(l20 - 1, i21 + 15);
+                    if(i43 <= 10 || i43 == 15)
+                    {
+                        characterobject.c = 1200;
+                        characterobject.pt = 140 + this.g_ac;
+                        characterobject.pth = characterobject.muki;
+                        var i18 = 0;
+                        do
+                        {
+                            if(i18 > this.t_kazu)
+                                break;
+                            if(this.co_t[i18].c > 1200 && this.co_t[i18].c <= 1210 && this.co_t[i18].x == l20 - 32 && Math.abs(this.co_t[i18].y - i21) < 32)
+                            {
+                                characterobject.c = 1210;
+                                break;
+                            }
+                            i18++;
+                        } while(true);
+                        break;
+                    }
+                }
+            }
+            if(Math.abs(i21 - this.co_j.y) < 32 && l20 > this.co_j.x)
+            {
+                characterobject.c = 1200;
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = characterobject.muki;
+            } else
+            {
+                var flag3 = false;
+                for(var j18 = 0; j18 <= this.t_kazu; j18++)
+                {
+                    if((this.co_t[j18].c < 1200 || this.co_t[j18].c >= 1300) && this.co_t[j18].c != 60 || j18 == i || Math.abs(this.co_t[j18].x - l20) >= 32 || Math.abs(this.co_t[j18].y - i21) >= 32)
+                        continue;
+                    if(this.co_t[j18].c == 1200)
+                    {
+                        var i34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                        if(i34 <= 1 || i34 >= 5)
+                        {
+                            if(l20 > this.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                        } else
+                        if(l20 < this.co_j.x)
+                            characterobject.c = 1200;
+                        else
+                            characterobject.c = 1210;
+                        var k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(i34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var j11 = 1;
+                            do
+                            {
+                                if(j11 > 31 || k30 + j11 >= this.mapWidth || this.maps.map_bg[k30 + j11][i34] >= 19)
+                                    break;
+                                if(this.maps.map_bg[k30 + j11][i34 + 1] <= 10 || this.maps.map_bg[k30 + j11][i34 + 1] == 15)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                j11++;
+                            } while(true);
+                        } else
+                        if(i34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var k11 = 1;
+                            do
+                            {
+                                if(k11 > 31 || k30 + k11 >= this.mapWidth || this.maps.map_bg[k30 + k11][i34] >= 19)
+                                    break;
+                                if(this.maps.map_bg[k30 + k11][i34] == 10)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                k11++;
+                            } while(true);
+                        }
+                        k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(i34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var l11 = 1;
+                            do
+                            {
+                                if(l11 > 31 || k30 - l11 <= 0 || this.maps.map_bg[k30 - l11][i34] >= 20 || this.maps.map_bg[k30 - l11][i34] == 18)
+                                    break;
+                                if(this.maps.map_bg[k30 - l11][i34 + 1] <= 10 || this.maps.map_bg[k30 - l11][i34 + 1] == 15)
+                                {
+                                    characterobject.c = 1200;
+                                    break;
+                                }
+                                l11++;
+                            } while(true);
+                        } else
+                        if(i34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var i12 = 1;
+                            do
+                            {
+                                if(i12 > 31 || k30 - i12 <= 0 || this.maps.map_bg[k30 - i12][i34] >= 20 || this.maps.map_bg[k30 - i12][i34] == 18)
+                                    break;
+                                if(this.maps.map_bg[k30 - i12][i34] == 10)
+                                {
+                                    characterobject.c = 1200;
+                                    break;
+                                }
+                                i12++;
+                            } while(true);
+                        }
+                        if(j18 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
+                            characterobject.c = 1200;
+                        l20 = characterobject.x;
+                        flag3 = true;
+                        break;
+                    }
+                    if(this.co_t[j18].x > characterobject.x)
+                    {
+                        l20 = characterobject.x;
+                        flag3 = true;
+                        break;
+                    }
+                    if(this.co_t[j18].x != characterobject.x || j18 >= i)
+                        continue;
+                    l20 = characterobject.x;
+                    flag3 = true;
+                    break;
+                }
 
-				if(flag3)
-				{
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-				} else
-				{
-					if(rightShiftIgnoreSign(l20, 5) * 32 == l20)
-					{
-						var l30 = rightShiftIgnoreSign(l20 + 15, 5);
-						var j34 = rightShiftIgnoreSign(i21 + 15, 5);
-						if(this.maps.map_bg[l30][j34 + 1] <= 9 && this.maps.map_bg[l30][j34] != 10 || (this.maps.map_bg[l30][j34 + 1] <= 10 || this.maps.map_bg[l30][j34 + 1] == 15) && j34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						{
-							var flag4 = false;
-							for(var j12 = 0; j12 <= 11; j12++)
-							{
-								if(this.ana_c[j12] <= 0 || this.ana_x[j12] * 32 != l20 || i21 + 32 != this.ana_y[j12] * 32)
-									continue;
-								var k18 = 0;
-								do
-								{
-									if(k18 > this.t_kazu)
-										break;
-									if((this.co_t[k18].c >= 1200 && this.co_t[k18].c < 1300 || this.co_t[k18].c == 60) && k18 != i && l20 == this.co_t[k18].x && i21 <= this.co_t[k18].y && i21 + 32 >= this.co_t[k18].y)
-									{
-										flag4 = true;
-										break;
-									}
-									k18++;
-								} while(true);
-								if(flag4)
-									break;
-							}
+                if(flag3)
+                {
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                } else
+                {
+                    if(rightShiftIgnoreSign(l20, 5) * 32 == l20)
+                    {
+                        var l30 = rightShiftIgnoreSign(l20 + 15, 5);
+                        var j34 = rightShiftIgnoreSign(i21 + 15, 5);
+                        if(this.maps.map_bg[l30][j34 + 1] <= 9 && this.maps.map_bg[l30][j34] != 10 || (this.maps.map_bg[l30][j34 + 1] <= 10 || this.maps.map_bg[l30][j34 + 1] == 15) && j34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        {
+                            var flag4 = false;
+                            for(var j12 = 0; j12 <= 11; j12++)
+                            {
+                                if(this.ana_c[j12] <= 0 || this.ana_x[j12] * 32 != l20 || i21 + 32 != this.ana_y[j12] * 32)
+                                    continue;
+                                var k18 = 0;
+                                do
+                                {
+                                    if(k18 > this.t_kazu)
+                                        break;
+                                    if((this.co_t[k18].c >= 1200 && this.co_t[k18].c < 1300 || this.co_t[k18].c == 60) && k18 != i && l20 == this.co_t[k18].x && i21 <= this.co_t[k18].y && i21 + 32 >= this.co_t[k18].y)
+                                    {
+                                        flag4 = true;
+                                        break;
+                                    }
+                                    k18++;
+                                } while(true);
+                                if(flag4)
+                                    break;
+                            }
 
-							var l18 = 0;
-							do
-							{
-								if(l18 > this.t_kazu)
-									break;
-								if(this.co_t[l18].c >= 1200 && this.co_t[l18].c <= 1210 && l18 != i && rightShiftIgnoreSign(this.co_t[l18].x, 5) * 32 == this.co_t[l18].x && l20 == this.co_t[l18].x && i21 <= this.co_t[l18].y && i21 + 32 >= this.co_t[l18].y && this.maps.getBGCode(this.co_t[l18].x + 15, this.co_t[l18].y + 32) >= 20)
-								{
-									flag4 = true;
-									break;
-								}
-								l18++;
-							} while(true);
-							if(!flag4)
-							{
-								characterobject.c = 1220;
-								characterobject.c1 = 0;
-							}
-						} else
-						if(this.maps.map_bg[l30][j34] == 10 && j34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-							characterobject.c = 1230;
-						else
-						if(this.maps.map_bg[l30 + 1][j34] >= 19 && (Math.abs(i21 - this.co_j.y) >= 32 || l20 >= this.co_j.x))
-						{
-							characterobject.c = 1200;
-							var j43 = this.maps.getBGCode(l20 - 1, i21 + 15);
-							if(j43 >= 20 || j43 == 18)
-								characterobject.c = 1210;
-						}
-					}
-					var k43 = this.maps.getBGCode(l20 + 15, i21 + 31);
-					if(k43 == 18 || k43 == 19)
-						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-				}
-			}
-			break;
+                            var l18 = 0;
+                            do
+                            {
+                                if(l18 > this.t_kazu)
+                                    break;
+                                if(this.co_t[l18].c >= 1200 && this.co_t[l18].c <= 1210 && l18 != i && rightShiftIgnoreSign(this.co_t[l18].x, 5) * 32 == this.co_t[l18].x && l20 == this.co_t[l18].x && i21 <= this.co_t[l18].y && i21 + 32 >= this.co_t[l18].y && this.maps.getBGCode(this.co_t[l18].x + 15, this.co_t[l18].y + 32) >= 20)
+                                {
+                                    flag4 = true;
+                                    break;
+                                }
+                                l18++;
+                            } while(true);
+                            if(!flag4)
+                            {
+                                characterobject.c = 1220;
+                                characterobject.c1 = 0;
+                            }
+                        } else
+                        if(this.maps.map_bg[l30][j34] == 10 && j34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                            characterobject.c = 1230;
+                        else
+                        if(this.maps.map_bg[l30 + 1][j34] >= 19 && (Math.abs(i21 - this.co_j.y) >= 32 || l20 >= this.co_j.x))
+                        {
+                            characterobject.c = 1200;
+                            var j43 = this.maps.getBGCode(l20 - 1, i21 + 15);
+                            if(j43 >= 20 || j43 == 18)
+                                characterobject.c = 1210;
+                        }
+                    }
+                    var k43 = this.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(k43 == 18 || k43 == 19)
+                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                }
+            }
+            break;
 
-		case 1220: 
-			if(this.maps.getBGCode(l20 + 15, i21 + 31) == 10)
-			{
-				if(l20 < this.co_j.x)
-					characterobject.muki = 1;
-				else
-				if(l20 > this.co_j.x)
-					characterobject.muki = 0;
-				characterobject.direction = 3;
-			}
-			if(i21 - 20 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 31) == 10 && (this.maps.getBGCode(l20 + 15, (i21 + 31) - 32) <= 10 || this.maps.getBGCode(l20 + 15, (i21 + 31) - 32) == 15))
-			{
-				characterobject.c = 1230;
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = characterobject.muki;
-				if(rightShiftIgnoreSign(i21, 5) * 32 != i21)
-				{
-					var i19 = 0;
-					do
-					{
-						if(i19 > this.t_kazu)
-							break;
-						if(this.co_t[i19].c >= 1220 && i19 != i && Math.abs(this.co_t[i19].x - l20) < 32 && Math.abs(i21 - 4 - this.co_t[i19].y) < 32)
-						{
-							characterobject.c = 1220;
-							break;
-						}
-						i19++;
-					} while(true);
-				}
-				if(characterobject.c == 1230)
-					break;
-			}
-			i21 += 4;
-			var flag6 = false;
+        case 1220: 
+            if(this.maps.getBGCode(l20 + 15, i21 + 31) == 10)
+            {
+                if(l20 < this.co_j.x)
+                    characterobject.muki = 1;
+                else
+                if(l20 > this.co_j.x)
+                    characterobject.muki = 0;
+                characterobject.direction = 3;
+            }
+            if(i21 - 20 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 31) == 10 && (this.maps.getBGCode(l20 + 15, (i21 + 31) - 32) <= 10 || this.maps.getBGCode(l20 + 15, (i21 + 31) - 32) == 15))
+            {
+                characterobject.c = 1230;
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = characterobject.muki;
+                if(rightShiftIgnoreSign(i21, 5) * 32 != i21)
+                {
+                    var i19 = 0;
+                    do
+                    {
+                        if(i19 > this.t_kazu)
+                            break;
+                        if(this.co_t[i19].c >= 1220 && i19 != i && Math.abs(this.co_t[i19].x - l20) < 32 && Math.abs(i21 - 4 - this.co_t[i19].y) < 32)
+                        {
+                            characterobject.c = 1220;
+                            break;
+                        }
+                        i19++;
+                    } while(true);
+                }
+                if(characterobject.c == 1230)
+                    break;
+            }
+            i21 += 4;
+            var flag6 = false;
 label1:
-			for(var j19 = 0; j19 <= this.t_kazu; j19++)
-			{
-				if((this.co_t[j19].c < 1200 || this.co_t[j19].c >= 1300) && this.co_t[j19].c != 60 || j19 == i || Math.abs(this.co_t[j19].x - l20) >= 32 || Math.abs(this.co_t[j19].y - i21) >= 32)
-					continue;
-				if(this.co_t[j19].y > characterobject.y)
-				{
-					i21 = characterobject.y;
-					flag6 = true;
-					i21 = this.co_t[j19].y - 32;
-					var flag9 = false;
-					flag9 = false;
-					if(this.co_t[j19].c == 1200 && this.maps.getBGCode(this.co_t[j19].x - 1, this.co_t[j19].y + 15) >= 20)
-						flag9 = true;
-					if(this.co_t[j19].c == 1210 && this.maps.getBGCode(this.co_t[j19].x + 32, this.co_t[j19].y + 15) >= 20)
-						flag9 = true;
-					if(this.co_t[j19].c == 1200 && this.maps.getBGCode(this.co_t[j19].x + 32, this.co_t[j19].y + 15) >= 20 && this.maps.getBGCode(this.co_t[j19].x + 15, this.co_t[j19].y + 32) >= 20)
-						flag9 = true;
-					if(this.co_t[j19].c == 1210 && this.maps.getBGCode(this.co_t[j19].x - 1, this.co_t[j19].y + 15) >= 20 && this.maps.getBGCode(this.co_t[j19].x + 15, this.co_t[j19].y + 32) >= 20)
-						flag9 = true;
-					if(!flag9)
-						break;
-					var k34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-					if(k34 <= 1 || k34 >= 5)
-					{
-						if(l20 > this.co_j.x)
-							characterobject.c = 1200;
-						else
-							characterobject.c = 1210;
-					} else
-					if(l20 < this.co_j.x)
-						characterobject.c = 1200;
-					else
-						characterobject.c = 1210;
-					var i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-					k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-					if(k34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var k12 = 1;
-						do
-						{
-							if(k12 > 31 || i31 + k12 >= this.mapWidth || this.maps.map_bg[i31 + k12][k34] >= 19)
-								break;
-							if(this.maps.map_bg[i31 + k12][k34 + 1] <= 10 || this.maps.map_bg[i31 + k12][k34 + 1] == 15)
-							{
-								characterobject.c = 1210;
-								break;
-							}
-							k12++;
-						} while(true);
-					} else
-					if(k34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var l12 = 1;
-						do
-						{
-							if(l12 > 31 || i31 + l12 >= this.mapWidth || this.maps.map_bg[i31 + l12][k34] >= 19)
-								break;
-							if(this.maps.map_bg[i31 + l12][k34] == 10)
-							{
-								characterobject.c = 1210;
-								break;
-							}
-							l12++;
-						} while(true);
-					}
-					i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-					k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-					if(k34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var i13 = 1;
-						do
-						{
-							if(i13 > 31 || i31 - i13 <= 0 || this.maps.map_bg[i31 - i13][k34] >= 20 || this.maps.map_bg[i31 - i13][k34] == 18)
-								break label1;
-							if(this.maps.map_bg[i31 - i13][k34 + 1] <= 10 || this.maps.map_bg[i31 - i13][k34 + 1] == 15)
-							{
-								characterobject.c = 1200;
-								break label1;
-							}
-							i13++;
-						} while(true);
-					}
-					if(k34 <= rightShiftIgnoreSign(this.co_j.y + 15, 5))
-						break;
-					var j13 = 1;
-					do
-					{
-						if(j13 > 31 || i31 - j13 <= 0 || this.maps.map_bg[i31 - j13][k34] >= 20 || this.maps.map_bg[i31 - j13][k34] == 18)
-							break label1;
-						if(this.maps.map_bg[i31 - j13][k34] == 10)
-						{
-							characterobject.c = 1200;
-							break label1;
-						}
-						j13++;
-					} while(true);
-				}
-				if(this.co_t[j19].y != characterobject.y || j19 >= i)
-					continue;
-				i21 = characterobject.y;
-				flag6 = true;
-				break;
-			}
+            for(var j19 = 0; j19 <= this.t_kazu; j19++)
+            {
+                if((this.co_t[j19].c < 1200 || this.co_t[j19].c >= 1300) && this.co_t[j19].c != 60 || j19 == i || Math.abs(this.co_t[j19].x - l20) >= 32 || Math.abs(this.co_t[j19].y - i21) >= 32)
+                    continue;
+                if(this.co_t[j19].y > characterobject.y)
+                {
+                    i21 = characterobject.y;
+                    flag6 = true;
+                    i21 = this.co_t[j19].y - 32;
+                    var flag9 = false;
+                    flag9 = false;
+                    if(this.co_t[j19].c == 1200 && this.maps.getBGCode(this.co_t[j19].x - 1, this.co_t[j19].y + 15) >= 20)
+                        flag9 = true;
+                    if(this.co_t[j19].c == 1210 && this.maps.getBGCode(this.co_t[j19].x + 32, this.co_t[j19].y + 15) >= 20)
+                        flag9 = true;
+                    if(this.co_t[j19].c == 1200 && this.maps.getBGCode(this.co_t[j19].x + 32, this.co_t[j19].y + 15) >= 20 && this.maps.getBGCode(this.co_t[j19].x + 15, this.co_t[j19].y + 32) >= 20)
+                        flag9 = true;
+                    if(this.co_t[j19].c == 1210 && this.maps.getBGCode(this.co_t[j19].x - 1, this.co_t[j19].y + 15) >= 20 && this.maps.getBGCode(this.co_t[j19].x + 15, this.co_t[j19].y + 32) >= 20)
+                        flag9 = true;
+                    if(!flag9)
+                        break;
+                    var k34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                    if(k34 <= 1 || k34 >= 5)
+                    {
+                        if(l20 > this.co_j.x)
+                            characterobject.c = 1200;
+                        else
+                            characterobject.c = 1210;
+                    } else
+                    if(l20 < this.co_j.x)
+                        characterobject.c = 1200;
+                    else
+                        characterobject.c = 1210;
+                    var i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                    k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                    if(k34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var k12 = 1;
+                        do
+                        {
+                            if(k12 > 31 || i31 + k12 >= this.mapWidth || this.maps.map_bg[i31 + k12][k34] >= 19)
+                                break;
+                            if(this.maps.map_bg[i31 + k12][k34 + 1] <= 10 || this.maps.map_bg[i31 + k12][k34 + 1] == 15)
+                            {
+                                characterobject.c = 1210;
+                                break;
+                            }
+                            k12++;
+                        } while(true);
+                    } else
+                    if(k34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var l12 = 1;
+                        do
+                        {
+                            if(l12 > 31 || i31 + l12 >= this.mapWidth || this.maps.map_bg[i31 + l12][k34] >= 19)
+                                break;
+                            if(this.maps.map_bg[i31 + l12][k34] == 10)
+                            {
+                                characterobject.c = 1210;
+                                break;
+                            }
+                            l12++;
+                        } while(true);
+                    }
+                    i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                    k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                    if(k34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var i13 = 1;
+                        do
+                        {
+                            if(i13 > 31 || i31 - i13 <= 0 || this.maps.map_bg[i31 - i13][k34] >= 20 || this.maps.map_bg[i31 - i13][k34] == 18)
+                                break label1;
+                            if(this.maps.map_bg[i31 - i13][k34 + 1] <= 10 || this.maps.map_bg[i31 - i13][k34 + 1] == 15)
+                            {
+                                characterobject.c = 1200;
+                                break label1;
+                            }
+                            i13++;
+                        } while(true);
+                    }
+                    if(k34 <= rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                        break;
+                    var j13 = 1;
+                    do
+                    {
+                        if(j13 > 31 || i31 - j13 <= 0 || this.maps.map_bg[i31 - j13][k34] >= 20 || this.maps.map_bg[i31 - j13][k34] == 18)
+                            break label1;
+                        if(this.maps.map_bg[i31 - j13][k34] == 10)
+                        {
+                            characterobject.c = 1200;
+                            break label1;
+                        }
+                        j13++;
+                    } while(true);
+                }
+                if(this.co_t[j19].y != characterobject.y || j19 >= i)
+                    continue;
+                i21 = characterobject.y;
+                flag6 = true;
+                break;
+            }
 
-			if(flag6)
-			{
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = characterobject.muki;
-				break;
-			}
-			if(this.maps.getBGCode(l20, i21 + 31) >= 20)
-				i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-			var l43 = this.maps.getBGCode(l20 + 15, i21 + 31);
-			if((l43 == 18 || l43 == 19) && i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-			{
-				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				var l34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-				if(l34 <= 1 || l34 >= 5)
-				{
-					if(l20 > this.co_j.x)
-					{
-						characterobject.muki = 0;
-						characterobject.c = 1200;
-					} else
-					{
-						characterobject.muki = 1;
-						characterobject.c = 1210;
-					}
-				} else
-				if(l20 < this.co_j.x)
-				{
-					characterobject.muki = 0;
-					characterobject.c = 1200;
-				} else
-				{
-					characterobject.muki = 1;
-					characterobject.c = 1210;
-				}
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = characterobject.muki;
-				break;
-			}
-			if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
-			{
-				if(this.maps.getBGCode(l20 + 15, i21 + 15) == 10 && i21 > this.co_j.y)
-				{
-					characterobject.c = 1230;
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-					var k19 = 0;
-					do
-					{
-						if(k19 > this.t_kazu)
-							break;
-						if(this.co_t[k19].c == 1220 && k19 != i && Math.abs(this.co_t[k19].x - l20) < 32 && Math.abs(i21 - 4 - this.co_t[k19].y) < 32)
-						{
-							i21 = characterobject.y;
-							characterobject.c = 1220;
-							break;
-						}
-						k19++;
-					} while(true);
-					break;
-				}
-				var i44 = this.maps.getBGCode(l20, i21 + 32);
-				if(i44 >= 20)
-				{
-					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-					var i35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-					if(i35 <= 1 || i35 >= 5)
-					{
-						if(l20 > this.co_j.x)
-						{
-							characterobject.muki = 0;
-							characterobject.c = 1200;
-						} else
-						{
-							characterobject.muki = 1;
-							characterobject.c = 1210;
-						}
-					} else
-					if(l20 < this.co_j.x)
-					{
-						characterobject.muki = 0;
-						characterobject.c = 1200;
-					} else
-					{
-						characterobject.muki = 1;
-						characterobject.c = 1210;
-					}
-					var j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-					i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-					if(i35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var k13 = 1;
-						do
-						{
-							if(k13 > 31 || j31 + k13 >= this.mapWidth || this.maps.map_bg[j31 + k13][i35] >= 19)
-								break;
-							if(this.maps.map_bg[j31 + k13][i35 + 1] <= 10 || this.maps.map_bg[j31 + k13][i35 + 1] == 15)
-							{
-								characterobject.c = 1210;
-								characterobject.muki = 1;
-								break;
-							}
-							k13++;
-						} while(true);
-					} else
-					if(i35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var l13 = 1;
-						do
-						{
-							if(l13 > 31 || j31 + l13 >= this.mapWidth || this.maps.map_bg[j31 + l13][i35] >= 19)
-								break;
-							if(this.maps.map_bg[j31 + l13][i35] == 10)
-							{
-								characterobject.c = 1210;
-								characterobject.muki = 1;
-								break;
-							}
-							l13++;
-						} while(true);
-					}
-					j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-					i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-					if(i35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var i14 = 1;
-						do
-						{
-							if(i14 > 31 || j31 - i14 <= 0 || this.maps.map_bg[j31 - i14][i35] >= 20 || this.maps.map_bg[j31 - i14][i35] == 18)
-								break;
-							if(this.maps.map_bg[j31 - i14][i35 + 1] <= 10 || this.maps.map_bg[j31 - i14][i35 + 1] == 15)
-							{
-								characterobject.c = 1200;
-								characterobject.muki = 0;
-								break;
-							}
-							i14++;
-						} while(true);
-					} else
-					if(i35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var j14 = 1;
-						do
-						{
-							if(j14 > 31 || j31 - j14 <= 0 || this.maps.map_bg[j31 - j14][i35] >= 20 || this.maps.map_bg[j31 - j14][i35] == 18)
-								break;
-							if(this.maps.map_bg[j31 - j14][i35] == 10)
-							{
-								characterobject.c = 1200;
-								characterobject.muki = 0;
-								break;
-							}
-							j14++;
-						} while(true);
-					}
-				} else
-				if((i44 == 15 || i44 == 10 || this.maps.getBGCode(l20 + 15, i21 + 15) == 10) && rightShiftIgnoreSign(i21 + 15, 5) >= rightShiftIgnoreSign(this.co_j.y + 15, 5))
-				{
-					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-					var j35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-					if(j35 <= 1 || j35 >= 5)
-					{
-						if(l20 > this.co_j.x)
-						{
-							characterobject.muki = 0;
-							characterobject.c = 1200;
-						} else
-						{
-							characterobject.muki = 1;
-							characterobject.c = 1210;
-						}
-					} else
-					if(l20 < this.co_j.x)
-					{
-						characterobject.muki = 0;
-						characterobject.c = 1200;
-					} else
-					{
-						characterobject.muki = 1;
-						characterobject.c = 1210;
-					}
-					var k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-					j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-					if(j35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var k14 = 1;
-						do
-						{
-							if(k14 > 31 || k31 + k14 >= this.mapWidth || this.maps.map_bg[k31 + k14][j35] >= 19)
-								break;
-							if(this.maps.map_bg[k31 + k14][j35 + 1] <= 10 || this.maps.map_bg[k31 + k14][j35 + 1] == 15)
-							{
-								characterobject.c = 1210;
-								characterobject.muki = 1;
-								break;
-							}
-							k14++;
-						} while(true);
-					} else
-					if(j35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var l14 = 1;
-						do
-						{
-							if(l14 > 31 || k31 + l14 >= this.mapWidth || this.maps.map_bg[k31 + l14][j35] >= 19)
-								break;
-							if(this.maps.map_bg[k31 + l14][j35] == 10)
-							{
-								characterobject.c = 1210;
-								characterobject.muki = 1;
-								break;
-							}
-							l14++;
-						} while(true);
-					}
-					k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-					j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-					if(j35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var i15 = 1;
-						do
-						{
-							if(i15 > 31 || k31 - i15 <= 0 || this.maps.map_bg[k31 - i15][j35] >= 20 || this.maps.map_bg[k31 - i15][j35] == 18)
-								break;
-							if(this.maps.map_bg[k31 - i15][j35 + 1] <= 10 || this.maps.map_bg[k31 - i15][j35 + 1] == 15)
-							{
-								characterobject.c = 1200;
-								characterobject.muki = 0;
-								break;
-							}
-							i15++;
-						} while(true);
-					} else
-					if(j35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-					{
-						var j15 = 1;
-						do
-						{
-							if(j15 > 31 || k31 - j15 <= 0 || this.maps.map_bg[k31 - j15][j35] >= 20 || this.maps.map_bg[k31 - j15][j35] == 18)
-								break;
-							if(this.maps.map_bg[k31 - j15][j35] == 10)
-							{
-								characterobject.c = 1200;
-								characterobject.muki = 0;
-								break;
-							}
-							j15++;
-						} while(true);
-					}
-				} else
-				if(i44 <= 9)
-				{
-					var flag7 = false;
-					for(var k15 = 0; k15 <= 11; k15++)
-					{
-						if(this.ana_c[k15] <= 0 || this.ana_x[k15] * 32 != l20 || i21 + 32 != this.ana_y[k15] * 32)
-							continue;
-						var l19 = 0;
-						do
-						{
-							if(l19 > this.t_kazu)
-								break;
-							if((this.co_t[l19].c >= 1200 && this.co_t[l19].c < 1300 || this.co_t[l19].c == 60) && l19 != i && l20 == this.co_t[l19].x && i21 <= this.co_t[l19].y && i21 + 32 >= this.co_t[l19].y)
-							{
-								flag7 = true;
-								break;
-							}
-							l19++;
-						} while(true);
-						if(flag7)
-							break;
-					}
+            if(flag6)
+            {
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = characterobject.muki;
+                break;
+            }
+            if(this.maps.getBGCode(l20, i21 + 31) >= 20)
+                i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+            var l43 = this.maps.getBGCode(l20 + 15, i21 + 31);
+            if((l43 == 18 || l43 == 19) && i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
+            {
+                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
+                var l34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                if(l34 <= 1 || l34 >= 5)
+                {
+                    if(l20 > this.co_j.x)
+                    {
+                        characterobject.muki = 0;
+                        characterobject.c = 1200;
+                    } else
+                    {
+                        characterobject.muki = 1;
+                        characterobject.c = 1210;
+                    }
+                } else
+                if(l20 < this.co_j.x)
+                {
+                    characterobject.muki = 0;
+                    characterobject.c = 1200;
+                } else
+                {
+                    characterobject.muki = 1;
+                    characterobject.c = 1210;
+                }
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = characterobject.muki;
+                break;
+            }
+            if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
+            {
+                if(this.maps.getBGCode(l20 + 15, i21 + 15) == 10 && i21 > this.co_j.y)
+                {
+                    characterobject.c = 1230;
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                    var k19 = 0;
+                    do
+                    {
+                        if(k19 > this.t_kazu)
+                            break;
+                        if(this.co_t[k19].c == 1220 && k19 != i && Math.abs(this.co_t[k19].x - l20) < 32 && Math.abs(i21 - 4 - this.co_t[k19].y) < 32)
+                        {
+                            i21 = characterobject.y;
+                            characterobject.c = 1220;
+                            break;
+                        }
+                        k19++;
+                    } while(true);
+                    break;
+                }
+                var i44 = this.maps.getBGCode(l20, i21 + 32);
+                if(i44 >= 20)
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                    var i35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                    if(i35 <= 1 || i35 >= 5)
+                    {
+                        if(l20 > this.co_j.x)
+                        {
+                            characterobject.muki = 0;
+                            characterobject.c = 1200;
+                        } else
+                        {
+                            characterobject.muki = 1;
+                            characterobject.c = 1210;
+                        }
+                    } else
+                    if(l20 < this.co_j.x)
+                    {
+                        characterobject.muki = 0;
+                        characterobject.c = 1200;
+                    } else
+                    {
+                        characterobject.muki = 1;
+                        characterobject.c = 1210;
+                    }
+                    var j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                    i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                    if(i35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var k13 = 1;
+                        do
+                        {
+                            if(k13 > 31 || j31 + k13 >= this.mapWidth || this.maps.map_bg[j31 + k13][i35] >= 19)
+                                break;
+                            if(this.maps.map_bg[j31 + k13][i35 + 1] <= 10 || this.maps.map_bg[j31 + k13][i35 + 1] == 15)
+                            {
+                                characterobject.c = 1210;
+                                characterobject.muki = 1;
+                                break;
+                            }
+                            k13++;
+                        } while(true);
+                    } else
+                    if(i35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var l13 = 1;
+                        do
+                        {
+                            if(l13 > 31 || j31 + l13 >= this.mapWidth || this.maps.map_bg[j31 + l13][i35] >= 19)
+                                break;
+                            if(this.maps.map_bg[j31 + l13][i35] == 10)
+                            {
+                                characterobject.c = 1210;
+                                characterobject.muki = 1;
+                                break;
+                            }
+                            l13++;
+                        } while(true);
+                    }
+                    j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                    i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                    if(i35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var i14 = 1;
+                        do
+                        {
+                            if(i14 > 31 || j31 - i14 <= 0 || this.maps.map_bg[j31 - i14][i35] >= 20 || this.maps.map_bg[j31 - i14][i35] == 18)
+                                break;
+                            if(this.maps.map_bg[j31 - i14][i35 + 1] <= 10 || this.maps.map_bg[j31 - i14][i35 + 1] == 15)
+                            {
+                                characterobject.c = 1200;
+                                characterobject.muki = 0;
+                                break;
+                            }
+                            i14++;
+                        } while(true);
+                    } else
+                    if(i35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var j14 = 1;
+                        do
+                        {
+                            if(j14 > 31 || j31 - j14 <= 0 || this.maps.map_bg[j31 - j14][i35] >= 20 || this.maps.map_bg[j31 - j14][i35] == 18)
+                                break;
+                            if(this.maps.map_bg[j31 - j14][i35] == 10)
+                            {
+                                characterobject.c = 1200;
+                                characterobject.muki = 0;
+                                break;
+                            }
+                            j14++;
+                        } while(true);
+                    }
+                } else
+                if((i44 == 15 || i44 == 10 || this.maps.getBGCode(l20 + 15, i21 + 15) == 10) && rightShiftIgnoreSign(i21 + 15, 5) >= rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                    var j35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                    if(j35 <= 1 || j35 >= 5)
+                    {
+                        if(l20 > this.co_j.x)
+                        {
+                            characterobject.muki = 0;
+                            characterobject.c = 1200;
+                        } else
+                        {
+                            characterobject.muki = 1;
+                            characterobject.c = 1210;
+                        }
+                    } else
+                    if(l20 < this.co_j.x)
+                    {
+                        characterobject.muki = 0;
+                        characterobject.c = 1200;
+                    } else
+                    {
+                        characterobject.muki = 1;
+                        characterobject.c = 1210;
+                    }
+                    var k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                    j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                    if(j35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var k14 = 1;
+                        do
+                        {
+                            if(k14 > 31 || k31 + k14 >= this.mapWidth || this.maps.map_bg[k31 + k14][j35] >= 19)
+                                break;
+                            if(this.maps.map_bg[k31 + k14][j35 + 1] <= 10 || this.maps.map_bg[k31 + k14][j35 + 1] == 15)
+                            {
+                                characterobject.c = 1210;
+                                characterobject.muki = 1;
+                                break;
+                            }
+                            k14++;
+                        } while(true);
+                    } else
+                    if(j35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var l14 = 1;
+                        do
+                        {
+                            if(l14 > 31 || k31 + l14 >= this.mapWidth || this.maps.map_bg[k31 + l14][j35] >= 19)
+                                break;
+                            if(this.maps.map_bg[k31 + l14][j35] == 10)
+                            {
+                                characterobject.c = 1210;
+                                characterobject.muki = 1;
+                                break;
+                            }
+                            l14++;
+                        } while(true);
+                    }
+                    k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                    j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                    if(j35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var i15 = 1;
+                        do
+                        {
+                            if(i15 > 31 || k31 - i15 <= 0 || this.maps.map_bg[k31 - i15][j35] >= 20 || this.maps.map_bg[k31 - i15][j35] == 18)
+                                break;
+                            if(this.maps.map_bg[k31 - i15][j35 + 1] <= 10 || this.maps.map_bg[k31 - i15][j35 + 1] == 15)
+                            {
+                                characterobject.c = 1200;
+                                characterobject.muki = 0;
+                                break;
+                            }
+                            i15++;
+                        } while(true);
+                    } else
+                    if(j35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                    {
+                        var j15 = 1;
+                        do
+                        {
+                            if(j15 > 31 || k31 - j15 <= 0 || this.maps.map_bg[k31 - j15][j35] >= 20 || this.maps.map_bg[k31 - j15][j35] == 18)
+                                break;
+                            if(this.maps.map_bg[k31 - j15][j35] == 10)
+                            {
+                                characterobject.c = 1200;
+                                characterobject.muki = 0;
+                                break;
+                            }
+                            j15++;
+                        } while(true);
+                    }
+                } else
+                if(i44 <= 9)
+                {
+                    var flag7 = false;
+                    for(var k15 = 0; k15 <= 11; k15++)
+                    {
+                        if(this.ana_c[k15] <= 0 || this.ana_x[k15] * 32 != l20 || i21 + 32 != this.ana_y[k15] * 32)
+                            continue;
+                        var l19 = 0;
+                        do
+                        {
+                            if(l19 > this.t_kazu)
+                                break;
+                            if((this.co_t[l19].c >= 1200 && this.co_t[l19].c < 1300 || this.co_t[l19].c == 60) && l19 != i && l20 == this.co_t[l19].x && i21 <= this.co_t[l19].y && i21 + 32 >= this.co_t[l19].y)
+                            {
+                                flag7 = true;
+                                break;
+                            }
+                            l19++;
+                        } while(true);
+                        if(flag7)
+                            break;
+                    }
 
-					if(flag7)
-					{
-						var k35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-						if(k35 <= 1 || k35 >= 5)
-						{
-							if(l20 > this.co_j.x)
-								characterobject.c = 1200;
-							else
-								characterobject.c = 1210;
-						} else
-						if(l20 < this.co_j.x)
-							characterobject.c = 1200;
-						else
-							characterobject.c = 1210;
-					}
-				}
-				if(characterobject.c == 1210 && (this.maps.getBGCode(characterobject.x + 32, characterobject.y + 15) >= 20 || this.maps.getBGCode(characterobject.x + 32, characterobject.y + 15) == 18))
-				{
-					characterobject.c = 1200;
-					characterobject.muki = 0;
-					if(Math.abs(i21 - this.co_j.y) < 32 && l20 < this.co_j.x)
-					{
-						characterobject.c = 1210;
-						characterobject.muki = 1;
-					}
-				} else
-				if(characterobject.c == 1200 && this.maps.getBGCode(characterobject.x - 1, characterobject.y + 15) >= 19)
-				{
-					characterobject.c = 1210;
-					characterobject.muki = 1;
-					if(Math.abs(i21 - this.co_j.y) < 32 && l20 > this.co_j.x)
-					{
-						characterobject.c = 1200;
-						characterobject.muki = 0;
-					}
-				}
-				if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
-				{
-					for(var l15 = 0; l15 <= 11; l15++)
-						if(this.ana_c[l15] > 0 && this.ana_x[l15] * 32 == l20 && this.ana_y[l15] * 32 == i21)
-						{
-							characterobject.c = 1250;
-							characterobject.c1 = 0;
-						}
+                    if(flag7)
+                    {
+                        var k35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                        if(k35 <= 1 || k35 >= 5)
+                        {
+                            if(l20 > this.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                        } else
+                        if(l20 < this.co_j.x)
+                            characterobject.c = 1200;
+                        else
+                            characterobject.c = 1210;
+                    }
+                }
+                if(characterobject.c == 1210 && (this.maps.getBGCode(characterobject.x + 32, characterobject.y + 15) >= 20 || this.maps.getBGCode(characterobject.x + 32, characterobject.y + 15) == 18))
+                {
+                    characterobject.c = 1200;
+                    characterobject.muki = 0;
+                    if(Math.abs(i21 - this.co_j.y) < 32 && l20 < this.co_j.x)
+                    {
+                        characterobject.c = 1210;
+                        characterobject.muki = 1;
+                    }
+                } else
+                if(characterobject.c == 1200 && this.maps.getBGCode(characterobject.x - 1, characterobject.y + 15) >= 19)
+                {
+                    characterobject.c = 1210;
+                    characterobject.muki = 1;
+                    if(Math.abs(i21 - this.co_j.y) < 32 && l20 > this.co_j.x)
+                    {
+                        characterobject.c = 1200;
+                        characterobject.muki = 0;
+                    }
+                }
+                if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
+                {
+                    for(var l15 = 0; l15 <= 11; l15++)
+                        if(this.ana_c[l15] > 0 && this.ana_x[l15] * 32 == l20 && this.ana_y[l15] * 32 == i21)
+                        {
+                            characterobject.c = 1250;
+                            characterobject.c1 = 0;
+                        }
 
-				}
-			}
-			if((characterobject.c == 1200 || characterobject.c == 1210) && Math.abs(l20 - this.co_j.x) <= 32 && Math.abs(i21 - this.co_j.y) <= 32 && !this.co_j.jimen_f && !this.j_hashigo_f)
-				characterobject.c = 1220;
-			if(Math.abs(this.co_j.x - characterobject.x) <= 24 && this.co_j.y + 32 == characterobject.y && this.co_j.c != 130 && (rightShiftIgnoreSign(this.co_j.y, 5) * 32 != this.co_j.y || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) != 15) && !this.j_hashigo_f)
-			{
-				this.co_j.y = i21 - 32;
-				if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
-			}
-			if(i21 >= this.maps.wy_max + 320)
-			{
-				characterobject.c = 60;
-				characterobject.c1 = 0;
-			}
-			characterobject.pt = 140 + this.g_ac;
-			characterobject.pth = characterobject.muki;
-			break;
+                }
+            }
+            if((characterobject.c == 1200 || characterobject.c == 1210) && Math.abs(l20 - this.co_j.x) <= 32 && Math.abs(i21 - this.co_j.y) <= 32 && !this.co_j.jimen_f && !this.j_hashigo_f)
+                characterobject.c = 1220;
+            if(Math.abs(this.co_j.x - characterobject.x) <= 24 && this.co_j.y + 32 == characterobject.y && this.co_j.c != 130 && (rightShiftIgnoreSign(this.co_j.y, 5) * 32 != this.co_j.y || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) != 15) && !this.j_hashigo_f)
+            {
+                this.co_j.y = i21 - 32;
+                if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
+                    this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
+            }
+            if(i21 >= this.maps.wy_max + 320)
+            {
+                characterobject.c = 60;
+                characterobject.c1 = 0;
+            }
+            characterobject.pt = 140 + this.g_ac;
+            characterobject.pth = characterobject.muki;
+            break;
 
-		case 1230: 
-			characterobject.direction = 2;
-			if(l20 < this.co_j.x)
-				characterobject.muki = 1;
-			else
-			if(l20 > this.co_j.x)
-				characterobject.muki = 0;
-			if(i21 + 20 <= this.co_j.y)
-			{
-				characterobject.c = 1220;
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = characterobject.muki;
-			} else
-			{
-				i21 -= 4;
-				var flag8 = false;
-				for(var i20 = 0; i20 <= this.t_kazu; i20++)
-				{
-					if((this.co_t[i20].c < 1200 || this.co_t[i20].c >= 1300) && this.co_t[i20].c != 60 || i20 == i || Math.abs(this.co_t[i20].x - l20) >= 32 || Math.abs(this.co_t[i20].y - i21) >= 32)
-						continue;
-					if(this.co_t[i20].c == 1220)
-					{
-						characterobject.c = 1220;
-						i21 = characterobject.y;
-						flag8 = true;
-						break;
-					}
-					if(this.co_t[i20].y < characterobject.y)
-					{
-						i21 = characterobject.y;
-						flag8 = true;
-						break;
-					}
-					if(this.co_t[i20].y != characterobject.y || i20 >= i)
-						continue;
-					i21 = characterobject.y;
-					flag8 = true;
-					break;
-				}
+        case 1230: 
+            characterobject.direction = 2;
+            if(l20 < this.co_j.x)
+                characterobject.muki = 1;
+            else
+            if(l20 > this.co_j.x)
+                characterobject.muki = 0;
+            if(i21 + 20 <= this.co_j.y)
+            {
+                characterobject.c = 1220;
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = characterobject.muki;
+            } else
+            {
+                i21 -= 4;
+                var flag8 = false;
+                for(var i20 = 0; i20 <= this.t_kazu; i20++)
+                {
+                    if((this.co_t[i20].c < 1200 || this.co_t[i20].c >= 1300) && this.co_t[i20].c != 60 || i20 == i || Math.abs(this.co_t[i20].x - l20) >= 32 || Math.abs(this.co_t[i20].y - i21) >= 32)
+                        continue;
+                    if(this.co_t[i20].c == 1220)
+                    {
+                        characterobject.c = 1220;
+                        i21 = characterobject.y;
+                        flag8 = true;
+                        break;
+                    }
+                    if(this.co_t[i20].y < characterobject.y)
+                    {
+                        i21 = characterobject.y;
+                        flag8 = true;
+                        break;
+                    }
+                    if(this.co_t[i20].y != characterobject.y || i20 >= i)
+                        continue;
+                    i21 = characterobject.y;
+                    flag8 = true;
+                    break;
+                }
 
-				if(flag8)
-				{
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-				} else
-				{
-					if(this.maps.getBGCode(l20, i21) >= 18)
-						i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
-					if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
-						if(this.maps.getBGCode(l20 + 15, i21 + 15) != 10 || this.maps.getBGCode(l20 + 15, i21 - 1) >= 20)
-						{
-							var l35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-							if(l35 <= 1 || l35 >= 5)
-							{
-								if(l20 > this.co_j.x)
-									characterobject.c = 1200;
-								else
-									characterobject.c = 1210;
-							} else
-							if(l20 < this.co_j.x)
-								characterobject.c = 1200;
-							else
-								characterobject.c = 1210;
-							var l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-							l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-							if(l35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-							{
-								var i16 = 1;
-								do
-								{
-									if(i16 > 31 || l31 + i16 >= this.mapWidth || this.maps.map_bg[l31 + i16][l35] >= 19)
-										break;
-									if(this.maps.map_bg[l31 + i16][l35 + 1] <= 10 || this.maps.map_bg[l31 + i16][l35 + 1] == 15)
-									{
-										characterobject.c = 1210;
-										break;
-									}
-									i16++;
-								} while(true);
-							} else
-							if(l35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-							{
-								var j16 = 1;
-								do
-								{
-									if(j16 > 31 || l31 + j16 >= this.mapWidth || this.maps.map_bg[l31 + j16][l35] >= 19)
-										break;
-									if(this.maps.map_bg[l31 + j16][l35] == 10)
-									{
-										characterobject.c = 1210;
-										break;
-									}
-									j16++;
-								} while(true);
-							}
-							l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
-							l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
-							if(l35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
-							{
-								var k16 = 1;
-								do
-								{
-									if(k16 > 31 || l31 - k16 <= 0 || this.maps.map_bg[l31 - k16][l35] >= 20 || this.maps.map_bg[l31 - k16][l35] == 18)
-										break;
-									if(this.maps.map_bg[l31 - k16][l35 + 1] <= 10 || this.maps.map_bg[l31 - k16][l35 + 1] == 15)
-									{
-										characterobject.c = 1200;
-										break;
-									}
-									k16++;
-								} while(true);
-							} else
-							if(l35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
-							{
-								var l16 = 1;
-								do
-								{
-									if(l16 > 31 || l31 - l16 <= 0 || this.maps.map_bg[l31 - l16][l35] >= 20 || this.maps.map_bg[l31 - l16][l35] == 18)
-										break;
-									if(this.maps.map_bg[l31 - l16][l35] == 10)
-									{
-										characterobject.c = 1200;
-										break;
-									}
-									l16++;
-								} while(true);
-							}
-						} else
-						if(Math.abs(i21 - this.co_j.y) < 32)
-						{
-							if(l20 > this.co_j.x)
-							{
-								characterobject.muki = 0;
-								characterobject.c = 1200;
-							} else
-							{
-								characterobject.muki = 1;
-								characterobject.c = 1210;
-							}
-						}
-					if((characterobject.c == 1200 || characterobject.c == 1210) && Math.abs(l20 - this.co_j.x) <= 32 && Math.abs(i21 - this.co_j.y) <= 32 && !this.co_j.jimen_f && !this.j_hashigo_f)
-						characterobject.c = 1230;
-					characterobject.pt = 140 + this.g_ac;
-					characterobject.pth = characterobject.muki;
-				}
-			}
-			break;
+                if(flag8)
+                {
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                } else
+                {
+                    if(this.maps.getBGCode(l20, i21) >= 18)
+                        i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                    if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
+                        if(this.maps.getBGCode(l20 + 15, i21 + 15) != 10 || this.maps.getBGCode(l20 + 15, i21 - 1) >= 20)
+                        {
+                            var l35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                            if(l35 <= 1 || l35 >= 5)
+                            {
+                                if(l20 > this.co_j.x)
+                                    characterobject.c = 1200;
+                                else
+                                    characterobject.c = 1210;
+                            } else
+                            if(l20 < this.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                            var l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                            l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                            if(l35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                            {
+                                var i16 = 1;
+                                do
+                                {
+                                    if(i16 > 31 || l31 + i16 >= this.mapWidth || this.maps.map_bg[l31 + i16][l35] >= 19)
+                                        break;
+                                    if(this.maps.map_bg[l31 + i16][l35 + 1] <= 10 || this.maps.map_bg[l31 + i16][l35 + 1] == 15)
+                                    {
+                                        characterobject.c = 1210;
+                                        break;
+                                    }
+                                    i16++;
+                                } while(true);
+                            } else
+                            if(l35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                            {
+                                var j16 = 1;
+                                do
+                                {
+                                    if(j16 > 31 || l31 + j16 >= this.mapWidth || this.maps.map_bg[l31 + j16][l35] >= 19)
+                                        break;
+                                    if(this.maps.map_bg[l31 + j16][l35] == 10)
+                                    {
+                                        characterobject.c = 1210;
+                                        break;
+                                    }
+                                    j16++;
+                                } while(true);
+                            }
+                            l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                            l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                            if(l35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                            {
+                                var k16 = 1;
+                                do
+                                {
+                                    if(k16 > 31 || l31 - k16 <= 0 || this.maps.map_bg[l31 - k16][l35] >= 20 || this.maps.map_bg[l31 - k16][l35] == 18)
+                                        break;
+                                    if(this.maps.map_bg[l31 - k16][l35 + 1] <= 10 || this.maps.map_bg[l31 - k16][l35 + 1] == 15)
+                                    {
+                                        characterobject.c = 1200;
+                                        break;
+                                    }
+                                    k16++;
+                                } while(true);
+                            } else
+                            if(l35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
+                            {
+                                var l16 = 1;
+                                do
+                                {
+                                    if(l16 > 31 || l31 - l16 <= 0 || this.maps.map_bg[l31 - l16][l35] >= 20 || this.maps.map_bg[l31 - l16][l35] == 18)
+                                        break;
+                                    if(this.maps.map_bg[l31 - l16][l35] == 10)
+                                    {
+                                        characterobject.c = 1200;
+                                        break;
+                                    }
+                                    l16++;
+                                } while(true);
+                            }
+                        } else
+                        if(Math.abs(i21 - this.co_j.y) < 32)
+                        {
+                            if(l20 > this.co_j.x)
+                            {
+                                characterobject.muki = 0;
+                                characterobject.c = 1200;
+                            } else
+                            {
+                                characterobject.muki = 1;
+                                characterobject.c = 1210;
+                            }
+                        }
+                    if((characterobject.c == 1200 || characterobject.c == 1210) && Math.abs(l20 - this.co_j.x) <= 32 && Math.abs(i21 - this.co_j.y) <= 32 && !this.co_j.jimen_f && !this.j_hashigo_f)
+                        characterobject.c = 1230;
+                    characterobject.pt = 140 + this.g_ac;
+                    characterobject.pth = characterobject.muki;
+                }
+            }
+            break;
 
-		case 1250: 
-			if(characterobject.c1 <= 75)
-			{
-				characterobject.c1++;
-				characterobject.pt = 140;
-				characterobject.pth = characterobject.muki;
-			} else
-			{
-				characterobject.c = 1260;
-				characterobject.pt = 140 + this.g_ac;
-				characterobject.pth = characterobject.muki;
-			}
-			break;
+        case 1250: 
+            if(characterobject.c1 <= 75)
+            {
+                characterobject.c1++;
+                characterobject.pt = 140;
+                characterobject.pth = characterobject.muki;
+            } else
+            {
+                characterobject.c = 1260;
+                characterobject.pt = 140 + this.g_ac;
+                characterobject.pth = characterobject.muki;
+            }
+            break;
 
-		case 1260: 
-			if(rightShiftIgnoreSign(i21 -= 4, 5) * 32 == i21)
-			{
-				if(characterobject.muki == 0)
-					characterobject.c = 1200;
-				else
-					characterobject.c = 1210;
-				var j36 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
-				if(j36 <= 1 || j36 >= 5)
-				{
-					if(l20 > this.co_j.x)
-					{
-						characterobject.muki = 0;
-						characterobject.c = 1200;
-					} else
-					{
-						characterobject.muki = 1;
-						characterobject.c = 1210;
-					}
-				} else
-				if(l20 < this.co_j.x)
-				{
-					characterobject.muki = 0;
-					characterobject.c = 1200;
-				} else
-				{
-					characterobject.muki = 1;
-					characterobject.c = 1210;
-				}
-				if(this.maps.getBGCode(l20 + 15, i21 + 15) >= 20)
-				{
-					characterobject.c = 60;
-					characterobject.c1 = 0;
-					this.gs.rsAddSound(19);
-				}
-			}
-			characterobject.pt = 140 + this.g_ac;
-			characterobject.pth = characterobject.muki;
-			break;
+        case 1260: 
+            if(rightShiftIgnoreSign(i21 -= 4, 5) * 32 == i21)
+            {
+                if(characterobject.muki == 0)
+                    characterobject.c = 1200;
+                else
+                    characterobject.c = 1210;
+                var j36 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
+                if(j36 <= 1 || j36 >= 5)
+                {
+                    if(l20 > this.co_j.x)
+                    {
+                        characterobject.muki = 0;
+                        characterobject.c = 1200;
+                    } else
+                    {
+                        characterobject.muki = 1;
+                        characterobject.c = 1210;
+                    }
+                } else
+                if(l20 < this.co_j.x)
+                {
+                    characterobject.muki = 0;
+                    characterobject.c = 1200;
+                } else
+                {
+                    characterobject.muki = 1;
+                    characterobject.c = 1210;
+                }
+                if(this.maps.getBGCode(l20 + 15, i21 + 15) >= 20)
+                {
+                    characterobject.c = 60;
+                    characterobject.c1 = 0;
+                    this.gs.rsAddSound(19);
+                }
+            }
+            characterobject.pt = 140 + this.g_ac;
+            characterobject.pth = characterobject.muki;
+            break;
 
-		case 1300: 
-			if((i21 += 4) % 32 == 0)
-				characterobject.c = 1310;
-			break;
+        case 1300: 
+            if((i21 += 4) % 32 == 0)
+                characterobject.c = 1310;
+            break;
 
-		case 1400: 
-			l20 -= 4;
-			characterobject.muki = 0;
-			if(this.maps.getBGCode(l20, i21 + 15) >= 20)
-				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-			if(l20 % 32 == 0)
-				if(characterobject.c2 == 0)
-				{
-					if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-					if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-					if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-						characterobject.c = 1430;
-				} else
-				if(characterobject.c2 == 1)
-				{
-					if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-					if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-						characterobject.c = 1410;
-				} else
-				if(characterobject.c2 == 2)
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1420;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-						characterobject.c = 1410;
-			characterobject.pt = 143 + this.g_ac;
-			characterobject.pth = characterobject.muki;
-			if(characterobject.c2 == 1)
-				characterobject.pt = 152 + this.g_ac;
-			else
-			if(characterobject.c2 == 2)
-				characterobject.pt = 155 + this.g_ac;
-			characterobject.direction = 0;
-			break;
+        case 1400: 
+            l20 -= 4;
+            characterobject.muki = 0;
+            if(this.maps.getBGCode(l20, i21 + 15) >= 20)
+                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+            if(l20 % 32 == 0)
+                if(characterobject.c2 == 0)
+                {
+                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                        characterobject.c = 1430;
+                } else
+                if(characterobject.c2 == 1)
+                {
+                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                        characterobject.c = 1410;
+                } else
+                if(characterobject.c2 == 2)
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1420;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                        characterobject.c = 1410;
+            characterobject.pt = 143 + this.g_ac;
+            characterobject.pth = characterobject.muki;
+            if(characterobject.c2 == 1)
+                characterobject.pt = 152 + this.g_ac;
+            else
+            if(characterobject.c2 == 2)
+                characterobject.pt = 155 + this.g_ac;
+            characterobject.direction = 0;
+            break;
 
-		case 1410: 
-			l20 += 4;
-			characterobject.muki = 1;
-			if(this.maps.getBGCode(l20 + 31, i21 + 15) >= 20)
-				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-			if(l20 % 32 == 0)
-				if(characterobject.c2 == 0)
-				{
-					if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-					if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-					if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-						characterobject.c = 1430;
-				} else
-				if(characterobject.c2 == 1)
-				{
-					if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-					if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-						characterobject.c = 1400;
-				} else
-				if(characterobject.c2 == 2)
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1420;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-						characterobject.c = 1400;
-			characterobject.pt = 143 + this.g_ac;
-			characterobject.pth = characterobject.muki;
-			if(characterobject.c2 == 1)
-				characterobject.pt = 152 + this.g_ac;
-			else
-			if(characterobject.c2 == 2)
-				characterobject.pt = 155 + this.g_ac;
-			characterobject.direction = 1;
-			break;
+        case 1410: 
+            l20 += 4;
+            characterobject.muki = 1;
+            if(this.maps.getBGCode(l20 + 31, i21 + 15) >= 20)
+                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+            if(l20 % 32 == 0)
+                if(characterobject.c2 == 0)
+                {
+                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                        characterobject.c = 1430;
+                } else
+                if(characterobject.c2 == 1)
+                {
+                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                        characterobject.c = 1400;
+                } else
+                if(characterobject.c2 == 2)
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1420;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                        characterobject.c = 1400;
+            characterobject.pt = 143 + this.g_ac;
+            characterobject.pth = characterobject.muki;
+            if(characterobject.c2 == 1)
+                characterobject.pt = 152 + this.g_ac;
+            else
+            if(characterobject.c2 == 2)
+                characterobject.pt = 155 + this.g_ac;
+            characterobject.direction = 1;
+            break;
 
-		case 1420: 
-			i21 -= 4;
-			if(this.maps.getBGCode(l20 + 15, i21) >= 20)
-				i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
-			if(i21 % 32 == 0)
-				if(characterobject.c2 == 0)
-				{
-					if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-					if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-						characterobject.c = 1430;
-				} else
-				if(characterobject.c2 == 1)
-				{
-					if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-					if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-					if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-						characterobject.c = 1410;
-				} else
-				if(characterobject.c2 == 2)
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1400;
-					else
-					if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-						characterobject.c = 1420;
-					else
-						characterobject.c = 1430;
-			characterobject.pt = 143 + this.g_ac;
-			characterobject.pth = characterobject.muki;
-			if(characterobject.c2 == 1)
-				characterobject.pt = 152 + this.g_ac;
-			else
-			if(characterobject.c2 == 2)
-				characterobject.pt = 155 + this.g_ac;
-			characterobject.direction = 2;
-			break;
+        case 1420: 
+            i21 -= 4;
+            if(this.maps.getBGCode(l20 + 15, i21) >= 20)
+                i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+            if(i21 % 32 == 0)
+                if(characterobject.c2 == 0)
+                {
+                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                        characterobject.c = 1430;
+                } else
+                if(characterobject.c2 == 1)
+                {
+                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                        characterobject.c = 1410;
+                } else
+                if(characterobject.c2 == 2)
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1400;
+                    else
+                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                        characterobject.c = 1420;
+                    else
+                        characterobject.c = 1430;
+            characterobject.pt = 143 + this.g_ac;
+            characterobject.pth = characterobject.muki;
+            if(characterobject.c2 == 1)
+                characterobject.pt = 152 + this.g_ac;
+            else
+            if(characterobject.c2 == 2)
+                characterobject.pt = 155 + this.g_ac;
+            characterobject.direction = 2;
+            break;
 
-		case 1430: 
-			i21 += 4;
-			if(this.maps.getBGCode(l20 + 15, i21 + 31) >= 20)
-				i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-			if(i21 % 32 == 0)
-				if(characterobject.c2 == 0)
-				{
-					if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-					if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-						characterobject.c = 1420;
-				} else
-				if(characterobject.c2 == 1)
-				{
-					if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-					if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-					if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-						characterobject.c = 1400;
-					else
-						characterobject.c = 1410;
-				} else
-				if(characterobject.c2 == 2)
-					if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1400;
-					else
-					if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20 && this.ranInt(2) == 0)
-						characterobject.c = 1410;
-					else
-					if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-						characterobject.c = 1430;
-					else
-						characterobject.c = 1420;
-			characterobject.pt = 143 + this.g_ac;
-			characterobject.pth = characterobject.muki;
-			if(characterobject.c2 == 1)
-				characterobject.pt = 152 + this.g_ac;
-			else
-			if(characterobject.c2 == 2)
-				characterobject.pt = 155 + this.g_ac;
-			characterobject.direction = 3;
-			break;
-		}
+        case 1430: 
+            i21 += 4;
+            if(this.maps.getBGCode(l20 + 15, i21 + 31) >= 20)
+                i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+            if(i21 % 32 == 0)
+                if(characterobject.c2 == 0)
+                {
+                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                        characterobject.c = 1420;
+                } else
+                if(characterobject.c2 == 1)
+                {
+                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                        characterobject.c = 1400;
+                    else
+                        characterobject.c = 1410;
+                } else
+                if(characterobject.c2 == 2)
+                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1400;
+                    else
+                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20 && this.ranInt(2) == 0)
+                        characterobject.c = 1410;
+                    else
+                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                        characterobject.c = 1430;
+                    else
+                        characterobject.c = 1420;
+            characterobject.pt = 143 + this.g_ac;
+            characterobject.pth = characterobject.muki;
+            if(characterobject.c2 == 1)
+                characterobject.pt = 152 + this.g_ac;
+            else
+            if(characterobject.c2 == 2)
+                characterobject.pt = 155 + this.g_ac;
+            characterobject.direction = 3;
+            break;
+        }
 		if(characterobject.c < 100)
 		{
 			characterobject.x = l20;
@@ -37344,83 +37317,112 @@ MainProgram.prototype.getSWDownOY = function(i, j, k, l, i1)
 	return k2;
 }
 
-
+/**
+ * 指定した位置に指定したコードのオブジェクトを配置します。
+ * @returns Number その位置のマップコード
+ * @private
+ */
 MainProgram.prototype.setChipValue = function (x, y, id) {
 	var word1 = -1;
 	switch (id) {
 		case 46:
 		case 0:
+            // '.'
 			break;
 		case 49:
+            // '1'
 			word1 = 1;
 			break;
 		case 50:
+            // '2'
 			word1 = 2;
 			break;
 		case 51:
+            // '3'
 			word1 = 3;
 			break;
 		case 52:
+            // '4'
 			word1 = 4;
 			break;
 		case 53:
+            // '5'
 			word1 = 5;
 			break;
 		case 54:
+            // '6'
 			word1 = 6;
 			break;
 		case 55:
+            // '7'
 			word1 = 7;
 			break;
 		case 56:
+            // '8'
 			word1 = 8;
 			break;
 		case 57:
+            // '9'
 			word1 = 9;
 			break;
+            // 'a'
 		case 97:
 			word1 = 20;
 			break;
 		case 98:
+            // 'b'
 			word1 = 21;
 			break;
 		case 99:
+            // 'c'
 			word1 = 22;
 			break;
 		case 100:
+            // 'd'
 			word1 = 23;
 			break;
 		case 101:
+            // 'e'
 			word1 = 24;
 			break;
 		case 102:
+            // 'f'
 			word1 = 25;
 			break;
 		case 103:
+            // 'g'
 			word1 = 26;
 			break;
 		case 104:
+            // 'h'
 			word1 = 27;
 			break;
 		case 105:
+            // 'i'
 			word1 = 28;
 			break;
 		case 91:
+            // '['
 			word1 = 15;
 			break;
 		case 93:
+            // ']'
 			word1 = 10;
 			break;
 		case 60:
+            // '<'
 			word1 = 18;
 			break;
 		case 62:
+            // '>'
 			word1 = 19;
 			break;
 		case 106:
+            // 'j'
 			word1 = 29;
 			break;
 		case 107:
+            // 'k' ？ブロック（コイン）
 			if (this.coin1_type >= 2) {
 				word1 = this.setAthleticOnMap(this.coin1_type, x, y);
 				if (word1 == -99) {
@@ -37437,6 +37439,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 108:
+            // 'l' ？ブロック（コイン3枚）
 			if (this.coin3_type >= 2) {
 				word1 = this.setAthleticOnMap(this.coin3_type, x, y);
 				if (word1 == -99) {
@@ -37455,6 +37458,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 109:
+            // 'm' ？ブロック（ファイヤーボール）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2100);
 			} else {
@@ -37463,6 +37467,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 110:
+            // 'n' ？ブロック（バリア）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2110);
 			} else {
@@ -37471,6 +37476,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 111:
+            // 'o' ？ブロック（タイム）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2120);
 			} else {
@@ -37479,6 +37485,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 112:
+            // 'p' ？ブロック（ジェット）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2130);
 			} else {
@@ -37487,6 +37494,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 113:
+            // 'q' ？ブロック（ヘルメット）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2140);
 			} else {
@@ -37495,6 +37503,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 114:
+            // 'r' ？ブロック（しっぽ）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2150);
 			} else {
@@ -37503,6 +37512,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 115:
+            // 's' ？ブロック（ドリル）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2160);
 			} else {
@@ -37511,6 +37521,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 116:
+            // 't' ？ブロック（グレネード）
 			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 				this.mSet(x * 32, y * 32, 2170);
 			} else {
@@ -37519,6 +37530,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 117:
+            // 'u' リンク土管1
 			if (this.dokan1_type >= 2) {
 				word1 = this.setAthleticOnMap(this.dokan1_type, x, y);
 				if (word1 == -99) {
@@ -37533,6 +37545,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 118:
+            // 'v' リンク土管2
 			if (this.dokan2_type >= 2) {
 				word1 = this.setAthleticOnMap(this.dokan2_type, x, y);
 				if (word1 == -99) {
@@ -37547,6 +37560,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 119:
+            // 'w' リンク土管3
 			if (this.dokan3_type >= 2) {
 				word1 = this.setAthleticOnMap(this.dokan3_type, x, y);
 				if (word1 == -99) {
@@ -37561,6 +37575,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 120:
+            // 'x' リンク土管4
 			if (this.dokan4_type >= 2) {
 				word1 = this.setAthleticOnMap(this.dokan4_type, x, y);
 				if (word1 == -99) {
@@ -37575,6 +37590,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 121:
+            // 'y' ？ブロック（1UP茸）
 			if (this.stage_1up_f[this.stage - 1] || this.j_tokugi == 17) {
 				if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 					this.mSet(x * 32, y * 32, 2180);
@@ -37587,45 +37603,54 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 122:
+            // 'z' すべる床
 			word1 = 69;
 			break;
 		case 43:
+            // '+' 一言メッセージ1
 			this.aSet(x * 32, y * 32, 80, x * 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 45:
+            // '-' 一言メッセージ2
 			this.aSet(x * 32, y * 32, 81, x * 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 42:
+            // '*' 一言メッセージ3
 			this.aSet(x * 32, y * 32, 82, x * 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 47:
+            // '/' 一言メッセージ4
 			this.aSet(x * 32, y * 32, 83, x * 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 65:
+            // 'A' 主人公
 			this.co_j.x = x * 32;
 			this.co_j.y = y * 32;
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 66:
+            // 'B' 亀（足元に空白があると向きを変える）
 			this.tSet(x * 32, y * 32, 100, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 67:
+            // 'C' 亀（足元に空白があると落ちる）
 			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 68:
+            // 'D' 亀（足元に空白があると落ちる 3匹連続）
 			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
 			this.tSet(x * 32 + 75, y * 32, 110, x * 32 - 512 - 32);
 			this.tSet(x * 32 + 150, y * 32, 110, x * 32 - 512 - 32);
@@ -37633,6 +37658,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 69:
+            // 'E' ピカチー
 			if (this.dengeki_mkf == 3)
 				this.tSet(x * 32, y * 32, 201, x * 32 - 512 - 32);
 			else if (this.dengeki_mkf == 4)
@@ -37645,6 +37671,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 70:
+            // 'F' チコリン
 			if (this.chikorin_attack >= 2 && this.chikorin_attack <= 5)
 				this.tSet(x * 32, y * 32, 308 + this.chikorin_attack, x * 32 - 512 - 32);
 			else if (this.chikorin_attack == 6)
@@ -37661,16 +37688,19 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 71:
+            // 'G' ヒノララシ
 			this.tSet(x * 32, y * 32, 400, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 72:
+            // 'H' ポッピー（上下移動）
 			this.tSet(x * 32, y * 32, 500, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 73:
+            // 'I' ポッピー（直進）
 			if (this.poppie_attack == 2)
 				this.tSet(x * 32, y * 32, 520, x * 32 - 512 - 32);
 			else if (this.poppie_attack == 3)
@@ -37685,6 +37715,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 74:
+            // 'J' ポッピー（直進　3羽連続）
 			this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32 - 32);
 			this.tSet(x * 32 + 80, y * 32 - 40, 510, x * 32 - 512 - 32 - 32);
 			this.tSet(x * 32 + 140, y * 32 + 38, 510, x * 32 - 512 - 32 - 32);
@@ -37692,6 +37723,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 75:
+            // 'K' 動く床（上下移動）
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			if (this.ugokuyuka1_type >= 2) {
@@ -37703,6 +37735,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 76:
+            // 'L' 動く床（左右移動）
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			if (this.ugokuyuka2_type >= 2) {
@@ -37714,6 +37747,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 77:
+            // 'M' 動く床（左右移動×2）
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			if (this.ugokuyuka3_type >= 2) {
@@ -37728,6 +37762,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 78:
+            // 'N' ドッスンスン
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			if (this.dossunsun_type >= 2) {
@@ -37739,6 +37774,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 79:
+            // 'O' マリリ
 			if (this.mariri_attack == 2)
 				this.tSet(x * 32, y * 32, 601, x * 32 - 512 - 32);
 			else if (this.mariri_attack == 3)
@@ -37753,6 +37789,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 80:
+            // 'P' ヤチャモ
 			if (this.yachamo_attack >= 1 && this.yachamo_attack <= 5)
 				this.tSet(x * 32, y * 32, 699 + this.yachamo_attack, x * 32 - 512 - 32);
 			else if (this.yachamo_attack == 6)
@@ -37769,6 +37806,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 81:
+            // 'Q' ミズタロウ
 			if (this.j_tokugi == 14)
 				this.tSet(x * 32, y * 32, 850, x * 32 - 512 - 32);
 			else if (this.mizutaro_attack >= 1 && this.mizutaro_attack <= 5)
@@ -37779,6 +37817,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 82:
+            // 'R' エアームズ
 			if (this.airms_kf == 2)
 				this.tSet(x * 32, y * 32, 950, x * 32 - 512 - 32);
 			else if (this.airms_kf == 3)
@@ -37793,6 +37832,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 83:
+            // 'S' グラーダ
 			this.co_b.c = 100;
 			this.co_b.c4 = 3;
 			this.co_b.x = x * 32;
@@ -37813,6 +37853,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				this.co_b.x += 160;
 			break;
 		case 84:
+            // 'T' カイオール
 			this.co_b.c = 200;
 			this.co_b.c4 = 3;
 			this.co_b.x = x * 32;
@@ -37833,6 +37874,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				this.co_b.x += 160;
 			break;
 		case 85:
+            // 'U' ファイヤーバー（左回り）
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			if (this.firebar1_type >= 2) {
@@ -37847,6 +37889,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 86:
+            // 'V' ファイヤーバー（右回り）
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			if (this.firebar2_type >= 2) {
@@ -37861,6 +37904,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			}
 			break;
 		case 87:
+            // 'W' タイキング
 			if (this.taiking_attack == 2)
 				this.tSet(x * 32, y * 32, 1050, x * 32 - 512 - 32);
 			else if (this.taiking_attack == 3)
@@ -37881,6 +37925,7 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 88:
+            // 'X' クラゲッソ
 			if (this.kuragesso_attack == 2)
 				this.tSet(x * 32, y * 32, 1150, x * 32 - 512 - 32);
 			else if (this.kuragesso_attack == 3)
@@ -37901,11 +37946,13 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				word1 = 4;
 			break;
 		case 89:
+            // 'Y' 水草
 			this.aSet(x * 32, y * 32, 60, x * 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 90:
+            // 'Z' センクウザ
 			this.co_b.c = 300;
 			this.co_b.c4 = 3;
 			this.co_b.x = x * 32;
@@ -37927,11 +37974,13 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 				this.co_b.x += 160;
 			break;
 		case 123:
+            // '{' 亀（追尾）
 			this.tSet(x * 32, y * 32, 1200, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
 			break;
 		case 125:
+            // '}' 重力無視の追跡ピカチー等
 			this.tSet(x * 32, y * 32, 1400, x * 32 - 512 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4)
 				word1 = 4;
@@ -37939,9 +37988,11 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 
 		default:
 			if (id >= 1000 && id < 5000) {
+                // 1000 〜 4999 はアスレチックコードとして扱う
 				word1 = this.setAthleticOnMap(id - 1000, x, y);
 			}
 			else if (id >= 5000 && id < 10000) {
+                // 5000 〜 9999 は敵コードとして扱う
 				this.tSet(x * 32, y * 32, id - 5000, x * 32 - 512 - 32);
 				if (this.maps.map_bg[x - 1][y] == 4)
 					word1 = 4;

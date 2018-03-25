@@ -26,6 +26,11 @@ function CharacterObject()
 	this.score = 0;
 	this.ss = 0;
 	this.gf = false;
+    /**
+     * このオブジェクトの動作を制御する関数
+     * @private
+     */
+    this.controller = undefined;
 }
 
 CharacterObject.prototype.init = function()
@@ -55,6 +60,7 @@ CharacterObject.prototype.init = function()
 	this.score = 0;
 	this.ss = 0;
 	this.gf = false;
+    this.controller = undefined;
 }
 
 CharacterObject.prototype.setPattern = function(paramString) {}
