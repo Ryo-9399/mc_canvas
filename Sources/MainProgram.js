@@ -5337,7 +5337,7 @@ MainProgram.prototype.readCustomParts = function(customParts)
                 var native =
                     5000 <= obj.extends && obj.extends < 10000 ?
                     // 敵コードの場合
-                    EnemyController.available[obj.extends] :
+                    EnemyController.available[obj.extends - 5000] :
                     null;
                 if(!native) {
                     // 拡張不可能
@@ -5348,12 +5348,14 @@ MainProgram.prototype.readCustomParts = function(customParts)
                 result[key] = {
                     properties: assign({}, native.properties, obj.properties),
                     native: native,
+                    nativeCode: obj.extends,
                 };
             } else if(obj.extends in result) {
                 // 継承可能なのでコピー
                 result[key] = {
                     properties: assign({}, result[obj.extends].properties, obj.properties),
                     native: result[obj.extends].native,
+                    nativeCode: result[obj.extends].nativeCode,
                 };
             } else {
                 // 継承元がまだ見つからない
@@ -37987,6 +37989,19 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 			break;
 
 		default:
+            if ("string" === typeof id) {
+                // カスタムパーツだ
+                if (this.customParts && this.customParts[id]){
+                    // カスタムパーツの場合は拡張元のIDで判定
+                    var nativeCode = this.customParts[id].nativeCode;
+                    if (nativeCode >= 5000 && nativeCode < 10000) {
+                        this.tSet(x * 32, y * 32, id, x * 32 - 512 - 32);
+                        if (this.maps.map_bg[x - 1][y] == 4)
+                            word1 = 4;
+                    }
+                }
+                break;
+            }
 			if (id >= 1000 && id < 5000) {
                 // 1000 〜 4999 はアスレチックコードとして扱う
 				word1 = this.setAthleticOnMap(id - 1000, x, y);
