@@ -29,7 +29,7 @@ EnemyController.Turtle = {
                     if(j21 >= 0)
                     {
                         characterobject.c = 1300;
-                        l20 = mp.ana_x[j21] * 32;
+                        characterobject.x = mp.ana_x[j21] * 32;
                         return true;
                     }
                 }
@@ -315,6 +315,234 @@ EnemyController.Turtle = {
 };
 
 /**
+ * 落ちる亀
+ */
+EnemyController.TurtleFall = {
+    properties: {
+        // 歩くスピード
+        walk_speed: 3,
+        // 落ちるスピード
+        fall_speed: 5,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(co) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp, i) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 110) {
+                // 落ちる亀（左向き）
+                if(mp.ana_kazu > 0)
+                {
+                    var l22 = mp.anaCheckNormal(l20, i21);
+                    if(l22 >= 0)
+                    {
+                        characterobject.c = 1300;
+                        characterobject.x = mp.ana_x[l22] * 32;
+                        return true;
+                    }
+                }
+                var l44 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(l44 != 18 && l44 != 19)
+                    l44 = 0;
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
+                {
+                    if(l44 == 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    else
+                    if(l44 == 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    if(mp.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
+                        i21++;
+                }
+                l20 -= properties.walk_speed;
+                var k37 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(k37 == 18 || k37 == 19)
+                    i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                if(l20 < 32)
+                {
+                    if(l20 <= 3)
+                        characterobject.c = 0;
+                } else
+                {
+                    var l37 = mp.maps.getBGCode(l20, i21);
+                    if(l37 >= 20 || l37 == 15 || l37 == 18)
+                    {
+                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                        characterobject.c = 115;
+                    }
+                }
+                if(i >= 120 && l20 < mp.maps.wx - 32)
+                    characterobject.c = 0;
+                if(l44 == 18)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                        i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
+                } else
+                if(l44 == 19)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+                } else
+                if(mp.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 15, i21 + 31) != 18 && mp.maps.getBGCode(l20 + 15, i21 + 31) != 19 && mp.maps.getBGCode(l20 + 31, i21 + 31) != 18)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
+                    characterobject.c = 120;
+                }
+                characterobject.pt = 140 + mp.g_ac;
+                characterobject.pth = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if(characterobject.c === 115) {
+                // 落ちる亀（右向き）
+                if(mp.ana_kazu > 0)
+                {
+                    var i23 = mp.anaCheckNormal(l20, i21);
+                    if(i23 >= 0)
+                    {
+                        characterobject.c = 1300;
+                        characterobject.x = mp.ana_x[i23] * 32;
+                        return true;
+                    }
+                }
+                var i45 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(i45 != 18 && i45 != 19)
+                    i45 = 0;
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
+                {
+                    if(i45 == 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    else
+                    if(i45 == 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    if(mp.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
+                        i21++;
+                }
+                l20 += properties.walk_speed;
+                var i38 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(i38 == 18 || i38 == 19)
+                    i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                i38 = mp.maps.getBGCode(l20 + 31, i21);
+                if(i38 >= 20 || i38 == 15 || i38 == 19)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.c = 110;
+                }
+                if(i >= 120 && l20 > mp.maps.wx + 512)
+                    characterobject.c = 0;
+                if(i45 == 19)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                        i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
+                } else
+                if(i45 == 18)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+                } else
+                if(mp.maps.getBGCode(l20, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 15, i21 + 31) != 18 && mp.maps.getBGCode(l20 + 15, i21 + 31) != 19 && mp.maps.getBGCode(l20, i21 + 31) != 19)
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32;
+                    characterobject.c = 125;
+                }
+                characterobject.pt = 140 + mp.g_ac;
+                characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if(characterobject.c === 120) {
+                // 落ちる亀（左・落下中）
+                if(mp.ana_kazu > 0)
+                {
+                    var l = 0;
+                    do
+                    {
+                        if(l > 11)
+                            break;
+                        if(mp.ana_c[l] > 0 && mp.ana_y[l] * 32 == i21 + 32 && Math.abs(mp.ana_x[l] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[l] * 32;
+                            break;
+                        }
+                        l++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                i21 += properties.fall_speed;
+                if(mp.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                    characterobject.c = 110;
+                }
+                if((mp.maps.getBGCode(l20 + 15, i21 + 31) == 18 || mp.maps.getBGCode(l20 + 15, i21 + 31) == 19) && mp.getSakamichiY(l20 + 15, i21 + 31) < i21)
+                {
+                    i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                    characterobject.c = 110;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+                characterobject.pt = 140;
+                characterobject.pth = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if(characterobject.c === 125) {
+                // 落ちる亀（右・落下中）
+                if(mp.ana_kazu > 0)
+                {
+                    var i1 = 0;
+                    do
+                    {
+                        if(i1 > 11)
+                            break;
+                        if(mp.ana_c[i1] > 0 && mp.ana_y[i1] * 32 == i21 + 32 && Math.abs(mp.ana_x[i1] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[i1] * 32;
+                            break;
+                        }
+                        i1++;
+                    } while(true);
+                    if(characterobject.c == 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                i21 += properties.fall_speed;
+                if(mp.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
+                {
+                    i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                    characterobject.c = 115;
+                }
+                if((mp.maps.getBGCode(l20 + 15, i21 + 31) == 18 || mp.maps.getBGCode(l20 + 15, i21 + 31) == 19) && mp.getSakamichiY(l20 + 15, i21 + 31) < i21)
+                {
+                    i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                    characterobject.c = 115;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+                characterobject.pt = 140;
+                characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
  * ピカチー
  */
 EnemyController.Pikachie = {
@@ -558,11 +786,94 @@ EnemyController.Pikachie = {
 };
 
 /**
+ * チコリン（はっぱカッター）
+ */
+EnemyController.Chikorin = {
+    properties: {
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(co) {
+            // 敵コードは300に統一
+            co.c2 = 300;
+            // 攻撃の種類をc3に入れておく
+            if (enemyCode === 301) {
+                co.c3 = 1;
+            }
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 300) {
+                if(mp.ana_kazu > 0)
+                {
+                    var j2 = 0;
+                    do
+                    {
+                        if(j2 > 11)
+                            break;
+                        if(mp.ana_c[j2] > 0 && mp.ana_y[j2] * 32 == i21 + 32 && Math.abs(this.ana_x[j2] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[j2] * 32;
+                            break;
+                        }
+                        j2++;
+                    } while(true);
+                    if(characterobject.c == 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 > 0)
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 == 2 || characterobject.c1 == 10 || characterobject.c1 == 18 || characterobject.c1 == 26)
+                    {
+                        if(l20 + 8 >= mp.co_j.x)
+                        {
+                            if(characterobject.c3 == 1)
+                                mp.mSet(l20, i21, 201);
+                            else
+                                mp.mSet(l20, i21, 200);
+                        } else
+                        if(characterobject.c3 == 1)
+                            mp.mSet(l20, i21, 206);
+                        else
+                            mp.mSet(l20, i21, 205);
+                        if(characterobject.c1 == 2 && Math.abs(i21 - mp.co_j.y) <= 288)
+                            mp.gs.rsAddSound(11);
+                    } else
+                    if(characterobject.c1 > 86)
+                        characterobject.c1 = 0;
+                } else
+                if(mp.co_j.x >= l20 - 256 && mp.co_j.x <= l20 + 256)
+                    characterobject.c1 = 1;
+                characterobject.pt = 150;
+                // 主人公の方を向く
+                if(l20 + 8 >= mp.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+
+/**
  * 拡張可能なマップチップコードの一覧
  */
 EnemyController.available = {
     // 亀（向きを変える）
     100: EnemyController.Turtle,
+    // 亀（落ちる）
+    110: EnemyController.TurtleFall,
     // ピカチー（電撃）
     200: EnemyController.Pikachie,
     // ピカチー（みずでっぽう 水平発射）
@@ -571,5 +882,9 @@ EnemyController.available = {
     202: EnemyController.Pikachie,
     // ピカチー（みずでっぽう プラズマ砲）
     203: EnemyController.Pikachie,
+    // チコリン（はっぱカッター）
+    300: EnemyController.Chikorin,
+    // チコリン（はっぱカッター　地形で消える）
+    301: EnemyController.Chikorin,
 };
 
