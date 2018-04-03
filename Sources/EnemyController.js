@@ -790,6 +790,15 @@ EnemyController.Pikachie = {
  */
 EnemyController.Chikorin = {
     properties: {
+        // 行動1周の時間
+        period: 86,
+        // 葉っぱを飛ばすタイミングと音を出すタイミング
+        attack_timing: {
+            2: 2,
+            10: 1,
+            18: 1,
+            26: 1,
+        },
     },
     initFactory: function(enemyCode, properties) {
         return function(co) {
@@ -829,28 +838,37 @@ EnemyController.Chikorin = {
                 }
                 if(characterobject.c1 > 0)
                 {
+                    // 行動中
                     characterobject.c1++;
-                    if(characterobject.c1 == 2 || characterobject.c1 == 10 || characterobject.c1 == 18 || characterobject.c1 == 26)
+                    var attack_value = properties.attack_timing[characterobject.c1];
+                    if(attack_value)
                     {
+                        // このフレームが攻撃フレームだったら
                         if(l20 + 8 >= mp.co_j.x)
                         {
-                            if(characterobject.c3 == 1)
+                            if(characterobject.c3 === 1)
                                 mp.mSet(l20, i21, 201);
                             else
                                 mp.mSet(l20, i21, 200);
                         } else
-                        if(characterobject.c3 == 1)
+                        if(characterobject.c3 === 1)
                             mp.mSet(l20, i21, 206);
                         else
                             mp.mSet(l20, i21, 205);
-                        if(characterobject.c1 == 2 && Math.abs(i21 - mp.co_j.y) <= 288)
+                        if(attack_value === 2 && Math.abs(i21 - mp.co_j.y) <= 288) {
+                            // 効果音発生
                             mp.gs.rsAddSound(11);
+                        }
                     } else
-                    if(characterobject.c1 > 86)
+                    if(characterobject.c1 > properties.period) {
+                        // 
                         characterobject.c1 = 0;
+                    }
                 } else
-                if(mp.co_j.x >= l20 - 256 && mp.co_j.x <= l20 + 256)
+                if(mp.co_j.x >= l20 - 256 && mp.co_j.x <= l20 + 256) {
+                    // 待機中に主人公が近づいたら行動中モードに移行
                     characterobject.c1 = 1;
+                }
                 characterobject.pt = 150;
                 // 主人公の方を向く
                 if(l20 + 8 >= mp.co_j.x)
