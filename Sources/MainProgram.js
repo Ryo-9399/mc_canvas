@@ -14739,29 +14739,6 @@ MainProgram.prototype.tSet = function(i, j, k, l)
             }
             // EnemyController未対応の敵コードの処理
 			switch (k) {
-				case 310:
-					characterobject.c3 = 8;
-					characterobject.c4 = 0;
-					break;
-
-				case 311:
-					characterobject.c2 = 310;
-					characterobject.c3 = 999;
-					characterobject.c4 = 0;
-					break;
-
-				case 312:
-					characterobject.c2 = 310;
-					characterobject.c3 = 8;
-					characterobject.c4 = 1;
-					break;
-
-				case 313:
-					characterobject.c2 = 310;
-					characterobject.c3 = 999;
-					characterobject.c4 = 1;
-					break;
-
 				case 500:
 					characterobject.y = j - 12;
 					characterobject.c3 = j - 52;
@@ -15219,56 +15196,6 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 210: 
-            break;
-
-        case 310: 
-            if(this.ana_kazu > 0)
-            {
-                var k2 = 0;
-                do
-                {
-                    if(k2 > 11)
-                        break;
-                    if(this.ana_c[k2] > 0 && this.ana_y[k2] * 32 == i21 + 32 && Math.abs(this.ana_x[k2] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[k2] * 32;
-                        break;
-                    }
-                    k2++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            if(characterobject.c1 <= 0)
-            {
-                if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32)
-                {
-                    characterobject.c1 = 100;
-                    this.gs.rsAddSound(17);
-                }
-            } else
-            if(characterobject.c1 >= 100 && characterobject.c1 < 200)
-            {
-                characterobject.c1++;
-                if(characterobject.c1 == 101)
-                {
-                    if(characterobject.c4 == 1)
-                        this.tSetBoss(l20, i21, 650, -3);
-                    else
-                        this.tSetBoss(l20, i21, 450, -3);
-                    if(characterobject.c3 < 999)
-                        characterobject.c3--;
-                    if(characterobject.c3 <= 0)
-                        characterobject.c1 = 500;
-                } else
-                if(characterobject.c1 >= 140)
-                    characterobject.c1 = 100;
-                if(l20 < this.maps.wx)
-                    characterobject.c1 = 500;
-            }
-            characterobject.pt = 150;
-            characterobject.pth = 0;
             break;
 
         case 320: 

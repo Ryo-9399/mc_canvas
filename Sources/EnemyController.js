@@ -883,6 +883,104 @@ EnemyController.Chikorin = {
     },
 };
 
+/**
+ * チコリン（ヒノララシ/マリリを投げる）
+ */
+EnemyController.ChikorinThrower = {
+    properties: {
+        // 投げる間隔
+        interval: 40,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(co) {
+            co.c2 = 310;
+            switch (enemyCode) {
+                case 310:
+                    // チコリン（ヒノララシを8匹投げる）
+                    co.c3 = 8;
+                    co.c4 = 0;
+                    break;
+                case 311:
+                    // チコリン（ヒノララシを無限に投げる）
+                    co.c3 = 999;
+                    co.c4 = 0;
+                    break;
+                case 312:
+                    // チコリン（マリリを8匹投げる）
+                    co.c3 = 8;
+                    co.c4 = 1;
+                    break;
+                case 313:
+                    // チコリン（マリリを無限に投げる）
+                    co.c3 = 999;
+                    co.c4 = 1;
+                    break;
+            }
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 310) {
+                if(mp.ana_kazu > 0)
+                {
+                    var k2 = 0;
+                    do
+                    {
+                        if(k2 > 11)
+                            break;
+                        if(mp.ana_c[k2] > 0 && mp.ana_y[k2] * 32 == i21 + 32 && Math.abs(mp.ana_x[k2] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[k2] * 32;
+                            break;
+                        }
+                        k2++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32)
+                    {
+                        // 射程に入ったら行動開始
+                        characterobject.c1 = 100;
+                        mp.gs.rsAddSound(17);
+                    }
+                } else
+                if(characterobject.c1 >= 100 && characterobject.c1 < 200)
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 === 101)
+                    {
+                        // c4が1ならマリリ、0ならヒノララシを投げる
+                        if(characterobject.c4 === 1)
+                            mp.tSetBoss(l20, i21, 650, -3);
+                        else
+                            mp.tSetBoss(l20, i21, 450, -3);
+                        if(characterobject.c3 < 999)
+                            characterobject.c3--;
+                        // 残弾が無くなったら停止状態へ移行
+                        if(characterobject.c3 <= 0)
+                            characterobject.c1 = 500;
+                    } else
+                    if(characterobject.c1 >= 100 + properties.interval)
+                        characterobject.c1 = 100;
+                    // 通り過ぎたら停止
+                    if(l20 < mp.maps.wx)
+                        characterobject.c1 = 500;
+                }
+                characterobject.pt = 150;
+                characterobject.pth = 0;
+            }
+        };
+    },
+};
+
 
 /**
  * 拡張可能なマップチップコードの一覧
@@ -904,5 +1002,13 @@ EnemyController.available = {
     300: EnemyController.Chikorin,
     // チコリン（はっぱカッター　地形で消える）
     301: EnemyController.Chikorin,
+    // チコリン（ヒノララシを8匹投げる）
+    310: EnemyController.ChikorinThrower,
+    // チコリン（ヒノララシを無限に投げる）
+    311: EnemyController.ChikorinThrower,
+    // チコリン（マリリを8匹投げる）
+    312: EnemyController.ChikorinThrower,
+    // チコリン（マリリを無限に投げる）
+    313: EnemyController.ChikorinThrower,
 };
 
