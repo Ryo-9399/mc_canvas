@@ -823,7 +823,7 @@ EnemyController.Chikorin = {
                     {
                         if(j2 > 11)
                             break;
-                        if(mp.ana_c[j2] > 0 && mp.ana_y[j2] * 32 == i21 + 32 && Math.abs(this.ana_x[j2] * 32 - l20) < 32)
+                        if(mp.ana_c[j2] > 0 && mp.ana_y[j2] * 32 == i21 + 32 && Math.abs(mp.ana_x[j2] * 32 - l20) < 32)
                         {
                             characterobject.c = 1300;
                             l20 = mp.ana_x[j2] * 32;
@@ -981,6 +981,232 @@ EnemyController.ChikorinThrower = {
     },
 };
 
+/**
+ * チコリン（はっぱカッター 乱れ射ち）
+ */
+EnemyController.ChikorinMidareuchi = {
+    properties: {
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(co) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 320) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(mp.ana_kazu > 0)
+                {
+                    var l2 = 0;
+                    do
+                    {
+                        if(l2 > 11)
+                            break;
+                        if(mp.ana_c[l2] > 0 && mp.ana_y[l2] * 32 == i21 + 32 && Math.abs(mp.ana_x[l2] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[l2] * 32;
+                            break;
+                        }
+                        l2++;
+                    } while(true);
+                    if(characterobject.c == 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx - 16 && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 288 && mp.co_j.x <= l20 + 192 && Math.abs(mp.co_j.x - l20) >= 88 && mp.co_j.y <= i21 + 128) {
+                        // 発射方向を決定
+                        if(mp.co_j.x <= l20 + 8)
+                            characterobject.c1 = 100;
+                        else
+                            characterobject.c1 = 200;
+                    }
+                } else
+                if(characterobject.c1 >= 100 && characterobject.c1 < 200)
+                {
+                    // 左向きに発射中
+                    characterobject.c1++;
+                    if(characterobject.c1 == 101)
+                    {
+                        var d2 = 4.7100000381469727;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d2) * 10), Math.floor(Math.sin(d2) * 10));
+                        mp.gs.rsAddSound(11);
+                    } else
+                    if(characterobject.c1 == 105)
+                    {
+                        var d3 = 3.9249999523162842;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d3) * 10), Math.floor(Math.sin(d3) * 10));
+                    } else
+                    if(characterobject.c1 == 109)
+                    {
+                        var d4 = 3.1400001049041748;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d4) * 10), Math.floor(Math.sin(d4) * 10));
+                    } else
+                    if(characterobject.c1 == 113)
+                    {
+                        var d5 = 3.6633334159851074;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d5) * 10), Math.floor(Math.sin(d5) * 10));
+                    } else
+                    if(characterobject.c1 >= 121)
+                    {
+                        var d6 = 4.1866669654846191;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d6) * 10), Math.floor(Math.sin(d6) * 10));
+                        characterobject.c1 = 300;
+                    }
+                } else
+                if(characterobject.c1 >= 200 && characterobject.c1 < 300)
+                {
+                    // 右向きに発射中
+                    characterobject.c1++;
+                    if(characterobject.c1 == 201)
+                    {
+                        var d7 = 4.7100000381469727;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d7) * 10), Math.floor(Math.sin(d7) * 10));
+                        mp.gs.rsAddSound(11);
+                    } else
+                    if(characterobject.c1 == 205)
+                    {
+                        var d8 = 5.4950003623962402;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d8) * 10), Math.floor(Math.sin(d8) * 10));
+                    } else
+                    if(characterobject.c1 == 209)
+                    {
+                        var d9 = 0.0;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d9) * 10), Math.floor(Math.sin(d9) * 10));
+                    } else
+                    if(characterobject.c1 == 213)
+                    {
+                        var d10 = 5.7566671371459961;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d10) * 10), Math.floor(Math.sin(d10) * 10));
+                    } else
+                    if(characterobject.c1 >= 221)
+                    {
+                        var d11 = 5.2333335876464844;
+                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d11) * 10), Math.floor(Math.sin(d11) * 10));
+                        characterobject.c1 = 300;
+                    }
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > 350)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 150;
+                // 主人公の方を向く
+                if(mp.co_j.x <= l20 + 8)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+            }
+        };
+    },
+};
+
+/**
+ * チコリン（ソーラービーム）
+ */
+EnemyController.ChikorinSolarBeam = {
+    properties: {
+        // ビームを撃ってから次に撃つまでの間隔
+        interval: 120,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(co) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 330) {
+                // 左へ発射
+                if(mp.ana_kazu > 0)
+                {
+                    var i3 = 0;
+                    do
+                    {
+                        if(i3 > 11)
+                            break;
+                        if(mp.ana_c[i3] > 0 && mp.ana_y[i3] * 32 == i21 + 32 && Math.abs(mp.ana_x[i3] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[i3] * 32;
+                            break;
+                        }
+                        i3++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx - 16 && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 352 && mp.co_j.x <= l20 - 72 && Math.abs(mp.co_j.y - i21) < 32)
+                    {
+                        mp.mSet2(l20, i21, 75, i, 0);
+                        mp.gs.rsAddSound(11);
+                        characterobject.c1 = 300;
+                    }
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > 300 + properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 150;
+                characterobject.pth = 0;
+                return true;
+            } else if (characterobject.c === 335) {
+                // 右へ発射
+                if(mp.ana_kazu > 0)
+                {
+                    var j3 = 0;
+                    do
+                    {
+                        if(j3 > 11)
+                            break;
+                        if(mp.ana_c[j3] > 0 && mp.ana_y[j3] * 32 == i21 + 32 && Math.abs(mp.ana_x[j3] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[j3] * 32;
+                            break;
+                        }
+                        j3++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx - 16 - 144 && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x <= l20 + 352 && mp.co_j.x >= l20 + 72 && Math.abs(mp.co_j.y - i21) < 32)
+                    {
+                        mp.mSet2(l20, i21, 85, i, 0);
+                        mp.gs.rsAddSound(11);
+                        characterobject.c1 = 300;
+                    }
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > 300 + properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 150;
+                characterobject.pth = 1;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
 
 /**
  * 拡張可能なマップチップコードの一覧
@@ -1010,5 +1236,11 @@ EnemyController.available = {
     312: EnemyController.ChikorinThrower,
     // チコリン（マリリを無限に投げる）
     313: EnemyController.ChikorinThrower,
+    // チコリン（はっぱカッター 乱れ打ち）
+    320: EnemyController.ChikorinMidareuchi,
+    // チコリン（ソーラービーム）
+    330: EnemyController.ChikorinSolarBeam,
+    // チコリン（ソーラービーム　右へ発射）
+    335: EnemyController.ChikorinSolarBeam,
 };
 
