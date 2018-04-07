@@ -2606,4 +2606,13 @@ MasaoConstruction.prototype.loadAdvanceMapJson = function (url) {
 	xhr.send(null);
 }
 
+/**
+ * 現在のゲーム状態のスナップショットオブジェクトを作成して返します。
+ */
+MasaoConstruction.prototype.getSnapshot = function() {
+	var result = {
+		mp: this.mp.getSnapshot(),
+	};
+	return result;
+};
 

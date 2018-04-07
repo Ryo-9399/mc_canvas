@@ -193,8 +193,10 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-    // メインループを作成
-    var __loop = new Loop(this, !!options['bc-loop-setinterval']);
+	// メインループを作成
+	// カスタムメインループが提供されていたらそれを使用
+	var loopConstructor = options['custom-loop'] || Loop;
+    var __loop = new loopConstructor(this, !!options['bc-loop-setinterval']);
     __loop.start(__st, this.__loop.bind(this));
     this.__resourceList.push({
         type: "Loop",

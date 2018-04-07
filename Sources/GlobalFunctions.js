@@ -16,6 +16,7 @@
  * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
  * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
  * @param {boolean} [options."bc-case-insensitive"] 拡張JSのメソッドの大文字小文字を区別しない
+ * @param {boolean} [options."custom-loop"] メインループを行うためのLoopクラスです。（テスト用）
  */
 function Game(params, id, options){
 	var randomID = makeRandomString();
@@ -202,8 +203,10 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-    // メインループを作成
-    var __loop = new Loop(this, !!options['bc-loop-setinterval']);
+	// メインループを作成
+	// カスタムメインループが提供されていたらそれを使用
+	var loopConstructor = options['custom-loop'] || Loop;
+    var __loop = new loopConstructor(this, !!options['bc-loop-setinterval']);
     __loop.start(__st, this.__loop.bind(this));
     this.__resourceList.push({
         type: "Loop",
@@ -334,7 +337,10 @@ Game.padAccessor = (function()
 	};
 })();
 
-// ゲームを終了する関数
+/**
+ * ゲームを終了する関数です。
+ * ゲームのメインループを終了し、このインスタンスによって追加されたDOMオブジェクトやタイマーを除去します。
+ */
 Game.prototype.kill = function(){
     //ゲームを止める
     this.__mc.stop();
@@ -355,13 +361,14 @@ Game.prototype.kill = function(){
     }
 };
 
-// ループ関数
+/**
+ * ゲームのメインループを1回実行する関数です。
+ */
 Game.prototype.__loop = function()
 {
 	var pt = new Date().getTime();
 	if(pt - this.__pt < this.__st) return;
 	this.__pt = pt - 10;
-
 
 	// デバッグ用キャンバス描画
 	if(this.__testCanvas)
@@ -439,7 +446,10 @@ Game.prototype.__loop = function()
 
 
 
-// ソフトウェアパッド更新関数
+/**
+ * ソフトウェアパッド更新関数
+ * @internal
+ */
 Game.prototype.__pad_update = function()
 {
 	var r = this.__pad.getBoundingClientRect();
