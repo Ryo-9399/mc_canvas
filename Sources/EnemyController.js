@@ -1102,7 +1102,10 @@ EnemyController.ChikorinMidareuchi = {
                     characterobject.pth = 0;
                 else
                     characterobject.pth = 1;
+
+                return true;
             }
+            return false;
         };
     },
 };
@@ -1207,6 +1210,366 @@ EnemyController.ChikorinSolarBeam = {
     },
 };
 
+/**
+ * ヒノララシ
+ */
+EnemyController.Hinorarashi = {
+    properties: {
+        // 歩くスピード
+        walk_speed: 4,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(co) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 400) {
+                // 歩く（左向き）
+                if(mp.ana_kazu > 0)
+                {
+                    var k3 = 0;
+                    do
+                    {
+                        if(k3 > 11)
+                            break;
+                        if(mp.ana_c[k3] > 0 && mp.ana_y[k3] * 32 == i21 + 32 && Math.abs(mp.ana_x[k3] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[k3] * 32;
+                            break;
+                        }
+                        k3++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(mp.j_tokugi === 14)
+                {
+                    characterobject.c2++;
+                    if(characterobject.c2 > 24)
+                    {
+                        characterobject.c2 = 0;
+                        if(mp.co_j.y < i21 + 8)
+                            mp.mSet(l20, i21, 150);
+                    }
+                }
+                var j45 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(j45 !== 18 && j45 !== 19)
+                    j45 = 0;
+                if(j45 === 0 && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9 || j45 > 0 && mp.getSakamichiY(l20 + 15, i21 + 31) > i21)
+                {
+                    // 落下処理
+                    i21 += 5;
+                    if(mp.maps.getBGCode(l20 + 15, i21 + 32) >= 20) {
+                        // 床に着地
+                        i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                    }
+                    if((mp.maps.getBGCode(l20 + 15, i21 + 31) === 18 || mp.maps.getBGCode(l20 + 15, i21 + 31) === 19) && mp.getSakamichiY(l20 + 15, i21 + 31) < i21) {
+                        // 坂に着地
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                    }
+                    characterobject.pt = 152;
+                    characterobject.pth = 0;
+                    if(mp.yuka_id_max >= 0)
+                    {
+                        var l3 = 0;
+                        do
+                        {
+                            if(l3 > mp.yuka_id_max)
+                                break;
+                            var yo = mp.yo[l3];
+                            if(yo.con >= 300 && yo.con < 350)
+                            {
+                                var k24 = mp.getSCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(k24 >= 0 && k24 <= i21 && k24 + 31 >= i21)
+                                {
+                                    i21 = k24;
+                                    characterobject.c = 404;
+                                    characterobject.c2 = l3;
+                                    characterobject.vx = -1;
+                                    break;
+                                }
+                            } else
+                            if(yo.con >= 350 && yo.con < 400)
+                            {
+                                var l24 = mp.getSHCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(l24 >= 0 && l24 - 192 <= i21 && l24 + 31 + 192 >= i21)
+                                {
+                                    i21 = l24;
+                                    characterobject.c = 404;
+                                    characterobject.c2 = l3;
+                                    characterobject.vx = -1;
+                                    break;
+                                }
+                            } else
+                            if(yo.con >= 400 && yo.con < 450)
+                            {
+                                var i25 = mp.getSWUpOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(i25 >= 0 && i25 <= i21 && i25 + 31 >= i21)
+                                {
+                                    i21 = i25;
+                                    characterobject.c = 404;
+                                    characterobject.c2 = l3;
+                                    characterobject.vx = -1;
+                                    break;
+                                }
+                            } else
+                            if(yo.con >= 450 && yo.con < 500)
+                            {
+                                var j25 = mp.getSWDownOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(j25 >= 0 && j25 <= i21 && j25 + 31 >= i21)
+                                {
+                                    i21 = j25;
+                                    characterobject.c = 404;
+                                    characterobject.c2 = l3;
+                                    characterobject.vx = -1;
+                                    break;
+                                }
+                            }
+                            l3++;
+                        } while(true);
+                    }
+                } else
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - properties.walk_speed, 5))
+                    {
+                        // 坂道を降りた時に地面にちょうど乗るようにy座標を調整
+                        if(j45 === 18) {
+                            i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                        }
+                        else if(j45 === 19) {
+                            i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                        }
+                        if(mp.maps.getBGCode((l20 + 15) - properties.walk_speed, i21 + 32) === 18) {
+                            // 下り坂が連続していたときに降り続けるための処理？
+                            i21++;
+                        }
+                    }
+                    l20 -= properties.walk_speed;
+                    var j38 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(j38 === 18 || j38 === 19) {
+                        // 坂道にさしかかったのでy座標を調整
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                    }
+                    j38 = mp.maps.getBGCode(l20, i21);
+                    if(j38 >= 20 || j38 === 15 || j38 === 18)
+                    {
+                        // 壁に当たったので向きを変える
+                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                        characterobject.c = 405;
+                    }
+                    // 足場が無いときに折り返す処理
+                    if(j45 === 18)
+                    {
+                        if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                        {
+                            l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
+                            characterobject.c = 405;
+                        }
+                    } else
+                    if(j45 === 19)
+                    {
+                        if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+                        {
+                            l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
+                            i21++;
+                            characterobject.c = 405;
+                        }
+                    } else
+                    if(mp.maps.getBGCode(l20, i21 + 32) <= 9 && mp.maps.getBGCode(l20, i21 + 31) <= 9)
+                    {
+                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                        characterobject.c = 405;
+                    }
+                    characterobject.pt = 152 + mp.g_ac;
+                    characterobject.pth = 0;
+                }
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 404) {
+                // 床に乗っている状態？
+                characterobject.pt = 152 + mp.g_ac;
+                characterobject.pth = 0;
+                var yo = mp.yo[characterobject.c2];
+                if(yo.con >= 300 && yo.con < 350)
+                {
+                    var i29 = rounddown((mp.yo[characterobject.c2].x2 * 80) / 100);
+                    if(characterobject.vx < 0)
+                    {
+                        if((l20 -= properties.walk_speed) <= yo.x - i29 - 15)
+                        {
+                            l20 = yo.x - i29 - 15;
+                            characterobject.vx = 1;
+                        }
+                    } else
+                    {
+                        characterobject.pth = 1;
+                        if((l20 += properties.walk_speed) >= (yo.x + i29) - 15)
+                        {
+                            l20 = (yo.x + i29) - 15;
+                            characterobject.vx = -1;
+                        }
+                    }
+                    i21 = mp.getSCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                } else
+                if(yo.con >= 350 && yo.con < 400)
+                {
+                    if(characterobject.vx < 0)
+                    {
+                        if((l20 -= properties.walk_speed) <= (yo.x - 15) + 8)
+                        {
+                            l20 = (yo.x - 15) + 8;
+                            characterobject.vx = 1;
+                        }
+                    } else
+                    {
+                        characterobject.pth = 1;
+                        if((l20 += properties.walk_speed) >= (yo.x + 239) - 15 - 8)
+                        {
+                            l20 = (yo.x + 239) - 15 - 8;
+                            characterobject.vx = -1;
+                        }
+                    }
+                    i21 = mp.getSHCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                } else
+                if(yo.con >= 400 && yo.con < 450)
+                {
+                    if(characterobject.vx < 0)
+                    {
+                        if((l20 -= properties.walk_speed) <= (yo.x + 8) - 15)
+                        {
+                            l20 = (yo.x + 8) - 15;
+                            characterobject.vx = 1;
+                        }
+                    } else
+                    {
+                        characterobject.pth = 1;
+                        if((l20 += properties.walk_speed) >= (yo.x + 256) - 8 - 15)
+                        {
+                            l20 = (yo.x + 256) - 8 - 15;
+                            characterobject.vx = -1;
+                        }
+                    }
+                    i21 = mp.getSWUpOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                } else
+                if(yo.con >= 450 && yo.con < 500)
+                {
+                    if(characterobject.vx < 0)
+                    {
+                        if((l20 -= properties.walk_speed) <= (yo.x + 8) - 15)
+                        {
+                            l20 = (yo.x + 8) - 15;
+                            characterobject.vx = 1;
+                        }
+                    } else
+                    {
+                        characterobject.pth = 1;
+                        if((l20 += properties.walk_speed) >= (yo.x + 256) - 8 - 15)
+                        {
+                            l20 = (yo.x + 256) - 8 - 15;
+                            characterobject.vx = -1;
+                        }
+                    }
+                    i21 = mp.getSWDownOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                }
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 405) {
+                // 歩いている（右向き）
+                if(mp.ana_kazu > 0)
+                {
+                    var i4 = 0;
+                    do
+                    {
+                        if(i4 > 11)
+                            break;
+                        if(mp.ana_c[i4] > 0 && mp.ana_y[i4] * 32 == i21 + 32 && Math.abs(mp.ana_x[i4] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[i4] * 32;
+                            break;
+                        }
+                        i4++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(mp.j_tokugi === 14)
+                {
+                    characterobject.c2++;
+                    if(characterobject.c2 > 24)
+                    {
+                        characterobject.c2 = 0;
+                        if(mp.co_j.y < i21 + 8)
+                            mp.mSet(l20, i21, 150);
+                    }
+                }
+                var k45 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(k45 !== 18 && k45 !== 19)
+                    k45 = 0;
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5))
+                {
+                    // 坂を降りたときのy座標の調整
+                    if(k45 === 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    else
+                    if(k45 === 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    if(mp.maps.getBGCode(l20 + 15 + properties.walk_speed, i21 + 32) === 19)
+                        i21++;
+                }
+                l20 += properties.walk_speed;
+                var k38 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if(k38 === 18 || k38 == 19)
+                    i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                k38 = mp.maps.getBGCode(l20 + 31, i21);
+                if(k38 >= 20 || k38 === 15 || k38 === 19)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.c = 400;
+                }
+                if(k45 === 19)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - properties.walk_speed, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+                    {
+                        l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
+                        characterobject.c = 400;
+                    }
+                } else
+                if(k45 === 18)
+                {
+                    if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - properties.walk_speed, 5) && mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+                    {
+                        l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
+                        i21++;
+                        characterobject.c = 400;
+                    }
+                } else
+                if(mp.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && mp.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.c = 400;
+                }
+                characterobject.pt = 152 + mp.g_ac;
+                characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
 
 /**
  * 拡張可能なマップチップコードの一覧
@@ -1242,5 +1605,7 @@ EnemyController.available = {
     330: EnemyController.ChikorinSolarBeam,
     // チコリン（ソーラービーム　右へ発射）
     335: EnemyController.ChikorinSolarBeam,
+    // ヒノララシ
+    400: EnemyController.Hinorarashi,
 };
 
