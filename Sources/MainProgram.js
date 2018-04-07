@@ -37950,3 +37950,67 @@ MainProgram.prototype.setChipValue = function (x, y, id) {
 	}
 	return word1;
 }
+
+/**
+ * 現在のゲーム状態を表すスナップショットオブジェクトを作成して返します。
+ */
+MainProgram.prototype.getSnapshot = function()
+{
+	// 出力すべきプロパティの一覧
+	var props = ["ran_seed","ana_kazu","ochiru_y","j_hashiru_f","j_jump_level","j_jump_type","j_zan_f","j_zan_cf","j_zan_p","j_zan_nagasa","j_zan_c","j_a_id","j_mizu_f","j_mizu_ac","j_mizu_awa_c","j_left","j_jdai_f","boss_hp","showm_c","showi_c","showi_x","showi_y","time","m_kazu","jm_kazu","a_hf","j_fire_f","j_v_c","j_v_kakudo","j_jet_c","j_jet_kf","j_jet_fuel","j_helm_f","j_drell_f","j_tail_f","j_tail_ac","j_gr_kazu","sl_step","sl_wx","sl_wy","sl_speed","ks_wx","ks_wy","j_tail_hf","j_tail_type","yachamo_attack","poppie_attack","hitokoto_num","boss_kijyun_y","coin_kazu","tpika_p","setmyw_w","setmyw_pt","setmyw_muki","souko_count1","souko_count2","souko_count3","heh","system_draw_mode","ml_mode","ml_mode_c","score","highscore","score_1up_1","score_1up_2","stage","stage_cc","g_c1","g_c2","g_c3","g_ac","g_ac2","tr1_c","tr2_c","left_dcc","right_dcc","xkey_c","vo_x","vo_y","ana_c","ana_x","ana_y","j_zan_x","j_zan_y","j_zan_pt","j_zan_pth","j_zan_img","j_zan_zs_x","j_zan_zs_y","j_shitakara_mushi_y","j_hashigo_f","j_hashigo_mushi_x","j_djump_kf","j_speed","j_fire_range","j_rope_id","j_rope_r","j_rope_cf","j_cannon_c","j_cannon_type","saka_mushi_y","dkey_count","j_hp_v","j_hp","j_hp_max","j_muteki_c","j_4_muki","showm_data","showi_img","setmapc_f","setbacki_f","setbacki_img","showr_c","showr_x","showr_y","showr_width","showr_height","showo_c","showo_x","showo_y","showo_width","showo_height","js_mes","gauge_v","gauge_value","gauge_text","vo_pa_x","vo_pa_y","stage_1up_f","j_fire_type","mu_ato_x","mu_ato_y","mu_ato_p","j_double_f","view_move_type","hitokoto_c","title_lock_f","start_game_f","mode_wait_ending","mode_wait_gameover","mode_wait_stagestart","attacktail_yf","mhouse_c","mhouse_x","mhouse_y","yuka_ride_id","dso_cf","spot_c","spot_r","spot_r_mokuhyou","draw_lock_f","nkscroll_con","nkscroll_view_x","nkscroll_view_y","nkscroll_my_view_x","nkscroll_my_view_y","nkscroll_speed_x","nkscroll_vx","nkscroll_vy","nkscroll_zsc","boss_attack_mode","cpoint_con","cpoint_stage","cpoint_x","cpoint_y","jst_slow_down","jst_key_down","jst_fast_run_attack","jst_fly_left_right","jst_fire_xkey_only","jst_kabe_kick","jst_double_jump","jst_fast_run","jst_high_sjump","jst_jump_level_fix","jst_auto_right","jst_syouryuuken","jst_pc_attack","up_key_c","down_key_c"];
+	var result = {};
+	props.forEach(function(key){
+		result[key] = this[key];
+	}, this);
+	// map_data_optionは巨大なので圧縮する
+	result.map_data_option = compressSparseBooleanArray2(this.map_data_option);
+    result.co_j = serializeCharacterObject(this.co_j);
+    // CharacterObjectの配列も小さくする
+    ["co_t","co_m","co_a","co_jm","co_mu"].forEach(function(key){
+        result[key] = compressCharacterObjectArray(this[key]);
+    }, this);
+    // YukaObjectの配列も小さくする
+    result.yo = this.yo.map(serializeYukaObject);
+	return result;
+	// boolean値2次元配列をtrueのインデックスの列に変換
+	function compressSparseBooleanArray2(arr) {
+		var width = arr.length;
+		var height = arr[0] && arr[0].length || 0;
+		var result_arr = [];
+		for (var x=0; y<width; x++) {
+			for (var y=0; y<height; y++) {
+				if (arr[x][y]) {
+					result_arr.push({
+						x: x,
+						y: y,
+					});
+				}
+			}
+		}
+		return {
+			width: width,
+			height: height,
+			arr: result_arr,
+		};
+	}
+    // CharacterObjectの配列を変換
+    function compressCharacterObjectArray(arr) {
+        return arr.map(function(obj) {
+            if (obj.c <= 0) {
+                // Cが0なのは使われていないオブジェクト
+                return 0;
+            } else {
+                return serializeCharacterObject(obj);
+            }
+        });
+    }
+    // CharacterObjectをシリアライズ
+    function serializeCharacterObject(obj) {
+        // スナップショットにコンストラクタ名が現れるのを防ぐためにJSON文字列化する
+        return JSON.stringify(obj);
+    }
+    // YukaObjectをシリアライズ
+    function serializeYukaObject(obj) {
+        return JSON.stringify(obj);
+    }
+}

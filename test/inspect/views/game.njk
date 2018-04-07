@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{{filename}}</title>
+    <style>
+      body {
+        background-color: silver;
+      }
+      #game {
+        text-align: center;
+      }
+      #count {
+        font-size: 1.6em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <div id="count"></div>
+    <script src="/output/CanvasMasao.js"></script>
+    <script>
+      var params = Object.assign(
+        {{params | safe}},
+        {
+          filename_pattern: '/static/pattern.gif',
+          filename_mapchip: '/static/mapchip.gif',
+          filename_title: '/static/title.gif',
+          filename_ending: '/static/ending.gif',
+          filename_gameover: '/static/gameover.gif',
+        }
+      );
+      var options = Object.assign(
+        {{options | safe}},
+        {userJSCallback});
+      var game = new CanvasMasao.Game(params, 'game', options);
+      // 乱数を固定
+      game.__mc.userInit = function() {
+        this.mp.ran_seed = {{ran_seed}};
+      };
+
+      var flag = true;
+      var count = -1;
+      function userJSCallback(os_g, mode, x, y, app) {
+        if (count < 0) {
+          // さっそくゲームを開始
+          console.log(mode, game.__mc.mp.ml_mode);
+          app.startGame();
+        }
+        if (flag) {
+          count++;
+          if (mode >= 300) {
+            // ゲームクリア or 死亡なのでカウントストップ
+            flag = false;
+          }
+          document.getElementById('count').textContent = String(count);
+        }
+      }
+    </script>
+  </body>
+</html>
