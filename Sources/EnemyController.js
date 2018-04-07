@@ -1572,6 +1572,374 @@ EnemyController.Hinorarashi = {
 };
 
 /**
+ * ポッピー（上下移動）
+ */
+EnemyController.PoppieUpDown = {
+    properties: {
+        // 普段の飛行速度
+        speed: 4,
+        // 折り返し時の加速度
+        accel: 1,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            // 初期y座標
+            var j = characterobject.y;
+
+            // パラメータを初期化
+            characterobject.y = j - 12;
+            characterobject.c3 = j - 52;
+            characterobject.c4 = j - 12;
+            characterobject.vy = -4;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 500) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(i21 <= characterobject.c3)
+                {
+                    characterobject.vy += properties.accel;
+                    if(characterobject.vy > properties.speed)
+                        characterobject.vy = properties.speed;
+                } else
+                if(i21 >= characterobject.c4)
+                {
+                    characterobject.vy -= properties.accel;
+                    if(characterobject.vy < -properties.speed)
+                        characterobject.vy = -properties.speed;
+                }
+                i21 += characterobject.vy;
+                characterobject.pt = 147 + mp.g_ac;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ポッピー（左右移動）
+ */
+EnemyController.PoppieLeftRight = {
+    properties: {
+        // 左右移動の速度
+        speed: 3,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 510) {
+                // 左向き
+                if((l20 -= properties.speed) < 48)
+                {
+                    // ステージから出て行ったので消滅
+                    if(l20 <= 3)
+                        characterobject.c = 0;
+                } else
+                if(mp.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
+                {
+                    // 壁に当たったので跳ね返る
+                    l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
+                    characterobject.c = 515;
+                }
+                characterobject.pt = 147 + mp.g_ac;
+                characterobject.pth = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 515) {
+                // 右向き
+                l20 += properties.speed;
+                if(mp.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
+                {
+                    // 壁に当たったので跳ね返る
+                    l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
+                    characterobject.c = 510;
+                }
+                characterobject.pt = 147 + mp.g_ac;
+                characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ポッピー（火の粉）
+ */
+EnemyController.PoppieFire = {
+    properties: {
+        // 発射の間隔
+        interval: 40,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 520) {
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 288 && mp.co_j.x <= l20 + 192 && Math.abs(mp.co_j.x - l20) >= 64 && Math.abs(mp.co_j.y - i21) <= 128) {
+                        // 射程に入ったら行動開始
+                        characterobject.c1 = 1;
+                    }
+                } else
+                if(characterobject.c1 === 1)
+                {
+                    if(l20 + 8 >= mp.co_j.x)
+                    {
+                        mp.mSet(l20, i21, 300);
+                        mp.gs.rsAddSound(14);
+                    } else
+                    {
+                        mp.mSet(l20, i21, 305);
+                        mp.gs.rsAddSound(14);
+                    }
+                    characterobject.c1 = 2;
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 147 + mp.g_ac;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ポッピー（火の粉 3連射）
+ */
+EnemyController.PoppieFire3 = {
+    properties: {
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            var j = characterobject.y;
+            characterobject.c3 = j;
+            characterobject.c4 = 0;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 530) {
+                if(characterobject.c4 <= 0)
+                {
+                    // 上昇中
+                    if((i21 -= 2) <= characterobject.c3 - 64)
+                    {
+                        i21 = characterobject.c3 - 64;
+                        characterobject.c4 = 10;
+                        // 発射可能だったら発射態勢へ
+                        if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 320 && mp.co_j.x <= l20 + 256 && Math.abs(mp.co_j.x - l20) >= 64 && Math.abs(mp.co_j.y - i21) <= 160)
+                            characterobject.c4 = 20;
+                    }
+                } else
+                if(characterobject.c4 === 10)
+                {
+                    // 下降中
+                    if((i21 += 2) >= characterobject.c3)
+                    {
+                        i21 = characterobject.c3;
+                        characterobject.c4 = 0;
+                    }
+                } else
+                if(characterobject.c4 === 20)
+                {
+                    // 火の粉発射
+                    if(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
+                    {
+                        if(i21 === characterobject.c3 - 64)
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                mp.mSet(l20, i21, 300);
+                                mp.gs.rsAddSound(14);
+                            } else
+                            {
+                                mp.mSet(l20, i21, 305);
+                                mp.gs.rsAddSound(14);
+                            }
+                        if(i21 === characterobject.c3 - 32)
+                            if(l20 + 8 >= mp.co_j.x)
+                                mp.mSet(l20, i21, 300);
+                            else
+                                mp.mSet(l20, i21, 305);
+                    }
+                    if((i21 += 2) >= characterobject.c3)
+                    {
+                        i21 = characterobject.c3;
+                        characterobject.c4 = 0;
+                        if(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
+                            if(l20 + 8 >= mp.co_j.x)
+                                mp.mSet(l20, i21, 300);
+                            else
+                                mp.mSet(l20, i21, 305);
+                    }
+                }
+                characterobject.pt = 147 + mp.g_ac;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ポッピー（バブル光線3発）
+ */
+EnemyController.PoppieBubble3 = {
+    properties: {
+        // 発射の間隔
+        interval: 40,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 540) {
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 288 && mp.co_j.x <= l20 + 192 && Math.abs(mp.co_j.x - l20) >= 64 && Math.abs(mp.co_j.y - i21) <= 128)
+                        characterobject.c1 = 1;
+                } else
+                if(characterobject.c1 === 1)
+                {
+                    if(l20 + 8 >= mp.co_j.x)
+                    {
+                        var d12 = 3.1400001049041748;
+                        mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+                        d12 = 3.6633334159851074;
+                        mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+                        d12 = 2.6166667938232422;
+                        mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+                        mp.gs.rsAddSound(18);
+                    } else
+                    {
+                        var d13 = 0.0;
+                        mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+                        d13 = 5.7566671371459961;
+                        mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+                        d13 = 0.52333337068557739;
+                        mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+                        mp.gs.rsAddSound(18);
+                    }
+                    characterobject.c1 = 2;
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 147 + mp.g_ac;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ポッピー（ハリケンブラスト）
+ */
+EnemyController.PoppieHurricaneBlast = {
+    properties: {
+        // 発射の間隔
+        interval: 80,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 550) {
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 228 && mp.co_j.x <= l20 + 192 && Math.abs(mp.co_j.x - l20) >= 64 && Math.abs(mp.co_j.y - i21) <= 128)
+                        characterobject.c1 = 1;
+                } else
+                if(characterobject.c1 === 1)
+                {
+                    for(var k5 = 0; k5 <= 300; k5 += 90)
+                    {
+                        mp.mSet2(l20, i21, 950, k5, 0);
+                        mp.mSet2(l20, i21, 960, 300 - k5, 0);
+                        mp.gs.rsAddSound(18);
+                    }
+
+                    characterobject.c1 = 2;
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 147 + mp.g_ac;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
  * 拡張可能なマップチップコードの一覧
  */
 EnemyController.available = {
@@ -1607,5 +1975,17 @@ EnemyController.available = {
     335: EnemyController.ChikorinSolarBeam,
     // ヒノララシ
     400: EnemyController.Hinorarashi,
+    // ポッピー（上下移動）
+    500: EnemyController.PoppieUpDown,
+    // ポッピー（左右移動）
+    510: EnemyController.PoppieLeftRight,
+    // ポッピー（火の粉）
+    520: EnemyController.PoppieFire,
+    // ポッピー（火の粉 3連射）
+    530: EnemyController.PoppieFire3,
+    // ポッピー（バブル光線3発）
+    540: EnemyController.PoppieBubble3,
+    // ポッピー（バブル光線3発）
+    550: EnemyController.PoppieHurricaneBlast,
 };
 
