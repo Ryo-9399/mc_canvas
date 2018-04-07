@@ -4,6 +4,7 @@
 	CanvasMasao.GameKey = GameKey;
 	CanvasMasao.GameMouse = GameMouse;
 	CanvasMasao.GameSoundForApplet = GameSoundForApplet;
+	CanvasMasao.GameSoundWebAudio = GameSoundWebAudio;
 	CanvasMasao.Game = Game;
 	CanvasMasao.IdouGamen = IdouGamen;
 	CanvasMasao.ImageBuff = ImageBuff;
@@ -14,7 +15,7 @@
 	CanvasMasao.TagDataBase = TagDataBase;
 	CanvasMasao.YukaObject = YukaObject;
 	return CanvasMasao;
-}();
+}(window, document, Math);
 
 var JSMasao = CanvasMasao.Game;
 JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;

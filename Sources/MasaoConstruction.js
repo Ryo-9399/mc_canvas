@@ -103,14 +103,6 @@ MasaoConstruction.prototype.paint = function(paramGraphics)
 		{
 			paramGraphics.drawString(this.getParameter("now_loading"), 32, 160);
 		}
-		if(this.th_jm <= 6)
-		{
-			paramGraphics.drawString("画像を読み込み中", 60, 200);
-		}
-		if(this.th_jm <= 5)
-		{
-			paramGraphics.drawString("---完了", 60, 220);
-		}
 	}
 }
 
@@ -133,38 +125,38 @@ MasaoConstruction.prototype.run = function()
 		for(var cur = oldFirstMessage; cur; cur = cur.next)
 		{
 			// ファイルロード待ちのメッセージ
-			if(cur.type == "load")
-			{
-				if(cur.target._dat.complete)
-				{
+			if (cur.type == "load") {
+				if (cur.target._dat.complete) {
 					continue;
 				}
-				else
-				{
+				else {
 					this.pushMessage(cur.type, cur.target, cur.parameters);
 				}
 			}
 			// makeChipImageメソッド呼び出し待ち
-			else if(cur.type == "makeChipImage")
-			{
-				if(cur.target._dat.complete)
-				{
+			else if (cur.type == "makeChipImage") {
+				if (cur.target._dat.complete) {
 					cur.parameters.chipimage.makeChipImage();
 				}
-				else
-				{
+				else {
 					this.pushMessage(cur.type, cur.target, cur.parameters);
 				}
 			}
 			// makeReverseChipImagrメソッド呼び出し待ち
-			else if(cur.type == "makeReverseChipImage")
-			{
-				if(cur.target._dat.complete)
-				{
+			else if (cur.type == "makeReverseChipImage") {
+				if (cur.target._dat.complete) {
 					cur.parameters.chipimage.makeReverseChipImage();
 				}
-				else
-				{
+				else {
+					this.pushMessage(cur.type, cur.target, cur.parameters);
+				}
+			}
+			// JSON読み込み待ち
+			else if (cur.type == "loadAdvanceMapJson") {
+				if (cur.target.complete) {
+					continue;
+				}
+				else {
 					this.pushMessage(cur.type, cur.target, cur.parameters);
 				}
 			}
@@ -316,6 +308,7 @@ MasaoConstruction.prototype.init_j = function()
 	{
 		this.tdb = new TagDataBase();
 		this.tdb.setValueFromHTML(this);
+		this.tdb.options = this.options;
 	}
 	var m = 0;
 	for (var p = 0; p < 3; p++) {
@@ -331,6 +324,22 @@ MasaoConstruction.prototype.init_j = function()
 	if (m == 0) {
 		this.tdb.setValueStage1();
 	}
+
+	// 新形式マップデータがJSONファイルのURLで設定されているときはJSONを読み込む
+	var advancedMap = this.options["advanced-map"];
+	var advanceMap = this.options["advance-map"];
+	if (typeof advancedMap === "string") {
+		this.loadAdvanceMapJson(advancedMap);
+	}
+	else if (typeof advancedMap === "undefined") {
+		if (typeof advanceMap === "string") {
+			this.loadAdvanceMapJson(advanceMap);
+		}
+		else if (typeof advanceMap === "object") {
+			this.options["advanced-map"] = advanceMap;
+		}
+	}
+
 	this.th_interval = this.tdb.getValueInt("game_speed");
 	if (this.th_interval < 1) {
 		this.th_interval = 1;
@@ -453,7 +462,7 @@ MasaoConstruction.prototype.init_j = function()
 		this.audio_bgm_no_mp3 = true;
 	if(this.tdb.getValueInt("audio_bgm_switch_ogg") == 2)
 		this.audio_bgm_no_ogg = true;
-	this.gs = new GameSoundForApplet(this.tdb, this);
+	this.gs = new (GameSoundForApplet.factory(this.tdb))(this.tdb, this);
 
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk, this.gs, this.tdb);
@@ -468,7 +477,7 @@ MasaoConstruction.prototype.init_j = function()
 	// MasaoJSS専用コールバック関数が設定されている場合、エミュレータオブジェクトを作成
 	if(this.options.userJSCallback)
 	{
-		this.masaoJSSAppletEmulator = new MasaoJSS(this);
+		this.masaoJSSAppletEmulator = new MasaoJSS(this, !!this.options['bc-case-insensitive']);
 	}
 
 
@@ -591,8 +600,8 @@ MasaoConstruction.prototype.getMyX = function()
 			if (i < 0) {
 				i = 0;
 			}
-			if (i > 179) {
-				i = 179;
+			if (i >= this.mp.mapWidth) {
+				i = this.mp.mapWidth - 1;
 			}
 			return i;
 		}
@@ -616,8 +625,8 @@ MasaoConstruction.prototype.getMyY = function()
 			if (i < 0) {
 				i = 0;
 			}
-			if (i > 29) {
-				i = 29;
+			if (i >= this.mp.mapHeight) {
+				i = this.mp.mapHeight - 1;
 			}
 			return i;
 		}
@@ -639,8 +648,8 @@ MasaoConstruction.prototype.getViewX = function()
 		if (i < 0) {
 			i = 0;
 		}
-		if (i > 164) {
-			i = 179;
+		if (i > this.mp.mapWidth - 16) {
+			i = this.mp.mapWidth - 1;  // ???
 		}
 		return i;
 	}
@@ -656,8 +665,8 @@ MasaoConstruction.prototype.getViewY = function()
 		if (i < 0) {
 			i = 0;
 		}
-		if (i > 20) {
-			i = 20;
+		if (i > this.mp.mapHeight - 10) {
+			i = this.mp.mapHeight - 10;
 		}
 		return i;
 	}
@@ -677,7 +686,7 @@ MasaoConstruction.prototype.setMyPosition = function(paramString1, paramString2)
 			i = -1;
 			j = -1;
 		}
-		if ((i < 0) || (i > 179) || (j < 0) || (j > 29)) {
+		if ((i < 0) || (i >= this.mp.mapWidth) || (j < 0) || (j >= this.mp.mapHeight)) {
 			return false;
 		}
 		this.mp.co_j.x = ((i + 1) * 32);
@@ -1900,7 +1909,7 @@ MasaoConstruction.prototype.getEnemyObjectCondition = function(paramString)
 		i = parseInt(paramString);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return 0;
 		}
 		return this.mp.co_t[i].c;
@@ -1916,7 +1925,7 @@ MasaoConstruction.prototype.getEnemyObjectPattern = function(paramString)
 		i = parseInt(paramString);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return 0;
 		}
 		return this.mp.co_t[i].pt;
@@ -1934,7 +1943,7 @@ MasaoConstruction.prototype.getEnemyObjectDirection = function(paramString)
 		i = parseInt(paramString);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return 0;
 		}
 		k = 0;
@@ -1961,7 +1970,7 @@ MasaoConstruction.prototype.setEnemyObjectImage = function(paramString1, paramIm
 		k = parseInt(paramString3);
 		if(isNaN(i))
 			i = -1;
-		if ((i < 0) || (i > 229)) {
+		if ((i < 0) || (i > this.mp.t_kazu)) {
 			return false;
 		}
 		this.mp.co_t[i].img = paramImage;
@@ -2203,7 +2212,7 @@ MasaoConstruction.prototype.getCoinCount = function(paramString1, paramString2, 
 MasaoConstruction.prototype.getCoinCount = function()
 {
 	if (this.mp != null) {
-		return this.mp.getCoinCount(0, 0, 179, 29);
+		return this.mp.getCoinCount(0, 0, this.mp.mapWidth - 1, this.mp.mapHeight - 1);
 	}
 	return -1;
 }
@@ -2321,14 +2330,14 @@ MasaoConstruction.prototype.setAthletic = function(paramString1, paramString2, p
 		if (j < 0) {
 			j = 0;
 		}
-		if (j > 179) {
-			j = 179;
+		if (j >= this.mp.mapWidth) {
+			j = this.mp.mapWidth - 1;
 		}
 		if (k < 0) {
 			k = 0;
 		}
-		if (k > 29) {
-			k = 29;
+		if (k >= this.mp.mapHeight) {
+			k = this.mp.mapHeight - 1;
 		}
 		j += 1;
 		k += 10;
@@ -2485,10 +2494,17 @@ MasaoConstruction.prototype.getParameter = function(name)
 	return this.params[s] + "";
 }
 
-MasaoConstruction.prototype.getAudioClip = function(url, flag)
+/**
+ * 音声ファイルのURLの拡張子を適切につけかえる
+ *
+ * @param {string} url 音声ファイルのURL
+ * @param {boolean} bgmflag ファイルがBGM用か
+ * @returns {string}
+ */
+MasaoConstruction.prototype.getAudioURL = function(url, bgmflag)
 {
-	var i1, i2;
-	url = url + "";
+    var i1, i2;
+    url = url + "";
 
 	// 拡張子を取り除く作業
 	i1 = url.lastIndexOf(".");
@@ -2512,7 +2528,7 @@ MasaoConstruction.prototype.getAudioClip = function(url, flag)
 	}
 
 	var audio = new Audio();
-	if(flag)
+	if(bgmflag)
 	{
 		// Wave形式
 		if(audio.canPlayType("audio/wav") && !this.audio_bgm_no_wave)
@@ -2540,8 +2556,12 @@ MasaoConstruction.prototype.getAudioClip = function(url, flag)
 		else
 			url = "";
 	}
+    return url;
+}
 
-	return new AudioClip(url);
+MasaoConstruction.prototype.getAudioClip = function(url, flag)
+{
+	return new AudioClip(this.getAudioURL(url, flag));
 }
 
 // メッセージを受け取ってキューの最後に追加する
@@ -2563,5 +2583,27 @@ MasaoConstruction.prototype.pushMessage = function(type, target, parameters)
 	this.lastMessage = newMessage;
 }
 
+
+MasaoConstruction.prototype.loadAdvanceMapJson = function (url) {
+	var xhr = new XMLHttpRequest();
+	var stateObj = { complete: false };
+	xhr.open("GET", url, true);
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4) {
+			try {
+				this.options["advanced-map"] = JSON.parse(xhr.responseText);
+			}
+			catch (ex) {
+				console.error("Failed to load JSON: " + url);
+			}
+			stateObj.complete = true;
+			xhr.onreadystatechange = null;
+		}
+	}.bind(this);
+
+	this.pushMessage("loadAdvanceMapJson", stateObj, null);
+
+	xhr.send(null);
+}
 
 

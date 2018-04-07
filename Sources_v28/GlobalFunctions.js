@@ -193,12 +193,12 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-	var __interval_id = setInterval(function(){
-		this.__loop();
-	}.bind(this), __st);
+    // メインループを作成
+    var __loop = new Loop(this, !!options['bc-loop-setinterval']);
+    __loop.start(__st, this.__loop.bind(this));
     this.__resourceList.push({
-        type: "setInterval",
-        value: __interval_id
+        type: "Loop",
+        value: __loop,
     });
 }
 
@@ -328,6 +328,8 @@ Game.prototype.kill = function(){
             clearInterval(rl[i].value);
         }else if(rl[i].type==="eventListener"){
             rl[i].target.removeEventListener(rl[i].name, rl[i].value);
+        }else if(rl[i].type==="Loop"){
+            rl[i].value.stop();
         }
     }
     this.__resourceList=[];
@@ -733,10 +735,220 @@ function makeRandomString(){
 	return Math.random().toString(36).slice(2);
 }
 
+/**
+ * requestAnimationFrameまたはsetIntervalを用いたループを行うためのクラスです。
+ * @constructor
+ * @param {Game} game 持ち主のGameオブジェクトです。
+ * @param {boolean} forceSetInterval 必ずsetIntervalを使用するフラグ
+ */
+function Loop(game, forceSetInterval){
+    this.game = game;
+    this.forceSetInterval = forceSetInterval;
+    /**
+     * @member {boolean}
+     * @private
+     * 現在ループが回っているかどうかのフラグ。
+     */
+    this.running = false;
+    /**
+     * @member {number}
+     * @private
+     * 現在のループの間隔（ミリ秒）。
+     */
+    this.interval = null;
+    /**
+     * @member {Function}
+     * @private
+     * ループごとに呼び出されるコールバック関数
+     */
+    this.callback = null;
+    /**
+     * @member {number}
+     * @private
+     * ループに何を使っているかのフラグ。
+     * 0: setInterval
+     * 1: requestAnimationFrame
+     */
+    this.mode = 0;
+    /**
+     * @member {number}
+     * @private
+     * 前のルームが呼び出された時刻。
+     */
+    this.prevTime = null;
+    /**
+     * @member {number}
+     * @private
+     * 現在待機中のsetIntervalやrequestAnimationFrameの返り値。
+     * ループを止めるとき用。
+     */
+    this.timerid = null;
+    this._loop = this._loop.bind(this);
+}
+/**
+ * 指定した間隔（ミリ秒）でループを行います。
+ * @param {number} interval ループの間隔
+ * @param {Function} callback ループで呼び出される関数
+ */
+Loop.prototype.start = function(interval, callback){
+    this.running = true;
+    this.interval = interval;
+    this.callback = callback;
+    
+    var now = timestamp();
+    this.targetTime = now + interval;
+    this.prevTime = now;
 
+    if (window.requestAnimationFrame && !this.forceSetInterval){
+        this.mode = 1;
+    } else {
+        this.mode = 0;
+    }
 
+    if (this.mode === 0){
+        this.timerid = setInterval(this._loop, interval);
+    }
+    this._next();
+};
 
+/**
+ * ループを停止します。
+ */
+Loop.prototype.stop = function(){
+    if (!this.running){
+        return;
+    }
+    this.running = false;
+    if (this.mode === 1){
+        cancelAnimationFrame(this.timerid);
+    } else {
+        clearInterval(this.timerid);
+    }
+}
 
+/**
+ * 次回のループを登録する関数です。
+ * @private
+ */
+Loop.prototype._next = function(){
+    if (this.mode === 1){
+        this.timerid = requestAnimationFrame(this._loop);
+    }
+};
 
+/**
+ * 1回のループを処理する関数です。
+ * @private
+ */
+Loop.prototype._loop = function(){
+    if (!this.running){
+        return;
+    }
+    /**
+     * @constant
+     * requestAnimationFrameのハンドラ内の時間の上限（ミリ秒）
+     */
+    var FRAME_TIME = 2;
+    /**
+     * @constant
+     * 一時停止の判断の閾値（ミリ秒）
+     * memo: game_speedの最大は300
+     */
+    var STOP_LIMIT = 500;
+    /**
+     * @constant
+     * requestIdleCallbackのコールバック呼び出し期限
+     */
+    var IDLE_TIMEOUT = 1000;
 
+    var n = timestamp();
+    if (n - this.prevTime >= STOP_LIMIT) {
+        // 前回のループから閾値以上経過していたら一時停止があったと判断
+        // 経過時間分のループを放棄
+        this.targetTime = n - 1;
+    }
+    // 現在コールバックを呼ぶべき回数
+    var loop_count = Math.ceil((n - this.targetTime) / this.interval);
+    this.targetTime += this.interval * loop_count;
+    while (loop_count > 0){
+        this.callback();
+        loop_count--;
+        // 毎回現在時刻を求め、許容される経過時間を過ぎたら
+        // ループ回数が残っていても中断
+        if (timestamp() - n > FRAME_TIME){
+            break;
+        }
+    }
+    if (loop_count > 0){
+        // 処理が終わりきらなかった場合は残りは後回しにする
+        // requestIdleCallbackにより描画処理後に行われることを期待
+        // （描画処理を優先させてあげないとFPSが落ちるので）
+        var _this = this;
+        idle(function cb(deadline){
+            // console.warn('idle', loop_count, deadline.timeRemaining());
+            while (loop_count > 0 && deadline.timeRemaining() > 0){
+                _this.callback();
+                loop_count--;
+            }
+            if (loop_count > 0 && !deadline.didTimeout){
+                // まだ実行しきれていない場合は次のidleに回す
+                // （didTimeoutがtrueの場合は超高負荷なので諦める）
+                idle(cb, {
+                    timeout: IDLE_TIMEOUT,
+                });
+            }
+        }, {
+            timeout: IDLE_TIMEOUT,
+        });
+    }
+    this._next();
+    this.prevTime = n;
+};
 
+/**
+ * @function timestamp
+ * 現在時刻を返す関数です。
+ * ただしperformance.nowの返す時刻はUNIX時間ではなく
+ * およそページを開いてからの経過時間なので、かならず相対時刻で利用すること。
+ * @returns Number 現在時刻
+ */
+var timestamp =
+    window.performance && performance.now ? performance.now.bind(performance) :
+    Date.now ? Date.now.bind(Date) : function(){
+        return new Date().getTime() * 1000;
+    };
+
+/**
+ * @function idle
+ * 処理を先送りにする関数です。
+ * requestIdleCallbackを想定し、他はshimです。
+ */
+var idle =
+    'function' === typeof requestIdleCallback ? requestIdleCallback :
+    'function' === typeof setImmediate ?
+    function(cb){
+        setImmediate(function(){
+            var n = timestamp();
+            var deadline = {
+                didTimeout: false,
+                timeRemaining: function(){
+                    // 50ms is the maximum value recommended by Google
+                    return 50 + n - timestamp();
+                },
+            };
+            cb(deadline);
+        });
+    } :
+    function(cb){
+        setTimeout(function(){
+            var n = timestamp();
+            var deadline = {
+                didTimeout: false,
+                timeRemaining: function(){
+                    // 50ms is the maximum value recommended by Google
+                    return 50 + n - timestamp();
+                },
+            };
+            cb(deadline);
+        }, 1);
+    };

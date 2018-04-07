@@ -4,8 +4,10 @@
  * 正男にuserJSCallbackが提供された場合、自動的に生成されます。
  *
  * @constructor
+ * @param mc {MasaoConstruction} 親のMasaoConstructionオブジェクト
+ * @param caseInsensitive {boolean} メソッド名の大文字・小文字の違いを無視する
  */
-function MasaoJSS(mc)
+function MasaoJSS(mc, caseInsensitive)
 {
 	this.my_offscreen_img = null;
 	this.oci = new Array(256);
@@ -167,8 +169,8 @@ function MasaoJSS(mc)
 				var i = rightShiftIgnoreSign(mc.mp.co_j.x + 15, 5) - 1;
 				if(i < 0)
 					i = 0;
-				if(i > 179)
-					i = 179;
+				if(i >= mc.mp.mapWidth)
+					i = mc.mp.mapWidth - 1;
 				return i;
 			}
 			if(mc.mp.ml_mode == 200)
@@ -198,8 +200,8 @@ function MasaoJSS(mc)
 				var i = rightShiftIgnoreSign(mc.mp.co_j.y + 15, 5) - 10;
 				if(i < 0)
 					i = 0;
-				if(i > 29)
-					i = 29;
+				if(i >= mc.mp.mapHeight)
+					i = mc.mp.mapHeight - 1;
 				return i;
 			}
 			if(mc.mp.ml_mode == 200)
@@ -225,8 +227,8 @@ function MasaoJSS(mc)
 			var i = rightShiftIgnoreSign(mc.mp.maps.wx, 5) - 1;
 			if(i < 0)
 				i = 0;
-			if(i > 164)
-				i = 179;
+			if(i > mc.mp.mapWidth - 16)
+				i = mc.mp.mapWidth - 1;  // ???
 			return i;
 		} else
 		{
@@ -248,8 +250,8 @@ function MasaoJSS(mc)
 			var i = rightShiftIgnoreSign(mc.mp.maps.wy, 5) - 10;
 			if(i < 0)
 				i = 0;
-			if(i > 20)
-				i = 20;
+			if(i > mc.mp.mapHeight - 10)
+				i = mc.mp.mapHeight - 10;
 			return i;
 		} else
 		{
@@ -278,7 +280,7 @@ function MasaoJSS(mc)
 				i = -1;
 				j = -1;
 			}
-			if(i < 0 || i > 179 || j < 0 || j > 29)
+			if(i < 0 || i >= mc.mp.mapWidth || j < 0 || j >= mc.mp.mapHeight)
 			{
 				return false;
 			} else
@@ -1009,7 +1011,7 @@ function MasaoJSS(mc)
 		if(this.getMode() >= 100 && this.getMode() < 200)
 		{
 			var i = 0;
-			for(var j = 0; j <= 229; j++)
+			for(var j = 0; j <= mc.mp.t_kazu; j++)
 				if(mc.mp.co_t[j].c >= 100 || mc.mp.co_t[j].c == 10)
 					i++;
 
@@ -2356,7 +2358,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return false;
 			if(j >= 0 && j <= 249)
 			{
@@ -2464,7 +2466,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].c;
@@ -2491,7 +2493,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].pt;
@@ -2518,7 +2520,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].x;
@@ -2545,7 +2547,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			else
 				return mc.mp.co_t[i].y;
@@ -2586,7 +2588,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 				return 0;
 			var k = 0;
 			var j = mc.mp.co_t[i].c;
@@ -2627,7 +2629,7 @@ function MasaoJSS(mc)
 			{
 				i = -1;
 			}
-			if(i < 0 || i > 229)
+			if(i < 0 || i > mc.mp.t_kazu)
 			{
 				return false;
 			} else
@@ -3162,8 +3164,8 @@ function MasaoJSS(mc)
 		{
 			s = "0";
 			s1 = "0";
-			s2 = "179";
-			s3 = "29";
+			s2 = mc.mp.mapWidth - 1;
+			s3 = mc.mp.mapHeight - 1;
 		}
 		if(mc.mp)
 		{
@@ -3194,7 +3196,7 @@ function MasaoJSS(mc)
 	this.getCoinCount = function()
 	{
 		if(mc.mp)
-			return mc.mp.getCoinCount(0, 0, 179, 29);
+			return mc.mp.getCoinCount(0, 0, mc.mp.mapWidth - 1, mc.mp.mapHeight - 1);
 		else
 			return -1;
 	}
@@ -3373,12 +3375,12 @@ function MasaoJSS(mc)
 				return false;
 			if(j < 0)
 				j = 0;
-			if(j > 179)
-				j = 179;
+			if(j >= mc.mp.mapWidth)
+				j = mc.mp.mapWidth - 1;
 			if(k < 0)
 				k = 0;
-			if(k > 29)
-				k = 29;
+			if(k >= mc.mp.mapHeight)
+				k = mc.mp.mapHeight - 1;
 			j++;
 			k += 10;
 			var l = 0;
@@ -3932,4 +3934,65 @@ function MasaoJSS(mc)
 		}
 		return false;
 	}
+
+    /**
+     * [0.0, 1.0)の範囲の乱数を返します。
+     *
+     * @returns {number} ゲーム内シードに依存した乱数。ゲームが開始されていないときにはMath.random()を返す。
+     * @since canvas正男
+     */
+	this.getRandomF = function () {
+		if (mc.mp) {
+			return mc.mp.ranInt(0x80000000) / 0x80000000;
+		}
+		else {
+			return Math.random();
+		}
+	}
+
+    /**
+     * [0, max)の範囲の整数乱数を返します。
+     *
+     * @param {number} max 返される乱数の最大値。
+     *
+     * @returns {number} ゲーム内シードに依存した乱数。ゲームが開始されていないときにはMath.random()を使用した乱数を返す。
+     * @since canvas正男
+     */
+	this.getRandom = function (max) {
+		if (mc.mp) {
+			return mc.mp.ranInt(max);
+		}
+		else {
+			return Math.floor(Math.random() * max);
+		}
+	}
+
+    if (caseInsensitive && 'undefined' !== typeof Proxy) {
+        // メソッドの大文字小文字の違いを無視するフラグが立っている
+        // 関数名を集める
+        var functions = Object.keys(this).filter(function(key){
+            return 'function' === typeof this[key];
+        }, this);
+        // 小文字化した関数を追加
+        functions.forEach(function(key) {
+            this[key.toLowerCase()] = this[key];
+        }, this);
+        // Proxyを間にはさむ
+        var proxy = new Proxy(this, {
+            get: function(target, prop, receiver) {
+                if (prop in target) {
+                    return target[prop];
+                } else {
+                    // maybe undefined
+                    return target[prop.toLowerCase()];
+                }
+            },
+        });
+        // 最適化のための通常の関数はProxyを通さない
+        var result = Object.create(proxy);
+        functions.forEach(function(key){
+            result[key] = this[key];
+        }, this);
+        return result;
+    }
 }
