@@ -14690,7 +14690,7 @@ MainProgram.prototype.checkWater = function(i, j)
  * @param i {number} X座標
  * @param j {number} Y座標
  * @param k {(string|number)} 敵コード
- * @param l {number} ?
+ * @param l {number} その敵が出現する画面の位置
  * @private
  */
 MainProgram.prototype.tSet = function(i, j, k, l)
@@ -14718,17 +14718,8 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			characterobject.c4 = j;
 			characterobject.x = i;
 			characterobject.y = j;
-            // カスタムパーツかEnemyControllerに定義があれば利用
-            var partsDefinition = undefined;
-            if(this.customParts && this.customParts[k]) {
-                partsDefinition = this.customParts[k];
-            } else if(EnemyController.available[k]) {
-                partsDefinition = {
-                    properties: EnemyController.available[k].properties,
-                    native: EnemyController.available[k],
-                    nativeCode: k + 5000,
-                };
-            }
+            // パーツの定義を探す
+            var partsDefinition = this.getEnemyDefinition(k);
             if(partsDefinition != null) {
                 // オブジェクトの初期化
                 characterobject.c2 = partsDefinition.nativeCode - 5000;
@@ -14739,14 +14730,6 @@ MainProgram.prototype.tSet = function(i, j, k, l)
             }
             // EnemyController未対応の敵コードの処理
 			switch (k) {
-				case 600:
-				case 601:
-				case 602:
-					characterobject.c2 = 600;
-					characterobject.c3 = 0;
-					characterobject.c4 = k - 600;
-					break;
-
 				case 660:
 					characterobject.y = j;
 					characterobject.c3 = i;
@@ -14846,6 +14829,13 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * ボスなどによって投げられる敵を設置します。
+ * @param i {number} X座標
+ * @param j {number} Y座標
+ * @param k {number} 敵コード
+ * @param l {number} 初速（X軸方向）
+ */
 MainProgram.prototype.tSetBoss = function(i, j, k, l)
 {
     var t_limit, i1;
@@ -14875,6 +14865,16 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
 			characterobject.x = i;
 			characterobject.y = j;
 			characterobject.vx = l;
+
+            var partsDefinition = this.getEnemyDefinition(k);
+            if (partsDefinition != null) {
+                characterobject.c = partsDefinition.nativeCode - 5000;
+                partsDefinition.native.initFactory(characterobject.c, partsDefinition.properties)(characterobject);
+                // コントローラーを設定
+                characterobject.controller = partsDefinition.native.controllerFactory(partsDefinition.properties);
+                break;
+            }
+
 			switch(k)
 			{
 			case 150: 
@@ -14894,21 +14894,36 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
 				else
 					characterobject.muki = 1;
 				break;
-
-			case 650: 
-				characterobject.vx = l;
-				characterobject.vy = -28;
-				if(characterobject.vx <= 0)
-					characterobject.muki = 0;
-				else
-					characterobject.muki = 1;
-				break;
-			}
-			break;
+            }
 		}
 		i1++;
 	} while(true);
 }
+
+/**
+ * 指定された敵コードの定義オブジェクトを返します。
+ * @param code {(string|number)} 敵コード
+ * @returns {PartsDefinition} 定義オブジェクト
+ * @private
+ */
+MainProgram.prototype.getEnemyDefinition = function(code)
+{
+    var customParts = this.customParts;
+    // カスタムパーツを探す
+    if (customParts && customParts[code]) {
+        return customParts[code];
+    }
+    // ネイティブな敵を探す
+    if (EnemyController.available[code]) {
+        var obj = EnemyController.available[code];
+        return {
+            properties: obj.properties,
+            native: obj,
+            nativeCode: code + 5000,
+        };
+    }
+    return null;
+};
 
 MainProgram.prototype.tMove = function()
 {
@@ -15437,416 +15452,6 @@ MainProgram.prototype.tMove = function()
             if(i21 >= this.ochiru_y)
                 characterobject.c = 0;
             characterobject.pt = 152;
-            characterobject.pth = characterobject.muki;
-            break;
-
-        case 600: 
-            if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
-            {
-                characterobject.c = 605;
-                characterobject.c1++;
-            }
-            if(characterobject.c1 < 25)
-            {
-                if(this.ana_kazu > 0)
-                {
-                    var l5 = 0;
-                    do
-                    {
-                        if(l5 > 11)
-                            break;
-                        if(this.ana_c[l5] > 0 && this.ana_y[l5] * 32 == i21 + 32 && Math.abs(this.ana_x[l5] * 32 - l20) < 32)
-                        {
-                            characterobject.c = 1300;
-                            l20 = this.ana_x[l5] * 32;
-                            break;
-                        }
-                        l5++;
-                    } while(true);
-                    if(characterobject.c == 1300)
-                        break;
-                }
-                characterobject.c1++;
-                characterobject.vy = -17;
-                characterobject.c3 = 0;
-                if(i < 120 && characterobject.c4 == 1)
-                    characterobject.vy = -22;
-                var l25 = this.maps.getBGCode(l20 + 15, i21 + 32);
-                if(l25 == 18 || l25 == 19)
-                    i21 = this.getSakamichiY(l20 + 15, i21 + 32);
-                characterobject.pt = 154;
-                characterobject.pth = 0;
-                if(i < 120 && characterobject.c4 == 1)
-                    if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-                        characterobject.pth = 0;
-                    else
-                        characterobject.pth = 1;
-            } else
-            {
-                if(this.ana_kazu > 0 && characterobject.vy > 0)
-                {
-                    var i6 = 0;
-                    do
-                    {
-                        if(i6 > 11)
-                            break;
-                        if(this.ana_c[i6] > 0 && this.ana_y[i6] * 32 <= i21 + 32 && this.ana_y[i6] * 32 >= i21 + 16 && Math.abs(this.ana_x[i6] * 32 - l20) < 32)
-                        {
-                            characterobject.c = 1300;
-                            l20 = this.ana_x[i6] * 32;
-                            i21 = this.ana_y[i6] * 32 - 32;
-                            break;
-                        }
-                        i6++;
-                    } while(true);
-                    if(characterobject.c == 1300)
-                        break;
-                }
-                if(characterobject.c3 == 0)
-                {
-                    characterobject.vy++;
-                    characterobject.c3 = 1;
-                } else
-                {
-                    characterobject.vy += 2;
-                    characterobject.c3 = 0;
-                }
-                if(characterobject.vy > 17)
-                    characterobject.vy = 17;
-                if(i >= 120 || characterobject.c4 != 1)
-                    l20 -= 5;
-                var k32 = i21;
-                i21 += characterobject.vy;
-                if(characterobject.vy < 4)
-                {
-                    characterobject.pt = 155;
-                    characterobject.pth = 0;
-                } else
-                {
-                    characterobject.pt = 156;
-                    characterobject.pth = 0;
-                }
-                if(l20 < 32)
-                {
-                    if(l20 <= 3)
-                        characterobject.c = 0;
-                } else
-                {
-                    if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
-                    {
-                        i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
-                        characterobject.vy = 0;
-                    }
-                    var k39 = this.maps.getBGCode(l20 + 15, i21 + 31);
-                    if(k39 >= 20 || k39 == 10 || k39 == 15)
-                    {
-                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-                        characterobject.c1 = 15;
-                        characterobject.pt = 154;
-                        characterobject.pth = 0;
-                    }
-                    if(k39 == 18 || k39 == 19)
-                    {
-                        if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-                        {
-                            i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-                            characterobject.c1 = 15;
-                            characterobject.pt = 154;
-                            characterobject.pth = 0;
-                        }
-                    } else
-                    if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(k32 + 31, 5))
-                    {
-                        var l39 = this.maps.getBGCode(l20 + 15, k32 + 31);
-                        if(l39 == 18 || l39 == 19)
-                        {
-                            i21 = rightShiftIgnoreSign(k32 + 31, 5) * 32;
-                            i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-                            characterobject.c1 = 15;
-                            characterobject.pt = 154;
-                            characterobject.pth = 0;
-                        }
-                    }
-                    if(this.yuka_id_max >= 0)
-                    {
-                        for(var j6 = 0; j6 <= this.yuka_id_max; j6++)
-                        {
-                            if(this.yo[j6].con >= 300 && this.yo[j6].con < 350)
-                            {
-                                var i26 = this.getSCOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-                                if(i26 >= 0 && i26 <= i21 && i26 + 31 >= i21)
-                                {
-                                    i21 = i26;
-                                    characterobject.c1 = 15;
-                                    characterobject.pt = 154;
-                                    characterobject.pth = 0;
-                                }
-                                continue;
-                            }
-                            if(this.yo[j6].con >= 350 && this.yo[j6].con < 400)
-                            {
-                                var j26 = this.getSHCOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-                                if(j26 >= 0 && j26 <= i21 && j26 + 31 >= i21)
-                                {
-                                    i21 = j26;
-                                    characterobject.c1 = 15;
-                                    characterobject.pt = 154;
-                                    characterobject.pth = 0;
-                                }
-                                continue;
-                            }
-                            if(this.yo[j6].con >= 400 && this.yo[j6].con < 450)
-                            {
-                                var k26 = this.getSWUpOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-                                if(k26 >= 0 && k26 <= i21 && k26 + 31 >= i21)
-                                {
-                                    i21 = k26;
-                                    characterobject.c1 = 15;
-                                    characterobject.pt = 154;
-                                    characterobject.pth = 0;
-                                }
-                                continue;
-                            }
-                            if(this.yo[j6].con < 450 || this.yo[j6].con >= 500)
-                                continue;
-                            var l26 = this.getSWDownOY(this.yo[j6].x, this.yo[j6].y, this.yo[j6].x2, this.yo[j6].y2, l20 + 15);
-                            if(l26 >= 0 && l26 <= i21 && l26 + 31 >= i21)
-                            {
-                                i21 = l26;
-                                characterobject.c1 = 15;
-                                characterobject.pt = 154;
-                                characterobject.pth = 0;
-                            }
-                        }
-
-                    }
-                    if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20, i21 + 31) >= 20 || this.maps.getBGCode(l20, i21 + 8) >= 20))
-                    {
-                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-                        characterobject.c = 605;
-                    }
-                    if(i >= 120 && l20 < this.maps.wx - 32)
-                        characterobject.c = 0;
-                }
-                if(i < 120 && characterobject.c4 == 1)
-                    if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
-                        characterobject.pth = 0;
-                    else
-                        characterobject.pth = 1;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            break;
-
-        case 605: 
-            if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
-            {
-                characterobject.c = 600;
-                characterobject.c1++;
-            }
-            if(characterobject.c1 < 25)
-            {
-                if(this.ana_kazu > 0)
-                {
-                    var k6 = 0;
-                    do
-                    {
-                        if(k6 > 11)
-                            break;
-                        if(this.ana_c[k6] > 0 && this.ana_y[k6] * 32 == i21 + 32 && Math.abs(this.ana_x[k6] * 32 - l20) < 32)
-                        {
-                            characterobject.c = 1300;
-                            l20 = this.ana_x[k6] * 32;
-                            break;
-                        }
-                        k6++;
-                    } while(true);
-                    if(characterobject.c == 1300)
-                        break;
-                }
-                characterobject.c1++;
-                characterobject.vy = -17;
-                characterobject.c3 = 0;
-                characterobject.pt = 154;
-                characterobject.pth = 1;
-            } else
-            {
-                if(this.ana_kazu > 0 && characterobject.vy > 0)
-                {
-                    var l6 = 0;
-                    do
-                    {
-                        if(l6 > 11)
-                            break;
-                        if(this.ana_c[l6] > 0 && this.ana_y[l6] * 32 <= i21 + 32 && this.ana_y[l6] * 32 >= i21 + 16 && Math.abs(this.ana_x[l6] * 32 - l20) < 32)
-                        {
-                            characterobject.c = 1300;
-                            l20 = this.ana_x[l6] * 32;
-                            i21 = this.ana_y[l6] * 32 - 32;
-                            break;
-                        }
-                        l6++;
-                    } while(true);
-                    if(characterobject.c == 1300)
-                        break;
-                }
-                if(characterobject.c3 == 0)
-                {
-                    characterobject.vy++;
-                    characterobject.c3 = 1;
-                } else
-                {
-                    characterobject.vy += 2;
-                    characterobject.c3 = 0;
-                }
-                if(characterobject.vy > 17)
-                    characterobject.vy = 17;
-                l20 += 5;
-                var l32 = i21;
-                i21 += characterobject.vy;
-                if(characterobject.vy < 4)
-                {
-                    characterobject.pt = 155;
-                    characterobject.pth = 1;
-                } else
-                {
-                    characterobject.pt = 156;
-                    characterobject.pth = 1;
-                }
-                if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
-                {
-                    i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
-                    characterobject.vy = 0;
-                }
-                var i40 = this.maps.getBGCode(l20 + 15, i21 + 31);
-                if(i40 >= 20 || i40 == 10 || i40 == 15)
-                {
-                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-                    characterobject.c1 = 15;
-                    characterobject.pt = 154;
-                    characterobject.pth = 1;
-                }
-                if(i40 == 18 || i40 == 19)
-                {
-                    if(i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
-                    {
-                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-                        characterobject.c1 = 15;
-                        characterobject.pt = 154;
-                        characterobject.pth = 1;
-                    }
-                } else
-                if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(l32 + 31, 5))
-                {
-                    var j40 = this.maps.getBGCode(l20 + 15, l32 + 31);
-                    if(j40 == 18 || j40 == 19)
-                    {
-                        i21 = rightShiftIgnoreSign(l32 + 31, 5) * 32;
-                        i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-                        characterobject.c1 = 15;
-                        characterobject.pt = 154;
-                        characterobject.pth = 1;
-                    }
-                }
-                if(this.yuka_id_max >= 0)
-                {
-                    for(var i7 = 0; i7 <= this.yuka_id_max; i7++)
-                    {
-                        if(this.yo[i7].con >= 300 && this.yo[i7].con < 350)
-                        {
-                            var i27 = this.getSCOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-                            if(i27 >= 0 && i27 <= i21 && i27 + 31 >= i21)
-                            {
-                                i21 = i27;
-                                characterobject.c1 = 15;
-                                characterobject.pt = 154;
-                                characterobject.pth = 1;
-                            }
-                            continue;
-                        }
-                        if(this.yo[i7].con >= 350 && this.yo[i7].con < 400)
-                        {
-                            var j27 = this.getSHCOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-                            if(j27 >= 0 && j27 <= i21 && j27 + 31 >= i21)
-                            {
-                                i21 = j27;
-                                characterobject.c1 = 15;
-                                characterobject.pt = 154;
-                                characterobject.pth = 1;
-                            }
-                            continue;
-                        }
-                        if(this.yo[i7].con >= 400 && this.yo[i7].con < 450)
-                        {
-                            var k27 = this.getSWUpOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-                            if(k27 >= 0 && k27 <= i21 && k27 + 31 >= i21)
-                            {
-                                i21 = k27;
-                                characterobject.c1 = 15;
-                                characterobject.pt = 154;
-                                characterobject.pth = 1;
-                            }
-                            continue;
-                        }
-                        if(this.yo[i7].con < 450 || this.yo[i7].con >= 500)
-                            continue;
-                        var l27 = this.getSWDownOY(this.yo[i7].x, this.yo[i7].y, this.yo[i7].x2, this.yo[i7].y2, l20 + 15);
-                        if(l27 >= 0 && l27 <= i21 && l27 + 31 >= i21)
-                        {
-                            i21 = l27;
-                            characterobject.c1 = 15;
-                            characterobject.pt = 154;
-                            characterobject.pth = 1;
-                        }
-                    }
-
-                }
-                if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20 + 31, i21 + 31) >= 20 || this.maps.getBGCode(l20 + 31, i21 + 8) >= 20))
-                {
-                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-                    characterobject.c = 600;
-                }
-                if(i >= 120 && l20 > this.maps.wx + 512)
-                    characterobject.c = 0;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            break;
-
-        case 650: 
-            if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
-            {
-                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-                characterobject.vx = 0;
-            }
-            if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
-            {
-                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-                characterobject.vx = 0;
-            }
-            l20 += characterobject.vx;
-            characterobject.vy += 2;
-            if(characterobject.vy > 18)
-                characterobject.vy = 18;
-            i21 += characterobject.vy;
-            var i28 = rightShiftIgnoreSign(i21 + 31, 5);
-            var word2 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][i28];
-            var word5 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][i28];
-            if(word2 >= 10 || word5 >= 10)
-            {
-                i21 = i28 * 32 - 32;
-                if(characterobject.muki == 1)
-                    characterobject.c = 605;
-                else
-                    characterobject.c = 600;
-                characterobject.c1 = 15;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            if(characterobject.vy < 4)
-                characterobject.pt = 155;
-            else
-                characterobject.pt = 156;
             characterobject.pth = characterobject.muki;
             break;
 

@@ -1940,6 +1940,493 @@ EnemyController.PoppieHurricaneBlast = {
 };
 
 /**
+ * マリリ
+ */
+EnemyController.Mariri = {
+    properties: {
+        // ジャンプの初速
+        // null = 初期値
+        jump_vy: null,
+        // 横方向の移動速度
+        speed: 5,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            if (enemyCode === 650) {
+                // 投げられたマリリ
+				characterobject.vy = -28;
+				if(characterobject.vx <= 0)
+					characterobject.muki = 0;
+				else
+					characterobject.muki = 1;
+            } else {
+                // 敵コードを600に統一
+                characterobject.c2 = 600;
+                characterobject.c3 = 0;
+                // 600 - 602
+                characterobject.c4 = enemyCode - 600;
+            }
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp, i) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 600) {
+                if(i < 120 && characterobject.c4 === 2 && characterobject.c1 === 20)
+                    // 左右にジャンプするマリリが方向転換
+                {
+                    characterobject.c = 605;
+                    characterobject.c1++;
+                }
+                if(characterobject.c1 < 25)
+                {
+                    if(mp.ana_kazu > 0)
+                    {
+                        var l5 = 0;
+                        do
+                        {
+                            if(l5 > 11)
+                                break;
+                            if(mp.ana_c[l5] > 0 && mp.ana_y[l5] * 32 == i21 + 32 && Math.abs(mp.ana_x[l5] * 32 - l20) < 32)
+                            {
+                                characterobject.c = 1300;
+                                l20 = mp.ana_x[l5] * 32;
+                                break;
+                            }
+                            l5++;
+                        } while(true);
+                        if(characterobject.c === 1300) {
+                            characterobject.x = l20;
+                            return true;
+                        }
+                    }
+                    characterobject.c1++;
+                    characterobject.vy = properties.jump_vy != null ? properties.jump_vy : -17;
+                    characterobject.c3 = 0;
+                    if(i < 120 && characterobject.c4 === 1 && properties.jump_vy == null) {
+                        // その場でジャンプのマリリはジャンプ力が違う
+                        characterobject.vy = -22;
+                    }
+                    var l25 = mp.maps.getBGCode(l20 + 15, i21 + 32);
+                    if(l25 === 18 || l25 === 19) {
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 32);
+                    }
+                    characterobject.pt = 154;
+                    characterobject.pth = 0;
+                    if(i < 120 && characterobject.c4 === 1) {
+                        // その場でジャンプするマリリは主人公の方を向く
+                        if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                            characterobject.pth = 0;
+                        else
+                            characterobject.pth = 1;
+                    }
+                } else
+                {
+                    if(mp.ana_kazu > 0 && characterobject.vy > 0)
+                    {
+                        var i6 = 0;
+                        do
+                        {
+                            if(i6 > 11)
+                                break;
+                            if(mp.ana_c[i6] > 0 && mp.ana_y[i6] * 32 <= i21 + 32 && mp.ana_y[i6] * 32 >= i21 + 16 && Math.abs(mp.ana_x[i6] * 32 - l20) < 32)
+                            {
+                                characterobject.c = 1300;
+                                l20 = mp.ana_x[i6] * 32;
+                                i21 = mp.ana_y[i6] * 32 - 32;
+                                break;
+                            }
+                            i6++;
+                        } while(true);
+                        if(characterobject.c === 1300) {
+                            characterobject.x = l20;
+                            characterobject.y = i21;
+                            return true;
+                        }
+                    }
+                    if(characterobject.c3 === 0)
+                    {
+                        characterobject.vy++;
+                        characterobject.c3 = 1;
+                    } else
+                    {
+                        characterobject.vy += 2;
+                        characterobject.c3 = 0;
+                    }
+                    if(characterobject.vy > 17)
+                        characterobject.vy = 17;
+                    if(i >= 120 || characterobject.c4 !== 1) {
+                        // その場でジャンプのマリリは進まない
+                        l20 -= properties.speed;
+                    }
+                    var k32 = i21;
+                    i21 += characterobject.vy;
+                    if(characterobject.vy < 4)
+                    {
+                        characterobject.pt = 155;
+                        characterobject.pth = 0;
+                    } else
+                    {
+                        characterobject.pt = 156;
+                        characterobject.pth = 0;
+                    }
+                    if(l20 < 32)
+                    {
+                        // ステージ外に出たら消える
+                        if(l20 <= 3)
+                            characterobject.c = 0;
+                    } else
+                    {
+                        if(characterobject.vy < 0 && mp.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
+                        {
+                            // 天井に頭をぶつけた
+                            i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
+                            characterobject.vy = 0;
+                        }
+                        var k39 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                        if(k39 >= 20 || k39 === 10 || k39 === 15)
+                        {
+                            // 地面に着地
+                            i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                            characterobject.c1 = 15;
+                            characterobject.pt = 154;
+                            characterobject.pth = 0;
+                        }
+                        if(k39 === 18 || k39 === 19)
+                        {
+                            // 坂に着地
+                            if(i21 >= mp.getSakamichiY(l20 + 15, i21 + 31))
+                            {
+                                i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 0;
+                            }
+                        } else
+                        if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(k32 + 31, 5))
+                        {
+                            // 坂道をすり抜けないための処理？
+                            var l39 = mp.maps.getBGCode(l20 + 15, k32 + 31);
+                            if(l39 === 18 || l39 === 19)
+                            {
+                                i21 = rightShiftIgnoreSign(k32 + 31, 5) * 32;
+                                i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 0;
+                            }
+                        }
+                        if(mp.yuka_id_max >= 0)
+                        {
+                            for(var j6 = 0; j6 <= mp.yuka_id_max; j6++)
+                            {
+                                var yo = mp.yo[j6];
+                                if(yo.con >= 300 && yo.con < 350)
+                                {
+                                    var i26 = mp.getSCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                    if(i26 >= 0 && i26 <= i21 && i26 + 31 >= i21)
+                                    {
+                                        i21 = i26;
+                                        characterobject.c1 = 15;
+                                        characterobject.pt = 154;
+                                        characterobject.pth = 0;
+                                    }
+                                    continue;
+                                }
+                                if(yo.con >= 350 && yo.con < 400)
+                                {
+                                    var j26 = mp.getSHCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                    if(j26 >= 0 && j26 <= i21 && j26 + 31 >= i21)
+                                    {
+                                        i21 = j26;
+                                        characterobject.c1 = 15;
+                                        characterobject.pt = 154;
+                                        characterobject.pth = 0;
+                                    }
+                                    continue;
+                                }
+                                if(yo.con >= 400 && yo.con < 450)
+                                {
+                                    var k26 = mp.getSWUpOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                    if(k26 >= 0 && k26 <= i21 && k26 + 31 >= i21)
+                                    {
+                                        i21 = k26;
+                                        characterobject.c1 = 15;
+                                        characterobject.pt = 154;
+                                        characterobject.pth = 0;
+                                    }
+                                    continue;
+                                }
+                                if(yo.con < 450 || yo.con >= 500)
+                                    continue;
+                                var l26 = mp.getSWDownOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(l26 >= 0 && l26 <= i21 && l26 + 31 >= i21)
+                                {
+                                    i21 = l26;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 0;
+                                }
+                            }
+                        }
+                        if(mp.maps.getBGCode(l20 + 15, i21 + 31) != 18 && mp.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (mp.maps.getBGCode(l20, i21 + 31) >= 20 || mp.maps.getBGCode(l20, i21 + 8) >= 20))
+                        {
+                            // 壁にあたって反転
+                            l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                            characterobject.c = 605;
+                        }
+                        if(i >= 120 && l20 < mp.maps.wx - 32)
+                            characterobject.c = 0;
+                    }
+                    if(i < 120 && characterobject.c4 === 1) {
+                        // その場でジャンプするマリリは主人公の方を向く
+                        if(mp.co_j.x <= l20 + 8 || mp.j_tokugi == 14)
+                            characterobject.pth = 0;
+                        else
+                            characterobject.pth = 1;
+                    }
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 605) {
+                if(i < 120 && characterobject.c4 === 2 && characterobject.c1 === 20)
+                {
+                    characterobject.c = 600;
+                    characterobject.c1++;
+                }
+                if(characterobject.c1 < 25)
+                {
+                    if(mp.ana_kazu > 0)
+                    {
+                        var k6 = 0;
+                        do
+                        {
+                            if(k6 > 11)
+                                break;
+                            if(mp.ana_c[k6] > 0 && mp.ana_y[k6] * 32 == i21 + 32 && Math.abs(mp.ana_x[k6] * 32 - l20) < 32)
+                            {
+                                characterobject.c = 1300;
+                                l20 = mp.ana_x[k6] * 32;
+                                break;
+                            }
+                            k6++;
+                        } while(true);
+                        if(characterobject.c === 1300) {
+                            characterobject.x = l20;
+                            return true;
+                        }
+                    }
+                    characterobject.c1++;
+                    characterobject.vy = properties.jump_vy != null ? properties.jump_vy : -17;
+                    characterobject.c3 = 0;
+                    characterobject.pt = 154;
+                    characterobject.pth = 1;
+                } else
+                {
+                    if(mp.ana_kazu > 0 && characterobject.vy > 0)
+                    {
+                        var l6 = 0;
+                        do
+                        {
+                            if(l6 > 11)
+                                break;
+                            if(mp.ana_c[l6] > 0 && mp.ana_y[l6] * 32 <= i21 + 32 && mp.ana_y[l6] * 32 >= i21 + 16 && Math.abs(mp.ana_x[l6] * 32 - l20) < 32)
+                            {
+                                characterobject.c = 1300;
+                                l20 = mp.ana_x[l6] * 32;
+                                i21 = mp.ana_y[l6] * 32 - 32;
+                                break;
+                            }
+                            l6++;
+                        } while(true);
+                        if(characterobject.c === 1300) {
+                            characterobject.x = l20;
+                            characterobject.y = i21;
+                            return true;
+                        }
+                    }
+                    if(characterobject.c3 === 0)
+                    {
+                        characterobject.vy++;
+                        characterobject.c3 = 1;
+                    } else
+                    {
+                        characterobject.vy += 2;
+                        characterobject.c3 = 0;
+                    }
+                    if(characterobject.vy > 17)
+                        characterobject.vy = 17;
+                    l20 += properties.speed;
+                    var l32 = i21;
+                    i21 += characterobject.vy;
+                    if(characterobject.vy < 4)
+                    {
+                        characterobject.pt = 155;
+                        characterobject.pth = 1;
+                    } else
+                    {
+                        characterobject.pt = 156;
+                        characterobject.pth = 1;
+                    }
+                    if(characterobject.vy < 0 && mp.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
+                    {
+                        i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
+                        characterobject.vy = 0;
+                    }
+                    var i40 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(i40 >= 20 || i40 === 10 || i40 === 15)
+                    {
+                        // 床に着地
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                        characterobject.c1 = 15;
+                        characterobject.pt = 154;
+                        characterobject.pth = 1;
+                    }
+                    if(i40 === 18 || i40 === 19)
+                    {
+                        if(i21 >= mp.getSakamichiY(l20 + 15, i21 + 31))
+                        {
+                            // 坂に着地
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 15;
+                            characterobject.pt = 154;
+                            characterobject.pth = 1;
+                        }
+                    } else
+                    if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(l32 + 31, 5))
+                    {
+                        var j40 = mp.maps.getBGCode(l20 + 15, l32 + 31);
+                        if(j40 === 18 || j40 === 19)
+                        {
+                            i21 = rightShiftIgnoreSign(l32 + 31, 5) * 32;
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 15;
+                            characterobject.pt = 154;
+                            characterobject.pth = 1;
+                        }
+                    }
+                    if(mp.yuka_id_max >= 0)
+                    {
+                        for(var i7 = 0; i7 <= mp.yuka_id_max; i7++)
+                        {
+                            var yo = mp.yo[i7];
+                            if(yo.con >= 300 && yo.con < 350)
+                            {
+                                var i27 = mp.getSCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(i27 >= 0 && i27 <= i21 && i27 + 31 >= i21)
+                                {
+                                    i21 = i27;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 1;
+                                }
+                                continue;
+                            }
+                            if(yo.con >= 350 && yo.con < 400)
+                            {
+                                var j27 = mp.getSHCOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(j27 >= 0 && j27 <= i21 && j27 + 31 >= i21)
+                                {
+                                    i21 = j27;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 1;
+                                }
+                                continue;
+                            }
+                            if(yo.con >= 400 && yo.con < 450)
+                            {
+                                var k27 = mp.getSWUpOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                                if(k27 >= 0 && k27 <= i21 && k27 + 31 >= i21)
+                                {
+                                    i21 = k27;
+                                    characterobject.c1 = 15;
+                                    characterobject.pt = 154;
+                                    characterobject.pth = 1;
+                                }
+                                continue;
+                            }
+                            if(yo.con < 450 || yo.con >= 500)
+                                continue;
+                            var l27 = mp.getSWDownOY(yo.x, yo.y, yo.x2, yo.y2, l20 + 15);
+                            if(l27 >= 0 && l27 <= i21 && l27 + 31 >= i21)
+                            {
+                                i21 = l27;
+                                characterobject.c1 = 15;
+                                characterobject.pt = 154;
+                                characterobject.pth = 1;
+                            }
+                        }
+                    }
+                    if(mp.maps.getBGCode(l20 + 15, i21 + 31) != 18 && mp.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (mp.maps.getBGCode(l20 + 31, i21 + 31) >= 20 || mp.maps.getBGCode(l20 + 31, i21 + 8) >= 20))
+                    {
+                        // 壁にあたって反転
+                        l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                        characterobject.c = 600;
+                    }
+                    if(i >= 120 && l20 > mp.maps.wx + 512)
+                        characterobject.c = 0;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 650) {
+                if(characterobject.vx < 0 && (mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15))
+                {
+                    // 壁にあたって停止
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.vx = 0;
+                }
+                if(characterobject.vx > 0 && (mp.maps.getBGCode(l20 + 31, i21) >= 15 || mp.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
+                {
+                    // 壁にあたって停止
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.vx = 0;
+                }
+                l20 += characterobject.vx;
+                characterobject.vy += 2;
+                if(characterobject.vy > 18)
+                    characterobject.vy = 18;
+                i21 += characterobject.vy;
+                var i28 = rightShiftIgnoreSign(i21 + 31, 5);
+                var word2 = mp.maps.map_bg[rightShiftIgnoreSign(l20, 5)][i28];
+                var word5 = mp.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][i28];
+                if(word2 >= 10 || word5 >= 10)
+                {
+                    // 着地したら通常のマリリに変化
+                    i21 = i28 * 32 - 32;
+                    if(characterobject.muki === 1)
+                        characterobject.c = 605;
+                    else
+                        characterobject.c = 600;
+                    characterobject.c1 = 15;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+                if(characterobject.vy < 4)
+                    characterobject.pt = 155;
+                else
+                    characterobject.pt = 156;
+                characterobject.pth = characterobject.muki;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
  * 拡張可能なマップチップコードの一覧
  */
 EnemyController.available = {
@@ -1987,5 +2474,13 @@ EnemyController.available = {
     540: EnemyController.PoppieBubble3,
     // ポッピー（バブル光線3発）
     550: EnemyController.PoppieHurricaneBlast,
+    // マリリ（ジャンプで進む）
+    600: EnemyController.Mariri,
+    // マリリ（その場でジャンプ）
+    601: EnemyController.Mariri,
+    // マリリ（左右にジャンプ）
+    602: EnemyController.Mariri,
+    // マリリ（敵キャラクターに投げられたやつ）
+    650: EnemyController.Mariri,
 };
 
