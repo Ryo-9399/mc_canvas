@@ -711,7 +711,7 @@ int getJSMes() <input id="TextGetJSMes" type="text" size="10">
 <dt>setMyHP(HP(0-))</dt>
 <dd>主人公の HP を設定する。<input type="button" value="setMyHP(2)" onClick="Applet1.setMyHP(2)"></dd>
 <dt>int getMyHP()</dt>
-<dd>主人公の HP を取得する。 getMyHP() <input name="TextGetMyHP" type="text" size="10"></dd>
+<dd>主人公の HP を取得する。 getMyHP() <input id="TextGetMyHP" type="text" size="10"></dd>
 <dt>setMyHPDamage(減らす値)</dt>
 <dd>主人公の HP を減らす。ダメージを受けた直後の点滅状態では、減らせない。<input type="button" value="setMyHPDamage(1)" onClick="Applet1.setMyHPDamage(1)"></dd>
 <dt>showMyHP(HP の名前)</dt>
@@ -736,7 +736,7 @@ int getJSMes() <input id="TextGetJSMes" type="text" size="10">
 <dt>int destroyEnemy(Ｘ座標,Ｙ座標,幅,高さ)</dt>
 <dd>指定範囲内の敵を倒す。例では、主人公の右側４ブロック分（幅 128 ドット）を攻撃します。<input type="button" value="destroyEnemy(Applet1.getMyXReal()+32,Applet1.getMyYReal(),128,32)" onClick="Applet1.destroyEnemy(Applet1.getMyXReal()+32,Applet1.getMyYReal(),128,32)"><br>戻り値は、倒した敵の数です。</dd>
 <dt>int getMyDirection()</dt>
-<dd>主人公の向きを取得する。戻り値は、左向きが 0 、右向きが 1 です。<input name="TextGetMyDirection" type="text" size="5"></dd>
+<dd>主人公の向きを取得する。戻り値は、左向きが 0 、右向きが 1 です。<input id="TextGetMyDirection" type="text" size="5"></dd>
 
 
 </dl>

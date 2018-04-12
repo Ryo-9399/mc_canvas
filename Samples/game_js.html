@@ -818,19 +818,19 @@ function run() {
 <dt>setMapchip(Ｘ座標(0-179),Ｙ座標(0-29),コード(0-249))</dt>
 <dd>標準レイヤーにマップチップをセット。<input type="button" value="setMapchip(3,25,20)" onClick="Applet1.setMapchip(3,25,20)"></dd>
 <dt>int getMapchip(Ｘ座標(0-179),Ｙ座標(0-29))</dt>
-<dd>標準レイヤーからマップチップコードを取得。 getMapchip(3,25) <input name="TextGetMapchip" type="text" size="10"></dd>
+<dd>標準レイヤーからマップチップコードを取得。 getMapchip(3,25) <input id="TextGetMapchip" type="text" size="10"></dd>
 <dt>setMapchip2(Ｘ座標(0-179),Ｙ座標(0-29),コード(0-255))</dt>
 <dd>背景レイヤーにマップチップをセット。<input type="button" value="setMapchip2(4,25,20)" onClick="Applet1.setMapchip2(4,25,20)"></dd>
 <dt>int getMapchip2(Ｘ座標(0-179),Ｙ座標(0-29))</dt>
-<dd>背景レイヤーからマップチップコードを取得。 getMapchip2(4,25) <input name="TextGetMapchip2" type="text" size="10"></dd>
+<dd>背景レイヤーからマップチップコードを取得。 getMapchip2(4,25) <input id="TextGetMapchip2" type="text" size="10"></dd>
 <dt>setBackImage(ファイル名)</dt>
 <dd>背景画像をセット。<input type="button" value='setBackImage("title.gif")' onClick='Applet1.setBackImage("title.gif")'></dd>
 </dl>
 
 <p>
-int getViewX() <input name="TextGetViewX" type="text" size="10">
- int getViewY() <input name="TextGetViewY" type="text" size="10">
- int getScore() <input name="TextGetScore" type="text" size="10">
+int getViewX() <input id="TextGetViewX" type="text" size="10">
+ int getViewY() <input id="TextGetViewY" type="text" size="10">
+ int getScore() <input id="TextGetScore" type="text" size="10">
 </p>
 
 <hr>
@@ -842,7 +842,7 @@ int getViewX() <input name="TextGetViewX" type="text" size="10">
 <dt>String getParamValue(param タグの name 属性)</dt>
 <dd>戻り値は param タグの value 属性。
 <input type="button" value='getParamValue("filename_pattern")' onClick='document.getElementById("TextGetParamValue").value = Applet1.getParamValue("filename_pattern")'>
-<input name="TextGetParamValue" type="text" size="18"></dd>
+<input id="TextGetParamValue" type="text" size="18"></dd>
 <dt>restart()</dt>
 <dd>setParamValue は、一部が有効にならないので、再起動して有効にします。<input type="button" value="restart()" onClick="Applet1.restart()"></dd>
 <dt>setHTMLText(ＨＴＭＬテキスト)</dt>
