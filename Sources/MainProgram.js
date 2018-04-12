@@ -14865,15 +14865,6 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
 
 			switch(k)
 			{
-			case 150: 
-				characterobject.vx = l;
-				characterobject.vy = -28;
-				if(characterobject.vx <= 0)
-					characterobject.muki = 0;
-				else
-					characterobject.muki = 1;
-				break;
-
 			case 450: 
 				characterobject.vx = l;
 				characterobject.vy = -22;
@@ -14883,6 +14874,7 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
 					characterobject.muki = 1;
 				break;
             }
+            break;
 		}
 		i1++;
 	} while(true);
@@ -15093,58 +15085,6 @@ MainProgram.prototype.tMove = function()
                 {
                     characterobject.c = 0;
                 }
-            break;
-
-        case 150: 
-            // ボスに投げられた亀
-            if(this.ana_kazu > 0)
-            {
-                var j1 = 0;
-                do
-                {
-                    if(j1 > 11)
-                        break;
-                    if(this.ana_c[j1] > 0 && this.ana_y[j1] * 32 == i21 + 32 && Math.abs(this.ana_x[j1] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[j1] * 32;
-                        break;
-                    }
-                    j1++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
-            {
-                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-                characterobject.vx = 0;
-            }
-            if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
-            {
-                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-                characterobject.vx = 0;
-            }
-            l20 += characterobject.vx;
-            characterobject.vy += 2;
-            if(characterobject.vy > 18)
-                characterobject.vy = 18;
-            i21 += characterobject.vy;
-            var j23 = rightShiftIgnoreSign(i21 + 31, 5);
-            var word0 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][j23];
-            var word3 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][j23];
-            if(word0 >= 15 || word3 >= 15)
-            {
-                i21 = j23 * 32 - 32;
-                if(characterobject.muki == 1)
-                    characterobject.c = 115;
-                else
-                    characterobject.c = 110;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            characterobject.pt = 140;
-            characterobject.pth = characterobject.muki;
             break;
 
         case 200: 

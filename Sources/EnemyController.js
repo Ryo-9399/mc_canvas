@@ -325,7 +325,15 @@ EnemyController.TurtleFall = {
         fall_speed: 5,
     },
     initFactory: function(enemyCode, properties) {
-        return function(co) {
+        return function(characterobject) {
+            if (enemyCode === 150) {
+                // 投げられたマリリ
+                characterobject.vy = -28; 
+				if(characterobject.vx <= 0)
+					characterobject.muki = 0;
+				else
+					characterobject.muki = 1;
+            }
         };
     },
     controllerFactory: function(properties) {
@@ -533,6 +541,62 @@ EnemyController.TurtleFall = {
                 characterobject.pt = 140;
                 characterobject.pth = 1;
 
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 150) {
+                // 投げられて飛んでいる亀
+                if(mp.ana_kazu > 0)
+                {
+                    var j1 = 0;
+                    do
+                    {
+                        if(j1 > 11)
+                            break;
+                        if(mp.ana_c[j1] > 0 && mp.ana_y[j1] * 32 == i21 + 32 && Math.abs(mp.ana_x[j1] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[j1] * 32;
+                            break;
+                        }
+                        j1++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.vx < 0 && (mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15))
+                {
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    characterobject.vx = 0;
+                }
+                if(characterobject.vx > 0 && (mp.maps.getBGCode(l20 + 31, i21) >= 15 || mp.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    characterobject.vx = 0;
+                }
+                l20 += characterobject.vx;
+                characterobject.vy += 2;
+                if(characterobject.vy > 18)
+                    characterobject.vy = 18;
+                i21 += characterobject.vy;
+                var j23 = rightShiftIgnoreSign(i21 + 31, 5);
+                var word0 = mp.maps.map_bg[rightShiftIgnoreSign(l20, 5)][j23];
+                var word3 = mp.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][j23];
+                if(word0 >= 15 || word3 >= 15)
+                {
+                    // 着地
+                    i21 = j23 * 32 - 32;
+                    if(characterobject.muki == 1)
+                        characterobject.c = 115;
+                    else
+                        characterobject.c = 110;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+                characterobject.pt = 140;
+                characterobject.pth = characterobject.muki;
                 characterobject.x = l20;
                 characterobject.y = i21;
                 return true;
@@ -2611,6 +2675,8 @@ EnemyController.available = {
     100: EnemyController.Turtle,
     // 亀（落ちる）
     110: EnemyController.TurtleFall,
+    // 亀（ボスに投げられた亀）
+    150: EnemyController.TurtleFall,
     // ピカチー（電撃）
     200: EnemyController.Pikachie,
     // ピカチー（みずでっぽう 水平発射）
