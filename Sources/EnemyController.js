@@ -2427,6 +2427,183 @@ EnemyController.Mariri = {
 };
 
 /**
+ * マリリ（左右移動）
+ */
+EnemyController.MaririLeftRight = {
+    properties: {
+        // 移動のスピード
+        speed: 8,
+        // 移動の距離
+        distance: 128,
+        // 移動間の間隔
+        interval: 20,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x;
+            characterobject.c4 = properties.interval >> 1;
+        };
+    },
+    controllerFactory: function(properties) {
+        // 待機フレームの半分
+        var wait_half = properties.interval >> 1;
+        // 右待機中フレーム
+        var right_wait = properties.interval;
+        // 左待機中フレーム
+        var left_wait = properties.interval * 2 + 10;
+        return function(characterobject, mp) {
+            if (characterobject.c === 660) {
+                if(characterobject.c4 < right_wait)
+                {
+                    // 待機中
+                    characterobject.c4++;
+                    characterobject.pt = 154;
+                    characterobject.pth = 0;
+                    if(characterobject.c4 < wait_half)
+                        characterobject.pth = 1;
+                } else
+                if(characterobject.c4 === right_wait)
+                {
+                    // 左へ移動中
+                    if((l20 -= properties.speed) <= characterobject.c3 - properties.distance)
+                    {
+                        l20 = characterobject.c3 - properties.distance;
+                        characterobject.c4 += 10;
+                    }
+                    characterobject.pt = 155 + mp.g_ac;
+                    characterobject.pth = 0;
+                } else
+                if(characterobject.c4 < left_wait)
+                {
+                    // 左で待機中
+                    characterobject.c4++;
+                    characterobject.pt = 154;
+                    characterobject.pth = 1;
+                    if(characterobject.c4 < left_wait - wait_half)
+                        characterobject.pth = 0;
+                } else
+                if(characterobject.c4 === left_wait)
+                {
+                    if((l20 += properties.speed) >= characterobject.c3)
+                    {
+                        l20 = characterobject.c3;
+                        characterobject.c4 = 0;
+                    }
+                    characterobject.pt = 155 + mp.g_ac;
+                    characterobject.pth = 1;
+                }
+
+                characterobject.x = l20;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * マリリ（体当たり）
+ */
+EnemyController.MaririTackle = {
+    properties: {
+        // 体当たりのスピード
+        attack_speed: 10,
+        // 定位置に戻るときのスピード
+        return_speed: 4,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x;
+            characterobject.c4 = 0;
+        };
+    },
+    controllerFactory: function(properties) {
+        // TODO
+        // 待機フレームの半分
+        var wait_half = properties.interval >> 1;
+        // 右待機中フレーム
+        var right_wait = properties.interval;
+        // 左待機中フレーム
+        var left_wait = properties.interval * 2 + 10;
+        return function(characterobject, mp) {
+            if (characterobject.c === 670) {
+                if(characterobject.c4 < 10)
+                {
+                    // 待機中
+                    characterobject.c4++;
+                    characterobject.pt = 154;
+                    if(l20 + 8 >= mp.co_j.x)
+                        characterobject.pth = 0;
+                    else
+                        characterobject.pth = 1;
+                } else
+                if(characterobject.c4 === 10)
+                {
+                    // 体当たり準備OK
+                    if(l20 - 128 - 16 <= mp.co_j.x && l20 - 48 >= mp.co_j.x && Math.abs(i21 - mp.co_j.y) <= 10)
+                        characterobject.c4 = 100;
+                    if(l20 + 128 + 16 >= mp.co_j.x && l20 + 48 <= mp.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
+                        characterobject.c4 = 200;
+                    characterobject.pt = 154;
+                    if(l20 + 8 >= mp.co_j.x)
+                        characterobject.pth = 0;
+                    else
+                        characterobject.pth = 1;
+                } else
+                if(characterobject.c4 === 100)
+                {
+                    // 左に体当たり中
+                    if((l20 -= properties.attack_speed) <= characterobject.c3 - 160)
+                    {
+                        l20 = characterobject.c3 - 160;
+                        characterobject.c4 = 150;
+                    }
+                    characterobject.pt = 155 + mp.g_ac;
+                    characterobject.pth = 0;
+                } else
+                if(characterobject.c4 === 150)
+                {
+                    // 左に体当たりから戻る
+                    if((l20 += properties.return_speed) >= characterobject.c3)
+                    {
+                        l20 = characterobject.c3;
+                        characterobject.c4 = 0;
+                    }
+                    characterobject.pt = 155 + mp.g_ac;
+                    characterobject.pth = 1;
+                } else
+                if(characterobject.c4 === 200)
+                {
+                    // 右に体当たり
+                    if((l20 += properties.attack_speed) >= characterobject.c3 + 160)
+                    {
+                        l20 = characterobject.c3 + 160;
+                        characterobject.c4 = 250;
+                    }
+                    characterobject.pt = 155 + mp.g_ac;
+                    characterobject.pth = 1;
+                } else
+                if(characterobject.c4 === 250)
+                {
+                    // 右に体当たりから戻る
+                    if((l20 -= properties.return_speed) <= characterobject.c3)
+                    {
+                        l20 = characterobject.c3;
+                        characterobject.c4 = 0;
+                    }
+                    characterobject.pt = 155 + mp.g_ac;
+                    characterobject.pth = 0;
+                }
+
+                characterobject.x = l20;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
  * 拡張可能なマップチップコードの一覧
  */
 EnemyController.available = {
@@ -2482,5 +2659,9 @@ EnemyController.available = {
     602: EnemyController.Mariri,
     // マリリ（敵キャラクターに投げられたやつ）
     650: EnemyController.Mariri,
+    // マリリ（左右に移動）
+    660: EnemyController.MaririLeftRight,
+    // マリリ（体当たり）
+    670: EnemyController.MaririTackle,
 };
 

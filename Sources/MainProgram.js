@@ -14730,18 +14730,6 @@ MainProgram.prototype.tSet = function(i, j, k, l)
             }
             // EnemyController未対応の敵コードの処理
 			switch (k) {
-				case 660:
-					characterobject.y = j;
-					characterobject.c3 = i;
-					characterobject.c4 = 10;
-					break;
-
-				case 670:
-					characterobject.y = j;
-					characterobject.c3 = i;
-					characterobject.c4 = 0;
-					break;
-
 				case 700:
 				case 701:
 				case 702:
@@ -15453,109 +15441,6 @@ MainProgram.prototype.tMove = function()
                 characterobject.c = 0;
             characterobject.pt = 152;
             characterobject.pth = characterobject.muki;
-            break;
-
-        case 660: 
-            if(characterobject.c4 < 20)
-            {
-                characterobject.c4++;
-                characterobject.pt = 154;
-                characterobject.pth = 0;
-                if(characterobject.c4 < 10)
-                    characterobject.pth = 1;
-            } else
-            if(characterobject.c4 == 20)
-            {
-                if((l20 -= 8) <= characterobject.c3 - 128)
-                {
-                    l20 = characterobject.c3 - 128;
-                    characterobject.c4 = 30;
-                }
-                characterobject.pt = 155 + this.g_ac;
-                characterobject.pth = 0;
-            } else
-            if(characterobject.c4 < 50)
-            {
-                characterobject.c4++;
-                characterobject.pt = 154;
-                characterobject.pth = 1;
-                if(characterobject.c4 < 40)
-                    characterobject.pth = 0;
-            } else
-            if(characterobject.c4 == 50)
-            {
-                if((l20 += 8) >= characterobject.c3)
-                {
-                    l20 = characterobject.c3;
-                    characterobject.c4 = 0;
-                }
-                characterobject.pt = 155 + this.g_ac;
-                characterobject.pth = 1;
-            }
-            break;
-
-        case 670: 
-            if(characterobject.c4 < 10)
-            {
-                characterobject.c4++;
-                characterobject.pt = 154;
-                if(l20 + 8 >= this.co_j.x)
-                    characterobject.pth = 0;
-                else
-                    characterobject.pth = 1;
-            } else
-            if(characterobject.c4 == 10)
-            {
-                if(l20 - 128 - 16 <= this.co_j.x && l20 - 48 >= this.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
-                    characterobject.c4 = 100;
-                if(l20 + 128 + 16 >= this.co_j.x && l20 + 48 <= this.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
-                    characterobject.c4 = 200;
-                characterobject.pt = 154;
-                if(l20 + 8 >= this.co_j.x)
-                    characterobject.pth = 0;
-                else
-                    characterobject.pth = 1;
-            } else
-            if(characterobject.c4 == 100)
-            {
-                if((l20 -= 10) <= characterobject.c3 - 160)
-                {
-                    l20 = characterobject.c3 - 160;
-                    characterobject.c4 = 150;
-                }
-                characterobject.pt = 155 + this.g_ac;
-                characterobject.pth = 0;
-            } else
-            if(characterobject.c4 == 150)
-            {
-                if((l20 += 4) >= characterobject.c3)
-                {
-                    l20 = characterobject.c3;
-                    characterobject.c4 = 0;
-                }
-                characterobject.pt = 155 + this.g_ac;
-                characterobject.pth = 1;
-            } else
-            if(characterobject.c4 == 200)
-            {
-                if((l20 += 10) >= characterobject.c3 + 160)
-                {
-                    l20 = characterobject.c3 + 160;
-                    characterobject.c4 = 250;
-                }
-                characterobject.pt = 155 + this.g_ac;
-                characterobject.pth = 1;
-            } else
-            if(characterobject.c4 == 250)
-            {
-                if((l20 -= 4) <= characterobject.c3)
-                {
-                    l20 = characterobject.c3;
-                    characterobject.c4 = 0;
-                }
-                characterobject.pt = 155 + this.g_ac;
-                characterobject.pth = 0;
-            }
             break;
 
         case 700: 
