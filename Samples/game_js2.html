@@ -27,40 +27,40 @@ function run() {
 
 
 	//  getMyXReal()
-	TextGetMyXReal.value = Applet1.getMyXReal();
+	document.getElementById("TextGetMyXReal").value = Applet1.getMyXReal();
 
 	//  getMyYReal()
-	TextGetMyYReal.value = Applet1.getMyYReal();
+	document.getElementById("TextGetMyYReal").value = Applet1.getMyYReal();
 
 	//  getViewXReal()
-	TextGetViewXReal.value = Applet1.getViewXReal();
+	document.getElementById("TextGetViewXReal").value = Applet1.getViewXReal();
 
 	//  getViewYReal()
-	TextGetViewYReal.value = Applet1.getViewYReal();
+	document.getElementById("TextGetViewYReal").value = Applet1.getViewYReal();
 
 	//  getEnemyTotal()
-	TextGetEnemyTotal.value = Applet1.getEnemyTotal();
+	document.getElementById("TextGetEnemyTotal").value = Applet1.getEnemyTotal();
 
 	//  isPressZKey()
-	TextIsPressZKey.value = Applet1.isPressZKey();
+	document.getElementById("TextIsPressZKey").value = Applet1.isPressZKey();
 
 	//  isPressXKey()
-	TextIsPressXKey.value = Applet1.isPressXKey();
+	document.getElementById("TextIsPressXKey").value = Applet1.isPressXKey();
 
 	//  getBossXReal()
-	TextGetBossXReal.value = Applet1.getBossXReal();
+	document.getElementById("TextGetBossXReal").value = Applet1.getBossXReal();
 
 	//  getBossYReal()
-	TextGetBossYReal.value = Applet1.getBossYReal();
+	document.getElementById("TextGetBossYReal").value = Applet1.getBossYReal();
 
 	//  getJSMes()
-	TextGetJSMes.value = Applet1.getJSMes();
+	document.getElementById("TextGetJSMes").value = Applet1.getJSMes();
 
 	//  getMyHP()
-	TextGetMyHP.value = Applet1.getMyHP();
+	document.getElementById("TextGetMyHP").value = Applet1.getMyHP();
 
 	//  getMyDirection()
-	TextGetMyDirection.value = Applet1.getMyDirection();
+	document.getElementById("TextGetMyDirection").value = Applet1.getMyDirection();
 
 	//  指定範囲をファイヤーボールで攻撃する
 	n = Applet1.attackFire(0,24*32+320,128,128);
@@ -73,16 +73,16 @@ function run() {
 
 
 <p>
-int getMyXReal() <input name="TextGetMyXReal" type="text" size="10">
-int getMyYReal() <input name="TextGetMyYReal" type="text" size="10">
+int getMyXReal() <input id="TextGetMyXReal" type="text" size="10">
+int getMyYReal() <input id="TextGetMyYReal" type="text" size="10">
  setMyXReal(),setMyYReal(),int getMyVX(),int getMyVY()<br>
-int getViewXReal() <input name="TextGetViewXReal" type="text" size="10">
-int getViewYReal() <input name="TextGetViewYReal" type="text" size="10"><br>
-int getEnemyTotal() <input name="TextGetEnemyTotal" type="text" size="10">
-int isPressZKey() <input name="TextIsPressZKey" type="text" size="5">
-int isPressXKey() <input name="TextIsPressXKey" type="text" size="5"><br>
-int getBossXReal() <input name="TextGetBossXReal" type="text" size="10">
-int getBossYReal() <input name="TextGetBossYReal" type="text" size="10">
+int getViewXReal() <input id="TextGetViewXReal" type="text" size="10">
+int getViewYReal() <input id="TextGetViewYReal" type="text" size="10"><br>
+int getEnemyTotal() <input id="TextGetEnemyTotal" type="text" size="10">
+int isPressZKey() <input id="TextIsPressZKey" type="text" size="5">
+int isPressXKey() <input id="TextIsPressXKey" type="text" size="5"><br>
+int getBossXReal() <input id="TextGetBossXReal" type="text" size="10">
+int getBossYReal() <input id="TextGetBossYReal" type="text" size="10">
 <input type="button" value="setScrollLock(64)" onClick="Applet1.setScrollLock(64)">
 </p>
 
@@ -119,7 +119,7 @@ int getBossYReal() <input name="TextGetBossYReal" type="text" size="10">
 <input type="button" value='showGauge(180,"何かのＨＰ  180 / 200")' onClick='Applet1.showGauge(180,"何かのＨＰ  180 / 200")'>
 <input type="button" value="hideGauge()" onClick="Applet1.hideGauge()"><br>
 
-int getJSMes() <input name="TextGetJSMes" type="text" size="10">
+int getJSMes() <input id="TextGetJSMes" type="text" size="10">
  <input type="button" value="setJSMes(0)" onClick="Applet1.setJSMes(0)">
  addScore(Applet1.attackFire(0,24*32+320,128,128))<br>
 
