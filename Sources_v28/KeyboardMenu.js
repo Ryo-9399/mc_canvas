@@ -1,6 +1,13 @@
 
-function KeyboardMenu(gamegraphics, gamekey, s)
+function KeyboardMenu(paramGameGraphics, paramGameKey, paramString)
 {
+	this.gg = paramGameGraphics;
+	this.gk = paramGameKey;
+	this.name_crys = paramString;
+	this.hi = this.gg.spt_img[0];
+	this.hih = this.gg.spt_img;
+	this.hg = this.gg.os_g;
+	this.ap = this.gg.ap;
 	this.c = new Array(16);
 	this.x = new Array(16);
 	this.y = new Array(16);
@@ -16,282 +23,282 @@ function KeyboardMenu(gamegraphics, gamekey, s)
 	this.mode = 0;
 	this.kettei_c = 0;
 	this.cancel_c = 0;
-	this.gg = gamegraphics;
-	this.gk = gamekey;
-	this.name_crys = s;
-	this.hi = this.gg.spt_img[0];
-	this.hih = this.gg.spt_img;
-	this.hg = this.gg.os_g;
-	this.ap = this.gg.ap;
 	this.initAll();
 }
 
 KeyboardMenu.prototype.initAll = function()
 {
-	for(var i = 0; i <= 15; i++)
+	var i;
+	for (i = 0; i <= 15; i++) {
 		this.init1(i);
-
+	}
 	this.c_fc = 0;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
 	this.aw = -1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
-	for(var j = 0; j <= 15; j++)
-		this.list_IDlist[j] = 0;
-
+	for (i = 0; i <= 15; i++) {
+		this.list_IDlist[i] = 0;
+	}
 	this.list_kazu = 0;
 	this.list_s = 0;
 }
 
-KeyboardMenu.prototype.init1 = function(i)
+KeyboardMenu.prototype.init1 = function(paramInt)
 {
-	this.c[i] = 0;
-	this.x[i] = 0;
-	this.y[i] = 0;
-	this.width[i] = 180;
-	this.selectedIndex[i] = 0;
-	this.item_kazu[i] = 0;
-	this.message[i] = "\u3069\u3046\u3057\u307E\u3059\u304B\uFF1F";
-	for(var j = 0; j <= 15; j++)
-		this.item[i][j] = "";
-
-	for(var k = 0; k <= 15; k++)
-		this.item_int[i][k] = 0;
-
+	this.c[paramInt] = 0;
+	this.x[paramInt] = 0;
+	this.y[paramInt] = 0;
+	this.width[paramInt] = 180;
+	this.selectedIndex[paramInt] = 0;
+	this.item_kazu[paramInt] = 0;
+	this.message[paramInt] = "どうしますか？";
+	var i;
+	for (i = 0; i <= 15; i++) {
+		this.item[paramInt][i] = "";
+	}
+	for (i = 0; i <= 15; i++) {
+		this.item_int[paramInt][i] = 0;
+	}
 }
 
-KeyboardMenu.prototype.setMessage = function(i, s)
+KeyboardMenu.prototype.setMessage = function(paramInt, paramString)
 {
-	this.message[i] = s;
+	this.message[paramInt] = paramString;
 }
 
-KeyboardMenu.prototype.addItem = function(i, s)
+KeyboardMenu.prototype.addItem = function(paramInt, paramString)
 {
-	this.item[i][this.item_kazu[i]] = s;
-	this.item_kazu[i]++;
+	this.item[paramInt][this.item_kazu[paramInt]] = paramString;
+	this.item_kazu[paramInt] += 1;
 }
 
-KeyboardMenu.prototype.addIntitem = function(i, j)
+KeyboardMenu.prototype.addIntitem = function(paramInt1, paramInt2)
 {
-	this.item_int[i][this.item_kazu[i]] = j;
-	this.item_kazu[i]++;
+	this.item_int[paramInt1][this.item_kazu[paramInt1]] = paramInt2;
+	this.item_kazu[paramInt1] += 1;
 }
 
-KeyboardMenu.prototype.addItem2 = function(i, s, j)
+KeyboardMenu.prototype.addItem2 = function(paramInt1, paramString, paramInt2)
 {
-	this.item[i][this.item_kazu[i]] = s;
-	this.item_int[i][this.item_kazu[i]] = j;
-	this.item_kazu[i]++;
+	this.item[paramInt1][this.item_kazu[paramInt1]] = paramString;
+	this.item_int[paramInt1][this.item_kazu[paramInt1]] = paramInt2;
+	this.item_kazu[paramInt1] += 1;
 }
 
-KeyboardMenu.prototype.active = function(i, j, k, l)
+KeyboardMenu.prototype.active = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
-	this.c[i] = 100;
-	this.x[i] = j;
-	this.y[i] = k;
-	if(l !== undefined)
-		this.width[i] = l;
+	this.c[paramInt1] = 100;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	if(paramInt4 !== undefined)
+		this.width[paramInt1] = ParamInt4;
 	else
-		this.width[i] = 180;
+		this.width[paramInt1] = 180;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeSerifutuki = function(i, j, k, l, s)
+KeyboardMenu.prototype.activeSerifutuki = function(paramInt1, paramInt2, paramInt3, paramInt4, paramString)
 {
-	this.c[i] = 700;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
+	this.c[paramInt1] = 700;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
-	this.item[i][15] = s;
+
+	this.item[paramInt1][15] = paramString;
 }
 
-KeyboardMenu.prototype.activeKaimono = function(i, j, k, l)
+KeyboardMenu.prototype.activeKaimono = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
-	this.c[i] = 900;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
+	this.c[paramInt1] = 900;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
-	this.kettei_c = 2;
-	this.cancel_c = 2;
-}
-
-KeyboardMenu.prototype.activeIchigyou = function(i, j, k, l)
-{
-	this.c[i] = 300;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.c_fc = -1;
-	this.gk.up_c = 0;
-	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeNigyou = function(i, j, k, l, color)
+KeyboardMenu.prototype.activeIchigyou = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
-	this.c[i] = 310;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.item_color[i] = color;
+	this.c[paramInt1] = 300;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeYongyou = function(i, j, k, l)
+KeyboardMenu.prototype.activeNigyou = function(paramInt1, paramInt2, paramInt3, paramInt4, paramColor)
 {
-	this.c[i] = 320;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
+	this.c[paramInt1] = 310;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
+	this.item_color[paramInt1] = paramColor;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeYongyou2 = function(i, j, k, l)
+KeyboardMenu.prototype.activeYongyou = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
-	this.c[i] = 321;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
+	this.c[paramInt1] = 320;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeSerifu = function(i, j, k, l, color)
+KeyboardMenu.prototype.activeYongyou2 = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
-	this.c[i] = 330;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.item_color[i] = color;
+	this.c[paramInt1] = 321;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeYasumu = function(i, j, k)
+KeyboardMenu.prototype.activeSerifu = function(paramInt1, paramInt2, paramInt3, paramInt4, paramColor)
 {
-	this.c[i] = 1000;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = 272;
+	this.c[paramInt1] = 330;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
+	this.item_color[paramInt1] = paramColor;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.onKao = function(i, j, k, l, i1)
+KeyboardMenu.prototype.activeYasumu = function(paramInt1, paramInt2, paramInt3)
 {
-	this.c[i] = 600;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.item_int[i][0] = i1;
-}
-
-KeyboardMenu.prototype.onMituketa = function(i, j, k)
-{
-	this.c[i] = 610;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = 200;
-}
-
-KeyboardMenu.prototype.onOkozukai = function(i, j, k, l, i1)
-{
-	this.c[i] = 800;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.item_int[i][0] = i1;
-}
-
-KeyboardMenu.prototype.activeIchigyouTime = function(i, j, k, l)
-{
-	this.c[i] = 350;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.item_int[i][0] = 100;
-}
-
-KeyboardMenu.prototype.activeNigyouTime = function(i, j, k, l, color)
-{
-	this.c[i] = 360;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.width[i] = l;
-	this.item_color[i] = color;
-	this.item_int[i][0] = 100;
-}
-
-KeyboardMenu.prototype.activeJibun = function(i, j, k, l, i1, j1, k1, l1)
-{
-	this.c[i] = 400;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.item_int[14][0] = i1;
-	this.item_int[14][1] = j1;
-	this.item_int[14][2] = k1;
-	this.item_int[14][3] = l1;
-	this.width[i] = l;
+	this.c[paramInt1] = 1000;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = 272;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
 
-KeyboardMenu.prototype.activeToujou = function(i, j, k, l, i1, s)
+KeyboardMenu.prototype.onKao = function(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5)
 {
-	this.c[i] = 420;
-	this.x[i] = j;
-	this.y[i] = k;
-	this.item_int[i][2] = i1;
-	this.item[i][0] = s;
-	this.width[i] = l;
+	this.c[paramInt1] = 600;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
+	this.item_int[paramInt1][0] = paramInt5;
+}
+
+KeyboardMenu.prototype.onMituketa = function(paramInt1, paramInt2, paramInt3)
+{
+	this.c[paramInt1] = 610;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = 200;
+}
+
+KeyboardMenu.prototype.onOkozukai = function(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5)
+{
+	this.c[paramInt1] = 800;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
+	this.item_int[paramInt1][0] = paramInt5;
+}
+
+KeyboardMenu.prototype.activeIchigyouTime = function(paramInt1, paramInt2, paramInt3, paramInt4)
+{
+	this.c[paramInt1] = 350;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
+
+	this.item_int[paramInt1][0] = 100;
+}
+
+KeyboardMenu.prototype.activeNigyouTime = function(paramInt1, paramInt2, paramInt3, paramInt4, paramColor)
+{
+	this.c[paramInt1] = 360;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.width[paramInt1] = paramInt4;
+	this.item_color[paramInt1] = paramColor;
+
+	this.item_int[paramInt1][0] = 100;
+}
+
+KeyboardMenu.prototype.activeJibun = function(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7, paramInt8)
+{
+	this.c[paramInt1] = 400;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.item_int[14][0] = paramInt5;
+	this.item_int[14][1] = paramInt6;
+	this.item_int[14][2] = paramInt7;
+	this.item_int[14][3] = paramInt8;
+
+	this.width[paramInt1] = paramInt4;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = i;
+	this.aw = paramInt1;
+	this.kettei_c = 2;
+	this.cancel_c = 2;
+}
+
+KeyboardMenu.prototype.activeToujou = function(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramString)
+{
+	this.c[paramInt1] = 420;
+	this.x[paramInt1] = paramInt2;
+	this.y[paramInt1] = paramInt3;
+	this.item_int[paramInt1][2] = paramInt5;
+	this.item[paramInt1][0] = paramString;
+
+	this.width[paramInt1] = paramInt4;
+	this.c_fc = -1;
+	this.gk.up_c = 0;
+	this.gk.down_c = 0;
+	this.aw = paramInt1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
@@ -315,18 +322,18 @@ KeyboardMenu.prototype.activeCS = function()
 	this.kettei_c = 2;
 }
 
-KeyboardMenu.prototype.off = function(i)
+KeyboardMenu.prototype.off = function(paramInt)
 {
-	this.c[i] = 0;
+	this.c[paramInt] = 0;
 }
 
-KeyboardMenu.prototype.offActivewindow = function(i, j)
+KeyboardMenu.prototype.offActivewindow = function(paramInt1, paramInt2)
 {
-	this.c[i] = 0;
+	this.c[paramInt1] = 0;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
-	this.aw = j;
+	this.aw = paramInt2;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
 }
@@ -373,13 +380,11 @@ KeyboardMenu.prototype.move = function()
 	}
 	if(!this.gk.tr1_f)
 		this.kettei_c = 0;
-	else
-	if(this.kettei_c == 0)
+	else if(this.kettei_c == 0)
 		this.kettei_c = 1;
 	if(!this.gk.x_f)
 		this.cancel_c = 0;
-	else
-	if(this.cancel_c == 0)
+	else if(this.cancel_c == 0)
 		this.cancel_c = 1;
 }
 
@@ -745,10 +750,10 @@ KeyboardMenu.prototype.drawMenus = function()
 
 }
 
-KeyboardMenu.prototype.drawWindowbox = function(i, j, k, l)
+KeyboardMenu.prototype.drawWindowbox = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
 	this.hg.setColor(Color.white);
-	this.hg.fillRect(i, j, k, l);
+	this.hg.fillRect(paramInt1, paramInt2, paramInt3, paramInt4);
 	this.hg.setColor(Color.black);
-	this.hg.fillRect(i + 2, j + 2, k - 4, l - 4);
+	this.hg.fillRect(paramInt1 + 2, paramInt2 + 2, paramInt3 - 4, paramInt4 - 4);
 }

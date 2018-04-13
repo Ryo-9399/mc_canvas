@@ -91,15 +91,15 @@ KeyboardMenu.prototype.addItem2 = function(paramInt1, paramString, paramInt2)
 	this.item_kazu[paramInt1] += 1;
 }
 
-KeyboardMenu.prototype.active = function(paramInt1, paramInt2, paramInt3)
+KeyboardMenu.prototype.active = function(paramInt1, paramInt2, paramInt3, paramInt4)
 {
 	this.c[paramInt1] = 100;
 	this.x[paramInt1] = paramInt2;
 	this.y[paramInt1] = paramInt3;
-	if (arguments.length == 3)
-		this.width[paramInt1] = 180;
+	if(paramInt4 !== undefined)
+		this.width[paramInt1] = ParamInt4;
 	else
-		this.width[paramInt1] = arguments[3];
+		this.width[paramInt1] = 180;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
 	this.gk.down_c = 0;
