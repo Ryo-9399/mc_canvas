@@ -1,9 +1,13 @@
+/**
+ * 画像やスクリーンのバッファリングに関するクラスまとめ
+ */
 
-/*
-画像やスクリーンのバッファリングに関するクラスまとめ
-*/
-
-// 画像管理クラス
+/**
+ * 画像管理クラス
+ * @param w {number} 画像の横幅
+ * @param h {number} 画像の高さ
+ * @constructor
+ */
 function ImageBuff(w, h)
 {
 	if(arguments.length == 2)
@@ -30,7 +34,10 @@ function ImageBuff(w, h)
     this._g_bk = null;
 }
 
-// 画像を読み込む
+/**
+ * 画像を読み込む
+ * @param url {string} 読み込む画像のパス(相対パス、URLともに可)
+ */
 ImageBuff.prototype.load = function(url)
 {
 	this._loaded = false;
@@ -62,6 +69,9 @@ ImageBuff.prototype.load = function(url)
 	}
 }
 
+/**
+ * 画像のロード完了時に行われる処理
+ */
 ImageBuff.prototype.onload = function()
 {
 	this._loaded = true;
@@ -73,6 +83,9 @@ function ImageBuff_onload(obj)
 	obj.onload();
 }
 
+/**
+ * 画像のロード時にエラーが発生した場合に行われる処理
+ */
 ImageBuff.prototype.onerror = function()
 {
 	this._error = true;
@@ -84,8 +97,11 @@ function ImageBuff_onerror(obj)
 	obj.onerror();
 }
 
-// 画像バッファを編集するためのクラスGraphicsを返す
-// Canvasモードでないと使えない
+/**
+ * 画像バッファを編集するためのクラスGraphicsを返す
+ * Canvasモードでないと使えない
+ * @returns {Graphics} Graphicsオブジェクト
+ */
 ImageBuff.prototype.getGraphics = function()
 {
 	if(this._width < 0) return null;
@@ -93,12 +109,19 @@ ImageBuff.prototype.getGraphics = function()
 	return this._g;
 }
 
+/**
+ * getGraphicsの別名
+ * @returns {Graphics}
+ */
 ImageBuff.prototype.createGraphics = function()
 {
 	return this.getGraphics();
 }
 
-// JavaのGraphicsと互換を保ったGraphicsオブジェクトを作成（JS拡張との互換性のため）
+/**
+ * JavaのGraphicsと互換を保ったGraphicsBkオブジェクトを作成（JS拡張との互換性のため）
+ * @returns {GraphicsBk} GraphicsBkオブジェクト
+ */
 ImageBuff.prototype.getGraphicsBk = function()
 {
 	if(this._width < 0) return null;
@@ -112,7 +135,11 @@ ImageBuff.prototype.getGraphicsBk = function()
 
 
 
-// 画像編集クラス
+/**
+ * 画像編集クラス
+ * @param img {ImageBuff} もととなるImageBuffオブジェクト
+ * @constructor
+ */
 function Graphics(img)
 {
 	this._ctx = img._dat.getContext("2d");
@@ -125,7 +152,14 @@ function Graphics(img)
 	this._font = new Font(Font.DIALOG, Font.PLAIN, 10);
 }
 
-// 線を描画する
+/**
+ * 線分を描画する
+ * @param x1 {number} 始点のX座標
+ * @param y1 {number} 始点のY座標
+ * @param x2 {number} 終点のX座標
+ * @param y2 {number} 終点のY座標
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawLine = function(x1, y1, x2, y2)
 {
 	if(this._ctx == null) return false;
@@ -136,10 +170,47 @@ Graphics.prototype.drawLine = function(x1, y1, x2, y2)
 	return true;
 }
 
-// 画像を描画する
-// 引数3-4個: ImageBuffオブジェクト, X座標, Y座標
-// 引数5-6個: ImageBuffオブジェクト, 描画X座標, 描画Y座標, 描画スケール幅, 描画スケール高さ
-// 引数9-10個: ImageBuffオブジェクト, データX座標, データY座標, データ幅, データ高さ, 描画X座標, 描画Y座標, 描画スケール幅, 描画スケール高さ
+/**
+ * 画像を描画する
+ * @method
+ * @memberOf Graphics.prototype
+ * @name drawImage
+ * @variation 1
+ * @param img {ImageBuff} ImageBuffオブジェクト
+ * @param dx {number} 描画先X座標
+ * @param dy {number} 描画先Y座標
+ * @returns {boolean} 描画に成功したかどうか
+ */
+/**
+ * 画像を描画する
+ * @method
+ * @memberOf Graphics.prototype
+ * @name drawImage
+ * @variation 2
+ * @param img {ImageBuff} ImageBuffオブジェクト
+ * @param dx {number} 描画先X座標
+ * @param dy {number} 描画先Y座標
+ * @param dw {number} 描画される横方向の幅
+ * @param dh {number} 描画される縦方向の高さ
+ * @returns {boolean} 描画に成功したかどうか
+ */
+/**
+ * 画像を描画する
+ * @method
+ * @memberOf Graphics.prototype
+ * @name drawImage
+ * @variation 3
+ * @param img {ImageBuff} ImageBuffオブジェクト
+ * @param sx {number} imgから切り出すX座標
+ * @param sy {number} imgから切り出すY座標
+ * @param sw {number} 切り出してくる横方向の幅
+ * @param sh {number} 切り出してくる縦方向の高さ
+ * @param dx {number} 描画先X座標
+ * @param dy {number} 描画先Y座標
+ * @param [dw] {number} 描画される横方向の幅
+ * @param [dh] {number} 描画される縦方向の高さ
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 {
 	if(img._dat == null) return false;
@@ -166,7 +237,14 @@ Graphics.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 	return false;
 }
 
-// 矩形を描画する
+/**
+ * 矩形を描画する
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawRect = function(x, y, w, h)
 {
 	if(this._ctx == null) return false;
@@ -174,7 +252,14 @@ Graphics.prototype.drawRect = function(x, y, w, h)
 	return true;
 }
 
-// 矩形を塗りつぶし描画する
+/**
+ * 矩形を塗りつぶし描画する
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.fillRect = function(x, y, w, h)
 {
 	if(this._ctx == null) return false;
@@ -182,7 +267,13 @@ Graphics.prototype.fillRect = function(x, y, w, h)
 	return true;
 }
 
-// 多角形を描画する
+/**
+ * 多角形を描画する
+ * @param xa {number[]} 頂点のX座標を格納した配列
+ * @param ya {number[]} 頂点のY座標を格納した配列
+ * @param pn {number} 多角形の頂点数
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawPolygon = function(xa, ya, pn)
 {
 	if(this._ctx == null) return false;
@@ -197,7 +288,13 @@ Graphics.prototype.drawPolygon = function(xa, ya, pn)
 	return true;
 }
 
-// 多角形を塗りつぶし描画する
+/**
+ * 多角形を塗りつぶし描画する
+ * @param xa {number[]} 頂点のX座標を格納した配列
+ * @param ya {number[]} 頂点のY座標を格納した配列
+ * @param pn {number} 多角形の頂点数
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.fillPolygon = function(xa, ya, pn)
 {
 	if(this._ctx == null) return false;
@@ -212,7 +309,14 @@ Graphics.prototype.fillPolygon = function(xa, ya, pn)
 	return true;
 }
 
-// 楕円を描画する
+/**
+ * 楕円を描画する
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawOval = function(x, y, w, h)
 {
 	if(this._ctx == null) return false;
@@ -220,7 +324,14 @@ Graphics.prototype.drawOval = function(x, y, w, h)
 	return true;
 }
 
-// 楕円を塗りつぶし描画する
+/**
+ * 楕円を塗りつぶし描画する
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.fillOval = function(x, y, w, h)
 {
 	if(this._ctx == null) return false;
@@ -228,7 +339,16 @@ Graphics.prototype.fillOval = function(x, y, w, h)
 	return true;
 }
 
-// 円弧を描画する
+/**
+ * 円弧を描画する
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @param angle {number} 描画を開始するラジアン角
+ * @param theta {number} 始点から終点までのラジアン角
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawArc = function(x, y, w, h, angle, theta)
 {
 	if(this._ctx == null) return false;
@@ -242,7 +362,16 @@ Graphics.prototype.drawArc = function(x, y, w, h, angle, theta)
 	return true;
 }
 
-// 円弧を塗りつぶし描画する
+/**
+ * 円弧を描画する
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @param angle {number} 描画を開始するラジアン角
+ * @param theta {number} 始点から終点までのラジアン角
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.fillArc = function(x, y, w, h, angle, theta)
 {
 	if(this._ctx == null) return false;
@@ -258,7 +387,11 @@ Graphics.prototype.fillArc = function(x, y, w, h, angle, theta)
 	return true;
 }
 
-// 広域アルファ値を設定する
+/**
+ * 広域アルファ値を設定する
+ * @param a {number} 0から255までのアルファ値
+ * @returns {boolean} 設定に成功したかどうか
+ */
 Graphics.prototype.setGlobalAlpha = function(a)
 {
 	if(this._ctx == null) return false;
@@ -268,7 +401,11 @@ Graphics.prototype.setGlobalAlpha = function(a)
 	return true;
 }
 
-// 描画色をColorオブジェクトで設定する
+/**
+ * 描画色をColorオブジェクトで設定する
+ * @param color {Color} 描画色
+ * @returns {boolean} 設定に成功したかどうか
+ */
 Graphics.prototype.setColor = function(color)
 {
 	if(this._ctx == null) return false;
@@ -279,7 +416,11 @@ Graphics.prototype.setColor = function(color)
 	return true;
 }
 
-// 描画文字列フォントを設定する
+/**
+ * 描画文字列フォントを設定する
+ * @param font {Font} 設定するFontオブジェクト
+ * @returns {boolean} 設定に成功したかどうか
+ */
 Graphics.prototype.setFont = function(font)
 {
 	if(this._ctx == null) return false;
@@ -297,7 +438,13 @@ Graphics.prototype.setFont = function(font)
 	return true;
 }
 
-// 文字列を描画する
+/**
+ * 文字列を描画する
+ * @param str {string} 描画する文字列
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @returns {boolean} 描画に成功したかどうか
+ */
 Graphics.prototype.drawString = function(str, x, y)
 {
 	if(this._ctx == null) return false;
@@ -305,7 +452,12 @@ Graphics.prototype.drawString = function(str, x, y)
 	return true;
 }
 
-// 座標軸を移動する
+/**
+ * 座標軸を移動する
+ * @param x {number} X方向の移動距離
+ * @param y {number} Y方向の移動距離
+ * @returns {boolean} 成功したかどうか
+ */
 Graphics.prototype.translate = function(x, y)
 {
 	if(this._ctx == null) return false;
@@ -313,7 +465,13 @@ Graphics.prototype.translate = function(x, y)
 	return true;
 }
 
-// 座標軸を回転させる
+/**
+ * 座標軸を回転させる
+ * @param angle {number} 回転させるラジアン角
+ * @param [x] {number} 回転の中心となるX座標
+ * @param [y] {number} 回転の中心となるY座標
+ * @returns {boolean} 成功したかどうか
+ */
 Graphics.prototype.rotate = function(angle, x, y)
 {
 	if(this._ctx == null) return false;
@@ -330,7 +488,12 @@ Graphics.prototype.rotate = function(angle, x, y)
 	return true;
 }
 
-// 座標軸を拡大縮小する
+/**
+ * 座標軸を拡大縮小する
+ * @param x {number} X方向の拡大倍率
+ * @param y {number} Y方向の拡大倍率
+ * @returns {boolean} 成功したかどうか
+ */
 Graphics.prototype.scale = function(x, y)
 {
 	if(this._ctx == null) return false;
@@ -338,12 +501,44 @@ Graphics.prototype.scale = function(x, y)
 	return true;
 }
 
-// クリッピング領域を設定する
-// 第１引数: パターン( "ellipse", "rect", "polygon" )
-// 第２引数～:
-//   "ellipse", x, y, w, h
-//   "rect", x, y, w, h
-//   "polygon", xa, ya, pn
+/**
+ * クリッピング領域を設定する
+ * @method
+ * @memberOf Graphics.prototype
+ * @name setClip
+ * @variation 1
+ * @param pattern {"elipse"} パターン (円弧状)
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @returns {boolean}
+ */
+/**
+ * クリッピング領域を設定する
+ * @method
+ * @memberOf Graphics.prototype
+ * @name setClip
+ * @variation 2
+ * @param pattern {"rect"} パターン (矩形)
+ * @param x {number} X座標
+ * @param y {number} Y座標
+ * @param w {number} 横幅
+ * @param h {number} 高さ
+ * @returns {boolean}
+ */
+/**
+ * クリッピング領域を設定する
+ * @method
+ * @memberOf Graphics.prototype
+ * @name setClip
+ * @variation 3
+ * @param pattern {"polygon"} パターン (多角形)
+ * @param xa {number[]} 頂点のX座標を格納した配列
+ * @param ya {number[]} 頂点のY座標を格納した配列
+ * @param pn {number} 多角形の頂点数
+ * @returns {boolean}
+ */
 Graphics.prototype.setClip = function(pattern)
 {
 	if(this._ctx == null) return false;
@@ -380,6 +575,16 @@ Graphics.prototype.setClip = function(pattern)
 	return false;
 }
 
+/**
+ * 自身の画像の一部を別の座標にコピーする
+ * @param x {number} 切り出すX座標
+ * @param y {number} 切り出すY座標
+ * @param width {number} 切り出す横幅
+ * @param height {number} 切り出す高さ
+ * @param dx {number} コピー先のX座標
+ * @param dy {number} コピー先のY座標
+ * @returns {boolean}
+ */
 Graphics.prototype.copyArea = function(x, y, width, height, dx, dy)
 {
 	if(this._ctx == null) return false;
@@ -387,13 +592,20 @@ Graphics.prototype.copyArea = function(x, y, width, height, dx, dy)
 	return true;
 }
 
+/**
+ * 描画等で加えた変更を破棄して元の画像に戻す
+ */
 Graphics.prototype.dispose = function()
 {
 	this._ctx.restore();
 	this._ctx.save();
 }
 
-// JavaのGraphicsとの後方互換性を保つためのクラス (Graphicsを継承)
+/**
+ * JavaのGraphicsとの後方互換性を保つためのクラス (Graphicsを継承)
+ * @param img {ImageBuff} もととなるImageBuffオブジェクト
+ * @constructor
+ */
 function GraphicsBk(img){
     Graphics.call(this, img);
 }
@@ -403,6 +615,10 @@ GraphicsBk.prototype = Object.create(Graphics.prototype, {
         value: GraphicsBk,
     },
 });
+/**
+ * 画像を描画する
+ * GraphicsクラスのdrawImage()との違いは、引数を9個与えた際に幅・高さの指定の代わりに終点のX座標とY座標を指定すること
+ */
 GraphicsBk.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 {
     if(arguments.length <= 6)
@@ -416,11 +632,14 @@ GraphicsBk.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a
 }
 
 
-
-
-
-
-
+/**
+ * 色を表現するクラス
+ * @param r {number} R(0-255)
+ * @param g {number} G(0-255)
+ * @param b {number} B(0-255)
+ * @param [a=255] {number} アルファ値(0-255)
+ * @constructor
+ */
 function Color(r, g, b, a)
 {
 	if(r > 255) this.r = 255;
@@ -444,16 +663,28 @@ function Color(r, g, b, a)
 	}
 }
 
+/**
+ * 赤色の値を取得する
+ * @returns {number|*}
+ */
 Color.prototype.getRed = function()
 {
 	return this.r;
 }
 
+/**
+ * 緑色の値を取得する
+ * @returns {number|*}
+ */
 Color.prototype.getGreen = function()
 {
 	return this.g;
 }
 
+/**
+ * 青色の値を取得する
+ * @returns {number|*}
+ */
 Color.prototype.getBlue = function()
 {
 	return this.b;
@@ -487,11 +718,13 @@ Color.blue = new Color(0, 0, 255);
 Color.BLUE = Color.blue;
 
 
-
-
-
-
-
+/**
+ * フォントを表現するクラス
+ * @param name {string} フォント名
+ * @param style {string} フォントのスタイル指定 (0:通常 1:太字 2:イタリック)
+ * @param size {number} フォントサイズ
+ * @constructor
+ */
 function Font(name, style, size)
 {
 	this._name = name;
