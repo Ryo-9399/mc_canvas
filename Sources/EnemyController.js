@@ -2606,7 +2606,7 @@ EnemyController.MaririTackle = {
                     // 体当たり準備OK
                     if(l20 - 128 - 16 <= mp.co_j.x && l20 - 48 >= mp.co_j.x && Math.abs(i21 - mp.co_j.y) <= 10)
                         characterobject.c4 = 100;
-                    if(l20 + 128 + 16 >= mp.co_j.x && l20 + 48 <= mp.co_j.x && Math.abs(i21 - this.co_j.y) <= 10)
+                    if(l20 + 128 + 16 >= mp.co_j.x && l20 + 48 <= mp.co_j.x && Math.abs(i21 - mp.co_j.y) <= 10)
                         characterobject.c4 = 200;
                     characterobject.pt = 154;
                     if(l20 + 8 >= mp.co_j.x)
@@ -2659,6 +2659,629 @@ EnemyController.MaririTackle = {
                     characterobject.pth = 0;
                 }
 
+                characterobject.x = l20;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ヤチャモ
+ */
+EnemyController.Yachamo = {
+    properties: {
+        // 攻撃の間隔
+        // null = 初期値
+        interval: null,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            // 敵コードを700に統一
+            characterobject.c2 = 700;
+            // 攻撃方法を覚えておく
+            characterobject.c3 = enemyCode - 700;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 700) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+                if(mp.ana_kazu > 0)
+                {
+                    var j7 = 0;
+                    do
+                    {
+                        if(j7 > 11)
+                            break;
+                        if(mp.ana_c[j7] > 0 && mp.ana_y[j7] * 32 == i21 + 32 && Math.abs(mp.ana_x[j7] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[j7] * 32;
+                            break;
+                        }
+                        j7++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c3 !== 1)
+                    if(characterobject.c1 > 0)
+                    {
+                        // 攻撃状態
+                        characterobject.c1++;
+                        if(characterobject.c1 === 2)
+                        {
+                            if(characterobject.c3 === 2)
+                            {
+                                // グレネード
+                                if(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
+                                    if(l20 + 8 >= mp.co_j.x)
+                                    {
+                                        mp.mSet2(l20, i21, 800, -10, -32);
+                                        mp.gs.rsAddSound(22);
+                                    } else
+                                    {
+                                        mp.mSet2(l20, i21, 800, 10, -32);
+                                        mp.gs.rsAddSound(22);
+                                    }
+                            } else
+                            if(characterobject.c3 === 3)
+                            {
+                                // はっぱカッター3発
+                                if(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
+                                    if(l20 + 8 >= mp.co_j.x)
+                                    {
+                                        var d14 = 3.1400001049041748;
+                                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+                                        d14 = 3.6633334159851074;
+                                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+                                        d14 = 4.1866669654846191;
+                                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+                                        mp.gs.rsAddSound(11);
+                                    } else
+                                    {
+                                        var d15 = 0.0;
+                                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+                                        d15 = 5.7566671371459961;
+                                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+                                        d15 = 5.2333335876464844;
+                                        mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+                                        mp.gs.rsAddSound(11);
+                                    }
+                            } else
+                            if(characterobject.c3 === 4)
+                            {
+                                // プラズマ砲
+                                if(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
+                                    if(l20 + 8 >= mp.co_j.x)
+                                    {
+                                        mp.mSet2(l20, i21, 810, -12, 0);
+                                        mp.gs.rsAddSound(22);
+                                    } else
+                                    {
+                                        mp.mSet2(l20, i21, 810, 12, 0);
+                                        mp.gs.rsAddSound(22);
+                                    }
+                            } else
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                // 火の粉（左）
+                                mp.mSet(l20, i21, 300);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(14);
+                            } else
+                            {
+                                // 火の粉（右）
+                                mp.mSet(l20, i21, 305);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(14);
+                            }
+                        } else
+                        {
+                            // 火の粉とプラズマ砲のデフォルトインターバル値は40
+                            // グレネードとはっぱカッター3連は52
+                            var interval =
+                                properties.interval == null ?
+                                (characterobject.c3 !== 2 && characterobject.c3 !== 3 ? 40 : 52) :
+                                properties.interval;
+                            if(characterobject.c1 > interval)
+                                characterobject.c1 = 0;
+                        }
+                    } else
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && mp.co_j.x >= l20 - 256 && mp.co_j.x <= l20 + 192 && Math.abs(mp.co_j.x - l20) >= 96)
+                    {
+                        // 射程圏内に入ったら動く
+                        characterobject.c1 = 1;
+                    }
+                characterobject.pt = 158;
+                // 主人公の方を向く
+                if(l20 + 8 >= mp.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ヤチャモ（速射）
+ */
+EnemyController.YachamoFast = {
+    properties: {
+        // 攻撃の間隔
+        interval: 35,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            // 敵コードを710に統一
+            characterobject.c2 = 710;
+            // 攻撃方法を覚えておく
+            characterobject.c3 = enemyCode - 710;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 710) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(mp.ana_kazu > 0)
+                {
+                    var k7 = 0;
+                    do
+                    {
+                        if(k7 > 11)
+                            break;
+                        if(mp.ana_c[k7] > 0 && mp.ana_y[k7] * 32 == i21 + 32 && Math.abs(mp.ana_x[k7] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[k7] * 32;
+                            break;
+                        }
+                        k7++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    // 射程に入ったら行動開始
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 320 && mp.co_j.x <= l20 + 192 && Math.abs(mp.co_j.x - l20) >= 64 && Math.abs(mp.co_j.y - i21) <= 128)
+                        if(characterobject.c3 === 0)
+                            characterobject.c1 = 1;
+                        else
+                            characterobject.c1 = 100;
+                } else
+                if(characterobject.c1 === 1)
+                {
+                    // 速射
+                    if(l20 + 8 >= mp.co_j.x)
+                    {
+                        mp.mSet(l20, i21, 300);
+                        mp.gs.rsAddSound(14);
+                    } else
+                    {
+                        mp.mSet(l20, i21, 305);
+                        mp.gs.rsAddSound(14);
+                    }
+                    characterobject.c1 = 300;
+                } else
+                if(characterobject.c1 >= 100 && characterobject.c1 < 200)
+                {
+                    // 3連射
+                    characterobject.c1++;
+                    if(characterobject.c1 === 101)
+                        mp.gs.rsAddSound(14);
+                    if(Math.abs(mp.co_j.x - l20) >= 48 && (characterobject.c1 == 101 || characterobject.c1 == 109 || characterobject.c1 == 117))
+                        if(l20 + 8 >= mp.co_j.x)
+                            mp.mSet(l20, i21, 300);
+                        else
+                            mp.mSet(l20, i21, 305);
+                    if(characterobject.c1 >= 125)
+                        characterobject.c1 = 300;
+                } else
+                {
+                    // 300〜：待機中
+                    characterobject.c1++;
+                    if(characterobject.c1 > 300 + properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 158;
+                if(l20 + 8 >= mp.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ヤチャモ（破壊光線）
+ */
+EnemyController.YachamoHyperBeam = {
+    properties: {
+        // 攻撃の間隔
+        interval: 80,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 720) {
+                // 左向き
+
+                if(mp.ana_kazu > 0)
+                {
+                    var l7 = 0;
+                    do
+                    {
+                        if(l7 > 11)
+                            break;
+                        if(mp.ana_c[l7] > 0 && mp.ana_y[l7] * 32 == i21 + 32 && Math.abs(mp.ana_x[l7] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[l7] * 32;
+                            break;
+                        }
+                        l7++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx - 16 && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 352 && mp.co_j.x <= l20 - 72 && Math.abs(mp.co_j.y - i21) < 64)
+                    {
+                        mp.mSet2(l20, i21, 77, i, 0);
+                        mp.gs.rsAddSound(14);
+                        characterobject.c1 = 300;
+                    }
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > 300 + properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 158;
+                characterobject.pth = 0;
+
+                return true;
+            } else if (characterobject.c === 725) {
+                // 右向き
+                if(mp.ana_kazu > 0)
+                {
+                    var i8 = 0;
+                    do
+                    {
+                        if(i8 > 11)
+                            break;
+                        if(mp.ana_c[i8] > 0 && mp.ana_y[i8] * 32 == i21 + 32 && Math.abs(mp.ana_x[i8] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[i8] * 32;
+                            break;
+                        }
+                        i8++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 >= mp.maps.wx - 16 - 144 && l20 <= (mp.maps.wx + 512) - 32 && i21 >= mp.maps.wy && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x <= l20 + 352 && mp.co_j.x >= l20 + 72 && Math.abs(mp.co_j.y - i21) < 32)
+                    {
+                        mp.mSet2(l20, i21, 87, i, 0);
+                        mp.gs.rsAddSound(14);
+                        characterobject.c1 = 300;
+                    }
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > 300 + properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 158;
+                characterobject.pth = 1;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * ミズタロウ
+ */
+EnemyController.Mizutaro = {
+    properties: {
+        // 歩く速度
+        walk_speed: 3,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            // 敵コードを800に統一
+            characterobject.c2 = 800;
+            characterobject.c4 = enemyCode - 800;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 800) {
+                // 左で立ち止まっている状態
+                if(mp.ana_kazu > 0)
+                {
+                    var j8 = 0;
+                    do
+                    {
+                        if(j8 > 11)
+                            break;
+                        if(mp.ana_c[j8] > 0 && mp.ana_y[j8] * 32 == i21 + 32 && Math.abs(mp.ana_x[j8] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[j8] * 32;
+                            break;
+                        }
+                        j8++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 > 0)
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 === 2)
+                    {
+                        if(characterobject.c4 === 1)
+                        {
+                            // はっぱカッター3発
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                var d16 = 3.1400001049041748;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+                                d16 = 3.6633334159851074;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+                                d16 = 4.1866669654846191;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+                                mp.gs.rsAddSound(11);
+                            } else
+                            {
+                                var d17 = 0.0;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+                                d17 = 5.7566671371459961;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+                                d17 = 5.2333335876464844;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+                                mp.gs.rsAddSound(11);
+                            }
+                        } else
+                        if(characterobject.c4 === 2)
+                        {
+                            // 電撃
+                            mp.mSet(l20, i21, 100);
+                            mp.gs.rsAddSound(10);
+                            characterobject.c1 = 12;
+                        } else
+                        if(characterobject.c4 === 3)
+                        {
+                            // みずでっぽう 水平発射
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                mp.mSet2(l20 - 16, i21, 732, -10, 0);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(15);
+                            } else
+                            {
+                                mp.mSet2(l20 + 16, i21, 732, 10, 0);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(15);
+                            }
+                            characterobject.c1 = 12;
+                        } else
+                        if(characterobject.c4 === 4)
+                        {
+                            // ハリケンブラスト
+                            for(var k8 = 0; k8 <= 300; k8 += 90)
+                            {
+                                mp.mSet2(l20, i21, 950, k8, 0);
+                                mp.mSet2(l20, i21, 960, 300 - k8, 0);
+                                mp.gs.rsAddSound(18);
+                            }
+
+                        } else
+                        {
+                            // みずでっぽう
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                mp.mSet(l20, i21, 400);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(15);
+                            } else
+                            {
+                                mp.mSet(l20, i21, 405);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(15);
+                            }
+                        }
+                    } else
+                    if(characterobject.c1 > 20)
+                    {
+                        characterobject.c = 810;
+                        characterobject.c1 = 0;
+                    }
+                } else
+                if(characterobject.c1 < 0)
+                    characterobject.c1++;
+                else
+                {
+                    // 射程に入ったら攻撃態勢へ
+                    if(mp.co_j.x >= l20 - 240 && mp.co_j.x <= l20 + 240)
+                        characterobject.c1 = 1;
+                }
+                characterobject.pt = 160;
+                if(l20 + 8 >= mp.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+                return true;
+            } else if (characterobject.c === 810) {
+                if(mp.ana_kazu > 0)
+                {
+                    var l8 = 0;
+                    do
+                    {
+                        if(l8 > 11)
+                            break;
+                        if(mp.ana_c[l8] > 0 && mp.ana_y[l8] * 32 == i21 + 32 && Math.abs(mp.ana_x[l8] * 32 - l20) < 32)
+                        {
+                            characterobject.c = 1300;
+                            l20 = mp.ana_x[l8] * 32;
+                            break;
+                        }
+                        l8++;
+                    } while(true);
+                    if(characterobject.c === 1300) {
+                        characterobject.x = l20;
+                        return true;
+                    }
+                }
+                if(characterobject.c1 <= 0)
+                {
+                    // 右へ移動中
+                    if((l20 += properties.walk_speed) >= characterobject.c3 + 96)
+                    {
+                        l20 = characterobject.c3 + 96;
+                        characterobject.c1 = 10;
+                    }
+                    if(mp.maps.getBGCode(l20 + 31, i21 + 32) <= 9)
+                    {
+                        // 床がなかったら停止
+                        l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                        characterobject.c1 = 10;
+                    }
+                    characterobject.pt = 161 + mp.g_ac;
+                    characterobject.pth = 1;
+                } else
+                if(characterobject.c4 !== 4 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
+                {
+                    // 右で待機・攻撃
+                    characterobject.c1++;
+                    if(characterobject.c1 === 15)
+                        if(characterobject.c4 === 1)
+                        {
+                            // はっぱカッター3発
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                var d18 = 3.1400001049041748;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+                                d18 = 3.6633334159851074;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+                                d18 = 4.1866669654846191;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+                                mp.gs.rsAddSound(11);
+                            } else
+                            {
+                                var d19 = 0.0;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+                                d19 = 5.7566671371459961;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+                                d19 = 5.2333335876464844;
+                                mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+                                mp.gs.rsAddSound(11);
+                            }
+                        } else
+                        if(characterobject.c4 === 2)
+                        {
+                            // 電撃
+                            mp.mSet(l20, i21, 100);
+                            mp.gs.rsAddSound(10);
+                        } else
+                        if(characterobject.c4 === 3)
+                        {
+                            // みずでっぽう 水平発射
+                            if(l20 + 8 >= mp.co_j.x)
+                            {
+                                mp.mSet2(l20 - 16, i21, 732, -10, 0);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(15);
+                            } else
+                            {
+                                mp.mSet2(l20 + 16, i21, 732, 10, 0);
+                                if(Math.abs(i21 - mp.co_j.y) <= 288)
+                                    mp.gs.rsAddSound(15);
+                            }
+                        } else
+                        if(characterobject.c4 === 4)
+                        {
+                            // ハリケンブラスト 
+                            for(var i9 = 0; i9 <= 300; i9 += 90)
+                            {
+                                mp.mSet2(l20, i21, 950, i9, 0);
+                                mp.mSet2(l20, i21, 960, 300 - i9, 0);
+                                mp.gs.rsAddSound(18);
+                            }
+
+                        } else
+                        if(l20 + 8 >= mp.co_j.x)
+                        {
+                            mp.mSet(l20, i21, 400);
+                            mp.gs.rsAddSound(15);
+                        } else
+                        {
+                            mp.mSet(l20, i21, 405);
+                            mp.gs.rsAddSound(15);
+                        }
+                    characterobject.pt = 160;
+                    if(l20 + 8 >= mp.co_j.x)
+                        characterobject.pth = 0;
+                    else
+                        characterobject.pth = 1;
+                } else
+                {
+                    // 左へ移動中
+                    if((l20 -= properties.walk_speed) <= characterobject.c3)
+                    {
+                        l20 = characterobject.c3;
+                        characterobject.c = 800;
+                        characterobject.c1 = -20;
+                    }
+                    if(mp.maps.getBGCode(l20, i21 + 32) <= 9)
+                    {
+                        // 床がなかったら停止
+                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                        characterobject.c = 800;
+                        characterobject.c1 = -20;
+                    }
+                    characterobject.pt = 161 + mp.g_ac;
+                    characterobject.pth = 0;
+                }
                 characterobject.x = l20;
                 return true;
             }
@@ -2729,5 +3352,33 @@ EnemyController.available = {
     660: EnemyController.MaririLeftRight,
     // マリリ（体当たり）
     670: EnemyController.MaririTackle,
+    // ヤチャモ（火の粉で攻撃）
+    700: EnemyController.Yachamo,
+    // ヤチャモ（何もしない）
+    701: EnemyController.Yachamo,
+    // ヤチャモ（グレネード）
+    702: EnemyController.Yachamo,
+    // ヤチャモ（はっぱカッター3発）
+    703: EnemyController.Yachamo,
+    // ヤチャモ（プラズマ砲）
+    704: EnemyController.Yachamo,
+    // ヤチャモ（火の粉 速射）
+    710: EnemyController.YachamoFast,
+    // ヤチャモ（火の粉 3連射）
+    711: EnemyController.YachamoFast,
+    // ヤチャモ（破壊光線）
+    720: EnemyController.YachamoHyperBeam,
+    // ヤチャモ（破壊光線 右へ発射）
+    725: EnemyController.YachamoHyperBeam,
+    // ミズタロウ（水鉄砲）
+    800: EnemyController.Mizutaro,
+    // ミズタロウ（はっぱカッター3発）
+    801: EnemyController.Mizutaro,
+    // ミズタロウ（電撃）
+    802: EnemyController.Mizutaro,
+    // ミズタロウ（みずでっぽう 水平発射）
+    803: EnemyController.Mizutaro,
+    // ミズタロウ（ハリケンブラスト）
+    804: EnemyController.Mizutaro,
 };
 
