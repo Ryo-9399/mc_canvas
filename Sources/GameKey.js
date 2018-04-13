@@ -56,7 +56,7 @@ GameKey.prototype.init = function()
 }
 
 /**
- * キー入力時を受けた時の処理
+ * キー入力を受けた時の処理
  * @param paramKeyEvent {KeyboardEvent} 入力されたキーに関するイベント
  */
 GameKey.prototype.keyPressed = function(paramKeyEvent)
