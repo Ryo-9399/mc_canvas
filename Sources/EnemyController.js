@@ -3438,7 +3438,7 @@ EnemyController.AirmsLeftRight = {
                     l20 -= properties.speed;
                     // 所定の位置で爆弾投下
                     if((l20 === characterobject.c3 - 4 || l20 == characterobject.c3 - 4 - 64 || l20 == characterobject.c3 - 4 - 128) && l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.y >= i21 + 16)
-                        this.mSet(l20 + 2, i21, 600);
+                        mp.mSet(l20 + 2, i21, 600);
                     if(l20 <= characterobject.c3 - 160)
                     {
                         // 反転
@@ -3557,6 +3557,772 @@ EnemyController.AirmsReturn = {
 };
 
 /**
+ * タイキング（左右移動　水中専用）
+ */
+EnemyController.Taiking = {
+    properties: {
+        // 移動速度
+        speed: 3,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 1000) {
+                // 左向き
+                if((l20 -= properties.speed) <= (characterobject.c3 - 256) + 16)
+                    characterobject.c = 1005;
+                if(mp.maps.getBGCode(l20 - 16, i21) >= 15 || mp.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
+                {
+                    // 壁にあたって反転
+                    l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
+                    characterobject.c = 1005;
+                }
+                characterobject.pt = 166;
+                characterobject.pth = 0;
+
+                characterobject.x = l20;
+                return true;
+            } else if (characterobject.c === 1005) {
+                // 右向き
+                if((l20 += properties.speed) >= characterobject.c3 + 16)
+                    characterobject.c = 1000;
+                if(mp.maps.getBGCode(l20 + 31 + 16, i21) >= 15 || mp.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
+                    characterobject.c = 1000;
+                }
+                characterobject.pt = 166;
+                characterobject.pth = 1;
+
+                characterobject.x = l20;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * タイキング（はねる）
+ */
+EnemyController.TaikingJump = {
+    properties: {
+        // ジャンプの初速
+        jump_vy: -26,
+        // 着地後の待機時間
+        interval: 10,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 1050) {
+                characterobject.pt = 166;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+                if(characterobject.c1 <= 0)
+                {
+                    // 待機中
+                    var j28 = mp.maps.getBGCode(l20 + 15, i21 + 32);
+                    if(j28 === 18 || j28 === 19)
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 32);
+                    if(mp.co_j.x >= l20 - 136 && mp.co_j.x <= l20 + 136)
+                    {
+                        // 近づいてきたら跳ねる
+                        characterobject.vy = properties.jump_vy;
+                        characterobject.c1 = 100;
+                    }
+                } else
+                if(characterobject.c1 === 100)
+                {
+                    // ジャンプ中
+                    characterobject.vy += 2;
+                    if(characterobject.vy > 18)
+                        characterobject.vy = 18;
+                    if(characterobject.vy < -22)
+                        i21 -= 22;
+                    else
+                        i21 += characterobject.vy;
+                    if(characterobject.vy < 0 && mp.maps.getBGCode(l20 + 15, i21) >= 18)
+                    {
+                        // 天井にぶつかる
+                        i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                        characterobject.vy = 0;
+                    }
+                    var k40 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(k40 >= 20 || k40 === 10 || k40 === 15)
+                    {
+                        // 着地
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                        characterobject.c1 = 200;
+                    }
+                    if(k40 === 18 || k40 === 19)
+                    {
+                        // 坂に着地
+                        if(i21 >= mp.getSakamichiY(l20 + 15, i21 + 31))
+                        {
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 200;
+                        }
+                    } else
+                    if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
+                    {
+                        // 坂をすり抜ける場合に対処
+                        var l40 = mp.maps.getBGCode(l20 + 15, characterobject.y + 31);
+                        if(l40 === 18 || l40 === 19)
+                        {
+                            i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 200;
+                        }
+                    }
+                } else
+                if(characterobject.c1 >= 200)
+                {
+                    // 着地後待機時間
+                    characterobject.c1++;
+                    if(characterobject.c1 > 200 + properties.interval)
+                        characterobject.c1 = 0;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * タイキング（縄張りをまもる）
+ */
+EnemyController.TaikingTerritory = {
+    properties: {
+        // 横方向移動速度
+        speed_x: 3,
+        // 縦方向移動速度
+        speed_y: 2,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 1060) {
+                characterobject.pt = 166;
+                characterobject.pth = 0;
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 < mp.co_j.x)
+                        characterobject.pth = 1;
+                    if(mp.co_j.c >= 100 && mp.co_j.c < 200 && (characterobject.c3 - 160) + 16 <= mp.co_j.x && (characterobject.c3 + 128) - 16 >= mp.co_j.x && (characterobject.c4 - 128) + 16 <= mp.co_j.y && (characterobject.c4 + 128) - 16 >= mp.co_j.y)
+                    {
+                        // 縄張りに入ったら動く
+                        characterobject.c1 = 100;
+                        if(l20 > mp.co_j.x)
+                        {
+                            if(mp.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                                characterobject.c1 = 0;
+                        } else
+                        if(l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                            characterobject.c1 = 0;
+                        if(i21 > mp.co_j.y)
+                        {
+                            if(mp.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                                characterobject.c1 = 0;
+                        } else
+                        if(i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                            characterobject.c1 = 0;
+                    }
+                } else
+                if(characterobject.c1 === 100)
+                {
+                    // 主人公を追跡中
+                    if(l20 > mp.co_j.x)
+                    {
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                            characterobject.c1 = 200;
+                    } else
+                    if(l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                        characterobject.c1 = 200;
+                    if(i21 > mp.co_j.y)
+                    {
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                            characterobject.c1 = 200;
+                    } else
+                    if(i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                        characterobject.c1 = 200;
+                    if(characterobject.c1 === 200)
+                    {
+                        if(l20 < characterobject.c3)
+                            characterobject.pth = 1;
+                        if(l20 == characterobject.c3 && l20 < mp.co_j.x)
+                            characterobject.pth = 1;
+                    } else
+                    {
+                        if(l20 < mp.co_j.x)
+                            characterobject.pth = 1;
+                        if(Math.abs(l20 - mp.co_j.x) <= properties.speed_x)
+                            l20 = mp.co_j.x;
+                        else
+                        if(l20 < mp.co_j.x)
+                            l20 += properties.speed_x;
+                        else
+                        if(l20 > mp.co_j.x)
+                            l20 -= properties.speed_x;
+                        if(Math.abs(i21 - mp.co_j.y) <= properties.speed_y)
+                            i21 = mp.co_j.y;
+                        else
+                        if(i21 < mp.co_j.y)
+                            i21 += properties.speed_y;
+                        else
+                        if(i21 > mp.co_j.y)
+                            i21 -= properties.speed_y;
+                        if(characterobject.c3 - 160 > mp.co_j.x || characterobject.c3 + 128 < mp.co_j.x || characterobject.c4 - 128 > mp.co_j.y || characterobject.c4 + 128 < mp.co_j.y)
+                            characterobject.c1 = 200;
+                        if(mp.co_j.c < 100 || mp.co_j.c >= 200)
+                            characterobject.c1 = 200;
+                    }
+                } else
+                if(characterobject.c1 === 200)
+                {
+                    // 主人公を追跡中
+                    if(l20 < characterobject.c3)
+                        characterobject.pth = 1;
+                    if(l20 == characterobject.c3 && l20 < mp.co_j.x)
+                        characterobject.pth = 1;
+                    if(Math.abs(l20 - characterobject.c3) <= properties.speed_x)
+                        l20 = characterobject.c3;
+                    else
+                    if(l20 < characterobject.c3)
+                        l20 += properties.speed_x;
+                    else
+                    if(l20 > characterobject.c3)
+                        l20 -= properties.speed_x;
+                    if(Math.abs(i21 - characterobject.c4) <= properties.speed_y)
+                        i21 = characterobject.c4;
+                    else
+                    if(i21 < characterobject.c4)
+                        i21 += properties.speed_y;
+                    else
+                    if(i21 > characterobject.c4)
+                        i21 -= properties.speed_y;
+                    if(l20 == characterobject.c3 && i21 == characterobject.c4)
+                        characterobject.c1 = 0;
+                }
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * タイキング（左回り）
+ */
+EnemyController.TaikingLeft = {
+    properties: {
+        // 角速度（degree）
+        speed: 5,
+        // 回転半径
+        radius: 64,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x - 64;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1070) {
+                characterobject.c1 -= properties.speed;
+                if(characterobject.c1 < 0)
+                    characterobject.c1 += 360;
+                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                characterobject.pt = 166;
+                if(characterobject.c1 < 180)
+                    characterobject.pth = 1;
+                else
+                    characterobject.pth = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * タイキング（右回り）
+ * TODO: これ左回りとほとんどコード同じでは？
+ */
+EnemyController.TaikingRight = {
+    properties: {
+        // 角速度（degree）
+        speed: 5,
+        // 回転半径
+        radius: 64,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x - 64;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1080) {
+                characterobject.c1 += properties.speed;
+                if(characterobject.c1 >= 360)
+                    characterobject.c1 -= 360;
+                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                characterobject.pt = 166;
+                if(characterobject.c1 < 180)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * クラゲッソ（バブル光線 水中専用）
+ */
+EnemyController.Kuragesso = {
+    properties: {
+        // 攻撃の間隔
+        interval: 77,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1100) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(characterobject.c1 > 0)
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                } else
+                if(Math.abs(mp.co_j.x - l20) <= 144 && Math.abs(mp.co_j.y - i21) <= 144)
+                {
+                    // 射程範囲内なら攻撃
+                    characterobject.c1 = 1;
+                    mp.mSet2(l20, i21, 700, -3, -3);
+                    mp.mSet2(l20, i21, 700, 3, -3);
+                    mp.mSet2(l20, i21, 700, -3, 3);
+                    mp.mSet2(l20, i21, 700, 3, 3);
+                    mp.mSet2(l20, i21, 700, -4, 0);
+                    mp.mSet2(l20, i21, 700, 4, 0);
+                    mp.mSet2(l20, i21, 700, 0, -4);
+                    mp.mSet2(l20, i21, 700, 0, 4);
+                }
+                characterobject.pt = 167;
+                if(l20 + 8 >= mp.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * クラゲッソ（バブル光線 水中専用）
+ */
+EnemyController.Kuragesso = {
+    properties: {
+        // 攻撃の間隔
+        interval: 77,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1100) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(characterobject.c1 > 0)
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                } else
+                if(Math.abs(mp.co_j.x - l20) <= 144 && Math.abs(mp.co_j.y - i21) <= 144)
+                {
+                    // 射程範囲内なら攻撃
+                    characterobject.c1 = 1;
+                    mp.mSet2(l20, i21, 700, -3, -3);
+                    mp.mSet2(l20, i21, 700, 3, -3);
+                    mp.mSet2(l20, i21, 700, -3, 3);
+                    mp.mSet2(l20, i21, 700, 3, 3);
+                    mp.mSet2(l20, i21, 700, -4, 0);
+                    mp.mSet2(l20, i21, 700, 4, 0);
+                    mp.mSet2(l20, i21, 700, 0, -4);
+                    mp.mSet2(l20, i21, 700, 0, 4);
+                }
+                characterobject.pt = 167;
+                if(l20 + 8 >= mp.co_j.x)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * クラゲッソ（近づくと落ちる）
+ */
+EnemyController.KuragessoFall = {
+    properties: {
+        // 落下の初速
+        init_vy: 2,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1150) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                characterobject.pt = 167;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+                if(characterobject.c1 <= 0)
+                {
+                    var k28 = mp.maps.getBGCode(l20 + 15, i21 + 32);
+                    if(k28 === 18 || k28 === 19)
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 32);
+                    if(mp.co_j.x >= l20 - 128 && mp.co_j.x <= l20 + 128 && i21 + 32 <= mp.co_j.y)
+                    {
+                        // 近づくと落下開始
+                        characterobject.vy = properties.init_vy;
+                        characterobject.c1 = 100;
+                    }
+                } else
+                if(characterobject.c1 === 100)
+                {
+                    // 落下中
+                    characterobject.vy++;
+                    if(characterobject.vy > 16)
+                        characterobject.vy = 16;
+                    if(characterobject.vy < -22)
+                        i21 -= 22;
+                    else
+                        i21 += characterobject.vy;
+                    if(characterobject.vy < 0 && mp.maps.getBGCode(l20 + 15, i21) >= 18)
+                    {
+                        // 天井にぶつかる
+                        i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                        characterobject.vy = 0;
+                    }
+                    var i41 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                    if(i41 >= 20 || i41 === 10 || i41 === 15)
+                    {
+                        // 床に着地
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                        characterobject.c1 = 200;
+                    }
+                    if(i41 === 18 || i41 === 19)
+                    {
+                        // 坂に着地
+                        if(i21 >= mp.getSakamichiY(l20 + 15, i21 + 31))
+                        {
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 200;
+                        }
+                    } else
+                    if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
+                    {
+                        var j41 = mp.maps.getBGCode(l20 + 15, characterobject.y + 31);
+                        if(j41 === 18 || j41 === 19)
+                        {
+                            // 床をすり抜けた場合に対処
+                            i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                            characterobject.c1 = 200;
+                        }
+                    }
+                } else
+                if(characterobject.c1 >= 200)
+                {
+                    // 着地後待機
+                    characterobject.c1++;
+                    if(characterobject.c1 > 210)
+                        characterobject.c1 = 0;
+                }
+                if(i21 >= mp.ochiru_y)
+                    characterobject.c = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * クラゲッソ（縄張りをまもる）
+ * TODO これタイキングと同じでは？
+ */
+EnemyController.KuragessoTerritory = {
+    properties: {
+        // 横方向移動速度
+        speed_x: 3,
+        // 縦方向移動速度
+        speed_y: 2,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1160) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                characterobject.pt = 167;
+                characterobject.pth = 0;
+                if(characterobject.c1 <= 0)
+                {
+                    if(l20 < mp.co_j.x)
+                        characterobject.pth = 1;
+                    if(mp.co_j.c >= 100 && mp.co_j.c < 200 && (characterobject.c3 - 160) + 16 <= mp.co_j.x && (characterobject.c3 + 128) - 16 >= mp.co_j.x && (characterobject.c4 - 128) + 16 <= mp.co_j.y && (characterobject.c4 + 128) - 16 >= mp.co_j.y)
+                    {
+                        characterobject.c1 = 100;
+                        if(l20 > mp.co_j.x)
+                        {
+                            if(mp.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                                characterobject.c1 = 0;
+                        } else
+                        if(l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                            characterobject.c1 = 0;
+                        if(i21 > mp.co_j.y)
+                        {
+                            if(mp.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                                characterobject.c1 = 0;
+                        } else
+                        if(i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                            characterobject.c1 = 0;
+                    }
+                } else
+                if(characterobject.c1 === 100)
+                {
+                    if(l20 > mp.co_j.x)
+                    {
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) >= 18)
+                            characterobject.c1 = 200;
+                    } else
+                    if(l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
+                        characterobject.c1 = 200;
+                    if(i21 > mp.co_j.y)
+                    {
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) >= 18)
+                            characterobject.c1 = 200;
+                    } else
+                    if(i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
+                        characterobject.c1 = 200;
+                    if(characterobject.c1 == 200)
+                    {
+                        if(l20 < characterobject.c3)
+                            characterobject.pth = 1;
+                        if(l20 == characterobject.c3 && l20 < mp.co_j.x)
+                            characterobject.pth = 1;
+                    } else
+                    {
+                        if(l20 < mp.co_j.x)
+                            characterobject.pth = 1;
+                        if(Math.abs(l20 - mp.co_j.x) <= properties.speed_x)
+                            l20 = mp.co_j.x;
+                        else
+                        if(l20 < mp.co_j.x)
+                            l20 += properties.speed_x;
+                        else
+                        if(l20 > mp.co_j.x)
+                            l20 -= properties.speed_x;
+                        if(Math.abs(i21 - mp.co_j.y) <= properties.speed_y)
+                            i21 = mp.co_j.y;
+                        else
+                        if(i21 < mp.co_j.y)
+                            i21 += properties.speed_y;
+                        else
+                        if(i21 > mp.co_j.y)
+                            i21 -= properties.speed_y;
+                        if(characterobject.c3 - 160 > mp.co_j.x || characterobject.c3 + 128 < mp.co_j.x || characterobject.c4 - 128 > mp.co_j.y || characterobject.c4 + 128 < mp.co_j.y)
+                            characterobject.c1 = 200;
+                        if(mp.co_j.c < 100 || mp.co_j.c >= 200)
+                            characterobject.c1 = 200;
+                    }
+                } else
+                if(characterobject.c1 === 200)
+                {
+                    if(l20 < characterobject.c3)
+                        characterobject.pth = 1;
+                    if(l20 == characterobject.c3 && l20 < mp.co_j.x)
+                        characterobject.pth = 1;
+                    if(Math.abs(l20 - characterobject.c3) <= properties.speed_x)
+                        l20 = characterobject.c3;
+                    else
+                    if(l20 < characterobject.c3)
+                        l20 += properties.speed_x;
+                    else
+                    if(l20 > characterobject.c3)
+                        l20 -= properties.speed_x;
+                    if(Math.abs(i21 - characterobject.c4) <= properties.speed_y)
+                        i21 = characterobject.c4;
+                    else
+                    if(i21 < characterobject.c4)
+                        i21 += properties.speed_y;
+                    else
+                    if(i21 > characterobject.c4)
+                        i21 -= properties.speed_y;
+                    if(l20 == characterobject.c3 && i21 == characterobject.c4)
+                        characterobject.c1 = 0;
+                }
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * クラゲッソ（左回り）
+ * TODO これタイキングと同じでは？
+ */
+EnemyController.KuragessoLeft = {
+    properties: {
+        // 角速度（degree）
+        speed: 5,
+        // 回転半径
+        radius: 64,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x - 64;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1170) {
+                characterobject.c1 -= properties.speed;
+                if(characterobject.c1 < 0)
+                    characterobject.c1 += 360;
+                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                characterobject.pt = 167;
+                if(characterobject.c1 < 180)
+                    characterobject.pth = 1;
+                else
+                    characterobject.pth = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * クラゲッソ（右回り）
+ * TODO これタイキングと同じでは？
+ */
+EnemyController.KuragessoRight = {
+    properties: {
+        // 角速度（degree）
+        speed: 5,
+        // 回転半径
+        radius: 64,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x - 64;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 1180) {
+                characterobject.c1 += properties.speed;
+                if(characterobject.c1 >= 360)
+                    characterobject.c1 -= 360;
+                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                characterobject.pt = 167;
+                if(characterobject.c1 < 180)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+
+
+/**
  * 拡張可能なマップチップコードの一覧
  */
 EnemyController.available = {
@@ -3656,5 +4422,25 @@ EnemyController.available = {
     930: EnemyController.AirmsStay,
     // エアームズ（壁に当たると向きを変える）
     950: EnemyController.AirmsReturn,
+    // タイキング（左右移動　水中専用）
+    1000: EnemyController.Taiking,
+    // タイキング（はねる）
+    1050: EnemyController.TaikingJump,
+    // タイキング（縄張りをまもる）
+    1060: EnemyController.TaikingTerritory,
+    // タイキング（左回り）
+    1070: EnemyController.TaikingLeft,
+    // タイキング（右回り）
+    1080: EnemyController.TaikingRight,
+    // クラゲッソ（バブル光線 水中専用）
+    1100: EnemyController.Kuragesso,
+    // クラゲッソ（近づくと落ちる）
+    1150: EnemyController.KuragessoFall,
+    // クラゲッソ（縄張りをまもる）
+    1160: EnemyController.KuragessoTerritory,
+    // クラゲッソ（左回り）
+    1170: EnemyController.KuragessoLeft,
+    // クラゲッソ（右回り）
+    1180: EnemyController.KuragessoRight,
 };
 
