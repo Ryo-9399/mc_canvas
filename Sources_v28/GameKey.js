@@ -1,4 +1,7 @@
-
+/**
+ * キー入力を管理する
+ * @constructor
+ */
 function GameKey()
 {
 	this.key_code = 0;
@@ -22,6 +25,9 @@ function GameKey()
 	this.left_right_lock = false;
 }
 
+/**
+ * 初期化
+ */
 GameKey.prototype.init = function()
 {
 	this.key_code = 0;
@@ -49,6 +55,10 @@ GameKey.prototype.init = function()
 	}
 }
 
+/**
+ * キー入力時を受けた時の処理
+ * @param paramKeyEvent {KeyboardEvent} 入力されたキーに関するイベント
+ */
 GameKey.prototype.keyPressed = function(paramKeyEvent)
 {
 	this.key_code = paramKeyEvent.keyCode;
@@ -133,6 +143,10 @@ GameKey.prototype.keyPressed = function(paramKeyEvent)
 	}
 }
 
+/**
+ * キーが離されたときの処理
+ * @param paramKeyEvent {KeyboardEvent} キーに関するイベント
+ */
 GameKey.prototype.keyReleased = function(paramKeyEvent)
 {
 	var i = paramKeyEvent.keyCode;
@@ -215,6 +229,10 @@ GameKey.prototype.keyReleased = function(paramKeyEvent)
 	}
 }
 
+/**
+ * 最後に押されたキーのキーコードを取得
+ * @returns {number} キーコード
+ */
 GameKey.prototype.getKeyCode = function()
 {
 	return this.key_code;
@@ -225,11 +243,25 @@ GameKey.prototype.getKeyCode = function()
 	return this.key_char;
 }*/
 
+/**
+ * GameKey.keyPressedの別名
+ * TODO: 消せ
+ * @param obj {GameKey}
+ * @param e {KeyboardEvent}
+ * @constructor
+ */
 function GameKey_keyPressed(obj, e)
 {
 	obj.keyPressed(e);
 }
 
+/**
+ * GameKey.keyReleasedの別名
+ * TODO: 消せ
+ * @param obj {GameKey}
+ * @param e {KeyboardEvent}
+ * @constructor
+ */
 function GameKey_keyReleased(obj, e)
 {
 	obj.keyReleased(e);
