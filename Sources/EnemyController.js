@@ -3291,6 +3291,272 @@ EnemyController.Mizutaro = {
 };
 
 /**
+ * エアームズ（壁に当たると止まる）
+ */
+EnemyController.AirmsStop = {
+    properties: {
+        // 飛行速度
+        speed: 4,
+        // 攻撃の間隔
+        interval: 26,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 900) {
+                // 飛行中
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if((l20 -= properties.speed) < 48)
+                {
+                    // ステージから出て消える
+                    if(l20 <= 4)
+                        characterobject.c = 0;
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 === 1)
+                        mp.mSet(l20, i21 + 19, 600);
+                    else
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                    if(mp.maps.getBGCode(l20, i21 + 31) >= 15)
+                    {
+                        // 壁に当たったら止まる
+                        l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                        characterobject.c = 910;
+                    }
+                }
+                characterobject.pt = 164;
+                characterobject.pth = 0;
+
+                characterobject.x = l20;
+                return true;
+            } else if (characterobject.c === 910) {
+                // 停止状態
+                characterobject.pt = 164;
+                characterobject.pth = 0;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * エアームズ（その場で投下）
+ */
+EnemyController.AirmsStay = {
+    properties: {
+        // 攻撃の間隔
+        interval: 30,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            // 敵コードは920に統一
+            characterobject.c2 = 920;
+            characterobject.c3 = enemyCode - 920;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 920) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(characterobject.c1 <= 0)
+                {
+                    // 射程に入ったら投下開始
+                    if(l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.x >= l20 - 256 && mp.co_j.x <= l20 + 256 && mp.co_j.y >= i21 + 16)
+                        characterobject.c1 = 1;
+                } else
+                if(characterobject.c1 === 1)
+                {
+                    if(characterobject.c3 === 1) {
+                        // グレネード投下
+                        mp.mSet2(l20, i21, 800, 0, 0);
+                    } else {
+                        // 爆弾投下
+                        mp.mSet(l20, i21 + 19, 606);
+                    }
+                    characterobject.c1 = 2;
+                } else
+                {
+                    characterobject.c1++;
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                }
+                characterobject.pt = 164;
+                if(mp.co_j.x <= l20 + 8 || mp.j_tokugi === 14)
+                    characterobject.pth = 0;
+                else
+                    characterobject.pth = 1;
+
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * エアームズ（左右に動いて爆弾投下）
+ */
+EnemyController.AirmsLeftRight = {
+    properties: {
+        // 飛行速度
+        speed: 4,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            characterobject.c3 = characterobject.x;
+            characterobject.c4 = 20;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            if (characterobject.c === 930) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
+                if(characterobject.c4 < 20)
+                {
+                    // 右で待機中
+                    characterobject.c4++;
+                    characterobject.pt = 164;
+                    characterobject.pth = 0;
+                    if(characterobject.c4 < 10)
+                        characterobject.pth = 1;
+                } else
+                if(characterobject.c4 === 20)
+                {
+                    // 左へ移動中
+                    l20 -= properties.speed;
+                    // 所定の位置で爆弾投下
+                    if((l20 === characterobject.c3 - 4 || l20 == characterobject.c3 - 4 - 64 || l20 == characterobject.c3 - 4 - 128) && l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.y >= i21 + 16)
+                        this.mSet(l20 + 2, i21, 600);
+                    if(l20 <= characterobject.c3 - 160)
+                    {
+                        // 反転
+                        l20 = characterobject.c3 - 160;
+                        characterobject.c4 = 30;
+                    }
+                    characterobject.pt = 164;
+                    characterobject.pth = 0;
+                } else
+                if(characterobject.c4 < 50)
+                {
+                    // 左で待機中
+                    characterobject.c4++;
+                    characterobject.pt = 164;
+                    characterobject.pth = 1;
+                    if(characterobject.c4 < 40)
+                        characterobject.pth = 0;
+                } else
+                if(characterobject.c4 === 50)
+                {
+                    // 右へ移動中
+                    l20 += properties.speed;
+                    if((l20 === (characterobject.c3 + 4) - 32 || l20 === (characterobject.c3 + 4) - 96) && l20 >= mp.maps.wx && l20 <= (mp.maps.wx + 512) - 32 && i21 <= (mp.maps.wy + 320) - 32 && mp.co_j.y >= i21 + 16)
+                        mp.mSet(l20 - 2, i21, 605);
+                    if(l20 >= characterobject.c3)
+                    {
+                        // 反転
+                        l20 = characterobject.c3;
+                        characterobject.c4 = 0;
+                    }
+                    characterobject.pt = 164;
+                    characterobject.pth = 1;
+                }
+
+                characterobject.x = l20;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * エアームズ（壁に当たると向きを変える）
+ */
+EnemyController.AirmsReturn = {
+    properties: {
+        // 飛行速度
+        speed: 4,
+        // 攻撃の間隔
+        interval: 26,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 950) {
+                // 左向き
+
+                if((l20 -= properties.speed) < 48)
+                {
+                    // ステージから出たら消える
+                    if(l20 <= properties.speed)
+                        characterobject.c = 0;
+                } else
+                {
+                    characterobject.c1++;
+                    // 爆弾を投下
+                    if(characterobject.c1 === 1)
+                        mp.mSet(l20, i21 + 19, 600);
+                    else
+                    if(characterobject.c1 > properties.interval)
+                        characterobject.c1 = 0;
+                    if(mp.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
+                    {
+                        // 壁が当たったので反転
+                        l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
+                        characterobject.c = 960;
+                        characterobject.c1 = properties.interval - 10;
+                    }
+                }
+                characterobject.pt = 164;
+                characterobject.pth = 0;
+
+                characterobject.x = l20;
+                return true;
+            } else if (characterobject.c === 960) {
+                // 右向き
+                l20 += properties.speed;
+                characterobject.c1++;
+                if(characterobject.c1 === 1)
+                    mp.mSet(l20, i21 + 19, 605);
+                else
+                if(characterobject.c1 > properties.interval)
+                    characterobject.c1 = 0;
+                if(mp.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
+                {
+                    // 壁に当たったので反転
+                    l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
+                    characterobject.c = 950;
+                    characterobject.c1 = properties.interval - 10;
+                }
+                characterobject.pt = 164;
+                characterobject.pth = 1;
+
+                characterobject.x = l20;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
  * 拡張可能なマップチップコードの一覧
  */
 EnemyController.available = {
@@ -3380,5 +3646,15 @@ EnemyController.available = {
     803: EnemyController.Mizutaro,
     // ミズタロウ（ハリケンブラスト）
     804: EnemyController.Mizutaro,
+    // エアームズ（壁に当たると止まる）
+    900: EnemyController.AirmsStop,
+    // エアームズ（その場で爆弾投下）
+    920: EnemyController.AirmsStay,
+    // エアームズ（その場でグレネード投下）
+    921: EnemyController.AirmsStay,
+    // エアームズ（左右に動いて爆弾投下）
+    930: EnemyController.AirmsStay,
+    // エアームズ（壁に当たると向きを変える）
+    950: EnemyController.AirmsReturn,
 };
 
