@@ -56,7 +56,7 @@ app.get('/__tests__/*', (req, res, next) => {
       res.render('game.njk', {
         params: JSON.stringify(stage.params),
         options: JSON.stringify({
-          'advanced-map': data['advanced-map'],
+          'advanced-map': stage['advanced-map'],
         }),
         ran_seed: stage._ran_seed || 0x12345,
       });
