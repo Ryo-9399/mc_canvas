@@ -1187,7 +1187,7 @@ EnemyController.ChikorinSolarBeam = {
         };
     },
     controllerFactory: function(properties) {
-        return function(characterobject, mp) {
+        return function(characterobject, mp, i) {
             var l20 = characterobject.x;
             var i21 = characterobject.y;
             if (characterobject.c === 330) {
@@ -2827,6 +2827,9 @@ EnemyController.MaririLeftRight = {
         var left_wait = properties.interval * 2 + 10;
         return function(characterobject, mp) {
             if (characterobject.c === 660) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
                 if(characterobject.c4 < right_wait)
                 {
                     // 待機中
@@ -2901,6 +2904,9 @@ EnemyController.MaririTackle = {
         var left_wait = properties.interval * 2 + 10;
         return function(characterobject, mp) {
             if (characterobject.c === 670) {
+                var l20 = characterobject.x;
+                var i21 = characterobject.y;
+
                 if(characterobject.c4 < 10)
                 {
                     // 待機中
@@ -3232,7 +3238,7 @@ EnemyController.YachamoHyperBeam = {
         };
     },
     controllerFactory: function(properties) {
-        return function(characterobject, mp) {
+        return function(characterobject, mp, i) {
             var l20 = characterobject.x;
             var i21 = characterobject.y;
 
@@ -6240,7 +6246,7 @@ EnemyController.available = {
     // エアームズ（その場でグレネード投下）
     921: EnemyController.AirmsStay,
     // エアームズ（左右に動いて爆弾投下）
-    930: EnemyController.AirmsStay,
+    930: EnemyController.AirmsLeftRight,
     // エアームズ（壁に当たると向きを変える）
     950: EnemyController.AirmsReturn,
     // タイキング（左右移動　水中専用）
