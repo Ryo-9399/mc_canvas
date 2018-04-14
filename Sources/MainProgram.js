@@ -14790,19 +14790,6 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
                 partsDefinition.native.initFactory(characterobject.c, partsDefinition.properties)(characterobject, this);
                 // コントローラーを設定
                 characterobject.controller = partsDefinition.native.controllerFactory(partsDefinition.properties);
-                break;
-            }
-
-			switch(k)
-			{
-			case 450: 
-				characterobject.vx = l;
-				characterobject.vy = -22;
-				if(characterobject.vx <= 0)
-					characterobject.muki = 0;
-				else
-					characterobject.muki = 1;
-				break;
             }
             break;
 		}
@@ -14870,6 +14857,7 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 50:
+            // ?
             characterobject.c1++;
             if(characterobject.c2 >= 0 && this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
                 i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
@@ -14881,6 +14869,7 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 52:
+            // ?
             l20 += characterobject.vx;
             characterobject.vy += 5;
             if(characterobject.vy > 25)
@@ -14894,6 +14883,7 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 54:
+            // ?
             l20 += characterobject.vx;
             characterobject.vy += 5;
             if(characterobject.vy > 25)
@@ -14907,6 +14897,7 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 55:
+            // ?
             characterobject.c1++;
             if(characterobject.c1 == 1)
                 this.addScore(10);
@@ -15057,260 +15048,6 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 210: 
-            break;
-
-        case 410: 
-            if(this.ana_kazu > 0)
-            {
-                var j4 = 0;
-                do
-                {
-                    if(j4 > 11)
-                        break;
-                    if(this.ana_c[j4] > 0 && this.ana_y[j4] * 32 == i21 + 32 && Math.abs(this.ana_x[j4] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[j4] * 32;
-                        break;
-                    }
-                    j4++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            var l45 = this.maps.getBGCode(l20 + 15, i21 + 31);
-            if(l45 != 18 && l45 != 19)
-                l45 = 0;
-            if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
-            {
-                if(l45 == 18)
-                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-                else
-                if(l45 == 19)
-                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-                if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
-                    i21++;
-            }
-            l20 -= 4;
-            var l38 = this.maps.getBGCode(l20 + 15, i21 + 31);
-            if(l38 == 18 || l38 == 19)
-                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-            if(l20 < 32)
-            {
-                if(l20 <= 3)
-                    characterobject.c = 0;
-            } else
-            {
-                var i39 = this.maps.getBGCode(l20, i21);
-                if(i39 >= 20 || i39 == 15 || i39 == 18)
-                {
-                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-                    characterobject.c = 415;
-                }
-            }
-            if(i >= 120 && l20 < this.maps.wx - 32)
-                characterobject.c = 0;
-            if(l45 == 18)
-            {
-                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-                    i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
-            } else
-            if(l45 == 19)
-            {
-                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
-            } else
-            if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
-            {
-                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
-                characterobject.c = 420;
-            }
-            characterobject.pt = 152 + this.g_ac;
-            characterobject.pth = 0;
-            break;
-
-        case 415: 
-            if(this.ana_kazu > 0)
-            {
-                var k4 = 0;
-                do
-                {
-                    if(k4 > 11)
-                        break;
-                    if(this.ana_c[k4] > 0 && this.ana_y[k4] * 32 == i21 + 32 && Math.abs(this.ana_x[k4] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[k4] * 32;
-                        break;
-                    }
-                    k4++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            var i46 = this.maps.getBGCode(l20 + 15, i21 + 31);
-            if(i46 != 18 && i46 != 19)
-                i46 = 0;
-            if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
-            {
-                if(i46 == 19)
-                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
-                else
-                if(i46 == 18)
-                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-                if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
-                    i21++;
-            }
-            l20 += 4;
-            var j39 = this.maps.getBGCode(l20 + 15, i21 + 31);
-            if(j39 == 18 || j39 == 19)
-                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-            j39 = this.maps.getBGCode(l20 + 31, i21);
-            if(j39 >= 20 || j39 == 15 || j39 == 19)
-            {
-                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-                characterobject.c = 410;
-            }
-            if(i >= 120 && l20 > this.maps.wx + 512)
-                characterobject.c = 0;
-            if(i46 == 19)
-            {
-                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-                    i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
-            } else
-            if(i46 == 18)
-            {
-                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
-            } else
-            if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
-            {
-                l20 = rightShiftIgnoreSign(l20, 5) * 32;
-                characterobject.c = 425;
-            }
-            characterobject.pt = 152 + this.g_ac;
-            characterobject.pth = 1;
-            break;
-
-        case 420: 
-            if(this.ana_kazu > 0)
-            {
-                var l4 = 0;
-                do
-                {
-                    if(l4 > 11)
-                        break;
-                    if(this.ana_c[l4] > 0 && this.ana_y[l4] * 32 == i21 + 32 && Math.abs(this.ana_x[l4] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[l4] * 32;
-                        break;
-                    }
-                    l4++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            i21 += 5;
-            if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-            {
-                i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-                characterobject.c = 410;
-            }
-            if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-            {
-                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-                characterobject.c = 410;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            characterobject.pt = 152;
-            characterobject.pth = 0;
-            break;
-
-        case 425: 
-            if(this.ana_kazu > 0)
-            {
-                var i5 = 0;
-                do
-                {
-                    if(i5 > 11)
-                        break;
-                    if(this.ana_c[i5] > 0 && this.ana_y[i5] * 32 == i21 + 32 && Math.abs(this.ana_x[i5] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[i5] * 32;
-                        break;
-                    }
-                    i5++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            i21 += 5;
-            if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-            {
-                i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
-                characterobject.c = 415;
-            }
-            if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
-            {
-                i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-                characterobject.c = 415;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            characterobject.pt = 152;
-            characterobject.pth = 1;
-            break;
-
-        case 450: 
-            if(this.ana_kazu > 0)
-            {
-                var j5 = 0;
-                do
-                {
-                    if(j5 > 11)
-                        break;
-                    if(this.ana_c[j5] > 0 && this.ana_y[j5] * 32 == i21 + 32 && Math.abs(this.ana_x[j5] * 32 - l20) < 32)
-                    {
-                        characterobject.c = 1300;
-                        l20 = this.ana_x[j5] * 32;
-                        break;
-                    }
-                    j5++;
-                } while(true);
-                if(characterobject.c == 1300)
-                    break;
-            }
-            if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
-            {
-                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-                characterobject.vx = 0;
-            }
-            if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
-            {
-                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-                characterobject.vx = 0;
-            }
-            l20 += characterobject.vx;
-            characterobject.vy += 2;
-            if(characterobject.vy > 18)
-                characterobject.vy = 18;
-            i21 += characterobject.vy;
-            var k25 = rightShiftIgnoreSign(i21 + 31, 5);
-            var word1 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][k25];
-            var word4 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][k25];
-            if(word1 >= 10 || word4 >= 10)
-            {
-                i21 = k25 * 32 - 32;
-                if(characterobject.muki == 1)
-                    characterobject.c = 415;
-                else
-                    characterobject.c = 410;
-            }
-            if(i21 >= this.ochiru_y)
-                characterobject.c = 0;
-            characterobject.pt = 152;
-            characterobject.pth = characterobject.muki;
             break;
 
         case 850: 
