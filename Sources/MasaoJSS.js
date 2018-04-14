@@ -322,9 +322,9 @@ function MasaoJSS(mc, caseInsensitive)
      * showImageで表示できる画像は1つだけです。
      *
      * @param {number} time 表示時間（フレーム数）
-     * @param {ImageBuff} buf 表示する画像
      * @param {number} x X座標
      * @param {number} y Y座標
+	 * @param {ImageBuff} buf 表示する画像
      */
 	this.showImage = function(s, s1, s2, s3)
 	{

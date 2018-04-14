@@ -1,4 +1,12 @@
-
+/**
+ * ゲーム本体
+ * @param gamegraphics {GameGraphicsForApplet}
+ * @param gamemouse {GameMouse}
+ * @param gamekey {GameKey}
+ * @param gamesound {GameSoundForApplet}
+ * @param tagdatabase {TagDataBase}
+ * @constructor
+ */
 function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 {
 	// マップの幅と高さ（ブロック単位）。将来はここを変数にする。
@@ -331,6 +339,10 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 }
 
 MainProgram.prototype = {
+	/**
+	 * 敵の最大インデックス(敵の総数-1)を取得
+	 * @returns {number}
+	 */
 	get t_kazu() {
 		if (this.co_t) {
 			return this.co_t.length - 1;
@@ -339,6 +351,10 @@ MainProgram.prototype = {
 			return -1;
 		}
 	},
+	/**
+	 * 仕掛けの最大インデックス(仕掛けの総数-1)を取得
+	 * @returns {number}
+	 */
 	get a_kazu() {
 		if (this.co_a) {
 			return this.co_a.length - 1;
@@ -347,6 +363,10 @@ MainProgram.prototype = {
 			return -1;
 		}
 	},
+	/**
+	 * 床オブジェクトの最大インデックス(床オブジェクトの総数-1)を取得
+	 * @returns {number}
+	 */
 	get yuka_id_max() {
 		if (this.yo) {
 			return this.yo.length - 1;
@@ -357,12 +377,21 @@ MainProgram.prototype = {
 	}
 };
 
+/**
+ * ハイスコアイベントのコールバックを登録する
+ * 複数回呼び出すと以前のイベントは置き換えられる
+ * @param highscoreeventhandler {Function} ハイスコア更新時に呼び出されるコールバック関数 第一引数にハイスコアの得点が渡される
+ * @returns {boolean} 常にtrue
+ */
 MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler)
 {
 	this.heh = highscoreeventhandler;
 	return true;
 }
 
+/**
+ * ハイスコアイベントのコールバックが登録されていれば、最高得点を引数としてハイスコアイベントを発火させる
+ */
 MainProgram.prototype.sendHighscore = function()
 {
 	if(Object.prototype.toString.call(this.heh) == "[object Function]")
@@ -374,11 +403,19 @@ MainProgram.prototype.sendHighscore = function()
 	}
 }
 
+/**
+ * ゲームを開始させる
+ */
 MainProgram.prototype.start = function()
 {
 	this.ml_mode = 50;
 }
 
+/**
+ * 主人公の特技を追加する
+ * @param i {number} 特技の種類(1から30まで)
+ * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+ */
 MainProgram.prototype.addMyTokugi = function(i)
 {
 	var flag = false;
@@ -548,6 +585,11 @@ MainProgram.prototype.addMyTokugi = function(i)
 	return flag;
 }
 
+/**
+ * 主人公の特技を取り除く
+ * @param i {number} 特技の種類(1から30まで)
+ * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+ */
 MainProgram.prototype.removeMyTokugi = function(i)
 {
 	var flag = false;
@@ -717,6 +759,10 @@ MainProgram.prototype.removeMyTokugi = function(i)
 	return flag;
 }
 
+/**
+ * 8フレーム周期のゲームカウンターを一つ進める(？)
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.moveGameCounter = function()
 {
 	switch(this.g_c3)
@@ -787,6 +833,14 @@ MainProgram.prototype.moveGameCounter = function()
 	}
 }
 
+/**
+ * 一言メッセージを設定する
+ * @param {number} time 表示時間（フレーム数）
+ * @param {string} name 名前
+ * @param {string} line1 メッセージ（1行目）
+ * @param {string} line2 メッセージ（2行目）
+ * @param {string} line3 メッセージ（3行目）
+ */
 MainProgram.prototype.showmSet = function(s, s1, s2, s3, s4)
 {
 	if(this.ml_mode != 100)
@@ -807,6 +861,10 @@ MainProgram.prototype.showmSet = function(s, s1, s2, s3, s4)
 	}
 }
 
+/**
+ * 謎(showmSetで設定された一言メッセージを実際に表示させる？)
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.showmMove = function()
 {
 	if(this.showm_c > 0)
@@ -817,6 +875,16 @@ MainProgram.prototype.showmMove = function()
 	}
 }
 
+/**
+ * マップ上に表示する画像を設定する
+ * 座標はマップ上ではなくスクリーン上の位置で指定
+ * 同時に設定できる画像は1つのみ
+ * @param {number} time 表示時間（フレーム数）
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {ImageBuff} buf 表示する画像
+ * @returns {boolean} 設定に成功するとtrueを返す
+ */
 MainProgram.prototype.showiSet = function(s, s1, s2, s3)
 {
 	if(this.ml_mode != 100)
@@ -836,6 +904,11 @@ MainProgram.prototype.showiSet = function(s, s1, s2, s3)
 	}
 }
 
+/**
+ * 背景画像を設定する
+ * @param {string} filename 画像のファイル名
+ * @returns {boolean}
+ */
 MainProgram.prototype.setbacki = function(s)
 {
 	if(this.ml_mode != 100)
@@ -851,6 +924,15 @@ MainProgram.prototype.setbacki = function(s)
 	}
 }
 
+/**
+ * 主人公を一定時間停止させます。
+ * 停止している間の主人公の画像（パターンコード）と向きを指定できます。
+ *
+ * @param {number} time 停止する時間（フレーム数）
+ * @param {number} pattern 停止している間のパターンコード
+ * @param {number} direction 向き（0なら左、1なら右）
+ * @returns {boolean} 主人公を停止状態にできたかどうか
+ */
 MainProgram.prototype.setMyWait = function(s, s1, s2)
 {
 	var i = -1;
