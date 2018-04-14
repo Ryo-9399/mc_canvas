@@ -43,8 +43,7 @@ function IdouGamen(gamegraphics, gamekey, keyboardmenu, mainprogram)
 
 IdouGamen.prototype.worldInit = function()
 {
-	var i;
-	for (i = 0; i <= 9; i++)
+	for (var i = 0; i <= 9; i++)
 	{
 		this.stage_c[i] = 0;
 		this.stage_cf[i] = false;
@@ -53,7 +52,7 @@ IdouGamen.prototype.worldInit = function()
 	this.door_koID = 0;
 	this.dokan_khID = 0;
 	this.door_score_open = 0;
-	for (i = 0; i <= 15; i++) {
+	for (var i = 0; i <= 15; i++) {
 		this.ie_c[i] = 0;
 	}
 	this.co_j.x = 0;
@@ -67,178 +66,178 @@ IdouGamen.prototype.worldInit = function()
 	this.mp_mode = 0;
 	this.km.initAll();
 	this.km.mode = 100;
-	for (var l = 0; l <= 8; l++)
+	for (var i = 0; i <= 8; i++)
 	{
-		var s = this.gg.ap.getParameter("chizu-" + l);
-		s = s + "...............";
-		this.map_string[l] = s;
+		var str = this.gg.ap.getParameter("chizu-" + i);
+		str += "...............";
+		this.map_string[i] = str;
 	}
-	for (var i1 = 0; i1 <= 8; i1++)
+	for (var i = 0; i <= 8; i++)
 	{
-		for (var k = 0; k <= 14; k++)
+		for (var j = 0; j <= 14; j++)
 		{
-			var c = this.map_string[i1].charAt(k);
+			var c = this.map_string[i].charAt(j);
 			if (c == "A")
 			{
-				this.co_j.x = k * 32;
-				this.co_j.y = i1 * 32;
-				this.map_bg[k][i1] = 220;
+				this.co_j.x = j * 32;
+				this.co_j.y = i * 32;
+				this.map_bg[j][i] = 220;
 			}
 			else if (c == "B")
 			{
-				this.map_bg[k][i1] = 216;
+				this.map_bg[j][i] = 216;
 				this.ie_c[3] = 100;
-				this.ie_x[3] = k * 32;
-				this.ie_y[3] = i1 * 32;
+				this.ie_x[3] = j * 32;
+				this.ie_y[3] = i * 32;
 			}
 			else if (c == "C")
 			{
-				this.map_bg[k][i1] = 217;
+				this.map_bg[j][i] = 217;
 				this.ie_c[4] = 100;
-				this.ie_x[4] = k * 32;
-				this.ie_y[4] = i1 * 32;
+				this.ie_x[4] = j * 32;
+				this.ie_y[4] = i * 32;
 			}
 			else if (c == "D")
 			{
-				this.map_bg[k][i1] = 218;
+				this.map_bg[j][i] = 218;
 				this.ie_c[10] = 100;
-				this.ie_x[10] = k * 32;
-				this.ie_y[10] = i1 * 32;
+				this.ie_x[10] = j * 32;
+				this.ie_y[10] = i * 32;
 			}
 			else if (c == "E")
 			{
-				this.map_bg[k][i1] = 219;
+				this.map_bg[j][i] = 219;
 				this.ie_c[11] = 100;
-				this.ie_x[11] = k * 32;
-				this.ie_y[11] = i1 * 32;
+				this.ie_x[11] = j * 32;
+				this.ie_y[11] = i * 32;
 			}
 			else if (c == "a")
 			{
 				if (this.stage_c[0] == 0)
 				{
-					this.map_bg[k][i1] = 223;
+					this.map_bg[j][i] = 223;
 					this.stage_c[0] = 100;
-					this.stage_x[0] = k * 32;
-					this.stage_y[0] = i1 * 32;
+					this.stage_x[0] = j * 32;
+					this.stage_y[0] = i * 32;
 				}
 				else
 				{
-					this.map_bg[k][i1] = 220;
+					this.map_bg[j][i] = 220;
 				}
 			}
 			else if (c == "b")
 			{
 				if (this.stage_c[1] == 0)
 				{
-					this.map_bg[k][i1] = 224;
+					this.map_bg[j][i] = 224;
 					this.stage_c[1] = 100;
-					this.stage_x[1] = k * 32;
-					this.stage_y[1] = i1 * 32;
+					this.stage_x[1] = j * 32;
+					this.stage_y[1] = i * 32;
 				}
 				else
 				{
-					this.map_bg[k][i1] = 220;
+					this.map_bg[j][i] = 220;
 				}
 			}
 			else if (c == "c")
 			{
 				if (this.stage_c[2] == 0)
 				{
-					this.map_bg[k][i1] = 225;
+					this.map_bg[j][i] = 225;
 					this.stage_c[2] = 100;
-					this.stage_x[2] = k * 32;
-					this.stage_y[2] = i1 * 32;
+					this.stage_x[2] = j * 32;
+					this.stage_y[2] = i * 32;
 				}
 				else
 				{
-					this.map_bg[k][i1] = 220;
+					this.map_bg[j][i] = 220;
 				}
 			}
 			else if (c == "d")
 			{
 				if (this.stage_c[3] == 0)
 				{
-					this.map_bg[k][i1] = 226;
+					this.map_bg[j][i] = 226;
 					this.stage_c[3] = 100;
-					this.stage_x[3] = k * 32;
-					this.stage_y[3] = i1 * 32;
+					this.stage_x[3] = j * 32;
+					this.stage_y[3] = i * 32;
 				}
 				else
 				{
-					this.map_bg[k][i1] = 220;
+					this.map_bg[j][i] = 220;
 				}
 			}
 			else if (c == "e")
 			{
-				this.map_bg[k][i1] = 213;
+				this.map_bg[j][i] = 213;
 				this.ie_c[0] = 100;
-				this.ie_x[0] = k * 32;
-				this.ie_y[0] = i1 * 32;
+				this.ie_x[0] = j * 32;
+				this.ie_y[0] = i * 32;
 			}
 			else if (c == "f")
 			{
-				this.map_bg[k][i1] = 214;
+				this.map_bg[j][i] = 214;
 				this.ie_c[1] = 100;
-				this.ie_x[1] = k * 32;
-				this.ie_y[1] = i1 * 32;
+				this.ie_x[1] = j * 32;
+				this.ie_y[1] = i * 32;
 			}
 			else if (c == "g")
 			{
-				this.map_bg[k][i1] = 215;
+				this.map_bg[j][i] = 215;
 				this.ie_c[2] = 100;
-				this.ie_x[2] = k * 32;
-				this.ie_y[2] = i1 * 32;
+				this.ie_x[2] = j * 32;
+				this.ie_y[2] = i * 32;
 			}
 			else if (c == "h")
 			{
-				this.map_bg[k][i1] = 212;
+				this.map_bg[j][i] = 212;
 				this.ie_c[9] = 100;
-				this.ie_x[9] = k * 32;
-				this.ie_y[9] = i1 * 32;
+				this.ie_x[9] = j * 32;
+				this.ie_y[9] = i * 32;
 			}
 			else if (c == "i")
 			{
-				this.map_bg[k][i1] = 206;
+				this.map_bg[j][i] = 206;
 				this.ie_c[5] = 100;
-				this.ie_x[5] = k * 32;
-				this.ie_y[5] = i1 * 32;
+				this.ie_x[5] = j * 32;
+				this.ie_y[5] = i * 32;
 			}
 			else if (c == "j")
 			{
-				this.map_bg[k][i1] = 207;
+				this.map_bg[j][i] = 207;
 				this.ie_c[6] = 100;
-				this.ie_x[6] = k * 32;
-				this.ie_y[6] = i1 * 32;
+				this.ie_x[6] = j * 32;
+				this.ie_y[6] = i * 32;
 			}
 			else if (c == "k")
 			{
-				this.map_bg[k][i1] = 208;
+				this.map_bg[j][i] = 208;
 				this.ie_c[7] = 100;
-				this.ie_x[7] = k * 32;
-				this.ie_y[7] = i1 * 32;
+				this.ie_x[7] = j * 32;
+				this.ie_y[7] = i * 32;
 			}
 			else if (c == "l")
 			{
-				this.map_bg[k][i1] = 209;
+				this.map_bg[j][i] = 209;
 				this.ie_c[8] = 100;
-				this.ie_x[8] = k * 32;
-				this.ie_y[8] = i1 * 32;
+				this.ie_x[8] = j * 32;
+				this.ie_y[8] = i * 32;
 			}
 			else if (c == "1")
 			{
-				this.map_bg[k][i1] = 220;
+				this.map_bg[j][i] = 220;
 			}
 			else if (c == "2")
 			{
-				this.map_bg[k][i1] = 221;
+				this.map_bg[j][i] = 221;
 			}
 			else if (c == "3")
 			{
-				this.map_bg[k][i1] = 222;
+				this.map_bg[j][i] = 222;
 			}
 			else
 			{
-				this.map_bg[k][i1] = 0;
+				this.map_bg[j][i] = 0;
 			}
 		}
 	}
@@ -313,46 +312,46 @@ IdouGamen.prototype.drawOs2 = function()
 	this.gg.setBackcolor(new Color(0, 127, 0));
 	this.gg.fill2();
 	this.gg.os2_g.drawImage(this.gg.li[3], 0, 0, this.gg.ap);
-	for (var i1 = 0; i1 <= 8; i1++)
+	for (var i = 0; i <= 8; i++)
 	{
-		for (var k = 0; k <= 14; k++)
+		for (var j = 0; j <= 14; j++)
 		{
-			var i = this.map_bg[k][i1];
-			if (i == 221)
+			var tmp = this.map_bg[j][i];
+			if (tmp == 221)
 			{
-				this.gg.drawPT2(k * 32 + 16, i1 * 32 + 24 - 16, 221);
-				this.gg.drawPT2(k * 32 + 16, i1 * 32 + 24 + 16, 221);
+				this.gg.drawPT2(j * 32 + 16, i * 32 + 24 - 16, 221);
+				this.gg.drawPT2(j * 32 + 16, i * 32 + 24 + 16, 221);
 			}
-			else if (i == 222)
+			else if (tmp == 222)
 			{
-				this.gg.drawPT2(k * 32 + 16 - 16, i1 * 32 + 24, 222);
-				this.gg.drawPT2(k * 32 + 16 + 16, i1 * 32 + 24, 222);
+				this.gg.drawPT2(j * 32 + 16 - 16, i * 32 + 24, 222);
+				this.gg.drawPT2(j * 32 + 16 + 16, i * 32 + 24, 222);
 			}
 		}
 	}
-	for (var j1 = 0; j1 <= 8; j1++)
+	for (var i = 0; i <= 8; i++)
 	{
-		for (var l = 0; l <= 14; l++)
+		for (var j = 0; j <= 14; j++)
 		{
-			var j = this.map_bg[l][j1];
-			if (j != 61 && j != 62 && j != 256) {
-				if (j >= 216 && j <= 219)
+			var tmp = this.map_bg[j][i];
+			if (tmp != 61 && tmp != 62 && tmp != 256) {
+				if (tmp >= 216 && tmp <= 219)
 				{
-					this.gg.drawPT2(l * 32 + 16, (j1 * 32 + 24) - 7, j);
+					this.gg.drawPT2(j * 32 + 16, (i * 32 + 24) - 7, tmp);
 				}
-				else if (j >= 206 && j <= 209)
+				else if (tmp >= 206 && tmp <= 209)
 				{
-					this.gg.drawPT2(l * 32 + 16, (j1 * 32 + 24) - 7, j);
+					this.gg.drawPT2(j * 32 + 16, (i * 32 + 24) - 7, tmp);
 				}
-				else if (j >= 212 && j <= 215)
+				else if (tmp >= 212 && tmp <= 215)
 				{
-					this.gg.drawPT2((l * 32 + 16) - 16, j1 * 32 + 24, 222);
-					this.gg.drawPT2(l * 32 + 16 + 16, j1 * 32 + 24, 222);
-					this.gg.drawPT2(l * 32 + 16, (j1 * 32 + 24) - 7, j);
+					this.gg.drawPT2((j * 32 + 16) - 16, i * 32 + 24, 222);
+					this.gg.drawPT2(j * 32 + 16 + 16, i * 32 + 24, 222);
+					this.gg.drawPT2(j * 32 + 16, (i * 32 + 24) - 7, tmp);
 				}
 				else
 				{
-					this.gg.drawPT2(l * 32 + 16, j1 * 32 + 24, j);
+					this.gg.drawPT2(j * 32 + 16, i * 32 + 24, tmp);
 				}
 			}
 		}
@@ -364,14 +363,14 @@ IdouGamen.prototype.drawMap = function()
 	this.gg.os_g.drawImage(this.gg.os2_img, 0, 0, this.gg.ap);
 }
 
-IdouGamen.prototype.getBGZ = function(i, j)
+IdouGamen.prototype.getBGZ = function(paramInt1, paramInt2)
 {
-	if (i < 0 || i > 479 || j < 0 || j > 287) {
+	if (paramInt1 < 0 || paramInt1 > 479 || paramInt2 < 0 || paramInt2 > 287) {
 		return 0;
 	}
-	var k = i >> 5;
-	var l = j >> 5;
-	return this.map_bg[k][l];
+	var i = paramInt1 >> 5;
+	var j = paramInt2 >> 5;
+	return this.map_bg[i][j];
 }
 
 IdouGamen.prototype.checkStage = function()
@@ -742,20 +741,22 @@ IdouGamen.prototype.mainProgram = function()
 
 IdouGamen.prototype.jMove = function()
 {
-	var l = this.co_j.x;
-	var i1 = this.co_j.y;
+	var cx = this.co_j.x;
+	var cy = this.co_j.y;
 	this.co_j.pt = 100;
 	if (this.co_j.vx == 0 && this.co_j.vy == 0)
 	{
-		this.co_j.ac++;
-		if (this.co_j.ac > 7)
+		this.co_j.ac += 1;
+		if (this.co_j.ac > 7) {
 			this.co_j.ac = 0;
+		}
 		if (this.co_j.ac > 3)
 		{
 			this.co_j.pt = 1000;
-			var i = this.getBGZ(l, i1);
-			if (i >= 216 && i <= 219 || i >= 206 && i <= 209)
+			var temporary_01 = this.getBGZ(cx, cy);
+			if ((temporary_01 >= 216 && temporary_01 <= 219) || (temporary_01 >= 206 && temporary_01 <= 209)) {
 				this.co_j.pt = 1010;
+			}
 		}
 		if (this.mp.tr1_c == 1)
 		{
@@ -767,22 +768,19 @@ IdouGamen.prototype.jMove = function()
 				this.dokan_khID = 0;
 				this.co_j.pt = 100;
 			}
-			else if (this.getBGZ(l, i1) >= 206 && this.getBGZ(l, i1) <= 209)
+			else if (this.getBGZ(cx, cy) >= 206 && this.getBGZ(cx, cy) <= 209)
 			{
 				if (this.mp.dokan_mode == 2)
 				{
 					var flag = false;
-					for (var k1 = 0; k1 <= 8; k1++)
+					for (var temporary_02 = 0; temporary_02 <= 8; temporary_02++)
 					{
-						for(var j1 = 0; j1 <= 14; j1++)
+						for (var temporary_03 = 0; temporary_03 <= 14; temporary_03++)
 						{
-							if (j1 * 32 == l && k1 * 32 == i1)
-								continue;
-							var k = this.map_bg[j1][k1];
-							if (k != this.getBGZ(l, i1))
-								continue;
-							l = j1 * 32;
-							i1 = k1 * 32;
+							if (temporary_03 * 32 == cx && temporary_02 * 32 == cy) continue;
+							if (this.map_bg[temporary_03][temporary_02] != this.getBGZ(cx, cy)) continue;
+							cx = temporary_03 * 32;
+							cy = temporary_02 * 32;
 							this.co_j.ac = 0;
 							this.co_j.pt = 1010;
 							flag = true;
@@ -798,11 +796,11 @@ IdouGamen.prototype.jMove = function()
 					this.mp_mode = 100;
 					this.cc_hankei = 312;
 					this.co_j.ac = 0;
-					this.dokan_khID = this.getBGZ(l, i1) - 205;
+					this.dokan_khID = this.getBGZ(cx, cy) - 205;
 					this.co_j.pt = 1010;
 				}
 			}
-			else if (this.getBGZ(l, i1) == 216)
+			else if (this.getBGZ(cx, cy) == 216)
 			{
 				this.km.init1(4);
 				this.km.onKao(4, 120, 42, 272, 230);
@@ -814,7 +812,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.pt = 1010;
 				this.co_j.ac = 0;
 			}
-			else if (this.getBGZ(l, i1) == 217)
+			else if (this.getBGZ(cx, cy) == 217)
 			{
 				this.km.init1(4);
 				this.km.onKao(4, 120, 42, 272, 232);
@@ -826,7 +824,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.pt = 1010;
 				this.co_j.ac = 0;
 			}
-			else if (this.getBGZ(l, i1) == 218)
+			else if (this.getBGZ(cx, cy) == 218)
 			{
 				this.km.init1(4);
 				this.km.onKao(4, 120, 42, 216, 234);
@@ -849,7 +847,7 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.pt = 1010;
 				this.co_j.ac = 0;
 			}
-			else if (this.getBGZ(l, i1) == 219)
+			else if (this.getBGZ(cx, cy) == 219)
 			{
 				this.km.init1(4);
 				this.km.onKao(4, 120, 42, 272, 236);
@@ -864,7 +862,7 @@ IdouGamen.prototype.jMove = function()
 		}
 		else if (this.gk.up_f)
 		{
-			if (this.getBGZ(l, i1 - 32) == 221)
+			if (this.getBGZ(cx, cy - 32) == 221)
 			{
 				this.co_j.vy = -4;
 				this.co_j.ac = -1;
@@ -872,7 +870,7 @@ IdouGamen.prototype.jMove = function()
 		}
 		else if (this.gk.down_f)
 		{
-			if (this.getBGZ(l, i1 + 32) == 221)
+			if (this.getBGZ(cx, cy + 32) == 221)
 			{
 				this.co_j.vy = 4;
 				this.co_j.ac = -1;
@@ -881,12 +879,12 @@ IdouGamen.prototype.jMove = function()
 		else if (this.gk.left_f)
 		{
 			this.co_j.muki = 0;
-			if (this.getBGZ(l - 32, i1) == 222)
+			if (this.getBGZ(cx - 32, cy) == 222)
 			{
 				this.co_j.vx = -4;
 				this.co_j.ac = -1;
 			}
-			if (this.getBGZ(l + 32, i1) >= 212 && this.getBGZ(l + 32, i1) <= 215)
+			if (this.getBGZ(cx + 32, cy) >= 212 && this.getBGZ(cx + 32, cy) <= 215)
 			{
 				this.co_j.vx = -4;
 				this.co_j.ac = -1;
@@ -895,12 +893,12 @@ IdouGamen.prototype.jMove = function()
 		else if (this.gk.right_f)
 		{
 			this.co_j.muki = 1;
-			if (this.getBGZ(l + 32, i1) == 222)
+			if (this.getBGZ(cx + 32, cy) == 222)
 			{
 				this.co_j.vx = 4;
 				this.co_j.ac = -1;
 			}
-			if (this.getBGZ(l - 32, i1) >= 212 && this.getBGZ(l - 32, i1) <= 215)
+			if (this.getBGZ(cx - 32, cy) >= 212 && this.getBGZ(cx - 32, cy) <= 215)
 			{
 				this.co_j.vx = 4;
 				this.co_j.ac = -1;
@@ -913,8 +911,8 @@ IdouGamen.prototype.jMove = function()
 		if (this.co_j.ac > 3) {
 			this.co_j.ac = 0;
 		}
-		l += this.co_j.vx;
-		i1 += this.co_j.vy;
+		cx += this.co_j.vx;
+		cy += this.co_j.vy;
 		if (this.co_j.vx != 0)
 		{
 			if (this.co_j.ac <= 1) {
@@ -938,23 +936,23 @@ IdouGamen.prototype.jMove = function()
 		} else {
 			this.co_j.pt = 205;
 		}
-		if (l % 32 == 0 && i1 % 32 == 0)
+		if (cx % 32 == 0 && cy % 32 == 0)
 		{
-			var j = this.getBGZ(l, i1);
-			if (j == 220 || (j >= 223 && j <= 227) || (j >= 216 && j <= 219) || (j >= 206 && j <= 209))
+			var temporary_04 = this.getBGZ(cx, cy);
+			if (temporary_04 == 220 || (temporary_04 >= 223 && temporary_04 <= 227) || (temporary_04 >= 216 && temporary_04 <= 219) || (temporary_04 >= 206 && temporary_04 <= 209))
 			{
 				this.co_j.vx = 0;
 				this.co_j.vy = 0;
 				this.co_j.ac = 0;
 			}
-			j = 0;
+			temporary_04 = 0;
 			if (this.co_j.vx > 0) {
-				j = this.getBGZ(l + 32, i1);
+				temporary_04 = this.getBGZ(cx + 32, cy);
 			}
 			else if (this.co_j.vx < 0) {
-				j = this.getBGZ(l - 32, i1);
+				temporary_04 = this.getBGZ(cx - 32, cy);
 			}
-			if (j >= 212 && j <= 215)
+			if (temporary_04 >= 212 && temporary_04 <= 215)
 			{
 				this.co_j.vx = 0;
 				this.co_j.vy = 0;
@@ -962,37 +960,37 @@ IdouGamen.prototype.jMove = function()
 				this.co_j.ac = 0;
 			}
 		}
-		if (l <= -32)
+		if (cx <= -32)
 		{
-			l = -32;
+			cx = -32;
 			this.co_j.vx = 0;
 			this.co_j.vy = 0;
 			this.co_j.ac = 0;
 		}
-		else if (l >= 480)
+		else if (cx >= 480)
 		{
-			l = 480;
+			cx = 480;
 			this.co_j.vx = 0;
 			this.co_j.vy = 0;
 			this.co_j.ac = 0;
 		}
-		if (i1 <= -32)
+		if (cy <= -32)
 		{
-			i1 = -32;
+			cy = -32;
 			this.co_j.vx = 0;
 			this.co_j.vy = 0;
 			this.co_j.ac = 0;
 		}
-		else if (i1 >= 288)
+		else if (cy >= 288)
 		{
-			i1 = 288;
+			cy = 288;
 			this.co_j.vx = 0;
 			this.co_j.vy = 0;
 			this.co_j.ac = 0;
 		}
 	}
-	this.co_j.x = l;
-	this.co_j.y = i1;
+	this.co_j.x = cx;
+	this.co_j.y = cy;
 }
 
 IdouGamen.prototype.circleCLS = function(paramInt)
@@ -1011,15 +1009,15 @@ IdouGamen.prototype.circleCLS = function(paramInt)
 	this.gg.os_g.fillPolygon(this.cc_p2_x, this.cc_p2_y, 17);
 }
 
-IdouGamen.prototype.squareCLS = function(i, j)
+IdouGamen.prototype.squareCLS = function(paramInt1, paramInt2)
 {
 	var d = 0.017453292519943295;
-	this.cc_p1_x[0] = Math.floor(Math.cos((this.cc_kakudo + 0) * d) * i) + 256;
-	this.cc_p1_y[0] = Math.floor(Math.sin((this.cc_kakudo + 0) * d) * i) + 160;
-	this.cc_p1_x[1] = Math.floor(Math.cos((this.cc_kakudo + 90) * d) * i) + 256;
-	this.cc_p1_y[1] = Math.floor(Math.sin((this.cc_kakudo + 90) * d) * i) + 160;
-	this.cc_p1_x[2] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * i) + 256;
-	this.cc_p1_y[2] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * i) + 160;
+	this.cc_p1_x[0] = Math.floor(Math.cos((this.cc_kakudo + 0) * d) * paramInt1) + 256;
+	this.cc_p1_y[0] = Math.floor(Math.sin((this.cc_kakudo + 0) * d) * paramInt1) + 160;
+	this.cc_p1_x[1] = Math.floor(Math.cos((this.cc_kakudo + 90) * d) * paramInt1) + 256;
+	this.cc_p1_y[1] = Math.floor(Math.sin((this.cc_kakudo + 90) * d) * paramInt1) + 160;
+	this.cc_p1_x[2] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * paramInt1) + 256;
+	this.cc_p1_y[2] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * paramInt1) + 160;
 	this.cc_p1_x[3] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * 500) + 256;
 	this.cc_p1_y[3] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * 500) + 160;
 	this.cc_p1_x[4] = Math.floor(Math.cos((this.cc_kakudo + 135) * d) * 700) + 256;
@@ -1028,12 +1026,12 @@ IdouGamen.prototype.squareCLS = function(i, j)
 	this.cc_p1_y[5] = Math.floor(Math.sin((this.cc_kakudo + 45) * d) * 700) + 160;
 	this.cc_p1_x[6] = Math.floor(Math.cos((this.cc_kakudo + 0) * d) * 500) + 256;
 	this.cc_p1_y[6] = Math.floor(Math.sin((this.cc_kakudo + 0) * d) * 500) + 160;
-	this.cc_p2_x[0] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * i) + 256;
-	this.cc_p2_y[0] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * i) + 160;
-	this.cc_p2_x[1] = Math.floor(Math.cos((this.cc_kakudo + 270) * d) * i) + 256;
-	this.cc_p2_y[1] = Math.floor(Math.sin((this.cc_kakudo + 270) * d) * i) + 160;
-	this.cc_p2_x[2] = Math.floor(Math.cos((this.cc_kakudo + 360) * d) * i) + 256;
-	this.cc_p2_y[2] = Math.floor(Math.sin((this.cc_kakudo + 360) * d) * i) + 160;
+	this.cc_p2_x[0] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * paramInt1) + 256;
+	this.cc_p2_y[0] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * paramInt1) + 160;
+	this.cc_p2_x[1] = Math.floor(Math.cos((this.cc_kakudo + 270) * d) * paramInt1) + 256;
+	this.cc_p2_y[1] = Math.floor(Math.sin((this.cc_kakudo + 270) * d) * paramInt1) + 160;
+	this.cc_p2_x[2] = Math.floor(Math.cos((this.cc_kakudo + 360) * d) * paramInt1) + 256;
+	this.cc_p2_y[2] = Math.floor(Math.sin((this.cc_kakudo + 360) * d) * paramInt1) + 160;
 	this.cc_p2_x[3] = Math.floor(Math.cos((this.cc_kakudo + 360) * d) * 500) + 256;
 	this.cc_p2_y[3] = Math.floor(Math.sin((this.cc_kakudo + 360) * d) * 500) + 160;
 	this.cc_p2_x[4] = Math.floor(Math.cos((this.cc_kakudo + 315) * d) * 700) + 256;
