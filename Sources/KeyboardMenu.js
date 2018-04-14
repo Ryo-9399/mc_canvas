@@ -400,7 +400,7 @@ KeyboardMenu.prototype.drawMenus = function()
 	for (var i = 0; i <= 15; i++) {
 		var c = this.c[i];
 		if (c == 0) continue;
-		switch (tmp01) {
+		switch (c) {
 			case 100:
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
 				this.hg.setColor(Color.white);
