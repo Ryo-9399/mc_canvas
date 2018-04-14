@@ -3861,8 +3861,8 @@ EnemyController.TaikingLeft = {
                 characterobject.c1 -= properties.speed;
                 if(characterobject.c1 < 0)
                     characterobject.c1 += 360;
-                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
                 characterobject.pt = 166;
                 if(characterobject.c1 < 180)
                     characterobject.pth = 1;
@@ -3900,8 +3900,8 @@ EnemyController.TaikingRight = {
                 characterobject.c1 += properties.speed;
                 if(characterobject.c1 >= 360)
                     characterobject.c1 -= 360;
-                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
                 characterobject.pt = 166;
                 if(characterobject.c1 < 180)
                     characterobject.pth = 0;
@@ -4264,8 +4264,8 @@ EnemyController.KuragessoLeft = {
                 characterobject.c1 -= properties.speed;
                 if(characterobject.c1 < 0)
                     characterobject.c1 += 360;
-                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
                 characterobject.pt = 167;
                 if(characterobject.c1 < 180)
                     characterobject.pth = 1;
@@ -4303,13 +4303,1247 @@ EnemyController.KuragessoRight = {
                 characterobject.c1 += properties.speed;
                 if(characterobject.c1 >= 360)
                     characterobject.c1 -= 360;
-                l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-                i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+                var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
                 characterobject.pt = 167;
                 if(characterobject.c1 < 180)
                     characterobject.pth = 0;
                 else
                     characterobject.pth = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
+/**
+ * 追跡亀
+ */
+EnemyController.TurtleChaser = {
+    properties: {
+        // 歩行速度
+        walk_speed: 4,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject) {
+            // 画面外にいても動く
+            characterobject.c = 1220;
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp, i) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+            if (characterobject.c === 1200) {
+                // 左へ歩く
+                l20 -= properties.walk_speed;
+                characterobject.muki = 0;
+                characterobject.direction = 0;
+                if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5))
+                {
+                    // 坂にさしかかった場合の処理
+                    var k41 = mp.maps.getBGCode(l20 + 4 + 15, i21 + 31);
+                    if(k41 === 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    else
+                    if(k41 === 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    k41 = mp.maps.getBGCode(l20 + 15, i21 + 32);
+                    if(k41 === 18)
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 32);
+                }
+                var l41 = mp.maps.getBGCode(l20, i21 + 8);
+                if(l41 >= 20 || l41 === 18)
+                {
+                    // 壁に当たったときの処理
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                    if(Math.abs(i21 - mp.co_j.y) >= 32 || l20 <= mp.co_j.x)
+                    {
+                        var i42 = mp.maps.getBGCode(l20 + 32, i21 + 15);
+                        if(i42 <= 10 || i42 === 15)
+                        {
+                            // 右に向きを変える
+                            characterobject.c = 1210;
+                            characterobject.muki = 1;
+                            characterobject.direction = 1;
+                            characterobject.pt = 140 + mp.g_ac;
+                            var i17 = 0;
+                            do
+                            {
+                                if(i17 > mp.t_kazu)
+                                    break;
+                                if(mp.co_t[i17].c > 1200 && mp.co_t[i17].c <= 1210 && mp.co_t[i17].x === l20 + 32 && Math.abs(mp.co_t[i17].y - i21) < 32)
+                                {
+                                    characterobject.c = 1200;
+                                    break;
+                                }
+                                i17++;
+                            } while(true);
+
+                            characterobject.x = l20;
+                            characterobject.y = i21;
+                            return true;
+                        }
+                    }
+                }
+                if(Math.abs(i21 - mp.co_j.y) < 32 && l20 < mp.co_j.x)
+                {
+                    // 主人公が右にいるので反転
+                    characterobject.c = 1210;
+                    characterobject.pt = 140 + mp.g_ac;
+                } else
+                {
+                    var flag1 = false;
+                    for(var j17 = 0; j17 <= mp.t_kazu; j17++)
+                    {
+                        if((mp.co_t[j17].c < 1200 || mp.co_t[j17].c >= 1300) && mp.co_t[j17].c !=! 60 || j17 === i || Math.abs(mp.co_t[j17].x - l20) >= 32 || Math.abs(mp.co_t[j17].y - i21) >= 32)
+                            continue;
+                        if(mp.co_t[j17].c === 1210)
+                        {
+                            var k33 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                            if(k33 <= 1 || k33 >= 5)
+                            {
+                                if(l20 > mp.co_j.x)
+                                    characterobject.c = 1200;
+                                else
+                                    characterobject.c = 1210;
+                            } else
+                            if(l20 < mp.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                            var i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                            k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                            if(k33 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var k9 = 1;
+                                do
+                                {
+                                    if(k9 > 31 || i30 + k9 >= mp.mapWidth || mp.maps.map_bg[i30 + k9][k33] >= 19)
+                                        break;
+                                    if(mp.maps.map_bg[i30 + k9][k33 + 1] <= 10 || mp.maps.map_bg[i30 + k9][k33 + 1] === 15)
+                                    {
+                                        characterobject.c = 1210;
+                                        break;
+                                    }
+                                    k9++;
+                                } while(true);
+                            } else
+                            if(k33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var l9 = 1;
+                                do
+                                {
+                                    if(l9 > 31 || i30 + l9 >= mp.mapWidth || mp.maps.map_bg[i30 + l9][k33] >= 19)
+                                        break;
+                                    if(mp.maps.map_bg[i30 + l9][k33] === 10)
+                                    {
+                                        characterobject.c = 1210;
+                                        break;
+                                    }
+                                    l9++;
+                                } while(true);
+                            }
+                            i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                            k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                            if(k33 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var i10 = 1;
+                                do
+                                {
+                                    if(i10 > 31 || i30 - i10 <= 0 || mp.maps.map_bg[i30 - i10][k33] >= 20 || mp.maps.map_bg[i30 - i10][k33] === 18)
+                                        break;
+                                    if(mp.maps.map_bg[i30 - i10][k33 + 1] <= 10 || mp.maps.map_bg[i30 - i10][k33 + 1] === 15)
+                                    {
+                                        characterobject.c = 1200;
+                                        break;
+                                    }
+                                    i10++;
+                                } while(true);
+                            } else
+                            if(k33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var j10 = 1;
+                                do
+                                {
+                                    if(j10 > 31 || i30 - j10 <= 0 || mp.maps.map_bg[i30 - j10][k33] >= 20 || mp.maps.map_bg[i30 - j10][k33] === 18)
+                                        break;
+                                    if(mp.maps.map_bg[i30 - j10][k33] === 10)
+                                    {
+                                        characterobject.c = 1200;
+                                        break;
+                                    }
+                                    j10++;
+                                } while(true);
+                            }
+                            if(j17 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 !== characterobject.x)
+                                characterobject.c = 1210;
+                            if(characterobject.c === 1200 && rightShiftIgnoreSign(characterobject.x, 5) * 32 !== characterobject.x)
+                                if(k33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5) && mp.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) === 10)
+                                {
+                                    characterobject.c = 1210;
+                                    for(var k10 = 0; k10 <= mp.t_kazu; k10++)
+                                        if(mp.co_t[k10].c === 1200 && Math.abs(mp.co_t[k10].y - characterobject.y) <= 16 && characterobject.x <= mp.co_t[k10].x)
+                                        {
+                                            var j20 = 0;
+                                            do
+                                            {
+                                                if(j20 > mp.t_kazu)
+                                                    break;
+                                                if(mp.co_t[j20].c >= 1200 && mp.co_t[j20].c < 1300 && Math.abs(mp.co_t[j20].y - mp.co_t[k10].y) <= 16 && mp.co_t[j20].x >= mp.co_t[k10].x - 32 && mp.co_t[j20].x < mp.co_t[k10].x && k10 != j20)
+                                                {
+                                                    mp.co_t[k10].c = 1210;
+                                                    break;
+                                                }
+                                                j20++;
+                                            } while(true);
+                                        }
+
+                                } else
+                                if(k33 < rightShiftIgnoreSign(mp.co_j.y + 15, 5) && mp.maps.getBGCode(characterobject.x + 15, characterobject.y + 32 + 15) === 10)
+                                {
+                                    characterobject.c = 1210;
+    label0:
+                                    for(var l10 = 0; l10 <= mp.t_kazu; l10++)
+                                    {
+                                        if(mp.co_t[l10].c !== 1200 || Math.abs(mp.co_t[l10].y - characterobject.y) > 16 || characterobject.x > mp.co_t[l10].x)
+                                            continue;
+                                        var k20 = 0;
+                                        do
+                                        {
+                                            if(k20 > mp.t_kazu)
+                                                continue label0;
+                                            if(mp.co_t[k20].c >= 1200 && mp.co_t[k20].c < 1300 && Math.abs(mp.co_t[k20].y - mp.co_t[l10].y) <= 16 && mp.co_t[k20].x >= mp.co_t[l10].x - 32 && mp.co_t[k20].x < mp.co_t[l10].x && l10 !== k20)
+                                            {
+                                                mp.co_t[l10].c = 1210;
+                                                continue label0;
+                                            }
+                                            k20++;
+                                        } while(true);
+                                    }
+
+                                }
+                            if(rightShiftIgnoreSign(characterobject.x, 5) * 32 == characterobject.x)
+                                if(k33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5) && mp.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) === 10)
+                                    characterobject.c = 1230;
+                                else
+                                if(k33 < rightShiftIgnoreSign(mp.co_j.y + 15, 5) && (mp.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 10 || mp.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 15))
+                                    characterobject.c = 1220;
+                            l20 = characterobject.x;
+                            flag1 = true;
+                            break;
+                        }
+                        if(mp.co_t[j17].x < characterobject.x)
+                        {
+                            l20 = characterobject.x;
+                            flag1 = true;
+                            break;
+                        }
+                        if(mp.co_t[j17].x !== characterobject.x || j17 >= i)
+                            continue;
+                        l20 = characterobject.x;
+                        flag1 = true;
+                        break;
+                    }
+
+                    if(flag1)
+                    {
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                    } else
+                    {
+                        if(rightShiftIgnoreSign(l20, 5) * 32 === l20)
+                        {
+                            var j30 = rightShiftIgnoreSign(l20 + 15, 5);
+                            var l33 = rightShiftIgnoreSign(i21 + 15, 5);
+                            if(mp.maps.map_bg[j30][l33 + 1] <= 9 && mp.maps.map_bg[j30][l33] !== 10 || (mp.maps.map_bg[j30][l33 + 1] <= 10 || mp.maps.map_bg[j30][l33 + 1] === 15) && l33 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var flag2 = false;
+                                for(var i11 = 0; i11 <= 11; i11++)
+                                {
+                                    if(mp.ana_c[i11] <= 0 || mp.ana_x[i11] * 32 !== l20 || i21 + 32 !== mp.ana_y[i11] * 32)
+                                        continue;
+                                    var k17 = 0;
+                                    do
+                                    {
+                                        if(k17 > mp.t_kazu)
+                                            break;
+                                        if((mp.co_t[k17].c >= 1200 && mp.co_t[k17].c < 1300 || mp.co_t[k17].c === 60) && k17 !== i && l20 === mp.co_t[k17].x && i21 <= mp.co_t[k17].y && i21 + 32 >= mp.co_t[k17].y)
+                                        {
+                                            flag2 = true;
+                                            break;
+                                        }
+                                        k17++;
+                                    } while(true);
+                                    if(flag2)
+                                        break;
+                                }
+
+                                var l17 = 0;
+                                do
+                                {
+                                    if(l17 > mp.t_kazu)
+                                        break;
+                                    if(mp.co_t[l17].c >= 1200 && mp.co_t[l17].c <= 1210 && l17 !== i && rightShiftIgnoreSign(mp.co_t[l17].x, 5) * 32 === mp.co_t[l17].x && l20 === mp.co_t[l17].x && i21 <= mp.co_t[l17].y && i21 + 32 >= mp.co_t[l17].y && mp.maps.getBGCode(mp.co_t[l17].x + 15, mp.co_t[l17].y + 32) >= 20)
+                                    {
+                                        flag2 = true;
+                                        break;
+                                    }
+                                    l17++;
+                                } while(true);
+                                if(!flag2)
+                                {
+                                    characterobject.c = 1220;
+                                    characterobject.c1 = 0;
+                                }
+                            } else
+                            if(mp.maps.map_bg[j30][l33] === 10 && l33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                                characterobject.c = 1230;
+                            else
+                            if((mp.maps.map_bg[j30 - 1][l33] >= 20 || mp.maps.map_bg[j30 - 1][l33] >= 18) && (Math.abs(i21 - mp.co_j.y) >= 32 || l20 <= mp.co_j.x))
+                            {
+                                characterobject.c = 1210;
+                                var j42 = mp.maps.getBGCode(l20 + 32, i21 + 15);
+                                if(j42 >= 19)
+                                    characterobject.c = 1200;
+                            }
+                        }
+                        var k42 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                        if(k42 === 18 || k42 === 19)
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                    }
+                }
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 1210) {
+                // 右に歩く
+                l20 += properties.walk_speed;
+                characterobject.muki = 1;
+                characterobject.direction = 1;
+                if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - properties.walk_speed, 5))
+                {
+                    // 坂にさしかかった
+                    var l42 = mp.maps.getBGCode((l20 - 4) + 15, i21 + 31);
+                    if(l42 === 18)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                    else
+                    if(l42 === 19)
+                        i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
+                    l42 = mp.maps.getBGCode(l20 + 15, i21 + 32);
+                    if(l42 === 19)
+                        i21 = mp.getSakamichiY(l20 + 15, i21 + 32);
+                }
+                if(mp.maps.getBGCode(l20 + 31, i21 + 8) >= 19)
+                {
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                    if(Math.abs(i21 - mp.co_j.y) >= 32 || l20 >= mp.co_j.x)
+                    {
+                        var i43 = mp.maps.getBGCode(l20 - 1, i21 + 15);
+                        if(i43 <= 10 || i43 === 15)
+                        {
+                            characterobject.c = 1200;
+                            characterobject.pt = 140 + mp.g_ac;
+                            characterobject.pth = characterobject.muki;
+                            var i18 = 0;
+                            do
+                            {
+                                if(i18 > mp.t_kazu)
+                                    break;
+                                if(mp.co_t[i18].c > 1200 && mp.co_t[i18].c <= 1210 && mp.co_t[i18].x === l20 - 32 && Math.abs(mp.co_t[i18].y - i21) < 32)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                i18++;
+                            } while(true);
+
+                            characterobject.x = l20;
+                            characterobject.y = i21;
+                            return true;
+                        }
+                    }
+                }
+                if(Math.abs(i21 - mp.co_j.y) < 32 && l20 > mp.co_j.x)
+                {
+                    characterobject.c = 1200;
+                    characterobject.pt = 140 + mp.g_ac;
+                    characterobject.pth = characterobject.muki;
+                } else
+                {
+                    var flag3 = false;
+                    for(var j18 = 0; j18 <= mp.t_kazu; j18++)
+                    {
+                        if((mp.co_t[j18].c < 1200 || mp.co_t[j18].c >= 1300) && mp.co_t[j18].c !== 60 || j18 === i || Math.abs(mp.co_t[j18].x - l20) >= 32 || Math.abs(mp.co_t[j18].y - i21) >= 32)
+                            continue;
+                        if(mp.co_t[j18].c === 1200)
+                        {
+                            var i34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                            if(i34 <= 1 || i34 >= 5)
+                            {
+                                if(l20 > mp.co_j.x)
+                                    characterobject.c = 1200;
+                                else
+                                    characterobject.c = 1210;
+                            } else
+                            if(l20 < mp.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                            var k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                            i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                            if(i34 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var j11 = 1;
+                                do
+                                {
+                                    if(j11 > 31 || k30 + j11 >= mp.mapWidth || mp.maps.map_bg[k30 + j11][i34] >= 19)
+                                        break;
+                                    if(mp.maps.map_bg[k30 + j11][i34 + 1] <= 10 || mp.maps.map_bg[k30 + j11][i34 + 1] === 15)
+                                    {
+                                        characterobject.c = 1210;
+                                        break;
+                                    }
+                                    j11++;
+                                } while(true);
+                            } else
+                            if(i34 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var k11 = 1;
+                                do
+                                {
+                                    if(k11 > 31 || k30 + k11 >= mp.mapWidth || mp.maps.map_bg[k30 + k11][i34] >= 19)
+                                        break;
+                                    if(mp.maps.map_bg[k30 + k11][i34] === 10)
+                                    {
+                                        characterobject.c = 1210;
+                                        break;
+                                    }
+                                    k11++;
+                                } while(true);
+                            }
+                            k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                            i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                            if(i34 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var l11 = 1;
+                                do
+                                {
+                                    if(l11 > 31 || k30 - l11 <= 0 || mp.maps.map_bg[k30 - l11][i34] >= 20 || mp.maps.map_bg[k30 - l11][i34] === 18)
+                                        break;
+                                    if(mp.maps.map_bg[k30 - l11][i34 + 1] <= 10 || mp.maps.map_bg[k30 - l11][i34 + 1] === 15)
+                                    {
+                                        characterobject.c = 1200;
+                                        break;
+                                    }
+                                    l11++;
+                                } while(true);
+                            } else
+                            if(i34 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var i12 = 1;
+                                do
+                                {
+                                    if(i12 > 31 || k30 - i12 <= 0 || mp.maps.map_bg[k30 - i12][i34] >= 20 || mp.maps.map_bg[k30 - i12][i34] === 18)
+                                        break;
+                                    if(mp.maps.map_bg[k30 - i12][i34] === 10)
+                                    {
+                                        characterobject.c = 1200;
+                                        break;
+                                    }
+                                    i12++;
+                                } while(true);
+                            }
+                            if(j18 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 !== characterobject.x)
+                                characterobject.c = 1200;
+                            l20 = characterobject.x;
+                            flag3 = true;
+                            break;
+                        }
+                        if(mp.co_t[j18].x > characterobject.x)
+                        {
+                            l20 = characterobject.x;
+                            flag3 = true;
+                            break;
+                        }
+                        if(mp.co_t[j18].x != characterobject.x || j18 >= i)
+                            continue;
+                        l20 = characterobject.x;
+                        flag3 = true;
+                        break;
+                    }
+
+                    if(flag3)
+                    {
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                    } else
+                    {
+                        if(rightShiftIgnoreSign(l20, 5) * 32 === l20)
+                        {
+                            var l30 = rightShiftIgnoreSign(l20 + 15, 5);
+                            var j34 = rightShiftIgnoreSign(i21 + 15, 5);
+                            if(mp.maps.map_bg[l30][j34 + 1] <= 9 && mp.maps.map_bg[l30][j34] !== 10 || (mp.maps.map_bg[l30][j34 + 1] <= 10 || mp.maps.map_bg[l30][j34 + 1] === 15) && j34 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            {
+                                var flag4 = false;
+                                for(var j12 = 0; j12 <= 11; j12++)
+                                {
+                                    if(mp.ana_c[j12] <= 0 || mp.ana_x[j12] * 32 !== l20 || i21 + 32 !== mp.ana_y[j12] * 32)
+                                        continue;
+                                    var k18 = 0;
+                                    do
+                                    {
+                                        if(k18 > mp.t_kazu)
+                                            break;
+                                        if((mp.co_t[k18].c >= 1200 && mp.co_t[k18].c < 1300 || mp.co_t[k18].c === 60) && k18 !== i && l20 === mp.co_t[k18].x && i21 <= mp.co_t[k18].y && i21 + 32 >= mp.co_t[k18].y)
+                                        {
+                                            flag4 = true;
+                                            break;
+                                        }
+                                        k18++;
+                                    } while(true);
+                                    if(flag4)
+                                        break;
+                                }
+
+                                var l18 = 0;
+                                do
+                                {
+                                    if(l18 > mp.t_kazu)
+                                        break;
+                                    if(mp.co_t[l18].c >= 1200 && mp.co_t[l18].c <= 1210 && l18 !== i && rightShiftIgnoreSign(mp.co_t[l18].x, 5) * 32 === mp.co_t[l18].x && l20 === mp.co_t[l18].x && i21 <= mp.co_t[l18].y && i21 + 32 >= mp.co_t[l18].y && mp.maps.getBGCode(mp.co_t[l18].x + 15, mp.co_t[l18].y + 32) >= 20)
+                                    {
+                                        flag4 = true;
+                                        break;
+                                    }
+                                    l18++;
+                                } while(true);
+                                if(!flag4)
+                                {
+                                    characterobject.c = 1220;
+                                    characterobject.c1 = 0;
+                                }
+                            } else
+                            if(mp.maps.map_bg[l30][j34] === 10 && j34 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                                characterobject.c = 1230;
+                            else
+                            if(mp.maps.map_bg[l30 + 1][j34] >= 19 && (Math.abs(i21 - mp.co_j.y) >= 32 || l20 >= mp.co_j.x))
+                            {
+                                characterobject.c = 1200;
+                                var j43 = mp.maps.getBGCode(l20 - 1, i21 + 15);
+                                if(j43 >= 20 || j43 === 18)
+                                    characterobject.c = 1210;
+                            }
+                        }
+                        var k43 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                        if(k43 === 18 || k43 === 19)
+                            i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                    }
+                }
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+            } else if (characterobject.c === 1220) {
+                if(mp.maps.getBGCode(l20 + 15, i21 + 31) === 10)
+                {
+                    if(l20 < mp.co_j.x)
+                        characterobject.muki = 1;
+                    else
+                    if(l20 > mp.co_j.x)
+                        characterobject.muki = 0;
+                    characterobject.direction = 3;
+                }
+                if(i21 - 20 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 31) === 10 && (mp.maps.getBGCode(l20 + 15, (i21 + 31) - 32) <= 10 || mp.maps.getBGCode(l20 + 15, (i21 + 31) - 32) === 15))
+                {
+                    // 下方向の主人公を追いかける？
+                    characterobject.c = 1230;
+                    characterobject.pt = 140 + mp.g_ac;
+                    characterobject.pth = characterobject.muki;
+                    if(rightShiftIgnoreSign(i21, 5) * 32 !== i21)
+                    {
+                        var i19 = 0;
+                        do
+                        {
+                            if(i19 > mp.t_kazu)
+                                break;
+                            if(mp.co_t[i19].c >= 1220 && i19 !== i && Math.abs(mp.co_t[i19].x - l20) < 32 && Math.abs(i21 - 4 - mp.co_t[i19].y) < 32)
+                            {
+                                // 近くに別の追跡敵がいるのでやめる？
+                                characterobject.c = 1220;
+                                break;
+                            }
+                            i19++;
+                        } while(true);
+                    }
+                    if(characterobject.c === 1230) {
+                        return true;
+                    }
+                }
+                // 落下
+                i21 += 4;
+                var flag6 = false;
+    label1:
+                for(var j19 = 0; j19 <= mp.t_kazu; j19++)
+                {
+                    var t = mp.co_t[j19];
+                    if((t.c < 1200 || t.c >= 1300) && t.c !== 60 || j19 === i || Math.abs(t.x - l20) >= 32 || Math.abs(t.y - i21) >= 32)
+                        continue;
+                    if(t.y > characterobject.y)
+                    {
+                        flag6 = true;
+                        i21 = t.y - 32;
+                        var flag9 = false;
+                        if(t.c === 1200 && mp.maps.getBGCode(t.x - 1, t.y + 15) >= 20)
+                            flag9 = true;
+                        if(t.c === 1210 && mp.maps.getBGCode(t.x + 32, t.y + 15) >= 20)
+                            flag9 = true;
+                        if(t.c === 1200 && mp.maps.getBGCode(t.x + 32, t.y + 15) >= 20 && mp.maps.getBGCode(t.x + 15, t.y + 32) >= 20)
+                            flag9 = true;
+                        if(t.c === 1210 && mp.maps.getBGCode(t.x - 1, t.y + 15) >= 20 && mp.maps.getBGCode(t.x + 15, t.y + 32) >= 20)
+                            flag9 = true;
+                        if(!flag9)
+                            break;
+                        var k34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                        if(k34 <= 1 || k34 >= 5)
+                        {
+                            if(l20 > mp.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                        } else
+                        if(l20 < mp.co_j.x)
+                            characterobject.c = 1200;
+                        else
+                            characterobject.c = 1210;
+                        var i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(k34 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var k12 = 1;
+                            do
+                            {
+                                if(k12 > 31 || i31 + k12 >= mp.mapWidth || mp.maps.map_bg[i31 + k12][k34] >= 19)
+                                    break;
+                                if(mp.maps.map_bg[i31 + k12][k34 + 1] <= 10 || mp.maps.map_bg[i31 + k12][k34 + 1] === 15)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                k12++;
+                            } while(true);
+                        } else
+                        if(k34 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var l12 = 1;
+                            do
+                            {
+                                if(l12 > 31 || i31 + l12 >= mp.mapWidth || mp.maps.map_bg[i31 + l12][k34] >= 19)
+                                    break;
+                                if(mp.maps.map_bg[i31 + l12][k34] === 10)
+                                {
+                                    characterobject.c = 1210;
+                                    break;
+                                }
+                                l12++;
+                            } while(true);
+                        }
+                        i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(k34 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var i13 = 1;
+                            do
+                            {
+                                if(i13 > 31 || i31 - i13 <= 0 || mp.maps.map_bg[i31 - i13][k34] >= 20 || mp.maps.map_bg[i31 - i13][k34] === 18)
+                                    break label1;
+                                if(mp.maps.map_bg[i31 - i13][k34 + 1] <= 10 || mp.maps.map_bg[i31 - i13][k34 + 1] == 15)
+                                {
+                                    characterobject.c = 1200;
+                                    break label1;
+                                }
+                                i13++;
+                            } while(true);
+                        }
+                        if(k34 <= rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                            break;
+                        var j13 = 1;
+                        do
+                        {
+                            if(j13 > 31 || i31 - j13 <= 0 || mp.maps.map_bg[i31 - j13][k34] >= 20 || mp.maps.map_bg[i31 - j13][k34] === 18)
+                                break label1;
+                            if(mp.maps.map_bg[i31 - j13][k34] === 10)
+                            {
+                                characterobject.c = 1200;
+                                break label1;
+                            }
+                            j13++;
+                        } while(true);
+                    }
+                    if(mp.co_t[j19].y != characterobject.y || j19 >= i)
+                        continue;
+                    i21 = characterobject.y;
+                    flag6 = true;
+                    break;
+                }
+
+                if(flag6)
+                {
+                    characterobject.pt = 140 + mp.g_ac;
+                    characterobject.pth = characterobject.muki;
+
+                    characterobject.x = l20;
+                    characterobject.y = i21;
+                    return true;
+                }
+                if(mp.maps.getBGCode(l20, i21 + 31) >= 20)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                var l43 = mp.maps.getBGCode(l20 + 15, i21 + 31);
+                if((l43 === 18 || l43 === 19) && i21 >= mp.getSakamichiY(l20 + 15, i21 + 31))
+                {
+                    i21 = mp.getSakamichiY(l20 + 15, i21 + 31);
+                    var l34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                    if(l34 <= 1 || l34 >= 5)
+                    {
+                        if(l20 > mp.co_j.x)
+                        {
+                            characterobject.muki = 0;
+                            characterobject.c = 1200;
+                        } else
+                        {
+                            characterobject.muki = 1;
+                            characterobject.c = 1210;
+                        }
+                    } else
+                    if(l20 < mp.co_j.x)
+                    {
+                        characterobject.muki = 0;
+                        characterobject.c = 1200;
+                    } else
+                    {
+                        characterobject.muki = 1;
+                        characterobject.c = 1210;
+                    }
+                    characterobject.pt = 140 + mp.g_ac;
+                    characterobject.pth = characterobject.muki;
+
+                    characterobject.x = l20;
+                    characterobject.y = i21;
+                    return true;
+                }
+                if(rightShiftIgnoreSign(i21, 5) * 32 === i21)
+                {
+                    if(mp.maps.getBGCode(l20 + 15, i21 + 15) === 10 && i21 > mp.co_j.y)
+                    {
+                        characterobject.c = 1230;
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                        var k19 = 0;
+                        do
+                        {
+                            if(k19 > mp.t_kazu)
+                                break;
+                            if(mp.co_t[k19].c === 1220 && k19 !== i && Math.abs(mp.co_t[k19].x - l20) < 32 && Math.abs(i21 - 4 - mp.co_t[k19].y) < 32)
+                            {
+                                i21 = characterobject.y;
+                                characterobject.c = 1220;
+                                break;
+                            }
+                            k19++;
+                        } while(true);
+
+                        characterobject.x = l20;
+                        characterobject.y = i21;
+                        return true;
+                    }
+                    var i44 = mp.maps.getBGCode(l20, i21 + 32);
+                    if(i44 >= 20)
+                    {
+                        i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                        var i35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                        if(i35 <= 1 || i35 >= 5)
+                        {
+                            if(l20 > mp.co_j.x)
+                            {
+                                characterobject.muki = 0;
+                                characterobject.c = 1200;
+                            } else
+                            {
+                                characterobject.muki = 1;
+                                characterobject.c = 1210;
+                            }
+                        } else
+                        if(l20 < mp.co_j.x)
+                        {
+                            characterobject.muki = 0;
+                            characterobject.c = 1200;
+                        } else
+                        {
+                            characterobject.muki = 1;
+                            characterobject.c = 1210;
+                        }
+                        var j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(i35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var k13 = 1;
+                            do
+                            {
+                                if(k13 > 31 || j31 + k13 >= mp.mapWidth || mp.maps.map_bg[j31 + k13][i35] >= 19)
+                                    break;
+                                if(mp.maps.map_bg[j31 + k13][i35 + 1] <= 10 || mp.maps.map_bg[j31 + k13][i35 + 1] === 15)
+                                {
+                                    characterobject.c = 1210;
+                                    characterobject.muki = 1;
+                                    break;
+                                }
+                                k13++;
+                            } while(true);
+                        } else
+                        if(i35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var l13 = 1;
+                            do
+                            {
+                                if(l13 > 31 || j31 + l13 >= mp.mapWidth || mp.maps.map_bg[j31 + l13][i35] >= 19)
+                                    break;
+                                if(mp.maps.map_bg[j31 + l13][i35] === 10)
+                                {
+                                    characterobject.c = 1210;
+                                    characterobject.muki = 1;
+                                    break;
+                                }
+                                l13++;
+                            } while(true);
+                        }
+                        j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(i35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var i14 = 1;
+                            do
+                            {
+                                if(i14 > 31 || j31 - i14 <= 0 || mp.maps.map_bg[j31 - i14][i35] >= 20 || mp.maps.map_bg[j31 - i14][i35] === 18)
+                                    break;
+                                if(mp.maps.map_bg[j31 - i14][i35 + 1] <= 10 || mp.maps.map_bg[j31 - i14][i35 + 1] === 15)
+                                {
+                                    characterobject.c = 1200;
+                                    characterobject.muki = 0;
+                                    break;
+                                }
+                                i14++;
+                            } while(true);
+                        } else
+                        if(i35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var j14 = 1;
+                            do
+                            {
+                                if(j14 > 31 || j31 - j14 <= 0 || mp.maps.map_bg[j31 - j14][i35] >= 20 || mp.maps.map_bg[j31 - j14][i35] === 18)
+                                    break;
+                                if(mp.maps.map_bg[j31 - j14][i35] === 10)
+                                {
+                                    characterobject.c = 1200;
+                                    characterobject.muki = 0;
+                                    break;
+                                }
+                                j14++;
+                            } while(true);
+                        }
+                    } else
+                    if((i44 === 15 || i44 === 10 || mp.maps.getBGCode(l20 + 15, i21 + 15) === 10) && rightShiftIgnoreSign(i21 + 15, 5) >= rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                    {
+                        i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+                        var j35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                        if(j35 <= 1 || j35 >= 5)
+                        {
+                            if(l20 > mp.co_j.x)
+                            {
+                                characterobject.muki = 0;
+                                characterobject.c = 1200;
+                            } else
+                            {
+                                characterobject.muki = 1;
+                                characterobject.c = 1210;
+                            }
+                        } else
+                        if(l20 < mp.co_j.x)
+                        {
+                            characterobject.muki = 0;
+                            characterobject.c = 1200;
+                        } else
+                        {
+                            characterobject.muki = 1;
+                            characterobject.c = 1210;
+                        }
+                        var k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(j35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var k14 = 1;
+                            do
+                            {
+                                if(k14 > 31 || k31 + k14 >= mp.mapWidth || mp.maps.map_bg[k31 + k14][j35] >= 19)
+                                    break;
+                                if(mp.maps.map_bg[k31 + k14][j35 + 1] <= 10 || mp.maps.map_bg[k31 + k14][j35 + 1] === 15)
+                                {
+                                    characterobject.c = 1210;
+                                    characterobject.muki = 1;
+                                    break;
+                                }
+                                k14++;
+                            } while(true);
+                        } else
+                        if(j35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var l14 = 1;
+                            do
+                            {
+                                if(l14 > 31 || k31 + l14 >= mp.mapWidth || mp.maps.map_bg[k31 + l14][j35] >= 19)
+                                    break;
+                                if(mp.maps.map_bg[k31 + l14][j35] === 10)
+                                {
+                                    characterobject.c = 1210;
+                                    characterobject.muki = 1;
+                                    break;
+                                }
+                                l14++;
+                            } while(true);
+                        }
+                        k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                        j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                        if(j35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var i15 = 1;
+                            do
+                            {
+                                if(i15 > 31 || k31 - i15 <= 0 || mp.maps.map_bg[k31 - i15][j35] >= 20 || mp.maps.map_bg[k31 - i15][j35] === 18)
+                                    break;
+                                if(mp.maps.map_bg[k31 - i15][j35 + 1] <= 10 || mp.maps.map_bg[k31 - i15][j35 + 1] === 15)
+                                {
+                                    characterobject.c = 1200;
+                                    characterobject.muki = 0;
+                                    break;
+                                }
+                                i15++;
+                            } while(true);
+                        } else
+                        if(j35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                        {
+                            var j15 = 1;
+                            do
+                            {
+                                if(j15 > 31 || k31 - j15 <= 0 || mp.maps.map_bg[k31 - j15][j35] >= 20 || mp.maps.map_bg[k31 - j15][j35] === 18)
+                                    break;
+                                if(mp.maps.map_bg[k31 - j15][j35] === 10)
+                                {
+                                    characterobject.c = 1200;
+                                    characterobject.muki = 0;
+                                    break;
+                                }
+                                j15++;
+                            } while(true);
+                        }
+                    } else
+                    if(i44 <= 9)
+                    {
+                        var flag7 = false;
+                        for(var k15 = 0; k15 <= 11; k15++)
+                        {
+                            if(mp.ana_c[k15] <= 0 || mp.ana_x[k15] * 32 !== l20 || i21 + 32 !== mp.ana_y[k15] * 32)
+                                continue;
+                            var l19 = 0;
+                            do
+                            {
+                                if(l19 > mp.t_kazu)
+                                    break;
+                                if((mp.co_t[l19].c >= 1200 && mp.co_t[l19].c < 1300 || mp.co_t[l19].c == 60) && l19 !== i && l20 === mp.co_t[l19].x && i21 <= mp.co_t[l19].y && i21 + 32 >= mp.co_t[l19].y)
+                                {
+                                    flag7 = true;
+                                    break;
+                                }
+                                l19++;
+                            } while(true);
+                            if(flag7)
+                                break;
+                        }
+
+                        if(flag7)
+                        {
+                            var k35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                            if(k35 <= 1 || k35 >= 5)
+                            {
+                                if(l20 > mp.co_j.x)
+                                    characterobject.c = 1200;
+                                else
+                                    characterobject.c = 1210;
+                            } else
+                            if(l20 < mp.co_j.x)
+                                characterobject.c = 1200;
+                            else
+                                characterobject.c = 1210;
+                        }
+                    }
+                    if(characterobject.c === 1210 && (mp.maps.getBGCode(characterobject.x + 32, characterobject.y + 15) >= 20 || mp.maps.getBGCode(characterobject.x + 32, characterobject.y + 15) === 18))
+                    {
+                        characterobject.c = 1200;
+                        characterobject.muki = 0;
+                        if(Math.abs(i21 - mp.co_j.y) < 32 && l20 < mp.co_j.x)
+                        {
+                            characterobject.c = 1210;
+                            characterobject.muki = 1;
+                        }
+                    } else
+                    if(characterobject.c === 1200 && mp.maps.getBGCode(characterobject.x - 1, characterobject.y + 15) >= 19)
+                    {
+                        characterobject.c = 1210;
+                        characterobject.muki = 1;
+                        if(Math.abs(i21 - mp.co_j.y) < 32 && l20 > mp.co_j.x)
+                        {
+                            characterobject.c = 1200;
+                            characterobject.muki = 0;
+                        }
+                    }
+                    if(rightShiftIgnoreSign(i21, 5) * 32 === i21)
+                    {
+                        for(var l15 = 0; l15 <= 11; l15++)
+                            if(mp.ana_c[l15] > 0 && mp.ana_x[l15] * 32 === l20 && mp.ana_y[l15] * 32 == i21)
+                            {
+                                characterobject.c = 1250;
+                                characterobject.c1 = 0;
+                            }
+
+                    }
+                }
+                if((characterobject.c === 1200 || characterobject.c == 1210) && Math.abs(l20 - mp.co_j.x) <= 32 && Math.abs(i21 - mp.co_j.y) <= 32 && !mp.co_j.jimen_f && !mp.j_hashigo_f)
+                    characterobject.c = 1220;
+                if(Math.abs(mp.co_j.x - characterobject.x) <= 24 && mp.co_j.y + 32 === characterobject.y && mp.co_j.c !== 130 && (rightShiftIgnoreSign(mp.co_j.y, 5) * 32 !== mp.co_j.y || mp.maps.getBGCode(mp.co_j.x + 15, mp.co_j.y + 32) !== 15) && !mp.j_hashigo_f)
+                {
+                    mp.co_j.y = i21 - 32;
+                    if(mp.maps.getBGCode(mp.co_j.x + 15, mp.co_j.y + 31) >= 20)
+                        mp.co_j.y = rightShiftIgnoreSign(mp.co_j.y + 31, 5) * 32 - 32;
+                }
+                if(i21 >= mp.maps.wy_max + 320)
+                {
+                    characterobject.c = 60;
+                    characterobject.c1 = 0;
+                }
+                characterobject.pt = 140 + mp.g_ac;
+                characterobject.pth = characterobject.muki;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 1230) {
+                // 上方向へ移動
+                characterobject.direction = 2;
+                if(l20 < mp.co_j.x)
+                    characterobject.muki = 1;
+                else
+                if(l20 > mp.co_j.x)
+                    characterobject.muki = 0;
+                if(i21 + 20 <= mp.co_j.y)
+                {
+                    characterobject.c = 1220;
+                    characterobject.pt = 140 + mp.g_ac;
+                    characterobject.pth = characterobject.muki;
+                } else
+                {
+                    i21 -= 4;
+                    var flag8 = false;
+                    for(var i20 = 0; i20 <= mp.t_kazu; i20++)
+                    {
+                        if((mp.co_t[i20].c < 1200 || mp.co_t[i20].c >= 1300) && mp.co_t[i20].c !== 60 || i20 === i || Math.abs(mp.co_t[i20].x - l20) >= 32 || Math.abs(mp.co_t[i20].y - i21) >= 32)
+                            continue;
+                        if(mp.co_t[i20].c === 1220)
+                        {
+                            characterobject.c = 1220;
+                            i21 = characterobject.y;
+                            flag8 = true;
+                            break;
+                        }
+                        if(mp.co_t[i20].y < characterobject.y)
+                        {
+                            i21 = characterobject.y;
+                            flag8 = true;
+                            break;
+                        }
+                        if(mp.co_t[i20].y !== characterobject.y || i20 >= i)
+                            continue;
+                        i21 = characterobject.y;
+                        flag8 = true;
+                        break;
+                    }
+
+                    if(flag8)
+                    {
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                    } else
+                    {
+                        if(mp.maps.getBGCode(l20, i21) >= 18)
+                            i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                        if(rightShiftIgnoreSign(i21, 5) * 32 === i21)
+                            if(mp.maps.getBGCode(l20 + 15, i21 + 15) !== 10 || mp.maps.getBGCode(l20 + 15, i21 - 1) >= 20)
+                            {
+                                var l35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                                if(l35 <= 1 || l35 >= 5)
+                                {
+                                    if(l20 > mp.co_j.x)
+                                        characterobject.c = 1200;
+                                    else
+                                        characterobject.c = 1210;
+                                } else
+                                if(l20 < mp.co_j.x)
+                                    characterobject.c = 1200;
+                                else
+                                    characterobject.c = 1210;
+                                var l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                                l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                                if(l35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                                {
+                                    var i16 = 1;
+                                    do
+                                    {
+                                        if(i16 > 31 || l31 + i16 >= mp.mapWidth || mp.maps.map_bg[l31 + i16][l35] >= 19)
+                                            break;
+                                        if(mp.maps.map_bg[l31 + i16][l35 + 1] <= 10 || mp.maps.map_bg[l31 + i16][l35 + 1] === 15)
+                                        {
+                                            characterobject.c = 1210;
+                                            break;
+                                        }
+                                        i16++;
+                                    } while(true);
+                                } else
+                                if(l35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                                {
+                                    var j16 = 1;
+                                    do
+                                    {
+                                        if(j16 > 31 || l31 + j16 >= mp.mapWidth || mp.maps.map_bg[l31 + j16][l35] >= 19)
+                                            break;
+                                        if(mp.maps.map_bg[l31 + j16][l35] === 10)
+                                        {
+                                            characterobject.c = 1210;
+                                            break;
+                                        }
+                                        j16++;
+                                    } while(true);
+                                }
+                                l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+                                l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+                                if(l35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                                {
+                                    var k16 = 1;
+                                    do
+                                    {
+                                        if(k16 > 31 || l31 - k16 <= 0 || mp.maps.map_bg[l31 - k16][l35] >= 20 || mp.maps.map_bg[l31 - k16][l35] === 18)
+                                            break;
+                                        if(mp.maps.map_bg[l31 - k16][l35 + 1] <= 10 || mp.maps.map_bg[l31 - k16][l35 + 1] === 15)
+                                        {
+                                            characterobject.c = 1200;
+                                            break;
+                                        }
+                                        k16++;
+                                    } while(true);
+                                } else
+                                if(l35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
+                                {
+                                    var l16 = 1;
+                                    do
+                                    {
+                                        if(l16 > 31 || l31 - l16 <= 0 || mp.maps.map_bg[l31 - l16][l35] >= 20 || mp.maps.map_bg[l31 - l16][l35] === 18)
+                                            break;
+                                        if(mp.maps.map_bg[l31 - l16][l35] === 10)
+                                        {
+                                            characterobject.c = 1200;
+                                            break;
+                                        }
+                                        l16++;
+                                    } while(true);
+                                }
+                            } else
+                            if(Math.abs(i21 - mp.co_j.y) < 32)
+                            {
+                                if(l20 > mp.co_j.x)
+                                {
+                                    characterobject.muki = 0;
+                                    characterobject.c = 1200;
+                                } else
+                                {
+                                    characterobject.muki = 1;
+                                    characterobject.c = 1210;
+                                }
+                            }
+                        if((characterobject.c === 1200 || characterobject.c === 1210) && Math.abs(l20 - mp.co_j.x) <= 32 && Math.abs(i21 - mp.co_j.y) <= 32 && !mp.co_j.jimen_f && !mp.j_hashigo_f)
+                            characterobject.c = 1230;
+                        characterobject.pt = 140 + mp.g_ac;
+                        characterobject.pth = characterobject.muki;
+                    }
+                }
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 1250) {
+                if(characterobject.c1 <= 75)
+                {
+                    characterobject.c1++;
+                    characterobject.pt = 140;
+                    characterobject.pth = characterobject.muki;
+                } else
+                {
+                    characterobject.c = 1260;
+                    characterobject.pt = 140 + mp.g_ac;
+                    characterobject.pth = characterobject.muki;
+                }
+                return true;
+            } else if (characterobject.c === 1260) {
+                if(rightShiftIgnoreSign(i21 -= 4, 5) * 32 === i21)
+                {
+                    if(characterobject.muki === 0)
+                        characterobject.c = 1200;
+                    else
+                        characterobject.c = 1210;
+                    var j36 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
+                    if(j36 <= 1 || j36 >= 5)
+                    {
+                        if(l20 > mp.co_j.x)
+                        {
+                            characterobject.muki = 0;
+                            characterobject.c = 1200;
+                        } else
+                        {
+                            characterobject.muki = 1;
+                            characterobject.c = 1210;
+                        }
+                    } else
+                    if(l20 < mp.co_j.x)
+                    {
+                        characterobject.muki = 0;
+                        characterobject.c = 1200;
+                    } else
+                    {
+                        characterobject.muki = 1;
+                        characterobject.c = 1210;
+                    }
+                    if(mp.maps.getBGCode(l20 + 15, i21 + 15) >= 20)
+                    {
+                        characterobject.c = 60;
+                        characterobject.c1 = 0;
+                        mp.gs.rsAddSound(19);
+                    }
+                }
+                characterobject.pt = 140 + mp.g_ac;
+                characterobject.pth = characterobject.muki;
 
                 characterobject.x = l20;
                 characterobject.y = i21;
@@ -4442,5 +5676,7 @@ EnemyController.available = {
     1170: EnemyController.KuragessoLeft,
     // クラゲッソ（右回り）
     1180: EnemyController.KuragessoRight,
+    // 追跡亀
+    1200: EnemyController.TurtleChaser,
 };
 
