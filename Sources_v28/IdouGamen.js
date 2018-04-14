@@ -753,8 +753,8 @@ IdouGamen.prototype.jMove = function()
 		if (this.co_j.ac > 3)
 		{
 			this.co_j.pt = 1000;
-			var temporary_01 = this.getBGZ(cx, cy);
-			if ((temporary_01 >= 216 && temporary_01 <= 219) || (temporary_01 >= 206 && temporary_01 <= 209)) {
+			var bgz = this.getBGZ(cx, cy);
+			if ((bgz >= 216 && bgz <= 219) || (bgz >= 206 && bgz <= 209)) {
 				this.co_j.pt = 1010;
 			}
 		}
@@ -773,14 +773,14 @@ IdouGamen.prototype.jMove = function()
 				if (this.mp.dokan_mode == 2)
 				{
 					var flag = false;
-					for (var temporary_02 = 0; temporary_02 <= 8; temporary_02++)
+					for (var i = 0; i <= 8; i++)
 					{
-						for (var temporary_03 = 0; temporary_03 <= 14; temporary_03++)
+						for (var j = 0; j <= 14; j++)
 						{
-							if (temporary_03 * 32 == cx && temporary_02 * 32 == cy) continue;
-							if (this.map_bg[temporary_03][temporary_02] != this.getBGZ(cx, cy)) continue;
-							cx = temporary_03 * 32;
-							cy = temporary_02 * 32;
+							if (j * 32 == cx && i * 32 == cy) continue;
+							if (this.map_bg[j][i] != this.getBGZ(cx, cy)) continue;
+							cx = j * 32;
+							cy = i * 32;
 							this.co_j.ac = 0;
 							this.co_j.pt = 1010;
 							flag = true;
@@ -938,21 +938,21 @@ IdouGamen.prototype.jMove = function()
 		}
 		if (cx % 32 == 0 && cy % 32 == 0)
 		{
-			var temporary_04 = this.getBGZ(cx, cy);
-			if (temporary_04 == 220 || (temporary_04 >= 223 && temporary_04 <= 227) || (temporary_04 >= 216 && temporary_04 <= 219) || (temporary_04 >= 206 && temporary_04 <= 209))
+			var bgz = this.getBGZ(cx, cy);
+			if (bgz == 220 || (bgz >= 223 && bgz <= 227) || (bgz >= 216 && bgz <= 219) || (bgz >= 206 && bgz <= 209))
 			{
 				this.co_j.vx = 0;
 				this.co_j.vy = 0;
 				this.co_j.ac = 0;
 			}
-			temporary_04 = 0;
+			bgz = 0;
 			if (this.co_j.vx > 0) {
-				temporary_04 = this.getBGZ(cx + 32, cy);
+				bgz = this.getBGZ(cx + 32, cy);
 			}
 			else if (this.co_j.vx < 0) {
-				temporary_04 = this.getBGZ(cx - 32, cy);
+				bgz = this.getBGZ(cx - 32, cy);
 			}
-			if (temporary_04 >= 212 && temporary_04 <= 215)
+			if (bgz >= 212 && bgz <= 215)
 			{
 				this.co_j.vx = 0;
 				this.co_j.vy = 0;
