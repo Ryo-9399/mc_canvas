@@ -14723,7 +14723,7 @@ MainProgram.prototype.tSet = function(i, j, k, l)
             if(partsDefinition != null) {
                 // オブジェクトの初期化
                 characterobject.c2 = partsDefinition.nativeCode - 5000;
-                partsDefinition.native.initFactory(characterobject.c2, partsDefinition.properties)(characterobject);
+                partsDefinition.native.initFactory(characterobject.c2, partsDefinition.properties)(characterobject, this);
                 // コントローラーを設定
                 characterobject.controller = partsDefinition.native.controllerFactory(partsDefinition.properties);
                 break;
@@ -14739,14 +14739,6 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 					characterobject.c2 = 1190;
 					characterobject.c3 = i - 64;
 					characterobject.c5 = 1;
-					break;
-
-				case 1400:
-					characterobject.c = 1430;
-					characterobject.c2 = this.tpika_p;
-					this.tpika_p++;
-					if (this.tpika_p > 2)
-						this.tpika_p = 2;
 					break;
 			}
 			break;
@@ -14795,7 +14787,7 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
             var partsDefinition = this.getEnemyDefinition(k);
             if (partsDefinition != null) {
                 characterobject.c = partsDefinition.nativeCode - 5000;
-                partsDefinition.native.initFactory(characterobject.c, partsDefinition.properties)(characterobject);
+                partsDefinition.native.initFactory(characterobject.c, partsDefinition.properties)(characterobject, this);
                 // コントローラーを設定
                 characterobject.controller = partsDefinition.native.controllerFactory(partsDefinition.properties);
                 break;
@@ -15445,240 +15437,6 @@ MainProgram.prototype.tMove = function()
         case 1300: 
             if((i21 += 4) % 32 == 0)
                 characterobject.c = 1310;
-            break;
-
-        case 1400: 
-            l20 -= 4;
-            characterobject.muki = 0;
-            if(this.maps.getBGCode(l20, i21 + 15) >= 20)
-                l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
-            if(l20 % 32 == 0)
-                if(characterobject.c2 == 0)
-                {
-                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                        characterobject.c = 1430;
-                } else
-                if(characterobject.c2 == 1)
-                {
-                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                        characterobject.c = 1410;
-                } else
-                if(characterobject.c2 == 2)
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1420;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                        characterobject.c = 1410;
-            characterobject.pt = 143 + this.g_ac;
-            characterobject.pth = characterobject.muki;
-            if(characterobject.c2 == 1)
-                characterobject.pt = 152 + this.g_ac;
-            else
-            if(characterobject.c2 == 2)
-                characterobject.pt = 155 + this.g_ac;
-            characterobject.direction = 0;
-            break;
-
-        case 1410: 
-            l20 += 4;
-            characterobject.muki = 1;
-            if(this.maps.getBGCode(l20 + 31, i21 + 15) >= 20)
-                l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
-            if(l20 % 32 == 0)
-                if(characterobject.c2 == 0)
-                {
-                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                        characterobject.c = 1430;
-                } else
-                if(characterobject.c2 == 1)
-                {
-                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                        characterobject.c = 1400;
-                } else
-                if(characterobject.c2 == 2)
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1420;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                        characterobject.c = 1400;
-            characterobject.pt = 143 + this.g_ac;
-            characterobject.pth = characterobject.muki;
-            if(characterobject.c2 == 1)
-                characterobject.pt = 152 + this.g_ac;
-            else
-            if(characterobject.c2 == 2)
-                characterobject.pt = 155 + this.g_ac;
-            characterobject.direction = 1;
-            break;
-
-        case 1420: 
-            i21 -= 4;
-            if(this.maps.getBGCode(l20 + 15, i21) >= 20)
-                i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
-            if(i21 % 32 == 0)
-                if(characterobject.c2 == 0)
-                {
-                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                        characterobject.c = 1430;
-                } else
-                if(characterobject.c2 == 1)
-                {
-                    if(i21 - 32 >= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                        characterobject.c = 1410;
-                } else
-                if(characterobject.c2 == 2)
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1400;
-                    else
-                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-                        characterobject.c = 1420;
-                    else
-                        characterobject.c = 1430;
-            characterobject.pt = 143 + this.g_ac;
-            characterobject.pth = characterobject.muki;
-            if(characterobject.c2 == 1)
-                characterobject.pt = 152 + this.g_ac;
-            else
-            if(characterobject.c2 == 2)
-                characterobject.pt = 155 + this.g_ac;
-            characterobject.direction = 2;
-            break;
-
-        case 1430: 
-            i21 += 4;
-            if(this.maps.getBGCode(l20 + 15, i21 + 31) >= 20)
-                i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
-            if(i21 % 32 == 0)
-                if(characterobject.c2 == 0)
-                {
-                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                        characterobject.c = 1420;
-                } else
-                if(characterobject.c2 == 1)
-                {
-                    if(i21 + 32 <= this.co_j.y && this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                    if(l20 - 32 >= this.co_j.x && this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                    if(l20 + 32 <= this.co_j.x && this.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-                        characterobject.c = 1400;
-                    else
-                        characterobject.c = 1410;
-                } else
-                if(characterobject.c2 == 2)
-                    if(this.maps.getBGCode(l20 - 1, i21 + 15) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1400;
-                    else
-                    if(this.maps.getBGCode(l20 + 32, i21 + 15) < 20 && this.ranInt(2) == 0)
-                        characterobject.c = 1410;
-                    else
-                    if(this.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-                        characterobject.c = 1430;
-                    else
-                        characterobject.c = 1420;
-            characterobject.pt = 143 + this.g_ac;
-            characterobject.pth = characterobject.muki;
-            if(characterobject.c2 == 1)
-                characterobject.pt = 152 + this.g_ac;
-            else
-            if(characterobject.c2 == 2)
-                characterobject.pt = 155 + this.g_ac;
-            characterobject.direction = 3;
             break;
         }
 		if(characterobject.c < 100)

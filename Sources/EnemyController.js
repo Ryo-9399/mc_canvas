@@ -5554,6 +5554,281 @@ EnemyController.TurtleChaser = {
     },
 };
 
+/**
+ * 重力無視の追跡ピカチー等
+ */
+EnemyController.PikachieChaser = {
+    properties: {
+        // 移動速度
+        speed: 4,
+    },
+    initFactory: function(enemyCode, properties) {
+        return function(characterobject, mp) {
+            characterobject.c = 1430;
+            // パターン画像が1匹ごとに変わる（3種類まで）
+            characterobject.c2 = mp.tpika_p;
+            mp.tpika_p++;
+            if (mp.tpika_p > 2) {
+                mp.tpika_p = 2;
+            }
+        };
+    },
+    controllerFactory: function(properties) {
+        return function(characterobject, mp, i) {
+            var l20 = characterobject.x;
+            var i21 = characterobject.y;
+
+            if (characterobject.c === 1400) {
+                l20 -= properties.speed;
+                characterobject.muki = 0;
+                if(mp.maps.getBGCode(l20, i21 + 15) >= 20)
+                    l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
+                if(l20 % 32 === 0)
+                    if(characterobject.c2 === 0)
+                    {
+                        if(l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                        if(i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                        if(i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                            characterobject.c = 1430;
+                    } else
+                    if(characterobject.c2 === 1)
+                    {
+                        if(i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                        if(i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                            characterobject.c = 1410;
+                    } else
+                    if(characterobject.c2 === 2)
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1420;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 + 32) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                            characterobject.c = 1410;
+                characterobject.pt = 143 + mp.g_ac;
+                characterobject.pth = characterobject.muki;
+                if(characterobject.c2 === 1)
+                    characterobject.pt = 152 + mp.g_ac;
+                else
+                if(characterobject.c2 === 2)
+                    characterobject.pt = 155 + mp.g_ac;
+                characterobject.direction = 0;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 1410) {
+                // 右へ移動
+                l20 += properties.speed;
+                characterobject.muki = 1;
+                if(mp.maps.getBGCode(l20 + 31, i21 + 15) >= 20)
+                    l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
+                if(l20 % 32 === 0)
+                    if(characterobject.c2 === 0)
+                    {
+                        if(l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                        if(i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                        if(i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                            characterobject.c = 1430;
+                    } else
+                    if(characterobject.c2 === 1)
+                    {
+                        if(i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                        if(i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                            characterobject.c = 1400;
+                    } else
+                    if(characterobject.c2 === 2)
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1420;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 + 32) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                            characterobject.c = 1400;
+                characterobject.pt = 143 + mp.g_ac;
+                characterobject.pth = characterobject.muki;
+                if(characterobject.c2 === 1)
+                    characterobject.pt = 152 + mp.g_ac;
+                else
+                if(characterobject.c2 === 2)
+                    characterobject.pt = 155 + mp.g_ac;
+                characterobject.direction = 1;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 1420) {
+                // 上へ移動
+                i21 -= properties.speed;
+                if(mp.maps.getBGCode(l20 + 15, i21) >= 20)
+                    i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+                if(i21 % 32 === 0)
+                    if(characterobject.c2 === 0)
+                    {
+                        if(l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                        if(l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                            characterobject.c = 1430;
+                    } else
+                    if(characterobject.c2 === 1)
+                    {
+                        if(i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                        if(l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                        if(l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                            characterobject.c = 1410;
+                    } else
+                    if(characterobject.c2 === 2)
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1400;
+                        else
+                        if(mp.maps.getBGCode(l20 + 32, i21 + 15) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
+                            characterobject.c = 1420;
+                        else
+                            characterobject.c = 1430;
+                characterobject.pt = 143 + mp.g_ac;
+                characterobject.pth = characterobject.muki;
+                if(characterobject.c2 === 1)
+                    characterobject.pt = 152 + mp.g_ac;
+                else
+                if(characterobject.c2 === 2)
+                    characterobject.pt = 155 + mp.g_ac;
+                characterobject.direction = 2;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            } else if (characterobject.c === 1430) {
+                // 下へ移動
+                i21 += properties.speed;
+                if(mp.maps.getBGCode(l20 + 15, i21 + 31) >= 20)
+                    i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
+                if(i21 % 32 === 0)
+                    if(characterobject.c2 === 0)
+                    {
+                        if(l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                        if(l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                            characterobject.c = 1420;
+                    } else
+                    if(characterobject.c2 === 1)
+                    {
+                        if(i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                        if(l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                        if(l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
+                            characterobject.c = 1400;
+                        else
+                            characterobject.c = 1410;
+                    } else
+                    if(characterobject.c2 === 2)
+                        if(mp.maps.getBGCode(l20 - 1, i21 + 15) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1400;
+                        else
+                        if(mp.maps.getBGCode(l20 + 32, i21 + 15) < 20 && mp.ranInt(2) === 0)
+                            characterobject.c = 1410;
+                        else
+                        if(mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
+                            characterobject.c = 1430;
+                        else
+                            characterobject.c = 1420;
+                characterobject.pt = 143 + mp.g_ac;
+                characterobject.pth = characterobject.muki;
+                if(characterobject.c2 === 1)
+                    characterobject.pt = 152 + mp.g_ac;
+                else
+                if(characterobject.c2 === 2)
+                    characterobject.pt = 155 + mp.g_ac;
+                characterobject.direction = 3;
+
+                characterobject.x = l20;
+                characterobject.y = i21;
+                return true;
+            }
+            return false;
+        };
+    },
+};
+
 
 
 /**
@@ -5678,5 +5953,7 @@ EnemyController.available = {
     1180: EnemyController.KuragessoRight,
     // 追跡亀
     1200: EnemyController.TurtleChaser,
+    // 重力無視の追跡ピカチー等
+    1400: EnemyController.PikachieChaser,
 };
 
