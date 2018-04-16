@@ -378,8 +378,8 @@ MainProgram.prototype = {
 };
 
 /**
- * ハイスコアイベントのコールバックを登録する
- * 複数回呼び出すと以前のイベントは置き換えられる
+ * ハイスコアイベントのコールバックを登録します
+ * 複数回呼び出すと以前のイベントは置き換えられます
  * @param highscoreeventhandler {Function} ハイスコア更新時に呼び出されるコールバック関数 第一引数にハイスコアの得点が渡される
  * @returns {boolean} 常にtrue
  */
@@ -390,7 +390,7 @@ MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler)
 }
 
 /**
- * ハイスコアイベントのコールバックが登録されていれば、最高得点を引数としてハイスコアイベントを発火させる
+ * ハイスコアイベントのコールバックが登録されていれば、最高得点を引数としてハイスコアイベントを発火させます
  */
 MainProgram.prototype.sendHighscore = function()
 {
@@ -404,7 +404,7 @@ MainProgram.prototype.sendHighscore = function()
 }
 
 /**
- * ゲームを開始させる
+ * ゲームを開始させます
  */
 MainProgram.prototype.start = function()
 {
@@ -412,9 +412,10 @@ MainProgram.prototype.start = function()
 }
 
 /**
- * 主人公の特技を追加する
+ * 主人公の特技を追加します
  * @param i {number} 特技の種類(1から30まで)
  * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+ * @see {@link MasaoJSS#addMyTokugi}
  */
 MainProgram.prototype.addMyTokugi = function(i)
 {
@@ -586,9 +587,10 @@ MainProgram.prototype.addMyTokugi = function(i)
 }
 
 /**
- * 主人公の特技を取り除く
+ * 主人公の特技を取り除きます
  * @param i {number} 特技の種類(1から30まで)
  * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+ * @see {@link MasaoJSS#removeMyTokugi}
  */
 MainProgram.prototype.removeMyTokugi = function(i)
 {
@@ -760,7 +762,7 @@ MainProgram.prototype.removeMyTokugi = function(i)
 }
 
 /**
- * 8フレーム周期のゲームカウンターを一つ進める(？)
+ * 8フレーム周期のゲームカウンターを一つ進めます(？)
  * TODO: 加筆求む
  */
 MainProgram.prototype.moveGameCounter = function()
@@ -834,12 +836,13 @@ MainProgram.prototype.moveGameCounter = function()
 }
 
 /**
- * 一言メッセージを設定する
+ * 一言メッセージを設定します
  * @param {number} time 表示時間（フレーム数）
  * @param {string} name 名前
  * @param {string} line1 メッセージ（1行目）
  * @param {string} line2 メッセージ（2行目）
  * @param {string} line3 メッセージ（3行目）
+ * @see {@link MasaoJSS#showMessage}
  */
 MainProgram.prototype.showmSet = function(s, s1, s2, s3, s4)
 {
@@ -876,14 +879,15 @@ MainProgram.prototype.showmMove = function()
 }
 
 /**
- * マップ上に表示する画像を設定する
- * 座標はマップ上ではなくスクリーン上の位置で指定
- * 同時に設定できる画像は1つのみ
+ * マップ上に表示する画像を設定します
+ * 座標はマップ上ではなくスクリーン上の位置で指定し、
+ * 同時に設定できる画像は1つのみです
  * @param {number} time 表示時間（フレーム数）
  * @param {number} x X座標
  * @param {number} y Y座標
  * @param {ImageBuff} buf 表示する画像
  * @returns {boolean} 設定に成功するとtrueを返す
+ * @see {@link MasaoJSS#showImage}
  */
 MainProgram.prototype.showiSet = function(s, s1, s2, s3)
 {
@@ -905,9 +909,10 @@ MainProgram.prototype.showiSet = function(s, s1, s2, s3)
 }
 
 /**
- * 背景画像を設定する
+ * 背景画像を設定します
  * @param {string} filename 画像のファイル名
  * @returns {boolean}
+ * @see {@link MasaoJSS#setBackImage}
  */
 MainProgram.prototype.setbacki = function(s)
 {
@@ -932,6 +937,7 @@ MainProgram.prototype.setbacki = function(s)
  * @param {number} pattern 停止している間のパターンコード
  * @param {number} direction 向き（0なら左、1なら右）
  * @returns {boolean} 主人公を停止状態にできたかどうか
+ * @see {@link MasaoJSS#setMyWait}
  */
 MainProgram.prototype.setMyWait = function(s, s1, s2)
 {
@@ -966,6 +972,12 @@ MainProgram.prototype.setMyWait = function(s, s1, s2)
 	return true;
 }
 
+/**
+ * ボスのHPを取得します。
+ *
+ * @returns {number} ボスのHP
+ * @see {@link MasaoJSS#getBossHP}
+ */
 MainProgram.prototype.getBossHP = function()
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -976,6 +988,13 @@ MainProgram.prototype.getBossHP = function()
 		return this.co_b.c4;
 }
 
+/**
+ * ボスのHPを設定します。
+ *
+ * @param {number} hp 新しいHP
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setBossHP}
+ */
 MainProgram.prototype.setBossHP = function(i)
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -1035,6 +1054,13 @@ MainProgram.prototype.setBossHP = function(i)
 	return true;
 }
 
+/**
+ * ボスの向きを取得します。
+ * 0が左向きで1が右向きです。
+ *
+ * @return {number} ボスの向き
+ * @see {@link MasaoJSS#getBossDirection}
+ */
 MainProgram.prototype.getBossDirection = function()
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -1042,6 +1068,13 @@ MainProgram.prototype.getBossDirection = function()
 	return this.co_b.pth != 1 ? 0 : 1;
 }
 
+/**
+ * ボスが攻撃中かどうかを取得します。
+ * 攻撃中の場合1、そうでない場合は0となります。
+ *
+ * @returns {number}
+ * @see {@link MasaoJSS#isBossAttackMode}
+ */
 MainProgram.prototype.isBossAttackMode = function()
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -1049,6 +1082,12 @@ MainProgram.prototype.isBossAttackMode = function()
 	return !this.boss_attack_mode ? 0 : 1;
 }
 
+/**
+ * ボスのX座標を設定します。
+ *
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setBossXReal}
+ */
 MainProgram.prototype.setBossXReal = function(i)
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -1063,6 +1102,12 @@ MainProgram.prototype.setBossXReal = function(i)
 	}
 }
 
+/**
+ * ボスのY座標を設定します。
+ *
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setBossYReal}
+ */
 MainProgram.prototype.setBossYReal = function(i)
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -1077,6 +1122,10 @@ MainProgram.prototype.setBossYReal = function(i)
 	}
 }
 
+/**
+ * ステージクリアします。
+ * @see {@link MasaoJSS#setStageClear}
+ */
 MainProgram.prototype.setStageClear = function()
 {
 	if(this.ml_mode != 100)
@@ -1092,6 +1141,20 @@ MainProgram.prototype.setStageClear = function()
 	}
 }
 
+/**
+ * ゲームで使用されている画像を変更します。画像は数値で指定します。
+ *
+ * * 0: タイトル画像
+ * * 1: エンディング画像
+ * * 2: ゲームクリア画像
+ * * 3: ？ TODO: 要調査
+ * * 8: パターン画像
+ * * 9: 背景マップチップ画像
+ *
+ * @param {number} type 画像の種類
+ * @param {string} filename ファイル名
+ * @see {@link MasaoJSS#setSystemImage}
+ */
 MainProgram.prototype.setSystemImage = function(s, s1)
 {
 	var i;
@@ -1118,6 +1181,17 @@ MainProgram.prototype.setSystemImage = function(s, s1)
 	return true;
 }
 
+/**
+ * スクロール可能な範囲をブロック単位で設定します。
+ * 引数は全て画面の左上の位置で指定します。
+ * マップの左上が(0, 0)です。
+ *
+ * @param {number} x1 範囲左上の座標
+ * @param {number} y1 範囲左上の座標
+ * @param {number} x2 範囲右下の座標
+ * @param {number} y2 範囲右下の座標
+ * @see {@link MasaoJSS#setScrollArea}
+ */
 MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1160,6 +1234,17 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 	return true;
 }
 
+/**
+ * スクロール可能な領域をピクセル単位で設定します。
+ * 引数は全て画面の左上の位置で指定します。
+ * マップの左上が(32, 320)です。
+ *
+ * @param {number} x1 範囲左上の座標
+ * @param {number} y1 範囲左上の座標
+ * @param {number} x2 範囲右下の座標
+ * @param {number} y2 範囲右下の座標
+ * @see {@link MasaoJSS#setScrollAreaReal}
+ */
 MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1202,6 +1287,16 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 	return true;
 }
 
+/**
+ * ゲームの各タイミングにおける時間を設定します。タイミングは数値で指定します。
+ * * 0: エンディング画像の表示時間
+ * * 1: ゲームオーバー画像の表示時間
+ * * 2: ステージ開始時のステージ番号表示時間
+ *
+ * @param {number} type タイミング
+ * @param {number} time 時間（フレーム）
+ * @see {@link MasaoJSS#setModeWait}
+ */
 MainProgram.prototype.setModeWait = function(s, s1)
 {
 	var i = 0;
@@ -1226,6 +1321,18 @@ MainProgram.prototype.setModeWait = function(s, s1)
 	return true;
 }
 
+/**
+ * {@link MainProgram#showrSet}及び{@link MainProgram#showoSet}で表示される図形の色を指定します。各値は0から255までの整数で指定します。
+ *
+ * @param {number} r R成分
+ * @param {number} g G成分
+ * @param {number} b B成分
+ * @param {number} [alpha=255] 不透明度
+ *
+ * @see {@link MasaoJSS#setPenColor}
+ * @see {@link MainProgram#showrSet}
+ * @see {@link MainProgram#showoSet}
+ */
 MainProgram.prototype.setPenColor = function(s, s1, s2, s3)
 {
 	var i = 255;
@@ -1249,6 +1356,18 @@ MainProgram.prototype.setPenColor = function(s, s1, s2, s3)
 	}
 }
 
+
+/**
+ * 一定時間表示する矩形を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
+ * 同時に設定できる矩形は1つのみです。
+ *
+ * @param {number} time 表示時間（フレーム数）
+ * @param {number} x 矩形の左端のX座標
+ * @param {number} y 矩形の上端のY座標
+ * @param {number} width 矩形の幅
+ * @param {number} height 矩形の高さ
+ * @see {@link MasaoJSS#showRect}
+ */
 MainProgram.prototype.showrSet = function(s, s1, s2, s3, s4)
 {
 	if(this.ml_mode != 100)
@@ -1264,6 +1383,17 @@ MainProgram.prototype.showrSet = function(s, s1, s2, s3, s4)
 	return this.showr_c > 0;
 }
 
+/**
+ * 一定時間表示する楕円を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
+ * 同時に設定できる楕円は1つのみです。
+ *
+ * @param {number} time 表示時間（フレーム数）
+ * @param {number} x 楕円の左端のX座標
+ * @param {number} y 楕円の上端のY座標
+ * @param {number} width 楕円の幅
+ * @param {number} height 楕円の高さ
+ * @see {@link MasaoJSS#showOval}
+ */
 MainProgram.prototype.showoSet = function(s, s1, s2, s3, s4)
 {
 	if(this.ml_mode != 100)
@@ -1278,12 +1408,27 @@ MainProgram.prototype.showoSet = function(s, s1, s2, s3, s4)
 		this.showo_c = 0;
 	return this.showr_c > 0;
 }
-
+/**
+ * JavaScript用メッセージを取得します。
+ * メッセージはゲーム開始時1になります。
+ *
+ * @returns {number} メッセージ
+ * @see {@link MasaoJSS#getJSMes}
+ */
 MainProgram.prototype.getJSMes = function()
 {
 	return this.js_mes;
 }
 
+/**
+ * ゲージを表示します。
+ * showGaugeで表示できるゲージは1つだけで、ボスのHPゲージと共有です。
+ * ゲージの値は最小が0、最大が200です。
+ *
+ * @param {number} value ゲージの値
+ * @param {string} name ゲージに表示される文字列
+ * @see {@link MasaoJSS#showGauge}
+ */
 MainProgram.prototype.showGauge = function(s, s1)
 {
 	var i = 0;
@@ -1303,6 +1448,11 @@ MainProgram.prototype.showGauge = function(s, s1)
 	return true;
 }
 
+/**
+ * ゲージを非表示にします。
+ * @returns {boolean}
+ * @see {@link MasaoJSS#hideGauge}
+ */
 MainProgram.prototype.hideGauge = function()
 {
 	if(this.ml_mode != 100)
@@ -1315,6 +1465,12 @@ MainProgram.prototype.hideGauge = function()
 	}
 }
 
+/**
+ * JavaScript用メッセージを設定します。
+ * @param s
+ * @returns {boolean}
+ * @see {@link MasaoJSS#setJSMes}
+ */
 MainProgram.prototype.setJSMes = function(s)
 {
 	this.js_mes = parseInt(s);
@@ -1323,6 +1479,15 @@ MainProgram.prototype.setJSMes = function(s)
 	return true;
 }
 
+/**
+ * 指定した位置に敵を設置します。
+ * 位置はブロック単位で指定します。
+ *
+ * @param {number} type 敵の種類
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @see {@link MasaoJSS#setEnemy}
+ */
 MainProgram.prototype.sete = function(s, s1, s2)
 {
 	var i = 0;
@@ -1874,6 +2039,12 @@ MainProgram.prototype.sete = function(s, s1, s2)
 	return flag;
 }
 
+/**
+ * スクロールロックを設定します。スクロール座標が指定したX座標に到達したら、そこで画面が固定されます。
+ *
+ * @param {number} x X座標
+ * @see {@link MasaoJSS#setScrollLock}
+ */
 MainProgram.prototype.setScrollLock = function(s)
 {
 	var i = 32;
@@ -1894,6 +2065,18 @@ MainProgram.prototype.setScrollLock = function(s)
 	return true;
 }
 
+/**
+ * ファイヤーボールとグレネードに対する当たり判定を指定範囲に発生させます。
+ * 指定範囲に入っていたファイヤーボールは消滅し、その数が返り値として返ります。
+ * また、グレネードの当たり判定に入っていた場合、1つにつき返り値が10増加します。
+ *
+ * @param {number} x 範囲の左端のX座標
+ * @param {number} y 範囲の上端のY座標
+ * @param {number} width 範囲のX方向大きさ
+ * @param {number} height 範囲のY方向大きさ
+ * @returns {number}
+ * @see {@link MasaoJSS#attackFire}
+ */
 MainProgram.prototype.attackFire = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1940,6 +2123,17 @@ MainProgram.prototype.attackFire = function(s, s1, s2, s3)
 	return i1;
 }
 
+/**
+ * 指定した矩形範囲にしっぽの攻撃判定を発生させます。
+ * 範囲にしっぽが当たった場合は1を、当たっていない場合は0を返します。
+ *
+ * @param {number} x 範囲左端のX座標
+ * @param {number} y 範囲上端のY座標
+ * @param {number} width 範囲の横幅
+ * @param {number} height 範囲の高さ
+ * @returns {number} TODO: 要調査
+ * @see {@link MasaoJSS#attackTail}
+ */
 MainProgram.prototype.attackTail = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1989,6 +2183,16 @@ MainProgram.prototype.attackTail = function(s, s1, s2, s3)
 	return i1;
 }
 
+/**
+ * 指定した矩形範囲にいる敵を倒します。
+ *
+ * @param {number} x 範囲左端のX座標
+ * @param {number} y 範囲上端のY座標
+ * @param {number} width 範囲のX方向大きさ
+ * @param {number} height 範囲のY方向大きさ
+ * @returns {number} 倒した敵の数 エラー時は-1
+ * @see {@link MasaoJSS#destroyEnemy}
+ */
 MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -2065,6 +2269,15 @@ MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3)
 	return i1;
 }
 
+/**
+ * マップチップを1つ変更します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {number} chip マップチップ番号
+ * @returns {boolean} 変更に成功したかどうか
+ * @see {@link MasaoJSS#setMapchip}
+ */
 MainProgram.prototype.setmapc = function(s, s1, s2)
 {
 	var i = 0;
@@ -2093,6 +2306,14 @@ MainProgram.prototype.setmapc = function(s, s1, s2)
 	}
 }
 
+/**
+ * マップチップを取得します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @returns {number} マップチップ番号 失敗した場合は-1
+ * @see {@link MasaoJSS#getMapchip}
+ */
 MainProgram.prototype.getmapc = function(s, s1)
 {
 	var i = 0;
@@ -2119,6 +2340,15 @@ MainProgram.prototype.getmapc = function(s, s1)
 	}
 }
 
+/**
+ * 背景レイヤーのマップチップを1つ変更します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {number} chip マップチップ番号
+ * @returns {boolean} 変更に成功したかどうか
+ * @see {@link MasaoJSS#setMapchip2}
+ */
 MainProgram.prototype.setmapc2 = function(s, s1, s2)
 {
 	var i = 0;
@@ -2148,6 +2378,14 @@ MainProgram.prototype.setmapc2 = function(s, s1, s2)
 	}
 }
 
+/**
+ * 背景レイヤーのマップチップを取得します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @returns {number} マップチップ番号 失敗した場合は-1
+ * @see {@link MasaoJSS#getMapchip2}
+ */
 MainProgram.prototype.getmapc2 = function(s, s1)
 {
 	var i = 0;
@@ -2176,6 +2414,13 @@ MainProgram.prototype.getmapc2 = function(s, s1)
 	}
 }
 
+/**
+ * 主人公のHP表示をONにします。
+ *
+ * @param {string|null} name HPの名前 nullにすると名前なし
+ * @returns {boolean} 常にtrue
+ * @see {@link MasaoJSS#showMyHP}
+ */
 MainProgram.prototype.showMyHP = function(s)
 {
 	this.j_hp_v = true;
@@ -2185,6 +2430,13 @@ MainProgram.prototype.showMyHP = function(s)
 	return true;
 }
 
+/**
+ * 主人公の最大HPを設定します。
+ *
+ * @param {number} maxhp 最大HP
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setMyMaxHP}
+ */
 MainProgram.prototype.setMyMaxHP = function(s)
 {
 	var i = -1;
@@ -2200,6 +2452,13 @@ MainProgram.prototype.setMyMaxHP = function(s)
 	return true;
 }
 
+/**
+ * 主人公の現在のHPを設定します。
+ *
+ * @param {number} hp 0以上のHP
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setMyHP}
+ */
 MainProgram.prototype.setMyHP = function(s)
 {
 	if((this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) && this.co_j.c >= 100 && this.co_j.c < 200)
@@ -2222,6 +2481,12 @@ MainProgram.prototype.setMyHP = function(s)
 	}
 }
 
+/**
+ * 主人公の現在のHPを取得します。
+ *
+ * @returns {number} 現在のHP
+ * @see {@link MasaoJSS#getMyHP}
+ */
 MainProgram.prototype.getMyHP = function()
 {
 	var i = 0;
@@ -2232,6 +2497,17 @@ MainProgram.prototype.getMyHP = function()
 	return i;
 }
 
+/**
+ * 主人公にダメージを与えます。
+ * このメソッドを使うと、HPが減るのに加えて無敵時間が設定されます。
+ *
+ * 無敵時間中にこのメソッドを使うとHPは変化しませんが、返り値としてtrueが返ります。
+ * 引数に負の値を与えると回復します。
+ *
+ * @param {number} damage ダメージ値
+ * @returns {boolean} ダメージを与えることに成功したかどうか
+ * @see {@link MasaoJSS#setMyHPDamage}
+ */
 MainProgram.prototype.setMyHPDamage = function(s)
 {
 	if(this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200)
@@ -2260,17 +2536,29 @@ MainProgram.prototype.setMyHPDamage = function(s)
 	}
 }
 
+/**
+ * 主人公に無敵時間を発生させます
+ * 無敵の持続する時間は主人公のHPが減少したときと同じで、
+ */
 MainProgram.prototype.setMyMuteki = function()
 {
 	this.j_muteki_c = 17;
 }
 
+/**
+ * 乱数生成のseedを初期化する
+ */
 MainProgram.prototype.ranInit = function()
 {
     //seedを初期化
     this.ran_seed = (Math.random()*0x100000000)|0;
 }
 
+/**
+ * 0以上i未満の乱整数を返します
+ * @param i {number}
+ * @returns {number} 0以上i未満のランダムな整数値
+ */
 MainProgram.prototype.ranInt = function(i)
 {
     //xor-shift 乱数(a=9, b=11, c=19)
@@ -2282,6 +2570,9 @@ MainProgram.prototype.ranInt = function(i)
     return ((ran_seed * 2.3283064365386963e-10)*i)|0;
 }
 
+/**
+ * 画面上部のスコア・残り時間・HP・残機を描画します
+ */
 MainProgram.prototype.drawScore = function()
 {
 	if(!this.score_v)
@@ -2365,6 +2656,10 @@ MainProgram.prototype.drawScore = function()
 	}
 }
 
+/**
+ * 謎(スコア・残機を表示する？)
+ * TODO: 要調査
+ */
 MainProgram.prototype.drawScore2 = function()
 {
 	if(!this.score_v)
@@ -2392,6 +2687,14 @@ MainProgram.prototype.drawScore2 = function()
 	}
 }
 
+/**
+ * スコアを加算します。
+ * 負の値を渡すとスコアが減ります。
+ *
+ * @param {number} score 加算するスコア
+ *
+ * @see {@link MasaoJSS#addScore}
+ */
 MainProgram.prototype.addScore = function(i)
 {
 	this.score += i;
@@ -2407,6 +2710,11 @@ MainProgram.prototype.addScore = function(i)
 	}
 }
 
+/**
+ * マップ全体に配置されたコインの総数を取得します
+ * scroll_areaタグの設定によりスクロール可能な範囲が制限されている場合、その範囲の中のコインの総数を数えます
+ * @returns {number} マップに本来存在するコインの総数
+ */
 MainProgram.prototype.getCoinTotal = function()
 {
 	var c = this.mapWidth;
@@ -2428,6 +2736,15 @@ MainProgram.prototype.getCoinTotal = function()
 	return k;
 }
 
+/**
+ * 指定した矩形範囲の中に配置されたコインの数を取得します
+ * 座標はブロック単位で指定します
+ * @param x1 始点のX座標
+ * @param y1 始点のY座標
+ * @param x2 終点のX座標
+ * @param y2 終点のY座標
+ * @returns {number}
+ */
 MainProgram.prototype.getCoinCount = function(i, j, k, l)
 {
 	if(this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96)
@@ -2480,6 +2797,9 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l)
 	}
 }
 
+/**
+ * ゲームクリア用はしごを表示させます
+ */
 MainProgram.prototype.showHashigo = function()
 {
 	var c = this.mapWidth;
@@ -2499,6 +2819,9 @@ MainProgram.prototype.showHashigo = function()
 	this.setmapc_f = true;
 }
 
+/**
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.addSerifu = function(i, j, k)
 {
 	for(var l = 1; l <= k; l++)
@@ -2514,6 +2837,9 @@ MainProgram.prototype.addSerifu = function(i, j, k)
 
 }
 
+/**
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.addSerifu2 = function(i, s, j, k)
 {
 	var l, k1, k2;
@@ -2540,6 +2866,9 @@ MainProgram.prototype.addSerifu2 = function(i, s, j, k)
 
 }
 
+/**
+ * ゲーム中の毎フレームの中核処理を行います
+ */
 MainProgram.prototype.mL100 = function()
 {
 	this.showmMove();
@@ -3639,6 +3968,9 @@ MainProgram.prototype.mL100 = function()
 		}
 }
 
+/**
+ * 毎フレームの処理のうち、ゲーム中以外の状態のときの処理を行います
+ */
 MainProgram.prototype.mainLoop = function()
 {
 	this.gk.left_right_lock = false;
@@ -4155,6 +4487,10 @@ MainProgram.prototype.mainLoop = function()
 	}
 }
 
+/**
+ * ゲームの状態を初期化します
+ * TODO: {@link MainProgram#init2}, {@link MainProgram#init3}との違いは？
+ */
 MainProgram.prototype.init1 = function()
 {
 	this.mode_wait_ending = 120;
@@ -4677,6 +5013,10 @@ MainProgram.prototype.init1 = function()
 		this.water_visible = 1;
 }
 
+/**
+ * 複数ステージや残機のある場合の初期化処理を行います（？）
+ * TODO: {@link MainProgram#init1}, {@link MainProgram#init3}との違いは？
+ */
 MainProgram.prototype.init2 = function()
 {
 	if(this.score > this.highscore)
@@ -4701,6 +5041,10 @@ MainProgram.prototype.init2 = function()
 	this.gs.rsInit();
 }
 
+/**
+ * ステージ開始時の初期化処理を行います(？）
+ * TODO: {@link MainProgram#init1}, {@link MainProgram#init2}との違いは？
+ */
 MainProgram.prototype.init3 = function()
 {
 	this.g_c1 = 0;
@@ -5124,6 +5468,10 @@ label0:
 	this.js_mes = 1;
 }
 
+/**
+ * ステージデータを読みとり、マップを生成します
+ * @param i ステージ番号 i-100がステージ番号(1スタート)となる
+ */
 MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの処理
 {
 	var i3;
@@ -5389,6 +5737,13 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 	return;
 }
 
+/**
+ * マップ上に仕掛けを配置します
+ * @param type 配置する仕掛けの種類
+ * @param x 配置先のブロックX座標
+ * @param y 配置先のブロックY座標
+ * @returns {number}
+ */
 MainProgram.prototype.setAthleticOnMap = function(i, j, k)
 {
 	var word0 = -1;
@@ -6449,6 +6804,11 @@ MainProgram.prototype.setAthleticOnMap = function(i, j, k)
 	return word0;
 }
 
+/**
+ * ゲーム画面を描画します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreen = function()
 {
 	var ai = new Array(26);
@@ -8356,6 +8716,11 @@ MainProgram.prototype.drawGamescreen = function()
 	this.km.drawMenus();
 }
 
+/**
+ * 主人公を描画します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenMy = function()
 {
 	var l = this.maps.wx;
@@ -8496,6 +8861,11 @@ MainProgram.prototype.drawGamescreenMy = function()
 		if(this.co_j.pt != 1110);
 }
 
+/**
+ * 敵を描画します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenEnemy = function()
 {
 	var j = this.maps.wx;
@@ -8516,6 +8886,11 @@ MainProgram.prototype.drawGamescreenEnemy = function()
 
 }
 
+/**
+ * HPゲージ、一言メッセージ、{@link MasaoJSS#showOval|showOval}, {@link MasaoJSS#showRect|showRect}, {@link MasaoJSS#showImage|showImage}で指定した描画物を描画します。
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenWindow = function()
 {
 	if(this.showr_c > 0)
@@ -8630,6 +9005,11 @@ MainProgram.prototype.drawGamescreenWindow = function()
 	}
 }
 
+/**
+ * 仕掛けを表示します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenUgokuyuka = function()
 {
 	var j2 = this.maps.wx;
@@ -9042,6 +9422,9 @@ MainProgram.prototype.drawGamescreenUgokuyuka = function()
 	}
 }
 
+/**
+ * 毎フレームの主人公の処理のうち、CharactorObject.cの値が100のときの処理を行います
+ */
 MainProgram.prototype.jM100 = function()
 {
 	var flag1 = false;
@@ -12459,6 +12842,10 @@ MainProgram.prototype.jM100 = function()
 	this.moveViewPosition();
 }
 
+/**
+ * 毎フレームの主人公の処理のうち、CharactorObject.cの値が100のときの処理を行います
+ * 主人公がシューティングモードの特技を持っている場合の処理です
+ */
 MainProgram.prototype.jM100stg = function()
 {
 	var flag2 = false;
@@ -13428,6 +13815,9 @@ MainProgram.prototype.jM100stg = function()
 	}
 }
 
+/**
+ * 毎フレームの主人公の処理を行います
+ */
 MainProgram.prototype.jMove = function()
 {
 	this.j_mizu_f = false;
@@ -14458,6 +14848,9 @@ MainProgram.prototype.jMove = function()
 	}
 }
 
+/**
+ * 主人公の位置に合わせて画面をスクロールさせ、表示するマップ位置を変更します
+ */
 MainProgram.prototype.moveViewPosition = function()
 {
 	this.co_j.wx = this.co_j.x - this.maps.wx;
@@ -14512,6 +14905,16 @@ MainProgram.prototype.moveViewPosition = function()
 		this.maps.wy = this.maps.wy_max;
 }
 
+/**
+ * 主人公を殺します。
+ * 
+ * * 1: その場で回転しながら死亡
+ * * 2: 飛び上がって回転しながら死亡
+ * * 3: 縦に潰れて死亡
+ * * 4: 横に潰れて死亡
+ * @param {number} [type=1] 死因
+ * @see {@link MasaoJSS#setMyMiss}
+ */
 MainProgram.prototype.jShinu = function(i)
 {
 	this.co_j.c1 = 0;
@@ -14553,6 +14956,16 @@ MainProgram.prototype.jShinu = function(i)
 	this.sendHighscore();
 }
 
+/**
+ * 主人公が敵を踏んだエフェクトを発生させます。引数でジャンプの高さを還ることができます。
+ * * 1: 亀などの敵を踏んだときの高さ
+ * * 2: ポッピー・エアームズを踏んだときの高さ
+ * * 3: ボスを踏んだときの高さ
+ *
+ * @param {number} [type=1] 高さ
+ * @see {@link MasaoJSS#setMyPress}
+ * @returns {boolean} 成功したかどうか
+ */
 MainProgram.prototype.jFumu = function(i)
 {
 	if(this.co_j.c < 100 || this.co_j.c >= 200)
