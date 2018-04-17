@@ -2538,7 +2538,7 @@ MainProgram.prototype.setMyHPDamage = function(s)
 
 /**
  * 主人公に無敵時間を発生させます
- * 無敵の持続する時間は主人公のHPが減少したときと同じで、
+ * 無敵の持続する時間は主人公のHPが減少したときと同じで、持続時間を設定することはできません
  */
 MainProgram.prototype.setMyMuteki = function()
 {
@@ -14985,6 +14985,12 @@ MainProgram.prototype.jFumu = function(i)
 	return true;
 }
 
+/**
+ * マップ上の座標をピクセル単位で指定し、そのタイルに坂道ブロックが存在した場合、与えたX座標におけるその坂道ブロックの床面のY座標を得ます
+ * @param x {number} マップX座標(ピクセル単位)
+ * @param y {number} マップY座標(ピクセル単位)
+ * @returns {number} 坂道の床面のY座標(ピクセル単位) 坂道ブロックがない場合、(なぜか)y-31が返る
+ */
 MainProgram.prototype.getSakamichiY = function(i, j)
 {
 	var k = 0;
@@ -15006,6 +15012,12 @@ MainProgram.prototype.getSakamichiY = function(i, j)
 	return k;
 }
 
+/**
+ * TODO: 加筆求む
+ * @param x {number}
+ * @param y {number}
+ * @param type {number}
+ */
 MainProgram.prototype.jZutuki = function(i, j, k)
 {
 	for(var l = 0; l <= this.t_kazu; l++)
@@ -15078,6 +15090,12 @@ MainProgram.prototype.jZutuki = function(i, j, k)
 
 }
 
+/**
+ * 指定したマップ上のピクセル座標の位置に水があるかどうかを調べる
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @returns {boolean} 指定した座標が水かどうか
+ */
 MainProgram.prototype.checkWater = function(i, j)
 {
 	var k = this.maps.getBGCode(i, j);
@@ -15093,6 +15111,13 @@ MainProgram.prototype.checkWater = function(i, j)
 	return false;
 }
 
+/**
+ * 敵を追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @param k {number} 敵の種類
+ * @param l {number} 追加パラメータ(？) TODO: 要調査
+ */
 MainProgram.prototype.tSet = function(i, j, k, l)
 {
     // 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
@@ -15272,6 +15297,13 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * ボスを追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @param k {number} ボスの種類
+ * @param [l] {number} 追加パラメータ(？) TODO:要調査
+ */
 MainProgram.prototype.tSetBoss = function(i, j, k, l)
 {
     var t_limit, i1;
@@ -15336,6 +15368,9 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * 敵のフレーム毎の処理を行います
+ */
 MainProgram.prototype.tMove = function()
 {
 	var flag = false;
@@ -20466,6 +20501,9 @@ label1:
 
 }
 
+/**
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.anaCheckNormal = function(i, j)
 {
 	var l = -1;
@@ -20484,6 +20522,14 @@ MainProgram.prototype.anaCheckNormal = function(i, j)
 	return l;
 }
 
+/**
+ * 特定のブロックの床面のY座標を得る(？)
+ * TODO: 要調査
+ * @param x X座標(ピクセル座標)
+ * @param y y座標(ピクセル座標)
+ * @returns {*}
+ * @see {@link getSakamichiY}
+ */
 MainProgram.prototype.sakamichiY = function(i, j)
 {
 	var k = rightShiftIgnoreSign(i + 15, 5);
