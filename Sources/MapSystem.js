@@ -1,9 +1,9 @@
-function MapSystem(paramInt1, paramInt2, paramGameGraphics, paramMainProgram)
+function MapSystem(width, height, gamegraphics, mainprogram)
 {
-	this.width = paramInt1;
-	this.height = paramInt2;
-	this.gg = paramGameGraphics;
-	this.mp = paramMainProgram;
+	this.width = width;
+	this.height = height;
+	this.gg = gamegraphics;
+	this.mp = mainprogram;
 	this.map_bg = createNDimensionArray(this.width, this.height);
 	this.map_bg_layer = createNDimensionArray(this.width, this.height);
 	this.map_string = new Array(this.height);
