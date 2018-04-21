@@ -477,5 +477,3 @@ Font.SERIF = "Serif";
 Font.PLAIN = 0;
 Font.BOLD = 1;
 Font.ITALIC = 2;
-
-
