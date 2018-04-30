@@ -1356,7 +1356,6 @@ MainProgram.prototype.setPenColor = function(s, s1, s2, s3)
 	}
 }
 
-
 /**
  * 一定時間表示する矩形を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
  * 同時に設定できる矩形は1つのみです。
@@ -1408,6 +1407,7 @@ MainProgram.prototype.showoSet = function(s, s1, s2, s3, s4)
 		this.showo_c = 0;
 	return this.showr_c > 0;
 }
+
 /**
  * JavaScript用メッセージを取得します。
  * メッセージはゲーム開始時1になります。
@@ -20580,6 +20580,12 @@ MainProgram.prototype.sakamichiY = function(i, j)
 	return k2;
 }
 
+/**
+ * 敵の攻撃を追加する
+ * @param x X座標(ピクセル座標)
+ * @param y y座標(ピクセル座標)
+ * @param type 種類
+ */
 MainProgram.prototype.mSet = function(i, j, k)
 {
 	var l = 0;
@@ -20848,6 +20854,14 @@ MainProgram.prototype.mSet = function(i, j, k)
 	} while(true);
 }
 
+/**
+ * ゲーム中に画面内に出現するコインやアイテムを追加する
+ * @param x X座標(ピクセル座標)
+ * @param y y座標(ピクセル座標)
+ * @param type 種類
+ * @param vx X速度(ピクセル単位)
+ * @param vy Y速度(ピクセル単位)
+ */
 MainProgram.prototype.mSet2 = function(i, j, k, l, i1)
 {
 	var j1 = 0;
@@ -21018,6 +21032,9 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1)
 	} while(true);
 }
 
+/**
+ * 敵の攻撃、？ブロックなどから出現したコイン・アイテムの更新処理
+ */
 MainProgram.prototype.mMove = function()
 {
 	for(var i = 0; i <= 79; i++)
