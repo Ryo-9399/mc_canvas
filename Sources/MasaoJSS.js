@@ -1789,7 +1789,7 @@ function MasaoJSS(mc, caseInsensitive)
      * @param {number} y2 Y方向大きさまたは右下の座標
      * @param {string} type 床の形
      *
-     * @returns {number} 床ID
+	 * @returns {number} 床ID 失敗した場合は-1
      */
 	this.newYuka = function(s, s1, s2, s3, s4)
 	{
@@ -1809,6 +1809,7 @@ function MasaoJSS(mc, caseInsensitive)
      * @param {number} [x2] X方向大きさまたは右下の座標
      * @param {number} [y2] Y方向大きさまたは右下の座標
      *
+	 * @returns {boolean} 成功したかどうか
      * @see {@link MasaoJSS#newYuka|newYuka}
      */
 	this.setYukaPosition = function(s, s1, s2, s3, s4)
@@ -1830,6 +1831,7 @@ function MasaoJSS(mc, caseInsensitive)
      *
      * @param {number} id 床ID
      * @param {number} type type値
+	 * @returns {boolean} 成功したかどうか
      */
 	this.setYukaType = function(s, s1)
 	{
@@ -1843,6 +1845,7 @@ function MasaoJSS(mc, caseInsensitive)
      * {@link MasaoJSS#newYuka|newYuka}で作った床を消去します。
      *
      * @param {number} id 床ID
+	 * @returns {boolean} 成功したかどうか
      */
 	this.disposeYuka = function(s)
 	{
@@ -1861,6 +1864,7 @@ function MasaoJSS(mc, caseInsensitive)
      * @param {number} g G値
      * @param {number} b B値
      * @param {number} alpha 不透明度
+	 * @returns {boolean} 成功したかどうか
      */
 	this.setYukaColor = function(s, s1, s2, s3, s4)
 	{
@@ -1872,7 +1876,7 @@ function MasaoJSS(mc, caseInsensitive)
 
     /**
      * 主人公がある床に乗っているかどうかを判定します。
-     * 乗っていれば1、乗っていなければ0が返ります。
+     * 乗っていれば1、乗っていなければ0、それ以外の場合には-1が返ります。
      *
      * @param {number} id 床ID
      *
@@ -1946,7 +1950,7 @@ function MasaoJSS(mc, caseInsensitive)
 
     /**
      * 主人公が地面に立っているかを判定します。
-     * 立っているなら1、いないなら0を返します。
+	 * 立っているなら1、いないなら0、それ以外の場合は-1を返します。
      * 地面ではなく床に乗っている場合は0になります。
      *
      * @returns {number} 地面に立っているか
@@ -1965,7 +1969,8 @@ function MasaoJSS(mc, caseInsensitive)
      *
      * @param {number} id 床ID
      * @param {number} pattern パターンコード
-     * @param {number} direction 向き（0ならそのまま、1なら左右逆）
+     * @param {number} direction 向き（0ならそのまま、1なら左右逆
+	 * @returns {boolean} 成功したかどうか
      */
 	this.setYukaPattern = function(s, s1, s2)
 	{
@@ -1981,6 +1986,7 @@ function MasaoJSS(mc, caseInsensitive)
      *
      * @param {number} id 床ID
      * @param {String|ImageBuff} image ファイル名または画像オブジェクト
+	 * @returns {boolean} 成功したかどうか
      */
 	this.setYukaImage = function(s, image)
 	{

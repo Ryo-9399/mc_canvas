@@ -36061,6 +36061,41 @@ MainProgram.prototype.hAttack = function(i, j)
 	} while(true);
 }
 
+/**
+ * 新しく床を生成し、床IDを返します。
+ * 床の位置、大きさ、形及び画像を指定できます。
+ *
+ * 床の形は次のように指定します。
+ *
+ * * `"line"`: 線分
+ * * `"triangle"`: 直角三角形
+ * * `"mount"`: 台形
+ * * `"circle"`: 円
+ * * `"half_circle"`: 上半分の半円
+ * * `"half_circle_line"`: 上半分の半円（線のみ）
+ * * `"wave_up"`: 右上がりの曲線
+ * * `"wave_up_line"`: 右上がりの曲線（線のみ）
+ * * `"wave_down"`: 右下がりの曲線
+ * * `"wave_down_line"`: 右下がりの曲線（線のみ）
+ * * `"rect"`: 矩形
+ * * `"pattern"`: 矩形（画像は{@link MasaoJSS#setYukaPattern|setYukaPattern}で設定）
+ * * その他: 矩形（ファイル名を指定）
+ *
+ * 引数`x2`, `y2`の意味は`type`の値によって変わります。
+ * `type`が`line`, `triangle`, `mount`の場合は線分の右下の座標です。
+ * `rect`, `pattern`および画像の場合は矩形の大きさです。
+ * `circie`の場合は`x2`が円の半径となり、`y2`は無視されます。
+ * その他の床は大きさが固定となり、`x2`も`y2`も無視されます。
+ *
+ * @param {number} x 床のX座標
+ * @param {number} y 床のY座標
+ * @param {number} x2 X方向大きさまたは右下の座標
+ * @param {number} y2 Y方向大きさまたは右下の座標
+ * @param {string} type 床の形
+ *
+ * @returns {number} 床ID 失敗した場合は-1
+ * @see {@link MasaoJSS#newYuka}
+ */
 MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 {
 	var j = 32;
@@ -36222,6 +36257,18 @@ MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 	return i;
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の位置を変更します。
+ * 引数が3つの場合位置のみ、5つの場合は床の大きさも変更します。
+ *
+ * @param {number} id 床ID
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {number} [x2] X方向大きさまたは右下の座標
+ * @param {number} [y2] Y方向大きさまたは右下の座標
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaPosition}
+ */
 MainProgram.prototype.setYukaPosition = function(s, s1, s2, s3, s4)
 {
 	if(arguments.length == 3)
@@ -36294,6 +36341,15 @@ MainProgram.prototype.setYukaPosition = function(s, s1, s2, s3, s4)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の当たり判定を変更します。
+ * `type`に2を与えると当たり判定がなくなり、その他の値だと当たり判定ありになります。
+ *
+ * @param {number} id 床ID
+ * @param {number} type type値
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaType}
+ */
 MainProgram.prototype.setYukaType = function(s, s1)
 {
 	var i = 0;
@@ -36321,6 +36377,13 @@ MainProgram.prototype.setYukaType = function(s, s1)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床を消去します。
+ *
+ * @param {number} id 床ID
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#disposeYuka}
+ */
 MainProgram.prototype.disposeYuka = function(s)
 {
 	var i = 0;
@@ -36345,6 +36408,18 @@ MainProgram.prototype.disposeYuka = function(s)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の色を設定します。
+ * 色の各成分は0から255の整数で与えます。
+ *
+ * @param {number} id 床ID
+ * @param {number} r R値
+ * @param {number} g G値
+ * @param {number} b B値
+ * @param {number} alpha 不透明度
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaColor}
+ */
 MainProgram.prototype.setYukaColor = function(index, color)
 {
 	if(arguments.length == 5)
@@ -36396,6 +36471,16 @@ MainProgram.prototype.setYukaColor = function(index, color)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床のパターン画像を設定します。
+ * `type`が`"pattern"`の床に対して有効です。
+ *
+ * @param {number} id 床ID
+ * @param {number} pattern パターンコード
+ * @param {number} direction 向き（0ならそのまま、1なら左右逆
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaPattern}
+ */
 MainProgram.prototype.setYukaPattern = function(s, s1, s2)
 {
 	var i = 0;
@@ -36429,6 +36514,15 @@ MainProgram.prototype.setYukaPattern = function(s, s1, s2)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の画像を変更します。
+ * `type`が`rect`, `pattern`及びその他で作成した床を対象にできます。
+ *
+ * @param {number} id 床ID
+ * @param {String|ImageBuff} image ファイル名または画像オブジェクト
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaImage}
+ */
 MainProgram.prototype.setYukaImage = function(s, a2)
 {
 	var i = 0;
@@ -36456,6 +36550,15 @@ MainProgram.prototype.setYukaImage = function(s, a2)
 	}
 }
 
+/**
+ * 主人公がある床に乗っているかどうかを判定します。
+ * 乗っていれば1、乗っていなければ0、それ以外の場合には-1が返ります。
+ *
+ * @param {number} id 床ID
+ *
+ * @returns {number}
+ * @see {@link MasaoJSS#isRideYuka}
+ */
 MainProgram.prototype.isRideYuka = function(s)
 {
 	var i = 0;
@@ -36506,6 +36609,14 @@ MainProgram.prototype.isRideYuka = function(s)
 	}
 }
 
+/**
+ * 主人公が地面に立っているかを判定します。
+ * 立っているなら1、いないなら0、それ以外の場合は-1を返します。
+ * 地面ではなく床に乗っている場合は0になります。
+ *
+ * @returns {number} 地面に立っているか
+ * @see {@link MasaoJSS#isRideGround}
+ */
 MainProgram.prototype.isRideGround = function()
 {
 	if(this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96)
@@ -36532,6 +36643,9 @@ MainProgram.prototype.isRideGround = function()
 	return 0;
 }
 
+/**
+ * 床オブジェクトの更新処理
+ */
 MainProgram.prototype.moveYuka = function()
 {
 	if(this.yuka_id_max < 0)
@@ -36964,6 +37078,9 @@ MainProgram.prototype.moveYuka = function()
 	}
 }
 
+/**
+ * 床オブジェクトの描画処理
+ */
 MainProgram.prototype.drawYuka = function()
 {
 	var j20 = 0;
@@ -37492,6 +37609,10 @@ label0:
 
 }
 
+/**
+ * 主人公と床オブジェクトとの当たり判定処理
+ * @param direction {number} 判定を行う向き 0,1,2,3のいずれか
+ */
 MainProgram.prototype.atariYuka = function(i)
 {
 	if(this.yuka_id_max < 0)
@@ -37844,6 +37965,10 @@ MainProgram.prototype.atariYuka = function(i)
 	}
 }
 
+/**
+ * 床と主人公が重なった状態かどうかを判定する
+ * @returns {boolean} 主人公に重なっている床オブジェクトが存在するならtrue
+ */
 MainProgram.prototype.isYukaCross = function()
 {
 	var flag = false;
