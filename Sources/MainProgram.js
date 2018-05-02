@@ -20525,8 +20525,8 @@ MainProgram.prototype.anaCheckNormal = function(i, j)
 /**
  * 特定のブロックの床面のY座標を得る(？)
  * TODO: 要調査
- * @param x X座標(ピクセル座標)
- * @param y y座標(ピクセル座標)
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
  * @returns {*}
  * @see {@link getSakamichiY}
  */
@@ -20581,10 +20581,10 @@ MainProgram.prototype.sakamichiY = function(i, j)
 }
 
 /**
- * 敵の攻撃を追加する
- * @param x X座標(ピクセル座標)
- * @param y y座標(ピクセル座標)
- * @param type 種類
+ * 敵の攻撃を発生させる
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
  */
 MainProgram.prototype.mSet = function(i, j, k)
 {
@@ -20856,11 +20856,11 @@ MainProgram.prototype.mSet = function(i, j, k)
 
 /**
  * ゲーム中に画面内に出現するコインやアイテムを追加する
- * @param x X座標(ピクセル座標)
- * @param y y座標(ピクセル座標)
- * @param type 種類
- * @param vx X速度(ピクセル単位)
- * @param vy Y速度(ピクセル単位)
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ * @param vx {number} X速度(ピクセル単位)
+ * @param vy {number} Y速度(ピクセル単位)
  */
 MainProgram.prototype.mSet2 = function(i, j, k, l, i1)
 {
@@ -22351,6 +22351,13 @@ MainProgram.prototype.mMove = function()
 
 }
 
+/**
+ * グレネード、ファイアボールといった主人公の攻撃を発生させる
+ * このメソッドで追加する攻撃は同時に2個しか存在できない
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ */
 MainProgram.prototype.jmSet = function(i, j, k)
 {
 	var l = 0;
@@ -22566,6 +22573,13 @@ MainProgram.prototype.jmSet = function(i, j, k)
 	} while(true);
 }
 
+/**
+ * シューティングモード、四方向移動モード時の攻撃を追加発生させる
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ * @param i {number} 攻撃を配置するco_jmのインデックス(同インデックスを指定すると前に発生させた攻撃が消滅するまで次を出せない
+ */
 MainProgram.prototype.jmSet2 = function(i, j, k, l)
 {
 	var i1 = l;
@@ -22776,6 +22790,9 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 	}
 }
 
+/**
+ * 主人公の攻撃の更新処理
+ */
 MainProgram.prototype.jmMove = function()
 {
 	for(var i = 0; i <= 8; i++)
@@ -23823,6 +23840,11 @@ MainProgram.prototype.jmMove = function()
 
 }
 
+/**
+ * 穴掘りモード時の主人公が掘った穴を追加
+ * @param x {number} X座標(マップ座標)
+ * @param y {number} Y座標(マップ座標)
+ */
 MainProgram.prototype.anaSet = function(i, j)
 {
 	var k = 0;
@@ -23842,6 +23864,12 @@ MainProgram.prototype.anaSet = function(i, j)
 	} while(true);
 }
 
+/**
+ * 穴掘りモード時の主人公が掘った穴を追加 その2(？)
+ * TODO: 要調査
+ * @param x {number} X座標(マップ座標)
+ * @param y {number} Y座標(マップ座標)
+ */
 MainProgram.prototype.anaSet2 = function(i, j)
 {
 	var k = 0;
@@ -23861,6 +23889,9 @@ MainProgram.prototype.anaSet2 = function(i, j)
 	} while(true);
 }
 
+/**
+ * 主人公の掘った穴の更新処理
+ */
 MainProgram.prototype.anaMove = function()
 {
 	for(var i = 0; i <= 11; i++)
@@ -23896,6 +23927,15 @@ MainProgram.prototype.anaMove = function()
 
 }
 
+/**
+ * 指定座標（ピクセル単位）の位置に、指定したコードの仕掛けを設置します
+ * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet} を参照
+ * @param pixelX {number} X座標(ピクセル単位)
+ * @param pixelY {number} Y座標(ピクセル単位)
+ * @param code {number} 設置する仕掛けのコード
+ * @param argValue {number} 仕掛けに使用する引数
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet}
+ */
 MainProgram.prototype.aSet = function(i, j, k, l)
 {
 	var i1 = 0;
@@ -26404,6 +26444,9 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * 仕掛けの更新処理
+ */
 MainProgram.prototype.aMove = function()
 {
 	this.j_a_id = -1;
@@ -31574,6 +31617,11 @@ MainProgram.prototype.aMove = function()
 	}
 }
 
+/**
+ * 仕掛けの更新処理のうち一部の仕掛けの処理を行う {@link MainProgram#aMove}から呼び出される
+ * @param i {number} 更新する仕掛けのco_a内のインデックス
+ * @see {@link MainProgram#aMove}
+ */
 MainProgram.prototype.aMoveOption = function(i)
 {
 	var characterobject = this.co_a[i];
