@@ -23928,7 +23928,7 @@ MainProgram.prototype.anaMove = function()
 }
 
 /**
- * 指定座標（ピクセル単位）の位置に、指定したコードの仕掛けを設置します
+ * 指定座標(ピクセル単位)の位置に、指定したコードの仕掛けを設置します
  * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet} を参照
  * @param pixelX {number} X座標(ピクセル単位)
  * @param pixelY {number} Y座標(ピクセル単位)
@@ -33412,6 +33412,14 @@ MainProgram.prototype.aMoveOption = function(i)
 	characterobject.y = k;
 }
 
+/**
+ * 範囲内に存在するスイッチ式の仕掛けをON状態にする
+ * @param x1 {number} 始点X座標 (ブロック座標)
+ * @param y1 {number} 始点Y座標 (プロック座標)
+ * @param x2 {number} 終点X座標 (プロック座標)
+ * @param y2 {number} 終点Y座標 (プロック座標)
+ * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
+ */
 MainProgram.prototype.onASwitch = function(i, j, k, l, i1)
 {
 	if(arguments.length == 4) i1 = 1;
@@ -33436,13 +33444,23 @@ MainProgram.prototype.onASwitch = function(i, j, k, l, i1)
 		}
 		if(i1 != 2 || k2 != 3500 && k2 != 3600 || this.co_a[j1].c4 != 2)
 			continue;
+		// k2 == 3600 スイッチ ↑キーでON/OFF
 		this.co_a[j1].c3 = 100;
+		// k2 == 3500 スイッチ 重なるとON/OFF
 		if(k2 == 3500)
 			this.co_a[j1].c3 = 1;
 	}
 
 }
 
+/**
+ * 範囲内に存在するスイッチ式の仕掛けをOFF状態にする
+ * @param x1 {number} 始点X座標 (ブロック座標)
+ * @param y1 {number} 始点Y座標 (プロック座標)
+ * @param x2 {number} 終点X座標 (プロック座標)
+ * @param y2 {number} 終点Y座標 (プロック座標)
+ * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
+ */
 MainProgram.prototype.offASwitch = function(i, j, k, l, i1)
 {
 	if(arguments.length == 4) i1 = 1;
@@ -33474,6 +33492,9 @@ MainProgram.prototype.offASwitch = function(i, j, k, l, i1)
 
 }
 
+/**
+ * ボスの更新処理
+ */
 MainProgram.prototype.bMove = function()
 {
 	if(this.co_b.x >= this.maps.wx + 1024)
@@ -35643,6 +35664,14 @@ MainProgram.prototype.bMove = function()
 	}
 }
 
+/**
+ * 指定座標(ブロック単位)の位置に、指定したコードの？ブロックを設置します
+ * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet} を参照
+ * @param blockX {number} X座標(ブロック単位)
+ * @param blockY {number} Y座標(ブロック単位)
+ * @param code {number} 設置するブロックのコード
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
+ */
 MainProgram.prototype.hSet = function(i, j, k)
 {
 	var l = 0;
@@ -35662,6 +35691,12 @@ MainProgram.prototype.hSet = function(i, j, k)
 	} while(true);
 }
 
+/**
+ * ？ブロックを叩かれた後の状態にして無効化する 一度取った後の1UPブロックに使用
+ * @param x {number} X座標(ブロック単位)
+ * @param y {number} Y座標(ブロック単位)
+ * @param c 無効化対象のブロックのコード これとCaracterObject.cの値が一致していれば無効化される
+ */
 MainProgram.prototype.hDelete = function(i, j, k)
 {
 	for(var l = 0; l <= 79; l++)
@@ -35673,6 +35708,11 @@ MainProgram.prototype.hDelete = function(i, j, k)
 
 }
 
+/**
+ * ？ブロックを叩いたときの処理
+ * @param x {number} X座標(ブロック単位)
+ * @param y {number} Y座標(ブロック単位)
+ */
 MainProgram.prototype.hAttack = function(i, j)
 {
 	var k = 0;
