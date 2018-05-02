@@ -2125,13 +2125,13 @@ MainProgram.prototype.attackFire = function(s, s1, s2, s3)
 
 /**
  * 指定した矩形範囲にしっぽの攻撃判定を発生させます。
- * 範囲にしっぽが当たった場合は1を、当たっていない場合は0を返します。
+ * 範囲にしっぽが当たった場合は1を、当たっていない場合は0を、それ以外の場合は-1を返します。
  *
  * @param {number} x 範囲左端のX座標
  * @param {number} y 範囲上端のY座標
  * @param {number} width 範囲の横幅
  * @param {number} height 範囲の高さ
- * @returns {number} TODO: 要調査
+ * @returns {number}
  * @see {@link MasaoJSS#attackTail}
  */
 MainProgram.prototype.attackTail = function(s, s1, s2, s3)
@@ -5738,11 +5738,12 @@ MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの�
 }
 
 /**
- * マップ上に仕掛けを配置します
- * @param type 配置する仕掛けの種類
- * @param x 配置先のブロックX座標
- * @param y 配置先のブロックY座標
+ * マップ上に仕掛けを配置します 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap} 参照
+ * @param type {number} 配置する仕掛けの種類
+ * @param blockX {number} 配置先のブロックX座標
+ * @param blockY {number} 配置先のブロックY座標
  * @returns {number}
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap}
  */
 MainProgram.prototype.setAthleticOnMap = function(i, j, k)
 {
@@ -20502,7 +20503,10 @@ label1:
 }
 
 /**
- * TODO: 加筆求む
+ * 指定した座標に主人公の掘った穴が存在するか調べ、存在する場合はその配列インデックスを返します
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @returns {number} 穴のid 穴が指定した座標に存在しない場合は-1
  */
 MainProgram.prototype.anaCheckNormal = function(i, j)
 {
@@ -38115,7 +38119,13 @@ MainProgram.prototype.getSWDownOY = function(i, j, k, l, i1)
 	return k2;
 }
 
-
+/**
+ * マップのパーツコードを受け取り、`maps.map_bg`に格納されるべき値を返すと同時にパーツの追加に必要な処理を行う
+ * @param x {number} X座標(ブロック単位)
+ * @param y {number} Y座標(ブロック単位)
+ * @param id パーツコード
+ * @returns {number} `maps.map_bg`に格納されるべき値
+ */
 MainProgram.prototype.setChipValue = function (x, y, id) {
 	var word1 = -1;
 	switch (id) {
