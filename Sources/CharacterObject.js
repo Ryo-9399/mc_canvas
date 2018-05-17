@@ -1,4 +1,7 @@
-
+/**
+ * 神クラス
+ * @constructor
+ */
 function CharacterObject()
 {
 	this.c = 0;
@@ -33,6 +36,9 @@ function CharacterObject()
     this.controller = undefined;
 }
 
+/**
+ * キャラクターオブジェクトを初期化する
+ */
 CharacterObject.prototype.init = function()
 {
 	this.c = 0;
@@ -63,4 +69,7 @@ CharacterObject.prototype.init = function()
     this.controller = undefined;
 }
 
+/**
+ * 未使用
+ */
 CharacterObject.prototype.setPattern = function(paramString) {}
