@@ -6145,8 +6145,6 @@ EnemyController.PikachieChaser = {
     },
 };
 
-
-
 /**
  * 拡張可能なマップチップコードの一覧
  */

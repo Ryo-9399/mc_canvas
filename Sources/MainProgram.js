@@ -15359,7 +15359,7 @@ MainProgram.prototype.tMove = function()
             break;
 
         case 10:
-            /**
+            /*
              * 10: まだ出現していない敵
              * c1: 出現するためのX座標?
              * c2: 本来の敵コード
