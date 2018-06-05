@@ -1,3 +1,4 @@
+import { Color } from "./ImageBuff";
 
 function YukaObject()
 {
@@ -52,3 +53,5 @@ YukaObject.prototype.setImage = function(paramImage)
 	this.img = paramImage;
 	return true;
 }
+
+export { YukaObject };

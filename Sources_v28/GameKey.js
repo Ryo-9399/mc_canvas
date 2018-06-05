@@ -266,3 +266,9 @@ function GameKey_keyReleased(obj, e)
 {
 	obj.keyReleased(e);
 }
+
+export {
+	GameKey,
+	GameKey_keyPressed,
+	GameKey_keyReleased,
+};

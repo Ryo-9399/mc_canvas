@@ -67,3 +67,5 @@ CharacterObject.prototype.init = function()
  * 未使用
  */
 CharacterObject.prototype.setPattern = function(paramString) {}
+
+export { CharacterObject };

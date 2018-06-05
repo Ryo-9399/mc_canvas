@@ -1,4 +1,3 @@
-;
 function GameSoundForApplet(paramTagDataBase, paramApplet)
 {
 	this.ap = paramApplet;
@@ -549,3 +548,5 @@ GameSoundForApplet.factory = function(tdb){
         return GameSoundForApplet;
     }
 };
+
+export { GameSoundForApplet };

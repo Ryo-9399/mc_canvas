@@ -1,3 +1,12 @@
+import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
+import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
+import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
+import { GameSoundForApplet } from "./GameSoundForApplet";
+import { AudioClip, Game, rightShiftIgnoreSign, waitFor } from "./GlobalFunctions";
+import { Color, Font, ImageBuff } from "./ImageBuff";
+import { MainProgram } from "./MainProgram";
+import { MasaoJSS } from "./MasaoJSS";
+import { TagDataBase } from "./TagDataBase";
 
 function MasaoConstruction(params, __canvas, __game, options)
 {
@@ -2616,3 +2625,4 @@ MasaoConstruction.prototype.getSnapshot = function() {
 	return result;
 };
 
+export { MasaoConstruction };

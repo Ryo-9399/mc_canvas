@@ -1,3 +1,9 @@
+import { GameGraphics } from "./GameGraphics";
+import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
+import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
+import { Game } from "./GlobalFunctions";
+import { ImageBuff, Color } from "./ImageBuff";
+import { MainProgram } from "./MainProgram";
 
 function MasaoConstruction(params, __canvas, __game, options)
 {
@@ -203,3 +209,5 @@ MasaoConstruction.prototype.getParameter = function(name)
 	if(typeof p === "undefined") return null;
 	return this.params[s] + "";
 }
+
+export { MasaoConstruction };

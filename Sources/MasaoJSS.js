@@ -1,3 +1,6 @@
+import { ChipImage } from "./ChipImage";
+import { rightShiftIgnoreSign } from "./GlobalFunctions";
+import { Color, Font, ImageBuff } from "./ImageBuff";
 
 /**
  * ユーザーJavaScriptから正男を操作するAPIを提供するオブジェクトです。
@@ -4002,3 +4005,5 @@ function MasaoJSS(mc, caseInsensitive)
         return result;
     }
 }
+
+export { MasaoJSS };

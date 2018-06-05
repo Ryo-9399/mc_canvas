@@ -1,3 +1,5 @@
+import { MasaoConstruction } from "./MasaoConstruction";
+
 /**
  * 新しい正男のインスタンスを生成します。
  * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
@@ -1040,3 +1042,14 @@ var idle =
             cb(deadline);
         }, 1);
     };
+
+export {
+	Game,
+	waitFor,
+	AudioClip,
+	Dimension,
+	createNDimensionArray,
+	rounddown,
+	rightShiftIgnoreSign,
+	makeRandomString,
+};

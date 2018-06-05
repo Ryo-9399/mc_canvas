@@ -1,3 +1,9 @@
+import { CharacterObject } from "./CharacterObject";
+import { createNDimensionArray, rounddown } from "./GlobalFunctions";
+import { IdouGamen } from "./IdouGamen";
+import { Color, Font } from "./ImageBuff";
+import { KeyboardMenu } from "./KeyboardMenu";
+import { MapSystem } from "./MapSystem";
 
 function MainProgram(gamegraphics, gamemouse, gamekey)
 {
@@ -8309,3 +8315,4 @@ MainProgram.prototype.hAttack = function(i, j)
 
 }
 
+export { MainProgram };

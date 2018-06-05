@@ -1,3 +1,6 @@
+import { createNDimensionArray, rightShiftIgnoreSign } from "./GlobalFunctions";
+import { Color } from "./ImageBuff";
+
 function MapSystem(width, height, gamegraphics, mainprogram)
 {
 	this.width = width;
@@ -665,3 +668,5 @@ MapSystem.prototype.putBGCode = function(paramInt1, paramInt2, paramInt3)
 		this.gg.drawBG2((paramInt1 - this.os2_wx) * 32 + 32, (paramInt2 - this.os2_wy) * 32 + 32, paramInt3);
 	}
 }
+
+export { MapSystem };
