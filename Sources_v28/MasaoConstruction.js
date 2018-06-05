@@ -71,6 +71,7 @@ MasaoConstruction.prototype.update = function(g)
 
 MasaoConstruction.prototype.run = function()
 {
+	var sleepTime;
 	if(this.th_jm == 10)
 	{
 		this.init_j();

@@ -1333,7 +1333,7 @@ MainProgram.prototype.mapsMakeStageData = function(i)
 	this.maps.wy_mini = 320;
 	this.maps.wx_max = 5856;
 	this.maps.wy_max = 6048;
-	var c1 = 0307;
+	var c1 = 199;
 	this.gg.setBackcolor(Color.blue);
 	switch(i)
 	{
@@ -2355,9 +2355,9 @@ MainProgram.prototype.drawGamescreen = function()
 	if(this.hitokoto_c > 0)
 	{
 		this.hitokoto_c--;
-		var c = 0320;
+		var c = 208;
 		var byte0 = 56;
-		var c1 = 0340;
+		var c1 = 224;
 		var i5 = 0;
 		for(var k2 = 0; k2 <= 2; k2++)
 		{
@@ -7362,7 +7362,7 @@ MainProgram.prototype.bMove = function()
 	case 110:
 		if(this.boss_type == 2)
 		{
-			var c = 0226;
+			var c = 150;
 			this.co_b.c1++;
 			if(this.co_b.c1 == 1)
 				this.tSetBoss(this.co_b.x, this.co_b.y, c, -2);
@@ -7499,7 +7499,7 @@ MainProgram.prototype.bMove = function()
 	case 115:
 		if(this.boss_type == 2)
 		{
-			var c3 = 0226;
+			var c3 = 150;
 			this.co_b.c1++;
 			if(this.co_b.c1 == 1)
 				this.tSetBoss(this.co_b.x, this.co_b.y, c3, 2);

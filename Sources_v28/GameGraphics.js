@@ -18,7 +18,7 @@ function GameGraphics(applet)
 	this.os2_g = this.os2_img.getGraphics();
 	this.mt = [];
 
-	str = this.ap.getParameter("filename_pattern");
+	var str = this.ap.getParameter("filename_pattern");
 	this.apt_img = this.ap.getImage(str);
 }
 
