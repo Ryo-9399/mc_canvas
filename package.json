@@ -10,7 +10,8 @@
     "build-v28": "gulp v28",
     "build-all": "gulp all",
     "inspect-test": "node test/inspect/index.js",
-    "test": "karma start test/karma.conf.js --single-run"
+    "test": "karma start test/karma.conf.js --single-run",
+    "doc": "jsdoc -r ./Sources/ -d ./doc -P ./package.json -R ./README.md -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template"
   },
   "repository": {
     "type": "git",
