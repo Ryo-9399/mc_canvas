@@ -20,14 +20,14 @@ gulp.task('fx', function () {
 gulp.task('kani2', function() {
     return gulp.src(['./Extends/MasaoKani2.js', 'Extends/pre.js'])
         .pipe(concat('MasaoKani2.js'))
-		.pipe(minify({}))
+        .pipe(minify({}))
         .pipe(gulp.dest('./Outputs/'));
 });
 
 gulp.task('kani2-manual', function() {
     return gulp.src('./Extends/MasaoKani2.js')
         .pipe(rename('MasaoKani2_manual.js'))
-		.pipe(minify({}))
+        .pipe(minify({}))
         .pipe(gulp.dest('./Outputs/'));
 });
 
