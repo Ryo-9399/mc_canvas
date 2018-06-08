@@ -4,6 +4,10 @@
   "description": "このプロジェクトは、福田直人氏の制作した「まさおコンストラクション」を、挙動をそのままに、 かつ全てのWebブラウザ上で動作するように改良するものです。",
   "main": "Outputs/CanvasMasao.js",
   "scripts": {
+    "build": "gulp",
+    "build-fx": "gulp fx",
+    "build-v28": "gulp v28",
+    "build-all": "gulp all",
     "inspect-test": "node test/inspect/index.js",
     "test": "karma start test/karma.conf.js --single-run"
   },
