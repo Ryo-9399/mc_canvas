@@ -18,6 +18,6 @@ gulp.task('v28', function () {
         .pipe(gulp.dest('./Outputs/'));
 });
 
-gulp.task('all', ['fx', 'v28']);
+gulp.task('all', gulp.parallel('fx', 'v28'));
 
-gulp.task('default', ['fx']);
+gulp.task('default', gulp.parallel('fx'));
