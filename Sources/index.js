@@ -1,6 +1,5 @@
-import { Game } from "./GlobalFunctions";
+import * as CanvasMasao from './CanvasMasao';
 
-window.CanvasMasao = {
-    Game: Game,
-};
-window.JSMasao = Game;
+window.CanvasMasao = CanvasMasao;
+window.JSMasao = CanvasMasao.Game;
+window.JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;
