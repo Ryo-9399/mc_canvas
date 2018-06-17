@@ -2,7 +2,7 @@ export { CharacterObject } from './CharacterObject';
 export { GameGraphicsForApplet } from './GameGraphicsForApplet';
 export { GameKey } from './GameKey';
 export { GameMouse } from './GameMouse';
-export { GameSoundForApplet } from './GameSoundForApplet';
+export { GameSoundForApplet, GameSoundWebAudio } from './GameSoundForApplet';
 export { Game } from './GlobalFunctions';
 export { IdouGamen } from './IdouGamen';
 export { ImageBuff } from './ImageBuff';
