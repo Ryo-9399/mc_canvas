@@ -549,4 +549,4 @@ GameSoundForApplet.factory = function(tdb){
     }
 };
 
-export { GameSoundForApplet };
+export { GameSoundForApplet, GameSoundWebAudio };
