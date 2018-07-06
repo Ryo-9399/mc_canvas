@@ -1,3 +1,5 @@
+import { MasaoConstruction } from "./MasaoConstruction";
+
 /**
  * 新しい正男のインスタンスを生成します。
  * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
@@ -933,19 +935,19 @@ Loop.prototype._loop = function(){
         return;
     }
     /**
-     * @constant
      * requestAnimationFrameのハンドラ内の時間の上限（ミリ秒）
+     * @constant
      */
     var FRAME_TIME = 2;
     /**
-     * @constant
      * 一時停止の判断の閾値（ミリ秒）
      * memo: game_speedの最大は300
+     * @constant
      */
     var STOP_LIMIT = 500;
     /**
-     * @constant
      * requestIdleCallbackのコールバック呼び出し期限
+     * @constant
      */
     var IDLE_TIMEOUT = 1000;
 
@@ -994,10 +996,10 @@ Loop.prototype._loop = function(){
 };
 
 /**
- * @function timestamp
  * 現在時刻を返す関数です。
  * ただしperformance.nowの返す時刻はUNIX時間ではなく
  * およそページを開いてからの経過時間なので、かならず相対時刻で利用すること。
+ * @function timestamp
  * @returns Number 現在時刻
  */
 var timestamp =
@@ -1007,9 +1009,9 @@ var timestamp =
     };
 
 /**
- * @function idle
  * 処理を先送りにする関数です。
  * requestIdleCallbackを想定し、他はshimです。
+ * @function idle
  */
 var idle =
     'function' === typeof requestIdleCallback ? requestIdleCallback :
@@ -1040,3 +1042,14 @@ var idle =
             cb(deadline);
         }, 1);
     };
+
+export {
+	Game,
+	waitFor,
+	AudioClip,
+	Dimension,
+	createNDimensionArray,
+	rounddown,
+	rightShiftIgnoreSign,
+	makeRandomString,
+};

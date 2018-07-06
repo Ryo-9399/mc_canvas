@@ -1,3 +1,5 @@
+import { Dimension, createNDimensionArray } from "./GlobalFunctions";
+import { ImageBuff, Color } from "./ImageBuff";
 
 function GameGraphics(applet)
 {
@@ -16,7 +18,7 @@ function GameGraphics(applet)
 	this.os2_g = this.os2_img.getGraphics();
 	this.mt = [];
 
-	str = this.ap.getParameter("filename_pattern");
+	var str = this.ap.getParameter("filename_pattern");
 	this.apt_img = this.ap.getImage(str);
 }
 
@@ -108,3 +110,4 @@ GameGraphics.prototype.drawListImage = function(i, j, k)
 	this.os_g.drawImage(this.li[k], i, j, this.ap);
 }
 
+export { GameGraphics };

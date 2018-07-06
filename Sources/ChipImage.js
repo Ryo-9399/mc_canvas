@@ -1,3 +1,6 @@
+import { createNDimensionArray } from "./GlobalFunctions";
+import { ImageBuff } from "./ImageBuff";
+
 /**
  * 1枚の画像から複数のチップ画像を生成するクラス
  * @param i {number} チップ１枚の横幅
@@ -133,3 +136,5 @@ function ChipImage(i, j, k, l, bufferedimage)
 	}
 
 }
+
+export { ChipImage };

@@ -64,3 +64,9 @@ function GameMouse_mouseReleased(obj, e)
 {
 	obj.mouseReleased(e);
 }
+
+export {
+	GameMouse,
+	GameMouse_mousePressed,
+	GameMouse_mouseReleased,
+};

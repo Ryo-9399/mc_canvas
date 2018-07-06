@@ -1,3 +1,5 @@
+import { Dimension, createNDimensionArray, waitFor } from "./GlobalFunctions";
+import { Color, ImageBuff } from "./ImageBuff";
 
 function GameGraphicsForApplet(paramTagDataBase, paramApplet)
 {
@@ -336,4 +338,4 @@ GameGraphicsForApplet.prototype.drawListImage = function(paramInt1, paramInt2, p
 
 
 
-
+export { GameGraphicsForApplet };
