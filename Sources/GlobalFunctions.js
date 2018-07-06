@@ -1,5 +1,25 @@
-// idがある場合，そのidの配下に設置
-// idがない場合，呼ばれた場所にdocument.writeし設置
+import { MasaoConstruction } from "./MasaoConstruction";
+
+/**
+ * 新しい正男のインスタンスを生成します。
+ * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
+ * 引数`id`なしで呼ばれた場合、その場所にdocument.writeで正男を設置します。
+ *
+ * @constructor
+ * @param {Object} params paramの一覧
+ * @param {string} [id] 正男を設置する要素のID
+ * @param {Object} [options] オプション
+ * @param {Object[]} [options.extensions] 拡張機能
+ * @param {Function} [options.userJSCallback] 毎フレーム呼び出されるコールバック関数
+ * @param {Function} [options.highscoreCallback] ハイスコア更新時に呼び出されるコールバック関数
+ * @param {Object} [options."advance-map"] 第3版マップデータ
+ * @param {boolean} [options."bc-enemy-number"] 敵の数制限の後方互換性を保つ
+ * @param {boolean} [options."bc-loop-setinterval"] ループに必ずsetIntervalを使う
+ * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
+ * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
+ * @param {boolean} [options."bc-case-insensitive"] 拡張JSのメソッドの大文字小文字を区別しない
+ * @param {boolean} [options."custom-loop"] メインループを行うためのLoopクラスです。（テスト用）
+ */
 function Game(params, id, options){
 	var randomID = makeRandomString();
 
@@ -185,16 +205,20 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-	var __interval_id = setInterval(function(){
-		this.__loop();
-	}.bind(this), __st);
+	// メインループを作成
+	// カスタムメインループが提供されていたらそれを使用
+	var loopConstructor = options['custom-loop'] || Loop;
+    var __loop = new loopConstructor(this, !!options['bc-loop-setinterval']);
+    __loop.start(__st, this.__loop.bind(this));
     this.__resourceList.push({
-        type: "setInterval",
-        value: __interval_id
+        type: "Loop",
+        value: __loop,
     });
 }
 
-// ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
+/**
+ * ページ読み込み後、ページ内の全ての正男appletをcanvas正男に置換します。
+ */
 Game.replaceAll = function(options){
 	if(document.readyState=="complete"){
 		onload();
@@ -233,7 +257,12 @@ Game.replaceAll = function(options){
 	};
 };
 
-// ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換する
+/**
+ * ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換します。
+ *
+ * @param {string} id アプレットのID
+ * @param {Object} [options] オプション
+ */
 Game.replace = function(id, options){
 	if(document.readyState=="complete"){
 		// load済みの場合は即座に呼び出す
@@ -253,7 +282,7 @@ Game.replaceByDom = function(paramScope, options){
 	var paramTags = paramScope.getElementsByTagName("param");
 	var paramLength = paramTags.length;
 	var params = {};
-	for(i = 0; i < paramLength; i++)
+	for(var i = 0; i < paramLength; i++)
 	{
 		params[paramTags[i].name] = paramTags[i].value;
 	}
@@ -310,7 +339,10 @@ Game.padAccessor = (function()
 	};
 })();
 
-// ゲームを終了する関数
+/**
+ * ゲームを終了する関数です。
+ * ゲームのメインループを終了し、このインスタンスによって追加されたDOMオブジェクトやタイマーを除去します。
+ */
 Game.prototype.kill = function(){
     //ゲームを止める
     this.__mc.stop();
@@ -320,6 +352,8 @@ Game.prototype.kill = function(){
             clearInterval(rl[i].value);
         }else if(rl[i].type==="eventListener"){
             rl[i].target.removeEventListener(rl[i].name, rl[i].value);
+        }else if(rl[i].type==="Loop"){
+            rl[i].value.stop();
         }
     }
     this.__resourceList=[];
@@ -329,13 +363,14 @@ Game.prototype.kill = function(){
     }
 };
 
-// ループ関数
+/**
+ * ゲームのメインループを1回実行する関数です。
+ */
 Game.prototype.__loop = function()
 {
 	var pt = new Date().getTime();
 	if(pt - this.__pt < this.__st) return;
 	this.__pt = pt - 10;
-
 
 	// デバッグ用キャンバス描画
 	if(this.__testCanvas)
@@ -344,7 +379,7 @@ Game.prototype.__loop = function()
 		ctx.fillStyle = "rgb(128,0,128)";
 		ctx.fillRect(0,0,700,700);
 		ctx.strokeStyle = "#f00";
-		var i,j;
+		var i;
 		if(this.__mc.gg){
 			ctx.save();
 			ctx.scale(0.5, 0.5);
@@ -376,7 +411,6 @@ Game.prototype.__loop = function()
 			var str = "<div style='text-align:left'>";
 			var prop;
 			var type;
-			var tmp;
 			for(prop in mp)
 			{
 				type = Object.prototype.toString.call(mp[prop]);
@@ -406,7 +440,7 @@ Game.prototype.__loop = function()
 		}
 	}
 
-	var t = this.__mc.run();
+	this.__mc.run();
 }
 
 // __repaintはMasaoConstructionへ移動
@@ -414,7 +448,10 @@ Game.prototype.__loop = function()
 
 
 
-// ソフトウェアパッド更新関数
+/**
+ * ソフトウェアパッド更新関数
+ * @internal
+ */
 Game.prototype.__pad_update = function()
 {
 	var r = this.__pad.getBoundingClientRect();
@@ -754,13 +791,13 @@ function createNDimensionArray()
 	var a = new Array(arguments.length);
 	for(var i = 0; i < arguments.length; i++)
 		a[i] = arguments[i];
-	var r = (function(an)
+	var r = (function F(an)
 	{
 		var ary = new Array(an[0]);
 		if(an.length == 1) return ary;
 		var an2 = an.slice(1);
 		for(var i = 0; i < an[0]; i++)
-			ary[i] = arguments.callee(an2);
+			ary[i] = F(an2);
 		return ary;
 	})(a);
 	return r;
@@ -777,14 +814,242 @@ function rounddown(val)
 		return -Math.floor(-val);
 }
 
+// sの絶対値をnビット右シフトし、sの符号を付けた値を返す
+function rightShiftIgnoreSign(s, n)
+{
+	return s < 0 ? (-((-s) >> n)) : (s >> n);
+}
+
+
 function makeRandomString(){
 	return Math.random().toString(36).slice(2);
 }
 
+/**
+ * requestAnimationFrameまたはsetIntervalを用いたループを行うためのクラスです。
+ * @constructor
+ * @param {Game} game 持ち主のGameオブジェクトです。
+ * @param {boolean} forceSetInterval 必ずsetIntervalを使用するフラグ
+ */
+function Loop(game, forceSetInterval){
+    this.game = game;
+    this.forceSetInterval = forceSetInterval;
+    /**
+     * @member {boolean}
+     * @private
+     * 現在ループが回っているかどうかのフラグ。
+     */
+    this.running = false;
+    /**
+     * @member {number}
+     * @private
+     * 現在のループの間隔（ミリ秒）。
+     */
+    this.interval = null;
+    /**
+     * @member {Function}
+     * @private
+     * ループごとに呼び出されるコールバック関数
+     */
+    this.callback = null;
+    /**
+     * @member {number}
+     * @private
+     * ループに何を使っているかのフラグ。
+     * 0: setInterval
+     * 1: requestAnimationFrame
+     */
+    this.mode = 0;
+    /**
+     * @member {number}
+     * @private
+     * 前のルームが呼び出された時刻。
+     */
+    this.prevTime = null;
+    /**
+     * @member {number}
+     * @private
+     * 現在待機中のsetIntervalやrequestAnimationFrameの返り値。
+     * ループを止めるとき用。
+     */
+    this.timerid = null;
+    this._loop = this._loop.bind(this);
+}
+/**
+ * 指定した間隔（ミリ秒）でループを行います。
+ * @param {number} interval ループの間隔
+ * @param {Function} callback ループで呼び出される関数
+ */
+Loop.prototype.start = function(interval, callback){
+    this.running = true;
+    this.interval = interval;
+    this.callback = callback;
+    
+    var now = timestamp();
+    this.targetTime = now + interval;
+    this.prevTime = now;
 
+    if (window.requestAnimationFrame && !this.forceSetInterval){
+        this.mode = 1;
+    } else {
+        this.mode = 0;
+    }
 
+    if (this.mode === 0){
+        this.timerid = setInterval(this._loop, interval);
+    }
+    this._next();
+};
 
+/**
+ * ループを停止します。
+ */
+Loop.prototype.stop = function(){
+    if (!this.running){
+        return;
+    }
+    this.running = false;
+    if (this.mode === 1){
+        cancelAnimationFrame(this.timerid);
+    } else {
+        clearInterval(this.timerid);
+    }
+}
 
+/**
+ * 次回のループを登録する関数です。
+ * @private
+ */
+Loop.prototype._next = function(){
+    if (this.mode === 1){
+        this.timerid = requestAnimationFrame(this._loop);
+    }
+};
 
+/**
+ * 1回のループを処理する関数です。
+ * @private
+ */
+Loop.prototype._loop = function(){
+    if (!this.running){
+        return;
+    }
+    /**
+     * requestAnimationFrameのハンドラ内の時間の上限（ミリ秒）
+     * @constant
+     */
+    var FRAME_TIME = 2;
+    /**
+     * 一時停止の判断の閾値（ミリ秒）
+     * memo: game_speedの最大は300
+     * @constant
+     */
+    var STOP_LIMIT = 500;
+    /**
+     * requestIdleCallbackのコールバック呼び出し期限
+     * @constant
+     */
+    var IDLE_TIMEOUT = 1000;
 
+    var n = timestamp();
+    if (n - this.prevTime >= STOP_LIMIT) {
+        // 前回のループから閾値以上経過していたら一時停止があったと判断
+        // 経過時間分のループを放棄
+        this.targetTime = n - 1;
+    }
+    // 現在コールバックを呼ぶべき回数
+    var loop_count = Math.ceil((n - this.targetTime) / this.interval);
+    this.targetTime += this.interval * loop_count;
+    while (loop_count > 0){
+        this.callback();
+        loop_count--;
+        // 毎回現在時刻を求め、許容される経過時間を過ぎたら
+        // ループ回数が残っていても中断
+        if (timestamp() - n > FRAME_TIME){
+            break;
+        }
+    }
+    if (loop_count > 0){
+        // 処理が終わりきらなかった場合は残りは後回しにする
+        // requestIdleCallbackにより描画処理後に行われることを期待
+        // （描画処理を優先させてあげないとFPSが落ちるので）
+        var _this = this;
+        idle(function cb(deadline){
+            // console.warn('idle', loop_count, deadline.timeRemaining());
+            while (loop_count > 0 && deadline.timeRemaining() > 0){
+                _this.callback();
+                loop_count--;
+            }
+            if (loop_count > 0 && !deadline.didTimeout){
+                // まだ実行しきれていない場合は次のidleに回す
+                // （didTimeoutがtrueの場合は超高負荷なので諦める）
+                idle(cb, {
+                    timeout: IDLE_TIMEOUT,
+                });
+            }
+        }, {
+            timeout: IDLE_TIMEOUT,
+        });
+    }
+    this._next();
+    this.prevTime = n;
+};
 
+/**
+ * 現在時刻を返す関数です。
+ * ただしperformance.nowの返す時刻はUNIX時間ではなく
+ * およそページを開いてからの経過時間なので、かならず相対時刻で利用すること。
+ * @function timestamp
+ * @returns Number 現在時刻
+ */
+var timestamp =
+    window.performance && performance.now ? performance.now.bind(performance) :
+    Date.now ? Date.now.bind(Date) : function(){
+        return new Date().getTime() * 1000;
+    };
+
+/**
+ * 処理を先送りにする関数です。
+ * requestIdleCallbackを想定し、他はshimです。
+ * @function idle
+ */
+var idle =
+    'function' === typeof requestIdleCallback ? requestIdleCallback :
+    'function' === typeof setImmediate ?
+    function(cb){
+        setImmediate(function(){
+            var n = timestamp();
+            var deadline = {
+                didTimeout: false,
+                timeRemaining: function(){
+                    // 50ms is the maximum value recommended by Google
+                    return 50 + n - timestamp();
+                },
+            };
+            cb(deadline);
+        });
+    } :
+    function(cb){
+        setTimeout(function(){
+            var n = timestamp();
+            var deadline = {
+                didTimeout: false,
+                timeRemaining: function(){
+                    // 50ms is the maximum value recommended by Google
+                    return 50 + n - timestamp();
+                },
+            };
+            cb(deadline);
+        }, 1);
+    };
+
+export {
+	Game,
+	waitFor,
+	AudioClip,
+	Dimension,
+	createNDimensionArray,
+	rounddown,
+	rightShiftIgnoreSign,
+	makeRandomString,
+};

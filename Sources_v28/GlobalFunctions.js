@@ -1,5 +1,25 @@
-// idがある場合，そのidの配下に設置
-// idがない場合，呼ばれた場所にdocument.writeし設置
+import { MasaoConstruction } from "./MasaoConstruction";
+
+/**
+ * 新しい正男のインスタンスを生成します。
+ * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
+ * 引数`id`なしで呼ばれた場合、その場所にdocument.writeで正男を設置します。
+ *
+ * @constructor
+ * @param {Object} params paramの一覧
+ * @param {string} [id] 正男を設置する要素のID
+ * @param {Object} [options] オプション
+ * @param {Object[]} [options.extensions] 拡張機能
+ * @param {Function} [options.userJSCallback] 毎フレーム呼び出されるコールバック関数
+ * @param {Function} [options.highscoreCallback] ハイスコア更新時に呼び出されるコールバック関数
+ * @param {Object} [options."advance-map"] 第3版マップデータ
+ * @param {boolean} [options."bc-enemy-number"] 敵の数制限の後方互換性を保つ
+ * @param {boolean} [options."bc-loop-setinterval"] ループに必ずsetIntervalを使う
+ * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
+ * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
+ * @param {boolean} [options."bc-case-insensitive"] 拡張JSのメソッドの大文字小文字を区別しない
+ * @param {boolean} [options."custom-loop"] メインループを行うためのLoopクラスです。（テスト用）
+ */
 function Game(params, id, options){
 	var randomID = makeRandomString();
 
@@ -66,23 +86,9 @@ function Game(params, id, options){
 
 	// ソフトウェアパッド用変数
 	//var __pad_btn;
-	this.__pad_before = new Array(8);
-	this.__pad_after = new Array(8);
+	this.__pad_before = [];
+	this.__pad_after = [];
 	this.__pad_touches = [];
-	this.__pad_coords = [
-		[410, 30, 490, 30, 490, 170, 410, 170],
-		[320, 30, 400, 30, 400, 170, 320, 170],
-		[250, 30, 290, 30, 290, 70, 250, 70],
-		[200, 30, 240, 30, 240, 70, 200, 70],
-		[5, 60, 87, 60, 87, 140, 5, 140],
-		[175, 60, 93, 60, 93, 140, 175, 140],
-		[30, 5, 30, 80, 150, 80, 150, 5],
-		[30, 195, 30, 120, 150, 120, 150, 195]
-		// 方向キーは重ねて縦・横同時押しができるようにする
-	];
-	this.__pad_chars = [
-		"X", "Z", "T", "P", "←", "→", "↑", "↓"
-	];
 
 	// タッチスクリーン対応端末での処理
 	if(window.TouchEvent)
@@ -127,9 +133,9 @@ function Game(params, id, options){
 		this.__padDiv.appendChild(__pad);
 
 		ss = __pad.style;
-		ss.position = "fixed";
-		ss.bottom = "0px";
-		ss.left = "0px";
+		ss.position = "absolute";
+		//ss.bottom = "0px";
+		//ss.left = "0px";
 		//ss.textAlign = "right";
 		var __interval_id=setInterval(function()
 		{
@@ -137,8 +143,14 @@ function Game(params, id, options){
 			var h = innerHeight;
 			var rw = (w < h) ? w : h;
 			__pad.style.width = w + "px";
-			__pad.style.height = (rw*0.4) + "px";
-		}, 500);
+			__pad.style.height = (rw*Game.pad.style.rate) + "px";
+			__pad.style.left = scrollX + "px";
+			if(Game.pad.avoidAD)
+				__pad.style.top = (scrollY + h - rw*Game.pad.style.rate - rw*0.16) + "px";
+			else
+				__pad.style.top = (scrollY + h - rw*Game.pad.style.rate) + "px";
+			this.__pad_update();
+		}.bind(this), 500);
         this.__resourceList.push({
             type: "setInterval",
             value: __interval_id
@@ -193,16 +205,20 @@ function Game(params, id, options){
 
 	this.__pt = 0;
 
-	var __interval_id = setInterval(function(){
-		this.__loop();
-	}.bind(this), __st);
+	// メインループを作成
+	// カスタムメインループが提供されていたらそれを使用
+	var loopConstructor = options['custom-loop'] || Loop;
+    var __loop = new loopConstructor(this, !!options['bc-loop-setinterval']);
+    __loop.start(__st, this.__loop.bind(this));
     this.__resourceList.push({
-        type: "setInterval",
-        value: __interval_id
+        type: "Loop",
+        value: __loop,
     });
 }
 
-// ページ読み込み後，ページ内の全ての正男appletをcanvas正男に置換する
+/**
+ * ページ読み込み後、ページ内の全ての正男appletをcanvas正男に置換します。
+ */
 Game.replaceAll = function(options){
 	if(document.readyState=="complete"){
 		onload();
@@ -241,7 +257,12 @@ Game.replaceAll = function(options){
 	};
 };
 
-// ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換する
+/**
+ * ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換します。
+ *
+ * @param {string} id アプレットのID
+ * @param {Object} [options] オプション
+ */
 Game.replace = function(id, options){
 	if(document.readyState=="complete"){
 		// load済みの場合は即座に呼び出す
@@ -261,7 +282,7 @@ Game.replaceByDom = function(paramScope, options){
 	var paramTags = paramScope.getElementsByTagName("param");
 	var paramLength = paramTags.length;
 	var params = {};
-	for(i = 0; i < paramLength; i++)
+	for(var i = 0; i < paramLength; i++)
 	{
 		params[paramTags[i].name] = paramTags[i].value;
 	}
@@ -318,7 +339,10 @@ Game.padAccessor = (function()
 	};
 })();
 
-// ゲームを終了する関数
+/**
+ * ゲームを終了する関数です。
+ * ゲームのメインループを終了し、このインスタンスによって追加されたDOMオブジェクトやタイマーを除去します。
+ */
 Game.prototype.kill = function(){
     //ゲームを止める
     this.__mc.stop();
@@ -328,6 +352,8 @@ Game.prototype.kill = function(){
             clearInterval(rl[i].value);
         }else if(rl[i].type==="eventListener"){
             rl[i].target.removeEventListener(rl[i].name, rl[i].value);
+        }else if(rl[i].type==="Loop"){
+            rl[i].value.stop();
         }
     }
     this.__resourceList=[];
@@ -337,13 +363,14 @@ Game.prototype.kill = function(){
     }
 };
 
-// ループ関数
+/**
+ * ゲームのメインループを1回実行する関数です。
+ */
 Game.prototype.__loop = function()
 {
 	var pt = new Date().getTime();
 	if(pt - this.__pt < this.__st) return;
 	this.__pt = pt - 10;
-
 
 	// デバッグ用キャンバス描画
 	if(this.__testCanvas)
@@ -352,7 +379,7 @@ Game.prototype.__loop = function()
 		ctx.fillStyle = "rgb(128,0,128)";
 		ctx.fillRect(0,0,700,700);
 		ctx.strokeStyle = "#f00";
-		var i,j;
+		var i;
 		if(this.__mc.gg){
 			ctx.save();
 			ctx.scale(0.5, 0.5);
@@ -384,7 +411,6 @@ Game.prototype.__loop = function()
 			var str = "<div style='text-align:left'>";
 			var prop;
 			var type;
-			var tmp;
 			for(prop in mp)
 			{
 				type = Object.prototype.toString.call(mp[prop]);
@@ -414,7 +440,7 @@ Game.prototype.__loop = function()
 		}
 	}
 
-	var t = this.__mc.run();
+	this.__mc.run();
 }
 
 // __repaintはMasaoConstructionへ移動
@@ -422,7 +448,10 @@ Game.prototype.__loop = function()
 
 
 
-// ソフトウェアパッド更新関数
+/**
+ * ソフトウェアパッド更新関数
+ * @internal
+ */
 Game.prototype.__pad_update = function()
 {
 	var r = this.__pad.getBoundingClientRect();
@@ -430,15 +459,16 @@ Game.prototype.__pad_update = function()
 	var dy = r.top;
 	var c = this.__pad_off.getContext("2d");
 	var i, j, k, tmp, sx, sy;
+	var num = Game.pad.coords.length;
 
 	c.clearRect(0, 0, 500, 200);
-	//c.fillStyle = "rgba(255, 255, 255, 0.3)";
-	//c.fillRect(0, 0, 500, 200);
-	c.fillStyle = "rgba(128, 128, 128, 0.5)";
-	for(i = 0; i < 8; i++)
+	c.fillStyle = Game.pad.style.back;
+	c.fillRect(0, 0, 500, 200);
+	c.fillStyle = Game.pad.style.button;
+	for(i = 0; i < num; i++)
 	{
 		c.beginPath();
-		tmp = this.__pad_coords[i];
+		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		for(j = 0; j < k; j++)
@@ -450,19 +480,19 @@ Game.prototype.__pad_update = function()
 	}
 
 
-	for(i = 0; i < 8; i++)
+	for(i = 0; i < num; i++)
 	{
 		this.__pad_after[i] = false;
 	}
 
 
-	c.fillStyle = "rgba(0, 0, 0, 0.5)";
+	c.fillStyle = Game.pad.style.active;
 
 
-	for(i = 0; i < 8; i++)
+	for(i = 0; i < num; i++)
 	{
 		c.beginPath();
-		tmp = this.__pad_coords[i];
+		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
 		for(j = 0; j < k; j++)
@@ -480,31 +510,29 @@ Game.prototype.__pad_update = function()
 	}
 
 
-	c.strokeStyle = "black";
-	c.fillStyle = "black";
-	for(i = 0; i < 8; i++)
+	c.strokeStyle = Game.pad.style.border;
+	c.fillStyle = Game.pad.style.text;
+	for(i = 0; i < num; i++)
 	{
 		c.beginPath();
-		tmp = this.__pad_coords[i];
+		tmp = Game.pad.coords[i];
 		k = (tmp.length >> 1);
 		c.moveTo(tmp[0], tmp[1]);
-		sx = tmp[0]; sy = tmp[1];
 		for(j = 1; j < k; j++)
 		{
 			c.lineTo(tmp[(j << 1)], tmp[(j << 1) + 1]);
-			sx += tmp[(j << 1)];
-			sy += tmp[(j << 1) + 1];
 		}
 		c.closePath();
 		c.stroke();
-		c.fillText(this.__pad_chars[i], sx / k, sy / k);
+		k = measureCenterOfGravity(tmp);
+		c.fillText(Game.pad.chars[i], k[0], k[1]);
 	}
 	c.stroke();
 
 	c = this.__pad.getContext("2d");
 	c.clearRect(0, 0, 500, 200);
 	c.drawImage(this.__pad_off, 0, 0);
-	for(var i = 0; i < 8; i++)
+	for(i = 0; i < num; i++)
 	{
 		if(this.__pad_before[i] != this.__pad_after[i])
 		{
@@ -513,13 +541,56 @@ Game.prototype.__pad_update = function()
 			else this.__pad_released(i);
 		}
 	}
+
+	// 頂点の配列から重心を求める
+	function measureCenterOfGravity(p)
+	{
+		/*
+		(x1, y1) : 基本頂点の座標
+		(x2, y2) : 古い頂点の座標
+		(x3, y3) : 次の頂点の座標
+		(gx, gy) : 現時点の重心の座標
+		s : 現時点での多角形の面積（質量と比例する）
+		(gx2, gy2) : 新しい三角形の重心
+		s2 : 新しい三角形の面積（質量と比例する）
+		*/
+		var i, n = p.length >> 1;
+		var x1, y1, x2, y2, x3, y3;
+		var gx, gy, s, gx2, gy2, s2;
+		x1 = p[0];  y1 = p[1];
+		gx = x1;  gy = y1;
+		if(n == 1)
+		{
+			return [gx, gy];
+		}
+		x2 = p[2];  y2 = p[3];
+		gx = (gx+x2) / 2;  gy = (gy+y2) / 2;
+		if(n == 2)
+		{
+			return [gx, gx];
+		}
+		x3 = p[4];  y3 = p[5];
+		s = Math.abs((x2-x1)*(y3-y1) - (y2-y1)*(x3-x1)) / 2;
+		gx = (x1+x2+x3) / 3;  gy = (y1+y2+y3) / 3;
+		for(i = 3; i < n; i++) // ４頂点以上からこのループに入る
+		{
+			x2 = x3;  y2 = y3;
+			x3 = p[i << 1];  y3 = p[(i << 1) + 1];
+			s2 = Math.abs((x2-x1)*(y3-y1) - (y2-y1)*(x3-x1)) / 2;
+			gx2 = (x1+x2+x3) / 3;  gy2 = (y1+y2+y3) / 3;
+			gx = (s*gx + s2*gx2) / (s+s2);
+			gy = (s*gy + s2*gy2) / (s+s2);
+			s = s2;
+		}
+		return [gx, gy];
+	}
 }
 
 Game.prototype.__pad_pressed = function(ch)
 {
 	if(this.__mc.gk)
 	{
-		var co = this.__get_code(ch);
+		var co = Game.pad.codes[ch];
 		this.__mc.gk.keyPressed( { 
 			keyCode:co,
 			preventDefault:function(){}
@@ -531,26 +602,11 @@ Game.prototype.__pad_released = function(ch)
 {
 	if(this.__mc.gk)
 	{
-		var co = this.__get_code(ch);
+		var co = Game.pad.codes[ch];
 		this.__mc.gk.keyReleased( { 
 			keyCode:co,
 			preventDefault:function(){}
 		} );
-	}
-}
-
-Game.prototype.__get_code = function(ch)
-{
-	switch(ch)
-	{
-	case 4: return 37;
-	case 6: return 38;
-	case 5: return 39;
-	case 7: return 40;
-	case 1: return 90;
-	case 0: return 88;
-	case 2: return 84;
-	case 3: return 80;
 	}
 }
 
@@ -563,6 +619,35 @@ Game.prototype.__pad_event = function(e)
 		this.__pad_touches.push(e.touches[i]);
 	}
 	this.__pad_update();
+}
+
+
+Game.pad = {
+	coords : [
+		[410, 30, 490, 30, 490, 170, 410, 170],
+		[320, 30, 400, 30, 400, 170, 320, 170],
+		[250, 30, 290, 30, 290, 70, 250, 70],
+		[200, 30, 240, 30, 240, 70, 200, 70],
+		[5, 60, 87, 60, 87, 140, 5, 140],
+		[175, 60, 93, 60, 93, 140, 175, 140],
+		[30, 5, 30, 80, 150, 80, 150, 5],
+		[30, 195, 30, 120, 150, 120, 150, 195]
+	],
+	chars : [
+		"X", "Z", "T", "P", "←", "→", "↑", "↓"
+	],
+	codes : [
+		88, 90, 84, 80, 37, 39, 38, 40
+	],
+	style : {
+		rate : 0.4,
+		back : "rgba(0, 0, 0, 0)",
+		button : "rgba(128, 128, 128, 0.5)",
+		active : "rgba(0, 0, 0, 0.5)",
+		text : "black",
+		border : "black",
+	},
+	avoidAD : false
 }
 
 
@@ -706,13 +791,13 @@ function createNDimensionArray()
 	var a = new Array(arguments.length);
 	for(var i = 0; i < arguments.length; i++)
 		a[i] = arguments[i];
-	var r = (function(an)
+	var r = (function F(an)
 	{
 		var ary = new Array(an[0]);
 		if(an.length == 1) return ary;
 		var an2 = an.slice(1);
 		for(var i = 0; i < an[0]; i++)
-			ary[i] = arguments.callee(an2);
+			ary[i] = F(an2);
 		return ary;
 	})(a);
 	return r;
@@ -729,14 +814,238 @@ function rounddown(val)
 		return -Math.floor(-val);
 }
 
+// sの絶対値をnビット右シフトし、sの符号を付けた値を返す
+function rightShiftIgnoreSign(s, n)
+{
+	return s < 0 ? (-((-s) >> n)) : (s >> n);
+}
+
+
 function makeRandomString(){
 	return Math.random().toString(36).slice(2);
 }
 
+/**
+ * requestAnimationFrameまたはsetIntervalを用いたループを行うためのクラスです。
+ * @constructor
+ * @param {Game} game 持ち主のGameオブジェクトです。
+ * @param {boolean} forceSetInterval 必ずsetIntervalを使用するフラグ
+ */
+function Loop(game, forceSetInterval){
+    this.game = game;
+    this.forceSetInterval = forceSetInterval;
+    /**
+     * @member {boolean}
+     * @private
+     * 現在ループが回っているかどうかのフラグ。
+     */
+    this.running = false;
+    /**
+     * @member {number}
+     * @private
+     * 現在のループの間隔（ミリ秒）。
+     */
+    this.interval = null;
+    /**
+     * @member {Function}
+     * @private
+     * ループごとに呼び出されるコールバック関数
+     */
+    this.callback = null;
+    /**
+     * @member {number}
+     * @private
+     * ループに何を使っているかのフラグ。
+     * 0: setInterval
+     * 1: requestAnimationFrame
+     */
+    this.mode = 0;
+    /**
+     * @member {number}
+     * @private
+     * 前のルームが呼び出された時刻。
+     */
+    this.prevTime = null;
+    /**
+     * @member {number}
+     * @private
+     * 現在待機中のsetIntervalやrequestAnimationFrameの返り値。
+     * ループを止めるとき用。
+     */
+    this.timerid = null;
+    this._loop = this._loop.bind(this);
+}
+/**
+ * 指定した間隔（ミリ秒）でループを行います。
+ * @param {number} interval ループの間隔
+ * @param {Function} callback ループで呼び出される関数
+ */
+Loop.prototype.start = function(interval, callback){
+    this.running = true;
+    this.interval = interval;
+    this.callback = callback;
+    
+    var now = timestamp();
+    this.targetTime = now + interval;
+    this.prevTime = now;
 
+    if (window.requestAnimationFrame && !this.forceSetInterval){
+        this.mode = 1;
+    } else {
+        this.mode = 0;
+    }
 
+    if (this.mode === 0){
+        this.timerid = setInterval(this._loop, interval);
+    }
+    this._next();
+};
 
+/**
+ * ループを停止します。
+ */
+Loop.prototype.stop = function(){
+    if (!this.running){
+        return;
+    }
+    this.running = false;
+    if (this.mode === 1){
+        cancelAnimationFrame(this.timerid);
+    } else {
+        clearInterval(this.timerid);
+    }
+}
 
+/**
+ * 次回のループを登録する関数です。
+ * @private
+ */
+Loop.prototype._next = function(){
+    if (this.mode === 1){
+        this.timerid = requestAnimationFrame(this._loop);
+    }
+};
 
+/**
+ * 1回のループを処理する関数です。
+ * @private
+ */
+Loop.prototype._loop = function(){
+    if (!this.running){
+        return;
+    }
+    /**
+     * @constant
+     * requestAnimationFrameのハンドラ内の時間の上限（ミリ秒）
+     */
+    var FRAME_TIME = 2;
+    /**
+     * @constant
+     * 一時停止の判断の閾値（ミリ秒）
+     * memo: game_speedの最大は300
+     */
+    var STOP_LIMIT = 500;
+    /**
+     * @constant
+     * requestIdleCallbackのコールバック呼び出し期限
+     */
+    var IDLE_TIMEOUT = 1000;
 
+    var n = timestamp();
+    if (n - this.prevTime >= STOP_LIMIT) {
+        // 前回のループから閾値以上経過していたら一時停止があったと判断
+        // 経過時間分のループを放棄
+        this.targetTime = n - 1;
+    }
+    // 現在コールバックを呼ぶべき回数
+    var loop_count = Math.ceil((n - this.targetTime) / this.interval);
+    this.targetTime += this.interval * loop_count;
+    while (loop_count > 0){
+        this.callback();
+        loop_count--;
+        // 毎回現在時刻を求め、許容される経過時間を過ぎたら
+        // ループ回数が残っていても中断
+        if (timestamp() - n > FRAME_TIME){
+            break;
+        }
+    }
+    if (loop_count > 0){
+        // 処理が終わりきらなかった場合は残りは後回しにする
+        // requestIdleCallbackにより描画処理後に行われることを期待
+        // （描画処理を優先させてあげないとFPSが落ちるので）
+        var _this = this;
+        idle(function cb(deadline){
+            // console.warn('idle', loop_count, deadline.timeRemaining());
+            while (loop_count > 0 && deadline.timeRemaining() > 0){
+                _this.callback();
+                loop_count--;
+            }
+            if (loop_count > 0 && !deadline.didTimeout){
+                // まだ実行しきれていない場合は次のidleに回す
+                // （didTimeoutがtrueの場合は超高負荷なので諦める）
+                idle(cb, {
+                    timeout: IDLE_TIMEOUT,
+                });
+            }
+        }, {
+            timeout: IDLE_TIMEOUT,
+        });
+    }
+    this._next();
+    this.prevTime = n;
+};
 
+/**
+ * @function timestamp
+ * 現在時刻を返す関数です。
+ * ただしperformance.nowの返す時刻はUNIX時間ではなく
+ * およそページを開いてからの経過時間なので、かならず相対時刻で利用すること。
+ * @returns Number 現在時刻
+ */
+var timestamp =
+    window.performance && performance.now ? performance.now.bind(performance) :
+    Date.now ? Date.now.bind(Date) : function(){
+        return new Date().getTime() * 1000;
+    };
+
+/**
+ * @function idle
+ * 処理を先送りにする関数です。
+ * requestIdleCallbackを想定し、他はshimです。
+ */
+var idle =
+    'function' === typeof requestIdleCallback ? requestIdleCallback :
+    'function' === typeof setImmediate ?
+    function(cb){
+        setImmediate(function(){
+            var n = timestamp();
+            var deadline = {
+                didTimeout: false,
+                timeRemaining: function(){
+                    // 50ms is the maximum value recommended by Google
+                    return 50 + n - timestamp();
+                },
+            };
+            cb(deadline);
+        });
+    } :
+    function(cb){
+        setTimeout(function(){
+            var n = timestamp();
+            var deadline = {
+                didTimeout: false,
+                timeRemaining: function(){
+                    // 50ms is the maximum value recommended by Google
+                    return 50 + n - timestamp();
+                },
+            };
+            cb(deadline);
+        }, 1);
+    };
+
+export {
+	Game,
+	Dimension,
+	createNDimensionArray,
+	rounddown,
+};

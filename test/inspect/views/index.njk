@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Stages</title>
+  </head>
+  <body>
+    <ul>
+      {% for path in paths %}
+        <li>
+          <a href="{{path}}">{{path}}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

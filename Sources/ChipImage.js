@@ -1,4 +1,15 @@
+import { createNDimensionArray } from "./GlobalFunctions";
+import { ImageBuff } from "./ImageBuff";
 
+/**
+ * 1枚の画像から複数のチップ画像を生成するクラス
+ * @param i {number} チップ１枚の横幅
+ * @param j {number} チップ1枚の高さ
+ * @param k {number} チップが横に並ぶ数
+ * @param l {number} チップが縦に並ぶ数
+ * @param bufferedimage {ImageBuff} オリジナルの画像
+ * @constructor
+ */
 function ChipImage(i, j, k, l, bufferedimage)
 {
 	this.chip_width = i;
@@ -82,21 +93,39 @@ function ChipImage(i, j, k, l, bufferedimage)
 		}
 	}
 
+	/**
+	 * 新しいチップ画像を内部的に生成する
+	 * createImageBufferを呼び出したあとに呼ぶ
+	 */
 	this.makeChipImage = function()
 	{
 		makeChipImage.bind(this)(bufferedimage);
 	}
 
+	/**
+	 * それぞれの画像が垂直・水平方向に反転したチップ画像を内部的に生成する
+	 * createImageBufferを呼び出したあとに呼ぶ
+	 */
 	this.makeReverseChipImage = function()
 	{
 		makeReverseChipImage.bind(this)();
 	}
 
+	/**
+	 * 新しいチップ画像を作る ために内部の配列を初期化する
+	 * @param n {number} 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
+	 */
 	this.createImageBuffer = function(n)
 	{
 		createImageBuffer.bind(this)(n);
 	}
 
+	/**
+	 * 単一のチップ画像を取得する
+	 * @param i {number} 取得するチップ画像の番号 (0ベースで、Y座標×X幅+X座標)
+	 * @param j {number} 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
+	 * @returns {ImageBuff | *} チップ画像 範囲指定がおかしければnullが、初期化用のメソッドがまだ呼ばれていないなど内部状態のどこかがおかしければundefinedとかよくわからないものが返る
+	 */
 	this.getChipImage = function(i, j)
 	{
 		if(!j) j = 0;
@@ -107,3 +136,5 @@ function ChipImage(i, j, k, l, bufferedimage)
 	}
 
 }
+
+export { ChipImage };

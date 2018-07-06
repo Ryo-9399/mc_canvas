@@ -30,71 +30,71 @@ function run() {
 	n = Applet1.getHighscore();
 
 	//  ハイスコアを表示する
-	TextGetHighscore.value = n;
+	document.getElementById("TextGetHighscore").value = n;
 
 	//  JavaApplet からモードを取得する
 	n = Applet1.getMode();
 
 	//  戻り値を表示する
-	TextGetMode.value = n;
+	document.getElementById("TextGetMode").value = n;
 
 	//  モードを表示する
 	switch(n) {
 		case 0:
-			TextMode.value = "起動中";
+			document.getElementById("TextMode").value = "起動中";
 			break;
 		case 1:
-			TextMode.value = "タイトル画面";
+			document.getElementById("TextMode").value = "タイトル画面";
 			break;
 		case 101:
-			TextMode.value = "ステージ１";
+			document.getElementById("TextMode").value = "ステージ１";
 			break;
 		case 102:
-			TextMode.value = "ステージ２";
+			document.getElementById("TextMode").value = "ステージ２";
 			break;
 		case 103:
-			TextMode.value = "ステージ３";
+			document.getElementById("TextMode").value = "ステージ３";
 			break;
 		case 104:
-			TextMode.value = "ステージ４";
+			document.getElementById("TextMode").value = "ステージ４";
 			break;
 		case 150:
-			TextMode.value = "ボス";
+			document.getElementById("TextMode").value = "ボス";
 			break;
 		case 200:
-			TextMode.value = "ゲームオーバー";
+			document.getElementById("TextMode").value = "ゲームオーバー";
 			break;
 		case 300:
-			TextMode.value = "エンディング";
+			document.getElementById("TextMode").value = "エンディング";
 			break;
 		case 400:
-			TextMode.value = "地図画面";
+			document.getElementById("TextMode").value = "地図画面";
 			break;
 	}
 
 	//  getMyX()
-	TextGetMyX.value = Applet1.getMyX();
+	document.getElementById("TextGetMyX").value = Applet1.getMyX();
 
 	//  getMyY()
-	TextGetMyY.value = Applet1.getMyY();
+	document.getElementById("TextGetMyY").value = Applet1.getMyY();
 
 	//  getMapchip()
-	TextGetMapchip.value = Applet1.getMapchip(3,25);
+	document.getElementById("TextGetMapchip").value = Applet1.getMapchip(3,25);
 
 	//  getMapchip2()
-	TextGetMapchip2.value = Applet1.getMapchip2(4,25);
+	document.getElementById("TextGetMapchip2").value = Applet1.getMapchip2(4,25);
 
 	//  getKeyCode()
-	TextGetKeyCode.value = Applet1.getKeyCode();
+	document.getElementById("TextGetKeyCode").value = Applet1.getKeyCode();
 
 	//  getViewX()
-	TextGetViewX.value = Applet1.getViewX();
+	document.getElementById("TextGetViewX").value = Applet1.getViewX();
 
 	//  getViewY()
-	TextGetViewY.value = Applet1.getViewY();
+	document.getElementById("TextGetViewY").value = Applet1.getViewY();
 
 	//  getScore()
-	TextGetScore.value = Applet1.getScore();
+	document.getElementById("TextGetScore").value = Applet1.getScore();
 }
 
 </script>
@@ -104,17 +104,17 @@ function run() {
 
 <dl>
 <dt>int getHighscore()</dt>
-<dd>ハイスコアを取得。<input name="TextGetHighscore" type="text" size="10"></dd>
+<dd>ハイスコアを取得。<input id="TextGetHighscore" type="text" size="10"></dd>
 <dt>int getMode()</dt>
-<dd>モードを取得。戻り値 <input name="TextGetMode" type="text" size="10"> モード <input name="TextMode" type="text" size="18"></dd>
+<dd>モードを取得。戻り値 <input id="TextGetMode" type="text" size="10"> モード <input id="TextMode" type="text" size="18"></dd>
 <dt>offSound()</dt>
 <dd>効果音を消す。<input type="button" value="offSound()" onClick="Applet1.offSound()"></dd>
 <dt>onSound()</dt>
 <dd>効果音を出す。<input type="button" value="onSound()" onClick="Applet1.onSound()"></dd>
 <dt>int getMyX()</dt>
-<dd>主人公のＸ座標を取得(0-179)。<input name="TextGetMyX" type="text" size="10"></dd>
+<dd>主人公のＸ座標を取得(0-179)。<input id="TextGetMyX" type="text" size="10"></dd>
 <dt>int getMyY()</dt>
-<dd>主人公のＹ座標を取得(0-29)。<input name="TextGetMyY" type="text" size="10"></dd>
+<dd>主人公のＹ座標を取得(0-29)。<input id="TextGetMyY" type="text" size="10"></dd>
 <dt>setMyPosition(Ｘ座標(0-179),Ｙ座標(0-29))</dt>
 <dd>主人公の座標をセット。<input type="button" value="setMyPosition(1,25)" onClick="Applet1.setMyPosition(1,25)"></dd>
 <dt>showMessage(表示する時間,名前,１行目,２行目,３行目)</dt>
@@ -801,7 +801,7 @@ function run() {
 <input type="button" value="pressTrigger1()" onClick="Applet1.pressTrigger1()">
 <input type="button" value="releaseTrigger1()" onClick="Applet1.releaseTrigger1()">
 <input type="button" value="releaseAll()" onClick="Applet1.releaseAll()">
- int getKeyCode() <input name="TextGetKeyCode" type="text" size="10">
+ int getKeyCode() <input id="TextGetKeyCode" type="text" size="10">
 <input type="button" value="resetKeyCode()" onClick="Applet1.resetKeyCode()">
 </p>
 
@@ -818,19 +818,19 @@ function run() {
 <dt>setMapchip(Ｘ座標(0-179),Ｙ座標(0-29),コード(0-249))</dt>
 <dd>標準レイヤーにマップチップをセット。<input type="button" value="setMapchip(3,25,20)" onClick="Applet1.setMapchip(3,25,20)"></dd>
 <dt>int getMapchip(Ｘ座標(0-179),Ｙ座標(0-29))</dt>
-<dd>標準レイヤーからマップチップコードを取得。 getMapchip(3,25) <input name="TextGetMapchip" type="text" size="10"></dd>
+<dd>標準レイヤーからマップチップコードを取得。 getMapchip(3,25) <input id="TextGetMapchip" type="text" size="10"></dd>
 <dt>setMapchip2(Ｘ座標(0-179),Ｙ座標(0-29),コード(0-255))</dt>
 <dd>背景レイヤーにマップチップをセット。<input type="button" value="setMapchip2(4,25,20)" onClick="Applet1.setMapchip2(4,25,20)"></dd>
 <dt>int getMapchip2(Ｘ座標(0-179),Ｙ座標(0-29))</dt>
-<dd>背景レイヤーからマップチップコードを取得。 getMapchip2(4,25) <input name="TextGetMapchip2" type="text" size="10"></dd>
+<dd>背景レイヤーからマップチップコードを取得。 getMapchip2(4,25) <input id="TextGetMapchip2" type="text" size="10"></dd>
 <dt>setBackImage(ファイル名)</dt>
 <dd>背景画像をセット。<input type="button" value='setBackImage("title.gif")' onClick='Applet1.setBackImage("title.gif")'></dd>
 </dl>
 
 <p>
-int getViewX() <input name="TextGetViewX" type="text" size="10">
- int getViewY() <input name="TextGetViewY" type="text" size="10">
- int getScore() <input name="TextGetScore" type="text" size="10">
+int getViewX() <input id="TextGetViewX" type="text" size="10">
+ int getViewY() <input id="TextGetViewY" type="text" size="10">
+ int getScore() <input id="TextGetScore" type="text" size="10">
 </p>
 
 <hr>
@@ -841,8 +841,8 @@ int getViewX() <input name="TextGetViewX" type="text" size="10">
 <input type="button" value='setParamValue("map0-29","fffffffffffffff")' onClick='Applet1.setParamValue("map0-29","fffffffffffffff")'></dd>
 <dt>String getParamValue(param タグの name 属性)</dt>
 <dd>戻り値は param タグの value 属性。
-<input type="button" value='getParamValue("filename_pattern")' onClick='TextGetParamValue.value = Applet1.getParamValue("filename_pattern")'>
-<input name="TextGetParamValue" type="text" size="18"></dd>
+<input type="button" value='getParamValue("filename_pattern")' onClick='document.getElementById("TextGetParamValue").value = Applet1.getParamValue("filename_pattern")'>
+<input id="TextGetParamValue" type="text" size="18"></dd>
 <dt>restart()</dt>
 <dd>setParamValue は、一部が有効にならないので、再起動して有効にします。<input type="button" value="restart()" onClick="Applet1.restart()"></dd>
 <dt>setHTMLText(ＨＴＭＬテキスト)</dt>

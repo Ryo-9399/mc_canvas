@@ -1,3 +1,5 @@
+import { Dimension, createNDimensionArray, waitFor } from "./GlobalFunctions";
+import { Color, ImageBuff } from "./ImageBuff";
 
 function GameGraphicsForApplet(paramTagDataBase, paramApplet)
 {
@@ -64,7 +66,7 @@ function GameGraphicsForApplet(paramTagDataBase, paramApplet)
 GameGraphicsForApplet.prototype.cut = function()
 {
 	// ■■■32x32にカットする処理
-	var i, j, i2, i1, n, m, localG;
+	var i, j, n, m, localG;
 	for (n = 0; n <= this.spt_kazu_y - 1; n++) {
 		for (m = 0; m <= this.spt_kazu_x - 1; m++)
 		{
@@ -130,9 +132,6 @@ GameGraphicsForApplet.prototype.cut = function()
 	// ■■■32x32にカットする処理(mapchip)
 	if (this.layer_mode == 2)
 	{
-		var arrayOfInt2 = new Array(262144);
-
-
 		for (n = 0; n <= 15; n++) {
 			for (m = 0; m <= 15; m++)
 			{
@@ -157,7 +156,7 @@ GameGraphicsForApplet.prototype.setPatternImage = function(paramString)
 		return;
 
 	// ■■■32x32にカットする処理
-	var i, j, i2, i1, n, m, localG;
+	var j, n, m, localG;
 	for (n = 0; n <= this.spt_kazu_y - 1; n++) {
 		for (m = 0; m <= this.spt_kazu_x - 1; m++)
 		{
@@ -193,9 +192,6 @@ GameGraphicsForApplet.prototype.setMapchipImage = function(paramString)
 	// ■■■32x32にカットする処理(mapchip)
 	if (this.layer_mode == 2)
 	{
-		var arrayOfInt2 = new Array(262144);
-
-
 		for (n = 0; n <= 15; n++) {
 			for (m = 0; m <= 15; m++)
 			{
@@ -342,4 +338,4 @@ GameGraphicsForApplet.prototype.drawListImage = function(paramInt1, paramInt2, p
 
 
 
-
+export { GameGraphicsForApplet };

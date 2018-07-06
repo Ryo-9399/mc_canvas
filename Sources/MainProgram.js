@@ -1,6 +1,26 @@
+import { CharacterObject } from "./CharacterObject";
+import { createNDimensionArray, rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { IdouGamen } from "./IdouGamen";
+import { Color, Font, ImageBuff } from "./ImageBuff";
+import { KeyboardMenu } from "./KeyboardMenu";
+import { MapSystem } from "./MapSystem";
+import { YukaObject } from "./YukaObject";
 
+/**
+ * ゲーム本体
+ * @param gamegraphics {GameGraphicsForApplet}
+ * @param gamemouse {GameMouse}
+ * @param gamekey {GameKey}
+ * @param gamesound {GameSoundForApplet}
+ * @param tagdatabase {TagDataBase}
+ * @constructor
+ */
 function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 {
+	// マップの幅と高さ（ブロック単位）。将来はここを変数にする。
+	this.mapWidth = 180;
+	this.mapHeight = 30;
+
 	this.ran = undefined;
     this.ran_seed = undefined;
 	this.gamecolor_back = undefined;
@@ -38,10 +58,8 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.showi_y = undefined;
 	this.time = undefined;
 	this.time_max = undefined;
-	this.t_kazu = undefined;
 	this.m_kazu = undefined;
 	this.jm_kazu = undefined;
-	this.a_kazu = undefined;
 	this.a_hf = undefined;
 	this.j_fire_f = undefined;
 	this.j_v_c = undefined;
@@ -139,16 +157,16 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.left_dcc = 0;
 	this.right_dcc = 0;
 	this.xkey_c = 0;
-	this.map_data_option = createNDimensionArray(200, 100);
-	this.co_t = new Array(230);
+	this.map_data_option = createNDimensionArray(this.mapWidth + 20, this.mapHeight + 70);
+	this.co_t = [];
 	this.co_m = new Array(80);
-	this.co_a = new Array(120);
+	this.co_a = [];
 	this.co_h = new Array(80);
 	this.co_jm = new Array(9);
 	this.co_mu = new Array(2);
-	this.yo = new Array(128);
-	this.vo_x = createNDimensionArray(120, 4);
-	this.vo_y = createNDimensionArray(120, 4);
+	this.yo = [];
+	this.vo_x = [];
+	this.vo_y = [];
 	this.ana_c = new Array(12);
 	this.ana_x = new Array(12);
 	this.ana_y = new Array(12);
@@ -237,7 +255,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.mhouse_c = 0;
 	this.mhouse_x = 0;
 	this.mhouse_y = 0;
-	this.yuka_id_max = -1;
 	this.yuka_ride_id = -1;
 	this.dso_cf = false;
 	this.spot_c = 0;
@@ -294,17 +311,12 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.tdb = tagdatabase;
 	this.spot_img = new ImageBuff(512, 320);
 	this.spot_g = this.spot_img.createGraphics();
-	this.maps = new MapSystem(200, 100, this.gg, this);
+	this.maps = new MapSystem(this.mapWidth + 20, this.mapHeight + 70, this.gg, this);
 	this.km = new KeyboardMenu(this.gg, this.gk, "\u307E\u3055\u304A");
 	this.co_j = new CharacterObject();
-	for(var i = 0; i <= 229; i++)
-		this.co_t[i] = new CharacterObject();
 
 	for(var j = 0; j <= 79; j++)
 		this.co_m[j] = new CharacterObject();
-
-	for(var k = 0; k <= 119; k++)
-		this.co_a[k] = new CharacterObject();
 
 	for(var l = 0; l <= 79; l++)
 		this.co_h[l] = new CharacterObject();
@@ -315,9 +327,6 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.co_b = new CharacterObject();
 	for(var j1 = 0; j1 <= 1; j1++)
 		this.co_mu[j1] = new CharacterObject();
-
-	for(var k1 = 0; k1 <= 127; k1++)
-		this.yo[k1] = new YukaObject();
 
 	var l1 = this.tdb.getValueInt("stage_select");
 	if(l1 == 2)
@@ -337,15 +346,62 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase)
 	this.init1();
 }
 
+MainProgram.prototype = {
+	/**
+	 * 敵の最大インデックス(敵の総数-1)を取得
+	 * @returns {number}
+	 */
+	get t_kazu() {
+		if (this.co_t) {
+			return this.co_t.length - 1;
+		}
+		else {
+			return -1;
+		}
+	},
+	/**
+	 * 仕掛けの最大インデックス(仕掛けの総数-1)を取得
+	 * @returns {number}
+	 */
+	get a_kazu() {
+		if (this.co_a) {
+			return this.co_a.length - 1;
+		}
+		else {
+			return -1;
+		}
+	},
+	/**
+	 * 床オブジェクトの最大インデックス(床オブジェクトの総数-1)を取得
+	 * @returns {number}
+	 */
+	get yuka_id_max() {
+		if (this.yo) {
+			return this.yo.length - 1;
+		}
+		else {
+			return -1;
+		}
+	}
+};
+
+/**
+ * ハイスコアイベントのコールバックを登録します
+ * 複数回呼び出すと以前のイベントは置き換えられます
+ * @param highscoreeventhandler {Function} ハイスコア更新時に呼び出されるコールバック関数 第一引数にハイスコアの得点が渡される
+ * @returns {boolean} 常にtrue
+ */
 MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler)
 {
 	this.heh = highscoreeventhandler;
 	return true;
 }
 
+/**
+ * ハイスコアイベントのコールバックが登録されていれば、最高得点を引数としてハイスコアイベントを発火させます
+ */
 MainProgram.prototype.sendHighscore = function()
 {
-	var flag = false;
 	if(Object.prototype.toString.call(this.heh) == "[object Function]")
 	{
 		var i = this.highscore;
@@ -355,173 +411,182 @@ MainProgram.prototype.sendHighscore = function()
 	}
 }
 
+/**
+ * ゲームを開始させます
+ */
 MainProgram.prototype.start = function()
 {
 	this.ml_mode = 50;
 }
 
+/**
+ * 主人公の特技を追加します
+ * @param i {number} 特技の種類(1から30まで)
+ * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+ * @see {@link MasaoJSS#addMyTokugi}
+ */
 MainProgram.prototype.addMyTokugi = function(i)
 {
 	var flag = false;
 	switch(i)
 	{
-	case 1: // '\001'
+	case 1:
 		this.j_helm_f = true;
 		flag = true;
 		break;
 
-	case 2: // '\002'
+	case 2:
 		this.j_drell_f = true;
 		flag = true;
 		break;
 
-	case 3: // '\003'
+	case 3:
 		this.jst_slow_down = 1;
 		flag = true;
 		break;
 
-	case 4: // '\004'
+	case 4:
 		this.jst_key_down = 1;
 		flag = true;
 		break;
 
-	case 5: // '\005'
+	case 5:
 		this.jst_fast_run_attack = 1;
 		flag = true;
 		break;
 
-	case 6: // '\006'
+	case 6:
 		this.jst_fly_left_right = 1;
 		flag = true;
 		break;
 
-	case 7: // '\007'
+	case 7:
 		this.jst_fast_run = 1;
 		flag = true;
 		break;
 
-	case 8: // '\b'
+	case 8:
 		this.jst_fast_run = 2;
 		flag = true;
 		break;
 
-	case 9: // '\t'
+	case 9:
 		this.jst_double_jump = 1;
 		flag = true;
 		break;
 
-	case 10: // '\n'
+	case 10:
 		this.jst_kabe_kick = 1;
 		flag = true;
 		break;
 
-	case 11: // '\013'
+	case 11:
 		this.jst_kabe_kick = 2;
 		flag = true;
 		break;
 
-	case 12: // '\f'
+	case 12:
 		this.jst_fire_xkey_only = 1;
 		flag = true;
 		break;
 
-	case 13: // '\r'
+	case 13:
 		this.jst_jump_level_fix = 1;
 		flag = true;
 		break;
 
-	case 14: // '\016'
+	case 14:
 		this.jst_jump_level_fix = 2;
 		flag = true;
 		break;
 
-	case 15: // '\017'
+	case 15:
 		this.jst_jump_level_fix = 3;
 		flag = true;
 		break;
 
-	case 16: // '\020'
+	case 16:
 		this.jst_jump_level_fix = 4;
 		flag = true;
 		break;
 
-	case 17: // '\021'
+	case 17:
 		this.j_tail_type = 1;
 		this.j_tail_f = true;
 		flag = true;
 		break;
 
-	case 18: // '\022'
+	case 18:
 		this.j_tail_type = 2;
 		this.j_tail_f = true;
 		flag = true;
 		break;
 
-	case 19: // '\023'
+	case 19:
 		this.j_tail_type = 3;
 		this.j_tail_f = true;
 		flag = true;
 		break;
 
-	case 20: // '\024'
+	case 20:
 		this.j_fire_type = 1;
 		this.j_fire_f = true;
 		flag = true;
 		break;
 
-	case 21: // '\025'
+	case 21:
 		this.j_fire_type = 2;
 		this.j_fire_range = 9999;
 		this.j_fire_f = true;
 		flag = true;
 		break;
 
-	case 22: // '\026'
+	case 22:
 		this.j_fire_type = 4;
 		this.j_fire_range = 10;
 		this.j_fire_f = true;
 		flag = true;
 		break;
 
-	case 23: // '\027'
+	case 23:
 		this.j_fire_type = 3;
 		this.j_fire_range = 10;
 		this.j_fire_f = true;
 		flag = true;
 		break;
 
-	case 24: // '\030'
+	case 24:
 		this.j_fire_type = 5;
 		this.j_fire_f = true;
 		flag = true;
 		break;
 
-	case 25: // '\031'
+	case 25:
 		this.jst_syouryuuken = 1;
 		flag = true;
 		break;
 
-	case 26: // '\032'
+	case 26:
 		this.jst_pc_attack = 1;
 		flag = true;
 		break;
 
-	case 27: // '\033'
+	case 27:
 		this.jst_pc_attack = 2;
 		flag = true;
 		break;
 
-	case 28: // '\034'
+	case 28:
 		this.jst_syouryuuken = 2;
 		flag = true;
 		break;
 
-	case 29: // '\035'
+	case 29:
 		this.jst_key_down = 2;
 		flag = true;
 		break;
 
-	case 30: // '\036'
+	case 30:
 		this.j_helm_f = true;
 		flag = true;
 		break;
@@ -529,168 +594,174 @@ MainProgram.prototype.addMyTokugi = function(i)
 	return flag;
 }
 
+/**
+ * 主人公の特技を取り除きます
+ * @param i {number} 特技の種類(1から30まで)
+ * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+ * @see {@link MasaoJSS#removeMyTokugi}
+ */
 MainProgram.prototype.removeMyTokugi = function(i)
 {
 	var flag = false;
 	switch(i)
 	{
-	case 1: // '\001'
+	case 1:
 		this.j_helm_f = false;
 		flag = true;
 		break;
 
-	case 2: // '\002'
+	case 2:
 		this.j_drell_f = false;
 		flag = true;
 		break;
 
-	case 3: // '\003'
+	case 3:
 		this.jst_slow_down = 0;
 		flag = true;
 		break;
 
-	case 4: // '\004'
+	case 4:
 		this.jst_key_down = 0;
 		flag = true;
 		break;
 
-	case 5: // '\005'
+	case 5:
 		this.jst_fast_run_attack = 0;
 		flag = true;
 		break;
 
-	case 6: // '\006'
+	case 6:
 		this.jst_fly_left_right = 0;
 		flag = true;
 		break;
 
-	case 7: // '\007'
+	case 7:
 		this.jst_fast_run = 0;
 		flag = true;
 		break;
 
-	case 8: // '\b'
+	case 8:
 		this.jst_fast_run = 0;
 		flag = true;
 		break;
 
-	case 9: // '\t'
+	case 9:
 		this.jst_double_jump = 0;
 		flag = true;
 		break;
 
-	case 10: // '\n'
+	case 10:
 		this.jst_kabe_kick = 0;
 		flag = true;
 		break;
 
-	case 11: // '\013'
+	case 11:
 		this.jst_kabe_kick = 0;
 		flag = true;
 		break;
 
-	case 12: // '\f'
+	case 12:
 		this.jst_fire_xkey_only = 0;
 		flag = true;
 		break;
 
-	case 13: // '\r'
+	case 13:
 		this.jst_jump_level_fix = 0;
 		flag = true;
 		break;
 
-	case 14: // '\016'
+	case 14:
 		this.jst_jump_level_fix = 0;
 		flag = true;
 		break;
 
-	case 15: // '\017'
+	case 15:
 		this.jst_jump_level_fix = 0;
 		flag = true;
 		break;
 
-	case 16: // '\020'
+	case 16:
 		this.jst_jump_level_fix = 0;
 		flag = true;
 		break;
 
-	case 17: // '\021'
+	case 17:
 		this.j_tail_type = 1;
 		this.j_tail_f = false;
 		flag = true;
 		break;
 
-	case 18: // '\022'
+	case 18:
 		this.j_tail_type = 2;
 		this.j_tail_f = false;
 		flag = true;
 		break;
 
-	case 19: // '\023'
+	case 19:
 		this.j_tail_type = 3;
 		this.j_tail_f = false;
 		flag = true;
 		break;
 
-	case 20: // '\024'
+	case 20:
 		this.j_fire_type = 1;
 		this.j_fire_f = false;
 		flag = true;
 		break;
 
-	case 21: // '\025'
+	case 21:
 		this.j_fire_type = 2;
 		this.j_fire_range = 9999;
 		this.j_fire_f = false;
 		flag = true;
 		break;
 
-	case 22: // '\026'
+	case 22:
 		this.j_fire_type = 4;
 		this.j_fire_range = 10;
 		this.j_fire_f = false;
 		flag = true;
 		break;
 
-	case 23: // '\027'
+	case 23:
 		this.j_fire_type = 3;
 		this.j_fire_range = 10;
 		this.j_fire_f = false;
 		flag = true;
 		break;
 
-	case 24: // '\030'
+	case 24:
 		this.j_fire_type = 5;
 		this.j_fire_f = false;
 		flag = true;
 		break;
 
-	case 25: // '\031'
+	case 25:
 		this.jst_syouryuuken = 0;
 		flag = true;
 		break;
 
-	case 26: // '\032'
+	case 26:
 		this.jst_pc_attack = 0;
 		flag = true;
 		break;
 
-	case 27: // '\033'
+	case 27:
 		this.jst_pc_attack = 0;
 		flag = true;
 		break;
 
-	case 28: // '\034'
+	case 28:
 		this.jst_syouryuuken = 0;
 		flag = true;
 		break;
 
-	case 29: // '\035'
+	case 29:
 		this.jst_key_down = 0;
 		flag = true;
 		break;
 
-	case 30: // '\036'
+	case 30:
 		this.j_helm_f = false;
 		flag = true;
 		break;
@@ -698,11 +769,15 @@ MainProgram.prototype.removeMyTokugi = function(i)
 	return flag;
 }
 
+/**
+ * 8フレーム周期のゲームカウンターを一つ進めます(？)
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.moveGameCounter = function()
 {
 	switch(this.g_c3)
 	{
-	case 0: // '\0'
+	case 0:
 		this.g_c3 = 1;
 		this.g_c1 = 1;
 		this.g_c2 = 1;
@@ -710,7 +785,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 0;
 		break;
 
-	case 1: // '\001'
+	case 1:
 		this.g_c3 = 2;
 		this.g_c1 = 0;
 		this.g_c2 = 2;
@@ -718,7 +793,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 1;
 		break;
 
-	case 2: // '\002'
+	case 2:
 		this.g_c3 = 3;
 		this.g_c1 = 1;
 		this.g_c2 = 3;
@@ -726,7 +801,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 1;
 		break;
 
-	case 3: // '\003'
+	case 3:
 		this.g_c3 = 4;
 		this.g_c1 = 0;
 		this.g_c2 = 0;
@@ -734,7 +809,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 2;
 		break;
 
-	case 4: // '\004'
+	case 4:
 		this.g_c3 = 5;
 		this.g_c1 = 1;
 		this.g_c2 = 1;
@@ -742,7 +817,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 2;
 		break;
 
-	case 5: // '\005'
+	case 5:
 		this.g_c3 = 6;
 		this.g_c1 = 0;
 		this.g_c2 = 2;
@@ -750,7 +825,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 3;
 		break;
 
-	case 6: // '\006'
+	case 6:
 		this.g_c3 = 7;
 		this.g_c1 = 1;
 		this.g_c2 = 3;
@@ -758,7 +833,7 @@ MainProgram.prototype.moveGameCounter = function()
 		this.g_ac2 = 3;
 		break;
 
-	case 7: // '\007'
+	case 7:
 		this.g_c3 = 0;
 		this.g_c1 = 0;
 		this.g_c2 = 0;
@@ -768,6 +843,15 @@ MainProgram.prototype.moveGameCounter = function()
 	}
 }
 
+/**
+ * 一言メッセージを設定します
+ * @param {number} time 表示時間（フレーム数）
+ * @param {string} name 名前
+ * @param {string} line1 メッセージ（1行目）
+ * @param {string} line2 メッセージ（2行目）
+ * @param {string} line3 メッセージ（3行目）
+ * @see {@link MasaoJSS#showMessage}
+ */
 MainProgram.prototype.showmSet = function(s, s1, s2, s3, s4)
 {
 	if(this.ml_mode != 100)
@@ -788,6 +872,10 @@ MainProgram.prototype.showmSet = function(s, s1, s2, s3, s4)
 	}
 }
 
+/**
+ * 謎(showmSetで設定された一言メッセージを実際に表示させる？)
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.showmMove = function()
 {
 	if(this.showm_c > 0)
@@ -798,6 +886,17 @@ MainProgram.prototype.showmMove = function()
 	}
 }
 
+/**
+ * マップ上に表示する画像を設定します
+ * 座標はマップ上ではなくスクリーン上の位置で指定し、
+ * 同時に設定できる画像は1つのみです
+ * @param {number} time 表示時間（フレーム数）
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {ImageBuff} buf 表示する画像
+ * @returns {boolean} 設定に成功するとtrueを返す
+ * @see {@link MasaoJSS#showImage}
+ */
 MainProgram.prototype.showiSet = function(s, s1, s2, s3)
 {
 	if(this.ml_mode != 100)
@@ -817,6 +916,12 @@ MainProgram.prototype.showiSet = function(s, s1, s2, s3)
 	}
 }
 
+/**
+ * 背景画像を設定します
+ * @param {string} filename 画像のファイル名
+ * @returns {boolean}
+ * @see {@link MasaoJSS#setBackImage}
+ */
 MainProgram.prototype.setbacki = function(s)
 {
 	if(this.ml_mode != 100)
@@ -832,6 +937,16 @@ MainProgram.prototype.setbacki = function(s)
 	}
 }
 
+/**
+ * 主人公を一定時間停止させます。
+ * 停止している間の主人公の画像（パターンコード）と向きを指定できます。
+ *
+ * @param {number} time 停止する時間（フレーム数）
+ * @param {number} pattern 停止している間のパターンコード
+ * @param {number} direction 向き（0なら左、1なら右）
+ * @returns {boolean} 主人公を停止状態にできたかどうか
+ * @see {@link MasaoJSS#setMyWait}
+ */
 MainProgram.prototype.setMyWait = function(s, s1, s2)
 {
 	var i = -1;
@@ -865,6 +980,12 @@ MainProgram.prototype.setMyWait = function(s, s1, s2)
 	return true;
 }
 
+/**
+ * ボスのHPを取得します。
+ *
+ * @returns {number} ボスのHP
+ * @see {@link MasaoJSS#getBossHP}
+ */
 MainProgram.prototype.getBossHP = function()
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -875,6 +996,13 @@ MainProgram.prototype.getBossHP = function()
 		return this.co_b.c4;
 }
 
+/**
+ * ボスのHPを設定します。
+ *
+ * @param {number} hp 新しいHP
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setBossHP}
+ */
 MainProgram.prototype.setBossHP = function(i)
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -934,6 +1062,13 @@ MainProgram.prototype.setBossHP = function(i)
 	return true;
 }
 
+/**
+ * ボスの向きを取得します。
+ * 0が左向きで1が右向きです。
+ *
+ * @return {number} ボスの向き
+ * @see {@link MasaoJSS#getBossDirection}
+ */
 MainProgram.prototype.getBossDirection = function()
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -941,6 +1076,13 @@ MainProgram.prototype.getBossDirection = function()
 	return this.co_b.pth != 1 ? 0 : 1;
 }
 
+/**
+ * ボスが攻撃中かどうかを取得します。
+ * 攻撃中の場合1、そうでない場合は0となります。
+ *
+ * @returns {number}
+ * @see {@link MasaoJSS#isBossAttackMode}
+ */
 MainProgram.prototype.isBossAttackMode = function()
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -948,6 +1090,12 @@ MainProgram.prototype.isBossAttackMode = function()
 	return !this.boss_attack_mode ? 0 : 1;
 }
 
+/**
+ * ボスのX座標を設定します。
+ *
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setBossXReal}
+ */
 MainProgram.prototype.setBossXReal = function(i)
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -962,6 +1110,12 @@ MainProgram.prototype.setBossXReal = function(i)
 	}
 }
 
+/**
+ * ボスのY座標を設定します。
+ *
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setBossYReal}
+ */
 MainProgram.prototype.setBossYReal = function(i)
 {
 	if(this.ml_mode < 100 || this.ml_mode >= 200)
@@ -976,6 +1130,10 @@ MainProgram.prototype.setBossYReal = function(i)
 	}
 }
 
+/**
+ * ステージクリアします。
+ * @see {@link MasaoJSS#setStageClear}
+ */
 MainProgram.prototype.setStageClear = function()
 {
 	if(this.ml_mode != 100)
@@ -991,6 +1149,20 @@ MainProgram.prototype.setStageClear = function()
 	}
 }
 
+/**
+ * ゲームで使用されている画像を変更します。画像は数値で指定します。
+ *
+ * * 0: タイトル画像
+ * * 1: エンディング画像
+ * * 2: ゲームクリア画像
+ * * 3: ？ TODO: 要調査
+ * * 8: パターン画像
+ * * 9: 背景マップチップ画像
+ *
+ * @param {number} type 画像の種類
+ * @param {string} filename ファイル名
+ * @see {@link MasaoJSS#setSystemImage}
+ */
 MainProgram.prototype.setSystemImage = function(s, s1)
 {
 	var i;
@@ -1017,12 +1189,23 @@ MainProgram.prototype.setSystemImage = function(s, s1)
 	return true;
 }
 
+/**
+ * スクロール可能な範囲をブロック単位で設定します。
+ * 引数は全て画面の左上の位置で指定します。
+ * マップの左上が(0, 0)です。
+ *
+ * @param {number} x1 範囲左上の座標
+ * @param {number} y1 範囲左上の座標
+ * @param {number} x2 範囲右下の座標
+ * @param {number} y2 範囲右下の座標
+ * @see {@link MasaoJSS#setScrollArea}
+ */
 MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 {
 	var i = 0;
 	var j = 0;
-	var k = 164;
-	var l = 20;
+	var k = this.mapWidth - 16;
+	var l = this.mapHeight - 10;
 	if(this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96)
 		return false;
 
@@ -1032,13 +1215,13 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 	l = parseInt(s3);
 	if(isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l))
 		i = -1;
-	if(i < 0 || i > 164)
+	if(i < 0 || i > this.mapWidth - 16)
 		return false;
-	if(k < 0 || k > 164)
+	if(k < 0 || k > this.mapWidth - 16)
 		return false;
-	if(j < 0 || j > 20)
+	if(j < 0 || j > this.mapHeight - 10)
 		return false;
-	if(l < 0 || l > 20)
+	if(l < 0 || l > this.mapHeight - 10)
 		return false;
 	if(i > k)
 	{
@@ -1059,12 +1242,23 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3)
 	return true;
 }
 
+/**
+ * スクロール可能な領域をピクセル単位で設定します。
+ * 引数は全て画面の左上の位置で指定します。
+ * マップの左上が(32, 320)です。
+ *
+ * @param {number} x1 範囲左上の座標
+ * @param {number} y1 範囲左上の座標
+ * @param {number} x2 範囲右下の座標
+ * @param {number} y2 範囲右下の座標
+ * @see {@link MasaoJSS#setScrollAreaReal}
+ */
 MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 {
 	var i = 0;
 	var j = 0;
-	var k = 164;
-	var l = 20;
+	var k = this.mapWidth - 16;
+	var l = this.mapHeight - 10;
 	if(this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96)
 		return false;
 
@@ -1074,13 +1268,13 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 	l = parseInt(s3);
 	if(isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l))
 		i = -1;
-	if(i < 32 || i > 5280)
+	if(i < 32 || i > (this.mapWidth - 15) * 32)
 		return false;
-	if(k < 32 || k > 5280)
+	if(k < 32 || k > (this.mapWidth - 15) * 32)
 		return false;
-	if(j < 320 || j > 960)
+	if(j < 320 || j > this.mapHeight * 32)
 		return false;
-	if(l < 320 || l > 960)
+	if(l < 320 || l > this.mapHeight * 32)
 		return false;
 	if(i > k)
 	{
@@ -1101,6 +1295,16 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3)
 	return true;
 }
 
+/**
+ * ゲームの各タイミングにおける時間を設定します。タイミングは数値で指定します。
+ * * 0: エンディング画像の表示時間
+ * * 1: ゲームオーバー画像の表示時間
+ * * 2: ステージ開始時のステージ番号表示時間
+ *
+ * @param {number} type タイミング
+ * @param {number} time 時間（フレーム）
+ * @see {@link MasaoJSS#setModeWait}
+ */
 MainProgram.prototype.setModeWait = function(s, s1)
 {
 	var i = 0;
@@ -1125,6 +1329,18 @@ MainProgram.prototype.setModeWait = function(s, s1)
 	return true;
 }
 
+/**
+ * {@link MainProgram#showrSet}及び{@link MainProgram#showoSet}で表示される図形の色を指定します。各値は0から255までの整数で指定します。
+ *
+ * @param {number} r R成分
+ * @param {number} g G成分
+ * @param {number} b B成分
+ * @param {number} [alpha=255] 不透明度
+ *
+ * @see {@link MasaoJSS#setPenColor}
+ * @see {@link MainProgram#showrSet}
+ * @see {@link MainProgram#showoSet}
+ */
 MainProgram.prototype.setPenColor = function(s, s1, s2, s3)
 {
 	var i = 255;
@@ -1148,6 +1364,17 @@ MainProgram.prototype.setPenColor = function(s, s1, s2, s3)
 	}
 }
 
+/**
+ * 一定時間表示する矩形を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
+ * 同時に設定できる矩形は1つのみです。
+ *
+ * @param {number} time 表示時間（フレーム数）
+ * @param {number} x 矩形の左端のX座標
+ * @param {number} y 矩形の上端のY座標
+ * @param {number} width 矩形の幅
+ * @param {number} height 矩形の高さ
+ * @see {@link MasaoJSS#showRect}
+ */
 MainProgram.prototype.showrSet = function(s, s1, s2, s3, s4)
 {
 	if(this.ml_mode != 100)
@@ -1163,6 +1390,17 @@ MainProgram.prototype.showrSet = function(s, s1, s2, s3, s4)
 	return this.showr_c > 0;
 }
 
+/**
+ * 一定時間表示する楕円を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
+ * 同時に設定できる楕円は1つのみです。
+ *
+ * @param {number} time 表示時間（フレーム数）
+ * @param {number} x 楕円の左端のX座標
+ * @param {number} y 楕円の上端のY座標
+ * @param {number} width 楕円の幅
+ * @param {number} height 楕円の高さ
+ * @see {@link MasaoJSS#showOval}
+ */
 MainProgram.prototype.showoSet = function(s, s1, s2, s3, s4)
 {
 	if(this.ml_mode != 100)
@@ -1178,11 +1416,27 @@ MainProgram.prototype.showoSet = function(s, s1, s2, s3, s4)
 	return this.showr_c > 0;
 }
 
+/**
+ * JavaScript用メッセージを取得します。
+ * メッセージはゲーム開始時1になります。
+ *
+ * @returns {number} メッセージ
+ * @see {@link MasaoJSS#getJSMes}
+ */
 MainProgram.prototype.getJSMes = function()
 {
 	return this.js_mes;
 }
 
+/**
+ * ゲージを表示します。
+ * showGaugeで表示できるゲージは1つだけで、ボスのHPゲージと共有です。
+ * ゲージの値は最小が0、最大が200です。
+ *
+ * @param {number} value ゲージの値
+ * @param {string} name ゲージに表示される文字列
+ * @see {@link MasaoJSS#showGauge}
+ */
 MainProgram.prototype.showGauge = function(s, s1)
 {
 	var i = 0;
@@ -1202,6 +1456,11 @@ MainProgram.prototype.showGauge = function(s, s1)
 	return true;
 }
 
+/**
+ * ゲージを非表示にします。
+ * @returns {boolean}
+ * @see {@link MasaoJSS#hideGauge}
+ */
 MainProgram.prototype.hideGauge = function()
 {
 	if(this.ml_mode != 100)
@@ -1214,6 +1473,12 @@ MainProgram.prototype.hideGauge = function()
 	}
 }
 
+/**
+ * JavaScript用メッセージを設定します。
+ * @param s
+ * @returns {boolean}
+ * @see {@link MasaoJSS#setJSMes}
+ */
 MainProgram.prototype.setJSMes = function(s)
 {
 	this.js_mes = parseInt(s);
@@ -1222,6 +1487,15 @@ MainProgram.prototype.setJSMes = function(s)
 	return true;
 }
 
+/**
+ * 指定した位置に敵を設置します。
+ * 位置はブロック単位で指定します。
+ *
+ * @param {number} type 敵の種類
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @see {@link MasaoJSS#setEnemy}
+ */
 MainProgram.prototype.sete = function(s, s1, s2)
 {
 	var i = 0;
@@ -1238,7 +1512,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		k = 0;
 	if(k <= 0)
 		return false;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 		return false;
 	i = (i + 1) * 32;
 	j = (j + 10) * 32;
@@ -1247,177 +1521,177 @@ MainProgram.prototype.sete = function(s, s1, s2)
 	default:
 		break;
 
-	case 1: // '\001'
+	case 1:
 		this.tSet(i, j, 100, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 2: // '\002'
+	case 2:
 		this.tSet(i, j, 110, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 3: // '\003'
+	case 3:
 		this.tSet(i, j, 110, i - 512 - 32);
 		this.tSet(i + 75, j, 110, i - 512 - 32);
 		this.tSet(i + 150, j, 110, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 4: // '\004'
+	case 4:
 		this.tSet(i, j, 200, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 5: // '\005'
+	case 5:
 		this.tSet(i, j, 300, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 6: // '\006'
+	case 6:
 		this.tSet(i, j, 400, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 7: // '\007'
+	case 7:
 		this.tSet(i, j, 500, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 8: // '\b'
+	case 8:
 		this.tSet(i, j, 510, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 9: // '\t'
+	case 9:
 		this.tSet(i, j, 510, i - 512 - 32 - 32);
 		this.tSet(i + 80, j - 40, 510, i - 512 - 32 - 32);
 		this.tSet(i + 140, j + 38, 510, i - 512 - 32 - 32);
 		flag = true;
 		break;
 
-	case 10: // '\n'
+	case 10:
 		this.tSet(i, j, 600, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 11: // '\013'
+	case 11:
 		this.tSet(i, j, 700, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 12: // '\f'
+	case 12:
 		this.tSet(i, j, 800, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 13: // '\r'
+	case 13:
 		this.tSet(i, j, 900, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 14: // '\016'
+	case 14:
 		this.tSet(i, j - 16, 1000, i - 512 - 32 - 32);
 		flag = true;
 		break;
 
-	case 15: // '\017'
+	case 15:
 		this.tSet(i, j, 1100, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 16: // '\020'
+	case 16:
 		this.mSet(i, j, 100);
 		this.gs.rsAddSound(10);
 		flag = true;
 		break;
 
-	case 17: // '\021'
+	case 17:
 		this.mSet(i, j, 200);
 		this.gs.rsAddSound(11);
 		flag = true;
 		break;
 
-	case 18: // '\022'
+	case 18:
 		this.mSet(i, j, 205);
 		this.gs.rsAddSound(11);
 		flag = true;
 		break;
 
-	case 19: // '\023'
+	case 19:
 		this.mSet(i, j, 300);
 		this.gs.rsAddSound(14);
 		flag = true;
 		break;
 
-	case 20: // '\024'
+	case 20:
 		this.mSet(i, j, 305);
 		this.gs.rsAddSound(14);
 		flag = true;
 		break;
 
-	case 21: // '\025'
+	case 21:
 		this.mSet(i, j, 400);
 		this.gs.rsAddSound(15);
 		flag = true;
 		break;
 
-	case 22: // '\026'
+	case 22:
 		this.mSet(i, j, 405);
 		this.gs.rsAddSound(15);
 		flag = true;
 		break;
 
-	case 23: // '\027'
+	case 23:
 		this.mSet(i, j + 19, 600);
 		flag = true;
 		break;
 
-	case 24: // '\030'
+	case 24:
 		this.mSet(i, j + 19, 605);
 		flag = true;
 		break;
 
-	case 25: // '\031'
+	case 25:
 		this.mSet(i, j + 19, 606);
 		flag = true;
 		break;
 
-	case 26: // '\032'
+	case 26:
 		this.mSet(i, j, 90);
 		this.gs.rsAddSound(18);
 		flag = true;
 		break;
 
-	case 27: // '\033'
+	case 27:
 		this.mSet2(i, j, 800, -5, -32);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 28: // '\034'
+	case 28:
 		this.mSet2(i, j, 800, -10, -32);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 29: // '\035'
+	case 29:
 		this.mSet2(i, j, 800, -15, -32);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 30: // '\036'
+	case 30:
 		this.mSet2(i, j, 500, 8 - this.ranInt(17), -25);
 		flag = true;
 		break;
 
-	case 31: // '\037'
+	case 31:
 		this.mSet2(i, j, 500, 12 - this.ranInt(25), -30);
 		flag = true;
 		break;
 
-	case 32: // ' '
+	case 32:
 		for(var l = 0; l <= 7; l++)
 		{
 			var d = ((l * 45) * 3.14) / 180;
@@ -1430,7 +1704,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 33: // '!'
+	case 33:
 		var d1 = 3.1400001049041748;
 		var i2 = Math.floor(Math.cos(d1) * 12);
 		var l2 = Math.floor(Math.sin(d1) * 12) * -1;
@@ -1447,7 +1721,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 34: // '"'
+	case 34:
 		var d2 = 3.3144445419311523;
 		var j2 = Math.floor(Math.cos(d2) * 12);
 		var i3 = Math.floor(Math.sin(d2) * 12) * -1;
@@ -1468,133 +1742,133 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 35: // '#'
+	case 35:
 		this.aSet(i + 16, j + 16, 70, i);
 		flag = true;
 		break;
 
-	case 36: // '$'
+	case 36:
 		this.aSet(i + 16, j + 16, 71, i);
 		flag = true;
 		break;
 
-	case 37: // '%'
+	case 37:
 		this.aSet(i + 16, j + 16, 72, i);
 		this.aSet(i + 16, j + 16, 74, i);
 		this.aSet(i + 16, j + 16, 76, i);
 		flag = true;
 		break;
 
-	case 38: // '&'
+	case 38:
 		this.aSet(i + 16, j + 16, 73, i);
 		this.aSet(i + 16, j + 16, 75, i);
 		this.aSet(i + 16, j + 16, 77, i);
 		flag = true;
 		break;
 
-	case 39: // '\''
+	case 39:
 		this.aSet(i, j, 101, i);
 		flag = true;
 		break;
 
-	case 40: // '('
+	case 40:
 		this.aSet(i, j + 9, 111, i);
 		flag = true;
 		break;
 
-	case 41: // ')'
+	case 41:
 		this.tSet(i, j, 320, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 42: // '*'
+	case 42:
 		this.tSet(i, j, 330, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 43: // '+'
+	case 43:
 		this.tSet(i, j, 660, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 44: // ','
+	case 44:
 		this.tSet(i, j, 670, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 45: // '-'
+	case 45:
 		this.tSet(i, j, 710, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 46: // '.'
+	case 46:
 		this.tSet(i, j, 720, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 47: // '/'
+	case 47:
 		this.tSet(i, j, 930, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 48: // '0'
+	case 48:
 		this.tSet(i, j, 920, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 49: // '1'
+	case 49:
 		this.tSet(i, j, 1050, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 50: // '2'
+	case 50:
 		this.tSet(i, j, 1060, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 51: // '3'
+	case 51:
 		this.tSet(i, j, 1070, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 52: // '4'
+	case 52:
 		this.tSet(i, j, 1080, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 53: // '5'
+	case 53:
 		this.tSet(i, j, 1150, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 54: // '6'
+	case 54:
 		this.tSet(i, j, 1160, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 55: // '7'
+	case 55:
 		this.tSet(i, j, 1170, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 56: // '8'
+	case 56:
 		this.tSet(i, j, 1180, i - 512 - 32);
 		flag = true;
 		break;
 
-	case 57: // '9'
+	case 57:
 		this.tSetBoss(i, j, 150, -4);
 		break;
 
-	case 58: // ':'
+	case 58:
 		this.tSetBoss(i, j, 450, -3);
 		break;
 
-	case 59: // ';'
+	case 59:
 		this.tSetBoss(i, j, 650, -3);
 		break;
 
-	case 60: // '<'
+	case 60:
 		for(var i1 = 0; i1 <= 300; i1 += 90)
 		{
 			this.mSet2(i, j, 950, i1, 0);
@@ -1605,7 +1879,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 61: // '='
+	case 61:
 		var d3 = 3.1400001049041748;
 		this.mSet2(i, j, 731, Math.floor(Math.cos(d3) * 9), Math.floor(Math.sin(d3) * 9));
 		d3 = 3.6633334159851074;
@@ -1616,7 +1890,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 62: // '>'
+	case 62:
 		var d4 = 0.0;
 		this.mSet2(i, j, 731, Math.floor(Math.cos(d4) * 9), Math.floor(Math.sin(d4) * 9));
 		d4 = 5.7566671371459961;
@@ -1627,43 +1901,43 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 63: // '?'
+	case 63:
 		this.mSet2(i - 16, j, 732, -10, 0);
 		this.gs.rsAddSound(15);
 		flag = true;
 		break;
 
-	case 64: // '@'
+	case 64:
 		this.mSet2(i - 16, j, 732, 10, 0);
 		this.gs.rsAddSound(15);
 		flag = true;
 		break;
 
-	case 65: // 'A'
+	case 65:
 		this.mSet2(i, j, 75, -1, 0);
 		this.gs.rsAddSound(11);
 		flag = true;
 		break;
 
-	case 66: // 'B'
+	case 66:
 		this.mSet2(i, j, 810, -12, 0);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 67: // 'C'
+	case 67:
 		this.mSet2(i, j, 810, 12, 0);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 68: // 'D'
+	case 68:
 		this.mSet2(i, j, 77, -1, 0);
 		this.gs.rsAddSound(14);
 		flag = true;
 		break;
 
-	case 69: // 'E'
+	case 69:
 		var d5 = 3.1400001049041748;
 		this.mSet2(i, j, 733, Math.floor(Math.cos(d5) * 9), Math.floor(Math.sin(d5) * 9));
 		d5 = 3.6633334159851074;
@@ -1674,7 +1948,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 70: // 'F'
+	case 70:
 		var d6 = 0.0;
 		this.mSet2(i, j, 733, Math.floor(Math.cos(d6) * 9), Math.floor(Math.sin(d6) * 9));
 		d6 = 5.7566671371459961;
@@ -1685,7 +1959,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 71: // 'G'
+	case 71:
 		for(var j1 = 0; j1 <= 270; j1 += 90)
 			this.mSet2(i, j, 970, j1, 0);
 
@@ -1693,7 +1967,7 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 72: // 'H'
+	case 72:
 		for(var k1 = 0; k1 <= 270; k1 += 90)
 			this.mSet2(i, j, 980, k1, 0);
 
@@ -1701,70 +1975,70 @@ MainProgram.prototype.sete = function(s, s1, s2)
 		flag = true;
 		break;
 
-	case 73: // 'I'
+	case 73:
 		this.mSet2(i, j, 740, -4, 9);
 		flag = true;
 		break;
 
-	case 74: // 'J'
+	case 74:
 		this.mSet2(i, j, 740, -4, 11);
 		flag = true;
 		break;
 
-	case 75: // 'K'
+	case 75:
 		this.mSet2(i, j, 740, 4, 9);
 		flag = true;
 		break;
 
-	case 76: // 'L'
+	case 76:
 		this.mSet2(i, j, 740, 4, 11);
 		flag = true;
 		break;
 
-	case 77: // 'M'
+	case 77:
 		this.mSet2(i, j, 800, 5, -32);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 78: // 'N'
+	case 78:
 		this.mSet2(i, j, 800, 10, -32);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 79: // 'O'
+	case 79:
 		this.mSet2(i, j, 800, 15, -32);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 80: // 'P'
+	case 80:
 		this.mSet2(i, j, 80, 12, -24);
 		this.mSet2(i, j, 80, -12, -24);
 		this.gs.rsAddSound(16);
 		flag = true;
 		break;
 
-	case 81: // 'Q'
+	case 81:
 		this.mSet2(i, j, 800, 0, 0);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 82: // 'R'
+	case 82:
 		this.mSet2(i, j, 801, 0, 0);
 		this.gs.rsAddSound(22);
 		flag = true;
 		break;
 
-	case 83: // 'S'
+	case 83:
 		this.mSet2(i, j, 85, -1, 0);
 		this.gs.rsAddSound(11);
 		flag = true;
 		break;
 
-	case 84: // 'T'
+	case 84:
 		this.mSet2(i, j, 87, -1, 0);
 		this.gs.rsAddSound(14);
 		flag = true;
@@ -1773,6 +2047,12 @@ MainProgram.prototype.sete = function(s, s1, s2)
 	return flag;
 }
 
+/**
+ * スクロールロックを設定します。スクロール座標が指定したX座標に到達したら、そこで画面が固定されます。
+ *
+ * @param {number} x X座標
+ * @see {@link MasaoJSS#setScrollLock}
+ */
 MainProgram.prototype.setScrollLock = function(s)
 {
 	var i = 32;
@@ -1789,10 +2069,22 @@ MainProgram.prototype.setScrollLock = function(s)
 	else
 		this.sl_step = 1;
 	this.sl_wx = i;
-	this.sl_wy = 960;
+	this.sl_wy = this.mapHeight * 32;
 	return true;
 }
 
+/**
+ * ファイヤーボールとグレネードに対する当たり判定を指定範囲に発生させます。
+ * 指定範囲に入っていたファイヤーボールは消滅し、その数が返り値として返ります。
+ * また、グレネードの当たり判定に入っていた場合、1つにつき返り値が10増加します。
+ *
+ * @param {number} x 範囲の左端のX座標
+ * @param {number} y 範囲の上端のY座標
+ * @param {number} width 範囲のX方向大きさ
+ * @param {number} height 範囲のY方向大きさ
+ * @returns {number}
+ * @see {@link MasaoJSS#attackFire}
+ */
 MainProgram.prototype.attackFire = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1839,6 +2131,17 @@ MainProgram.prototype.attackFire = function(s, s1, s2, s3)
 	return i1;
 }
 
+/**
+ * 指定した矩形範囲にしっぽの攻撃判定を発生させます。
+ * 範囲にしっぽが当たった場合は1を、当たっていない場合は0を、それ以外の場合は-1を返します。
+ *
+ * @param {number} x 範囲左端のX座標
+ * @param {number} y 範囲上端のY座標
+ * @param {number} width 範囲の横幅
+ * @param {number} height 範囲の高さ
+ * @returns {number}
+ * @see {@link MasaoJSS#attackTail}
+ */
 MainProgram.prototype.attackTail = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1888,6 +2191,16 @@ MainProgram.prototype.attackTail = function(s, s1, s2, s3)
 	return i1;
 }
 
+/**
+ * 指定した矩形範囲にいる敵を倒します。
+ *
+ * @param {number} x 範囲左端のX座標
+ * @param {number} y 範囲上端のY座標
+ * @param {number} width 範囲のX方向大きさ
+ * @param {number} height 範囲のY方向大きさ
+ * @returns {number} 倒した敵の数 エラー時は-1
+ * @see {@link MasaoJSS#destroyEnemy}
+ */
 MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3)
 {
 	var i = 0;
@@ -1941,8 +2254,8 @@ MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3)
 		{
 			characterobject.c = 55;
 			characterobject.c1 = 0;
-			var k1 = characterobject.x >> 5;
-			var l1 = characterobject.y >> 5;
+			var k1 = rightShiftIgnoreSign(characterobject.x, 5);
+			var l1 = rightShiftIgnoreSign(characterobject.y, 5);
 			if(characterobject.c5 == 1)
 				this.onASwitch(k1 - 5, l1 - 5, k1 + 5, l1 + 5);
 			else
@@ -1964,6 +2277,15 @@ MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3)
 	return i1;
 }
 
+/**
+ * マップチップを1つ変更します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {number} chip マップチップ番号
+ * @returns {boolean} 変更に成功したかどうか
+ * @see {@link MasaoJSS#setMapchip}
+ */
 MainProgram.prototype.setmapc = function(s, s1, s2)
 {
 	var i = 0;
@@ -1979,7 +2301,7 @@ MainProgram.prototype.setmapc = function(s, s1, s2)
 		k = -1;
 	if(k < 0 || k > 249)
 		return false;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return false;
 	} else
@@ -1992,6 +2314,14 @@ MainProgram.prototype.setmapc = function(s, s1, s2)
 	}
 }
 
+/**
+ * マップチップを取得します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @returns {number} マップチップ番号 失敗した場合は-1
+ * @see {@link MasaoJSS#getMapchip}
+ */
 MainProgram.prototype.getmapc = function(s, s1)
 {
 	var i = 0;
@@ -2006,7 +2336,7 @@ MainProgram.prototype.getmapc = function(s, s1)
 		k = -1;
 	if(k < 0)
 		return -1;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return -1;
 	} else
@@ -2018,6 +2348,15 @@ MainProgram.prototype.getmapc = function(s, s1)
 	}
 }
 
+/**
+ * 背景レイヤーのマップチップを1つ変更します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {number} chip マップチップ番号
+ * @returns {boolean} 変更に成功したかどうか
+ * @see {@link MasaoJSS#setMapchip2}
+ */
 MainProgram.prototype.setmapc2 = function(s, s1, s2)
 {
 	var i = 0;
@@ -2035,7 +2374,7 @@ MainProgram.prototype.setmapc2 = function(s, s1, s2)
 		k = -1;
 	if(k < 0 || k > 255)
 		return false;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return false;
 	} else
@@ -2047,6 +2386,14 @@ MainProgram.prototype.setmapc2 = function(s, s1, s2)
 	}
 }
 
+/**
+ * 背景レイヤーのマップチップを取得します。
+ *
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @returns {number} マップチップ番号 失敗した場合は-1
+ * @see {@link MasaoJSS#getMapchip2}
+ */
 MainProgram.prototype.getmapc2 = function(s, s1)
 {
 	var i = 0;
@@ -2063,7 +2410,7 @@ MainProgram.prototype.getmapc2 = function(s, s1)
 		k = -1;
 	if(k < 0)
 		return -1;
-	if(i < 0 || i > 179 || j < 0 || j > 29)
+	if(i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight)
 	{
 		return -1;
 	} else
@@ -2075,6 +2422,13 @@ MainProgram.prototype.getmapc2 = function(s, s1)
 	}
 }
 
+/**
+ * 主人公のHP表示をONにします。
+ *
+ * @param {string|null} name HPの名前 nullにすると名前なし
+ * @returns {boolean} 常にtrue
+ * @see {@link MasaoJSS#showMyHP}
+ */
 MainProgram.prototype.showMyHP = function(s)
 {
 	this.j_hp_v = true;
@@ -2084,6 +2438,13 @@ MainProgram.prototype.showMyHP = function(s)
 	return true;
 }
 
+/**
+ * 主人公の最大HPを設定します。
+ *
+ * @param {number} maxhp 最大HP
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setMyMaxHP}
+ */
 MainProgram.prototype.setMyMaxHP = function(s)
 {
 	var i = -1;
@@ -2099,9 +2460,15 @@ MainProgram.prototype.setMyMaxHP = function(s)
 	return true;
 }
 
+/**
+ * 主人公の現在のHPを設定します。
+ *
+ * @param {number} hp 0以上のHP
+ * @returns {boolean} 設定に成功したかどうか
+ * @see {@link MasaoJSS#setMyHP}
+ */
 MainProgram.prototype.setMyHP = function(s)
 {
-	var byte0 = -1;
 	if((this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) && this.co_j.c >= 100 && this.co_j.c < 200)
 	{
 		var i;
@@ -2122,6 +2489,12 @@ MainProgram.prototype.setMyHP = function(s)
 	}
 }
 
+/**
+ * 主人公の現在のHPを取得します。
+ *
+ * @returns {number} 現在のHP
+ * @see {@link MasaoJSS#getMyHP}
+ */
 MainProgram.prototype.getMyHP = function()
 {
 	var i = 0;
@@ -2132,9 +2505,19 @@ MainProgram.prototype.getMyHP = function()
 	return i;
 }
 
+/**
+ * 主人公にダメージを与えます。
+ * このメソッドを使うと、HPが減るのに加えて無敵時間が設定されます。
+ *
+ * 無敵時間中にこのメソッドを使うとHPは変化しませんが、返り値としてtrueが返ります。
+ * 引数に負の値を与えると回復します。
+ *
+ * @param {number} damage ダメージ値
+ * @returns {boolean} ダメージを与えることに成功したかどうか
+ * @see {@link MasaoJSS#setMyHPDamage}
+ */
 MainProgram.prototype.setMyHPDamage = function(s)
 {
-	var i = 0xfffe7961;
 	if(this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200)
 	{
 		var j;
@@ -2161,17 +2544,29 @@ MainProgram.prototype.setMyHPDamage = function(s)
 	}
 }
 
+/**
+ * 主人公に無敵時間を発生させます
+ * 無敵の持続する時間は主人公のHPが減少したときと同じで、持続時間を設定することはできません
+ */
 MainProgram.prototype.setMyMuteki = function()
 {
 	this.j_muteki_c = 17;
 }
 
+/**
+ * 乱数生成のseedを初期化する
+ */
 MainProgram.prototype.ranInit = function()
 {
     //seedを初期化
     this.ran_seed = (Math.random()*0x100000000)|0;
 }
 
+/**
+ * 0以上i未満の乱整数を返します
+ * @param i {number}
+ * @returns {number} 0以上i未満のランダムな整数値
+ */
 MainProgram.prototype.ranInt = function(i)
 {
     //xor-shift 乱数(a=9, b=11, c=19)
@@ -2183,6 +2578,9 @@ MainProgram.prototype.ranInt = function(i)
     return ((ran_seed * 2.3283064365386963e-10)*i)|0;
 }
 
+/**
+ * 画面上部のスコア・残り時間・HP・残機を描画します
+ */
 MainProgram.prototype.drawScore = function()
 {
 	if(!this.score_v)
@@ -2266,6 +2664,10 @@ MainProgram.prototype.drawScore = function()
 	}
 }
 
+/**
+ * 謎(スコア・残機を表示する？)
+ * TODO: 要調査
+ */
 MainProgram.prototype.drawScore2 = function()
 {
 	if(!this.score_v)
@@ -2293,6 +2695,14 @@ MainProgram.prototype.drawScore2 = function()
 	}
 }
 
+/**
+ * スコアを加算します。
+ * 負の値を渡すとスコアが減ります。
+ *
+ * @param {number} score 加算するスコア
+ *
+ * @see {@link MasaoJSS#addScore}
+ */
 MainProgram.prototype.addScore = function(i)
 {
 	this.score += i;
@@ -2308,16 +2718,21 @@ MainProgram.prototype.addScore = function(i)
 	}
 }
 
+/**
+ * マップ全体に配置されたコインの総数を取得します
+ * scroll_areaタグの設定によりスクロール可能な範囲が制限されている場合、その範囲の中のコインの総数を数えます
+ * @returns {number} マップに本来存在するコインの総数
+ */
 MainProgram.prototype.getCoinTotal = function()
 {
-	var c = 180;
+	var c = this.mapWidth;
 	var k = 0;
 	if(this.scroll_area == 2 || this.scroll_area == 4)
 		c = 16;
 	else
 	if(this.scroll_area == 3 || this.scroll_area == 5)
 		c = 32;
-	for(var j = 10; j <= 39; j++)
+	for(var j = 10; j <= this.mapHeight + 9; j++)
 	{
 		for(var i = 1; i <= c; i++)
 			if(this.maps.map_bg[i][j] == 9)
@@ -2329,6 +2744,15 @@ MainProgram.prototype.getCoinTotal = function()
 	return k;
 }
 
+/**
+ * 指定した矩形範囲の中に配置されたコインの数を取得します
+ * 座標はブロック単位で指定します
+ * @param x1 始点のX座標
+ * @param y1 始点のY座標
+ * @param x2 終点のX座標
+ * @param y2 終点のY座標
+ * @returns {number}
+ */
 MainProgram.prototype.getCoinCount = function(i, j, k, l)
 {
 	if(this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96)
@@ -2339,20 +2763,20 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l)
 		var i2 = l + 10;
 		if(j1 < 1)
 			j1 = 1;
-		if(j1 > 180)
-			j1 = 180;
+		if(j1 > this.mapWidth)
+			j1 = this.mapWidth;
 		if(l1 < 1)
 			l1 = 1;
-		if(l1 > 180)
-			l1 = 180;
+		if(l1 > this.mapWidth)
+			l1 = this.mapWidth;
 		if(k1 < 10)
 			k1 = 10;
-		if(k1 > 39)
-			k1 = 39;
+		if(k1 > this.mapHeight + 9)
+			k1 = this.mapHeight + 9;
 		if(i2 < 10)
 			i2 = 10;
-		if(i2 > 39)
-			i2 = 39;
+		if(i2 > this.mapHeight + 9)
+			i2 = this.mapHeight + 9;
 		if(j1 > l1)
 		{
 			var j2 = j1;
@@ -2381,16 +2805,18 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l)
 	}
 }
 
+/**
+ * ゲームクリア用はしごを表示させます
+ */
 MainProgram.prototype.showHashigo = function()
 {
-	var c = 0264;
-	var flag = false;
+	var c = this.mapWidth;
 	if(this.scroll_area == 2 || this.scroll_area == 4)
-		c = 020;
+		c = 16;
 	else
 	if(this.scroll_area == 3 || this.scroll_area == 5)
 		c = 32;
-	for(var j = 10; j <= 39; j++)
+	for(var j = 10; j <= this.mapHeight + 9; j++)
 	{
 		for(var i = 1; i <= c; i++)
 			if(this.maps.map_bg[i][j] == 8)
@@ -2401,6 +2827,9 @@ MainProgram.prototype.showHashigo = function()
 	this.setmapc_f = true;
 }
 
+/**
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.addSerifu = function(i, j, k)
 {
 	for(var l = 1; l <= k; l++)
@@ -2416,6 +2845,9 @@ MainProgram.prototype.addSerifu = function(i, j, k)
 
 }
 
+/**
+ * TODO: 加筆求む
+ */
 MainProgram.prototype.addSerifu2 = function(i, s, j, k)
 {
 	var l, k1, k2;
@@ -2442,6 +2874,9 @@ MainProgram.prototype.addSerifu2 = function(i, s, j, k)
 
 }
 
+/**
+ * ゲーム中の毎フレームの中核処理を行います
+ */
 MainProgram.prototype.mL100 = function()
 {
 	this.showmMove();
@@ -2501,8 +2936,8 @@ MainProgram.prototype.mL100 = function()
 				var i = this.sl_speed;
 				if(this.maps.getBGCode(this.co_j.x + 31, this.co_j.y) >= 20 || this.maps.getBGCode(this.co_j.x + 31, this.co_j.y + 31) >= 20)
 				{
-					i = ((this.co_j.x + 31) >> 5) * 32 - 32 - (this.co_j.x - this.sl_speed);
-					this.co_j.x = ((this.co_j.x + 31) >> 5) * 32 - 32;
+					i = rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - 32 - (this.co_j.x - this.sl_speed);
+					this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - 32;
 				}
 				this.co_j.wx = this.co_j.x - this.maps.wx;
 				for(var j1 = 0; j1 <= 31; j1++)
@@ -2749,7 +3184,7 @@ MainProgram.prototype.mL100 = function()
 				var j = this.co_j.x;
 				this.co_j.x += this.nkscroll_speed_x;
 				if(this.maps.getBGCode(this.co_j.x + 31, this.co_j.y) >= 20 || this.maps.getBGCode(this.co_j.x + 31, this.co_j.y + 31) >= 20)
-					this.co_j.x = ((this.co_j.x + 31) >> 5) * 32 - 32;
+					this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - 32;
 				if(this.co_j.c >= 100 && this.co_j.c < 200)
 				{
 					if(this.co_j.x > (this.nkscroll_view_x + 512) - 32)
@@ -2860,7 +3295,7 @@ MainProgram.prototype.mL100 = function()
 				var k = this.co_j.x;
 				this.co_j.x -= this.nkscroll_speed_x;
 				if(this.maps.getBGCode(this.co_j.x, this.co_j.y) >= 20 || this.maps.getBGCode(this.co_j.x, this.co_j.y + 31) >= 20)
-					this.co_j.x = (this.co_j.x >> 5) * 32 + 32;
+					this.co_j.x = rightShiftIgnoreSign(this.co_j.x, 5) * 32 + 32;
 				if(this.co_j.c >= 100 && this.co_j.c < 200)
 				{
 					if(this.co_j.x > (this.nkscroll_view_x + 512) - 32)
@@ -2990,7 +3425,7 @@ MainProgram.prototype.mL100 = function()
 				var l = this.co_j.y;
 				this.co_j.y += this.nkscroll_speed_x;
 				if(this.maps.getBGCode(this.co_j.x, this.co_j.y + 31) >= 20 || this.maps.getBGCode(this.co_j.x + 31, this.co_j.y + 31) >= 20)
-					this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				if(this.co_j.c >= 100 && this.co_j.c < 200)
 				{
 					if(this.co_j.x > (this.nkscroll_view_x + 512) - 32)
@@ -3090,7 +3525,7 @@ MainProgram.prototype.mL100 = function()
 				var i1 = this.co_j.y;
 				this.co_j.y -= this.nkscroll_speed_x;
 				if(this.maps.getBGCode(this.co_j.x, this.co_j.y) >= 20 || this.maps.getBGCode(this.co_j.x + 31, this.co_j.y) >= 20)
-					this.co_j.y = (this.co_j.y >> 5) * 32 + 32;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 32;
 				if(this.co_j.c >= 100 && this.co_j.c < 200)
 				{
 					if(this.co_j.x > (this.nkscroll_view_x + 512) - 32)
@@ -3473,7 +3908,7 @@ MainProgram.prototype.mL100 = function()
 				this.hg.fillRect(j9 - 2, c - 2, 36, 36);
 				this.hg.drawImage(this.gg.spt_option_img[3], j9, c, this.ap);
 				j9 += 36;
-				c1 = 0377;
+				c1 = 255;
 			}
 
 		}
@@ -3485,7 +3920,7 @@ MainProgram.prototype.mL100 = function()
 				this.hg.fillRect(j9 - 2, c - 2, 36, 36);
 				this.hg.drawImage(this.gg.spt_option_img[4], j9, c, this.ap);
 				j9 += 36;
-				c1 = 0377;
+				c1 = 255;
 			}
 
 		}
@@ -3541,6 +3976,9 @@ MainProgram.prototype.mL100 = function()
 		}
 }
 
+/**
+ * 毎フレームの処理のうち、ゲーム中以外の状態のときの処理を行います
+ */
 MainProgram.prototype.mainLoop = function()
 {
 	this.gk.left_right_lock = false;
@@ -3549,7 +3987,7 @@ MainProgram.prototype.mainLoop = function()
 	default:
 		break;
 
-	case 50: // '2'
+	case 50:
 		this.draw_lock_f = false;
 		if(this.start_game_f)
 		{
@@ -3591,7 +4029,7 @@ MainProgram.prototype.mainLoop = function()
 		}
 		break;
 
-	case 60: // '<'
+	case 60:
 		this.gg.drawListImage(0, 0, 0);
 		if(this.score > 0 || this.highscore > 0)
 			this.drawScore();
@@ -3642,7 +4080,7 @@ MainProgram.prototype.mainLoop = function()
 			this.gs.playBGM(this.stage - 1);
 		break;
 
-	case 80: // 'P'
+	case 80:
 		this.init2();
 		this.ml_mode = 100;
 		this.init3();
@@ -3657,7 +4095,7 @@ MainProgram.prototype.mainLoop = function()
 			this.gs.playBGM(this.stage - 1);
 		break;
 
-	case 90: // 'Z'
+	case 90:
 		this.dso_cf = true;
 		this.init3();
 		if(this.mode_wait_stagestart == 0)
@@ -3694,7 +4132,7 @@ MainProgram.prototype.mainLoop = function()
 			this.gs.playBGM(this.stage - 1);
 		break;
 
-	case 91: // '['
+	case 91:
 		this.ml_mode_c++;
 		if(this.ml_mode_c > this.mode_wait_stagestart)
 			this.ml_mode = 100;
@@ -3731,45 +4169,45 @@ MainProgram.prototype.mainLoop = function()
 		}
 		break;
 
-	case 95: // '_'
+	case 95:
 		this.stage = this.ig.checkStage();
 		this.init3();
 		switch(this.ig.shop_kattaitem)
 		{
-		case 7: // '\007'
+		case 7:
 		default:
 			break;
 
-		case 0: // '\0'
+		case 0:
 			this.j_gr_kazu = 3;
 			break;
 
-		case 1: // '\001'
+		case 1:
 			this.j_jet_fuel = 80;
 			break;
 
-		case 2: // '\002'
+		case 2:
 			this.j_drell_f = true;
 			break;
 
-		case 3: // '\003'
+		case 3:
 			this.j_helm_f = true;
 			break;
 
-		case 4: // '\004'
+		case 4:
 			this.j_tail_f = true;
 			break;
 
-		case 5: // '\005'
+		case 5:
 			this.j_v_c = 150;
 			this.j_v_kakudo = 0;
 			break;
 
-		case 6: // '\006'
+		case 6:
 			this.j_fire_f = true;
 			break;
 
-		case 8: // '\b'
+		case 8:
 			if(this.time_max > 0)
 				this.time += 30000;
 			break;
@@ -3783,7 +4221,7 @@ MainProgram.prototype.mainLoop = function()
 			this.gs.playBGM(this.stage - 1);
 		break;
 
-	case 96: // '`'
+	case 96:
 		this.ml_mode_c++;
 		if(this.ml_mode_c > 8)
 			this.ml_mode = 100;
@@ -3797,7 +4235,7 @@ MainProgram.prototype.mainLoop = function()
 		}
 		break;
 
-	case 110: // 'n'
+	case 110:
 		if(this.ml_mode_c < 8)
 			this.ml_mode_c++;
 		if(this.ml_mode_c == 1)
@@ -4057,6 +4495,10 @@ MainProgram.prototype.mainLoop = function()
 	}
 }
 
+/**
+ * ゲームの状態を初期化します
+ * TODO: {@link MainProgram#init2}, {@link MainProgram#init3}との違いは？
+ */
 MainProgram.prototype.init1 = function()
 {
 	this.mode_wait_ending = 120;
@@ -4579,6 +5021,10 @@ MainProgram.prototype.init1 = function()
 		this.water_visible = 1;
 }
 
+/**
+ * 複数ステージや残機のある場合の初期化処理を行います（？）
+ * TODO: {@link MainProgram#init1}, {@link MainProgram#init3}との違いは？
+ */
 MainProgram.prototype.init2 = function()
 {
 	if(this.score > this.highscore)
@@ -4603,6 +5049,10 @@ MainProgram.prototype.init2 = function()
 	this.gs.rsInit();
 }
 
+/**
+ * ステージ開始時の初期化処理を行います(？）
+ * TODO: {@link MainProgram#init1}, {@link MainProgram#init2}との違いは？
+ */
 MainProgram.prototype.init3 = function()
 {
 	this.g_c1 = 0;
@@ -4717,58 +5167,58 @@ MainProgram.prototype.init3 = function()
 	this.down_key_c = 0;
 	switch(this.j_tokugi)
 	{
-	case 2: // '\002'
+	case 2:
 		this.jst_slow_down = 1;
 		break;
 
-	case 3: // '\003'
+	case 3:
 		this.jst_key_down = 1;
 		break;
 
-	case 4: // '\004'
+	case 4:
 		this.jst_fast_run_attack = 1;
 		break;
 
-	case 5: // '\005'
+	case 5:
 		this.jst_fly_left_right = 1;
 		break;
 
-	case 6: // '\006'
+	case 6:
 		this.jst_kabe_kick = 1;
 		break;
 
-	case 7: // '\007'
+	case 7:
 		this.j_fire_type = 2;
 		this.j_fire_range = 9999;
 		this.jst_fire_xkey_only = 1;
 		break;
 
-	case 8: // '\b'
+	case 8:
 		this.jst_double_jump = 1;
 		break;
 
-	case 9: // '\t'
+	case 9:
 		this.jst_fast_run = 1;
 		break;
 
-	case 11: // '\013'
+	case 11:
 		this.jst_high_sjump = 1;
 		break;
 
-	case 13: // '\r'
+	case 13:
 		this.jst_fast_run = 2;
 		break;
 
-	case 16: // '\020'
+	case 16:
 		this.jst_kabe_kick = 2;
 		break;
 
-	case 18: // '\022'
+	case 18:
 		this.jst_auto_right = 1;
 		this.gk.left_right_lock = true;
 		break;
 
-	case 19: // '\023'
+	case 19:
 		this.jst_auto_right = 2;
 		this.gk.left_right_lock = true;
 		break;
@@ -4819,10 +5269,8 @@ MainProgram.prototype.init3 = function()
 	this.souko_count1 = 0;
 	this.souko_count2 = 0;
 	this.souko_count3 = 0;
-	this.yuka_id_max = -1;
 	this.yuka_ride_id = -1;
-	for(var l = 0; l <= 127; l++)
-		this.yo[l].init();
+	this.yo = [];
 
 	this.sl_step = 0;
 	this.sl_speed = 0;
@@ -4860,14 +5308,14 @@ MainProgram.prototype.init3 = function()
 	{
 		this.sl_step = 10;
 		this.ks_wx = 32;
-		this.ks_wy = 960;
+		this.ks_wy = this.mapHeight * 32;
 		this.sl_speed = 2;
 	} else
 	if(k5 == 3)
 	{
 		this.sl_step = 10;
 		this.ks_wx = 32;
-		this.ks_wy = 960;
+		this.ks_wy = this.mapHeight * 32;
 		this.sl_speed = 4;
 	}
 	this.nkscroll_con = 0;
@@ -4877,23 +5325,14 @@ MainProgram.prototype.init3 = function()
 	this.nkscroll_vx = 0;
 	this.nkscroll_vy = 0;
 	this.nkscroll_zsc = false;
-	for(var j1 = 0; j1 <= 119; j1++)
-	{
-		this.co_a[j1].init();
-		for(var j5 = 0; j5 <= 3; j5++)
-		{
-			this.vo_x[j1][j5] = 0;
-			this.vo_y[j1][j5] = 0;
-		}
 
-	}
-
-	this.a_kazu = -1;
+	this.co_a = [new CharacterObject()];  // 例外落ち回避用要素
+	this.vo_x = [[0, 0, 0, 0]];
+	this.vo_y = [[0, 0, 0, 0]];
 	this.a_hf = false;
-	for(var k1 = 0; k1 <= 229; k1++)
-		this.co_t[k1].init();
 
-	this.t_kazu = -1;
+	this.co_t = [];
+
 	this.co_b.init();
 	this.boss_kijyun_y = 0;
 	this.boss_attack_mode = false;
@@ -4926,7 +5365,7 @@ MainProgram.prototype.init3 = function()
 				if(this.co_a[l2].c == 3400 && this.co_a[l2].x == this.cpoint_x && this.co_a[l2].y == this.cpoint_y)
 					this.co_a[l2].c = 0;
 
-			this.hDelete(this.co_j.x >> 5, (this.co_j.y >> 5) + 1, 4100);
+			this.hDelete(rightShiftIgnoreSign(this.co_j.x, 5), rightShiftIgnoreSign(this.co_j.y, 5) + 1, 4100);
 		} else
 		{
 			this.cpoint_con = 0;
@@ -4940,7 +5379,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 2)
 	{
 		this.maps.wx_max = 32;
-		this.maps.wy_mini = 960;
+		this.maps.wy_mini = this.mapHeight * 32;
 		for(var i3 = 0; i3 <= this.maps.height - 1; i3++)
 			this.maps.map_bg[17][i3] = 21;
 
@@ -4954,7 +5393,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 3)
 	{
 		this.maps.wx_max = 544;
-		this.maps.wy_mini = 960;
+		this.maps.wy_mini = this.mapHeight * 32;
 		for(var k3 = 0; k3 <= this.maps.height - 1; k3++)
 			this.maps.map_bg[33][k3] = 21;
 
@@ -4968,7 +5407,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 4)
 	{
 		this.maps.wx_max = 32;
-		this.maps.wy_mini = 640;
+		this.maps.wy_mini = (this.mapHeight - 10) * 32;
 		for(var i4 = 0; i4 <= this.maps.height - 1; i4++)
 			this.maps.map_bg[17][i4] = 21;
 
@@ -4982,7 +5421,7 @@ MainProgram.prototype.init3 = function()
 	if(this.scroll_area == 5)
 	{
 		this.maps.wx_max = 544;
-		this.maps.wy_mini = 640;
+		this.maps.wy_mini = (this.mapHeight - 10) * 32;
 		for(var k4 = 0; k4 <= this.maps.height - 1; k4++)
 			this.maps.map_bg[33][k4] = 21;
 
@@ -5016,12 +5455,12 @@ MainProgram.prototype.init3 = function()
 		}
 	}
 label0:
-	for(var j6 = 10; j6 <= 39; j6++)
+	for(var j6 = 10; j6 <= this.mapHeight + 9; j6++)
 	{
 		var i6 = 1;
 		do
 		{
-			if(i6 > 180)
+			if(i6 > this.mapWidth)
 				continue label0;
 			if(this.maps.map_bg[i6][j6] == 28)
 			{
@@ -5037,7 +5476,11 @@ label0:
 	this.js_mes = 1;
 }
 
-MainProgram.prototype.mapsMakeStageData = function(i)
+/**
+ * ステージデータを読みとり、マップを生成します
+ * @param i ステージ番号 i-100がステージ番号(1スタート)となる
+ */
+MainProgram.prototype.mapsMakeStageData = function(i)  // 新形式マップの処理
 {
 	var i3;
 	var as;
@@ -5047,12 +5490,37 @@ MainProgram.prototype.mapsMakeStageData = function(i)
 	var s9;
 	s8 = "0123456789abcdef";
 	s9 = "0123456789ABCDEF";
-	this.maps.init();
-	for(var l1 = 0; l1 < 50; l1++)
-	{
-		for(var k = 0; k < 200; k++)
-			this.map_data_option[k][l1] = false;
 
+	var advance_map = this.tdb.options["advanced-map"];
+	var stage = null;
+	var mainLayer = null;
+	var mapchipLayer = null;
+
+	if (advance_map) {
+		stage = advance_map.stages[i - 101];
+		this.mapWidth = stage.size.x;
+		this.mapHeight = stage.size.y;
+		stage.layers.forEach(function (layer) {
+			if (layer.type === "main") {
+				mainLayer = layer;
+			}
+			else if (layer.type === "mapchip") {
+				mapchipLayer = layer;
+			}
+		});
+	}
+	else {
+		this.mapWidth = 180;
+		this.mapHeight = 30;
+	}
+
+	this.maps = new MapSystem(this.mapWidth + 20, this.mapHeight + 70, this.gg, this);
+	this.maps.init();
+	this.map_data_option = createNDimensionArray(this.mapWidth + 20, this.mapHeight + 70);
+	for(var l1 = 0; l1 < this.mapHeight + 70; l1++)
+	{
+		for(var k = 0; k < this.mapWidth + 20; k++)
+			this.map_data_option[k][l1] = false;
 	}
 
 	as = this.maps.map_string;
@@ -5061,127 +5529,101 @@ MainProgram.prototype.mapsMakeStageData = function(i)
 	this.maps.wy = 32;
 	this.maps.wx_mini = 32;
 	this.maps.wy_mini = 320;
-	this.maps.wx_max = 5856;
-	this.maps.wy_max = 6048;
-	c2 = 0307;
+	this.maps.wx_max = (this.mapWidth - 15) * 32;
+	this.maps.wy_max = this.mapHeight * 32;
+	c2 = this.mapWidth + 19;
 	this.gg.setBackcolor(Color.blue);
-label0:
-	switch(i)
-	{
-	default:
-		break;
 
-	case 101: // 'e'
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		for(var i2 = 0; i2 <= 29; i2++)
-		{
-			var s = "" + "." + this.tdb.getValue("" + "map0-" + i2);
-			s = "" + s + this.tdb.getValue("" + "map1-" + i2);
-			s = "" + s + this.tdb.getValue("" + "map2-" + i2);
-			as[i2 + 10] = s;
-			if(this.gg.layer_mode == 2)
-			{
-				var s1 = "" + "00" + this.tdb.getValue("" + "layer0-" + i2);
-				s1 = "" + s1 + this.tdb.getValue("" + "layer1-" + i2);
-				s1 = "" + s1 + this.tdb.getValue("" + "layer2-" + i2);
-				as1[i2 + 10] = s1;
-			}
+	if (!advance_map) {
+		switch (i) {
+			default:
+				break;
+
+			case 101:
+				for (var i2 = 0; i2 < this.mapHeight; i2++) {
+					var s = "" + "." + this.tdb.getValue("" + "map0-" + i2);
+					s = "" + s + this.tdb.getValue("" + "map1-" + i2);
+					s = "" + s + this.tdb.getValue("" + "map2-" + i2);
+					as[i2 + 10] = s;
+					if (this.gg.layer_mode == 2) {
+						var s1 = "" + "00" + this.tdb.getValue("" + "layer0-" + i2);
+						s1 = "" + s1 + this.tdb.getValue("" + "layer1-" + i2);
+						s1 = "" + s1 + this.tdb.getValue("" + "layer2-" + i2);
+						as1[i2 + 10] = s1;
+					}
+				}
+				break;
+
+			case 102:
+				for (var j2 = 0; j2 < this.mapHeight; j2++) {
+					var s2 = "" + "." + this.tdb.getValue("" + "map0-" + j2 + "-s");
+					s2 = "" + s2 + this.tdb.getValue("" + "map1-" + j2 + "-s");
+					s2 = "" + s2 + this.tdb.getValue("" + "map2-" + j2 + "-s");
+					as[j2 + 10] = s2;
+					if (this.gg.layer_mode == 2) {
+						var s3 = "" + "00" + this.tdb.getValue("" + "layer0-" + j2 + "-s");
+						s3 = "" + s3 + this.tdb.getValue("" + "layer1-" + j2 + "-s");
+						s3 = "" + s3 + this.tdb.getValue("" + "layer2-" + j2 + "-s");
+						as1[j2 + 10] = s3;
+					}
+				}
+				break;
+
+			case 103:
+				for (var k2 = 0; k2 < this.mapHeight; k2++) {
+					var s4 = "" + "." + this.tdb.getValue("" + "map0-" + k2 + "-t");
+					s4 = "" + s4 + this.tdb.getValue("" + "map1-" + k2 + "-t");
+					s4 = "" + s4 + this.tdb.getValue("" + "map2-" + k2 + "-t");
+					as[k2 + 10] = s4;
+					if (this.gg.layer_mode == 2) {
+						var s5 = "" + "00" + this.tdb.getValue("" + "layer0-" + k2 + "-t");
+						s5 = "" + s5 + this.tdb.getValue("" + "layer1-" + k2 + "-t");
+						s5 = "" + s5 + this.tdb.getValue("" + "layer2-" + k2 + "-t");
+						as1[k2 + 10] = s5;
+					}
+				}
+				break;
+
+			case 104:
+				for (var l2 = 0; l2 < this.mapHeight; l2++) {
+					var s6 = "" + "." + this.tdb.getValue("" + "map0-" + l2 + "-f");
+					s6 = "" + s6 + this.tdb.getValue("" + "map1-" + l2 + "-f");
+					s6 = "" + s6 + this.tdb.getValue("" + "map2-" + l2 + "-f");
+					as[l2 + 10] = s6;
+					if (this.gg.layer_mode == 2) {
+						var s7 = "" + "00" + this.tdb.getValue("" + "layer0-" + l2 + "-f");
+						s7 = "" + s7 + this.tdb.getValue("" + "layer1-" + l2 + "-f");
+						s7 = "" + s7 + this.tdb.getValue("" + "layer2-" + l2 + "-f");
+						as1[l2 + 10] = s7;
+					}
+				}
+				break;
 		}
-
-		break;
-
-	case 102: // 'f'
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back_s);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		var j2 = 0;
-		do
-		{
-			if(j2 > 29)
-				break label0;
-			var s2 = "" + "." + this.tdb.getValue("" + "map0-" + j2 + "-s");
-			s2 = "" + s2 + this.tdb.getValue("" + "map1-" + j2 + "-s");
-			s2 = "" + s2 + this.tdb.getValue("" + "map2-" + j2 + "-s");
-			as[j2 + 10] = s2;
-			if(this.gg.layer_mode == 2)
-			{
-				var s3 = "" + "00" + this.tdb.getValue("" + "layer0-" + j2 + "-s");
-				s3 = "" + s3 + this.tdb.getValue("" + "layer1-" + j2 + "-s");
-				s3 = "" + s3 + this.tdb.getValue("" + "layer2-" + j2 + "-s");
-				as1[j2 + 10] = s3;
-			}
-			j2++;
-		} while(true);
-
-	case 103: // 'g'
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back_t);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		var k2 = 0;
-		do
-		{
-			if(k2 > 29)
-				break label0;
-			var s4 = "" + "." + this.tdb.getValue("" + "map0-" + k2 + "-t");
-			s4 = "" + s4 + this.tdb.getValue("" + "map1-" + k2 + "-t");
-			s4 = "" + s4 + this.tdb.getValue("" + "map2-" + k2 + "-t");
-			as[k2 + 10] = s4;
-			if(this.gg.layer_mode == 2)
-			{
-				var s5 = "" + "00" + this.tdb.getValue("" + "layer0-" + k2 + "-t");
-				s5 = "" + s5 + this.tdb.getValue("" + "layer1-" + k2 + "-t");
-				s5 = "" + s5 + this.tdb.getValue("" + "layer2-" + k2 + "-t");
-				as1[k2 + 10] = s5;
-			}
-			k2++;
-		} while(true);
-
-	case 104: // 'h'
-		this.maps.setBank(0);
-		this.gg.setBackcolor(this.gamecolor_back_f);
-		this.maps.wx_max = 5280;
-		this.maps.wy_max = 960;
-		for(var l2 = 0; l2 <= 29; l2++)
-		{
-			var s6 = "" + "." + this.tdb.getValue("" + "map0-" + l2 + "-f");
-			s6 = "" + s6 + this.tdb.getValue("" + "map1-" + l2 + "-f");
-			s6 = "" + s6 + this.tdb.getValue("" + "map2-" + l2 + "-f");
-			as[l2 + 10] = s6;
-			if(this.gg.layer_mode == 2)
-			{
-				var s7 = "" + "00" + this.tdb.getValue("" + "layer0-" + l2 + "-f");
-				s7 = "" + s7 + this.tdb.getValue("" + "layer1-" + l2 + "-f");
-				s7 = "" + s7 + this.tdb.getValue("" + "layer2-" + l2 + "-f");
-				as1[l2 + 10] = s7;
-			}
-		}
-
-		break;
 	}
+	this.maps.setBank(0);
+	if (i == 101)
+		this.gg.setBackcolor(this.gamecolor_back);
+	else if (i == 102)
+		this.gg.setBackcolor(this.gamecolor_back_s);
+	else if (i == 103)
+		this.gg.setBackcolor(this.gamecolor_back_t);
+	else if (i == 104)
+		this.gg.setBackcolor(this.gamecolor_back_f);
 	var tmp1866_1864;
 	var tmp1866_1862;
 	var tmp1937_1935;
 	var tmp1937_1933;
 	for (i3 = 0; i3 < this.maps.height; i3++) {
-		if (as[i3].length < this.maps.width)
-		{
+		if (as[i3].length < this.maps.width) {
 			var n = as[i3].length;
-			for (k = n; k < this.maps.width; k++)
-			{
+			for (k = n; k < this.maps.width; k++) {
 				tmp1866_1864 = i3;
 				tmp1866_1862 = as;
 				tmp1866_1862[tmp1866_1864] = (tmp1866_1862[tmp1866_1864] + ".");
 			}
-			if (this.gg.layer_mode == 2)
-			{
+			if (this.gg.layer_mode == 2) {
 				n = as1[i3].length;
-				for (k = n; k < this.maps.width * 2; k++)
-				{
+				for (k = n; k < this.maps.width * 2; k++) {
 					tmp1937_1935 = i3;
 					tmp1937_1933 = as1;
 					tmp1937_1933[tmp1937_1935] = (tmp1937_1933[tmp1937_1935] + "0");
@@ -5195,758 +5637,74 @@ label0:
 		{
 			for(var i1 = 0; i1 < this.maps.width; i1++)
 			{
-				var c = as1[j3].charAt(i1 * 2);
-				if(c == '.')
-					continue;
 				var word0 = 0;
-				var j = 0;
-				do
-				{
-					if(j > 15)
-						break;
-					if(c == s8.charAt(j))
-					{
-						word0 = Math.floor(j * 16);
-						break;
+				if (mapchipLayer) {
+					try {
+						word0 = mapchipLayer.map[j3 - 10][i1 - 1];
+						if (!word0) {
+							word0 = 0;
+						}
 					}
-					if(c == s9.charAt(j))
-					{
-						word0 = Math.floor(j * 16);
-						break;
-					}
-					j++;
-				} while(true);
-				c = as1[j3].charAt(i1 * 2 + 1);
-				j = 0;
-				do
-				{
-					if(j > 15)
-						break;
-					if(c == s8.charAt(j))
-					{
-						word0 += j;
-						break;
-					}
-					if(c == s9.charAt(j))
-					{
-						word0 += j;
-						break;
-					}
-					j++;
-				} while(true);
+					catch (ex) { }
+				}
+				else {
+					var c = as1[j3].charAt(i1 * 2);
+					if (c == '.')
+						continue;
+					var j = 0;
+					do {
+						if (j > 15)
+							break;
+						if (c == s8.charAt(j)) {
+							word0 = Math.floor(j * 16);
+							break;
+						}
+						if (c == s9.charAt(j)) {
+							word0 = Math.floor(j * 16);
+							break;
+						}
+						j++;
+					} while (true);
+					c = as1[j3].charAt(i1 * 2 + 1);
+					j = 0;
+					do {
+						if (j > 15)
+							break;
+						if (c == s8.charAt(j)) {
+							word0 += j;
+							break;
+						}
+						if (c == s9.charAt(j)) {
+							word0 += j;
+							break;
+						}
+						j++;
+					} while (true);
+				}
 				this.maps.map_bg_layer[i1][j3] = word0;
 			}
 
 		}
 
 	}
-	var flag = false;
 	for(var k3 = 0; k3 < this.maps.height; k3++)
 	{
 		for(var j1 = 0; j1 < this.maps.width; j1++)
 		{
-			var c1 = as[k3].charAt(j1);
-			var word1 = -1;
-			if(c1 == '.')
-				continue;
-			if(c1 == '1')
-				word1 = 1;
-			else
-			if(c1 == '2')
-				word1 = 2;
-			else
-			if(c1 == '3')
-				word1 = 3;
-			else
-			if(c1 == '4')
-				word1 = 4;
-			else
-			if(c1 == '5')
-				word1 = 5;
-			else
-			if(c1 == '6')
-				word1 = 6;
-			else
-			if(c1 == '7')
-				word1 = 7;
-			else
-			if(c1 == '8')
-				word1 = 8;
-			else
-			if(c1 == '9')
-				word1 = 9;
-			else
-			if(c1 == 'a')
-				word1 = 20;
-			else
-			if(c1 == 'b')
-				word1 = 21;
-			else
-			if(c1 == 'c')
-				word1 = 22;
-			else
-			if(c1 == 'd')
-				word1 = 23;
-			else
-			if(c1 == 'e')
-				word1 = 24;
-			else
-			if(c1 == 'f')
-				word1 = 25;
-			else
-			if(c1 == 'g')
-				word1 = 26;
-			else
-			if(c1 == 'h')
-				word1 = 27;
-			else
-			if(c1 == 'i')
-				word1 = 28;
-			else
-			if(c1 == '[')
-				word1 = 15;
-			else
-			if(c1 == ']')
-				word1 = 10;
-			else
-			if(c1 == '<')
-				word1 = 18;
-			else
-			if(c1 == '>')
-				word1 = 19;
-			else
-			if(c1 == 'j')
-				word1 = 29;
-			else
-			if(c1 == 'k')
-			{
-				if(this.coin1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.coin1_type, j1, k3);
-					if(word1 == -99)
-					{
-						word1 = 40;
-						this.hSet(j1, k3, 100);
+			var c1 = 0;
+			if (mainLayer) {
+				try {
+					c1 = mainLayer.map[k3 - 10][j1 - 1];
+					if (!c1) {
+						c1 = 0;
 					}
-				} else
-				if(this.j_tokugi == 14)
-					this.mSet(j1 * 32, k3 * 32, 2181);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2000);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 100);
 				}
-			} else
-			if(c1 == 'l')
-			{
-				if(this.coin3_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.coin3_type, j1, k3);
-					if(word1 == -99)
-					{
-						word1 = 40;
-						this.hSet(j1, k3, 200);
-					}
-				} else
-				if(this.j_tokugi == 14)
-					this.mSet(j1 * 32, k3 * 32, 2182);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2010);
-					this.mSet(j1 * 32, k3 * 32, 2020);
-					this.mSet(j1 * 32, k3 * 32, 2000);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 200);
-				}
-			} else
-			if(c1 == 'm')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2100);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 300);
-				}
-			} else
-			if(c1 == 'n')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2110);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 400);
-				}
-			} else
-			if(c1 == 'o')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2120);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 500);
-				}
-			} else
-			if(c1 == 'p')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2130);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 600);
-				}
-			} else
-			if(c1 == 'q')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2140);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 700);
-				}
-			} else
-			if(c1 == 'r')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2150);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 800);
-				}
-			} else
-			if(c1 == 's')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2160);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 900);
-				}
-			} else
-			if(c1 == 't')
-			{
-				if(this.j_tokugi == 14 || this.j_tokugi == 15)
-				{
-					this.mSet(j1 * 32, k3 * 32, 2170);
-				} else
-				{
-					word1 = 40;
-					this.hSet(j1, k3, 1000);
-				}
-			} else
-			if(c1 == 'u')
-			{
-				if(this.dokan1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan1_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 300, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 300, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'v')
-			{
-				if(this.dokan2_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan2_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 310, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 310, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'w')
-			{
-				if(this.dokan3_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan3_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 320, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 320, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'x')
-			{
-				if(this.dokan4_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dokan4_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32, 330, j1 * 32);
-						if(this.maps.map_bg[j1 - 1][k3] == 4)
-							word1 = 4;
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 330, j1 * 32);
-					if(this.maps.map_bg[j1 - 1][k3] == 4)
-						word1 = 4;
-				}
-			} else
-			if(c1 == 'y')
-			{
-				if(this.stage_1up_f[this.stage - 1] || this.j_tokugi == 17)
-				{
-					if(this.j_tokugi == 14 || this.j_tokugi == 15)
-					{
-						this.mSet(j1 * 32, k3 * 32, 2180);
-					} else
-					{
-						word1 = 40;
-						this.hSet(j1, k3, 1100);
-					}
-				} else
-				{
-					word1 = 41;
-				}
-			} else
-			if(c1 == 'z')
-				word1 = 69;
-			else
-			if(c1 == '+')
-			{
-				this.aSet(j1 * 32, k3 * 32, 80, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '-')
-			{
-				this.aSet(j1 * 32, k3 * 32, 81, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '*')
-			{
-				this.aSet(j1 * 32, k3 * 32, 82, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '/')
-			{
-				this.aSet(j1 * 32, k3 * 32, 83, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'A')
-			{
-				this.co_j.x = j1 * 32;
-				this.co_j.y = k3 * 32;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'B')
-			{
-				this.tSet(j1 * 32, k3 * 32, 100, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'C')
-			{
-				this.tSet(j1 * 32, k3 * 32, 110, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'D')
-			{
-				this.tSet(j1 * 32, k3 * 32, 110, j1 * 32 - 512 - 32);
-				this.tSet(j1 * 32 + 75, k3 * 32, 110, j1 * 32 - 512 - 32);
-				this.tSet(j1 * 32 + 150, k3 * 32, 110, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'E')
-			{
-				this.tSet(j1 * 32, k3 * 32, 200, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'F')
-			{
-				if(this.chikorin_attack == 2 || this.chikorin_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 310, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 3 || this.chikorin_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 311, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 7)
-					this.tSet(j1 * 32, k3 * 32, 320, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 8)
-					this.tSet(j1 * 32, k3 * 32, 330, j1 * 32 - 512 - 32);
-				else
-				if(this.chikorin_attack == 9)
-					this.tSet(j1 * 32, k3 * 32, 335, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 300, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'G')
-			{
-				this.tSet(j1 * 32, k3 * 32, 400, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'H')
-			{
-				this.tSet(j1 * 32, k3 * 32, 500, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'I')
-			{
-				if(this.poppie_attack == 2)
-					this.tSet(j1 * 32, k3 * 32, 520, j1 * 32 - 512 - 32);
-				else
-				if(this.poppie_attack == 3)
-					this.tSet(j1 * 32, k3 * 32, 530, j1 * 32 - 512 - 32);
-				else
-				if(this.poppie_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 540, j1 * 32 - 512 - 32);
-				else
-				if(this.poppie_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 550, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 510, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'J')
-			{
-				this.tSet(j1 * 32, k3 * 32, 510, j1 * 32 - 512 - 32 - 32);
-				this.tSet(j1 * 32 + 80, k3 * 32 - 40, 510, j1 * 32 - 512 - 32 - 32);
-				this.tSet(j1 * 32 + 140, k3 * 32 + 38, 510, j1 * 32 - 512 - 32 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'K')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.ugokuyuka1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.ugokuyuka1_type, j1, k3);
-					if(word1 == -99)
-						this.aSet(j1 * 32, k3 * 32, 100, j1 * 32);
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32, 100, j1 * 32);
-				}
-			} else
-			if(c1 == 'L')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.ugokuyuka2_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.ugokuyuka2_type, j1, k3);
-					if(word1 == -99)
-						this.aSet(j1 * 32, k3 * 32 + 9, 110, j1 * 32 - 16);
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32 + 9, 110, j1 * 32 - 16);
-				}
-			} else
-			if(c1 == 'M')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.ugokuyuka3_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.ugokuyuka3_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32, k3 * 32 + 9, 115, j1 * 32 - 16);
-						this.aSet(j1 * 32, k3 * 32 + 9, 116, j1 * 32 - 16);
-					}
-				} else
-				{
-					this.aSet(j1 * 32, k3 * 32 + 9, 115, j1 * 32 - 16);
-					this.aSet(j1 * 32, k3 * 32 + 9, 116, j1 * 32 - 16);
-				}
-			} else
-			if(c1 == 'N')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.dossunsun_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.dossunsun_type, j1, k3);
-					if(word1 == -99)
-						this.aSet(j1 * 32 - 32, k3 * 32, 400, j1 * 32);
-				} else
-				{
-					this.aSet(j1 * 32 - 32, k3 * 32, 400, j1 * 32);
-				}
-			} else
-			if(c1 == 'O')
-			{
-				if(this.mariri_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 660, j1 * 32 - 512 - 32);
-				else
-				if(this.mariri_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 670, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 600, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'P')
-			{
-				if(this.yachamo_attack == 6 || this.yachamo_attack == 7)
-					this.tSet(j1 * 32, k3 * 32, 710, j1 * 32 - 512 - 32);
-				else
-				if(this.yachamo_attack == 8)
-					this.tSet(j1 * 32, k3 * 32, 720, j1 * 32 - 512 - 32);
-				else
-				if(this.yachamo_attack == 9)
-					this.tSet(j1 * 32, k3 * 32, 725, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 700, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'Q')
-			{
-				if(this.j_tokugi == 14)
-					this.tSet(j1 * 32, k3 * 32, 850, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 800, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'R')
-			{
-				if(this.airms_kf == 3 || this.airms_kf == 4)
-					this.tSet(j1 * 32, k3 * 32, 920, j1 * 32 - 512 - 32);
-				else
-				if(this.airms_kf == 5)
-					this.tSet(j1 * 32, k3 * 32, 930, j1 * 32 - 512 - 32);
-				else
-					this.tSet(j1 * 32, k3 * 32, 900, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'S')
-			{
-				this.co_b.c = 100;
-				this.co_b.c4 = 3;
-				this.co_b.x = j1 * 32;
-				this.co_b.y = k3 * 32 - 16;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.co_b.x < 448)
-					this.co_b.x = 448;
-				else
-				if(this.co_b.x > 5664)
-					this.co_b.x = 5664;
-				if(this.sl_step == 10)
-					this.sl_step = 11;
-				else
-					this.sl_step = 1;
-				this.sl_wx = this.co_b.x - 384;
-				this.sl_wy = 960;
-				if(this.boss_destroy_type == 2)
-					this.co_b.x += 160;
-			} else
-			if(c1 == 'T')
-			{
-				this.co_b.c = 200;
-				this.co_b.c4 = 3;
-				this.co_b.x = j1 * 32;
-				this.co_b.y = k3 * 32 - 16;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.co_b.x < 448)
-					this.co_b.x = 448;
-				else
-				if(this.co_b.x > 5664)
-					this.co_b.x = 5664;
-				if(this.sl_step == 10)
-					this.sl_step = 11;
-				else
-					this.sl_step = 1;
-				this.sl_wx = this.co_b.x - 384;
-				this.sl_wy = 960;
-				if(this.boss_destroy_type == 2)
-					this.co_b.x += 160;
-			} else
-			if(c1 == 'U')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.firebar1_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.firebar1_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32 + 16, k3 * 32 + 16, 70, j1 * 32);
-						word1 = 50;
-					}
-				} else
-				{
-					this.aSet(j1 * 32 + 16, k3 * 32 + 16, 70, j1 * 32);
-					word1 = 50;
-				}
-			} else
-			if(c1 == 'V')
-			{
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.firebar2_type >= 2)
-				{
-					word1 = this.setAthleticOnMap(this.firebar2_type, j1, k3);
-					if(word1 == -99)
-					{
-						this.aSet(j1 * 32 + 16, k3 * 32 + 16, 71, j1 * 32);
-						word1 = 50;
-					}
-				} else
-				{
-					this.aSet(j1 * 32 + 16, k3 * 32 + 16, 71, j1 * 32);
-					word1 = 50;
-				}
-			} else
-			if(c1 == 'W')
-			{
-				if(this.taiking_attack == 2)
-					this.tSet(j1 * 32, k3 * 32, 1050, j1 * 32 - 512 - 32);
-				else
-				if(this.taiking_attack == 3)
-					this.tSet(j1 * 32, k3 * 32, 1060, j1 * 32 - 512 - 32);
-				else
-				if(this.taiking_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 1070, j1 * 32 - 512 - 32);
-				else
-				if(this.taiking_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 1080, j1 * 32 - 512 - 32 - 32);
-				else
-				if(this.j_tokugi == 14)
-					this.tSet(j1 * 32, k3 * 32, 1002, j1 * 32 - 512 - 32 - 32);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.tSet(j1 * 32, k3 * 32, 1003, j1 * 32 - 512 - 32);
-				} else
-				{
-					this.tSet(j1 * 32, k3 * 32 - 16, 1000, j1 * 32 - 512 - 32 - 32);
-					word1 = 4;
-				}
-				if(this.maps.map_bg[j1 - 1][k3] == 4 || this.maps.map_bg[j1][k3 - 1] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'X')
-			{
-				if(this.kuragesso_attack == 2)
-					this.tSet(j1 * 32, k3 * 32, 1150, j1 * 32 - 512 - 32);
-				else
-				if(this.kuragesso_attack == 3)
-					this.tSet(j1 * 32, k3 * 32, 1160, j1 * 32 - 512 - 32);
-				else
-				if(this.kuragesso_attack == 4)
-					this.tSet(j1 * 32, k3 * 32, 1170, j1 * 32 - 512 - 32);
-				else
-				if(this.kuragesso_attack == 5)
-					this.tSet(j1 * 32, k3 * 32, 1180, j1 * 32 - 512 - 32 - 32);
-				else
-				if(this.j_tokugi == 14)
-					this.tSet(j1 * 32, k3 * 32, 1102, j1 * 32 - 512 - 32);
-				else
-				if(this.j_tokugi == 15)
-				{
-					this.tSet(j1 * 32, k3 * 32, 1103, j1 * 32 - 512 - 32);
-				} else
-				{
-					this.tSet(j1 * 32, k3 * 32, 1100, j1 * 32 - 512 - 32);
-					word1 = 4;
-				}
-				if(this.maps.map_bg[j1 - 1][k3] == 4 || this.maps.map_bg[j1][k3 - 1] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'Y')
-			{
-				this.aSet(j1 * 32, k3 * 32, 60, j1 * 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == 'Z')
-			{
-				this.co_b.c = 300;
-				this.co_b.c4 = 3;
-				this.co_b.x = j1 * 32;
-				this.co_b.y = k3 * 32 - 16;
-				this.boss_kijyun_y = this.co_b.y;
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-				if(this.co_b.x < 448)
-					this.co_b.x = 448;
-				else
-				if(this.co_b.x > 5664)
-					this.co_b.x = 5664;
-				if(this.sl_step == 10)
-					this.sl_step = 11;
-				else
-					this.sl_step = 1;
-				this.sl_wx = this.co_b.x - 384;
-				this.sl_wy = 960;
-				if(this.boss_destroy_type == 2)
-					this.co_b.x += 160;
-			} else
-			if(c1 == '{')
-			{
-				this.tSet(j1 * 32, k3 * 32, 1200, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
-			} else
-			if(c1 == '}')
-			{
-				this.tSet(j1 * 32, k3 * 32, 1400, j1 * 32 - 512 - 32);
-				if(this.maps.map_bg[j1 - 1][k3] == 4)
-					word1 = 4;
+				catch (ex) { }
 			}
+			else {
+				c1 = as[k3].charCodeAt(j1);
+			}
+			var word1 = this.setChipValue(j1, k3, c1);
 			if(word1 >= 0)
 				this.maps.map_bg[j1][k3] = word1;
 		}
@@ -5962,7 +5720,7 @@ label0:
 	for(var l3 = 0; l3 <= this.maps.height - 1; l3++)
 	{
 		this.maps.map_bg[0][l3] = 21;
-		this.maps.map_bg[181][l3] = 21;
+		this.maps.map_bg[this.mapWidth + 1][l3] = 21;
 		this.maps.map_bg[c2][l3] = 21;
 	}
 
@@ -5987,6 +5745,14 @@ label0:
 	return;
 }
 
+/**
+ * マップ上に仕掛けを配置します 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap} 参照
+ * @param type {number} 配置する仕掛けの種類
+ * @param blockX {number} 配置先のブロックX座標
+ * @param blockY {number} 配置先のブロックY座標
+ * @returns {number}
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap}
+ */
 MainProgram.prototype.setAthleticOnMap = function(i, j, k)
 {
 	var word0 = -1;
@@ -7047,6 +6813,11 @@ MainProgram.prototype.setAthleticOnMap = function(i, j, k)
 	return word0;
 }
 
+/**
+ * ゲーム画面を描画します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreen = function()
 {
 	var ai = new Array(26);
@@ -7133,7 +6904,7 @@ MainProgram.prototype.drawGamescreen = function()
 				default:
 					break;
 
-				case 100: // 'd'
+				case 100:
 					this.hg.drawImage(this.hi[190], i13, k15, this.ap);
 					this.hg.drawImage(this.hi[191], i13 + 32, k15, this.ap);
 					this.hg.drawImage(this.hi[192], i13 + 64, k15, this.ap);
@@ -8062,18 +7833,18 @@ MainProgram.prototype.drawGamescreen = function()
 				{
 					var k8 = this.maps.getBGCode(characterobject2.x, characterobject2.y);
 					if(k8 >= 20 && k8 != 29)
-						this.gg.drawPT((characterobject2.x >> 5) * 32 - i6, (characterobject2.y >> 5) * 32 - j6, k8, 0);
+						this.gg.drawPT(rightShiftIgnoreSign(characterobject2.x, 5) * 32 - i6, rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6, k8, 0);
 					k8 = this.maps.getBGCode(characterobject2.x + 31, characterobject2.y);
 					if(k8 >= 20 && k8 != 29)
-						this.gg.drawPT(((characterobject2.x + 31) >> 5) * 32 - i6, (characterobject2.y >> 5) * 32 - j6, k8, 0);
+						this.gg.drawPT(rightShiftIgnoreSign(characterobject2.x + 31, 5) * 32 - i6, rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6, k8, 0);
 					continue;
 				}
 				var l8 = this.maps.getBGCode(characterobject2.x, characterobject2.y);
 				if(l8 >= 20)
-					this.gg.drawPT((characterobject2.x >> 5) * 32 - i6, (characterobject2.y >> 5) * 32 - j6, l8, 0);
+					this.gg.drawPT(rightShiftIgnoreSign(characterobject2.x, 5) * 32 - i6, rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6, l8, 0);
 				l8 = this.maps.getBGCode(characterobject2.x + 31, characterobject2.y);
 				if(l8 >= 20)
-					this.gg.drawPT(((characterobject2.x + 31) >> 5) * 32 - i6, (characterobject2.y >> 5) * 32 - j6, l8, 0);
+					this.gg.drawPT(rightShiftIgnoreSign(characterobject2.x + 31, 5) * 32 - i6, rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6, l8, 0);
 				continue;
 			}
 			if(characterobject2.pt == 1000)
@@ -8760,13 +8531,13 @@ MainProgram.prototype.drawGamescreen = function()
 	if(this.second_gazou_visible && this.second_gazou_priority == 2 && this.second_gazou_img != null)
 		if(this.second_gazou_scroll == 2)
 		{
-			var i9 = -(((this.maps.wx - 32) >> 2) % 512);
+			var i9 = -(rightShiftIgnoreSign(this.maps.wx - 32, 2) % 512);
 			this.hg.drawImage(this.second_gazou_img, i9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i9 + 512, 0, this.ap);
 		} else
 		if(this.second_gazou_scroll == 3)
 		{
-			var j9 = -(((this.maps.wx - 32) >> 1) % 512);
+			var j9 = -(rightShiftIgnoreSign(this.maps.wx - 32, 1) % 512);
 			this.hg.drawImage(this.second_gazou_img, j9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, j9 + 512, 0, this.ap);
 		} else
@@ -8789,13 +8560,13 @@ MainProgram.prototype.drawGamescreen = function()
 		} else
 		if(this.second_gazou_scroll == 5)
 		{
-			var k9 = -((((this.maps.wx - 32) * 3) >> 1) % 512);
+			var k9 = -(rightShiftIgnoreSign((this.maps.wx - 32) * 3, 1) % 512);
 			this.hg.drawImage(this.second_gazou_img, k9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, k9 + 512, 0, this.ap);
 		} else
 		if(this.second_gazou_scroll == 6)
 		{
-			var l9 = -((((this.maps.wx - 32) * 3) >> 1) % 512);
+			var l9 = -(rightShiftIgnoreSign((this.maps.wx - 32) * 3, 1) % 512);
 			var l11 = -(this.maps.wy - 320);
 			this.hg.drawImage(this.second_gazou_img, l9, l11, this.ap);
 			this.hg.drawImage(this.second_gazou_img, l9 + 512, l11, this.ap);
@@ -8848,27 +8619,27 @@ MainProgram.prototype.drawGamescreen = function()
 		if(this.spot_c == 100)
 		{
 			this.hg.setColor(Color.black);
-			var i15 = (this.co_j.x + 16) - (this.spot_r >> 1) - this.maps.wx;
+			var i15 = (this.co_j.x + 16) - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wx;
 			if(i15 > 0)
 				this.hg.fillRect(0, 0, i15, 320);
-			var i24 = (this.co_j.x + 16 + (this.spot_r >> 1)) - this.maps.wx;
+			var i24 = (this.co_j.x + 16 + rightShiftIgnoreSign(this.spot_r, 1)) - this.maps.wx;
 			if(i24 < 512)
 				this.hg.fillRect(i24, 0, 512 - i24, 320);
-			var l17 = (this.co_j.y + 16) - (this.spot_r >> 1) - this.maps.wy;
+			var l17 = (this.co_j.y + 16) - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wy;
 			if(l17 > 0)
 				this.hg.fillRect(i15, 0, i24 - i15, l17);
-			var j30 = (this.co_j.y + 16 + (this.spot_r >> 1)) - this.maps.wy;
+			var j30 = (this.co_j.y + 16 + rightShiftIgnoreSign(this.spot_r, 1)) - this.maps.wy;
 			if(j30 < 320)
 				this.hg.fillRect(i15, j30, i24 - i15, 320 - j30);
 			this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
 			this.hg.setColor(Color.black);
 			this.hg.fillRect(0, 0, 512, 320);
 			var graphics230 = this.gg.os_img.getGraphics();
-			graphics230.setClip("ellipse", (this.co_j.x + 16) - (this.spot_r >> 1) - this.maps.wx, (this.co_j.y + 16) - (this.spot_r >> 1) - this.maps.wy, this.spot_r, this.spot_r);
+			graphics230.setClip("ellipse", (this.co_j.x + 16) - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wx, (this.co_j.y + 16) - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wy, this.spot_r, this.spot_r);
 			graphics230.drawImage(this.spot_img, 0, 0, this.ap);
 			this.hg.setColor(new Color(0, 0, 0, 96));
 			this.hg.fillRect(0, 0, 512, 320);
-			graphics230.setClip("ellipse", (this.co_j.x + 16) - ((this.spot_r - 48) >> 1) - this.maps.wx, (this.co_j.y + 16) - ((this.spot_r - 48) >> 1) - this.maps.wy, this.spot_r - 48, this.spot_r - 48);
+			graphics230.setClip("ellipse", (this.co_j.x + 16) - rightShiftIgnoreSign(this.spot_r - 48, 1) - this.maps.wx, (this.co_j.y + 16) - rightShiftIgnoreSign(this.spot_r - 48, 1) - this.maps.wy, this.spot_r - 48, this.spot_r - 48);
 			graphics230.drawImage(this.spot_img, 0, 0, this.ap);
 			graphics230.dispose();
 		} else
@@ -8883,9 +8654,9 @@ MainProgram.prototype.drawGamescreen = function()
 	if(this.hitokoto_c > 0)
 	{
 		this.hitokoto_c--;
-		var c = 0320;
+		var c = 208;
 		var byte1 = 56;
-		var c1 = 0340;
+		var c1 = 224;
 		var k12 = 0;
 		for(var k3 = 0; k3 <= 2; k3++)
 		{
@@ -8954,6 +8725,11 @@ MainProgram.prototype.drawGamescreen = function()
 	this.km.drawMenus();
 }
 
+/**
+ * 主人公を描画します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenMy = function()
 {
 	var l = this.maps.wx;
@@ -9094,6 +8870,11 @@ MainProgram.prototype.drawGamescreenMy = function()
 		if(this.co_j.pt != 1110);
 }
 
+/**
+ * 敵を描画します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenEnemy = function()
 {
 	var j = this.maps.wx;
@@ -9114,6 +8895,11 @@ MainProgram.prototype.drawGamescreenEnemy = function()
 
 }
 
+/**
+ * HPゲージ、一言メッセージ、{@link MasaoJSS#showOval|showOval}, {@link MasaoJSS#showRect|showRect}, {@link MasaoJSS#showImage|showImage}で指定した描画物を描画します。
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenWindow = function()
 {
 	if(this.showr_c > 0)
@@ -9158,9 +8944,9 @@ MainProgram.prototype.drawGamescreenWindow = function()
 		}
 	if(this.hitokoto_c > -1)
 	{
-		var c = 0320;
+		var c = 208;
 		var byte0 = 56;
-		var c1 = 0340;
+		var c1 = 224;
 		var l1 = 0;
 		for(var j = 0; j <= 2; j++)
 		{
@@ -9228,6 +9014,11 @@ MainProgram.prototype.drawGamescreenWindow = function()
 	}
 }
 
+/**
+ * 仕掛けを表示します
+ * {@link MainProgram#drawSystemObject}以外では使われていない？
+ * @see {@link MainProgram#drawSystemObject}
+ */
 MainProgram.prototype.drawGamescreenUgokuyuka = function()
 {
 	var j2 = this.maps.wx;
@@ -9271,7 +9062,7 @@ MainProgram.prototype.drawGamescreenUgokuyuka = function()
 				default:
 					break;
 
-				case 100: // 'd'
+				case 100:
 					this.hg.drawImage(this.hi[190], i4, i5, this.ap);
 					this.hg.drawImage(this.hi[191], i4 + 32, i5, this.ap);
 					this.hg.drawImage(this.hi[192], i4 + 64, i5, this.ap);
@@ -9408,18 +9199,18 @@ MainProgram.prototype.drawGamescreenUgokuyuka = function()
 				{
 					var k3 = this.maps.getBGCode(characterobject1.x, characterobject1.y);
 					if(k3 >= 20 && k3 != 29)
-						this.gg.drawPT((characterobject1.x >> 5) * 32 - j2, (characterobject1.y >> 5) * 32 - k2, k3, 0);
+						this.gg.drawPT(rightShiftIgnoreSign(characterobject1.x, 5) * 32 - j2, rightShiftIgnoreSign(characterobject1.y, 5) * 32 - k2, k3, 0);
 					k3 = this.maps.getBGCode(characterobject1.x + 31, characterobject1.y);
 					if(k3 >= 20 && k3 != 29)
-						this.gg.drawPT(((characterobject1.x + 31) >> 5) * 32 - j2, (characterobject1.y >> 5) * 32 - k2, k3, 0);
+						this.gg.drawPT(rightShiftIgnoreSign(characterobject1.x + 31, 5) * 32 - j2, rightShiftIgnoreSign(characterobject1.y, 5) * 32 - k2, k3, 0);
 					continue;
 				}
 				var l3 = this.maps.getBGCode(characterobject1.x, characterobject1.y);
 				if(l3 >= 20)
-					this.gg.drawPT((characterobject1.x >> 5) * 32 - j2, (characterobject1.y >> 5) * 32 - k2, l3, 0);
+					this.gg.drawPT(rightShiftIgnoreSign(characterobject1.x, 5) * 32 - j2, rightShiftIgnoreSign(characterobject1.y, 5) * 32 - k2, l3, 0);
 				l3 = this.maps.getBGCode(characterobject1.x + 31, characterobject1.y);
 				if(l3 >= 20)
-					this.gg.drawPT(((characterobject1.x + 31) >> 5) * 32 - j2, (characterobject1.y >> 5) * 32 - k2, l3, 0);
+					this.gg.drawPT(rightShiftIgnoreSign(characterobject1.x + 31, 5) * 32 - j2, rightShiftIgnoreSign(characterobject1.y, 5) * 32 - k2, l3, 0);
 				continue;
 			}
 			if(characterobject1.pt == 1000)
@@ -9640,6 +9431,9 @@ MainProgram.prototype.drawGamescreenUgokuyuka = function()
 	}
 }
 
+/**
+ * 毎フレームの主人公の処理のうち、CharactorObject.cの値が100のときの処理を行います
+ */
 MainProgram.prototype.jM100 = function()
 {
 	var flag1 = false;
@@ -9662,7 +9456,7 @@ MainProgram.prototype.jM100 = function()
 	} else
 	if(l29 == 8 || l29 == 9)
 	{
-		if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+		if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 		{
 			this.j_mizu_f = true;
 			this.j_djump_kf = true;
@@ -9675,7 +9469,7 @@ MainProgram.prototype.jM100 = function()
 				this.j_mizu_awa_c = 0;
 		}
 	} else
-	if(l29 >= 15 && l29 <= 19 && this.maps.map_bg[(this.co_j.x + 15) >> 5][((this.co_j.y + 15) >> 5) - 1] == 4)
+	if(l29 >= 15 && l29 <= 19 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1] == 4)
 	{
 		this.j_mizu_f = true;
 		this.j_djump_kf = true;
@@ -9781,22 +9575,22 @@ MainProgram.prototype.jM100 = function()
 	var j5 = this.co_j.x;
 	var k5 = this.co_j.y;
 	this.co_j.pt = 100;
-	var i = (j5 + 15) >> 5;
-	var j2 = (k5 + 31) >> 5;
+	var i = rightShiftIgnoreSign(j5 + 15, 5);
+	var j2 = rightShiftIgnoreSign(k5 + 31, 5);
 	var word0 = this.maps.map_bg[i][j2];
 	var flag = this.map_data_option[i][j2];
-	var l2 = (k5 + 32) >> 5;
+	var l2 = rightShiftIgnoreSign(k5 + 32, 5);
 	var word2 = this.maps.map_bg[i][l2];
 	if(this.j_shitakara_mushi_y > 0 && this.j_shitakara_mushi_y != l2)
 		this.j_shitakara_mushi_y = -1;
 	flag19 = false;
-	if(word2 == 15 && (k5 >> 5) * 32 == k5 && this.co_j.vy >= 0)
+	if(word2 == 15 && rightShiftIgnoreSign(k5, 5) * 32 == k5 && this.co_j.vy >= 0)
 	{
 		flag19 = true;
 		if(this.j_shitakara_mushi_y > 0 && this.j_shitakara_mushi_y == l2)
 			flag19 = false;
 	}
-	if((word2 >= 20 || word2 == 10 || this.j_a_id >= 0 || flag19) && this.j_hashigo_mushi_x != (this.co_j.x + 15) >> 5)
+	if((word2 >= 20 || word2 == 10 || this.j_a_id >= 0 || flag19) && this.j_hashigo_mushi_x != rightShiftIgnoreSign(this.co_j.x + 15, 5))
 	{
 		this.co_j.jimen_f = true;
 		this.j_jump_type = 2;
@@ -9832,20 +9626,20 @@ MainProgram.prototype.jM100 = function()
 			}
 		}
 	}
-	if(word0 == 10 && (this.co_j.y >> 5) * 32 == this.co_j.y)
+	if(word0 == 10 && rightShiftIgnoreSign(this.co_j.y, 5) * 32 == this.co_j.y)
 	{
 		this.co_j.jimen_f = true;
-		if(this.j_tokugi <= 11 && (this.co_j.x + 15) >> 5 != this.j_hashigo_mushi_x && this.maps.getBGCode((this.co_j.x + 15) - 32, this.co_j.y + 31) != 10 && this.maps.getBGCode(this.co_j.x + 15 + 32, this.co_j.y + 31) != 10 && this.maps.getBGCode((this.co_j.x + 15) - 32, this.co_j.y + 32) <= 9 && this.maps.getBGCode(this.co_j.x + 15 + 32, this.co_j.y + 32) <= 9)
+		if(this.j_tokugi <= 11 && rightShiftIgnoreSign(this.co_j.x + 15, 5) != this.j_hashigo_mushi_x && this.maps.getBGCode((this.co_j.x + 15) - 32, this.co_j.y + 31) != 10 && this.maps.getBGCode(this.co_j.x + 15 + 32, this.co_j.y + 31) != 10 && this.maps.getBGCode((this.co_j.x + 15) - 32, this.co_j.y + 32) <= 9 && this.maps.getBGCode(this.co_j.x + 15 + 32, this.co_j.y + 32) <= 9)
 		{
 			var flag5 = false;
-			if((this.co_j.x >> 5) * 32 != this.co_j.x)
+			if(rightShiftIgnoreSign(this.co_j.x, 5) * 32 != this.co_j.x)
 			{
 				var j10 = 0;
 				do
 				{
 					if(j10 > this.a_kazu)
 						break;
-					if(this.co_a[j10].c == 410 && this.co_a[j10].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[j10].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[j10].y && this.co_j.y <= this.co_a[j10].y + 63)
+					if(this.co_a[j10].c == 410 && this.co_a[j10].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[j10].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[j10].y && this.co_j.y <= this.co_a[j10].y + 63)
 					{
 						flag5 = true;
 						break;
@@ -9856,11 +9650,11 @@ MainProgram.prototype.jM100 = function()
 			if(!flag5)
 			{
 				this.j_hashigo_f = true;
-				this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 			}
 		}
 	}
-	if(this.j_hashigo_mushi_x != (this.co_j.x + 15) >> 5 || this.co_j.vx == 0)
+	if(this.j_hashigo_mushi_x != rightShiftIgnoreSign(this.co_j.x + 15, 5) || this.co_j.vx == 0)
 		this.j_hashigo_mushi_x = -1;
 	if(this.saka_mushi_y >= 0)
 		if(this.co_j.y + 31 > this.saka_mushi_y * 32 + 32 + 23 || this.co_j.y + 31 < this.saka_mushi_y * 32)
@@ -9870,19 +9664,19 @@ MainProgram.prototype.jM100 = function()
 			this.saka_mushi_y = -1;
 	if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15) == 10 || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) == 10)
 	{
-		if(this.j_hashigo_mushi_x != (this.co_j.x + 15) >> 5)
+		if(this.j_hashigo_mushi_x != rightShiftIgnoreSign(this.co_j.x + 15, 5))
 			this.j_jump_type = 2;
 		if(this.gk.up_f)
 		{
 			var flag6 = false;
-			if((this.co_j.x >> 5) * 32 != this.co_j.x)
+			if(rightShiftIgnoreSign(this.co_j.x, 5) * 32 != this.co_j.x)
 			{
 				var k10 = 0;
 				do
 				{
 					if(k10 > this.a_kazu)
 						break;
-					if(this.co_a[k10].c == 410 && this.co_a[k10].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[k10].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[k10].y && this.co_j.y <= this.co_a[k10].y + 63)
+					if(this.co_a[k10].c == 410 && this.co_a[k10].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[k10].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[k10].y && this.co_j.y <= this.co_a[k10].y + 63)
 					{
 						flag6 = true;
 						break;
@@ -9901,14 +9695,14 @@ MainProgram.prototype.jM100 = function()
 		if(this.gk.down_f && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) < 20 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) != 15)
 		{
 			var flag7 = false;
-			if((this.co_j.x >> 5) * 32 != this.co_j.x)
+			if(rightShiftIgnoreSign(this.co_j.x, 5) * 32 != this.co_j.x)
 			{
 				var l10 = 0;
 				do
 				{
 					if(l10 > this.a_kazu)
 						break;
-					if(this.co_a[l10].c == 410 && this.co_a[l10].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[l10].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[l10].y && this.co_j.y <= this.co_a[l10].y + 63)
+					if(this.co_a[l10].c == 410 && this.co_a[l10].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[l10].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[l10].y && this.co_j.y <= this.co_a[l10].y + 63)
 					{
 						flag7 = true;
 						break;
@@ -9938,9 +9732,9 @@ MainProgram.prototype.jM100 = function()
 	{
 		if(this.gk.left_f)
 		{
-			var j16 = (this.co_j.y + 15) >> 5;
-			var word20 = this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][j16];
-			var word30 = this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][j16 + 1];
+			var j16 = rightShiftIgnoreSign(this.co_j.y + 15, 5);
+			var word20 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][j16];
+			var word30 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][j16 + 1];
 			if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && (word20 <= 10 || word20 == 15))
 			{
 				this.j_hashigo_f = false;
@@ -9959,7 +9753,7 @@ MainProgram.prototype.jM100 = function()
 			} else
 			if((word20 <= 10 || word20 == 15) && (word30 >= 20 || word30 == 15 || word30 == 10))
 			{
-				var word21 = this.maps.map_bg[(this.co_j.x + 15) >> 5][j16 + 1];
+				var word21 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j16 + 1];
 				if(word21 == 10 || word21 == 15 || word21 >= 20)
 				{
 					this.j_hashigo_f = false;
@@ -9972,9 +9766,9 @@ MainProgram.prototype.jM100 = function()
 		}
 		if(this.gk.right_f)
 		{
-			var k16 = (this.co_j.y + 15) >> 5;
-			var word22 = this.maps.map_bg[((this.co_j.x + 15) >> 5) + 1][k16];
-			var word31 = this.maps.map_bg[((this.co_j.x + 15) >> 5) + 1][k16 + 1];
+			var k16 = rightShiftIgnoreSign(this.co_j.y + 15, 5);
+			var word22 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) + 1][k16];
+			var word31 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) + 1][k16 + 1];
 			if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && (word22 <= 10 || word22 == 15))
 			{
 				this.j_hashigo_f = false;
@@ -9993,7 +9787,7 @@ MainProgram.prototype.jM100 = function()
 			} else
 			if((word22 <= 10 || word22 == 15) && (word31 >= 20 || word31 == 15 || word31 == 10))
 			{
-				var word23 = this.maps.map_bg[(this.co_j.x + 15) >> 5][k16 + 1];
+				var word23 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][k16 + 1];
 				if(word23 == 10 || word23 == 15 || word23 >= 20)
 				{
 					this.j_hashigo_f = false;
@@ -10103,7 +9897,7 @@ MainProgram.prototype.jM100 = function()
 		{
 			if(i11 > this.a_kazu)
 				break;
-			if(this.co_a[i11].c == 410 && this.co_a[i11].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[i11].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[i11].y && this.co_j.y <= this.co_a[i11].y + 63)
+			if(this.co_a[i11].c == 410 && this.co_a[i11].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[i11].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[i11].y && this.co_j.y <= this.co_a[i11].y + 63)
 			{
 				flag8 = true;
 				break;
@@ -10157,7 +9951,7 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.ac = 0;
 				} else
 				{
-					this.co_j.pt = 105 + (this.co_j.ac >> 1);
+					this.co_j.pt = 105 + rightShiftIgnoreSign(this.co_j.ac, 1);
 					this.co_j.ac++;
 					if(this.co_j.ac > 3)
 						this.co_j.ac = 0;
@@ -10177,7 +9971,7 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.ac = 0;
 				} else
 				{
-					this.co_j.pt = 103 + (this.co_j.ac >> 1);
+					this.co_j.pt = 103 + rightShiftIgnoreSign(this.co_j.ac, 1);
 					this.co_j.ac++;
 					if(this.co_j.ac > 3)
 						this.co_j.ac = 0;
@@ -10218,7 +10012,7 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.ac = 0;
 				} else
 				{
-					this.co_j.pt = 105 + (this.co_j.ac >> 1);
+					this.co_j.pt = 105 + rightShiftIgnoreSign(this.co_j.ac, 1);
 					this.co_j.ac++;
 					if(this.co_j.ac > 3)
 						this.co_j.ac = 0;
@@ -10238,7 +10032,7 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.ac = 0;
 				} else
 				{
-					this.co_j.pt = 103 + (this.co_j.ac >> 1);
+					this.co_j.pt = 103 + rightShiftIgnoreSign(this.co_j.ac, 1);
 					this.co_j.ac++;
 					if(this.co_j.ac > 3)
 						this.co_j.ac = 0;
@@ -10261,7 +10055,7 @@ MainProgram.prototype.jM100 = function()
 				this.co_j.ac = 0;
 			} else
 			{
-				this.co_j.pt = 103 + (this.co_j.ac >> 1);
+				this.co_j.pt = 103 + rightShiftIgnoreSign(this.co_j.ac, 1);
 				this.co_j.ac++;
 				if(this.co_j.ac > 3)
 					this.co_j.ac = 0;
@@ -10283,7 +10077,7 @@ MainProgram.prototype.jM100 = function()
 				this.co_j.ac = 0;
 			} else
 			{
-				this.co_j.pt = 103 + (this.co_j.ac >> 1);
+				this.co_j.pt = 103 + rightShiftIgnoreSign(this.co_j.ac, 1);
 				this.co_j.ac++;
 				if(this.co_j.ac > 3)
 					this.co_j.ac = 0;
@@ -10312,15 +10106,15 @@ MainProgram.prototype.jM100 = function()
 			}
 			if(this.co_j.vy < 0)
 			{
-				if(Math.abs((this.co_j.x >> 5) * 32 - this.co_j.x) < 3)
+				if(Math.abs(rightShiftIgnoreSign(this.co_j.x, 5) * 32 - this.co_j.x) < 3)
 				{
-					this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+					this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 					this.co_j.vx = 0;
 				}
 			} else
-			if(Math.abs((this.co_j.x >> 5) * 32 - this.co_j.x) < 6)
+			if(Math.abs(rightShiftIgnoreSign(this.co_j.x, 5) * 32 - this.co_j.x) < 6)
 			{
-				this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 				this.co_j.vx = 0;
 			}
 			if(this.co_j.vy > 90)
@@ -10496,16 +10290,16 @@ MainProgram.prototype.jM100 = function()
 			if(this.gk.left_f)
 			{
 				this.co_j.vx = -30;
-				this.co_j.x = ((this.co_j.x + 15) >> 5) * 32 - 6;
+				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 - 6;
 			} else
 			if(this.gk.right_f)
 			{
 				this.co_j.vx = 30;
-				this.co_j.x = ((this.co_j.x + 15) >> 5) * 32 + 6;
+				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 6;
 			}
 	}
 	if(this.j_hashigo_f)
-		this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+		this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 	else
 	if(this.co_j.vx < 0)
 	{
@@ -10518,7 +10312,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = k21;
 					if(this.yo[this.yuka_ride_id].y > this.yo[this.yuka_ride_id].y2 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = this.yo[this.yuka_ride_id].y - 32;
@@ -10548,7 +10342,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = i22;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					var j22 = rounddown((this.yo[this.yuka_ride_id].x2 * 90) / 100);
@@ -10562,7 +10356,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = k22;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = this.yo[this.yuka_ride_id].y + 32;
@@ -10575,7 +10369,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = l22;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = (this.yo[this.yuka_ride_id].y + 128) - 32;
@@ -10604,7 +10398,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = j23;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = this.yo[this.yuka_ride_id].y - 32;
@@ -10624,16 +10418,16 @@ MainProgram.prototype.jM100 = function()
 		if(this.co_j.jimen_f)
 			if(word0 == 19)
 			{
-				if(i > (this.co_j.x + 15) >> 5)
+				if(i > rightShiftIgnoreSign(this.co_j.x + 15, 5))
 				{
 					this.co_j.y = (j2 - 1) * 32;
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 - 1] == 19)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 - 1] == 19)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] == 18)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] == 18)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 32);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] < 19 && this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] != 15)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] < 19 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] != 15)
 					{
 						this.co_j.vy = this.co_j.vx;
 						if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && this.co_j.vy < -40)
@@ -10648,16 +10442,16 @@ MainProgram.prototype.jM100 = function()
 			} else
 			if(word0 == 18)
 			{
-				if(i > (this.co_j.x + 15) >> 5)
+				if(i > rightShiftIgnoreSign(this.co_j.x + 15, 5))
 				{
 					this.co_j.y = j2 * 32;
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] == 19)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] == 19)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 + 1] == 18)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 + 1] == 18)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, (j2 + 1) * 32);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 + 1] < 18)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 + 1] < 18)
 					{
 						this.co_j.vy = this.co_j.vx * -1;
 						this.co_j.y += rounddown(this.co_j.vx / -10);
@@ -10667,28 +10461,28 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 				}
 			} else
-			if((word2 >= 20 || word2 == 10 || word2 == 15) && i > (this.co_j.x + 15) >> 5)
+			if((word2 >= 20 || word2 == 10 || word2 == 15) && i > rightShiftIgnoreSign(this.co_j.x + 15, 5))
 			{
 				this.co_j.y = j2 * 32;
-				if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 + 1] == 18)
+				if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 + 1] == 18)
 					this.co_j.y = this.getSakamichiY(this.co_j.x + 15, (j2 + 1) * 32);
 			}
 		if(this.co_j.jimen_f)
 		{
-			var k = (this.co_j.x + 15) >> 5;
-			var word12 = this.maps.map_bg[k][this.co_j.y >> 5];
-			var j3 = (this.co_j.y + 31) >> 5;
+			var k = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+			var word12 = this.maps.map_bg[k][rightShiftIgnoreSign(this.co_j.y, 5)];
+			var j3 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			var word4 = this.maps.map_bg[k][j3];
-			if((word12 == 18 && !this.map_data_option[k][this.co_j.y >> 5] || word4 == 18 && !this.map_data_option[k][j3]) && i > k && this.co_j.y > this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31))
+			if((word12 == 18 && !this.map_data_option[k][rightShiftIgnoreSign(this.co_j.y, 5)] || word4 == 18 && !this.map_data_option[k][j3]) && i > k && this.co_j.y > this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31))
 			{
 				this.co_j.x = k * 32 + 17;
 				this.co_j.vx = 0;
 			}
 		} else
 		{
-			var l = (this.co_j.x + 15) >> 5;
-			var word13 = this.maps.map_bg[l][this.co_j.y >> 5];
-			var k3 = (this.co_j.y + 31) >> 5;
+			var l = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+			var word13 = this.maps.map_bg[l][rightShiftIgnoreSign(this.co_j.y, 5)];
+			var k3 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			var word5 = this.maps.map_bg[l][k3];
 			if(word0 == 19 && flag && i > l && (this.saka_mushi_y < 0 || k3 != this.saka_mushi_y && k3 != this.saka_mushi_y + 1))
 			{
@@ -10696,12 +10490,12 @@ MainProgram.prototype.jM100 = function()
 				if(this.maps.map_bg[l][k3] == 19)
 					this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 			}
-			if((word13 == 18 && !this.map_data_option[l][this.co_j.y >> 5] || word5 == 18 && !this.map_data_option[l][k3]) && i > l)
+			if((word13 == 18 && !this.map_data_option[l][rightShiftIgnoreSign(this.co_j.y, 5)] || word5 == 18 && !this.map_data_option[l][k3]) && i > l)
 			{
 				this.co_j.x = l * 32 + 17;
 				this.co_j.vx = 0;
 			}
-			if(word13 == 19 && !this.map_data_option[l][this.co_j.y >> 5] && i > l)
+			if(word13 == 19 && !this.map_data_option[l][rightShiftIgnoreSign(this.co_j.y, 5)] && i > l)
 			{
 				this.co_j.x = l * 32 + 17;
 				this.co_j.vx = 0;
@@ -10769,7 +10563,7 @@ MainProgram.prototype.jM100 = function()
 								}
 								if(this.maps.getBGCode(characterobject.x, characterobject.y) >= 18 || this.maps.getBGCode(characterobject.x, characterobject.y + 31) >= 18 || this.maps.getBGCode(characterobject.x, characterobject.y + 63) >= 18)
 								{
-									characterobject.x = (characterobject.x >> 5) * 32 + 32;
+									characterobject.x = rightShiftIgnoreSign(characterobject.x, 5) * 32 + 32;
 									this.co_j.vx = 0;
 								}
 								for(var k11 = 0; k11 <= this.a_kazu; k11++)
@@ -10801,7 +10595,7 @@ MainProgram.prototype.jM100 = function()
 									if(j29 >= 0)
 										characterobject.x = this.co_a[j29].x - 96;
 									else
-										characterobject.x = ((characterobject.x + 31) >> 5) * 32;
+										characterobject.x = rightShiftIgnoreSign(characterobject.x + 31, 5) * 32;
 									this.co_j.vx = 0;
 								}
 								if(j29 >= 0 && this.co_a[j29].x - 96 >= characterobject.x && this.maps.getBGCode(this.co_a[j29].x - 96, characterobject.y + 64) < 18 && this.maps.getBGCode((this.co_a[j29].x - 96) + 31, characterobject.y + 64) < 18 && this.maps.getBGCode((this.co_a[j29].x - 96) + 63, characterobject.y + 64) < 18 && this.maps.getBGCode((this.co_a[j29].x - 96) + 95, characterobject.y + 64) < 18)
@@ -10825,7 +10619,7 @@ MainProgram.prototype.jM100 = function()
 						}
 						if(this.maps.getBGCode(characterobject.x, characterobject.y) >= 18 || this.maps.getBGCode(characterobject.x, characterobject.y + 31) >= 18 || this.maps.getBGCode(characterobject.x, characterobject.y + 63) >= 18)
 						{
-							characterobject.x = (characterobject.x >> 5) * 32 + 32;
+							characterobject.x = rightShiftIgnoreSign(characterobject.x, 5) * 32 + 32;
 							this.co_j.vx = 0;
 						}
 						for(var i12 = 0; i12 <= this.a_kazu; i12++)
@@ -10833,9 +10627,9 @@ MainProgram.prototype.jM100 = function()
 								characterobject.x = this.co_a[i12].x + 96;
 
 						if(this.maps.getBGCode(characterobject.x, characterobject.y + 64) < 18 && this.maps.getBGCode(characterobject.x + 31, characterobject.y + 64) < 18 && this.maps.getBGCode(characterobject.x + 63, characterobject.y + 64) < 18 && this.maps.getBGCode(characterobject.x + 95, characterobject.y + 64) < 18)
-							characterobject.x = ((characterobject.x + 31) >> 5) * 32;
-						if((characterobject.x + 31) >> 5 < (j28 + 31) >> 5 && this.maps.getBGCode(((characterobject.x + 31) >> 5) * 32, characterobject.y + 64) < 18 && this.maps.getBGCode(((characterobject.x + 31) >> 5) * 32 + 31, characterobject.y + 64) < 18 && this.maps.getBGCode(((characterobject.x + 31) >> 5) * 32 + 63, characterobject.y + 64) < 18 && this.maps.getBGCode(((characterobject.x + 31) >> 5) * 32 + 95, characterobject.y + 64) < 18)
-							characterobject.x = ((characterobject.x + 31) >> 5) * 32;
+							characterobject.x = rightShiftIgnoreSign(characterobject.x + 31, 5) * 32;
+						if(rightShiftIgnoreSign(characterobject.x + 31, 5) < rightShiftIgnoreSign(j28 + 31, 5) && this.maps.getBGCode(rightShiftIgnoreSign(characterobject.x + 31, 5) * 32, characterobject.y + 64) < 18 && this.maps.getBGCode(rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 + 31, characterobject.y + 64) < 18 && this.maps.getBGCode(rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 + 63, characterobject.y + 64) < 18 && this.maps.getBGCode(rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 + 95, characterobject.y + 64) < 18)
+							characterobject.x = rightShiftIgnoreSign(characterobject.x + 31, 5) * 32;
 						for(var j12 = 0; j12 <= this.a_kazu; j12++)
 						{
 							if(this.co_a[j12].c != 3000 || this.co_a[j12].y != characterobject.y || j28 <= this.co_a[j12].x || characterobject.x > this.co_a[j12].x)
@@ -10891,9 +10685,9 @@ MainProgram.prototype.jM100 = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(0);
-		var i1 = (this.co_j.x + 15) >> 5;
-		var word14 = this.maps.map_bg[i1][this.co_j.y >> 5];
-		var l3 = (this.co_j.y + 31) >> 5;
+		var i1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+		var word14 = this.maps.map_bg[i1][rightShiftIgnoreSign(this.co_j.y, 5)];
+		var l3 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		var word6 = this.maps.map_bg[i1][l3];
 		if(word14 >= 20 || word6 >= 20)
 		{
@@ -10914,7 +10708,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = j24;
 					if(this.yo[this.yuka_ride_id].y < this.yo[this.yuka_ride_id].y2 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = this.yo[this.yuka_ride_id].y2 - 32;
@@ -10944,7 +10738,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = l24;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					var i25 = rounddown((this.yo[this.yuka_ride_id].x2 * 90) / 100);
@@ -10958,7 +10752,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = j25;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = this.yo[this.yuka_ride_id].y + 32;
@@ -10971,7 +10765,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = k25;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = this.yo[this.yuka_ride_id].y - 32;
@@ -11000,7 +10794,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					this.co_j.y = i26;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				} else
 				{
 					this.co_j.y = (this.yo[this.yuka_ride_id].y + 128) - 32;
@@ -11020,16 +10814,16 @@ MainProgram.prototype.jM100 = function()
 		if(this.co_j.jimen_f)
 			if(word0 == 18)
 			{
-				if(i < (this.co_j.x + 15) >> 5)
+				if(i < rightShiftIgnoreSign(this.co_j.x + 15, 5))
 				{
 					this.co_j.y = (j2 - 1) * 32;
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 - 1] == 18)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 - 1] == 18)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] == 19)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] == 19)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 32);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] < 18 && this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] != 15)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] < 18 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] != 15)
 					{
 						this.co_j.vy = this.co_j.vx * -1;
 						if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && this.co_j.vy < -40)
@@ -11043,16 +10837,16 @@ MainProgram.prototype.jM100 = function()
 			} else
 			if(word0 == 19)
 			{
-				if(i < (this.co_j.x + 15) >> 5)
+				if(i < rightShiftIgnoreSign(this.co_j.x + 15, 5))
 				{
 					this.co_j.y = j2 * 32;
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2] == 18)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2] == 18)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 + 1] == 19)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 + 1] == 19)
 						this.co_j.y = this.getSakamichiY(this.co_j.x + 15, (j2 + 1) * 32);
 					else
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 + 1] < 18)
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 + 1] < 18)
 					{
 						this.co_j.vy = this.co_j.vx;
 						this.co_j.y += rounddown(this.co_j.vx / 10);
@@ -11062,28 +10856,28 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 				}
 			} else
-			if((word2 >= 20 || word2 == 10 || word2 == 15) && i < (this.co_j.x + 15) >> 5)
+			if((word2 >= 20 || word2 == 10 || word2 == 15) && i < rightShiftIgnoreSign(this.co_j.x + 15, 5))
 			{
 				this.co_j.y = j2 * 32;
-				if(this.maps.map_bg[(this.co_j.x + 15) >> 5][j2 + 1] == 19)
+				if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2 + 1] == 19)
 					this.co_j.y = this.getSakamichiY(this.co_j.x + 15, (j2 + 1) * 32);
 			}
 		if(this.co_j.jimen_f)
 		{
-			var j1 = (this.co_j.x + 15) >> 5;
-			var word15 = this.maps.map_bg[j1][this.co_j.y >> 5];
-			var i4 = (this.co_j.y + 31) >> 5;
+			var j1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+			var word15 = this.maps.map_bg[j1][rightShiftIgnoreSign(this.co_j.y, 5)];
+			var i4 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			var word7 = this.maps.map_bg[j1][i4];
-			if((word15 == 19 && !this.map_data_option[j1][this.co_j.y >> 5] || word7 == 19 && !this.map_data_option[j1][i4]) && i < j1 && this.co_j.y > this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31))
+			if((word15 == 19 && !this.map_data_option[j1][rightShiftIgnoreSign(this.co_j.y, 5)] || word7 == 19 && !this.map_data_option[j1][i4]) && i < j1 && this.co_j.y > this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31))
 			{
 				this.co_j.x = j1 * 32 - 16;
 				this.co_j.vx = 0;
 			}
 		} else
 		{
-			var k1 = (this.co_j.x + 15) >> 5;
-			var word16 = this.maps.map_bg[k1][this.co_j.y >> 5];
-			var j4 = (this.co_j.y + 31) >> 5;
+			var k1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+			var word16 = this.maps.map_bg[k1][rightShiftIgnoreSign(this.co_j.y, 5)];
+			var j4 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			var word8 = this.maps.map_bg[k1][j4];
 			if(word0 == 18 && flag && i < k1 && (this.saka_mushi_y < 0 || j4 != this.saka_mushi_y && j4 != this.saka_mushi_y + 1))
 			{
@@ -11091,12 +10885,12 @@ MainProgram.prototype.jM100 = function()
 				if(this.maps.map_bg[k1][j4] == 18)
 					this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 			}
-			if((word16 == 19 && !this.map_data_option[k1][this.co_j.y >> 5] || word8 == 19 && !this.map_data_option[k1][j4]) && i < k1)
+			if((word16 == 19 && !this.map_data_option[k1][rightShiftIgnoreSign(this.co_j.y, 5)] || word8 == 19 && !this.map_data_option[k1][j4]) && i < k1)
 			{
 				this.co_j.x = k1 * 32 - 16;
 				this.co_j.vx = 0;
 			}
-			if(word16 == 18 && !this.map_data_option[k1][this.co_j.y >> 5] && i < k1)
+			if(word16 == 18 && !this.map_data_option[k1][rightShiftIgnoreSign(this.co_j.y, 5)] && i < k1)
 			{
 				this.co_j.x = k1 * 32 - 16;
 				this.co_j.vx = 0;
@@ -11164,7 +10958,7 @@ MainProgram.prototype.jM100 = function()
 								}
 								if(this.maps.getBGCode(characterobject1.x + 95, characterobject1.y) >= 18 || this.maps.getBGCode(characterobject1.x + 95, characterobject1.y + 31) >= 18 || this.maps.getBGCode(characterobject1.x + 95, characterobject1.y + 63) >= 18)
 								{
-									characterobject1.x = ((characterobject1.x + 95) >> 5) * 32 - 96;
+									characterobject1.x = rightShiftIgnoreSign(characterobject1.x + 95, 5) * 32 - 96;
 									this.co_j.vx = 0;
 								}
 								for(var l12 = 0; l12 <= this.a_kazu; l12++)
@@ -11196,7 +10990,7 @@ MainProgram.prototype.jM100 = function()
 									if(k29 >= 0)
 										characterobject1.x = this.co_a[k29].x + 96;
 									else
-										characterobject1.x = (characterobject1.x >> 5) * 32;
+										characterobject1.x = rightShiftIgnoreSign(characterobject1.x, 5) * 32;
 									this.co_j.vx = 0;
 								}
 								if(k29 >= 0 && this.co_a[k29].x + 96 <= characterobject1.x && this.maps.getBGCode(this.co_a[k29].x + 96, characterobject1.y + 64) < 18 && this.maps.getBGCode(this.co_a[k29].x + 96 + 31, characterobject1.y + 64) < 18 && this.maps.getBGCode(this.co_a[k29].x + 96 + 63, characterobject1.y + 64) < 18 && this.maps.getBGCode(this.co_a[k29].x + 96 + 95, characterobject1.y + 64) < 18)
@@ -11220,7 +11014,7 @@ MainProgram.prototype.jM100 = function()
 						}
 						if(this.maps.getBGCode(characterobject1.x + 95, characterobject1.y) >= 18 || this.maps.getBGCode(characterobject1.x + 95, characterobject1.y + 31) >= 18 || this.maps.getBGCode(characterobject1.x + 95, characterobject1.y + 63) >= 18)
 						{
-							characterobject1.x = ((characterobject1.x + 95) >> 5) * 32 - 96;
+							characterobject1.x = rightShiftIgnoreSign(characterobject1.x + 95, 5) * 32 - 96;
 							this.co_j.vx = 0;
 						}
 						for(var j13 = 0; j13 <= this.a_kazu; j13++)
@@ -11228,9 +11022,9 @@ MainProgram.prototype.jM100 = function()
 								characterobject1.x = this.co_a[j13].x - 96;
 
 						if(this.maps.getBGCode(characterobject1.x, characterobject1.y + 64) < 18 && this.maps.getBGCode(characterobject1.x + 31, characterobject1.y + 64) < 18 && this.maps.getBGCode(characterobject1.x + 63, characterobject1.y + 64) < 18 && this.maps.getBGCode(characterobject1.x + 95, characterobject1.y + 64) < 18)
-							characterobject1.x = (characterobject1.x >> 5) * 32;
-						if(characterobject1.x >> 5 > l28 >> 5 && this.maps.getBGCode((characterobject1.x >> 5) * 32, characterobject1.y + 64) < 18 && this.maps.getBGCode((characterobject1.x >> 5) * 32 + 31, characterobject1.y + 64) < 18 && this.maps.getBGCode((characterobject1.x >> 5) * 32 + 63, characterobject1.y + 64) < 18 && this.maps.getBGCode((characterobject1.x >> 5) * 32 + 95, characterobject1.y + 64) < 18)
-							characterobject1.x = (characterobject1.x >> 5) * 32;
+							characterobject1.x = rightShiftIgnoreSign(characterobject1.x, 5) * 32;
+						if(rightShiftIgnoreSign(characterobject1.x, 5) > rightShiftIgnoreSign(l28, 5) && this.maps.getBGCode(rightShiftIgnoreSign(characterobject1.x, 5) * 32, characterobject1.y + 64) < 18 && this.maps.getBGCode(rightShiftIgnoreSign(characterobject1.x, 5) * 32 + 31, characterobject1.y + 64) < 18 && this.maps.getBGCode(rightShiftIgnoreSign(characterobject1.x, 5) * 32 + 63, characterobject1.y + 64) < 18 && this.maps.getBGCode(rightShiftIgnoreSign(characterobject1.x, 5) * 32 + 95, characterobject1.y + 64) < 18)
+							characterobject1.x = rightShiftIgnoreSign(characterobject1.x, 5) * 32;
 						for(var k13 = 0; k13 <= this.a_kazu; k13++)
 						{
 							if(this.co_a[k13].c != 3000 || this.co_a[k13].y != characterobject1.y || l28 >= this.co_a[k13].x || characterobject1.x < this.co_a[k13].x)
@@ -11286,9 +11080,9 @@ MainProgram.prototype.jM100 = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(1);
-		var l1 = (this.co_j.x + 15) >> 5;
-		var word17 = this.maps.map_bg[l1][this.co_j.y >> 5];
-		var k4 = (this.co_j.y + 31) >> 5;
+		var l1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+		var word17 = this.maps.map_bg[l1][rightShiftIgnoreSign(this.co_j.y, 5)];
+		var k4 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		var word9 = this.maps.map_bg[l1][k4];
 		if(word17 >= 20 || word9 >= 20)
 		{
@@ -11351,21 +11145,21 @@ MainProgram.prototype.jM100 = function()
 				this.j_cannon_type = 4;
 				this.gs.rsAddSound(23);
 			} else
-			if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y - 1) >= 20 || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y - 1) == 18 && !this.map_data_option[(this.co_j.x + 15) >> 5][(this.co_j.y - 1) >> 5])
+			if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y - 1) >= 20 || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y - 1) == 18 && !this.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y - 1, 5)])
 			{
 				if((this.j_tokugi != 10 && this.j_tokugi != 12 && this.j_tokugi != 13 || !this.gk.z_f) && this.gk.tr1_c == 1 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y - 1) == 40)
 				{
-					var l14 = (this.co_j.x + 15) >> 5;
-					var l16 = (this.co_j.y - 1) >> 5;
+					var l14 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					var l16 = rightShiftIgnoreSign(this.co_j.y - 1, 5);
 					this.hAttack(l14, l16);
 				}
 				l29 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y - 1);
 				if((this.j_tokugi != 12 && this.j_tokugi != 13 || !this.gk.z_f) && this.j_helm_f && (l29 == 20 || l29 == 69 && this.suberuyuka_hkf == 1))
 				{
 					this.gk.tr1_c = 6;
-					var i15 = (this.co_j.x + 15) >> 5;
-					var i17 = (this.co_j.y - 1) >> 5;
-					if(this.maps.map_bg[(this.co_j.x + 15) >> 5][((this.co_j.y - 1) >> 5) + 1] == 4)
+					var i15 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					var i17 = rightShiftIgnoreSign(this.co_j.y - 1, 5);
+					if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y - 1, 5) + 1] == 4)
 						this.maps.putBGCode(i15, i17, 4);
 					else
 						this.maps.putBGCode(i15, i17, 0);
@@ -11398,7 +11192,7 @@ MainProgram.prototype.jM100 = function()
 						this.j_jet_kf = true;
 						this.co_j.vy = -90;
 						this.j_jump_level = 1;
-						this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+						this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 						this.co_j.vx = 0;
 						if(this.j_jump_type == 2)
 							this.j_jump_type = 0;
@@ -11416,7 +11210,7 @@ MainProgram.prototype.jM100 = function()
 						this.j_jet_kf = false;
 						if(this.j_jdai_f)
 						{
-							this.co_j.y = (this.co_j.y >> 5) * 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32;
 							this.co_j.vy = -120;
 							this.j_jump_level = 0;
 							this.gs.rsAddSound(3);
@@ -11488,7 +11282,7 @@ MainProgram.prototype.jM100 = function()
 						var i27 = Math.abs(this.co_j.vx);
 						if(this.j_jdai_f)
 						{
-							this.co_j.y = (this.co_j.y >> 5) * 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32;
 							this.co_j.vy = -410;
 							this.j_jump_level = 5;
 							if(this.co_a[this.j_a_id].c3 <= 1)
@@ -11501,7 +11295,7 @@ MainProgram.prototype.jM100 = function()
 								if(this.co_a[this.j_a_id].c4 == 1)
 								{
 									this.co_j.vy = -460;
-									l29 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y - 1) >> 5];
+									l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y - 1, 5)];
 									if(l29 <= 9)
 									{
 										for(var j6 = 0; j6 <= 5; j6++)
@@ -11626,7 +11420,7 @@ MainProgram.prototype.jM100 = function()
 							this.j_jump_level = 5;
 							if(this.jst_high_sjump == 1)
 								this.co_j.vy = -390;
-							l29 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y - 1) >> 5];
+							l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y - 1, 5)];
 							if(l29 <= 9)
 							{
 								for(var k6 = 0; k6 <= 5; k6++)
@@ -11648,12 +11442,12 @@ MainProgram.prototype.jM100 = function()
 					}
 			}
 		} else
-		if(word0 != 18 && word0 != 19 || this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5] >= 18)
+		if(word0 != 18 && word0 != 19 || this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)] >= 18)
 			this.co_j.vy = 0;
 	} else
 	{
-		if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && !this.j_hashigo_f && !this.j_mizu_f && Math.abs((this.co_j.x >> 5) * 32 - this.co_j.x) < 6)
-			this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+		if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && !this.j_hashigo_f && !this.j_mizu_f && Math.abs(rightShiftIgnoreSign(this.co_j.x, 5) * 32 - this.co_j.x) < 6)
+			this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 		if(!this.j_mizu_f)
 		{
 			if(this.j_hashigo_f)
@@ -11673,8 +11467,8 @@ MainProgram.prototype.jM100 = function()
 							this.co_j.vy = -150;
 							this.co_j.x -= 6;
 						}
-						this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
-						this.j_hashigo_mushi_x = (this.co_j.x + 15) >> 5;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
+						this.j_hashigo_mushi_x = rightShiftIgnoreSign(this.co_j.x + 15, 5);
 						this.j_hashigo_f = false;
 					} else
 					if(this.co_j.muki == 1 && this.maps.getBGCode(this.co_j.x + 32, this.co_j.y + 31) < 18 && this.maps.getBGCode(this.co_j.x + 32, this.co_j.y) < 18 && this.maps.getBGCode(this.co_j.x + 32, this.co_j.y + 31) != 10 && this.maps.getBGCode(this.co_j.x + 32, this.co_j.y) != 10)
@@ -11691,8 +11485,8 @@ MainProgram.prototype.jM100 = function()
 							this.co_j.vy = -150;
 							this.co_j.x += 6;
 						}
-						this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
-						this.j_hashigo_mushi_x = (this.co_j.x + 15) >> 5;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
+						this.j_hashigo_mushi_x = rightShiftIgnoreSign(this.co_j.x + 15, 5);
 						this.j_hashigo_f = false;
 					}
 			} else
@@ -11877,10 +11671,10 @@ MainProgram.prototype.jM100 = function()
 			if(this.gk.tr1_c == 1)
 			{
 				var flag17 = false;
-				l29 = this.maps.map_bg[(this.co_j.x + 15) >> 5][((this.co_j.y + 15) >> 5) - 1];
+				l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1];
 				if(l29 <= 9 && l29 != 4)
 					flag17 = true;
-				if((l29 == 8 || l29 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][((this.co_j.y + 15) >> 5) - 1] == 4)
+				if((l29 == 8 || l29 == 9) && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1] == 4)
 					flag17 = false;
 				if(flag17 && (this.co_j.y + 15) % 32 <= 8)
 				{
@@ -11889,24 +11683,24 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.ac = 0;
 					this.co_j.vy = -180;
 					this.j_jump_level = 1;
-					this.co_j.y = ((this.co_j.y + 15) >> 5) * 32 - 14;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 - 14;
 					this.j_jet_kf = false;
 					flag1 = true;
 					if(this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13)
-						if((this.co_j.x + 15) % 32 <= 6 && (this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] >= 20 || this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 18))
+						if((this.co_j.x + 15) % 32 <= 6 && (this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] >= 20 || this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 18))
 						{
 							this.co_j.vx = -30;
-							this.co_j.x = ((this.co_j.x + 15) >> 5) * 32 - 15;
+							this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 - 15;
 						} else
-						if((this.co_j.x + 15) % 32 >= 25 && this.maps.map_bg[((this.co_j.x + 15) >> 5) + 1][(this.co_j.y + 15) >> 5] >= 19)
+						if((this.co_j.x + 15) % 32 >= 25 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) + 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] >= 19)
 						{
 							this.co_j.vx = 30;
-							this.co_j.x = ((this.co_j.x + 15) >> 5) * 32 + 16;
+							this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 16;
 						} else
 						{
-							this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+							this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 						}
-					this.mSet(this.co_j.x, ((this.co_j.y + 15) >> 5) * 32 - 32, 50);
+					this.mSet(this.co_j.x, rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 - 32, 50);
 					this.gs.rsAddSound(20);
 				} else
 				{
@@ -11979,9 +11773,7 @@ MainProgram.prototype.jM100 = function()
 	}
 	if(this.co_j.vy < 0)
 	{
-		var i2 = (this.co_j.x + 15) >> 5;
-		var i3 = this.co_j.y >> 5;
-		var word3 = this.maps.map_bg[i2][i3];
+		var i3 = rightShiftIgnoreSign(this.co_j.y, 5);
 		var k27 = this.co_j.vy;
 		if(k27 < -320)
 			k27 = -320;
@@ -11997,15 +11789,15 @@ MainProgram.prototype.jM100 = function()
 			var flag18 = false;
 			if(i20 <= 9 && i20 != 4)
 				flag18 = true;
-			if((i20 == 8 || i20 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+			if((i20 == 8 || i20 == 9) && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 				flag18 = false;
 			if(flag18)
 			{
-				this.co_j.y = ((this.co_j.y + 15) >> 5) * 32 + 17;
+				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 + 17;
 				this.co_j.vy = -10;
 			}
 		}
-		if((this.co_j.x + 15) >> 5 != this.j_hashigo_mushi_x && (this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15) == 10 || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) == 10))
+		if(rightShiftIgnoreSign(this.co_j.x + 15, 5) != this.j_hashigo_mushi_x && (this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15) == 10 || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) == 10))
 		{
 			var flag13 = false;
 			var l13 = 0;
@@ -12013,7 +11805,7 @@ MainProgram.prototype.jM100 = function()
 			{
 				if(l13 > this.a_kazu)
 					break;
-				if(this.co_a[l13].c == 410 && this.co_a[l13].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[l13].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && (this.co_j.y >> 3) * 8 + 31 >= this.co_a[l13].y && (this.co_j.y >> 3) * 8 <= this.co_a[l13].y + 63)
+				if(this.co_a[l13].c == 410 && this.co_a[l13].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[l13].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && rightShiftIgnoreSign(this.co_j.y, 3) * 8 + 31 >= this.co_a[l13].y && rightShiftIgnoreSign(this.co_j.y, 3) * 8 <= this.co_a[l13].y + 63)
 				{
 					flag13 = true;
 					break;
@@ -12023,7 +11815,7 @@ MainProgram.prototype.jM100 = function()
 			if(!flag13)
 			{
 				this.j_hashigo_f = true;
-				this.co_j.y = (this.co_j.y >> 3) * 8;
+				this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 3) * 8;
 			}
 		}
 		if(this.a_hf)
@@ -12040,7 +11832,7 @@ MainProgram.prototype.jM100 = function()
 						this.co_j.y = characterobject2.y + 32;
 						this.co_j.vy = 0;
 						characterobject2.c = 0;
-						this.maps.putBGCode(characterobject2.x >> 5, characterobject2.y >> 5, 23);
+						this.maps.putBGCode(rightShiftIgnoreSign(characterobject2.x, 5), rightShiftIgnoreSign(characterobject2.y, 5), 23);
 						this.gs.rsAddSound(13);
 					}
 					continue;
@@ -12073,7 +11865,7 @@ MainProgram.prototype.jM100 = function()
 						this.co_j.vy = 0;
 						if(characterobject2.y != characterobject2.vy || this.maps.getBGCode(characterobject2.x, characterobject2.y - 1) >= 18 && this.maps.getBGCode(characterobject2.x + 31, characterobject2.y - 1) >= 18 && this.maps.getBGCode(characterobject2.x + 63, characterobject2.y - 1) >= 18 && this.maps.getBGCode(characterobject2.x + 95, characterobject2.y - 1) >= 18)
 							continue;
-						characterobject2.vy = ((characterobject2.vy - 32) >> 5) * 32;
+						characterobject2.vy = rightShiftIgnoreSign(characterobject2.vy - 32, 5) * 32;
 						if(characterobject2.vy < 320)
 							characterobject2.vy = 320;
 						else
@@ -12122,21 +11914,21 @@ MainProgram.prototype.jM100 = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(2);
-		var i5 = this.co_j.y >> 5;
-		var word18 = this.maps.map_bg[(this.co_j.x + 15) >> 5][i5];
+		var i5 = rightShiftIgnoreSign(this.co_j.y, 5);
+		var word18 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][i5];
 		if(word18 >= 20)
 		{
 			this.co_j.y = i5 * 32 + 32;
 			this.co_j.vy = 0;
 			if(word18 == 40)
 			{
-				var j15 = (this.co_j.x + 15) >> 5;
-				var j17 = (this.co_j.y - 1) >> 5;
+				var j15 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+				var j17 = rightShiftIgnoreSign(this.co_j.y - 1, 5);
 				this.hAttack(j15, j17);
 			}
 			if(this.j_helm_f && (word18 == 20 || word18 == 69 && this.suberuyuka_hkf == 1))
 			{
-				var k15 = (this.co_j.x + 15) >> 5;
+				var k15 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
 				var k17 = i5;
 				if(this.maps.map_bg[k15][k17 + 1] == 4)
 					this.maps.putBGCode(k15, k17, 4);
@@ -12154,21 +11946,20 @@ MainProgram.prototype.jM100 = function()
 				this.jZutuki(k15 * 32, k17 * 32 - 32, 0);
 			}
 		}
-		i5 = this.co_j.y >> 5;
-		word18 = this.maps.map_bg[(this.co_j.x + 15) >> 5][i5];
-		if(i3 > i5 && (word18 == 18 || word18 == 19) && !this.map_data_option[(this.co_j.x + 15) >> 5][i5])
+		i5 = rightShiftIgnoreSign(this.co_j.y, 5);
+		word18 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][i5];
+		if(i3 > i5 && (word18 == 18 || word18 == 19) && !this.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][i5])
 		{
 			this.co_j.y = i5 * 32 + 32;
 			this.co_j.vy = 0;
-			i5 = this.co_j.y >> 5;
-			var word19 = this.maps.map_bg[(this.co_j.x + 15) >> 5][i5];
+			i5 = rightShiftIgnoreSign(this.co_j.y, 5);
 		}
 		if(i3 > i5)
 		{
 			if(this.gk.right_f)
 			{
-				var word24 = this.maps.map_bg[(this.co_j.x + 16) >> 5][i3];
-				var word32 = this.maps.map_bg[(this.co_j.x + 16) >> 5][i5];
+				var word24 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 16, 5)][i3];
+				var word32 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 16, 5)][i5];
 				if(word24 <= 17 && word32 >= 20)
 				{
 					this.co_j.y = i5 * 32 + 32;
@@ -12177,8 +11968,8 @@ MainProgram.prototype.jM100 = function()
 			}
 			if(this.gk.left_f)
 			{
-				var word25 = this.maps.map_bg[(this.co_j.x + 14) >> 5][i3];
-				var word33 = this.maps.map_bg[(this.co_j.x + 14) >> 5][i5];
+				var word25 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 14, 5)][i3];
+				var word33 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 14, 5)][i5];
 				if(word25 <= 17 && word33 >= 20)
 				{
 					this.co_j.y = i5 * 32 + 32;
@@ -12197,11 +11988,10 @@ MainProgram.prototype.jM100 = function()
 	} else
 	if(this.co_j.vy > 0)
 	{
-		var j = (this.co_j.x + 15) >> 5;
-		var k2 = (this.co_j.y + 31) >> 5;
-		var word1 = this.maps.map_bg[j][k2];
+		var j = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+		var k2 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		this.co_j.y += rounddown(this.co_j.vy / 10);
-		if((this.co_j.x + 15) >> 5 != this.j_hashigo_mushi_x && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15) == 10)
+		if(rightShiftIgnoreSign(this.co_j.x + 15, 5) != this.j_hashigo_mushi_x && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15) == 10)
 		{
 			var flag14 = false;
 			var i14 = 0;
@@ -12209,7 +11999,7 @@ MainProgram.prototype.jM100 = function()
 			{
 				if(i14 > this.a_kazu)
 					break;
-				if(this.co_a[i14].c == 410 && this.co_a[i14].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[i14].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && (this.co_j.y >> 3) * 8 + 31 >= this.co_a[i14].y && (this.co_j.y >> 3) * 8 <= this.co_a[i14].y + 63)
+				if(this.co_a[i14].c == 410 && this.co_a[i14].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[i14].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && rightShiftIgnoreSign(this.co_j.y, 3) * 8 + 31 >= this.co_a[i14].y && rightShiftIgnoreSign(this.co_j.y, 3) * 8 <= this.co_a[i14].y + 63)
 				{
 					flag14 = true;
 					break;
@@ -12219,7 +12009,7 @@ MainProgram.prototype.jM100 = function()
 			if(!flag14)
 			{
 				this.j_hashigo_f = true;
-				this.co_j.y = (this.co_j.y >> 3) * 8;
+				this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 3) * 8;
 			}
 		}
 		if(this.a_hf)
@@ -12315,19 +12105,19 @@ MainProgram.prototype.jM100 = function()
 				i7++;
 			} while(true);
 		}
-		var l4 = (this.co_j.y + 31) >> 5;
+		var l4 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		var word10 = this.maps.map_bg[j][l4];
 		if(k2 < l4)
 		{
-			var word34 = this.maps.map_bg[(this.co_j.x + 15) >> 5][k2];
+			var word34 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][k2];
 			if(word34 == 18 || word34 == 19)
-				if(this.map_data_option[(this.co_j.x + 15) >> 5][k2])
+				if(this.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][k2])
 				{
 					if(this.saka_mushi_y < 0 || k2 != this.saka_mushi_y && k2 != this.saka_mushi_y + 1)
 					{
 						this.co_j.vy = 0;
 						this.co_j.y = k2 * 32;
-						if(this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5] == 18 || this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5] == 19)
+						if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)] == 18 || this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)] == 19)
 							this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 					}
 				} else
@@ -12336,11 +12126,11 @@ MainProgram.prototype.jM100 = function()
 					this.co_j.vy = 0;
 				}
 		}
-		l29 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5];
+		l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)];
 		if(l29 == 18 || l29 == 19)
-			if(this.map_data_option[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5])
+			if(this.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)])
 			{
-				if(this.saka_mushi_y < 0 || (this.co_j.y + 31) >> 5 != this.saka_mushi_y)
+				if(this.saka_mushi_y < 0 || rightShiftIgnoreSign(this.co_j.y + 31, 5) != this.saka_mushi_y)
 				{
 					var l17 = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 31);
 					if(l17 < this.co_j.y && l17 >= k5)
@@ -12352,7 +12142,7 @@ MainProgram.prototype.jM100 = function()
 				if(i18 < this.co_j.y)
 					this.co_j.y = i18;
 			}
-		l4 = (this.co_j.y + 31) >> 5;
+		l4 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		word10 = this.maps.map_bg[j][l4];
 		var flag20;
 		if(word10 == 15 && k2 < l4)
@@ -12371,12 +12161,11 @@ MainProgram.prototype.jM100 = function()
 		{
 			this.co_j.y = l4 * 32 - 32;
 			this.co_j.vy = 0;
-			l4 = (this.co_j.y + 31) >> 5;
-			var word11 = this.maps.map_bg[j][l4];
+			l4 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		}
 		if(this.j_hashigo_f)
 		{
-			var word41 = this.maps.map_bg[j][(this.co_j.y + 32) >> 5];
+			var word41 = this.maps.map_bg[j][rightShiftIgnoreSign(this.co_j.y + 32, 5)];
 			if(word41 >= 20)
 			{
 				this.j_hashigo_f = false;
@@ -12388,8 +12177,8 @@ MainProgram.prototype.jM100 = function()
 		{
 			if(this.gk.right_f || this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13)
 			{
-				var word26 = this.maps.map_bg[(this.co_j.x + 16) >> 5][k2];
-				var word35 = this.maps.map_bg[(this.co_j.x + 16) >> 5][l4];
+				var word26 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 16, 5)][k2];
+				var word35 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 16, 5)][l4];
 				if(word35 == 10)
 					word35 = 20;
 				if(word26 <= 17 && word35 >= 20)
@@ -12405,8 +12194,8 @@ MainProgram.prototype.jM100 = function()
 			}
 			if(this.gk.left_f || this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13)
 			{
-				var word27 = this.maps.map_bg[(this.co_j.x + 14) >> 5][k2];
-				var word36 = this.maps.map_bg[(this.co_j.x + 14) >> 5][l4];
+				var word27 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 14, 5)][k2];
+				var word36 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 14, 5)][l4];
 				if(word36 == 10)
 					word36 = 20;
 				if(word27 <= 17 && word36 >= 20)
@@ -12429,7 +12218,7 @@ MainProgram.prototype.jM100 = function()
 				this.j_mizu_awa_c = 38;
 				if(this.maps.getBGCode(this.co_j.x + 15, (this.co_j.y + 15) - 32) != 10)
 				{
-					this.mSet(this.co_j.x, ((this.co_j.y + 15) >> 5) * 32 - 32, 50);
+					this.mSet(this.co_j.x, rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 - 32, 50);
 					this.gs.rsAddSound(20);
 				}
 				if(this.co_j.vx < -60)
@@ -12438,9 +12227,9 @@ MainProgram.prototype.jM100 = function()
 				if(this.co_j.vx > 60)
 					this.co_j.vx = 60;
 			} else
-			if((j20 == 8 || j20 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+			if((j20 == 8 || j20 == 9) && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.mSet(this.co_j.x, ((this.co_j.y + 15) >> 5) * 32 - 32, 50);
+				this.mSet(this.co_j.x, rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 - 32, 50);
 				this.j_mizu_awa_c = 38;
 				if(this.co_j.vx < -60)
 					this.co_j.vx = -60;
@@ -12461,21 +12250,21 @@ MainProgram.prototype.jM100 = function()
 	if(this.gk.down_f)
 	{
 		var i29 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31);
-		if((i29 == 18 || i29 == 19) && this.map_data_option[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5])
+		if((i29 == 18 || i29 == 19) && this.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)])
 		{
-			this.saka_mushi_y = (this.co_j.y + 31) >> 5;
+			this.saka_mushi_y = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			if(this.co_j.vy < 25)
 				this.co_j.vy = 25;
 		}
 		if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) == 15)
 		{
-			this.j_shitakara_mushi_y = (this.co_j.y + 32) >> 5;
+			this.j_shitakara_mushi_y = rightShiftIgnoreSign(this.co_j.y + 32, 5);
 			this.j_jump_type = 2;
 			this.co_j.ac = 0;
-			this.saka_mushi_y = (this.co_j.y + 31) >> 5;
+			this.saka_mushi_y = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			if(this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13)
 			{
-				this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
+				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 				this.co_j.vx = 0;
 			}
 			if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15) == 10)
@@ -12486,7 +12275,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					if(j14 > this.a_kazu)
 						break;
-					if(this.co_a[j14].c == 410 && this.co_a[j14].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[j14].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[j14].y && this.co_j.y <= this.co_a[j14].y + 63)
+					if(this.co_a[j14].c == 410 && this.co_a[j14].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[j14].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[j14].y && this.co_j.y <= this.co_a[j14].y + 63)
 					{
 						flag15 = true;
 						break;
@@ -12499,7 +12288,7 @@ MainProgram.prototype.jM100 = function()
 		}
 	}
 	if(this.j_hashigo_f)
-		this.co_j.pt = 210 + (this.co_j.ac >> 1);
+		this.co_j.pt = 210 + rightShiftIgnoreSign(this.co_j.ac, 1);
 	if((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && this.gk.tr1_c == 1 && !this.gk.z_f)
 	{
 		if(this.j_tail_f && (this.j_tail_ac <= 0 || this.j_tail_ac >= 8))
@@ -12732,7 +12521,7 @@ MainProgram.prototype.jM100 = function()
 				{
 					if(k14 > this.a_kazu)
 						break;
-					if(this.co_a[k14].c == 410 && this.co_a[k14].x <= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_a[k14].x + 95 >= ((this.co_j.x + 15) >> 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[k14].y && this.co_j.y <= this.co_a[k14].y + 63)
+					if(this.co_a[k14].c == 410 && this.co_a[k14].x <= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_a[k14].x + 95 >= rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 15 && this.co_j.y + 31 >= this.co_a[k14].y && this.co_j.y <= this.co_a[k14].y + 63)
 					{
 						flag16 = true;
 						break;
@@ -12741,8 +12530,8 @@ MainProgram.prototype.jM100 = function()
 				} while(true);
 				if(!flag16)
 				{
-					var l15 = (this.co_j.x + 15) >> 5;
-					var j18 = (this.co_j.y + 32) >> 5;
+					var l15 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					var j18 = rightShiftIgnoreSign(this.co_j.y + 32, 5);
 					if(this.maps.map_bg[l15][j18 - 1] == 4 || this.maps.map_bg[l15 - 1][j18] == 4 || this.maps.map_bg[l15 + 1][j18] == 4)
 						this.maps.putBGCode(l15, j18, 4);
 					else
@@ -12798,10 +12587,10 @@ MainProgram.prototype.jM100 = function()
 			{
 				var i16;
 				if(this.co_j.muki == 1)
-					i16 = (this.co_j.x + 40) >> 5;
+					i16 = rightShiftIgnoreSign(this.co_j.x + 40, 5);
 				else
-					i16 = (this.co_j.x - 8) >> 5;
-				var k18 = (this.co_j.y + 15) >> 5;
+					i16 = rightShiftIgnoreSign(this.co_j.x - 8, 5);
+				var k18 = rightShiftIgnoreSign(this.co_j.y + 15, 5);
 				if(this.maps.map_bg[i16][k18] == 20 || this.maps.map_bg[i16][k18] == 69 && this.suberuyuka_hkf == 1)
 				{
 					if(this.maps.map_bg[i16 - 1][k18] == 4)
@@ -12830,8 +12619,8 @@ MainProgram.prototype.jM100 = function()
 	if((this.j_tokugi == 12 || this.j_tokugi == 13) && (this.co_j.jimen_f || this.j_hashigo_f))
 		if(this.gk.x_f)
 		{
-			var l18 = ((this.co_j.x + 15) >> 5) + 1;
-			var j19 = (this.co_j.y + 32 + 15) >> 5;
+			var l18 = rightShiftIgnoreSign(this.co_j.x + 15, 5) + 1;
+			var j19 = rightShiftIgnoreSign(this.co_j.y + 32 + 15, 5);
 			var word28 = this.maps.map_bg[l18][j19];
 			var word37 = this.maps.map_bg[l18][j19 - 1];
 			if((word28 == 20 || word28 == 40) && word37 <= 9 && (this.maps.map_bg[l18 - 1][j19 - 1] <= 10 || this.maps.map_bg[l18 - 1][j19 - 1] == 15 || this.maps.map_bg[l18 - 1][j19 - 1] == 18 || this.maps.map_bg[l18 - 1][j19 - 1] == 19))
@@ -12909,8 +12698,8 @@ MainProgram.prototype.jM100 = function()
 		} else
 		if(this.gk.z_f)
 		{
-			var i19 = ((this.co_j.x + 15) >> 5) - 1;
-			var k19 = (this.co_j.y + 32 + 15) >> 5;
+			var i19 = rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1;
+			var k19 = rightShiftIgnoreSign(this.co_j.y + 32 + 15, 5);
 			var word29 = this.maps.map_bg[i19][k19];
 			var word38 = this.maps.map_bg[i19][k19 - 1];
 			if((word29 == 20 || word29 == 40) && word38 <= 9 && (this.maps.map_bg[i19 + 1][k19 - 1] <= 10 || this.maps.map_bg[i19 + 1][k19 - 1] == 15 || this.maps.map_bg[i19 + 1][k19 - 1] <= 18 || this.maps.map_bg[i19 + 1][k19 - 1] == 19))
@@ -12986,17 +12775,17 @@ MainProgram.prototype.jM100 = function()
 				}
 			}
 		}
-	l29 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 15) >> 5];
+	l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5)];
 	switch(l29)
 	{
-	case 9: // '\t'
-		if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+	case 9:
+		if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 		{
-			this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+			this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 			this.j_mizu_f = true;
 		} else
 		{
-			this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+			this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 		}
 		this.addScore(5);
 		this.gs.rsAddSound(6);
@@ -13013,16 +12802,16 @@ MainProgram.prototype.jM100 = function()
 		}
 		break;
 
-	case 8: // '\b'
+	case 8:
 		if(this.clear_type != 2 && this.clear_type != 3 || this.coin_kazu <= 0)
 		{
-			if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+			if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 				this.j_mizu_f = true;
 			} else
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 			}
 			this.gs.rsAddSound(2);
 			this.stage_cc = 1;
@@ -13033,13 +12822,13 @@ MainProgram.prototype.jM100 = function()
 		}
 		break;
 
-	case 5: // '\005'
-		this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+	case 5:
+		this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 		this.jShinu(1);
 		break;
 
-	case 6: // '\006'
-		this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+	case 6:
+		this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 		this.jShinu(1);
 		break;
 	}
@@ -13062,10 +12851,12 @@ MainProgram.prototype.jM100 = function()
 	this.moveViewPosition();
 }
 
+/**
+ * 毎フレームの主人公の処理のうち、CharactorObject.cの値が100のときの処理を行います
+ * 主人公がシューティングモードの特技を持っている場合の処理です
+ */
 MainProgram.prototype.jM100stg = function()
 {
-	var flag = false;
-	var flag1 = false;
 	var flag2 = false;
 	this.j_zan_cf = false;
 	this.j_mizu_f = false;
@@ -13082,7 +12873,7 @@ MainProgram.prototype.jM100stg = function()
 	} else
 	if(i7 == 8 || i7 == 9)
 	{
-		if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+		if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 		{
 			this.j_mizu_f = true;
 			this.j_mizu_awa_c++;
@@ -13093,7 +12884,7 @@ MainProgram.prototype.jM100stg = function()
 				this.j_mizu_awa_c = 0;
 		}
 	} else
-	if(i7 >= 15 && i7 <= 19 && this.maps.map_bg[(this.co_j.x + 15) >> 5][((this.co_j.y + 15) >> 5) - 1] == 4)
+	if(i7 >= 15 && i7 <= 19 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1] == 4)
 	{
 		this.j_mizu_f = true;
 		this.j_mizu_awa_c++;
@@ -13155,8 +12946,6 @@ MainProgram.prototype.jM100stg = function()
 	{
 		this.gk.right_c = 0;
 	}
-	var k2 = this.co_j.x;
-	var l2 = this.co_j.y;
 	this.co_j.pt = 100;
 	if(this.j_tokugi == 14)
 	{
@@ -13193,16 +12982,16 @@ MainProgram.prototype.jM100stg = function()
 					this.co_j.vx = 0;
 					this.co_j.vy = this.j_speed * -1;
 					this.j_4_muki = 2;
-					if((this.co_j.y >> 5) * 32 > this.co_j.y + rounddown(this.co_j.vy / 10))
-						this.co_j.vy = (this.co_j.y - (this.co_j.y >> 5) * 32) * 10;
+					if(rightShiftIgnoreSign(this.co_j.y, 5) * 32 > this.co_j.y + rounddown(this.co_j.vy / 10))
+						this.co_j.vy = (this.co_j.y - rightShiftIgnoreSign(this.co_j.y, 5) * 32) * 10;
 				} else
 				if(this.maps.getBGCode(this.co_j.x + 32, this.co_j.y + 31) < 20)
 				{
 					this.co_j.vx = 0;
 					this.co_j.vy = this.j_speed;
 					this.j_4_muki = 3;
-					if(((this.co_j.y + 31) >> 5) * 32 < this.co_j.y + rounddown(this.co_j.vy / 10))
-						this.co_j.vy = (((this.co_j.y + 31) >> 5) * 32 - this.co_j.y) * 10;
+					if(rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 < this.co_j.y + rounddown(this.co_j.vy / 10))
+						this.co_j.vy = (rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - this.co_j.y) * 10;
 				}
 		} else
 		if(this.gk.left_f)
@@ -13217,16 +13006,16 @@ MainProgram.prototype.jM100stg = function()
 					this.co_j.vx = 0;
 					this.co_j.vy = this.j_speed * -1;
 					this.j_4_muki = 2;
-					if((this.co_j.y >> 5) * 32 > this.co_j.y + rounddown(this.co_j.vy / 10))
-						this.co_j.vy = (this.co_j.y - (this.co_j.y >> 5) * 32) * 10;
+					if(rightShiftIgnoreSign(this.co_j.y, 5) * 32 > this.co_j.y + rounddown(this.co_j.vy / 10))
+						this.co_j.vy = (this.co_j.y - rightShiftIgnoreSign(this.co_j.y, 5) * 32) * 10;
 				} else
 				if(this.maps.getBGCode(this.co_j.x - 1, this.co_j.y + 31) < 20)
 				{
 					this.co_j.vx = 0;
 					this.co_j.vy = this.j_speed;
 					this.j_4_muki = 3;
-					if(((this.co_j.y + 31) >> 5) * 32 < this.co_j.y + rounddown(this.co_j.vy / 10))
-						this.co_j.vy = (((this.co_j.y + 31) >> 5) * 32 - this.co_j.y) * 10;
+					if(rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 < this.co_j.y + rounddown(this.co_j.vy / 10))
+						this.co_j.vy = (rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - this.co_j.y) * 10;
 				}
 		} else
 		if(this.gk.up_f)
@@ -13241,8 +13030,8 @@ MainProgram.prototype.jM100stg = function()
 					this.co_j.vy = 0;
 					this.co_j.muki = 0;
 					this.j_4_muki = 0;
-					if((this.co_j.x >> 5) * 32 > this.co_j.x + rounddown(this.co_j.vx / 10))
-						this.co_j.vx = (this.co_j.x - (this.co_j.x >> 5) * 32) * 10;
+					if(rightShiftIgnoreSign(this.co_j.x, 5) * 32 > this.co_j.x + rounddown(this.co_j.vx / 10))
+						this.co_j.vx = (this.co_j.x - rightShiftIgnoreSign(this.co_j.x, 5) * 32) * 10;
 				} else
 				if(this.maps.getBGCode(this.co_j.x + 31, this.co_j.y - 1) < 20)
 				{
@@ -13250,8 +13039,8 @@ MainProgram.prototype.jM100stg = function()
 					this.co_j.vy = 0;
 					this.co_j.muki = 1;
 					this.j_4_muki = 1;
-					if(((this.co_j.x + 31) >> 5) * 32 < this.co_j.x + rounddown(this.co_j.vx / 10))
-						this.co_j.vx = (((this.co_j.x + 31) >> 5) * 32 - this.co_j.x) * 10;
+					if(rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 < this.co_j.x + rounddown(this.co_j.vx / 10))
+						this.co_j.vx = (rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - this.co_j.x) * 10;
 				}
 		} else
 		if(this.gk.down_f)
@@ -13266,8 +13055,8 @@ MainProgram.prototype.jM100stg = function()
 					this.co_j.vy = 0;
 					this.co_j.muki = 0;
 					this.j_4_muki = 0;
-					if((this.co_j.x >> 5) * 32 > this.co_j.x + rounddown(this.co_j.vx / 10))
-						this.co_j.vx = (this.co_j.x - (this.co_j.x >> 5) * 32) * 10;
+					if(rightShiftIgnoreSign(this.co_j.x, 5) * 32 > this.co_j.x + rounddown(this.co_j.vx / 10))
+						this.co_j.vx = (this.co_j.x - rightShiftIgnoreSign(this.co_j.x, 5) * 32) * 10;
 				} else
 				if(this.maps.getBGCode(this.co_j.x + 31, this.co_j.y + 32) < 20)
 				{
@@ -13275,8 +13064,8 @@ MainProgram.prototype.jM100stg = function()
 					this.co_j.vy = 0;
 					this.co_j.muki = 1;
 					this.j_4_muki = 1;
-					if(((this.co_j.x + 31) >> 5) * 32 < this.co_j.x + rounddown(this.co_j.vx / 10))
-						this.co_j.vx = (((this.co_j.x + 31) >> 5) * 32 - this.co_j.x) * 10;
+					if(rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 < this.co_j.x + rounddown(this.co_j.vx / 10))
+						this.co_j.vx = (rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - this.co_j.x) * 10;
 				}
 		} else
 		{
@@ -13293,13 +13082,13 @@ MainProgram.prototype.jM100stg = function()
 			this.co_j.ac = 0;
 		}
 		if(this.co_j.vx != 0)
-			this.co_j.pt = 103 + (this.co_j.ac >> 1);
+			this.co_j.pt = 103 + rightShiftIgnoreSign(this.co_j.ac, 1);
 		else
 		if(this.j_4_muki == 2)
-			this.co_j.pt = 204 + (this.co_j.ac >> 1);
+			this.co_j.pt = 204 + rightShiftIgnoreSign(this.co_j.ac, 1);
 		else
 		if(this.j_4_muki == 3)
-			this.co_j.pt = 202 + (this.co_j.ac >> 1);
+			this.co_j.pt = 202 + rightShiftIgnoreSign(this.co_j.ac, 1);
 		else
 			this.co_j.pt = 100;
 	}
@@ -13368,9 +13157,9 @@ MainProgram.prototype.jM100stg = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(0);
-		var j = this.co_j.x >> 5;
-		var word6 = this.maps.map_bg[j][this.co_j.y >> 5];
-		var k1 = (this.co_j.y + 31) >> 5;
+		var j = rightShiftIgnoreSign(this.co_j.x, 5);
+		var word6 = this.maps.map_bg[j][rightShiftIgnoreSign(this.co_j.y, 5)];
+		var k1 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		var word2 = this.maps.map_bg[j][k1];
 		if(word6 >= 20 || word2 >= 20)
 		{
@@ -13443,9 +13232,9 @@ MainProgram.prototype.jM100stg = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(1);
-		var k = (this.co_j.x + 31) >> 5;
-		var word7 = this.maps.map_bg[k][this.co_j.y >> 5];
-		var l1 = (this.co_j.y + 31) >> 5;
+		var k = rightShiftIgnoreSign(this.co_j.x + 31, 5);
+		var word7 = this.maps.map_bg[k][rightShiftIgnoreSign(this.co_j.y, 5)];
+		var l1 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		var word3 = this.maps.map_bg[k][l1];
 		if(word7 >= 20 || word3 >= 20)
 		{
@@ -13456,9 +13245,6 @@ MainProgram.prototype.jM100stg = function()
 	}
 	if(this.co_j.vy < 0)
 	{
-		var l = (this.co_j.x + 15) >> 5;
-		var j1 = this.co_j.y >> 5;
-		var word1 = this.maps.map_bg[l][j1];
 		var k6 = this.co_j.vy;
 		if(k6 < -320)
 			k6 = -320;
@@ -13525,23 +13311,23 @@ MainProgram.prototype.jM100stg = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(2);
-		var j2 = this.co_j.y >> 5;
-		var word8 = this.maps.map_bg[(this.co_j.x + 15) >> 5][j2];
-		var word9 = this.maps.map_bg[this.co_j.x >> 5][j2];
-		var word11 = this.maps.map_bg[(this.co_j.x + 31) >> 5][j2];
+		var j2 = rightShiftIgnoreSign(this.co_j.y, 5);
+		var word8 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][j2];
+		var word9 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x, 5)][j2];
+		var word11 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 31, 5)][j2];
 		if(word9 >= 20 || word11 >= 20)
 		{
 			this.co_j.y = j2 * 32 + 32;
 			this.co_j.vy = 0;
 			if(word8 == 40)
 			{
-				var i4 = (this.co_j.x + 15) >> 5;
-				var i5 = (this.co_j.y - 1) >> 5;
+				var i4 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+				var i5 = rightShiftIgnoreSign(this.co_j.y - 1, 5);
 				this.hAttack(i4, i5);
 			}
 			if(this.j_helm_f && (word8 == 20 || word8 == 69 && this.suberuyuka_hkf == 1))
 			{
-				var j4 = (this.co_j.x + 15) >> 5;
+				var j4 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
 				var j5 = j2;
 				if(this.maps.map_bg[j4][j5 + 1] == 4)
 					this.maps.putBGCode(j4, j5, 4);
@@ -13558,9 +13344,6 @@ MainProgram.prototype.jM100stg = function()
 	} else
 	if(this.co_j.vy > 0)
 	{
-		var i = (this.co_j.x + 15) >> 5;
-		var i1 = (this.co_j.y + 31) >> 5;
-		var word0 = this.maps.map_bg[i][i1];
 		this.co_j.y += rounddown(this.co_j.vy / 10);
 		if(this.a_hf)
 		{
@@ -13624,16 +13407,14 @@ MainProgram.prototype.jM100stg = function()
 		}
 		if(this.yuka_id_max >= 0)
 			this.atariYuka(3);
-		var i2 = (this.co_j.y + 31) >> 5;
-		var word4 = this.maps.map_bg[i][i2];
-		var word10 = this.maps.map_bg[this.co_j.x >> 5][i2];
-		var word12 = this.maps.map_bg[(this.co_j.x + 31) >> 5][i2];
+		var i2 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
+		var word10 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x, 5)][i2];
+		var word12 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 31, 5)][i2];
 		if(word10 >= 20 || word12 >= 20 || flag2)
 		{
 			this.co_j.y = i2 * 32 - 32;
 			this.co_j.vy = 0;
-			i2 = (this.co_j.y + 31) >> 5;
-			var word5 = this.maps.map_bg[i][i2];
+			i2 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		}
 		if(this.co_j.y > (this.maps.wy_max + 320) - 32)
 			this.co_j.y = (this.maps.wy_max + 320) - 32;
@@ -13642,7 +13423,7 @@ MainProgram.prototype.jM100stg = function()
 			var i6 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
 			if(i6 == 4)
 			{
-				this.mSet(this.co_j.x, ((this.co_j.y + 15) >> 5) * 32 - 32, 50);
+				this.mSet(this.co_j.x, rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 - 32, 50);
 				this.j_mizu_awa_c = 38;
 				this.gs.rsAddSound(20);
 				if(this.co_j.vx < -60)
@@ -13651,9 +13432,9 @@ MainProgram.prototype.jM100stg = function()
 				if(this.co_j.vx > 60)
 					this.co_j.vx = 60;
 			} else
-			if((i6 == 8 || i6 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+			if((i6 == 8 || i6 == 9) && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.mSet(this.co_j.x, ((this.co_j.y + 15) >> 5) * 32 - 32, 50);
+				this.mSet(this.co_j.x, rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32 - 32, 50);
 				this.j_mizu_awa_c = 38;
 				if(this.co_j.vx < -60)
 					this.co_j.vx = -60;
@@ -13665,7 +13446,7 @@ MainProgram.prototype.jM100stg = function()
 	}
 	if(this.gk.down_f && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) == 15)
 	{
-		this.j_shitakara_mushi_y = (this.co_j.y + 32) >> 5;
+		this.j_shitakara_mushi_y = rightShiftIgnoreSign(this.co_j.y + 32, 5);
 		this.j_jump_type = 2;
 		this.co_j.ac = 0;
 	}
@@ -13782,8 +13563,8 @@ MainProgram.prototype.jM100stg = function()
 		i7 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32);
 		if(this.j_drell_f && (i7 == 20 || i7 == 69 && this.suberuyuka_hkf == 1))
 		{
-			var k4 = (this.co_j.x + 15) >> 5;
-			var k5 = (this.co_j.y + 32) >> 5;
+			var k4 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+			var k5 = rightShiftIgnoreSign(this.co_j.y + 32, 5);
 			if(this.maps.map_bg[k4][k5 - 1] == 4 || this.maps.map_bg[k4 - 1][k5] == 4 || this.maps.map_bg[k4 + 1][k5] == 4)
 				this.maps.putBGCode(k4, k5, 4);
 			else
@@ -13854,19 +13635,19 @@ MainProgram.prototype.jM100stg = function()
 			{
 				var l4;
 				if(this.co_j.muki == 1)
-					l4 = (this.co_j.x + 40) >> 5;
+					l4 = rightShiftIgnoreSign(this.co_j.x + 40, 5);
 				else
-					l4 = (this.co_j.x - 8) >> 5;
-				var l5 = (this.co_j.y + 15) >> 5;
+					l4 = rightShiftIgnoreSign(this.co_j.x - 8, 5);
+				var l5 = rightShiftIgnoreSign(this.co_j.y + 15, 5);
 				if(this.j_tokugi == 15 && this.j_4_muki == 2)
 				{
-					l4 = (this.co_j.x + 15) >> 5;
-					l5 = (this.co_j.y - 16) >> 5;
+					l4 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					l5 = rightShiftIgnoreSign(this.co_j.y - 16, 5);
 				} else
 				if(this.j_tokugi == 15 && this.j_4_muki == 3)
 				{
-					l4 = (this.co_j.x + 15) >> 5;
-					l5 = (this.co_j.y + 44) >> 5;
+					l4 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					l5 = rightShiftIgnoreSign(this.co_j.y + 44, 5);
 				}
 				if(this.maps.map_bg[l4][l5] == 20 || this.maps.map_bg[l4][l5] == 69 && this.suberuyuka_hkf == 1)
 				{
@@ -13913,17 +13694,17 @@ MainProgram.prototype.jM100stg = function()
 			}
 		}
 	}
-	i7 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 15) >> 5];
+	i7 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5)];
 	switch(i7)
 	{
-	case 9: // '\t'
-		if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+	case 9:
+		if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 		{
-			this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+			this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 			this.j_mizu_f = true;
 		} else
 		{
-			this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+			this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 		}
 		this.addScore(5);
 		this.gs.rsAddSound(6);
@@ -13940,16 +13721,16 @@ MainProgram.prototype.jM100stg = function()
 		}
 		break;
 
-	case 8: // '\b'
+	case 8:
 		if(this.clear_type != 2 && this.clear_type != 3 || this.coin_kazu <= 0)
 		{
-			if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+			if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 				this.j_mizu_f = true;
 			} else
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 			}
 			this.gs.rsAddSound(2);
 			this.stage_cc = 1;
@@ -13960,13 +13741,13 @@ MainProgram.prototype.jM100stg = function()
 		}
 		break;
 
-	case 5: // '\005'
-		this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+	case 5:
+		this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 		this.jShinu(1);
 		break;
 
-	case 6: // '\006'
-		this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+	case 6:
+		this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 		this.jShinu(1);
 		break;
 	}
@@ -14043,9 +13824,11 @@ MainProgram.prototype.jM100stg = function()
 	}
 }
 
+/**
+ * 毎フレームの主人公の処理を行います
+ */
 MainProgram.prototype.jMove = function()
 {
-	var flag = false;
 	this.j_mizu_f = false;
 	var j7 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
 	if(j7 == 4)
@@ -14059,7 +13842,7 @@ MainProgram.prototype.jMove = function()
 		if(this.j_mizu_awa_c > 54)
 			this.j_mizu_awa_c = 0;
 	} else
-	if((j7 == 8 || j7 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+	if((j7 == 8 || j7 == 9) && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 	{
 		this.j_mizu_f = true;
 		this.j_jet_c = 0;
@@ -14189,7 +13972,7 @@ MainProgram.prototype.jMove = function()
 			this.co_j.c = 100;
 			var i = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31);
 			if(i >= 20)
-				this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32 - 1;
+				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32 - 1;
 			i = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31);
 			if(i == 18 || i == 19)
 				this.co_j.y -= 16;
@@ -14301,28 +14084,28 @@ MainProgram.prototype.jMove = function()
 				this.co_j.vx = 100;
 			if(this.co_a[this.j_rope_id].c == 3200)
 			{
-				var i1 = (this.co_a[this.j_rope_id].y >> 5) * 32 - 32 - 2;
+				var i1 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y, 5) * 32 - 32 - 2;
 				if(this.co_j.y > i1)
 					this.co_j.y = i1;
 			} else
 			{
-				var j1 = (this.co_a[this.j_rope_id].y >> 5) * 32 + 32;
+				var j1 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y, 5) * 32 + 32;
 				if(this.co_j.y < j1)
 					this.co_j.y = j1;
 			}
 			this.j_rope_cf = true;
 		}
-		var word0 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 15) >> 5];
+		var word0 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5)];
 		switch(word0)
 		{
-		case 9: // '\t'
-			if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+		case 9:
+			if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 				this.j_mizu_f = true;
 			} else
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 			}
 			this.addScore(5);
 			this.gs.rsAddSound(6);
@@ -14339,16 +14122,16 @@ MainProgram.prototype.jMove = function()
 			}
 			break;
 
-		case 8: // '\b'
+		case 8:
 			if(this.clear_type != 2 && this.clear_type != 3 || this.coin_kazu <= 0)
 			{
-				if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+				if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 				{
-					this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+					this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 					this.j_mizu_f = true;
 				} else
 				{
-					this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+					this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 				}
 				this.gs.rsAddSound(2);
 				this.stage_cc = 1;
@@ -14359,15 +14142,15 @@ MainProgram.prototype.jMove = function()
 			}
 			break;
 
-		case 5: // '\005'
-			this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
-			this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+		case 5:
+			this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
+			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 			this.jShinu(1);
 			break;
 
-		case 6: // '\006'
-			this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
-			this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+		case 6:
+			this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
+			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 			this.jShinu(1);
 			break;
 		}
@@ -14383,11 +14166,11 @@ MainProgram.prototype.jMove = function()
 		{
 			this.co_j.muki = 1;
 			this.co_a[this.j_rope_id].x += 4;
-			var l2 = (this.co_a[this.j_rope_id].y - 32) >> 5;
-			var l3 = (this.co_a[this.j_rope_id].y - 1) >> 5;
-			var l4 = (this.co_a[this.j_rope_id].y + 31) >> 5;
-			var l5 = (this.co_a[this.j_rope_id].y + 63) >> 5;
-			var l6 = (this.co_a[this.j_rope_id].x + 63) >> 5;
+			var l2 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y - 32, 5);
+			var l3 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y - 1, 5);
+			var l4 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y + 31, 5);
+			var l5 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y + 63, 5);
+			var l6 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x + 63, 5);
 			if(this.maps.map_bg[l6][l2] >= 18 || this.maps.map_bg[l6][l3] >= 18 || this.maps.map_bg[l6][l4] >= 18 || this.maps.map_bg[l6][l5] >= 18)
 				this.co_a[this.j_rope_id].x = l6 * 32 - 64;
 		} else
@@ -14395,11 +14178,11 @@ MainProgram.prototype.jMove = function()
 		{
 			this.co_j.muki = 0;
 			this.co_a[this.j_rope_id].x -= 4;
-			var i3 = (this.co_a[this.j_rope_id].y - 32) >> 5;
-			var i4 = (this.co_a[this.j_rope_id].y - 1) >> 5;
-			var i5 = (this.co_a[this.j_rope_id].y + 31) >> 5;
-			var i6 = (this.co_a[this.j_rope_id].y + 63) >> 5;
-			var i7 = this.co_a[this.j_rope_id].x >> 5;
+			var i3 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y - 32, 5);
+			var i4 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y - 1, 5);
+			var i5 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y + 31, 5);
+			var i6 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y + 63, 5);
+			var i7 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x, 5);
 			if(this.maps.map_bg[i7][i3] >= 18 || this.maps.map_bg[i7][i4] >= 18 || this.maps.map_bg[i7][i5] >= 18 || this.maps.map_bg[i7][i6] >= 18)
 				this.co_a[this.j_rope_id].x = i7 * 32 + 32;
 		}
@@ -14412,10 +14195,10 @@ MainProgram.prototype.jMove = function()
 			this.co_a[this.j_rope_id].y -= 4;
 			if(this.co_a[this.j_rope_id].y < 352)
 				this.co_a[this.j_rope_id].y = 352;
-			var j3 = this.co_a[this.j_rope_id].x >> 5;
-			var j4 = (this.co_a[this.j_rope_id].x + 31) >> 5;
-			var j5 = (this.co_a[this.j_rope_id].x + 63) >> 5;
-			var j6 = (this.co_a[this.j_rope_id].y - 32) >> 5;
+			var j3 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x, 5);
+			var j4 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x + 31, 5);
+			var j5 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x + 63, 5);
+			var j6 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y - 32, 5);
 			if(this.maps.map_bg[j3][j6] >= 18 || this.maps.map_bg[j4][j6] >= 18 || this.maps.map_bg[j5][j6] >= 18)
 				this.co_a[this.j_rope_id].y = j6 * 32 + 64;
 		} else
@@ -14424,10 +14207,10 @@ MainProgram.prototype.jMove = function()
 			this.co_a[this.j_rope_id].y += 4;
 			if(this.co_a[this.j_rope_id].y > this.ochiru_y - 32)
 				this.co_a[this.j_rope_id].y = this.ochiru_y - 32;
-			var k3 = this.co_a[this.j_rope_id].x >> 5;
-			var k4 = (this.co_a[this.j_rope_id].x + 31) >> 5;
-			var k5 = (this.co_a[this.j_rope_id].x + 63) >> 5;
-			var k6 = (this.co_a[this.j_rope_id].y + 63) >> 5;
+			var k3 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x, 5);
+			var k4 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x + 31, 5);
+			var k5 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].x + 63, 5);
+			var k6 = rightShiftIgnoreSign(this.co_a[this.j_rope_id].y + 63, 5);
 			if(this.maps.map_bg[k3][k6] >= 18 || this.maps.map_bg[k4][k6] >= 18 || this.maps.map_bg[k5][k6] >= 18)
 				this.co_a[this.j_rope_id].y = k6 * 32 - 64;
 		}
@@ -14451,21 +14234,21 @@ MainProgram.prototype.jMove = function()
 				this.co_j.vx = 60;
 			this.j_rope_cf = true;
 		}
-		var word1 = this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 15) >> 5];
+		var word1 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5)];
 		switch(word1)
 		{
-		case 7: // '\007'
+		case 7:
 		default:
 			break;
 
-		case 9: // '\t'
-			if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+		case 9:
+			if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 				this.j_mizu_f = true;
 			} else
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 			}
 			this.addScore(5);
 			this.gs.rsAddSound(6);
@@ -14480,16 +14263,16 @@ MainProgram.prototype.jMove = function()
 				this.showHashigo();
 			break;
 
-		case 8: // '\b'
+		case 8:
 			if((this.clear_type == 2 || this.clear_type == 3) && this.coin_kazu > 0)
 				break;
-			if(this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+			if(this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4)
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 4);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 4);
 				this.j_mizu_f = true;
 			} else
 			{
-				this.maps.putBGCode((this.co_j.x + 15) >> 5, (this.co_j.y + 15) >> 5, 0);
+				this.maps.putBGCode(rightShiftIgnoreSign(this.co_j.x + 15, 5), rightShiftIgnoreSign(this.co_j.y + 15, 5), 0);
 			}
 			this.gs.rsAddSound(2);
 			this.stage_cc = 1;
@@ -14499,15 +14282,15 @@ MainProgram.prototype.jMove = function()
 				this.addScore(100);
 			break;
 
-		case 5: // '\005'
-			this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
-			this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+		case 5:
+			this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
+			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 			this.jShinu(1);
 			break;
 
-		case 6: // '\006'
-			this.co_j.x = ((this.co_j.x + 15) >> 5) * 32;
-			this.co_j.y = ((this.co_j.y + 15) >> 5) * 32;
+		case 6:
+			this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
+			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 			this.jShinu(1);
 			break;
 		}
@@ -15074,6 +14857,9 @@ MainProgram.prototype.jMove = function()
 	}
 }
 
+/**
+ * 主人公の位置に合わせて画面をスクロールさせ、表示するマップ位置を変更します
+ */
 MainProgram.prototype.moveViewPosition = function()
 {
 	this.co_j.wx = this.co_j.x - this.maps.wx;
@@ -15128,6 +14914,16 @@ MainProgram.prototype.moveViewPosition = function()
 		this.maps.wy = this.maps.wy_max;
 }
 
+/**
+ * 主人公を殺します。
+ * 
+ * * 1: その場で回転しながら死亡
+ * * 2: 飛び上がって回転しながら死亡
+ * * 3: 縦に潰れて死亡
+ * * 4: 横に潰れて死亡
+ * @param {number} [type=1] 死因
+ * @see {@link MasaoJSS#setMyMiss}
+ */
 MainProgram.prototype.jShinu = function(i)
 {
 	this.co_j.c1 = 0;
@@ -15169,6 +14965,16 @@ MainProgram.prototype.jShinu = function(i)
 	this.sendHighscore();
 }
 
+/**
+ * 主人公が敵を踏んだエフェクトを発生させます。引数でジャンプの高さを還ることができます。
+ * * 1: 亀などの敵を踏んだときの高さ
+ * * 2: ポッピー・エアームズを踏んだときの高さ
+ * * 3: ボスを踏んだときの高さ
+ *
+ * @param {number} [type=1] 高さ
+ * @see {@link MasaoJSS#setMyPress}
+ * @returns {boolean} 成功したかどうか
+ */
 MainProgram.prototype.jFumu = function(i)
 {
 	if(this.co_j.c < 100 || this.co_j.c >= 200)
@@ -15188,20 +14994,26 @@ MainProgram.prototype.jFumu = function(i)
 	return true;
 }
 
+/**
+ * マップ上の座標をピクセル単位で指定し、そのタイルに坂道ブロックが存在した場合、与えたX座標におけるその坂道ブロックの床面のY座標を得ます
+ * @param x {number} マップX座標(ピクセル単位)
+ * @param y {number} マップY座標(ピクセル単位)
+ * @returns {number} 坂道の床面のY座標(ピクセル単位) 坂道ブロックがない場合、(なぜか)y-31が返る
+ */
 MainProgram.prototype.getSakamichiY = function(i, j)
 {
 	var k = 0;
-	var l = i - (i >> 5) * 32;
-	var word0 = this.maps.map_bg[i >> 5][j >> 5];
+	var l = i - rightShiftIgnoreSign(i, 5) * 32;
+	var word0 = this.maps.map_bg[rightShiftIgnoreSign(i, 5)][rightShiftIgnoreSign(j, 5)];
 	if(word0 == 18)
 	{
 		var i1 = 31 - l;
-		k = ((j >> 5) * 32 + i1) - 31;
+		k = (rightShiftIgnoreSign(j, 5) * 32 + i1) - 31;
 	} else
 	if(word0 == 19)
 	{
 		var j1 = l;
-		k = ((j >> 5) * 32 + j1) - 31;
+		k = (rightShiftIgnoreSign(j, 5) * 32 + j1) - 31;
 	} else
 	{
 		k = j - 31;
@@ -15209,6 +15021,12 @@ MainProgram.prototype.getSakamichiY = function(i, j)
 	return k;
 }
 
+/**
+ * TODO: 加筆求む
+ * @param x {number}
+ * @param y {number}
+ * @param type {number}
+ */
 MainProgram.prototype.jZutuki = function(i, j, k)
 {
 	for(var l = 0; l <= this.t_kazu; l++)
@@ -15259,8 +15077,8 @@ MainProgram.prototype.jZutuki = function(i, j, k)
 		{
 			characterobject.c = 55;
 			characterobject.c1 = 0;
-			var i1 = characterobject.x >> 5;
-			var j1 = characterobject.y >> 5;
+			var i1 = rightShiftIgnoreSign(characterobject.x, 5);
+			var j1 = rightShiftIgnoreSign(characterobject.y, 5);
 			if(characterobject.c5 == 1)
 				this.onASwitch(i1 - 5, j1 - 5, i1 + 5, j1 + 5);
 			else
@@ -15281,6 +15099,12 @@ MainProgram.prototype.jZutuki = function(i, j, k)
 
 }
 
+/**
+ * 指定したマップ上のピクセル座標の位置に水があるかどうかを調べる
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @returns {boolean} 指定した座標が水かどうか
+ */
 MainProgram.prototype.checkWater = function(i, j)
 {
 	var k = this.maps.getBGCode(i, j);
@@ -15296,13 +15120,24 @@ MainProgram.prototype.checkWater = function(i, j)
 	return false;
 }
 
+/**
+ * 敵を追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @param k {number} 敵の種類
+ * @param l {number} 追加パラメータ(？) TODO: 要調査
+ */
 MainProgram.prototype.tSet = function(i, j, k, l)
 {
+    // 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
+    var t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
 	var i1 = 0;
 	do
 	{
-		if(i1 > 219)
-			break;
+        if(i1 > t_limit)
+            break;
+		if(i1 > this.t_kazu)
+			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
 		{
 			this.co_t[i1].init();
@@ -15314,98 +15149,156 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 			characterobject.c4 = j;
 			characterobject.x = i;
 			characterobject.y = j;
-			this.t_kazu++;
-			if(this.t_kazu > 229)
-				this.t_kazu = 229;
-			switch(k)
-			{
-			case 310: 
-				characterobject.c3 = 8;
-				break;
+			switch (k) {
+				case 200:
+				case 201:
+				case 202:
+				case 203:
+					characterobject.c2 = 200;
+					characterobject.c3 = k - 200;
+					break;
 
-			case 311: 
-				characterobject.c2 = 310;
-				characterobject.c3 = 999;
-				break;
+				case 301:
+					characterobject.c2 = 300;
+					characterobject.c3 = 1;
+					break;
 
-			case 500: 
-				characterobject.y = j - 12;
-				characterobject.c3 = j - 52;
-				characterobject.c4 = j - 12;
-				characterobject.vy = -4;
-				break;
+				case 310:
+					characterobject.c3 = 8;
+					characterobject.c4 = 0;
+					break;
 
-			case 530: 
-				characterobject.y = j;
-				characterobject.c3 = j;
-				characterobject.c4 = 0;
-				break;
+				case 311:
+					characterobject.c2 = 310;
+					characterobject.c3 = 999;
+					characterobject.c4 = 0;
+					break;
 
-			case 600: 
-				characterobject.c3 = 0;
-				break;
+				case 312:
+					characterobject.c2 = 310;
+					characterobject.c3 = 8;
+					characterobject.c4 = 1;
+					break;
 
-			case 660: 
-				characterobject.y = j;
-				characterobject.c3 = i;
-				characterobject.c4 = 10;
-				break;
+				case 313:
+					characterobject.c2 = 310;
+					characterobject.c3 = 999;
+					characterobject.c4 = 1;
+					break;
 
-			case 670: 
-				characterobject.y = j;
-				characterobject.c3 = i;
-				characterobject.c4 = 0;
-				break;
+				case 500:
+					characterobject.y = j - 12;
+					characterobject.c3 = j - 52;
+					characterobject.c4 = j - 12;
+					characterobject.vy = -4;
+					break;
 
-			case 900: 
-				if(this.airms_kf == 2)
-					characterobject.c2 = 950;
-				break;
+				case 530:
+					characterobject.y = j;
+					characterobject.c3 = j;
+					characterobject.c4 = 0;
+					break;
 
-			case 930: 
-				characterobject.y = j;
-				characterobject.c3 = i;
-				characterobject.c4 = 20;
-				break;
+				case 600:
+				case 601:
+				case 602:
+					characterobject.c2 = 600;
+					characterobject.c3 = 0;
+					characterobject.c4 = k - 600;
+					break;
 
-			case 1070: 
-				characterobject.c3 = i - 64;
-				break;
+				case 660:
+					characterobject.y = j;
+					characterobject.c3 = i;
+					characterobject.c4 = 10;
+					break;
 
-			case 1080: 
-				characterobject.c3 = i - 64;
-				break;
+				case 670:
+					characterobject.y = j;
+					characterobject.c3 = i;
+					characterobject.c4 = 0;
+					break;
 
-			case 1170: 
-				characterobject.c3 = i - 64;
-				break;
+				case 700:
+				case 701:
+				case 702:
+				case 703:
+				case 704:
+					characterobject.c2 = 700;
+					characterobject.c3 = k - 700;
+					break;
 
-			case 1180: 
-				characterobject.c3 = i - 64;
-				break;
+				case 710:
+					characterobject.c3 = 0;
+					break;
 
-			case 1190: 
-				characterobject.c3 = i - 64;
-				characterobject.c5 = 0;
-				break;
+				case 711:
+					characterobject.c2 = 710;
+					characterobject.c3 = 1;
+					break;
 
-			case 1191: 
-				characterobject.c2 = 1190;
-				characterobject.c3 = i - 64;
-				characterobject.c5 = 1;
-				break;
+				case 800:
+				case 801:
+				case 802:
+				case 803:
+				case 804:
+					characterobject.c2 = 800;
+					characterobject.c4 = k - 800;
+					break;
 
-			case 1200: 
-				characterobject.c = 1220;
-				break;
+				case 920:
+					characterobject.c3 = 0;
+					break;
 
-			case 1400: 
-				characterobject.c = 1430;
-				characterobject.c2 = this.tpika_p;
-				this.tpika_p++;
-				if(this.tpika_p > 2)
-					this.tpika_p = 2;
-				break;
+				case 921:
+					characterobject.c2 = 920;
+					characterobject.c3 = 1;
+					break;
+
+				case 930:
+					characterobject.y = j;
+					characterobject.c3 = i;
+					characterobject.c4 = 20;
+					break;
+
+				case 1070:
+					characterobject.c3 = i - 64;
+					break;
+
+				case 1080:
+					characterobject.c3 = i - 64;
+					break;
+
+				case 1170:
+					characterobject.c3 = i - 64;
+					break;
+
+				case 1180:
+					characterobject.c3 = i - 64;
+					break;
+
+				case 1190:
+					characterobject.c3 = i - 64;
+					characterobject.c5 = 0;
+					break;
+
+				case 1191:
+					characterobject.c2 = 1190;
+					characterobject.c3 = i - 64;
+					characterobject.c5 = 1;
+					break;
+
+				case 1200:
+					characterobject.c = 1220;
+					break;
+
+				case 1400:
+					characterobject.c = 1430;
+					characterobject.c2 = this.tpika_p;
+					this.tpika_p++;
+					if (this.tpika_p > 2)
+						this.tpika_p = 2;
+					break;
 			}
 			break;
 		}
@@ -15413,14 +15306,30 @@ MainProgram.prototype.tSet = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * ボスを追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @param k {number} ボスの種類
+ * @param [l] {number} 追加パラメータ(？) TODO:要調査
+ */
 MainProgram.prototype.tSetBoss = function(i, j, k, l)
 {
-	this.t_kazu = 229;
-	var i1 = 220;
+    var t_limit, i1;
+    // 敵の個数に関する後方互換性オプション
+    if(this.tdb.options["bc-enemy-number"]){
+        t_limit = 229;
+        i1 = 220;
+    }else{
+        t_limit = Infinity;
+        i1 = 0;
+    }
 	do
 	{
-		if(i1 > 229)
-			break;
+        if(i1 > t_limit)
+            break;
+		while(i1 > this.t_kazu)
+			this.co_t.push(new CharacterObject());
 		if(this.co_t[i1].c <= 0)
 		{
 			var characterobject = this.co_t[i1];
@@ -15468,6 +15377,9 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * 敵のフレーム毎の処理を行います
+ */
 MainProgram.prototype.tMove = function()
 {
 	var flag = false;
@@ -15484,7 +15396,7 @@ MainProgram.prototype.tMove = function()
 		default:
 			break;
 
-		case 10: // '\n'
+		case 10:
 			if(this.maps.wx >= characterobject.c1)
 			{
 				characterobject.c = characterobject.c2;
@@ -15493,7 +15405,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 50: // '2'
+		case 50:
 			characterobject.c1++;
 			if(characterobject.c2 >= 0 && this.yo[characterobject.c2].con >= 350 && this.yo[characterobject.c2].con < 400)
 				i21 = this.getSHCOY(this.yo[characterobject.c2].x, this.yo[characterobject.c2].y, this.yo[characterobject.c2].x2, this.yo[characterobject.c2].y2, l20 + 15);
@@ -15504,7 +15416,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 52: // '4'
+		case 52:
 			l20 += characterobject.vx;
 			characterobject.vy += 5;
 			if(characterobject.vy > 25)
@@ -15517,7 +15429,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 54: // '6'
+		case 54:
 			l20 += characterobject.vx;
 			characterobject.vy += 5;
 			if(characterobject.vy > 25)
@@ -15530,7 +15442,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 55: // '7'
+		case 55:
 			characterobject.c1++;
 			if(characterobject.c1 == 1)
 				this.addScore(10);
@@ -15551,7 +15463,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 57: // '9'
+		case 57:
 			characterobject.c1++;
 			characterobject.pth = 0;
 			if(characterobject.c1 <= 3)
@@ -15571,7 +15483,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 60: // '<'
+		case 60:
 			if(characterobject.c1 == 1)
 			{
 				i21 = this.maps.wy_mini - 32;
@@ -15588,12 +15500,12 @@ MainProgram.prototype.tMove = function()
 						l20 = 32 + this.ranInt(32) * 32;
 					} else
 					{
-						l20 = ((this.co_j.x >> 5 + this.ranInt(17)) - 8) * 32;
+						l20 = ((rightShiftIgnoreSign(this.co_j.x, 5) + this.ranInt(17)) - 8) * 32;
 						if(l20 < 32)
 							l20 = 32;
 						else
-						if(l20 > 5760)
-							l20 = 5760;
+						if(l20 > this.mapWidth * 32)
+							l20 = this.mapWidth * 32;
 					}
 					var l36 = this.maps.getBGCode(l20 + 15, i21 + 32 + 15);
 					if(l36 <= 10 || l36 == 15)
@@ -15620,7 +15532,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 65: // 'A'
+		case 65:
 			characterobject.c1++;
 			if(characterobject.c1 < 50)
 			{
@@ -15641,7 +15553,7 @@ MainProgram.prototype.tMove = function()
 				}
 			break;
 
-		case 100: // 'd'
+		case 100:
 			if(this.ana_kazu > 0)
 			{
 				var j21 = this.anaCheckNormal(l20, i21);
@@ -15659,7 +15571,7 @@ MainProgram.prototype.tMove = function()
 			{
 				i21 += 5;
 				if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-					i21 = ((i21 + 32) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 				if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
 					i21 = this.getSakamichiY(l20 + 15, i21 + 31);
 				characterobject.pt = 140;
@@ -15724,13 +15636,13 @@ MainProgram.prototype.tMove = function()
 				}
 			} else
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 3) >> 5)
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
 				{
 					if(j44 == 18)
-						i21 = ((i21 + 31) >> 5) * 32;
+						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 					else
 					if(j44 == 19)
-						i21 = ((i21 + 31) >> 5) * 32 - 32;
+						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 					if(this.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
 						i21++;
 				}
@@ -15741,29 +15653,29 @@ MainProgram.prototype.tMove = function()
 				i37 = this.maps.getBGCode(l20, i21);
 				if(i37 >= 20 || i37 == 15 || i37 == 18)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 105;
 				}
 				if(j44 == 18)
 				{
-					if((l20 + 15) >> 5 < (l20 + 15 + 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
 					{
-						l20 = ((l20 >> 5) * 32 + 32) - 15;
+						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
 						characterobject.c = 105;
 					}
 				} else
 				if(j44 == 19)
 				{
-					if((l20 + 15) >> 5 < (l20 + 15 + 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
 					{
-						l20 = ((l20 >> 5) * 32 + 32) - 15;
+						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
 						i21++;
 						characterobject.c = 105;
 					}
 				} else
 				if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20, i21 + 31) <= 9)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 105;
 				}
 				characterobject.pt = 140 + this.g_ac;
@@ -15771,7 +15683,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 104: // 'h'
+		case 104:
 			characterobject.pt = 140 + this.g_ac;
 			characterobject.pth = 0;
 			if(this.yo[characterobject.c2].con >= 300 && this.yo[characterobject.c2].con < 350)
@@ -15857,7 +15769,7 @@ MainProgram.prototype.tMove = function()
 			}
 			break;
 
-		case 105: // 'i'
+		case 105:
 			if(this.ana_kazu > 0)
 			{
 				var k22 = this.anaCheckNormal(l20, i21);
@@ -15871,13 +15783,13 @@ MainProgram.prototype.tMove = function()
 			var k44 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if(k44 != 18 && k44 != 19)
 				k44 = 0;
-			if((l20 + 15) >> 5 < (l20 + 15 + 3) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
 			{
 				if(k44 == 19)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				else
 				if(k44 == 18)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if(this.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
 					i21++;
 			}
@@ -15888,36 +15800,36 @@ MainProgram.prototype.tMove = function()
 			j37 = this.maps.getBGCode(l20 + 31, i21);
 			if(j37 >= 20 || j37 == 15 || j37 == 19)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.c = 100;
 			}
 			if(k44 == 19)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
 				{
-					l20 = ((l20 + 15) >> 5) * 32 - 16;
+					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
 					characterobject.c = 100;
 				}
 			} else
 			if(k44 == 18)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
 				{
-					l20 = ((l20 + 15) >> 5) * 32 - 16;
+					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
 					i21++;
 					characterobject.c = 100;
 				}
 			} else
 			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.c = 100;
 			}
 			characterobject.pt = 140 + this.g_ac;
 			characterobject.pth = 1;
 			break;
 
-		case 110: // 'n'
+		case 110:
 			if(this.ana_kazu > 0)
 			{
 				var l22 = this.anaCheckNormal(l20, i21);
@@ -15931,13 +15843,13 @@ MainProgram.prototype.tMove = function()
 			var l44 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if(l44 != 18 && l44 != 19)
 				l44 = 0;
-			if((l20 + 15) >> 5 > ((l20 + 15) - 3) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5))
 			{
 				if(l44 == 18)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				else
 				if(l44 == 19)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if(this.maps.getBGCode((l20 + 15) - 3, i21 + 32) == 18)
 					i21++;
 			}
@@ -15954,7 +15866,7 @@ MainProgram.prototype.tMove = function()
 				var l37 = this.maps.getBGCode(l20, i21);
 				if(l37 >= 20 || l37 == 15 || l37 == 18)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 115;
 				}
 			}
@@ -15962,23 +15874,23 @@ MainProgram.prototype.tMove = function()
 				characterobject.c = 0;
 			if(l44 == 18)
 			{
-				if((l20 + 15) >> 5 < (l20 + 15 + 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = ((i21 + 15) >> 5) * 32;
+				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
 			} else
 			if(l44 == 19)
 			{
-				if((l20 + 15) >> 5 < (l20 + 15 + 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
 			} else
 			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
 			{
-				l20 = ((l20 + 31) >> 5) * 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
 				characterobject.c = 120;
 			}
 			characterobject.pt = 140 + this.g_ac;
 			characterobject.pth = 0;
 			break;
 
-		case 115: // 's'
+		case 115:
 			if(this.ana_kazu > 0)
 			{
 				var i23 = this.anaCheckNormal(l20, i21);
@@ -15992,13 +15904,13 @@ MainProgram.prototype.tMove = function()
 			var i45 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if(i45 != 18 && i45 != 19)
 				i45 = 0;
-			if((l20 + 15) >> 5 < (l20 + 15 + 3) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 3, 5))
 			{
 				if(i45 == 19)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				else
 				if(i45 == 18)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if(this.maps.getBGCode(l20 + 15 + 3, i21 + 32) == 19)
 					i21++;
 			}
@@ -16009,30 +15921,30 @@ MainProgram.prototype.tMove = function()
 			i38 = this.maps.getBGCode(l20 + 31, i21);
 			if(i38 >= 20 || i38 == 15 || i38 == 19)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.c = 110;
 			}
 			if(i >= 120 && l20 > this.maps.wx + 512)
 				characterobject.c = 0;
 			if(i45 == 19)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = ((i21 + 15) >> 5) * 32;
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
 			} else
 			if(i45 == 18)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 3) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 3, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
 			} else
 			if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
 			{
-				l20 = (l20 >> 5) * 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32;
 				characterobject.c = 125;
 			}
 			characterobject.pt = 140 + this.g_ac;
 			characterobject.pth = 1;
 			break;
 
-		case 120: // 'x'
+		case 120:
 			if(this.ana_kazu > 0)
 			{
 				var l = 0;
@@ -16054,7 +15966,7 @@ MainProgram.prototype.tMove = function()
 			i21 += 5;
 			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
 			{
-				i21 = ((i21 + 32) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 				characterobject.c = 110;
 			}
 			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
@@ -16068,7 +15980,7 @@ MainProgram.prototype.tMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 125: // '}'
+		case 125:
 			if(this.ana_kazu > 0)
 			{
 				var i1 = 0;
@@ -16090,7 +16002,7 @@ MainProgram.prototype.tMove = function()
 			i21 += 5;
 			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
 			{
-				i21 = ((i21 + 32) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 				characterobject.c = 115;
 			}
 			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
@@ -16125,12 +16037,12 @@ MainProgram.prototype.tMove = function()
 			}
 			if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
 			{
-				l20 = (l20 >> 5) * 32 + 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 				characterobject.vx = 0;
 			}
 			if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.vx = 0;
 			}
 			l20 += characterobject.vx;
@@ -16138,9 +16050,9 @@ MainProgram.prototype.tMove = function()
 			if(characterobject.vy > 18)
 				characterobject.vy = 18;
 			i21 += characterobject.vy;
-			var j23 = (i21 + 31) >> 5;
-			var word0 = this.maps.map_bg[l20 >> 5][j23];
-			var word3 = this.maps.map_bg[(l20 + 31) >> 5][j23];
+			var j23 = rightShiftIgnoreSign(i21 + 31, 5);
+			var word0 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][j23];
+			var word3 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][j23];
 			if(word0 >= 15 || word3 >= 15)
 			{
 				i21 = j23 * 32 - 32;
@@ -16218,7 +16130,7 @@ MainProgram.prototype.tMove = function()
 			i21 += characterobject.vy;
 			if(this.maps.getBGCode(l20 + 15, i21 + 31) >= 10)
 			{
-				i21 = ((i21 + 31) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				characterobject.c = 200;
 				characterobject.c1 = 30;
 			}
@@ -16274,49 +16186,49 @@ MainProgram.prototype.tMove = function()
 			if(i21 >= this.ochiru_y)
 				characterobject.c = 0;
 			if(characterobject.vy == 0 && (Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y) && i21 >= this.maps.wy - 128 && i21 <= this.maps.wy + 320 + 128)
-				if(this.dengeki_mkf == 3)
+				if(characterobject.c3 == 1)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
-						this.mSet2(l20 - 16, (i21 >> 5) * 32, 732, -10, 0);
+						this.mSet2(l20 - 16, rightShiftIgnoreSign(i21, 5) * 32, 732, -10, 0);
 						this.gs.rsAddSound(15);
 					} else
 					{
-						this.mSet2(l20 + 16, (i21 >> 5) * 32, 732, 10, 0);
+						this.mSet2(l20 + 16, rightShiftIgnoreSign(i21, 5) * 32, 732, 10, 0);
 						this.gs.rsAddSound(15);
 					}
 				} else
-				if(this.dengeki_mkf == 4)
+				if(characterobject.c3 == 2)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
 						var d = 3.1400001049041748;
-						this.mSet2(l20, (i21 >> 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
 						d = 3.6633334159851074;
-						this.mSet2(l20, (i21 >> 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
 						d = 2.6166667938232422;
-						this.mSet2(l20, (i21 >> 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d) * 9), Math.floor(Math.sin(d) * 9));
 						this.gs.rsAddSound(10);
 					} else
 					{
 						var d1 = 0.0;
-						this.mSet2(l20, (i21 >> 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
 						d1 = 5.7566671371459961;
-						this.mSet2(l20, (i21 >> 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
 						d1 = 0.52333337068557739;
-						this.mSet2(l20, (i21 >> 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 733, Math.floor(Math.cos(d1) * 9), Math.floor(Math.sin(d1) * 9));
 						this.gs.rsAddSound(10);
 					}
 				} else
-				if(this.dengeki_mkf == 5)
+				if(characterobject.c3 == 3)
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
-						this.mSet2(l20, (i21 >> 5) * 32, 810, -12, 0);
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 810, -12, 0);
 						this.gs.rsAddSound(22);
 					} else
 					{
-						this.mSet2(l20, (i21 >> 5) * 32, 810, 12, 0);
+						this.mSet2(l20, rightShiftIgnoreSign(i21, 5) * 32, 810, 12, 0);
 						this.gs.rsAddSound(22);
 					}
 				} else
@@ -16360,12 +16272,12 @@ MainProgram.prototype.tMove = function()
 				{
 					if(l20 + 8 >= this.co_j.x)
 					{
-						if(this.chikorin_attack == 6)
+						if(characterobject.c3 == 1)
 							this.mSet(l20, i21, 201);
 						else
 							this.mSet(l20, i21, 200);
 					} else
-					if(this.chikorin_attack == 6)
+					if(characterobject.c3 == 1)
 						this.mSet(l20, i21, 206);
 					else
 						this.mSet(l20, i21, 205);
@@ -16416,7 +16328,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1++;
 				if(characterobject.c1 == 101)
 				{
-					if(this.chikorin_attack == 4 || this.chikorin_attack == 5)
+					if(characterobject.c4 == 1)
 						this.tSetBoss(l20, i21, 650, -3);
 					else
 						this.tSetBoss(l20, i21, 450, -3);
@@ -16645,7 +16557,7 @@ MainProgram.prototype.tMove = function()
 			{
 				i21 += 5;
 				if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
-					i21 = ((i21 + 32) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 				if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
 					i21 = this.getSakamichiY(l20 + 15, i21 + 31);
 				characterobject.pt = 152;
@@ -16710,13 +16622,13 @@ MainProgram.prototype.tMove = function()
 				}
 			} else
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5)
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
 				{
 					if(j45 == 18)
-						i21 = ((i21 + 31) >> 5) * 32;
+						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 					else
 					if(j45 == 19)
-						i21 = ((i21 + 31) >> 5) * 32 - 32;
+						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 					if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
 						i21++;
 				}
@@ -16727,29 +16639,29 @@ MainProgram.prototype.tMove = function()
 				j38 = this.maps.getBGCode(l20, i21);
 				if(j38 >= 20 || j38 == 15 || j38 == 18)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 405;
 				}
 				if(j45 == 18)
 				{
-					if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
 					{
-						l20 = ((l20 >> 5) * 32 + 32) - 15;
+						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
 						characterobject.c = 405;
 					}
 				} else
 				if(j45 == 19)
 				{
-					if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+					if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
 					{
-						l20 = ((l20 >> 5) * 32 + 32) - 15;
+						l20 = (rightShiftIgnoreSign(l20, 5) * 32 + 32) - 15;
 						i21++;
 						characterobject.c = 405;
 					}
 				} else
 				if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20, i21 + 31) <= 9)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 405;
 				}
 				characterobject.pt = 152 + this.g_ac;
@@ -16875,13 +16787,13 @@ MainProgram.prototype.tMove = function()
 			var k45 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if(k45 != 18 && k45 != 19)
 				k45 = 0;
-			if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
 			{
 				if(k45 == 19)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				else
 				if(k45 == 18)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
 					i21++;
 			}
@@ -16892,29 +16804,29 @@ MainProgram.prototype.tMove = function()
 			k38 = this.maps.getBGCode(l20 + 31, i21);
 			if(k38 >= 20 || k38 == 15 || k38 == 19)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.c = 400;
 			}
 			if(k45 == 19)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
 				{
-					l20 = ((l20 + 15) >> 5) * 32 - 16;
+					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
 					characterobject.c = 400;
 				}
 			} else
 			if(k45 == 18)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9)
 				{
-					l20 = ((l20 + 15) >> 5) * 32 - 16;
+					l20 = rightShiftIgnoreSign(l20 + 15, 5) * 32 - 16;
 					i21++;
 					characterobject.c = 400;
 				}
 			} else
 			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 31, i21 + 31) <= 9)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.c = 400;
 			}
 			characterobject.pt = 152 + this.g_ac;
@@ -16943,13 +16855,13 @@ MainProgram.prototype.tMove = function()
 			var l45 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if(l45 != 18 && l45 != 19)
 				l45 = 0;
-			if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
 			{
 				if(l45 == 18)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				else
 				if(l45 == 19)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if(this.maps.getBGCode((l20 + 15) - 4, i21 + 32) == 18)
 					i21++;
 			}
@@ -16966,7 +16878,7 @@ MainProgram.prototype.tMove = function()
 				var i39 = this.maps.getBGCode(l20, i21);
 				if(i39 >= 20 || i39 == 15 || i39 == 18)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 415;
 				}
 			}
@@ -16974,16 +16886,16 @@ MainProgram.prototype.tMove = function()
 				characterobject.c = 0;
 			if(l45 == 18)
 			{
-				if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = ((i21 + 15) >> 5) * 32;
+				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
 			} else
 			if(l45 == 19)
 			{
-				if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+				if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
 			} else
 			if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20 + 31, i21 + 31) != 18)
 			{
-				l20 = ((l20 + 31) >> 5) * 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32;
 				characterobject.c = 420;
 			}
 			characterobject.pt = 152 + this.g_ac;
@@ -17012,13 +16924,13 @@ MainProgram.prototype.tMove = function()
 			var i46 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if(i46 != 18 && i46 != 19)
 				i46 = 0;
-			if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
 			{
 				if(i46 == 19)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				else
 				if(i46 == 18)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if(this.maps.getBGCode(l20 + 15 + 4, i21 + 32) == 19)
 					i21++;
 			}
@@ -17029,23 +16941,23 @@ MainProgram.prototype.tMove = function()
 			j39 = this.maps.getBGCode(l20 + 31, i21);
 			if(j39 >= 20 || j39 == 15 || j39 == 19)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.c = 410;
 			}
 			if(i >= 120 && l20 > this.maps.wx + 512)
 				characterobject.c = 0;
 			if(i46 == 19)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
-					i21 = ((i21 + 15) >> 5) * 32;
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9)
+					i21 = rightShiftIgnoreSign(i21 + 15, 5) * 32;
 			} else
 			if(i46 == 18)
 			{
-				if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5 && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
+				if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5) && this.maps.getBGCode(l20 + 15, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) <= 9);
 			} else
 			if(this.maps.getBGCode(l20, i21 + 32) <= 9 && this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && this.maps.getBGCode(l20, i21 + 31) != 19)
 			{
-				l20 = (l20 >> 5) * 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32;
 				characterobject.c = 425;
 			}
 			characterobject.pt = 152 + this.g_ac;
@@ -17074,7 +16986,7 @@ MainProgram.prototype.tMove = function()
 			i21 += 5;
 			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
 			{
-				i21 = ((i21 + 32) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 				characterobject.c = 410;
 			}
 			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
@@ -17110,7 +17022,7 @@ MainProgram.prototype.tMove = function()
 			i21 += 5;
 			if(this.maps.getBGCode(l20 + 15, i21 + 32) >= 20)
 			{
-				i21 = ((i21 + 32) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 				characterobject.c = 415;
 			}
 			if((this.maps.getBGCode(l20 + 15, i21 + 31) == 18 || this.maps.getBGCode(l20 + 15, i21 + 31) == 19) && this.getSakamichiY(l20 + 15, i21 + 31) < i21)
@@ -17145,12 +17057,12 @@ MainProgram.prototype.tMove = function()
 			}
 			if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
 			{
-				l20 = (l20 >> 5) * 32 + 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 				characterobject.vx = 0;
 			}
 			if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.vx = 0;
 			}
 			l20 += characterobject.vx;
@@ -17158,9 +17070,9 @@ MainProgram.prototype.tMove = function()
 			if(characterobject.vy > 18)
 				characterobject.vy = 18;
 			i21 += characterobject.vy;
-			var k25 = (i21 + 31) >> 5;
-			var word1 = this.maps.map_bg[l20 >> 5][k25];
-			var word4 = this.maps.map_bg[(l20 + 31) >> 5][k25];
+			var k25 = rightShiftIgnoreSign(i21 + 31, 5);
+			var word1 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][k25];
+			var word4 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][k25];
 			if(word1 >= 10 || word4 >= 10)
 			{
 				i21 = k25 * 32 - 32;
@@ -17204,7 +17116,7 @@ MainProgram.prototype.tMove = function()
 			} else
 			if(this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
 			{
-				l20 = ((l20 - 16) >> 5) * 32 + 32 + 16;
+				l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
 				characterobject.c = 515;
 			}
 			characterobject.pt = 147 + this.g_ac;
@@ -17215,7 +17127,7 @@ MainProgram.prototype.tMove = function()
 			l20 += 3;
 			if(this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
 			{
-				l20 = ((l20 + 31 + 16) >> 5) * 32 - 32 - 16;
+				l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
 				characterobject.c = 510;
 			}
 			characterobject.pt = 147 + this.g_ac;
@@ -17381,7 +17293,7 @@ MainProgram.prototype.tMove = function()
 			break;
 
 		case 600: 
-			if(i < 120 && this.mariri_attack == 3 && characterobject.c1 == 20)
+			if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
 			{
 				characterobject.c = 605;
 				characterobject.c1++;
@@ -17409,14 +17321,14 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1++;
 				characterobject.vy = -17;
 				characterobject.c3 = 0;
-				if(i < 120 && this.mariri_attack == 2)
+				if(i < 120 && characterobject.c4 == 1)
 					characterobject.vy = -22;
 				var l25 = this.maps.getBGCode(l20 + 15, i21 + 32);
 				if(l25 == 18 || l25 == 19)
 					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
 				characterobject.pt = 154;
 				characterobject.pth = 0;
-				if(i < 120 && this.mariri_attack == 2)
+				if(i < 120 && characterobject.c4 == 1)
 					if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
 						characterobject.pth = 0;
 					else
@@ -17453,7 +17365,7 @@ MainProgram.prototype.tMove = function()
 				}
 				if(characterobject.vy > 17)
 					characterobject.vy = 17;
-				if(i >= 120 || this.mariri_attack != 2)
+				if(i >= 120 || characterobject.c4 != 1)
 					l20 -= 5;
 				var k32 = i21;
 				i21 += characterobject.vy;
@@ -17474,13 +17386,13 @@ MainProgram.prototype.tMove = function()
 				{
 					if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
 					{
-						i21 = (((i21 + 6) >> 5) * 32 + 32) - 6;
+						i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
 						characterobject.vy = 0;
 					}
 					var k39 = this.maps.getBGCode(l20 + 15, i21 + 31);
 					if(k39 >= 20 || k39 == 10 || k39 == 15)
 					{
-						i21 = ((i21 + 31) >> 5) * 32 - 32;
+						i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 						characterobject.c1 = 15;
 						characterobject.pt = 154;
 						characterobject.pth = 0;
@@ -17495,12 +17407,12 @@ MainProgram.prototype.tMove = function()
 							characterobject.pth = 0;
 						}
 					} else
-					if((i21 + 31) >> 5 > (k32 + 31) >> 5)
+					if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(k32 + 31, 5))
 					{
 						var l39 = this.maps.getBGCode(l20 + 15, k32 + 31);
 						if(l39 == 18 || l39 == 19)
 						{
-							i21 = ((k32 + 31) >> 5) * 32;
+							i21 = rightShiftIgnoreSign(k32 + 31, 5) * 32;
 							i21 = this.getSakamichiY(l20 + 15, i21 + 31);
 							characterobject.c1 = 15;
 							characterobject.pt = 154;
@@ -17562,13 +17474,13 @@ MainProgram.prototype.tMove = function()
 					}
 					if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20, i21 + 31) >= 20 || this.maps.getBGCode(l20, i21 + 8) >= 20))
 					{
-						l20 = (l20 >> 5) * 32 + 32;
+						l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 						characterobject.c = 605;
 					}
 					if(i >= 120 && l20 < this.maps.wx - 32)
 						characterobject.c = 0;
 				}
-				if(i < 120 && this.mariri_attack == 2)
+				if(i < 120 && characterobject.c4 == 1)
 					if(this.co_j.x <= l20 + 8 || this.j_tokugi == 14)
 						characterobject.pth = 0;
 					else
@@ -17579,7 +17491,7 @@ MainProgram.prototype.tMove = function()
 			break;
 
 		case 605: 
-			if(i < 120 && this.mariri_attack == 3 && characterobject.c1 == 20)
+			if(i < 120 && characterobject.c4 == 2 && characterobject.c1 == 20)
 			{
 				characterobject.c = 600;
 				characterobject.c1++;
@@ -17655,13 +17567,13 @@ MainProgram.prototype.tMove = function()
 				}
 				if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21 + 6) >= 18)
 				{
-					i21 = (((i21 + 6) >> 5) * 32 + 32) - 6;
+					i21 = (rightShiftIgnoreSign(i21 + 6, 5) * 32 + 32) - 6;
 					characterobject.vy = 0;
 				}
 				var i40 = this.maps.getBGCode(l20 + 15, i21 + 31);
 				if(i40 >= 20 || i40 == 10 || i40 == 15)
 				{
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 					characterobject.c1 = 15;
 					characterobject.pt = 154;
 					characterobject.pth = 1;
@@ -17676,12 +17588,12 @@ MainProgram.prototype.tMove = function()
 						characterobject.pth = 1;
 					}
 				} else
-				if((i21 + 31) >> 5 > (l32 + 31) >> 5)
+				if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(l32 + 31, 5))
 				{
 					var j40 = this.maps.getBGCode(l20 + 15, l32 + 31);
 					if(j40 == 18 || j40 == 19)
 					{
-						i21 = ((l32 + 31) >> 5) * 32;
+						i21 = rightShiftIgnoreSign(l32 + 31, 5) * 32;
 						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
 						characterobject.c1 = 15;
 						characterobject.pt = 154;
@@ -17743,7 +17655,7 @@ MainProgram.prototype.tMove = function()
 				}
 				if(this.maps.getBGCode(l20 + 15, i21 + 31) != 18 && this.maps.getBGCode(l20 + 15, i21 + 31) != 19 && (this.maps.getBGCode(l20 + 31, i21 + 31) >= 20 || this.maps.getBGCode(l20 + 31, i21 + 8) >= 20))
 				{
-					l20 = ((l20 + 31) >> 5) * 32 - 32;
+					l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 					characterobject.c = 600;
 				}
 				if(i >= 120 && l20 > this.maps.wx + 512)
@@ -17756,12 +17668,12 @@ MainProgram.prototype.tMove = function()
 		case 650: 
 			if(characterobject.vx < 0 && (this.maps.getBGCode(l20, i21) >= 15 || this.maps.getBGCode(l20, i21 + 31) >= 15))
 			{
-				l20 = (l20 >> 5) * 32 + 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 				characterobject.vx = 0;
 			}
 			if(characterobject.vx > 0 && (this.maps.getBGCode(l20 + 31, i21) >= 15 || this.maps.getBGCode(l20 + 31, i21 + 31) >= 15))
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				characterobject.vx = 0;
 			}
 			l20 += characterobject.vx;
@@ -17769,9 +17681,9 @@ MainProgram.prototype.tMove = function()
 			if(characterobject.vy > 18)
 				characterobject.vy = 18;
 			i21 += characterobject.vy;
-			var i28 = (i21 + 31) >> 5;
-			var word2 = this.maps.map_bg[l20 >> 5][i28];
-			var word5 = this.maps.map_bg[(l20 + 31) >> 5][i28];
+			var i28 = rightShiftIgnoreSign(i21 + 31, 5);
+			var word2 = this.maps.map_bg[rightShiftIgnoreSign(l20, 5)][i28];
+			var word5 = this.maps.map_bg[rightShiftIgnoreSign(l20 + 31, 5)][i28];
 			if(word2 >= 10 || word5 >= 10)
 			{
 				i21 = i28 * 32 - 32;
@@ -17912,13 +17824,13 @@ MainProgram.prototype.tMove = function()
 				if(characterobject.c == 1300)
 					break;
 			}
-			if(this.yachamo_attack != 2)
+			if(characterobject.c3 != 1)
 				if(characterobject.c1 > 0)
 				{
 					characterobject.c1++;
 					if(characterobject.c1 == 2)
 					{
-						if(this.yachamo_attack == 3)
+						if(characterobject.c3 == 2)
 						{
 							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
 								if(l20 + 8 >= this.co_j.x)
@@ -17931,7 +17843,7 @@ MainProgram.prototype.tMove = function()
 									this.gs.rsAddSound(22);
 								}
 						} else
-						if(this.yachamo_attack == 4)
+						if(characterobject.c3 == 3)
 						{
 							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
 								if(l20 + 8 >= this.co_j.x)
@@ -17954,7 +17866,7 @@ MainProgram.prototype.tMove = function()
 									this.gs.rsAddSound(11);
 								}
 						} else
-						if(this.yachamo_attack == 5)
+						if(characterobject.c3 == 4)
 						{
 							if(Math.abs(this.co_j.x - l20) > 32 || i21 <= this.co_j.y)
 								if(l20 + 8 >= this.co_j.x)
@@ -17979,7 +17891,7 @@ MainProgram.prototype.tMove = function()
 								this.gs.rsAddSound(14);
 						}
 					} else
-					if(this.yachamo_attack != 3 && this.yachamo_attack != 4 && characterobject.c1 > 40)
+					if(characterobject.c3 != 2 && characterobject.c3 != 3 && characterobject.c1 > 40)
 						characterobject.c1 = 0;
 					else
 					if(characterobject.c1 > 52)
@@ -18016,7 +17928,7 @@ MainProgram.prototype.tMove = function()
 			if(characterobject.c1 <= 0)
 			{
 				if(l20 >= this.maps.wx && l20 <= (this.maps.wx + 512) - 32 && i21 >= this.maps.wy && i21 <= (this.maps.wy + 320) - 32 && this.co_j.x >= l20 - 320 && this.co_j.x <= l20 + 192 && Math.abs(this.co_j.x - l20) >= 64 && Math.abs(this.co_j.y - i21) <= 128)
-					if(this.yachamo_attack == 6)
+					if(characterobject.c3 == 0)
 						characterobject.c1 = 1;
 					else
 						characterobject.c1 = 100;
@@ -18157,7 +18069,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1++;
 				if(characterobject.c1 == 2)
 				{
-					if(this.mizutaro_attack == 2)
+					if(characterobject.c4 == 1)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -18179,13 +18091,13 @@ MainProgram.prototype.tMove = function()
 							this.gs.rsAddSound(11);
 						}
 					} else
-					if(this.mizutaro_attack == 3)
+					if(characterobject.c4 == 2)
 					{
 						this.mSet(l20, i21, 100);
 						this.gs.rsAddSound(10);
 						characterobject.c1 = 12;
 					} else
-					if(this.mizutaro_attack == 4)
+					if(characterobject.c4 == 3)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -18200,7 +18112,7 @@ MainProgram.prototype.tMove = function()
 						}
 						characterobject.c1 = 12;
 					} else
-					if(this.mizutaro_attack == 5)
+					if(characterobject.c4 == 4)
 					{
 						for(var k8 = 0; k8 <= 300; k8 += 90)
 						{
@@ -18268,17 +18180,17 @@ MainProgram.prototype.tMove = function()
 				}
 				if(this.maps.getBGCode(l20 + 31, i21 + 32) <= 9)
 				{
-					l20 = ((l20 + 31) >> 5) * 32 - 32;
+					l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 					characterobject.c1 = 10;
 				}
 				characterobject.pt = 161 + this.g_ac;
 				characterobject.pth = 1;
 			} else
-			if(this.mizutaro_attack != 5 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
+			if(characterobject.c4 != 4 && characterobject.c1 <= 35 || characterobject.c1 <= 50)
 			{
 				characterobject.c1++;
 				if(characterobject.c1 == 15)
-					if(this.mizutaro_attack == 2)
+					if(characterobject.c4 == 1)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -18300,12 +18212,12 @@ MainProgram.prototype.tMove = function()
 							this.gs.rsAddSound(11);
 						}
 					} else
-					if(this.mizutaro_attack == 3)
+					if(characterobject.c4 == 2)
 					{
 						this.mSet(l20, i21, 100);
 						this.gs.rsAddSound(10);
 					} else
-					if(this.mizutaro_attack == 4)
+					if(characterobject.c4 == 3)
 					{
 						if(l20 + 8 >= this.co_j.x)
 						{
@@ -18319,7 +18231,7 @@ MainProgram.prototype.tMove = function()
 								this.gs.rsAddSound(15);
 						}
 					} else
-					if(this.mizutaro_attack == 5)
+					if(characterobject.c4 == 4)
 					{
 						for(var i9 = 0; i9 <= 300; i9 += 90)
 						{
@@ -18353,7 +18265,7 @@ MainProgram.prototype.tMove = function()
 				}
 				if(this.maps.getBGCode(l20, i21 + 32) <= 9)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 800;
 					characterobject.c1 = -20;
 				}
@@ -18426,7 +18338,7 @@ MainProgram.prototype.tMove = function()
 					characterobject.c1 = 0;
 				if(this.maps.getBGCode(l20, i21 + 31) >= 15)
 				{
-					l20 = (l20 >> 5) * 32 + 32;
+					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.c = 910;
 				}
 			}
@@ -18447,7 +18359,7 @@ MainProgram.prototype.tMove = function()
 			} else
 			if(characterobject.c1 == 1)
 			{
-				if(this.airms_kf == 4)
+				if(characterobject.c3 == 1)
 					this.mSet2(l20, i21, 800, 0, 0);
 				else
 					this.mSet(l20, i21 + 19, 606);
@@ -18523,7 +18435,7 @@ MainProgram.prototype.tMove = function()
 					characterobject.c1 = 0;
 				if(this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
 				{
-					l20 = ((l20 - 16) >> 5) * 32 + 32 + 16;
+					l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
 					characterobject.c = 960;
 					characterobject.c1 = 16;
 				}
@@ -18542,7 +18454,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c1 = 0;
 			if(this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
 			{
-				l20 = ((l20 + 31 + 16) >> 5) * 32 - 32 - 16;
+				l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
 				characterobject.c = 950;
 				characterobject.c1 = 16;
 			}
@@ -18555,7 +18467,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c = 1005;
 			if(this.maps.getBGCode(l20 - 16, i21) >= 15 || this.maps.getBGCode(l20 - 16, i21 + 31) >= 15)
 			{
-				l20 = ((l20 - 16) >> 5) * 32 + 32 + 16;
+				l20 = rightShiftIgnoreSign(l20 - 16, 5) * 32 + 32 + 16;
 				characterobject.c = 1005;
 			}
 			characterobject.pt = 166;
@@ -18595,7 +18507,7 @@ MainProgram.prototype.tMove = function()
 				characterobject.c = 1000;
 			if(this.maps.getBGCode(l20 + 31 + 16, i21) >= 15 || this.maps.getBGCode(l20 + 31 + 16, i21 + 31) >= 15)
 			{
-				l20 = ((l20 + 31 + 16) >> 5) * 32 - 32 - 16;
+				l20 = rightShiftIgnoreSign(l20 + 31 + 16, 5) * 32 - 32 - 16;
 				characterobject.c = 1000;
 			}
 			characterobject.pt = 166;
@@ -18630,13 +18542,13 @@ MainProgram.prototype.tMove = function()
 					i21 += characterobject.vy;
 				if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21) >= 18)
 				{
-					i21 = (i21 >> 5) * 32 + 32;
+					i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
 					characterobject.vy = 0;
 				}
 				var k40 = this.maps.getBGCode(l20 + 15, i21 + 31);
 				if(k40 >= 20 || k40 == 10 || k40 == 15)
 				{
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 					characterobject.c1 = 200;
 				}
 				if(k40 == 18 || k40 == 19)
@@ -18647,12 +18559,12 @@ MainProgram.prototype.tMove = function()
 						characterobject.c1 = 200;
 					}
 				} else
-				if((i21 + 31) >> 5 > (characterobject.y + 31) >> 5)
+				if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
 				{
 					var l40 = this.maps.getBGCode(l20 + 15, characterobject.y + 31);
 					if(l40 == 18 || l40 == 19)
 					{
-						i21 = ((characterobject.y + 31) >> 5) * 32;
+						i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
 						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
 						characterobject.c1 = 200;
 					}
@@ -18888,13 +18800,13 @@ MainProgram.prototype.tMove = function()
 					i21 += characterobject.vy;
 				if(characterobject.vy < 0 && this.maps.getBGCode(l20 + 15, i21) >= 18)
 				{
-					i21 = (i21 >> 5) * 32 + 32;
+					i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
 					characterobject.vy = 0;
 				}
 				var i41 = this.maps.getBGCode(l20 + 15, i21 + 31);
 				if(i41 >= 20 || i41 == 10 || i41 == 15)
 				{
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 					characterobject.c1 = 200;
 				}
 				if(i41 == 18 || i41 == 19)
@@ -18905,12 +18817,12 @@ MainProgram.prototype.tMove = function()
 						characterobject.c1 = 200;
 					}
 				} else
-				if((i21 + 31) >> 5 > (characterobject.y + 31) >> 5)
+				if(rightShiftIgnoreSign(i21 + 31, 5) > rightShiftIgnoreSign(characterobject.y + 31, 5))
 				{
 					var j41 = this.maps.getBGCode(l20 + 15, characterobject.y + 31);
 					if(j41 == 18 || j41 == 19)
 					{
-						i21 = ((characterobject.y + 31) >> 5) * 32;
+						i21 = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32;
 						i21 = this.getSakamichiY(l20 + 15, i21 + 31);
 						characterobject.c1 = 200;
 					}
@@ -19062,14 +18974,14 @@ MainProgram.prototype.tMove = function()
 			l20 -= 4;
 			characterobject.muki = 0;
 			characterobject.direction = 0;
-			if((l20 + 15) >> 5 < (l20 + 15 + 4) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + 4, 5))
 			{
 				var k41 = this.maps.getBGCode(l20 + 4 + 15, i21 + 31);
 				if(k41 == 19)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				else
 				if(k41 == 18)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				k41 = this.maps.getBGCode(l20 + 15, i21 + 32);
 				if(k41 == 18)
 					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
@@ -19077,7 +18989,7 @@ MainProgram.prototype.tMove = function()
 			var l41 = this.maps.getBGCode(l20, i21 + 8);
 			if(l41 >= 20 || l41 == 18)
 			{
-				l20 = (l20 >> 5) * 32 + 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 				if(Math.abs(i21 - this.co_j.y) >= 32 || l20 <= this.co_j.x)
 				{
 					var i42 = this.maps.getBGCode(l20 + 32, i21 + 15);
@@ -19116,7 +19028,7 @@ MainProgram.prototype.tMove = function()
 						continue;
 					if(this.co_t[j17].c == 1210)
 					{
-						var k33 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+						var k33 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 						if(k33 <= 1 || k33 >= 5)
 						{
 							if(l20 > this.co_j.x)
@@ -19128,14 +19040,14 @@ MainProgram.prototype.tMove = function()
 							characterobject.c = 1200;
 						else
 							characterobject.c = 1210;
-						var i30 = (characterobject.x + 15) >> 5;
-						k33 = (characterobject.y + 15) >> 5;
-						if(k33 < (this.co_j.y + 15) >> 5)
+						var i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+						k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+						if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var k9 = 1;
 							do
 							{
-								if(k9 > 31 || i30 + k9 >= 180 || this.maps.map_bg[i30 + k9][k33] >= 19)
+								if(k9 > 31 || i30 + k9 >= this.mapWidth || this.maps.map_bg[i30 + k9][k33] >= 19)
 									break;
 								if(this.maps.map_bg[i30 + k9][k33 + 1] <= 10 || this.maps.map_bg[i30 + k9][k33 + 1] == 15)
 								{
@@ -19145,12 +19057,12 @@ MainProgram.prototype.tMove = function()
 								k9++;
 							} while(true);
 						} else
-						if(k33 > (this.co_j.y + 15) >> 5)
+						if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var l9 = 1;
 							do
 							{
-								if(l9 > 31 || i30 + l9 >= 180 || this.maps.map_bg[i30 + l9][k33] >= 19)
+								if(l9 > 31 || i30 + l9 >= this.mapWidth || this.maps.map_bg[i30 + l9][k33] >= 19)
 									break;
 								if(this.maps.map_bg[i30 + l9][k33] == 10)
 								{
@@ -19160,9 +19072,9 @@ MainProgram.prototype.tMove = function()
 								l9++;
 							} while(true);
 						}
-						i30 = (characterobject.x + 15) >> 5;
-						k33 = (characterobject.y + 15) >> 5;
-						if(k33 < (this.co_j.y + 15) >> 5)
+						i30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+						k33 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+						if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var i10 = 1;
 							do
@@ -19177,7 +19089,7 @@ MainProgram.prototype.tMove = function()
 								i10++;
 							} while(true);
 						} else
-						if(k33 > (this.co_j.y + 15) >> 5)
+						if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var j10 = 1;
 							do
@@ -19192,10 +19104,10 @@ MainProgram.prototype.tMove = function()
 								j10++;
 							} while(true);
 						}
-						if(j17 < i && (characterobject.x >> 5) * 32 != characterobject.x)
+						if(j17 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
 							characterobject.c = 1210;
-						if(characterobject.c == 1200 && (characterobject.x >> 5) * 32 != characterobject.x)
-							if(k33 > (this.co_j.y + 15) >> 5 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
+						if(characterobject.c == 1200 && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
+							if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
 							{
 								characterobject.c = 1210;
 								for(var k10 = 0; k10 <= this.t_kazu; k10++)
@@ -19216,7 +19128,7 @@ MainProgram.prototype.tMove = function()
 									}
 
 							} else
-							if(k33 < (this.co_j.y + 15) >> 5 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32 + 15) == 10)
+							if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32 + 15) == 10)
 							{
 								characterobject.c = 1210;
 label0:
@@ -19239,11 +19151,11 @@ label0:
 								}
 
 							}
-						if((characterobject.x >> 5) * 32 == characterobject.x)
-							if(k33 > (this.co_j.y + 15) >> 5 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
+						if(rightShiftIgnoreSign(characterobject.x, 5) * 32 == characterobject.x)
+							if(k33 > rightShiftIgnoreSign(this.co_j.y + 15, 5) && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 10)
 								characterobject.c = 1230;
 							else
-							if(k33 < (this.co_j.y + 15) >> 5 && (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 10 || this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 15))
+							if(k33 < rightShiftIgnoreSign(this.co_j.y + 15, 5) && (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 10 || this.maps.getBGCode(characterobject.x + 15, characterobject.y + 32) <= 15))
 								characterobject.c = 1220;
 						l20 = characterobject.x;
 						flag1 = true;
@@ -19268,11 +19180,11 @@ label0:
 					characterobject.pth = characterobject.muki;
 				} else
 				{
-					if((l20 >> 5) * 32 == l20)
+					if(rightShiftIgnoreSign(l20, 5) * 32 == l20)
 					{
-						var j30 = (l20 + 15) >> 5;
-						var l33 = (i21 + 15) >> 5;
-						if(this.maps.map_bg[j30][l33 + 1] <= 9 && this.maps.map_bg[j30][l33] != 10 || (this.maps.map_bg[j30][l33 + 1] <= 10 || this.maps.map_bg[j30][l33 + 1] == 15) && l33 < (this.co_j.y + 15) >> 5)
+						var j30 = rightShiftIgnoreSign(l20 + 15, 5);
+						var l33 = rightShiftIgnoreSign(i21 + 15, 5);
+						if(this.maps.map_bg[j30][l33 + 1] <= 9 && this.maps.map_bg[j30][l33] != 10 || (this.maps.map_bg[j30][l33 + 1] <= 10 || this.maps.map_bg[j30][l33 + 1] == 15) && l33 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var flag2 = false;
 							for(var i11 = 0; i11 <= 11; i11++)
@@ -19300,7 +19212,7 @@ label0:
 							{
 								if(l17 > this.t_kazu)
 									break;
-								if(this.co_t[l17].c >= 1200 && this.co_t[l17].c <= 1210 && l17 != i && (this.co_t[l17].x >> 5) * 32 == this.co_t[l17].x && l20 == this.co_t[l17].x && i21 <= this.co_t[l17].y && i21 + 32 >= this.co_t[l17].y && this.maps.getBGCode(this.co_t[l17].x + 15, this.co_t[l17].y + 32) >= 20)
+								if(this.co_t[l17].c >= 1200 && this.co_t[l17].c <= 1210 && l17 != i && rightShiftIgnoreSign(this.co_t[l17].x, 5) * 32 == this.co_t[l17].x && l20 == this.co_t[l17].x && i21 <= this.co_t[l17].y && i21 + 32 >= this.co_t[l17].y && this.maps.getBGCode(this.co_t[l17].x + 15, this.co_t[l17].y + 32) >= 20)
 								{
 									flag2 = true;
 									break;
@@ -19313,7 +19225,7 @@ label0:
 								characterobject.c1 = 0;
 							}
 						} else
-						if(this.maps.map_bg[j30][l33] == 10 && l33 > (this.co_j.y + 15) >> 5)
+						if(this.maps.map_bg[j30][l33] == 10 && l33 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 							characterobject.c = 1230;
 						else
 						if((this.maps.map_bg[j30 - 1][l33] >= 20 || this.maps.map_bg[j30 - 1][l33] >= 18) && (Math.abs(i21 - this.co_j.y) >= 32 || l20 <= this.co_j.x))
@@ -19337,21 +19249,21 @@ label0:
 			l20 += 4;
 			characterobject.muki = 1;
 			characterobject.direction = 1;
-			if((l20 + 15) >> 5 > ((l20 + 15) - 4) >> 5)
+			if(rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign((l20 + 15) - 4, 5))
 			{
 				var l42 = this.maps.getBGCode((l20 - 4) + 15, i21 + 31);
 				if(l42 == 18)
-					i21 = ((i21 + 31) >> 5) * 32 - 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				else
 				if(l42 == 19)
-					i21 = ((i21 + 31) >> 5) * 32;
+					i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32;
 				l42 = this.maps.getBGCode(l20 + 15, i21 + 32);
 				if(l42 == 19)
 					i21 = this.getSakamichiY(l20 + 15, i21 + 32);
 			}
 			if(this.maps.getBGCode(l20 + 31, i21 + 8) >= 19)
 			{
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				if(Math.abs(i21 - this.co_j.y) >= 32 || l20 >= this.co_j.x)
 				{
 					var i43 = this.maps.getBGCode(l20 - 1, i21 + 15);
@@ -19390,7 +19302,7 @@ label0:
 						continue;
 					if(this.co_t[j18].c == 1200)
 					{
-						var i34 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+						var i34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 						if(i34 <= 1 || i34 >= 5)
 						{
 							if(l20 > this.co_j.x)
@@ -19402,14 +19314,14 @@ label0:
 							characterobject.c = 1200;
 						else
 							characterobject.c = 1210;
-						var k30 = (characterobject.x + 15) >> 5;
-						i34 = (characterobject.y + 15) >> 5;
-						if(i34 < (this.co_j.y + 15) >> 5)
+						var k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+						i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+						if(i34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var j11 = 1;
 							do
 							{
-								if(j11 > 31 || k30 + j11 >= 180 || this.maps.map_bg[k30 + j11][i34] >= 19)
+								if(j11 > 31 || k30 + j11 >= this.mapWidth || this.maps.map_bg[k30 + j11][i34] >= 19)
 									break;
 								if(this.maps.map_bg[k30 + j11][i34 + 1] <= 10 || this.maps.map_bg[k30 + j11][i34 + 1] == 15)
 								{
@@ -19419,12 +19331,12 @@ label0:
 								j11++;
 							} while(true);
 						} else
-						if(i34 > (this.co_j.y + 15) >> 5)
+						if(i34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var k11 = 1;
 							do
 							{
-								if(k11 > 31 || k30 + k11 >= 180 || this.maps.map_bg[k30 + k11][i34] >= 19)
+								if(k11 > 31 || k30 + k11 >= this.mapWidth || this.maps.map_bg[k30 + k11][i34] >= 19)
 									break;
 								if(this.maps.map_bg[k30 + k11][i34] == 10)
 								{
@@ -19434,9 +19346,9 @@ label0:
 								k11++;
 							} while(true);
 						}
-						k30 = (characterobject.x + 15) >> 5;
-						i34 = (characterobject.y + 15) >> 5;
-						if(i34 < (this.co_j.y + 15) >> 5)
+						k30 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+						i34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+						if(i34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var l11 = 1;
 							do
@@ -19451,7 +19363,7 @@ label0:
 								l11++;
 							} while(true);
 						} else
-						if(i34 > (this.co_j.y + 15) >> 5)
+						if(i34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var i12 = 1;
 							do
@@ -19466,7 +19378,7 @@ label0:
 								i12++;
 							} while(true);
 						}
-						if(j18 < i && (characterobject.x >> 5) * 32 != characterobject.x)
+						if(j18 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 != characterobject.x)
 							characterobject.c = 1200;
 						l20 = characterobject.x;
 						flag3 = true;
@@ -19491,11 +19403,11 @@ label0:
 					characterobject.pth = characterobject.muki;
 				} else
 				{
-					if((l20 >> 5) * 32 == l20)
+					if(rightShiftIgnoreSign(l20, 5) * 32 == l20)
 					{
-						var l30 = (l20 + 15) >> 5;
-						var j34 = (i21 + 15) >> 5;
-						if(this.maps.map_bg[l30][j34 + 1] <= 9 && this.maps.map_bg[l30][j34] != 10 || (this.maps.map_bg[l30][j34 + 1] <= 10 || this.maps.map_bg[l30][j34 + 1] == 15) && j34 < (this.co_j.y + 15) >> 5)
+						var l30 = rightShiftIgnoreSign(l20 + 15, 5);
+						var j34 = rightShiftIgnoreSign(i21 + 15, 5);
+						if(this.maps.map_bg[l30][j34 + 1] <= 9 && this.maps.map_bg[l30][j34] != 10 || (this.maps.map_bg[l30][j34 + 1] <= 10 || this.maps.map_bg[l30][j34 + 1] == 15) && j34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						{
 							var flag4 = false;
 							for(var j12 = 0; j12 <= 11; j12++)
@@ -19523,7 +19435,7 @@ label0:
 							{
 								if(l18 > this.t_kazu)
 									break;
-								if(this.co_t[l18].c >= 1200 && this.co_t[l18].c <= 1210 && l18 != i && (this.co_t[l18].x >> 5) * 32 == this.co_t[l18].x && l20 == this.co_t[l18].x && i21 <= this.co_t[l18].y && i21 + 32 >= this.co_t[l18].y && this.maps.getBGCode(this.co_t[l18].x + 15, this.co_t[l18].y + 32) >= 20)
+								if(this.co_t[l18].c >= 1200 && this.co_t[l18].c <= 1210 && l18 != i && rightShiftIgnoreSign(this.co_t[l18].x, 5) * 32 == this.co_t[l18].x && l20 == this.co_t[l18].x && i21 <= this.co_t[l18].y && i21 + 32 >= this.co_t[l18].y && this.maps.getBGCode(this.co_t[l18].x + 15, this.co_t[l18].y + 32) >= 20)
 								{
 									flag4 = true;
 									break;
@@ -19536,7 +19448,7 @@ label0:
 								characterobject.c1 = 0;
 							}
 						} else
-						if(this.maps.map_bg[l30][j34] == 10 && j34 > (this.co_j.y + 15) >> 5)
+						if(this.maps.map_bg[l30][j34] == 10 && j34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 							characterobject.c = 1230;
 						else
 						if(this.maps.map_bg[l30 + 1][j34] >= 19 && (Math.abs(i21 - this.co_j.y) >= 32 || l20 >= this.co_j.x))
@@ -19571,9 +19483,8 @@ label0:
 				characterobject.c = 1230;
 				characterobject.pt = 140 + this.g_ac;
 				characterobject.pth = characterobject.muki;
-				if((i21 >> 5) * 32 != i21)
+				if(rightShiftIgnoreSign(i21, 5) * 32 != i21)
 				{
-					var flag5 = false;
 					var i19 = 0;
 					do
 					{
@@ -19614,7 +19525,7 @@ label1:
 						flag9 = true;
 					if(!flag9)
 						break;
-					var k34 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+					var k34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 					if(k34 <= 1 || k34 >= 5)
 					{
 						if(l20 > this.co_j.x)
@@ -19626,14 +19537,14 @@ label1:
 						characterobject.c = 1200;
 					else
 						characterobject.c = 1210;
-					var i31 = (characterobject.x + 15) >> 5;
-					k34 = (characterobject.y + 15) >> 5;
-					if(k34 < (this.co_j.y + 15) >> 5)
+					var i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+					if(k34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var k12 = 1;
 						do
 						{
-							if(k12 > 31 || i31 + k12 >= 180 || this.maps.map_bg[i31 + k12][k34] >= 19)
+							if(k12 > 31 || i31 + k12 >= this.mapWidth || this.maps.map_bg[i31 + k12][k34] >= 19)
 								break;
 							if(this.maps.map_bg[i31 + k12][k34 + 1] <= 10 || this.maps.map_bg[i31 + k12][k34 + 1] == 15)
 							{
@@ -19643,12 +19554,12 @@ label1:
 							k12++;
 						} while(true);
 					} else
-					if(k34 > (this.co_j.y + 15) >> 5)
+					if(k34 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var l12 = 1;
 						do
 						{
-							if(l12 > 31 || i31 + l12 >= 180 || this.maps.map_bg[i31 + l12][k34] >= 19)
+							if(l12 > 31 || i31 + l12 >= this.mapWidth || this.maps.map_bg[i31 + l12][k34] >= 19)
 								break;
 							if(this.maps.map_bg[i31 + l12][k34] == 10)
 							{
@@ -19658,9 +19569,9 @@ label1:
 							l12++;
 						} while(true);
 					}
-					i31 = (characterobject.x + 15) >> 5;
-					k34 = (characterobject.y + 15) >> 5;
-					if(k34 < (this.co_j.y + 15) >> 5)
+					i31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					k34 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+					if(k34 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var i13 = 1;
 						do
@@ -19675,7 +19586,7 @@ label1:
 							i13++;
 						} while(true);
 					}
-					if(k34 <= (this.co_j.y + 15) >> 5)
+					if(k34 <= rightShiftIgnoreSign(this.co_j.y + 15, 5))
 						break;
 					var j13 = 1;
 					do
@@ -19704,12 +19615,12 @@ label1:
 				break;
 			}
 			if(this.maps.getBGCode(l20, i21 + 31) >= 20)
-				i21 = ((i21 + 31) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 			var l43 = this.maps.getBGCode(l20 + 15, i21 + 31);
 			if((l43 == 18 || l43 == 19) && i21 >= this.getSakamichiY(l20 + 15, i21 + 31))
 			{
 				i21 = this.getSakamichiY(l20 + 15, i21 + 31);
-				var l34 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+				var l34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 				if(l34 <= 1 || l34 >= 5)
 				{
 					if(l20 > this.co_j.x)
@@ -19735,7 +19646,7 @@ label1:
 				characterobject.pth = characterobject.muki;
 				break;
 			}
-			if((i21 >> 5) * 32 == i21)
+			if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
 			{
 				if(this.maps.getBGCode(l20 + 15, i21 + 15) == 10 && i21 > this.co_j.y)
 				{
@@ -19760,8 +19671,8 @@ label1:
 				var i44 = this.maps.getBGCode(l20, i21 + 32);
 				if(i44 >= 20)
 				{
-					i21 = ((i21 + 32) >> 5) * 32 - 32;
-					var i35 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+					var i35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 					if(i35 <= 1 || i35 >= 5)
 					{
 						if(l20 > this.co_j.x)
@@ -19783,14 +19694,14 @@ label1:
 						characterobject.muki = 1;
 						characterobject.c = 1210;
 					}
-					var j31 = (characterobject.x + 15) >> 5;
-					i35 = (characterobject.y + 15) >> 5;
-					if(i35 < (this.co_j.y + 15) >> 5)
+					var j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+					if(i35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var k13 = 1;
 						do
 						{
-							if(k13 > 31 || j31 + k13 >= 180 || this.maps.map_bg[j31 + k13][i35] >= 19)
+							if(k13 > 31 || j31 + k13 >= this.mapWidth || this.maps.map_bg[j31 + k13][i35] >= 19)
 								break;
 							if(this.maps.map_bg[j31 + k13][i35 + 1] <= 10 || this.maps.map_bg[j31 + k13][i35 + 1] == 15)
 							{
@@ -19801,12 +19712,12 @@ label1:
 							k13++;
 						} while(true);
 					} else
-					if(i35 > (this.co_j.y + 15) >> 5)
+					if(i35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var l13 = 1;
 						do
 						{
-							if(l13 > 31 || j31 + l13 >= 180 || this.maps.map_bg[j31 + l13][i35] >= 19)
+							if(l13 > 31 || j31 + l13 >= this.mapWidth || this.maps.map_bg[j31 + l13][i35] >= 19)
 								break;
 							if(this.maps.map_bg[j31 + l13][i35] == 10)
 							{
@@ -19817,9 +19728,9 @@ label1:
 							l13++;
 						} while(true);
 					}
-					j31 = (characterobject.x + 15) >> 5;
-					i35 = (characterobject.y + 15) >> 5;
-					if(i35 < (this.co_j.y + 15) >> 5)
+					j31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					i35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+					if(i35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var i14 = 1;
 						do
@@ -19835,7 +19746,7 @@ label1:
 							i14++;
 						} while(true);
 					} else
-					if(i35 > (this.co_j.y + 15) >> 5)
+					if(i35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var j14 = 1;
 						do
@@ -19852,10 +19763,10 @@ label1:
 						} while(true);
 					}
 				} else
-				if((i44 == 15 || i44 == 10 || this.maps.getBGCode(l20 + 15, i21 + 15) == 10) && (i21 + 15) >> 5 >= (this.co_j.y + 15) >> 5)
+				if((i44 == 15 || i44 == 10 || this.maps.getBGCode(l20 + 15, i21 + 15) == 10) && rightShiftIgnoreSign(i21 + 15, 5) >= rightShiftIgnoreSign(this.co_j.y + 15, 5))
 				{
-					i21 = ((i21 + 32) >> 5) * 32 - 32;
-					var j35 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+					i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
+					var j35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 					if(j35 <= 1 || j35 >= 5)
 					{
 						if(l20 > this.co_j.x)
@@ -19877,14 +19788,14 @@ label1:
 						characterobject.muki = 1;
 						characterobject.c = 1210;
 					}
-					var k31 = (characterobject.x + 15) >> 5;
-					j35 = (characterobject.y + 15) >> 5;
-					if(j35 < (this.co_j.y + 15) >> 5)
+					var k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+					if(j35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var k14 = 1;
 						do
 						{
-							if(k14 > 31 || k31 + k14 >= 180 || this.maps.map_bg[k31 + k14][j35] >= 19)
+							if(k14 > 31 || k31 + k14 >= this.mapWidth || this.maps.map_bg[k31 + k14][j35] >= 19)
 								break;
 							if(this.maps.map_bg[k31 + k14][j35 + 1] <= 10 || this.maps.map_bg[k31 + k14][j35 + 1] == 15)
 							{
@@ -19895,12 +19806,12 @@ label1:
 							k14++;
 						} while(true);
 					} else
-					if(j35 > (this.co_j.y + 15) >> 5)
+					if(j35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var l14 = 1;
 						do
 						{
-							if(l14 > 31 || k31 + l14 >= 180 || this.maps.map_bg[k31 + l14][j35] >= 19)
+							if(l14 > 31 || k31 + l14 >= this.mapWidth || this.maps.map_bg[k31 + l14][j35] >= 19)
 								break;
 							if(this.maps.map_bg[k31 + l14][j35] == 10)
 							{
@@ -19911,9 +19822,9 @@ label1:
 							l14++;
 						} while(true);
 					}
-					k31 = (characterobject.x + 15) >> 5;
-					j35 = (characterobject.y + 15) >> 5;
-					if(j35 < (this.co_j.y + 15) >> 5)
+					k31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					j35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+					if(j35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var i15 = 1;
 						do
@@ -19929,7 +19840,7 @@ label1:
 							i15++;
 						} while(true);
 					} else
-					if(j35 > (this.co_j.y + 15) >> 5)
+					if(j35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 					{
 						var j15 = 1;
 						do
@@ -19971,7 +19882,7 @@ label1:
 
 					if(flag7)
 					{
-						var k35 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+						var k35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 						if(k35 <= 1 || k35 >= 5)
 						{
 							if(l20 > this.co_j.x)
@@ -20005,7 +19916,7 @@ label1:
 						characterobject.muki = 0;
 					}
 				}
-				if((i21 >> 5) * 32 == i21)
+				if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
 				{
 					for(var l15 = 0; l15 <= 11; l15++)
 						if(this.ana_c[l15] > 0 && this.ana_x[l15] * 32 == l20 && this.ana_y[l15] * 32 == i21)
@@ -20018,11 +19929,11 @@ label1:
 			}
 			if((characterobject.c == 1200 || characterobject.c == 1210) && Math.abs(l20 - this.co_j.x) <= 32 && Math.abs(i21 - this.co_j.y) <= 32 && !this.co_j.jimen_f && !this.j_hashigo_f)
 				characterobject.c = 1220;
-			if(Math.abs(this.co_j.x - characterobject.x) <= 24 && this.co_j.y + 32 == characterobject.y && this.co_j.c != 130 && ((this.co_j.y >> 5) * 32 != this.co_j.y || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) != 15) && !this.j_hashigo_f)
+			if(Math.abs(this.co_j.x - characterobject.x) <= 24 && this.co_j.y + 32 == characterobject.y && this.co_j.c != 130 && (rightShiftIgnoreSign(this.co_j.y, 5) * 32 != this.co_j.y || this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) != 15) && !this.j_hashigo_f)
 			{
 				this.co_j.y = i21 - 32;
 				if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
-					this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 			}
 			if(i21 >= this.maps.wy_max + 320)
 			{
@@ -20080,11 +19991,11 @@ label1:
 				} else
 				{
 					if(this.maps.getBGCode(l20, i21) >= 18)
-						i21 = (i21 >> 5) * 32 + 32;
-					if((i21 >> 5) * 32 == i21)
+						i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
+					if(rightShiftIgnoreSign(i21, 5) * 32 == i21)
 						if(this.maps.getBGCode(l20 + 15, i21 + 15) != 10 || this.maps.getBGCode(l20 + 15, i21 - 1) >= 20)
 						{
-							var l35 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+							var l35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 							if(l35 <= 1 || l35 >= 5)
 							{
 								if(l20 > this.co_j.x)
@@ -20096,14 +20007,14 @@ label1:
 								characterobject.c = 1200;
 							else
 								characterobject.c = 1210;
-							var l31 = (characterobject.x + 15) >> 5;
-							l35 = (characterobject.y + 15) >> 5;
-							if(l35 < (this.co_j.y + 15) >> 5)
+							var l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+							l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+							if(l35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 							{
 								var i16 = 1;
 								do
 								{
-									if(i16 > 31 || l31 + i16 >= 180 || this.maps.map_bg[l31 + i16][l35] >= 19)
+									if(i16 > 31 || l31 + i16 >= this.mapWidth || this.maps.map_bg[l31 + i16][l35] >= 19)
 										break;
 									if(this.maps.map_bg[l31 + i16][l35 + 1] <= 10 || this.maps.map_bg[l31 + i16][l35 + 1] == 15)
 									{
@@ -20113,12 +20024,12 @@ label1:
 									i16++;
 								} while(true);
 							} else
-							if(l35 > (this.co_j.y + 15) >> 5)
+							if(l35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 							{
 								var j16 = 1;
 								do
 								{
-									if(j16 > 31 || l31 + j16 >= 180 || this.maps.map_bg[l31 + j16][l35] >= 19)
+									if(j16 > 31 || l31 + j16 >= this.mapWidth || this.maps.map_bg[l31 + j16][l35] >= 19)
 										break;
 									if(this.maps.map_bg[l31 + j16][l35] == 10)
 									{
@@ -20128,9 +20039,9 @@ label1:
 									j16++;
 								} while(true);
 							}
-							l31 = (characterobject.x + 15) >> 5;
-							l35 = (characterobject.y + 15) >> 5;
-							if(l35 < (this.co_j.y + 15) >> 5)
+							l31 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+							l35 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+							if(l35 < rightShiftIgnoreSign(this.co_j.y + 15, 5))
 							{
 								var k16 = 1;
 								do
@@ -20145,7 +20056,7 @@ label1:
 									k16++;
 								} while(true);
 							} else
-							if(l35 > (this.co_j.y + 15) >> 5)
+							if(l35 > rightShiftIgnoreSign(this.co_j.y + 15, 5))
 							{
 								var l16 = 1;
 								do
@@ -20163,8 +20074,6 @@ label1:
 						} else
 						if(Math.abs(i21 - this.co_j.y) < 32)
 						{
-							var i32 = (l20 + 15) >> 5;
-							var i36 = (i21 + 15) >> 5;
 							if(l20 > this.co_j.x)
 							{
 								characterobject.muki = 0;
@@ -20198,13 +20107,13 @@ label1:
 			break;
 
 		case 1260: 
-			if(((i21 -= 4) >> 5) * 32 == i21)
+			if(rightShiftIgnoreSign(i21 -= 4, 5) * 32 == i21)
 			{
 				if(characterobject.muki == 0)
 					characterobject.c = 1200;
 				else
 					characterobject.c = 1210;
-				var j36 = Math.abs(((i21 + 15) >> 5) - ((this.co_j.y + 15) >> 5));
+				var j36 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(this.co_j.y + 15, 5));
 				if(j36 <= 1 || j36 >= 5)
 				{
 					if(l20 > this.co_j.x)
@@ -20246,7 +20155,7 @@ label1:
 			l20 -= 4;
 			characterobject.muki = 0;
 			if(this.maps.getBGCode(l20, i21 + 15) >= 20)
-				l20 = (l20 >> 5) * 32 + 32;
+				l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 			if(l20 % 32 == 0)
 				if(characterobject.c2 == 0)
 				{
@@ -20305,7 +20214,7 @@ label1:
 			l20 += 4;
 			characterobject.muki = 1;
 			if(this.maps.getBGCode(l20 + 31, i21 + 15) >= 20)
-				l20 = ((l20 + 31) >> 5) * 32 - 32;
+				l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 			if(l20 % 32 == 0)
 				if(characterobject.c2 == 0)
 				{
@@ -20363,7 +20272,7 @@ label1:
 		case 1420: 
 			i21 -= 4;
 			if(this.maps.getBGCode(l20 + 15, i21) >= 20)
-				i21 = (i21 >> 5) * 32 + 32;
+				i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
 			if(i21 % 32 == 0)
 				if(characterobject.c2 == 0)
 				{
@@ -20421,7 +20330,7 @@ label1:
 		case 1430: 
 			i21 += 4;
 			if(this.maps.getBGCode(l20 + 15, i21 + 31) >= 20)
-				i21 = ((i21 + 31) >> 5) * 32 - 32;
+				i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 			if(i21 % 32 == 0)
 				if(characterobject.c2 == 0)
 				{
@@ -20515,8 +20424,8 @@ label1:
 				{
 					characterobject.c = 55;
 					characterobject.c1 = 0;
-					var j32 = characterobject.x >> 5;
-					var k36 = characterobject.y >> 5;
+					var j32 = rightShiftIgnoreSign(characterobject.x, 5);
+					var k36 = rightShiftIgnoreSign(characterobject.y, 5);
 					if(characterobject.c5 == 1)
 						this.onASwitch(j32 - 5, k36 - 5, j32 + 5, k36 + 5);
 					else
@@ -20601,6 +20510,12 @@ label1:
 
 }
 
+/**
+ * 指定した座標に主人公の掘った穴が存在するか調べ、存在する場合はその配列インデックスを返します
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @returns {number} 穴のid 穴が指定した座標に存在しない場合は-1
+ */
 MainProgram.prototype.anaCheckNormal = function(i, j)
 {
 	var l = -1;
@@ -20619,10 +20534,18 @@ MainProgram.prototype.anaCheckNormal = function(i, j)
 	return l;
 }
 
+/**
+ * 特定のブロックの床面のY座標を得る(？)
+ * TODO: 要調査
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @returns {*}
+ * @see {@link getSakamichiY}
+ */
 MainProgram.prototype.sakamichiY = function(i, j)
 {
-	var k = (i + 15) >> 5;
-	var l = (j + 31) >> 5;
+	var k = rightShiftIgnoreSign(i + 15, 5);
+	var l = rightShiftIgnoreSign(j + 31, 5);
 	var word0 = this.maps.map_bg[k][l];
 	var k2 = j;
 	switch(word0)
@@ -20630,38 +20553,38 @@ MainProgram.prototype.sakamichiY = function(i, j)
 	default:
 		break;
 
-	case 10: // '\n'
+	case 10:
 		var i1 = l * 32 - (i + 15) % 32;
 		if(i1 < j)
 			k2 = i1;
 		break;
 
-	case 11: // '\013'
+	case 11:
 		var j1 = (l * 32 + (i + 15) % 32) - 31;
 		if(j1 < j)
 			k2 = j1;
 		break;
 
-	case 12: // '\f'
-		var k1 = l * 32 - (((i + 15) % 32) >> 1);
+	case 12:
+		var k1 = l * 32 - rightShiftIgnoreSign((i + 15) % 32, 1);
 		if(k1 < j)
 			k2 = k1;
 		break;
 
-	case 13: // '\r'
-		var l1 = l * 32 - (((i + 15) % 32) >> 1) - 16;
+	case 13:
+		var l1 = l * 32 - rightShiftIgnoreSign((i + 15) % 32, 1) - 16;
 		if(l1 < j)
 			k2 = l1;
 		break;
 
-	case 14: // '\016'
-		var i2 = (l * 32 + ((i + 15) % 32) >> 1) - 31;
+	case 14:
+		var i2 = (l * 32 + rightShiftIgnoreSign((i + 15) % 32, 1)) - 31;
 		if(i2 < j)
 			k2 = i2;
 		break;
 
-	case 15: // '\017'
-		var j2 = (l * 32 + ((i + 15) % 32) >> 1) - 15;
+	case 15:
+		var j2 = (l * 32 + rightShiftIgnoreSign((i + 15) % 32, 1)) - 15;
 		if(j2 < j)
 			k2 = j2;
 		break;
@@ -20669,6 +20592,12 @@ MainProgram.prototype.sakamichiY = function(i, j)
 	return k2;
 }
 
+/**
+ * 敵の攻撃を発生させる
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ */
 MainProgram.prototype.mSet = function(i, j, k)
 {
 	var l = 0;
@@ -20686,26 +20615,26 @@ MainProgram.prototype.mSet = function(i, j, k)
 			this.m_kazu++;
 			switch(k)
 			{
-			case 90: // 'Z'
+			case 90:
 				characterobject.c2 = 4;
 				characterobject.vx = 0;
 				characterobject.vy = 0;
 				break;
 
-			case 95: // '_'
+			case 95:
 				characterobject.c2 = 4;
 				characterobject.vx = -14;
 				characterobject.vy = 0;
 				break;
 
-			case 96: // '`'
+			case 96:
 				characterobject.c = 95;
 				characterobject.c2 = 4;
 				characterobject.vx = 14;
 				characterobject.vy = 0;
 				break;
 
-			case 100: // 'd'
+			case 100:
 				var k1 = this.co_j.x - i;
 				var i2 = this.co_j.y - j;
 				var i1 = Math.floor(Math.sqrt(k1 * k1 + i2 * i2));
@@ -20937,6 +20866,14 @@ MainProgram.prototype.mSet = function(i, j, k)
 	} while(true);
 }
 
+/**
+ * ゲーム中に画面内に出現するコインやアイテムを追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ * @param vx {number} X速度(ピクセル単位)
+ * @param vy {number} Y速度(ピクセル単位)
+ */
 MainProgram.prototype.mSet2 = function(i, j, k, l, i1)
 {
 	var j1 = 0;
@@ -20956,22 +20893,22 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1)
 			this.m_kazu++;
 			switch(k)
 			{
-			case 75: // 'K'
+			case 75:
 				characterobject.c2 = l;
 				characterobject.vy = 96;
 				break;
 
-			case 77: // 'M'
+			case 77:
 				characterobject.c2 = l;
 				characterobject.vy = 96;
 				break;
 
-			case 85: // 'U'
+			case 85:
 				characterobject.c2 = l;
 				characterobject.vy = 96;
 				break;
 
-			case 87: // 'W'
+			case 87:
 				characterobject.c2 = l;
 				characterobject.vy = 96;
 				break;
@@ -21107,6 +21044,9 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1)
 	} while(true);
 }
 
+/**
+ * 敵の攻撃、？ブロックなどから出現したコイン・アイテムの更新処理
+ */
 MainProgram.prototype.mMove = function()
 {
 	for(var i = 0; i <= 79; i++)
@@ -21116,7 +21056,7 @@ MainProgram.prototype.mMove = function()
 		var characterobject = this.co_m[i];
 		switch(characterobject.c)
 		{
-		case 50: // '2'
+		case 50:
 			characterobject.c1++;
 			if(characterobject.c1 <= 5)
 				characterobject.pt = 80;
@@ -21131,19 +21071,19 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 60: // '<'
+		case 60:
 			characterobject.y -= 5;
-			var j4 = characterobject.y >> 5;
-			var word0 = this.maps.map_bg[(characterobject.x + 11) >> 5][j4];
+			var j4 = rightShiftIgnoreSign(characterobject.y, 5);
+			var word0 = this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 11, 5)][j4];
 			if(word0 <= 3 || word0 >= 20 || word0 == 10)
 				characterobject.c = 0;
-			word0 = this.maps.map_bg[(characterobject.x + 20) >> 5][j4];
+			word0 = this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 20, 5)][j4];
 			if(word0 <= 3 || word0 >= 20 || word0 == 10)
 				characterobject.c = 0;
-			word0 = this.maps.map_bg[(characterobject.x + 15) >> 5][j4];
-			if((word0 == 8 || word0 == 9) && this.maps.map_bg[((characterobject.x + 15) >> 5) - 1][j4] != 4)
+			word0 = this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 15, 5)][j4];
+			if((word0 == 8 || word0 == 9) && this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 15, 5) - 1][j4] != 4)
 				characterobject.c = 0;
-			if(word0 == 15 && this.maps.map_bg[(characterobject.x + 15) >> 5][j4 - 1] != 4)
+			if(word0 == 15 && this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 15, 5)][j4 - 1] != 4)
 				characterobject.c = 0;
 			if(characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512)
 				characterobject.c = 0;
@@ -21153,7 +21093,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 65: // 'A'
+		case 65:
 			characterobject.c1++;
 			if(characterobject.c1 <= 3)
 				characterobject.pt = 172;
@@ -21172,47 +21112,47 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 70: // 'F'
+		case 70:
 			characterobject.c1++;
 			switch(characterobject.c1)
 			{
-			case 1: // '\001'
+			case 1:
 				characterobject.c2 = 20;
 				break;
 
-			case 2: // '\002'
+			case 2:
 				characterobject.c2 = 34;
 				break;
 
-			case 3: // '\003'
+			case 3:
 				characterobject.c2 = 46;
 				break;
 
-			case 4: // '\004'
+			case 4:
 				characterobject.c2 = 56;
 				break;
 
-			case 5: // '\005'
+			case 5:
 				characterobject.c2 = 64;
 				break;
 
-			case 6: // '\006'
+			case 6:
 				characterobject.c2 = 70;
 				break;
 
-			case 7: // '\007'
+			case 7:
 				characterobject.c2 = 74;
 				break;
 
-			case 8: // '\b'
+			case 8:
 				characterobject.c2 = 77;
 				break;
 
-			case 9: // '\t'
+			case 9:
 				characterobject.c2 = 79;
 				break;
 
-			case 10: // '\n'
+			case 10:
 				characterobject.c2 = 80;
 				break;
 			}
@@ -21233,7 +21173,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 75: // 'K'
+		case 75:
 			characterobject.pt = 1200;
 			characterobject.pth = 0;
 			characterobject.vy -= 6;
@@ -21250,12 +21190,12 @@ MainProgram.prototype.mMove = function()
 				characterobject.c = 0;
 			break;
 
-		case 76: // 'L'
+		case 76:
 			characterobject.x -= 18;
 			if(characterobject.x < this.maps.wx - 32)
 				characterobject.x = this.maps.wx - 32;
-			if(this.maps.map_bg[characterobject.x >> 5][(characterobject.y + 15) >> 5] >= 20)
-				characterobject.x = (characterobject.x >> 5) * 32 + 32;
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x, 5)][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
+				characterobject.x = rightShiftIgnoreSign(characterobject.x, 5) * 32 + 32;
 			if(characterobject.c3 > 0)
 			{
 				characterobject.c3--;
@@ -21273,7 +21213,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 77: // 'M'
+		case 77:
 			characterobject.pt = 1220;
 			characterobject.pth = 0;
 			characterobject.vy -= 6;
@@ -21290,12 +21230,12 @@ MainProgram.prototype.mMove = function()
 				characterobject.c = 0;
 			break;
 
-		case 78: // 'N'
+		case 78:
 			characterobject.x -= 18;
 			if(characterobject.x < this.maps.wx - 32)
 				characterobject.x = this.maps.wx - 32;
-			if(this.maps.map_bg[characterobject.x >> 5][(characterobject.y + 15) >> 5] >= 20)
-				characterobject.x = (characterobject.x >> 5) * 32 + 32;
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x, 5)][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
+				characterobject.x = rightShiftIgnoreSign(characterobject.x, 5) * 32 + 32;
 			if(characterobject.c3 > 0)
 			{
 				characterobject.c3--;
@@ -21313,7 +21253,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 80: // 'P'
+		case 80:
 			if(characterobject.vy >= 5)
 				if(characterobject.vx > 2)
 					characterobject.vx--;
@@ -21334,7 +21274,7 @@ MainProgram.prototype.mMove = function()
 				characterobject.pth = 1;
 			break;
 
-		case 85: // 'U'
+		case 85:
 			characterobject.pt = 1200;
 			characterobject.pth = 0;
 			characterobject.vy -= 6;
@@ -21351,12 +21291,12 @@ MainProgram.prototype.mMove = function()
 				characterobject.c = 0;
 			break;
 
-		case 86: // 'V'
+		case 86:
 			characterobject.x += 18;
 			if(characterobject.x > this.maps.wx + 512 + 16)
 				characterobject.x = this.maps.wx + 512 + 16;
-			if(this.maps.map_bg[characterobject.x >> 5][(characterobject.y + 15) >> 5] >= 20)
-				characterobject.x = (characterobject.x >> 5) * 32 - 1;
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x, 5)][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
+				characterobject.x = rightShiftIgnoreSign(characterobject.x, 5) * 32 - 1;
 			if(characterobject.c3 > 0)
 			{
 				characterobject.c3--;
@@ -21374,7 +21314,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 87: // 'W'
+		case 87:
 			characterobject.pt = 1220;
 			characterobject.pth = 0;
 			characterobject.vy -= 6;
@@ -21391,12 +21331,12 @@ MainProgram.prototype.mMove = function()
 				characterobject.c = 0;
 			break;
 
-		case 88: // 'X'
+		case 88:
 			characterobject.x += 18;
 			if(characterobject.x > this.maps.wx + 512 + 16)
 				characterobject.x = this.maps.wx + 512 + 16;
-			if(this.maps.map_bg[characterobject.x >> 5][(characterobject.y + 15) >> 5] >= 20)
-				characterobject.x = (characterobject.x >> 5) * 32 - 1;
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x, 5)][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
+				characterobject.x = rightShiftIgnoreSign(characterobject.x, 5) * 32 - 1;
 			if(characterobject.c3 > 0)
 			{
 				characterobject.c3--;
@@ -21414,7 +21354,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 90: // 'Z'
+		case 90:
 			if(characterobject.c2 < 48)
 			{
 				characterobject.c2 += 4;
@@ -21461,7 +21401,7 @@ MainProgram.prototype.mMove = function()
 			characterobject.pt = 1000;
 			break;
 
-		case 95: // '_'
+		case 95:
 			if(characterobject.c2 < 64)
 			{
 				characterobject.c2 += 4;
@@ -21491,11 +21431,11 @@ MainProgram.prototype.mMove = function()
 			characterobject.pt = 1010;
 			break;
 
-		case 100: // 'd'
+		case 100:
 			characterobject.x += characterobject.vx;
 			characterobject.y += characterobject.vy;
-			var k3 = (characterobject.x + 15) >> 5;
-			if(this.maps.map_bg[k3][(characterobject.y + 12) >> 5] >= 20 || this.maps.map_bg[k3][(characterobject.y + 18) >> 5] >= 20)
+			var k3 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+			if(this.maps.map_bg[k3][rightShiftIgnoreSign(characterobject.y + 12, 5)] >= 20 || this.maps.map_bg[k3][rightShiftIgnoreSign(characterobject.y + 18, 5)] >= 20)
 				characterobject.c = 0;
 			if(this.dengeki_mkf != 2 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
 				characterobject.c = 0;
@@ -21518,7 +21458,7 @@ MainProgram.prototype.mMove = function()
 		case 150: 
 			characterobject.x += characterobject.vx;
 			characterobject.y += characterobject.vy;
-			if(this.maps.map_bg[(characterobject.x + 15) >> 5][(characterobject.y + 15) >> 5] >= 20)
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 15, 5)][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
 				characterobject.c = 0;
 			if(this.dengeki_mkf != 2 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
 				characterobject.c = 0;
@@ -21551,25 +21491,25 @@ MainProgram.prototype.mMove = function()
 				characterobject.c = 0;
 			if(characterobject.c2 == 1)
 			{
-				var l3 = (characterobject.x + 15) >> 5;
-				if(this.maps.map_bg[l3][(characterobject.y + 12) >> 5] >= 20 || this.maps.map_bg[l3][(characterobject.y + 20) >> 5] >= 20)
+				var l3 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+				if(this.maps.map_bg[l3][rightShiftIgnoreSign(characterobject.y + 12, 5)] >= 20 || this.maps.map_bg[l3][rightShiftIgnoreSign(characterobject.y + 20, 5)] >= 20)
 					characterobject.c = 0;
 			}
 			switch(this.g_c2)
 			{
-			case 0: // '\0'
+			case 0:
 				characterobject.pt = 122;
 				break;
 
-			case 1: // '\001'
+			case 1:
 				characterobject.pt = 123;
 				break;
 
-			case 2: // '\002'
+			case 2:
 				characterobject.pt = 124;
 				break;
 
-			case 3: // '\003'
+			case 3:
 				characterobject.pt = 125;
 				break;
 			}
@@ -21578,8 +21518,8 @@ MainProgram.prototype.mMove = function()
 
 		case 300: 
 			characterobject.x += characterobject.vx;
-			var k5 = (characterobject.y + 15) >> 5;
-			if(this.maps.map_bg[(characterobject.x + 8) >> 5][k5] >= 20 || this.maps.map_bg[(characterobject.x + 23) >> 5][k5] >= 20)
+			var k5 = rightShiftIgnoreSign(characterobject.y + 15, 5);
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 8, 5)][k5] >= 20 || this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 23, 5)][k5] >= 20)
 				characterobject.c = 0;
 			if(characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 128)
 				characterobject.c = 0;
@@ -21601,8 +21541,8 @@ MainProgram.prototype.mMove = function()
 			characterobject.y += rounddown(characterobject.vy / 10);
 			if(characterobject.y >= this.maps.wy + 320)
 				characterobject.c = 0;
-			var i4 = (characterobject.x + 15) >> 5;
-			if(this.maps.map_bg[i4][(characterobject.y + 15) >> 5] >= 20)
+			var i4 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+			if(this.maps.map_bg[i4][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
 				characterobject.c = 0;
 			if(this.g_c1 == 0)
 				characterobject.pt = 128;
@@ -21667,11 +21607,11 @@ MainProgram.prototype.mMove = function()
 			if(characterobject.vy > 200)
 				characterobject.vy = 200;
 			characterobject.y += rounddown(characterobject.vy / 10);
-			if(this.maps.map_bg[(characterobject.x + 15) >> 5][(characterobject.y + 15) >> 5] >= 20)
+			if(this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 15, 5)][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20)
 			{
 				characterobject.c = 610;
 				characterobject.c1 = 0;
-				characterobject.y = ((characterobject.y + 15) >> 5) * 32 - 16;
+				characterobject.y = rightShiftIgnoreSign(characterobject.y + 15, 5) * 32 - 16;
 				this.gs.rsAddSound(19);
 			}
 			if(characterobject.x <= this.maps.wx - 32 - 64 || characterobject.x >= this.maps.wx + 512 + 64)
@@ -21738,19 +21678,19 @@ MainProgram.prototype.mMove = function()
 			{
 				switch(this.g_c2)
 				{
-				case 0: // '\0'
+				case 0:
 					characterobject.pt = 122;
 					break;
 
-				case 1: // '\001'
+				case 1:
 					characterobject.pt = 123;
 					break;
 
-				case 2: // '\002'
+				case 2:
 					characterobject.pt = 124;
 					break;
 
-				case 3: // '\003'
+				case 3:
 					characterobject.pt = 125;
 					break;
 				}
@@ -21825,7 +21765,7 @@ MainProgram.prototype.mMove = function()
 				if(this.maps.getBGCode(characterobject.x + 15, characterobject.y + 31) >= 20)
 				{
 					characterobject.c = 70;
-					characterobject.y = ((characterobject.y + 31) >> 5) * 32 - 16;
+					characterobject.y = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32 - 16;
 					characterobject.c1 = 1;
 					characterobject.c2 = 20;
 				}
@@ -22423,6 +22363,13 @@ MainProgram.prototype.mMove = function()
 
 }
 
+/**
+ * グレネード、ファイアボールといった主人公の攻撃を発生させる
+ * このメソッドで追加する攻撃は同時に2個しか存在できない
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ */
 MainProgram.prototype.jmSet = function(i, j, k)
 {
 	var l = 0;
@@ -22441,7 +22388,7 @@ MainProgram.prototype.jmSet = function(i, j, k)
 			this.jm_kazu++;
 			switch(k)
 			{
-			case 60: // '<'
+			case 60:
 				characterobject.x = i + 16;
 				characterobject.y = j;
 				characterobject.vx = i + 16;
@@ -22450,7 +22397,7 @@ MainProgram.prototype.jmSet = function(i, j, k)
 				this.gs.rsAddSound(23);
 				break;
 
-			case 65: // 'A'
+			case 65:
 				characterobject.x = i + 16;
 				characterobject.y = j;
 				characterobject.vx = i + 16;
@@ -22459,7 +22406,7 @@ MainProgram.prototype.jmSet = function(i, j, k)
 				this.gs.rsAddSound(23);
 				break;
 
-			case 100: // 'd'
+			case 100:
 				characterobject.vx = rounddown(this.co_j.vx / 10) - 10;
 				characterobject.vy = -28;
 				if(Math.abs(characterobject.vx) < 2)
@@ -22507,7 +22454,7 @@ MainProgram.prototype.jmSet = function(i, j, k)
 				this.gs.rsAddSound(23);
 				break;
 
-			case 105: // 'i'
+			case 105:
 				characterobject.vx = rounddown(this.co_j.vx / 10) + 10;
 				characterobject.vy = -28;
 				if(Math.abs(characterobject.vx) < 2)
@@ -22555,7 +22502,7 @@ MainProgram.prototype.jmSet = function(i, j, k)
 				this.gs.rsAddSound(23);
 				break;
 
-			case 110: // 'n'
+			case 110:
 				characterobject.x = i;
 				characterobject.y = j;
 				characterobject.vx = -10;
@@ -22563,7 +22510,7 @@ MainProgram.prototype.jmSet = function(i, j, k)
 				this.gs.rsAddSound(23);
 				break;
 
-			case 115: // 's'
+			case 115:
 				characterobject.c = 110;
 				characterobject.x = i;
 				characterobject.y = j;
@@ -22638,6 +22585,13 @@ MainProgram.prototype.jmSet = function(i, j, k)
 	} while(true);
 }
 
+/**
+ * シューティングモード、四方向移動モード時の攻撃を追加発生させる
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} y座標(ピクセル座標)
+ * @param type {number} 種類
+ * @param i {number} 攻撃を配置するco_jmのインデックス(同インデックスを指定すると前に発生させた攻撃が消滅するまで次を出せない
+ */
 MainProgram.prototype.jmSet2 = function(i, j, k, l)
 {
 	var i1 = l;
@@ -22656,7 +22610,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 	default:
 		break;
 
-	case 50: // '2'
+	case 50:
 		characterobject.x = i;
 		characterobject.y = j;
 		characterobject.c = 50;
@@ -22666,7 +22620,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 		this.gs.rsAddSound(23);
 		break;
 
-	case 60: // '<'
+	case 60:
 		characterobject.x = i + 16;
 		characterobject.y = j;
 		characterobject.vx = i + 16;
@@ -22675,7 +22629,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 		this.gs.rsAddSound(23);
 		break;
 
-	case 65: // 'A'
+	case 65:
 		characterobject.x = i + 16;
 		characterobject.y = j;
 		characterobject.vx = i + 16;
@@ -22684,7 +22638,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 		this.gs.rsAddSound(23);
 		break;
 
-	case 100: // 'd'
+	case 100:
 		characterobject.vx = rounddown(this.co_j.vx / 10) - 10;
 		characterobject.vy = -28;
 		if(Math.abs(characterobject.vx) < 2)
@@ -22716,7 +22670,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 		this.gs.rsAddSound(23);
 		break;
 
-	case 105: // 'i'
+	case 105:
 		characterobject.vx = rounddown(this.co_j.vx / 10) + 10;
 		characterobject.vy = -28;
 		if(Math.abs(characterobject.vx) < 2)
@@ -22848,6 +22802,9 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l)
 	}
 }
 
+/**
+ * 主人公の攻撃の更新処理
+ */
 MainProgram.prototype.jmMove = function()
 {
 	for(var i = 0; i <= 8; i++)
@@ -22857,47 +22814,47 @@ MainProgram.prototype.jmMove = function()
 		var characterobject = this.co_jm[i];
 		switch(characterobject.c)
 		{
-		case 50: // '2'
+		case 50:
 			characterobject.c1++;
 			switch(characterobject.c1)
 			{
-			case 1: // '\001'
+			case 1:
 				characterobject.c2 = 20;
 				break;
 
-			case 2: // '\002'
+			case 2:
 				characterobject.c2 = 34;
 				break;
 
-			case 3: // '\003'
+			case 3:
 				characterobject.c2 = 46;
 				break;
 
-			case 4: // '\004'
+			case 4:
 				characterobject.c2 = 56;
 				break;
 
-			case 5: // '\005'
+			case 5:
 				characterobject.c2 = 64;
 				break;
 
-			case 6: // '\006'
+			case 6:
 				characterobject.c2 = 70;
 				break;
 
-			case 7: // '\007'
+			case 7:
 				characterobject.c2 = 74;
 				break;
 
-			case 8: // '\b'
+			case 8:
 				characterobject.c2 = 77;
 				break;
 
-			case 9: // '\t'
+			case 9:
 				characterobject.c2 = 79;
 				break;
 
-			case 10: // '\n'
+			case 10:
 				characterobject.c2 = 80;
 				break;
 			}
@@ -22908,14 +22865,14 @@ MainProgram.prototype.jmMove = function()
 			}
 			if(characterobject.c4 == 2 && characterobject.c1 == 10)
 			{
-				var i9 = (characterobject.x + 15) >> 5;
-				var k12 = (characterobject.y + 15) >> 5;
+				var i9 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+				var k12 = rightShiftIgnoreSign(characterobject.y + 15, 5);
 				characterobject.x = i9 * 32;
 				characterobject.y = k12 * 32;
 				for(var i16 = -1; i16 <= 1; i16++)
 				{
 					for(var k15 = -1; k15 <= 1; k15++)
-						if(i9 + k15 >= 1 && i9 + k15 <= 180 && k12 + i16 >= 10 && k12 + i16 <= 39 && this.maps.map_bg[i9 + k15][k12 + i16] == 20)
+						if(i9 + k15 >= 1 && i9 + k15 <= this.mapWidth && k12 + i16 >= 10 && k12 + i16 <= this.mapHeight + 9 && this.maps.map_bg[i9 + k15][k12 + i16] == 20)
 							this.maps.putBGCode(i9 + k15, k12 + i16, 0);
 
 				}
@@ -22975,8 +22932,8 @@ MainProgram.prototype.jmMove = function()
 				{
 					characterobject2.c = 55;
 					characterobject2.c1 = 0;
-					var l9 = characterobject2.x >> 5;
-					var j13 = characterobject2.y >> 5;
+					var l9 = rightShiftIgnoreSign(characterobject2.x, 5);
+					var j13 = rightShiftIgnoreSign(characterobject2.y, 5);
 					if(characterobject2.c5 == 1)
 						this.onASwitch(l9 - 5, j13 - 5, l9 + 5, j13 + 5);
 					else
@@ -23087,7 +23044,7 @@ MainProgram.prototype.jmMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 60: // '<'
+		case 60:
 			characterobject.y = this.co_j.y;
 			characterobject.x -= 28;
 			if(characterobject.x <= this.maps.wx - 32)
@@ -23125,8 +23082,8 @@ MainProgram.prototype.jmMove = function()
 				{
 					characterobject3.c = 55;
 					characterobject3.c1 = 0;
-					var j10 = characterobject3.x >> 5;
-					var l13 = characterobject3.y >> 5;
+					var j10 = rightShiftIgnoreSign(characterobject3.x, 5);
+					var l13 = rightShiftIgnoreSign(characterobject3.y, 5);
 					if(characterobject3.c5 == 1)
 						this.onASwitch(j10 - 5, l13 - 5, j10 + 5, l13 + 5);
 					else
@@ -23208,7 +23165,7 @@ MainProgram.prototype.jmMove = function()
 			characterobject.pt = 1200;
 			break;
 
-		case 65: // 'A'
+		case 65:
 			characterobject.y = this.co_j.y;
 			characterobject.x += 28;
 			if(characterobject.x >= this.maps.wx + 512 + 32)
@@ -23246,8 +23203,8 @@ MainProgram.prototype.jmMove = function()
 				{
 					characterobject4.c = 55;
 					characterobject4.c1 = 0;
-					var k10 = characterobject4.x >> 5;
-					var i14 = characterobject4.y >> 5;
+					var k10 = rightShiftIgnoreSign(characterobject4.x, 5);
+					var i14 = rightShiftIgnoreSign(characterobject4.y, 5);
 					if(characterobject4.c5 == 1)
 						this.onASwitch(k10 - 5, i14 - 5, k10 + 5, i14 + 5);
 					else
@@ -23329,11 +23286,11 @@ MainProgram.prototype.jmMove = function()
 			characterobject.pt = 1205;
 			break;
 
-		case 100: // 'd'
+		case 100:
 			var l10 = characterobject.x;
 			characterobject.x += characterobject.vx;
-			if((l10 + 7) >> 5 > (characterobject.x + 7) >> 5 && this.maps.getBGCode(l10 + 7, characterobject.y + 15) == 19 && this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) >= 20)
-				characterobject.y = ((characterobject.y + 15) >> 5) * 32 - 24;
+			if(rightShiftIgnoreSign(l10 + 7, 5) > rightShiftIgnoreSign(characterobject.x + 7, 5) && this.maps.getBGCode(l10 + 7, characterobject.y + 15) == 19 && this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) >= 20)
+				characterobject.y = rightShiftIgnoreSign(characterobject.y + 15, 5) * 32 - 24;
 			if(this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) >= 20)
 				characterobject.c = 0;
 			characterobject.vy += 5;
@@ -23346,15 +23303,15 @@ MainProgram.prototype.jmMove = function()
 			var i3 = this.maps.getBGCode(characterobject.x + 15, characterobject.y + 23);
 			if(i3 >= 20 || i3 == 15 || i3 == 10)
 			{
-				characterobject.y = ((characterobject.y + 23) >> 5) * 32 - 24;
+				characterobject.y = rightShiftIgnoreSign(characterobject.y + 23, 5) * 32 - 24;
 				characterobject.vy = -28;
 			} else
-			if((j14 + 23) >> 5 < (characterobject.y + 23) >> 5)
+			if(rightShiftIgnoreSign(j14 + 23, 5) < rightShiftIgnoreSign(characterobject.y + 23, 5))
 			{
 				i3 = this.maps.getBGCode(characterobject.x + 15, j14 + 23);
 				if(i3 == 18 || i3 == 19)
 				{
-					characterobject.y = ((characterobject.y + 23) >> 5) * 32 - 24;
+					characterobject.y = rightShiftIgnoreSign(characterobject.y + 23, 5) * 32 - 24;
 					characterobject.vy = -28;
 				}
 			}
@@ -23417,8 +23374,7 @@ MainProgram.prototype.jmMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 101: // 'e'
-			var i11 = characterobject.x;
+		case 101:
 			characterobject.x += characterobject.vx;
 			characterobject.y += characterobject.vy;
 			if(this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) >= 20 || this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) == 18)
@@ -23467,11 +23423,11 @@ MainProgram.prototype.jmMove = function()
 			characterobject.pth = 0;
 			break;
 
-		case 105: // 'i'
+		case 105:
 			var j11 = characterobject.x;
 			characterobject.x += characterobject.vx;
-			if((j11 + 23) >> 5 < (characterobject.x + 23) >> 5 && this.maps.getBGCode(j11 + 23, characterobject.y + 15) == 18 && this.maps.getBGCode(characterobject.x + 23, characterobject.y + 15) >= 20)
-				characterobject.y = ((characterobject.y + 15) >> 5) * 32 - 24;
+			if(rightShiftIgnoreSign(j11 + 23, 5) < rightShiftIgnoreSign(characterobject.x + 23, 5) && this.maps.getBGCode(j11 + 23, characterobject.y + 15) == 18 && this.maps.getBGCode(characterobject.x + 23, characterobject.y + 15) >= 20)
+				characterobject.y = rightShiftIgnoreSign(characterobject.y + 15, 5) * 32 - 24;
 			if(this.maps.getBGCode(characterobject.x + 23, characterobject.y + 15) >= 20)
 				characterobject.c = 0;
 			characterobject.vy += 5;
@@ -23484,15 +23440,15 @@ MainProgram.prototype.jmMove = function()
 			var j5 = this.maps.getBGCode(characterobject.x + 15, characterobject.y + 23);
 			if(j5 >= 20 || j5 == 15 || j5 == 10)
 			{
-				characterobject.y = ((characterobject.y + 23) >> 5) * 32 - 24;
+				characterobject.y = rightShiftIgnoreSign(characterobject.y + 23, 5) * 32 - 24;
 				characterobject.vy = -28;
 			} else
-			if((k14 + 23) >> 5 < (characterobject.y + 23) >> 5)
+			if(rightShiftIgnoreSign(k14 + 23, 5) < rightShiftIgnoreSign(characterobject.y + 23, 5))
 			{
 				j5 = this.maps.getBGCode(characterobject.x + 15, k14 + 23);
 				if(j5 == 18 || j5 == 19)
 				{
-					characterobject.y = ((characterobject.y + 23) >> 5) * 32 - 24;
+					characterobject.y = rightShiftIgnoreSign(characterobject.y + 23, 5) * 32 - 24;
 					characterobject.vy = -28;
 				}
 			}
@@ -23555,8 +23511,7 @@ MainProgram.prototype.jmMove = function()
 			characterobject.pth = 1;
 			break;
 
-		case 106: // 'j'
-			var k11 = characterobject.x;
+		case 106:
 			characterobject.x += characterobject.vx;
 			characterobject.y += characterobject.vy;
 			if(this.maps.getBGCode(characterobject.x + 23, characterobject.y + 15) >= 19)
@@ -23607,7 +23562,7 @@ MainProgram.prototype.jmMove = function()
 				characterobject.pt = 128 + this.g_c1;
 			break;
 
-		case 110: // 'n'
+		case 110:
 			var j15 = -1;
 			var l11 = 9999;
 			for(var j2 = 0; j2 <= this.t_kazu; j2++)
@@ -23727,7 +23682,7 @@ MainProgram.prototype.jmMove = function()
 				if(characterobject.vy > 0 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 31) >= 18)
 				{
 					characterobject.c = 50;
-					characterobject.y = ((characterobject.y + 31) >> 5) * 32 - 16;
+					characterobject.y = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32 - 16;
 					characterobject.c1 = 1;
 					characterobject.c2 = 20;
 				}
@@ -23740,14 +23695,14 @@ MainProgram.prototype.jmMove = function()
 				characterobject.c2 = 20;
 				if(characterobject.c4 == 2)
 				{
-					var i12 = (characterobject.x + 15) >> 5;
-					var l14 = (characterobject.y + 15) >> 5;
+					var i12 = rightShiftIgnoreSign(characterobject.x + 15, 5);
+					var l14 = rightShiftIgnoreSign(characterobject.y + 15, 5);
 					characterobject.x = i12 * 32;
 					characterobject.y = l14 * 32;
 					for(var j16 = -1; j16 <= 1; j16++)
 					{
 						for(var l15 = -1; l15 <= 1; l15++)
-							if(i12 + l15 >= 1 && i12 + l15 <= 180 && l14 + j16 >= 10 && l14 + j16 <= 39 && this.maps.map_bg[i12 + l15][l14 + j16] == 20)
+							if(i12 + l15 >= 1 && i12 + l15 <= this.mapWidth && l14 + j16 >= 10 && l14 + j16 <= this.mapHeight + 9 && this.maps.map_bg[i12 + l15][l14 + j16] == 20)
 								this.gs.rsAddSound(16);
 
 					}
@@ -23863,8 +23818,8 @@ MainProgram.prototype.jmMove = function()
 			{
 				characterobject5.c = 55;
 				characterobject5.c1 = 0;
-				var j12 = characterobject5.x >> 5;
-				var i15 = characterobject5.y >> 5;
+				var j12 = rightShiftIgnoreSign(characterobject5.x, 5);
+				var i15 = rightShiftIgnoreSign(characterobject5.y, 5);
 				if(characterobject5.c5 == 1)
 					this.onASwitch(j12 - 5, i15 - 5, j12 + 5, i15 + 5);
 				else
@@ -23897,6 +23852,11 @@ MainProgram.prototype.jmMove = function()
 
 }
 
+/**
+ * 穴掘りモード時の主人公が掘った穴を追加
+ * @param x {number} X座標(マップ座標)
+ * @param y {number} Y座標(マップ座標)
+ */
 MainProgram.prototype.anaSet = function(i, j)
 {
 	var k = 0;
@@ -23916,6 +23876,12 @@ MainProgram.prototype.anaSet = function(i, j)
 	} while(true);
 }
 
+/**
+ * 穴掘りモード時の主人公が掘った穴を追加 その2(？)
+ * TODO: 要調査
+ * @param x {number} X座標(マップ座標)
+ * @param y {number} Y座標(マップ座標)
+ */
 MainProgram.prototype.anaSet2 = function(i, j)
 {
 	var k = 0;
@@ -23935,6 +23901,9 @@ MainProgram.prototype.anaSet2 = function(i, j)
 	} while(true);
 }
 
+/**
+ * 主人公の掘った穴の更新処理
+ */
 MainProgram.prototype.anaMove = function()
 {
 	for(var i = 0; i <= 11; i++)
@@ -23970,13 +23939,25 @@ MainProgram.prototype.anaMove = function()
 
 }
 
+/**
+ * 指定座標(ピクセル単位)の位置に、指定したコードの仕掛けを設置します
+ * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet} を参照
+ * @param pixelX {number} X座標(ピクセル単位)
+ * @param pixelY {number} Y座標(ピクセル単位)
+ * @param code {number} 設置する仕掛けのコード
+ * @param argValue {number} 仕掛けに使用する引数
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet}
+ */
 MainProgram.prototype.aSet = function(i, j, k, l)
 {
 	var i1 = 0;
 	do
 	{
-		if(i1 > 119)
-			break;
+		if (i1 > this.a_kazu) {
+			this.co_a.push(new CharacterObject());
+			this.vo_x.push([0, 0, 0, 0]);
+			this.vo_y.push([0, 0, 0, 0]);
+		}
 		if(this.co_a[i1].c <= 0)
 		{
 			var characterobject = this.co_a[i1];
@@ -23985,23 +23966,20 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 			characterobject.c2 = l + 128;
 			characterobject.x = i;
 			characterobject.y = j;
-			this.a_kazu++;
-			if(this.a_kazu > 119)
-				this.a_kazu = 119;
 			switch(k)
 			{
-			case 60: // '<'
+			case 60:
 				characterobject.pt = 200;
 				break;
 
-			case 70: // 'F'
+			case 70:
 				characterobject.vx = -3;
 				characterobject.c3 = 0;
 				characterobject.c1 = i - 512 - 150;
 				characterobject.c2 = i + 150;
 				break;
 
-			case 71: // 'G'
+			case 71:
 				characterobject.c = 70;
 				characterobject.vx = 3;
 				characterobject.c3 = 0;
@@ -24009,7 +23987,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 150;
 				break;
 
-			case 72: // 'H'
+			case 72:
 				characterobject.c = 70;
 				characterobject.vx = -2;
 				characterobject.c3 = 0;
@@ -24017,7 +23995,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 190;
 				break;
 
-			case 73: // 'I'
+			case 73:
 				characterobject.c = 70;
 				characterobject.vx = 2;
 				characterobject.c3 = 0;
@@ -24025,7 +24003,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 190;
 				break;
 
-			case 74: // 'J'
+			case 74:
 				characterobject.c = 70;
 				characterobject.vx = -2;
 				characterobject.c3 = 120;
@@ -24033,7 +24011,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 190;
 				break;
 
-			case 75: // 'K'
+			case 75:
 				characterobject.c = 70;
 				characterobject.vx = 2;
 				characterobject.c3 = 120;
@@ -24041,7 +24019,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 190;
 				break;
 
-			case 76: // 'L'
+			case 76:
 				characterobject.c = 70;
 				characterobject.vx = -2;
 				characterobject.c3 = 240;
@@ -24049,7 +24027,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 190;
 				break;
 
-			case 77: // 'M'
+			case 77:
 				characterobject.c = 70;
 				characterobject.vx = 2;
 				characterobject.c3 = 240;
@@ -24057,7 +24035,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = i + 190;
 				break;
 
-			case 78: // 'N'
+			case 78:
 				characterobject.c = 70;
 				characterobject.vx = 2;
 				characterobject.c3 = 160;
@@ -24066,7 +24044,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				break;
 
-			case 79: // 'O'
+			case 79:
 				characterobject.c = 70;
 				characterobject.vx = -2;
 				characterobject.c3 = 380;
@@ -24075,55 +24053,55 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 3;
 				break;
 
-			case 80: // 'P'
+			case 80:
 				characterobject.pt = 800;
 				characterobject.c3 = 1;
 				break;
 
-			case 81: // 'Q'
+			case 81:
 				characterobject.c = 80;
 				characterobject.pt = 800;
 				characterobject.c3 = 2;
 				break;
 
-			case 82: // 'R'
+			case 82:
 				characterobject.c = 80;
 				characterobject.pt = 800;
 				characterobject.c3 = 3;
 				break;
 
-			case 83: // 'S'
+			case 83:
 				characterobject.c = 80;
 				characterobject.pt = 800;
 				characterobject.c3 = 4;
 				break;
 
-			case 85: // 'U'
+			case 85:
 				characterobject.c = 85;
 				characterobject.pt = 850;
 				break;
 
-			case 86: // 'V'
+			case 86:
 				characterobject.c = 86;
 				characterobject.pt = 860;
 				break;
 
-			case 87: // 'W'
+			case 87:
 				characterobject.c = 87;
 				characterobject.pt = 860;
 				break;
 
-			case 88: // 'X'
+			case 88:
 				characterobject.c = 88;
 				characterobject.pt = 860;
 				break;
 
-			case 89: // 'Y'
+			case 89:
 				characterobject.c = 89;
 				characterobject.pt = 860;
 				break;
 
-			case 90: // 'Z'
+			case 90:
 				characterobject.x = i + 16;
 				characterobject.y = j;
 				characterobject.pt = 1200;
@@ -24135,7 +24113,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 91: // '['
+			case 91:
 				characterobject.x = i + 16;
 				characterobject.y = j;
 				characterobject.pt = 1200;
@@ -24147,7 +24125,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 92: // '\\'
+			case 92:
 				characterobject.x = i + 16;
 				characterobject.y = j;
 				characterobject.pt = 1200;
@@ -24159,7 +24137,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 93: // ']'
+			case 93:
 				characterobject.x = i + 16;
 				characterobject.y = j + 16;
 				characterobject.pt = 1300;
@@ -24172,7 +24150,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 94: // '^'
+			case 94:
 				characterobject.x = i + 16 + 384;
 				characterobject.y = j + 16;
 				characterobject.pt = 1300;
@@ -24186,7 +24164,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 95: // '_'
+			case 95:
 				characterobject.x = i + 16;
 				characterobject.y = j + 16;
 				characterobject.pt = 1400;
@@ -24200,7 +24178,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 96: // '`'
+			case 96:
 				characterobject.x = i + 16;
 				characterobject.y = j + 16;
 				characterobject.pt = 1400;
@@ -24214,7 +24192,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
 
-			case 100: // 'd'
+			case 100:
 				characterobject.vy = 5;
 				characterobject.x = i + 8;
 				characterobject.y = j - 212;
@@ -24223,7 +24201,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.pt = 100;
 				break;
 
-			case 101: // 'e'
+			case 101:
 				characterobject.c = 100;
 				characterobject.vy = 5;
 				characterobject.x = i + 8;
@@ -24235,7 +24213,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c2 = 6400;
 				break;
 
-			case 110: // 'n'
+			case 110:
 				characterobject.vx = -3;
 				characterobject.x = i + 208;
 				characterobject.c3 = i;
@@ -24249,7 +24227,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				}
 				break;
 
-			case 111: // 'o'
+			case 111:
 				characterobject.c = 110;
 				characterobject.vx = -3;
 				characterobject.x = i + 208;
@@ -24265,7 +24243,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				}
 				break;
 
-			case 115: // 's'
+			case 115:
 				characterobject.c = 110;
 				characterobject.vx = -3;
 				characterobject.x = i + 208;
@@ -24280,7 +24258,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				}
 				break;
 
-			case 116: // 't'
+			case 116:
 				characterobject.c = 110;
 				characterobject.vx = 3;
 				characterobject.x = i + 320;
@@ -24295,7 +24273,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				}
 				break;
 
-			case 120: // 'x'
+			case 120:
 				characterobject.vx = i + 160;
 				characterobject.vy = j;
 				characterobject.x = i + 8;
@@ -24307,7 +24285,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.pt = 100;
 				break;
 
-			case 121: // 'y'
+			case 121:
 				characterobject.c = 120;
 				characterobject.vx = i + 160;
 				characterobject.vy = j;
@@ -24329,7 +24307,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 0;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 151: 
@@ -24342,7 +24320,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 1;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 152: 
@@ -24355,7 +24333,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 160: 
@@ -24367,7 +24345,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 0;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 161: 
@@ -24380,7 +24358,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 1;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 162: 
@@ -24393,7 +24371,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				characterobject.pt = 100;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 300: 
@@ -24640,7 +24618,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 11;
 				characterobject.vy = j;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c = 410;
 				break;
 
@@ -24651,7 +24629,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = i;
 				characterobject.c = 410;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 487: 
@@ -24661,7 +24639,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = i;
 				characterobject.c = 410;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 488: 
@@ -24687,7 +24665,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = j;
 				characterobject.vx = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c = 410;
 				break;
 
@@ -24854,7 +24832,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1100: 
@@ -25068,7 +25046,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = -3;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25087,7 +25065,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = 3;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25105,7 +25083,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = -2;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25124,7 +25102,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.vx = 2;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c3 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c3), "0", "0", "0", "0");
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
@@ -25141,7 +25119,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1901: 
@@ -25150,7 +25128,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 1;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1902: 
@@ -25159,7 +25137,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 2;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1903: 
@@ -25168,7 +25146,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 3;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1904: 
@@ -25177,7 +25155,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 4;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1905: 
@@ -25186,7 +25164,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 5;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1906: 
@@ -25195,7 +25173,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 6;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1907: 
@@ -25204,7 +25182,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 7;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1908: 
@@ -25213,7 +25191,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 8;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1909: 
@@ -25222,7 +25200,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 9;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1910: 
@@ -25231,7 +25209,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 10;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1911: 
@@ -25240,7 +25218,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 11;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1912: 
@@ -25276,7 +25254,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 15;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1916: 
@@ -25285,7 +25263,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 16;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1917: 
@@ -25294,7 +25272,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 17;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 1918: 
@@ -25303,7 +25281,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 18;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2000: 
@@ -25486,7 +25464,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2201: 
@@ -25494,7 +25472,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 120;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2202: 
@@ -25502,7 +25480,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 240;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2210: 
@@ -25510,7 +25488,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2211: 
@@ -25518,7 +25496,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 120;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2212: 
@@ -25526,7 +25504,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 240;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2250: 
@@ -25534,7 +25512,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2251: 
@@ -25542,7 +25520,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -2;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2252: 
@@ -25550,7 +25528,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -4;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2253: 
@@ -25558,7 +25536,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = -4;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2260: 
@@ -25566,7 +25544,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2261: 
@@ -25574,7 +25552,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2262: 
@@ -25582,7 +25560,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 4;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2263: 
@@ -25590,7 +25568,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 4;
 				characterobject.c3 = 180;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2300: 
@@ -25601,7 +25579,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = characterobject.y;
 				characterobject.vy = -4;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25614,7 +25592,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = j;
 				characterobject.vy = 4;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25628,7 +25606,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25642,7 +25620,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25656,7 +25634,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 1000;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "0", "0", "half_circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25670,7 +25648,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "80", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25684,7 +25662,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 4;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "80", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25698,7 +25676,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 40;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "112", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25712,7 +25690,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = -40;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "112", "0", "circle");
 				this.setYukaColor(characterobject.c4, new Color(this.gamecolor_mizunohadou.getRed(), this.gamecolor_mizunohadou.getGreen(), this.gamecolor_mizunohadou.getBlue(), 176));
 				break;
@@ -25726,7 +25704,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2801: 
@@ -25738,7 +25716,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2802: 
@@ -25750,7 +25728,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 1;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2803: 
@@ -25762,7 +25740,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 1;
 				characterobject.c = 2800;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 2900: 
@@ -25777,7 +25755,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.pt = 3300;
 				characterobject.c3 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3010: 
@@ -25785,7 +25763,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.pt = 3300;
 				characterobject.c3 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3100: 
@@ -25858,7 +25836,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3201: 
@@ -25871,7 +25849,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3202: 
@@ -25884,7 +25862,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3203: 
@@ -25897,7 +25875,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3300: 
@@ -25909,7 +25887,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.c5 = 96;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "96", "0", "circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25923,7 +25901,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vy = 0;
 				characterobject.c5 = 128;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(characterobject.x), String(characterobject.y), "128", "0", "circle");
 				this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 				break;
@@ -25976,84 +25954,84 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3710: 
 				characterobject.c3 = 100;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3800: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3810: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3900: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 3910: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4000: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4010: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4100: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4110: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4200: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4210: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4300: 
@@ -26063,7 +26041,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4301: 
@@ -26074,7 +26052,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4302: 
@@ -26085,7 +26063,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4303: 
@@ -26096,7 +26074,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4304: 
@@ -26107,7 +26085,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4305: 
@@ -26118,7 +26096,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4306: 
@@ -26129,7 +26107,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4307: 
@@ -26140,7 +26118,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4310: 
@@ -26151,7 +26129,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4311: 
@@ -26162,7 +26140,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4312: 
@@ -26173,7 +26151,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4313: 
@@ -26184,7 +26162,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4314: 
@@ -26195,7 +26173,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4315: 
@@ -26206,7 +26184,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4316: 
@@ -26217,7 +26195,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4317: 
@@ -26228,21 +26206,21 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c5 = 0;
 				characterobject.vy = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4400: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4410: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4500: 
@@ -26254,7 +26232,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 0;
 				characterobject.vy = 322;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26269,7 +26247,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 1;
 				characterobject.vy = 218;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26284,7 +26262,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 2;
 				characterobject.vy = 322;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26299,7 +26277,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 3;
 				characterobject.vy = 218;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26314,7 +26292,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 10;
 				characterobject.vy = 218;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26329,7 +26307,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 11;
 				characterobject.vy = 270;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26344,7 +26322,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 12;
 				characterobject.vy = 322;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26359,7 +26337,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.vx = 13;
 				characterobject.vy = 270;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 				this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 				break;
@@ -26377,7 +26355,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 0;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4701: 
@@ -26386,7 +26364,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 1;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4702: 
@@ -26395,7 +26373,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 2;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4703: 
@@ -26404,7 +26382,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c4 = 3;
 				characterobject.pt = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4800: 
@@ -26412,7 +26390,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4801: 
@@ -26421,7 +26399,7 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c4 = 1;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 4900: 
@@ -26458,14 +26436,14 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 5210: 
 				characterobject.c3 = 0;
 				characterobject.c5 = 0;
 				characterobject.c1 = 0;
-				characterobject.c2 = 5792;
+				characterobject.c2 = (this.mapWidth + 1) * 32;
 				break;
 
 			case 5300: 
@@ -26478,13 +26456,11 @@ MainProgram.prototype.aSet = function(i, j, k, l)
 	} while(true);
 }
 
+/**
+ * 仕掛けの更新処理
+ */
 MainProgram.prototype.aMove = function()
 {
-	var flag = false;
-	var flag1 = false;
-	var flag2 = false;
-	var flag3 = false;
-	var flag12 = false;
 	this.j_a_id = -1;
 	this.j_jdai_f = false;
 	this.a_hf = false;
@@ -26507,7 +26483,7 @@ MainProgram.prototype.aMove = function()
 		default:
 			break;
 
-		case 60: // '<'
+		case 60:
 			if(k3 > this.maps.wx - 80 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 96 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -26522,7 +26498,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 70: // 'F'
+		case 70:
 			if(characterobject.c4 == 2)
 			{
 				characterobject.c3 += characterobject.vx;
@@ -26645,7 +26621,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 80: // 'P'
+		case 80:
 			if(k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -26661,7 +26637,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 85: // 'U'
+		case 85:
 			if(k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -26672,7 +26648,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 86: // 'V'
+		case 86:
 			if(k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -26800,38 +26776,38 @@ MainProgram.prototype.aMove = function()
 								default:
 									break;
 
-								case 0: // '\0'
+								case 0:
 									this.j_gr_kazu += 3;
 									this.gs.rsAddSound(7);
 									break;
 
-								case 1: // '\001'
+								case 1:
 									this.j_jet_fuel += 80;
 									this.gs.rsAddSound(7);
 									break;
 
-								case 2: // '\002'
+								case 2:
 									this.j_drell_f = true;
 									this.gs.rsAddSound(7);
 									break;
 
-								case 3: // '\003'
+								case 3:
 									this.j_helm_f = true;
 									this.gs.rsAddSound(7);
 									break;
 
-								case 4: // '\004'
+								case 4:
 									this.j_tail_f = true;
 									this.gs.rsAddSound(7);
 									break;
 
-								case 5: // '\005'
+								case 5:
 									this.j_v_c = 150;
 									this.j_v_kakudo = 0;
 									this.gs.rsAddSound(7);
 									break;
 
-								case 6: // '\006'
+								case 6:
 									this.j_fire_f = true;
 									this.j_fire_type = this.default_j_fire_type;
 									if(this.j_fire_type == 3 || this.j_fire_type == 4)
@@ -26839,7 +26815,7 @@ MainProgram.prototype.aMove = function()
 									this.gs.rsAddSound(7);
 									break;
 
-								case 7: // '\007'
+								case 7:
 									if(this.j_tokugi == 17)
 										this.setMyHP(String(this.getMyHP() + 1));
 									else
@@ -26847,7 +26823,7 @@ MainProgram.prototype.aMove = function()
 									this.gs.rsAddSound(7);
 									break;
 
-								case 8: // '\b'
+								case 8:
 									if(this.time_max > 0)
 										this.time += 30000;
 									this.gs.rsAddSound(7);
@@ -26933,7 +26909,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 87: // 'W'
+		case 87:
 			if(k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -27073,7 +27049,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 88: // 'X'
+		case 88:
 			if(k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -27213,7 +27189,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 89: // 'Y'
+		case 89:
 			if(k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320)
 			{
 				characterobject.gf = true;
@@ -27344,7 +27320,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 90: // 'Z'
+		case 90:
 			if(k3 > this.maps.wx - 180 && k3 < this.maps.wx + 512 + 180 && l3 > this.maps.wy - 180 && l3 < this.maps.wy + 320 + 180)
 			{
 				characterobject.gf = true;
@@ -27390,7 +27366,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 93: // ']'
+		case 93:
 			if(k3 > this.maps.wx - 180 && k3 < this.maps.wx + 512 + 180 && l3 > this.maps.wy - 180 && l3 < this.maps.wy + 320 + 180)
 			{
 				characterobject.gf = true;
@@ -27399,7 +27375,7 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 0)
 				{
 					characterobject.c3 = 1;
-					this.maps.putBGCode(k3 >> 5, l3 >> 5, 50);
+					this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 50);
 				}
 			} else
 			{
@@ -27428,7 +27404,7 @@ MainProgram.prototype.aMove = function()
 			this.setYukaPosition(String(characterobject.c4), String(k85), String(l87), String(i90), String(l92));
 			break;
 
-		case 95: // '_'
+		case 95:
 			if(k3 > this.maps.wx - 180 && k3 < this.maps.wx + 512 + 180 && l3 > this.maps.wy - 180 && l3 < this.maps.wy + 320 + 180)
 			{
 				characterobject.gf = true;
@@ -27437,7 +27413,7 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 0)
 				{
 					characterobject.c3 = 1;
-					this.maps.putBGCode(k3 >> 5, l3 >> 5, 50);
+					this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 50);
 				}
 			} else
 			{
@@ -27493,7 +27469,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 100: // 'd'
+		case 100:
 			if(k3 > this.maps.wx - 80 - 32 && k3 < this.maps.wx + 512 + 32 && l3 > this.maps.wy - 16 && l3 < this.maps.wy + 320 + 32)
 			{
 				characterobject.gf = true;
@@ -27523,7 +27499,7 @@ MainProgram.prototype.aMove = function()
 					this.co_j.y = l3 - 32;
 				if(characterobject.vy < 0 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20)
 				{
-					this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 					this.jShinu(3);
 				}
 				if(this.co_j.x + 15 >= k3 && this.co_j.x <= k3 + 64 && this.co_j.y + 31 >= l3 && this.co_j.y <= l3 + 13)
@@ -27534,7 +27510,7 @@ MainProgram.prototype.aMove = function()
 							this.j_hashigo_f = true;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18)
 						{
-							this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.jShinu(3);
 						}
 					} else
@@ -27545,7 +27521,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 110: // 'n'
+		case 110:
 			if(k3 > this.maps.wx - 80 - 32 && k3 < this.maps.wx + 512 + 32 && l3 > this.maps.wy - 16 && l3 < this.maps.wy + 320 + 32)
 			{
 				characterobject.gf = true;
@@ -27576,17 +27552,17 @@ MainProgram.prototype.aMove = function()
 					this.co_j.x += characterobject.vx;
 					if(characterobject.vx > 0)
 					{
-						var l6 = (this.co_j.x + 15) >> 5;
-						var k23 = this.co_j.y >> 5;
-						var i47 = (this.co_j.y + 31) >> 5;
+						var l6 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var k23 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var i47 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[l6][k23] >= 20 || this.maps.map_bg[l6][i47] >= 20)
 							this.co_j.x = l6 * 32 - 16;
 					} else
 					if(characterobject.vx < 0)
 					{
-						var i7 = (this.co_j.x + 15) >> 5;
-						var l23 = this.co_j.y >> 5;
-						var j47 = (this.co_j.y + 31) >> 5;
+						var i7 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var l23 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var j47 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[i7][l23] >= 20 || this.maps.map_bg[i7][j47] >= 20)
 							this.co_j.x = (i7 * 32 + 32) - 14;
 					}
@@ -27595,9 +27571,9 @@ MainProgram.prototype.aMove = function()
 					if(characterobject.vx > 0)
 					{
 						this.co_j.x = k3 + 65;
-						var j7 = (this.co_j.x + 15) >> 5;
-						var i24 = this.co_j.y >> 5;
-						var k47 = (this.co_j.y + 31) >> 5;
+						var j7 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var i24 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var k47 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[j7][i24] >= 20 || this.maps.map_bg[j7][k47] >= 20)
 						{
 							this.co_j.c = 230;
@@ -27610,9 +27586,9 @@ MainProgram.prototype.aMove = function()
 					} else
 					{
 						this.co_j.x = k3 - 16;
-						var k7 = (this.co_j.x + 15) >> 5;
-						var j24 = this.co_j.y >> 5;
-						var l47 = (this.co_j.y + 31) >> 5;
+						var k7 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var j24 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var l47 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[k7][j24] >= 20 || this.maps.map_bg[k7][l47] >= 20)
 						{
 							this.co_j.c = 230;
@@ -27626,7 +27602,7 @@ MainProgram.prototype.aMove = function()
 			}
 			break;
 
-		case 120: // 'x'
+		case 120:
 			if(k3 > this.maps.wx - 80 - 32 && k3 < this.maps.wx + 512 + 32 && l3 > this.maps.wy - 16 && l3 < this.maps.wy + 320 + 32)
 			{
 				characterobject.gf = true;
@@ -27660,7 +27636,7 @@ MainProgram.prototype.aMove = function()
 					this.co_j.y += j95;
 				if(j95 < 0 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20)
 				{
-					this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 					this.jShinu(3);
 				}
 				if(this.co_j.x + 15 >= k3 && this.co_j.x <= k3 + 64 && this.co_j.y + 31 >= l3 && this.co_j.y <= l3 + 13)
@@ -27669,7 +27645,7 @@ MainProgram.prototype.aMove = function()
 						this.co_j.y = l3 + 14;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18)
 						{
-							this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.jShinu(3);
 						}
 					} else
@@ -27686,17 +27662,17 @@ MainProgram.prototype.aMove = function()
 					this.co_j.x += i95;
 					if(i95 > 0)
 					{
-						var l7 = (this.co_j.x + 15) >> 5;
-						var k24 = this.co_j.y >> 5;
-						var i48 = (this.co_j.y + 31) >> 5;
+						var l7 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var k24 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var i48 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[l7][k24] >= 20 || this.maps.map_bg[l7][i48] >= 20)
 							this.co_j.x = l7 * 32 - 16;
 					} else
 					if(i95 < 0)
 					{
-						var i8 = (this.co_j.x + 15) >> 5;
-						var l24 = this.co_j.y >> 5;
-						var j48 = (this.co_j.y + 31) >> 5;
+						var i8 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var l24 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var j48 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[i8][l24] >= 20 || this.maps.map_bg[i8][j48] >= 20)
 							this.co_j.x = (i8 * 32 + 32) - 14;
 					}
@@ -27705,9 +27681,9 @@ MainProgram.prototype.aMove = function()
 					if(i95 > 0)
 					{
 						this.co_j.x = k3 + 65;
-						var j8 = (this.co_j.x + 15) >> 5;
-						var i25 = this.co_j.y >> 5;
-						var k48 = (this.co_j.y + 31) >> 5;
+						var j8 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var i25 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var k48 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[j8][i25] >= 20 || this.maps.map_bg[j8][k48] >= 20)
 						{
 							this.co_j.c = 230;
@@ -27720,9 +27696,9 @@ MainProgram.prototype.aMove = function()
 					} else
 					{
 						this.co_j.x = k3 - 16;
-						var k8 = (this.co_j.x + 15) >> 5;
-						var j25 = this.co_j.y >> 5;
-						var l48 = (this.co_j.y + 31) >> 5;
+						var k8 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var j25 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var l48 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[k8][j25] >= 20 || this.maps.map_bg[k8][l48] >= 20)
 						{
 							this.co_j.c = 230;
@@ -27751,13 +27727,13 @@ MainProgram.prototype.aMove = function()
 		case 300: 
 			if(characterobject.c3 >= 200)
 			{
-				this.maps.map_bg[k3 >> 5][l3 >> 5] = 31;
-				this.maps.map_bg[k3 >> 5][(l3 >> 5) + 1] = 31;
+				this.maps.map_bg[rightShiftIgnoreSign(k3, 5)][rightShiftIgnoreSign(l3, 5)] = 31;
+				this.maps.map_bg[rightShiftIgnoreSign(k3, 5)][rightShiftIgnoreSign(l3, 5) + 1] = 31;
 			} else
 			if(this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13)
 			{
-				this.maps.map_bg[k3 >> 5][l3 >> 5] = 31;
-				this.maps.map_bg[(k3 >> 5) + 1][l3 >> 5] = 31;
+				this.maps.map_bg[rightShiftIgnoreSign(k3, 5)][rightShiftIgnoreSign(l3, 5)] = 31;
+				this.maps.map_bg[rightShiftIgnoreSign(k3, 5) + 1][rightShiftIgnoreSign(l3, 5)] = 31;
 			}
 			if(k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 96 && l3 < this.maps.wy + 320)
 			{
@@ -27910,7 +27886,7 @@ MainProgram.prototype.aMove = function()
 					this.co_j.y = l3 - 32;
 					if(characterobject.c3 == 200 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20)
 					{
-						this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 						this.jShinu(3);
 					}
 				}
@@ -27928,7 +27904,7 @@ MainProgram.prototype.aMove = function()
 						}
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18)
 						{
-							this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.jShinu(3);
 						}
 					}
@@ -27938,7 +27914,7 @@ MainProgram.prototype.aMove = function()
 						this.j_a_id = i;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20)
 						{
-							this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 							this.jShinu(3);
 						}
 					}
@@ -27957,7 +27933,6 @@ MainProgram.prototype.aMove = function()
 			{
 				characterobject.gf = false;
 			}
-			var flag4 = false;
 			var byte8 = 0;
 			if(characterobject.c4 <= 1)
 			{
@@ -27965,11 +27940,11 @@ MainProgram.prototype.aMove = function()
 				{
 					if(k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15)
 					{
-						var l8 = k3 >> 5;
-						var k25 = (k3 + 31) >> 5;
-						var i49 = (k3 + 63) >> 5;
-						var i63 = (k3 + 95) >> 5;
-						var j39 = (l3 - 1) >> 5;
+						var l8 = rightShiftIgnoreSign(k3, 5);
+						var k25 = rightShiftIgnoreSign(k3 + 31, 5);
+						var i49 = rightShiftIgnoreSign(k3 + 63, 5);
+						var i63 = rightShiftIgnoreSign(k3 + 95, 5);
+						var j39 = rightShiftIgnoreSign(l3 - 1, 5);
 						if(this.maps.map_bg[l8][j39] < 18 && this.maps.map_bg[k25][j39] < 18 && this.maps.map_bg[i49][j39] < 18 && this.maps.map_bg[i63][j39] < 18)
 							characterobject.c3 = 1;
 					}
@@ -27991,11 +27966,11 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 200;
 					}
-					var i9 = k3 >> 5;
-					var l25 = (k3 + 31) >> 5;
-					var j49 = (k3 + 63) >> 5;
-					var j63 = (k3 + 95) >> 5;
-					var k39 = (l3 - 1) >> 5;
+					var i9 = rightShiftIgnoreSign(k3, 5);
+					var l25 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j49 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j63 = rightShiftIgnoreSign(k3 + 95, 5);
+					var k39 = rightShiftIgnoreSign(l3 - 1, 5);
 					if(this.maps.map_bg[i9][k39] >= 18 || this.maps.map_bg[l25][k39] >= 18 || this.maps.map_bg[j49][k39] >= 18 || this.maps.map_bg[j63][k39] >= 18)
 					{
 						l3 = k39 * 32 + 32;
@@ -28023,10 +27998,10 @@ MainProgram.prototype.aMove = function()
 				{
 					if(characterobject.vx - 160 - 40 <= this.co_j.x + 15 && characterobject.vx > this.co_j.x + 15 && l3 - 32 < this.co_j.y && l3 + 64 > this.co_j.y)
 					{
-						var j9 = (k3 - 1) >> 5;
-						var i26 = l3 >> 5;
-						var k49 = (l3 + 31) >> 5;
-						var k63 = (l3 + 63) >> 5;
+						var j9 = rightShiftIgnoreSign(k3 - 1, 5);
+						var i26 = rightShiftIgnoreSign(l3, 5);
+						var k49 = rightShiftIgnoreSign(l3 + 31, 5);
+						var k63 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[j9][i26] < 18 && this.maps.map_bg[j9][k49] < 18 && this.maps.map_bg[j9][k63] < 18)
 							characterobject.c3 = 1;
 					}
@@ -28040,7 +28015,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 100)
 				{
 					k3 -= 12;
-					var byte1 = -1;
 					if(k3 <= characterobject.vx - 160)
 					{
 						k3 = characterobject.vx - 160;
@@ -28048,10 +28022,10 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 200;
 					}
-					var k9 = (k3 - 1) >> 5;
-					var j26 = l3 >> 5;
-					var l49 = (l3 + 31) >> 5;
-					var l63 = (l3 + 63) >> 5;
+					var k9 = rightShiftIgnoreSign(k3 - 1, 5);
+					var j26 = rightShiftIgnoreSign(l3, 5);
+					var l49 = rightShiftIgnoreSign(l3 + 31, 5);
+					var l63 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[k9][j26] >= 18 || this.maps.map_bg[k9][l49] >= 18 || this.maps.map_bg[k9][l63] >= 18)
 					{
 						k3 = k9 * 32 + 32;
@@ -28063,7 +28037,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 200)
 				{
 					k3 += 3;
-					var flag5 = true;
 					if(k3 >= characterobject.vx)
 					{
 						k3 = characterobject.vx;
@@ -28079,10 +28052,10 @@ MainProgram.prototype.aMove = function()
 				{
 					if(characterobject.vx + 96 + 160 + 40 > this.co_j.x + 15 && characterobject.vx + 96 <= this.co_j.x + 15 && l3 - 32 < this.co_j.y && l3 + 64 > this.co_j.y)
 					{
-						var l9 = (k3 + 96) >> 5;
-						var k26 = l3 >> 5;
-						var i50 = (l3 + 31) >> 5;
-						var i64 = (l3 + 63) >> 5;
+						var l9 = rightShiftIgnoreSign(k3 + 96, 5);
+						var k26 = rightShiftIgnoreSign(l3, 5);
+						var i50 = rightShiftIgnoreSign(l3 + 31, 5);
+						var i64 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[l9][k26] < 18 && this.maps.map_bg[l9][i50] < 18 && this.maps.map_bg[l9][i64] < 18)
 							characterobject.c3 = 1;
 					}
@@ -28096,7 +28069,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 100)
 				{
 					k3 += 12;
-					var flag6 = true;
 					if(k3 >= characterobject.vx + 160)
 					{
 						k3 = characterobject.vx + 160;
@@ -28104,10 +28076,10 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 200;
 					}
-					var i10 = (k3 + 96) >> 5;
-					var l26 = l3 >> 5;
-					var j50 = (l3 + 31) >> 5;
-					var j64 = (l3 + 63) >> 5;
+					var i10 = rightShiftIgnoreSign(k3 + 96, 5);
+					var l26 = rightShiftIgnoreSign(l3, 5);
+					var j50 = rightShiftIgnoreSign(l3 + 31, 5);
+					var j64 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[i10][l26] >= 18 || this.maps.map_bg[i10][j50] >= 18 || this.maps.map_bg[i10][j64] >= 18)
 					{
 						k3 = i10 * 32 - 96;
@@ -28119,7 +28091,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 200)
 				{
 					k3 -= 3;
-					var byte2 = -1;
 					if(k3 <= characterobject.vx)
 					{
 						k3 = characterobject.vx;
@@ -28136,10 +28107,10 @@ MainProgram.prototype.aMove = function()
 				k3 += characterobject.vx;
 				if(characterobject.vx < 0)
 				{
-					var j10 = k3 >> 5;
-					var i27 = l3 >> 5;
-					var k50 = (l3 + 31) >> 5;
-					var k64 = (l3 + 63) >> 5;
+					var j10 = rightShiftIgnoreSign(k3, 5);
+					var i27 = rightShiftIgnoreSign(l3, 5);
+					var k50 = rightShiftIgnoreSign(l3 + 31, 5);
+					var k64 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[j10][i27] >= 18 || this.maps.map_bg[j10][k50] >= 18 || this.maps.map_bg[j10][k64] >= 18)
 					{
 						k3 = j10 * 32 + 32;
@@ -28148,10 +28119,10 @@ MainProgram.prototype.aMove = function()
 				} else
 				if(characterobject.vx > 0)
 				{
-					var k10 = (k3 + 95) >> 5;
-					var j27 = l3 >> 5;
-					var l50 = (l3 + 31) >> 5;
-					var l64 = (l3 + 63) >> 5;
+					var k10 = rightShiftIgnoreSign(k3 + 95, 5);
+					var j27 = rightShiftIgnoreSign(l3, 5);
+					var l50 = rightShiftIgnoreSign(l3 + 31, 5);
+					var l64 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[k10][j27] >= 18 || this.maps.map_bg[k10][l50] >= 18 || this.maps.map_bg[k10][l64] >= 18)
 					{
 						k3 = k10 * 32 - 96;
@@ -28165,11 +28136,11 @@ MainProgram.prototype.aMove = function()
 				{
 					if(k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15 && this.co_j.y >= l3 + 64 && this.co_j.y <= l3 + 64 + 96)
 					{
-						var l10 = k3 >> 5;
-						var k27 = (k3 + 31) >> 5;
-						var i51 = (k3 + 63) >> 5;
-						var i65 = (k3 + 95) >> 5;
-						var l39 = (l3 + 64) >> 5;
+						var l10 = rightShiftIgnoreSign(k3, 5);
+						var k27 = rightShiftIgnoreSign(k3 + 31, 5);
+						var i51 = rightShiftIgnoreSign(k3 + 63, 5);
+						var i65 = rightShiftIgnoreSign(k3 + 95, 5);
+						var l39 = rightShiftIgnoreSign(l3 + 64, 5);
 						if(this.maps.map_bg[l10][l39] < 18 && this.maps.map_bg[k27][l39] < 18 && this.maps.map_bg[i51][l39] < 18 && this.maps.map_bg[i65][l39] < 18)
 							characterobject.c3 = 1;
 					}
@@ -28184,11 +28155,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 += 8;
 					byte8 = 1;
-					var i11 = k3 >> 5;
-					var l27 = (k3 + 31) >> 5;
-					var j51 = (k3 + 63) >> 5;
-					var j65 = (k3 + 95) >> 5;
-					var i40 = (l3 + 63) >> 5;
+					var i11 = rightShiftIgnoreSign(k3, 5);
+					var l27 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j51 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j65 = rightShiftIgnoreSign(k3 + 95, 5);
+					var i40 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[i11][i40] >= 18 || this.maps.map_bg[l27][i40] >= 18 || this.maps.map_bg[j51][i40] >= 18 || this.maps.map_bg[j65][i40] >= 18)
 					{
 						l3 = i40 * 32 - 64;
@@ -28208,11 +28179,11 @@ MainProgram.prototype.aMove = function()
 				{
 					if(this.j_a_id == i)
 					{
-						var j11 = k3 >> 5;
-						var i28 = (k3 + 31) >> 5;
-						var k51 = (k3 + 63) >> 5;
-						var k65 = (k3 + 95) >> 5;
-						var j40 = (l3 - 1) >> 5;
+						var j11 = rightShiftIgnoreSign(k3, 5);
+						var i28 = rightShiftIgnoreSign(k3 + 31, 5);
+						var k51 = rightShiftIgnoreSign(k3 + 63, 5);
+						var k65 = rightShiftIgnoreSign(k3 + 95, 5);
+						var j40 = rightShiftIgnoreSign(l3 - 1, 5);
 						if(this.maps.map_bg[j11][j40] < 18 && this.maps.map_bg[i28][j40] < 18 && this.maps.map_bg[k51][j40] < 18 && this.maps.map_bg[k65][j40] < 18)
 							characterobject.c3 = 100;
 					}
@@ -28221,11 +28192,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 -= 4;
 					byte8 = -1;
-					var k11 = k3 >> 5;
-					var j28 = (k3 + 31) >> 5;
-					var l51 = (k3 + 63) >> 5;
-					var l65 = (k3 + 95) >> 5;
-					var k40 = (l3 - 32) >> 5;
+					var k11 = rightShiftIgnoreSign(k3, 5);
+					var j28 = rightShiftIgnoreSign(k3 + 31, 5);
+					var l51 = rightShiftIgnoreSign(k3 + 63, 5);
+					var l65 = rightShiftIgnoreSign(k3 + 95, 5);
+					var k40 = rightShiftIgnoreSign(l3 - 32, 5);
 					if(this.maps.map_bg[k11][k40] >= 18 || this.maps.map_bg[j28][k40] >= 18 || this.maps.map_bg[l51][k40] >= 18 || this.maps.map_bg[l65][k40] >= 18)
 					{
 						l3 = k40 * 32 + 64;
@@ -28265,11 +28236,11 @@ MainProgram.prototype.aMove = function()
 				{
 					if(this.j_a_id == i)
 					{
-						var l11 = k3 >> 5;
-						var k28 = (k3 + 31) >> 5;
-						var i52 = (k3 + 63) >> 5;
-						var i66 = (k3 + 95) >> 5;
-						var l40 = (l3 + 64) >> 5;
+						var l11 = rightShiftIgnoreSign(k3, 5);
+						var k28 = rightShiftIgnoreSign(k3 + 31, 5);
+						var i52 = rightShiftIgnoreSign(k3 + 63, 5);
+						var i66 = rightShiftIgnoreSign(k3 + 95, 5);
+						var l40 = rightShiftIgnoreSign(l3 + 64, 5);
 						if(this.maps.map_bg[l11][l40] < 18 && this.maps.map_bg[k28][l40] < 18 && this.maps.map_bg[i52][l40] < 18 && this.maps.map_bg[i66][l40] < 18)
 							characterobject.c3 = 100;
 					}
@@ -28278,11 +28249,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 += 4;
 					byte8 = 1;
-					var i12 = k3 >> 5;
-					var l28 = (k3 + 31) >> 5;
-					var j52 = (k3 + 63) >> 5;
-					var j66 = (k3 + 95) >> 5;
-					var i41 = (l3 + 64) >> 5;
+					var i12 = rightShiftIgnoreSign(k3, 5);
+					var l28 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j52 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j66 = rightShiftIgnoreSign(k3 + 95, 5);
+					var i41 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[i12][i41] >= 18 || this.maps.map_bg[l28][i41] >= 18 || this.maps.map_bg[j52][i41] >= 18 || this.maps.map_bg[j66][i41] >= 18)
 					{
 						l3 = i41 * 32 - 64;
@@ -28322,21 +28293,21 @@ MainProgram.prototype.aMove = function()
 				{
 					if(k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15 && l3 - 16 >= this.co_j.y)
 					{
-						var j12 = k3 >> 5;
-						var i29 = (k3 + 31) >> 5;
-						var k52 = (k3 + 63) >> 5;
-						var k66 = (k3 + 95) >> 5;
-						var j41 = (l3 - 1) >> 5;
+						var j12 = rightShiftIgnoreSign(k3, 5);
+						var i29 = rightShiftIgnoreSign(k3 + 31, 5);
+						var k52 = rightShiftIgnoreSign(k3 + 63, 5);
+						var k66 = rightShiftIgnoreSign(k3 + 95, 5);
+						var j41 = rightShiftIgnoreSign(l3 - 1, 5);
 						if(this.maps.map_bg[j12][j41] < 18 && this.maps.map_bg[i29][j41] < 18 && this.maps.map_bg[k52][j41] < 18 && this.maps.map_bg[k66][j41] < 18)
 							characterobject.c3 = 1;
 					}
 					if(k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15 && l3 + 48 <= this.co_j.y)
 					{
-						var k12 = k3 >> 5;
-						var j29 = (k3 + 31) >> 5;
-						var l52 = (k3 + 63) >> 5;
-						var l66 = (k3 + 95) >> 5;
-						var k41 = (l3 + 64) >> 5;
+						var k12 = rightShiftIgnoreSign(k3, 5);
+						var j29 = rightShiftIgnoreSign(k3 + 31, 5);
+						var l52 = rightShiftIgnoreSign(k3 + 63, 5);
+						var l66 = rightShiftIgnoreSign(k3 + 95, 5);
+						var k41 = rightShiftIgnoreSign(l3 + 64, 5);
 						if(this.maps.map_bg[k12][k41] < 18 && this.maps.map_bg[j29][k41] < 18 && this.maps.map_bg[l52][k41] < 18 && this.maps.map_bg[l66][k41] < 18)
 							characterobject.c3 = 1001;
 					}
@@ -28358,11 +28329,11 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 200;
 					}
-					var l12 = k3 >> 5;
-					var k29 = (k3 + 31) >> 5;
-					var i53 = (k3 + 63) >> 5;
-					var i67 = (k3 + 95) >> 5;
-					var l41 = (l3 - 1) >> 5;
+					var l12 = rightShiftIgnoreSign(k3, 5);
+					var k29 = rightShiftIgnoreSign(k3 + 31, 5);
+					var i53 = rightShiftIgnoreSign(k3 + 63, 5);
+					var i67 = rightShiftIgnoreSign(k3 + 95, 5);
+					var l41 = rightShiftIgnoreSign(l3 - 1, 5);
 					if(this.maps.map_bg[l12][l41] >= 18 || this.maps.map_bg[k29][l41] >= 18 || this.maps.map_bg[i53][l41] >= 18 || this.maps.map_bg[i67][l41] >= 18)
 					{
 						l3 = l41 * 32 + 32;
@@ -28400,11 +28371,11 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 1200;
 					}
-					var i13 = k3 >> 5;
-					var l29 = (k3 + 31) >> 5;
-					var j53 = (k3 + 63) >> 5;
-					var j67 = (k3 + 95) >> 5;
-					var i42 = (l3 + 64) >> 5;
+					var i13 = rightShiftIgnoreSign(k3, 5);
+					var l29 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j53 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j67 = rightShiftIgnoreSign(k3 + 95, 5);
+					var i42 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[i13][i42] >= 18 || this.maps.map_bg[l29][i42] >= 18 || this.maps.map_bg[j53][i42] >= 18 || this.maps.map_bg[j67][i42] >= 18)
 					{
 						l3 = i42 * 32 - 64;
@@ -28432,19 +28403,19 @@ MainProgram.prototype.aMove = function()
 				{
 					if(characterobject.vx - 160 - 40 <= this.co_j.x + 15 && characterobject.vx > this.co_j.x + 15 && l3 - 32 < this.co_j.y && l3 + 64 > this.co_j.y)
 					{
-						var j13 = (k3 - 1) >> 5;
-						var i30 = l3 >> 5;
-						var k53 = (l3 + 31) >> 5;
-						var k67 = (l3 + 63) >> 5;
+						var j13 = rightShiftIgnoreSign(k3 - 1, 5);
+						var i30 = rightShiftIgnoreSign(l3, 5);
+						var k53 = rightShiftIgnoreSign(l3 + 31, 5);
+						var k67 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[j13][i30] < 18 && this.maps.map_bg[j13][k53] < 18 && this.maps.map_bg[j13][k67] < 18)
 							characterobject.c3 = 1;
 					}
 					if(characterobject.vx + 96 + 160 + 40 > this.co_j.x + 15 && characterobject.vx + 96 <= this.co_j.x + 15 && l3 - 32 < this.co_j.y && l3 + 64 > this.co_j.y)
 					{
-						var k13 = (k3 + 96) >> 5;
-						var j30 = l3 >> 5;
-						var l53 = (l3 + 31) >> 5;
-						var l67 = (l3 + 63) >> 5;
+						var k13 = rightShiftIgnoreSign(k3 + 96, 5);
+						var j30 = rightShiftIgnoreSign(l3, 5);
+						var l53 = rightShiftIgnoreSign(l3 + 31, 5);
+						var l67 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[k13][j30] < 18 && this.maps.map_bg[k13][l53] < 18 && this.maps.map_bg[k13][l67] < 18)
 							characterobject.c3 = 1001;
 					}
@@ -28458,7 +28429,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 100)
 				{
 					k3 -= 12;
-					var byte3 = -1;
 					if(k3 <= characterobject.vx - 160)
 					{
 						k3 = characterobject.vx - 160;
@@ -28466,10 +28436,10 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 200;
 					}
-					var l13 = (k3 - 1) >> 5;
-					var k30 = l3 >> 5;
-					var i54 = (l3 + 31) >> 5;
-					var i68 = (l3 + 63) >> 5;
+					var l13 = rightShiftIgnoreSign(k3 - 1, 5);
+					var k30 = rightShiftIgnoreSign(l3, 5);
+					var i54 = rightShiftIgnoreSign(l3 + 31, 5);
+					var i68 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[l13][k30] >= 18 || this.maps.map_bg[l13][i54] >= 18 || this.maps.map_bg[l13][i68] >= 18)
 					{
 						k3 = l13 * 32 + 32;
@@ -28481,7 +28451,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 200)
 				{
 					k3 += 3;
-					var flag7 = true;
 					if(k3 >= characterobject.vx)
 					{
 						k3 = characterobject.vx;
@@ -28499,7 +28468,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 1100)
 				{
 					k3 += 12;
-					var flag8 = true;
 					if(k3 >= characterobject.vx + 160)
 					{
 						k3 = characterobject.vx + 160;
@@ -28507,10 +28475,10 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(12);
 						characterobject.c3 = 1200;
 					}
-					var i14 = (k3 + 96) >> 5;
-					var l30 = l3 >> 5;
-					var j54 = (l3 + 31) >> 5;
-					var j68 = (l3 + 63) >> 5;
+					var i14 = rightShiftIgnoreSign(k3 + 96, 5);
+					var l30 = rightShiftIgnoreSign(l3, 5);
+					var j54 = rightShiftIgnoreSign(l3 + 31, 5);
+					var j68 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[i14][l30] >= 18 || this.maps.map_bg[i14][j54] >= 18 || this.maps.map_bg[i14][j68] >= 18)
 					{
 						k3 = i14 * 32 - 96;
@@ -28522,7 +28490,6 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 1200)
 				{
 					k3 -= 3;
-					var byte4 = -1;
 					if(k3 <= characterobject.vx)
 					{
 						k3 = characterobject.vx;
@@ -28538,11 +28505,11 @@ MainProgram.prototype.aMove = function()
 				{
 					if(k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15 && l3 + 48 <= this.co_j.y)
 					{
-						var j14 = k3 >> 5;
-						var i31 = (k3 + 31) >> 5;
-						var k54 = (k3 + 63) >> 5;
-						var k68 = (k3 + 95) >> 5;
-						var j42 = (l3 + 64) >> 5;
+						var j14 = rightShiftIgnoreSign(k3, 5);
+						var i31 = rightShiftIgnoreSign(k3 + 31, 5);
+						var k54 = rightShiftIgnoreSign(k3 + 63, 5);
+						var k68 = rightShiftIgnoreSign(k3 + 95, 5);
+						var j42 = rightShiftIgnoreSign(l3 + 64, 5);
 						if(this.maps.map_bg[j14][j42] < 18 && this.maps.map_bg[i31][j42] < 18 && this.maps.map_bg[k54][j42] < 18 && this.maps.map_bg[k68][j42] < 18)
 							characterobject.c3 = 1;
 					}
@@ -28557,11 +28524,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 += 12;
 					byte8 = 1;
-					var k14 = k3 >> 5;
-					var j31 = (k3 + 31) >> 5;
-					var l54 = (k3 + 63) >> 5;
-					var l68 = (k3 + 95) >> 5;
-					var k42 = (l3 + 64) >> 5;
+					var k14 = rightShiftIgnoreSign(k3, 5);
+					var j31 = rightShiftIgnoreSign(k3 + 31, 5);
+					var l54 = rightShiftIgnoreSign(k3 + 63, 5);
+					var l68 = rightShiftIgnoreSign(k3 + 95, 5);
+					var k42 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[k14][k42] >= 18 || this.maps.map_bg[j31][k42] >= 18 || this.maps.map_bg[l54][k42] >= 18 || this.maps.map_bg[l68][k42] >= 18)
 					{
 						l3 = k42 * 32 - 64;
@@ -28596,11 +28563,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 -= 4;
 					byte8 = -1;
-					var l14 = k3 >> 5;
-					var k31 = (k3 + 31) >> 5;
-					var i55 = (k3 + 63) >> 5;
-					var i69 = (k3 + 95) >> 5;
-					var l42 = l3 >> 5;
+					var l14 = rightShiftIgnoreSign(k3, 5);
+					var k31 = rightShiftIgnoreSign(k3 + 31, 5);
+					var i55 = rightShiftIgnoreSign(k3 + 63, 5);
+					var i69 = rightShiftIgnoreSign(k3 + 95, 5);
+					var l42 = rightShiftIgnoreSign(l3, 5);
 					if(this.maps.map_bg[l14][l42] >= 18 || this.maps.map_bg[k31][l42] >= 18 || this.maps.map_bg[i55][l42] >= 18 || this.maps.map_bg[i69][l42] >= 18)
 					{
 						l3 = l42 * 32 + 32;
@@ -28615,11 +28582,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 += 4;
 					byte8 = 1;
-					var i15 = k3 >> 5;
-					var l31 = (k3 + 31) >> 5;
-					var j55 = (k3 + 63) >> 5;
-					var j69 = (k3 + 95) >> 5;
-					var i43 = (l3 + 64) >> 5;
+					var i15 = rightShiftIgnoreSign(k3, 5);
+					var l31 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j55 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j69 = rightShiftIgnoreSign(k3 + 95, 5);
+					var i43 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[i15][i43] >= 18 || this.maps.map_bg[l31][i43] >= 18 || this.maps.map_bg[j55][i43] >= 18 || this.maps.map_bg[j69][i43] >= 18)
 					{
 						l3 = i43 * 32 - 64;
@@ -28634,32 +28601,30 @@ MainProgram.prototype.aMove = function()
 			} else
 			if(characterobject.c4 == 12)
 			{
-				var j15 = (k3 + 47) >> 5;
-				var i32 = (l3 + 63) >> 5;
+				var j15 = rightShiftIgnoreSign(k3 + 47, 5);
+				var i32 = rightShiftIgnoreSign(l3 + 63, 5);
 				if(this.maps.map_bg[j15][i32] == 19)
 				{
 					if(characterobject.c3 == 0)
 					{
-						if((k3 + 47) >> 5 != ((k3 + 47) - 4) >> 5)
-							l3 = ((l3 + 63) >> 5) * 32 - 64;
+						if(rightShiftIgnoreSign(k3 + 47, 5) != rightShiftIgnoreSign((k3 + 47) - 4, 5))
+							l3 = rightShiftIgnoreSign(l3 + 63, 5) * 32 - 64;
 						k3 -= 4;
-						var byte5 = -1;
-						j15 = (k3 + 47) >> 5;
-						i32 = (l3 + 63) >> 5;
+						j15 = rightShiftIgnoreSign(k3 + 47, 5);
+						i32 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[j15][i32] == 19 || this.maps.map_bg[j15][i32] == 18)
 							l3 = this.getSakamichiY(k3 + 47, l3 + 63) - 32;
 					} else
 					{
-						if((k3 + 47) >> 5 != (k3 + 47 + 4) >> 5)
-							l3 = ((l3 + 63) >> 5) * 32 - 32;
+						if(rightShiftIgnoreSign(k3 + 47, 5) != rightShiftIgnoreSign(k3 + 47 + 4, 5))
+							l3 = rightShiftIgnoreSign(l3 + 63, 5) * 32 - 32;
 						k3 += 4;
-						var flag9 = true;
-						j15 = (k3 + 47) >> 5;
-						i32 = (l3 + 63) >> 5;
+						j15 = rightShiftIgnoreSign(k3 + 47, 5);
+						i32 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[j15][i32] == 19 || this.maps.map_bg[j15][i32] == 18)
 							l3 = this.getSakamichiY(k3 + 47, l3 + 63) - 32;
-						j15 = (k3 + 47) >> 5;
-						i32 = (l3 + 64) >> 5;
+						j15 = rightShiftIgnoreSign(k3 + 47, 5);
+						i32 = rightShiftIgnoreSign(l3 + 64, 5);
 						if(this.maps.map_bg[j15][i32] == 19)
 							l3 = this.getSakamichiY(k3 + 47, l3 + 64) - 32;
 					}
@@ -28668,26 +28633,24 @@ MainProgram.prototype.aMove = function()
 				{
 					if(characterobject.c3 != 0)
 					{
-						if((k3 + 47) >> 5 != (k3 + 47 + 4) >> 5)
-							l3 = ((l3 + 63) >> 5) * 32 - 64;
+						if(rightShiftIgnoreSign(k3 + 47, 5) != rightShiftIgnoreSign(k3 + 47 + 4, 5))
+							l3 = rightShiftIgnoreSign(l3 + 63, 5) * 32 - 64;
 						k3 += 4;
-						var flag10 = true;
-						var k15 = (k3 + 47) >> 5;
-						var j32 = (l3 + 63) >> 5;
+						var k15 = rightShiftIgnoreSign(k3 + 47, 5);
+						var j32 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[k15][j32] == 19 || this.maps.map_bg[k15][j32] == 18)
 							l3 = this.getSakamichiY(k3 + 47, l3 + 63) - 32;
 					} else
 					{
-						if((k3 + 47) >> 5 != ((k3 + 47) - 4) >> 5)
-							l3 = ((l3 + 63) >> 5) * 32 - 32;
+						if(rightShiftIgnoreSign(k3 + 47, 5) != rightShiftIgnoreSign((k3 + 47) - 4, 5))
+							l3 = rightShiftIgnoreSign(l3 + 63, 5) * 32 - 32;
 						k3 -= 4;
-						var byte6 = -1;
-						var l15 = (k3 + 47) >> 5;
-						var k32 = (l3 + 63) >> 5;
+						var l15 = rightShiftIgnoreSign(k3 + 47, 5);
+						var k32 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[l15][k32] == 19 || this.maps.map_bg[l15][k32] == 18)
 							l3 = this.getSakamichiY(k3 + 47, l3 + 63) - 32;
-						l15 = (k3 + 47) >> 5;
-						k32 = (l3 + 64) >> 5;
+						l15 = rightShiftIgnoreSign(k3 + 47, 5);
+						k32 = rightShiftIgnoreSign(l3 + 64, 5);
 						if(this.maps.map_bg[l15][k32] == 18)
 							l3 = this.getSakamichiY(k3 + 47, l3 + 64) - 32;
 					}
@@ -28695,16 +28658,15 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 0)
 				{
 					k3 -= 4;
-					var byte7 = -1;
-					var i16 = (k3 + 47) >> 5;
-					var l32 = (l3 + 64) >> 5;
+					var i16 = rightShiftIgnoreSign(k3 + 47, 5);
+					var l32 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[i16][l32] == 18)
 						l3 = this.getSakamichiY(k3 + 47, l3 + 64) - 32;
-					i16 = (k3 - 1) >> 5;
-					l32 = l3 >> 5;
-					var k55 = (l3 + 31) >> 5;
-					var k69 = (l3 + 63) >> 5;
-					if(this.maps.map_bg[(k3 + 16) >> 5][k69] == 19 || this.maps.map_bg[(k3 + 32) >> 5][k69] == 19)
+					i16 = rightShiftIgnoreSign(k3 - 1, 5);
+					l32 = rightShiftIgnoreSign(l3, 5);
+					var k55 = rightShiftIgnoreSign(l3 + 31, 5);
+					var k69 = rightShiftIgnoreSign(l3 + 63, 5);
+					if(this.maps.map_bg[rightShiftIgnoreSign(k3 + 16, 5)][k69] == 19 || this.maps.map_bg[rightShiftIgnoreSign(k3 + 32, 5)][k69] == 19)
 					{
 						if(this.maps.map_bg[i16][l32] >= 20)
 						{
@@ -28720,16 +28682,15 @@ MainProgram.prototype.aMove = function()
 				} else
 				{
 					k3 += 4;
-					var flag11 = true;
-					var j16 = (k3 + 47) >> 5;
-					var i33 = (l3 + 64) >> 5;
+					var j16 = rightShiftIgnoreSign(k3 + 47, 5);
+					var i33 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[j16][i33] == 19)
 						l3 = this.getSakamichiY(k3 + 47, l3 + 64) - 32;
-					j16 = (k3 + 96) >> 5;
-					i33 = l3 >> 5;
-					var l55 = (l3 + 31) >> 5;
-					var l69 = (l3 + 63) >> 5;
-					if(this.maps.map_bg[((k3 + 96) - 16) >> 5][l69] == 18 || this.maps.map_bg[((k3 + 96) - 32) >> 5][l69] == 18)
+					j16 = rightShiftIgnoreSign(k3 + 96, 5);
+					i33 = rightShiftIgnoreSign(l3, 5);
+					var l55 = rightShiftIgnoreSign(l3 + 31, 5);
+					var l69 = rightShiftIgnoreSign(l3 + 63, 5);
+					if(this.maps.map_bg[rightShiftIgnoreSign((k3 + 96) - 16, 5)][l69] == 18 || this.maps.map_bg[rightShiftIgnoreSign((k3 + 96) - 32, 5)][l69] == 18)
 					{
 						if(this.maps.map_bg[j16][i33] >= 20)
 						{
@@ -28757,11 +28718,11 @@ MainProgram.prototype.aMove = function()
 			} else
 			if(characterobject.c4 == 14)
 			{
-				var k16 = k3 >> 5;
-				var j33 = (k3 + 31) >> 5;
-				var i56 = (k3 + 63) >> 5;
-				var i70 = (k3 + 95) >> 5;
-				var j43 = (l3 + 64) >> 5;
+				var k16 = rightShiftIgnoreSign(k3, 5);
+				var j33 = rightShiftIgnoreSign(k3 + 31, 5);
+				var i56 = rightShiftIgnoreSign(k3 + 63, 5);
+				var i70 = rightShiftIgnoreSign(k3 + 95, 5);
+				var j43 = rightShiftIgnoreSign(l3 + 64, 5);
 				if(this.maps.map_bg[k16][j43] >= 18 || this.maps.map_bg[j33][j43] >= 18 || this.maps.map_bg[i56][j43] >= 18 || this.maps.map_bg[i70][j43] >= 18)
 				{
 					l3 = j43 * 32 - 64;
@@ -28770,7 +28731,7 @@ MainProgram.prototype.aMove = function()
 					{
 						if(j > 29)
 							break;
-						var k43 = (l3 + 63) >> 5;
+						var k43 = rightShiftIgnoreSign(l3 + 63, 5);
 						if(this.maps.map_bg[k16][k43] < 18 && this.maps.map_bg[j33][k43] < 18 && this.maps.map_bg[i56][k43] < 18 && this.maps.map_bg[i70][k43] < 18)
 							break;
 						l3 = k43 * 32 - 64;
@@ -28781,11 +28742,11 @@ MainProgram.prototype.aMove = function()
 				{
 					l3 += 4;
 					byte8 = 1;
-					var l16 = k3 >> 5;
-					var k33 = (k3 + 31) >> 5;
-					var j56 = (k3 + 63) >> 5;
-					var j70 = (k3 + 95) >> 5;
-					var l43 = (l3 + 64) >> 5;
+					var l16 = rightShiftIgnoreSign(k3, 5);
+					var k33 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j56 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j70 = rightShiftIgnoreSign(k3 + 95, 5);
+					var l43 = rightShiftIgnoreSign(l3 + 64, 5);
 					if(this.maps.map_bg[l16][l43] >= 18 || this.maps.map_bg[k33][l43] >= 18 || this.maps.map_bg[j56][l43] >= 18 || this.maps.map_bg[j70][l43] >= 18)
 					{
 						l3 = l43 * 32 - 64;
@@ -28809,11 +28770,11 @@ MainProgram.prototype.aMove = function()
 					characterobject.pt = 3400;
 				else
 					characterobject.pt = 400;
-				var i17 = k3 >> 5;
-				var l33 = (k3 + 31) >> 5;
-				var k56 = (k3 + 63) >> 5;
-				var k70 = (k3 + 95) >> 5;
-				var i44 = (l3 + 64) >> 5;
+				var i17 = rightShiftIgnoreSign(k3, 5);
+				var l33 = rightShiftIgnoreSign(k3 + 31, 5);
+				var k56 = rightShiftIgnoreSign(k3 + 63, 5);
+				var k70 = rightShiftIgnoreSign(k3 + 95, 5);
+				var i44 = rightShiftIgnoreSign(l3 + 64, 5);
 				if(characterobject.vx != 1)
 					if(this.maps.map_bg[i17][i44] >= 18 || this.maps.map_bg[l33][i44] >= 18 || this.maps.map_bg[k56][i44] >= 18 || this.maps.map_bg[k70][i44] >= 18)
 					{
@@ -28823,7 +28784,7 @@ MainProgram.prototype.aMove = function()
 						{
 							if(k > 29)
 								break;
-							var j44 = (l3 + 63) >> 5;
+							var j44 = rightShiftIgnoreSign(l3 + 63, 5);
 							if(this.maps.map_bg[i17][j44] < 18 && this.maps.map_bg[l33][j44] < 18 && this.maps.map_bg[k56][j44] < 18 && this.maps.map_bg[k70][j44] < 18)
 								break;
 							l3 = j44 * 32 - 64;
@@ -28850,11 +28811,11 @@ MainProgram.prototype.aMove = function()
 						{
 							l3 += 4;
 							byte8 = 1;
-							var j17 = k3 >> 5;
-							var i34 = (k3 + 31) >> 5;
-							var l56 = (k3 + 63) >> 5;
-							var l70 = (k3 + 95) >> 5;
-							var k44 = (l3 + 64) >> 5;
+							var j17 = rightShiftIgnoreSign(k3, 5);
+							var i34 = rightShiftIgnoreSign(k3 + 31, 5);
+							var l56 = rightShiftIgnoreSign(k3 + 63, 5);
+							var l70 = rightShiftIgnoreSign(k3 + 95, 5);
+							var k44 = rightShiftIgnoreSign(l3 + 64, 5);
 							if(this.maps.map_bg[j17][k44] >= 18 || this.maps.map_bg[i34][k44] >= 18 || this.maps.map_bg[l56][k44] >= 18 || this.maps.map_bg[l70][k44] >= 18)
 							{
 								l3 = k44 * 32 - 64;
@@ -28881,11 +28842,11 @@ MainProgram.prototype.aMove = function()
 				l3 += rounddown(characterobject.vy / 10);
 				if(characterobject.vy > -10 && characterobject.vy >= 10)
 				{
-					var k17 = k3 >> 5;
-					var j34 = (k3 + 31) >> 5;
-					var i57 = (k3 + 63) >> 5;
-					var i71 = (k3 + 95) >> 5;
-					var l44 = (l3 + 63) >> 5;
+					var k17 = rightShiftIgnoreSign(k3, 5);
+					var j34 = rightShiftIgnoreSign(k3 + 31, 5);
+					var i57 = rightShiftIgnoreSign(k3 + 63, 5);
+					var i71 = rightShiftIgnoreSign(k3 + 95, 5);
+					var l44 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[k17][l44] >= 20 || this.maps.map_bg[j34][l44] >= 20 || this.maps.map_bg[i57][l44] >= 20 || this.maps.map_bg[i71][l44] >= 20)
 					{
 						l3 = l44 * 32 - 64;
@@ -28910,17 +28871,17 @@ MainProgram.prototype.aMove = function()
 					this.co_j.x += k3 - characterobject.x;
 					if(k3 - characterobject.x > 0)
 					{
-						var l17 = (this.co_j.x + 15) >> 5;
-						var k34 = this.co_j.y >> 5;
-						var j57 = (this.co_j.y + 31) >> 5;
+						var l17 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var k34 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var j57 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[l17][k34] >= 20 || this.maps.map_bg[l17][j57] >= 20)
 							this.co_j.x = l17 * 32 - 16;
 					} else
 					if(k3 - characterobject.x < 0)
 					{
-						var i18 = (this.co_j.x + 15) >> 5;
-						var l34 = this.co_j.y >> 5;
-						var k57 = (this.co_j.y + 31) >> 5;
+						var i18 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var l34 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var k57 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[i18][l34] >= 20 || this.maps.map_bg[i18][k57] >= 20)
 							this.co_j.x = (i18 * 32 + 32) - 14;
 					}
@@ -28931,7 +28892,7 @@ MainProgram.prototype.aMove = function()
 						if(this.j_hashigo_f || this.gk.down_f && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) == 10)
 						{
 							this.co_j.c = 230;
-							this.co_j.x = ((this.co_j.x + 15) >> 5) * 32 + 11;
+							this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 + 11;
 							this.co_j.c1 = 0;
 							this.j_zan_f = false;
 							this.j_jet_c = 0;
@@ -28939,12 +28900,12 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(24);
 						} else
 						{
-							if(characterobject.c4 == 12 && this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5] == 18 && (this.co_j.x + 15) >> 5 != (k3 + 81 + 15) >> 5)
-								this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							if(characterobject.c4 == 12 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)] == 18 && rightShiftIgnoreSign(this.co_j.x + 15, 5) != rightShiftIgnoreSign(k3 + 81 + 15, 5))
+								this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.co_j.x = k3 + 81;
-							var j18 = (this.co_j.x + 15) >> 5;
-							var i35 = this.co_j.y >> 5;
-							var l57 = (this.co_j.y + 31) >> 5;
+							var j18 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+							var i35 = rightShiftIgnoreSign(this.co_j.y, 5);
+							var l57 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 							if(this.maps.map_bg[j18][i35] >= 20 || this.maps.map_bg[j18][l57] >= 20)
 							{
 								this.co_j.c = 230;
@@ -28960,7 +28921,7 @@ MainProgram.prototype.aMove = function()
 						if(this.j_hashigo_f || this.gk.down_f && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 32) == 10)
 						{
 							this.co_j.c = 230;
-							this.co_j.x = ((this.co_j.x + 15) >> 5) * 32 - 11;
+							this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32 - 11;
 							this.co_j.c1 = 0;
 							this.j_zan_f = false;
 							this.j_jet_c = 0;
@@ -28968,12 +28929,12 @@ MainProgram.prototype.aMove = function()
 							this.gs.rsAddSound(24);
 						} else
 						{
-							if(characterobject.c4 == 12 && this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 31) >> 5] == 19 && (this.co_j.x + 15) >> 5 != ((k3 - 16) + 15) >> 5)
-								this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							if(characterobject.c4 == 12 && this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 31, 5)] == 19 && rightShiftIgnoreSign(this.co_j.x + 15, 5) != rightShiftIgnoreSign((k3 - 16) + 15, 5))
+								this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.co_j.x = k3 - 16;
-							var k18 = (this.co_j.x + 15) >> 5;
-							var j35 = this.co_j.y >> 5;
-							var i58 = (this.co_j.y + 31) >> 5;
+							var k18 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+							var j35 = rightShiftIgnoreSign(this.co_j.y, 5);
+							var i58 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 							if(this.maps.map_bg[k18][j35] >= 20 || this.maps.map_bg[k18][i58] >= 20)
 							{
 								this.co_j.c = 230;
@@ -28995,11 +28956,11 @@ MainProgram.prototype.aMove = function()
 				l3 += rounddown(characterobject.vy / 10);
 				if(characterobject.vy <= -10)
 				{
-					var l18 = k3 >> 5;
-					var k35 = (k3 + 31) >> 5;
-					var j58 = (k3 + 63) >> 5;
-					var j71 = (k3 + 95) >> 5;
-					var i45 = l3 >> 5;
+					var l18 = rightShiftIgnoreSign(k3, 5);
+					var k35 = rightShiftIgnoreSign(k3 + 31, 5);
+					var j58 = rightShiftIgnoreSign(k3 + 63, 5);
+					var j71 = rightShiftIgnoreSign(k3 + 95, 5);
+					var i45 = rightShiftIgnoreSign(l3, 5);
 					if(this.maps.map_bg[l18][i45] >= 18 || this.maps.map_bg[k35][i45] >= 18 || this.maps.map_bg[j58][i45] >= 18 || this.maps.map_bg[j71][i45] >= 18)
 					{
 						l3 = i45 * 32 + 32;
@@ -29008,11 +28969,11 @@ MainProgram.prototype.aMove = function()
 				} else
 				if(characterobject.vy >= 10)
 				{
-					var i19 = k3 >> 5;
-					var l35 = (k3 + 31) >> 5;
-					var k58 = (k3 + 63) >> 5;
-					var k71 = (k3 + 95) >> 5;
-					var j45 = (l3 + 63) >> 5;
+					var i19 = rightShiftIgnoreSign(k3, 5);
+					var l35 = rightShiftIgnoreSign(k3 + 31, 5);
+					var k58 = rightShiftIgnoreSign(k3 + 63, 5);
+					var k71 = rightShiftIgnoreSign(k3 + 95, 5);
+					var j45 = rightShiftIgnoreSign(l3 + 63, 5);
 					if(this.maps.map_bg[i19][j45] >= 20 || this.maps.map_bg[l35][j45] >= 20 || this.maps.map_bg[k58][j45] >= 20 || this.maps.map_bg[k71][j45] >= 20)
 					{
 						l3 = j45 * 32 - 64;
@@ -29046,7 +29007,7 @@ MainProgram.prototype.aMove = function()
 					this.co_j.y = l3 - 32;
 					if(byte8 < 0 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20)
 					{
-						this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 						this.jShinu(3);
 					}
 				}
@@ -29064,9 +29025,9 @@ MainProgram.prototype.aMove = function()
 						}
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18)
 						{
-							this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.jShinu(3);
-							if(characterobject.c4 == 12 && (this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 32) >> 5] == 18 || this.maps.map_bg[(this.co_j.x + 15) >> 5][(this.co_j.y + 32) >> 5] == 19))
+							if(characterobject.c4 == 12 && (this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 32, 5)] == 18 || this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 32, 5)] == 19))
 								this.co_j.y = this.getSakamichiY(this.co_j.x + 15, this.co_j.y + 32);
 						}
 					}
@@ -29076,7 +29037,7 @@ MainProgram.prototype.aMove = function()
 						this.j_a_id = i;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20)
 						{
-							this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 							this.jShinu(3);
 						}
 					}
@@ -29130,7 +29091,7 @@ MainProgram.prototype.aMove = function()
 					l3 += characterobject.vy;
 					if(this.maps.getBGCode(k3 + 32, l3 + 13) >= 20)
 					{
-						l3 = ((l3 + 13) >> 5) * 32 - 14;
+						l3 = rightShiftIgnoreSign(l3 + 13, 5) * 32 - 14;
 						characterobject.c3 = 100;
 					}
 					if(l3 >= this.ochiru_y + 48)
@@ -29190,7 +29151,7 @@ MainProgram.prototype.aMove = function()
 			k3 += characterobject.vx;
 			if(this.maps.getBGCode(k3 + 63 + 16, l3) >= 20 || this.maps.getBGCode(k3 + 63 + 16, l3 + 32) >= 20)
 			{
-				k3 = ((k3 + 63 + 16) >> 5) * 32 - 64 - 16;
+				k3 = rightShiftIgnoreSign(k3 + 63 + 16, 5) * 32 - 64 - 16;
 				characterobject.vx = k3 - characterobject.x;
 				characterobject.c3 = 200;
 			}
@@ -29201,9 +29162,9 @@ MainProgram.prototype.aMove = function()
 					this.co_j.x += characterobject.vx;
 					if(characterobject.vx > 0)
 					{
-						var j19 = (this.co_j.x + 15) >> 5;
-						var i36 = this.co_j.y >> 5;
-						var l58 = (this.co_j.y + 31) >> 5;
+						var j19 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var i36 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var l58 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[j19][i36] >= 20 || this.maps.map_bg[j19][l58] >= 20)
 							this.co_j.x = j19 * 32 - 16;
 					}
@@ -29426,9 +29387,9 @@ MainProgram.prototype.aMove = function()
 				}
 				if(characterobject.c3 == 1 || characterobject.c3 == 11)
 				{
-					var k19 = k3 >> 5;
-					var j36 = (k3 + 32) >> 5;
-					var i59 = (l3 + characterobject.c4 + 1) >> 5;
+					var k19 = rightShiftIgnoreSign(k3, 5);
+					var j36 = rightShiftIgnoreSign(k3 + 32, 5);
+					var i59 = rightShiftIgnoreSign(l3 + characterobject.c4 + 1, 5);
 					if(this.maps.map_bg[k19][i59] >= 20 || this.maps.map_bg[j36][i59] >= 20)
 					{
 						characterobject.vx = 100;
@@ -29437,9 +29398,9 @@ MainProgram.prototype.aMove = function()
 				} else
 				if(characterobject.c3 == 2 || characterobject.c3 == 12)
 				{
-					var l19 = l3 >> 5;
-					var k36 = (l3 + 32) >> 5;
-					var j59 = (k3 - characterobject.c4 - 1) >> 5;
+					var l19 = rightShiftIgnoreSign(l3, 5);
+					var k36 = rightShiftIgnoreSign(l3 + 32, 5);
+					var j59 = rightShiftIgnoreSign(k3 - characterobject.c4 - 1, 5);
 					if(this.maps.map_bg[j59][l19] >= 20 || this.maps.map_bg[j59][k36] >= 20)
 					{
 						characterobject.vx = 100;
@@ -29448,9 +29409,9 @@ MainProgram.prototype.aMove = function()
 				} else
 				if(characterobject.c3 == 3 || characterobject.c3 == 13)
 				{
-					var i20 = l3 >> 5;
-					var l36 = (l3 + 32) >> 5;
-					var k59 = (k3 + characterobject.c4 + 1) >> 5;
+					var i20 = rightShiftIgnoreSign(l3, 5);
+					var l36 = rightShiftIgnoreSign(l3 + 32, 5);
+					var k59 = rightShiftIgnoreSign(k3 + characterobject.c4 + 1, 5);
 					if(this.maps.map_bg[k59][i20] >= 20 || this.maps.map_bg[k59][l36] >= 20)
 					{
 						characterobject.vx = 100;
@@ -29458,9 +29419,9 @@ MainProgram.prototype.aMove = function()
 					}
 				} else
 				{
-					var j20 = k3 >> 5;
-					var i37 = (k3 + 32) >> 5;
-					var l59 = (l3 - characterobject.c4 - 1) >> 5;
+					var j20 = rightShiftIgnoreSign(k3, 5);
+					var i37 = rightShiftIgnoreSign(k3 + 32, 5);
+					var l59 = rightShiftIgnoreSign(l3 - characterobject.c4 - 1, 5);
 					if(this.maps.map_bg[j20][l59] >= 18 || this.maps.map_bg[i37][l59] >= 18)
 					{
 						characterobject.vx = 100;
@@ -29520,10 +29481,10 @@ MainProgram.prototype.aMove = function()
 			if(characterobject.c3 == 0)
 			{
 				l3 -= 8;
-				var k20 = k3 >> 5;
-				var j37 = (k3 + 31) >> 5;
-				var i60 = (k3 + 63) >> 5;
-				var k45 = l3 >> 5;
+				var k20 = rightShiftIgnoreSign(k3, 5);
+				var j37 = rightShiftIgnoreSign(k3 + 31, 5);
+				var i60 = rightShiftIgnoreSign(k3 + 63, 5);
+				var k45 = rightShiftIgnoreSign(l3, 5);
 				if(this.maps.map_bg[k20][k45] >= 18 || this.maps.map_bg[j37][k45] >= 18 || this.maps.map_bg[i60][k45] >= 18)
 				{
 					l3 = k45 * 32 + 32;
@@ -29537,10 +29498,10 @@ MainProgram.prototype.aMove = function()
 			} else
 			{
 				l3 += 8;
-				var l20 = k3 >> 5;
-				var k37 = (k3 + 31) >> 5;
-				var j60 = (k3 + 63) >> 5;
-				var l45 = (l3 + 96) >> 5;
+				var l20 = rightShiftIgnoreSign(k3, 5);
+				var k37 = rightShiftIgnoreSign(k3 + 31, 5);
+				var j60 = rightShiftIgnoreSign(k3 + 63, 5);
+				var l45 = rightShiftIgnoreSign(l3 + 96, 5);
 				if(this.maps.map_bg[l20][l45] >= 18 || this.maps.map_bg[k37][l45] >= 18 || this.maps.map_bg[j60][l45] >= 18)
 				{
 					l3 = l45 * 32 - 96;
@@ -29568,10 +29529,10 @@ MainProgram.prototype.aMove = function()
 		case 1020: 
 			if(characterobject.c3 == 0)
 			{
-				var i21 = ((k3 -= 8) - 1) >> 5;
-				var l37 = l3 >> 5;
-				var k60 = (l3 + 31) >> 5;
-				var l71 = (l3 + 63) >> 5;
+				var i21 = rightShiftIgnoreSign((k3 -= 8) - 1, 5);
+				var l37 = rightShiftIgnoreSign(l3, 5);
+				var k60 = rightShiftIgnoreSign(l3 + 31, 5);
+				var l71 = rightShiftIgnoreSign(l3 + 63, 5);
 				if(this.maps.map_bg[i21][l37] >= 18 || this.maps.map_bg[i21][k60] >= 18 || this.maps.map_bg[i21][l71] >= 18)
 				{
 					k3 = i21 * 32 + 32;
@@ -29579,10 +29540,10 @@ MainProgram.prototype.aMove = function()
 				}
 			} else
 			{
-				var j21 = ((k3 += 8) + 96) >> 5;
-				var i38 = l3 >> 5;
-				var l60 = (l3 + 31) >> 5;
-				var i72 = (l3 + 63) >> 5;
+				var j21 = rightShiftIgnoreSign((k3 += 8) + 96, 5);
+				var i38 = rightShiftIgnoreSign(l3, 5);
+				var l60 = rightShiftIgnoreSign(l3 + 31, 5);
+				var i72 = rightShiftIgnoreSign(l3 + 63, 5);
 				if(this.maps.map_bg[j21][i38] >= 18 || this.maps.map_bg[j21][l60] >= 18 || this.maps.map_bg[j21][i72] >= 18)
 				{
 					k3 = j21 * 32 - 96;
@@ -29732,7 +29693,7 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 0)
 				{
 					characterobject.c3 = 1;
-					this.maps.putBGCode(k3 >> 5, l3 >> 5, 50);
+					this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 50);
 				}
 			} else
 			{
@@ -29746,7 +29707,6 @@ MainProgram.prototype.aMove = function()
 					if(this.co_j.y + 16 < j79 - 48 || this.co_j.y + 16 > l93 + 24)
 						this.j_rope_cf = false;
 					var j73 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 32);
-					var i91 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 184);
 					if(this.co_j.x + 16 < j73 - 32 - 76 || this.co_j.x + 16 > j73 + 32 + 76)
 						this.j_rope_cf = false;
 				} else
@@ -29825,8 +29785,8 @@ MainProgram.prototype.aMove = function()
 					if(characterobject.c4 == 3)
 					{
 						var i5 = 0;
-						var k91 = k3 >> 5;
-						var j94 = l3 >> 5;
+						var k91 = rightShiftIgnoreSign(k3, 5);
+						var j94 = rightShiftIgnoreSign(l3, 5);
 						var l79 = -10;
 						do
 						{
@@ -29837,7 +29797,7 @@ MainProgram.prototype.aMove = function()
 							{
 								if(l73 > 10)
 									break;
-								if(k91 + l73 >= 1 && k91 + l73 <= 180 && j94 + l79 >= 10 && j94 + l79 <= 39 && this.maps.map_bg[k91 + l73][j94 + l79] == 9)
+								if(k91 + l73 >= 1 && k91 + l73 <= this.mapWidth && j94 + l79 >= 10 && j94 + l79 <= this.mapHeight + 9 && this.maps.map_bg[k91 + l73][j94 + l79] == 9)
 								{
 									i5++;
 									break;
@@ -29857,7 +29817,7 @@ MainProgram.prototype.aMove = function()
 						var k1 = 0;
 						do
 						{
-							if(k1 > 229)
+							if(k1 > this.t_kazu)
 								break;
 							if((this.co_t[k1].c >= 100 || this.co_t[k1].c == 10) && this.co_t[k1].x <= k3 && this.co_t[k1].x >= k3 - 480)
 							{
@@ -29878,7 +29838,7 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 <= 101)
 				{
 					characterobject.pt = 0;
-					this.maps.putBGCode(k3 >> 5, l3 >> 5, 0);
+					this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 0);
 				} else
 				if(characterobject.c3 == 102)
 					characterobject.pt = 0;
@@ -30020,7 +29980,7 @@ MainProgram.prototype.aMove = function()
 			if(this.co_j.c >= 100 && this.co_j.c < 200 && this.j_v_c <= 0)
 			{
 				var k74 = rounddown((characterobject.vy * 64) / 100) - 64;
-				if(k3 - (k74 >> 1) <= this.co_j.x + 15 && k3 + 64 + (k74 >> 1) >= this.co_j.x + 15)
+				if(k3 - rightShiftIgnoreSign(k74, 1) <= this.co_j.x + 15 && k3 + 64 + rightShiftIgnoreSign(k74, 1) >= this.co_j.x + 15)
 					if(characterobject.c3 == 0)
 					{
 						if(l3 - k74 <= this.co_j.y + 31 && l3 + 63 >= this.co_j.y)
@@ -30031,7 +29991,7 @@ MainProgram.prototype.aMove = function()
 						if(l3 + 63 + k74 >= this.co_j.y && l3 <= this.co_j.y + 31)
 							this.jShinu(1);
 					} else
-					if(characterobject.c3 == 2 && l3 + 63 + (k74 >> 1) >= this.co_j.y && l3 - (k74 >> 1) <= this.co_j.y + 31)
+					if(characterobject.c3 == 2 && l3 + 63 + rightShiftIgnoreSign(k74, 1) >= this.co_j.y && l3 - rightShiftIgnoreSign(k74, 1) <= this.co_j.y + 31)
 						this.jShinu(1);
 			}
 			characterobject.pt = 2400;
@@ -30131,8 +30091,8 @@ MainProgram.prototype.aMove = function()
 						this.nkscroll_view_y = this.maps.wy;
 					} else
 					{
-						this.nkscroll_view_x = (this.maps.wx >> 1) * 2;
-						this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
+						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 						if(this.nkscroll_view_y < this.maps.wy_mini)
 							this.nkscroll_view_y = this.maps.wy_mini;
 						if(this.nkscroll_view_y > this.maps.wy_max)
@@ -30154,8 +30114,8 @@ MainProgram.prototype.aMove = function()
 						this.nkscroll_view_y = this.maps.wy;
 					} else
 					{
-						this.nkscroll_view_x = (this.maps.wx >> 1) * 2;
-						this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
+						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 						if(this.nkscroll_view_y < this.maps.wy_mini)
 							this.nkscroll_view_y = this.maps.wy_mini;
 						if(this.nkscroll_view_y > this.maps.wy_max)
@@ -30171,12 +30131,12 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
 						this.nkscroll_view_x = this.maps.wx_max;
-					this.nkscroll_view_y = (this.maps.wy >> 1) * 2;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
 					this.nkscroll_vx = 0;
 					this.nkscroll_vy = -1;
 					characterobject.c4 = 1;
@@ -30187,12 +30147,12 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
 						this.nkscroll_view_x = this.maps.wx_max;
-					this.nkscroll_view_y = (this.maps.wy >> 1) * 2;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
 					this.nkscroll_vx = 0;
 					this.nkscroll_vy = 1;
 					characterobject.c4 = 1;
@@ -30203,8 +30163,8 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
-					this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30223,8 +30183,8 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
-					this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30243,8 +30203,8 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
-					this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30263,8 +30223,8 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
-					this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30323,8 +30283,8 @@ MainProgram.prototype.aMove = function()
 						this.nkscroll_view_y = this.maps.wy;
 					} else
 					{
-						this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
-						this.nkscroll_view_y = ((this.maps.wy + 15) >> 5) * 32;
+						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
+						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
 						if(this.nkscroll_view_x < this.maps.wx_mini)
 							this.nkscroll_view_x = this.maps.wx_mini;
 						if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30344,7 +30304,7 @@ MainProgram.prototype.aMove = function()
 				if(k3 <= this.co_j.x + 15 && k3 + 31 >= this.co_j.x + 15 && l3 <= this.co_j.y + 31 && l3 + 31 >= this.co_j.y)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_x = (this.maps.wx >> 1) * 2;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
 					this.nkscroll_view_y = this.maps.wy;
 					this.nkscroll_vx = 1;
 					this.nkscroll_vy = 0;
@@ -30356,8 +30316,8 @@ MainProgram.prototype.aMove = function()
 				if(k3 <= this.co_j.x + 15 && k3 + 31 >= this.co_j.x + 15 && l3 <= this.co_j.y + 31 && l3 + 31 >= this.co_j.y)
 				{
 					this.nkscroll_con = 100;
-					this.nkscroll_view_y = (this.maps.wy >> 1) * 2;
-					this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
+					this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
 					if(this.nkscroll_view_x < this.maps.wx_mini)
 						this.nkscroll_view_x = this.maps.wx_mini;
 					if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30393,7 +30353,7 @@ MainProgram.prototype.aMove = function()
 					} else
 					{
 						this.nkscroll_view_y = this.maps.wy;
-						this.nkscroll_view_x = ((this.maps.wx + 15) >> 5) * 32;
+						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
 						if(this.nkscroll_view_x < this.maps.wx_mini)
 							this.nkscroll_view_x = this.maps.wx_mini;
 						if(this.nkscroll_view_x > this.maps.wx_max)
@@ -30409,7 +30369,7 @@ MainProgram.prototype.aMove = function()
 				if(k3 >= this.maps.wx && k3 <= (this.maps.wx + 512) - 32 && l3 >= this.maps.wy && l3 <= (this.maps.wy + 320) - 32)
 				{
 					this.nkscroll_con = 400;
-					this.nkscroll_view_x = (this.maps.wx >> 1) * 2;
+					this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
 					this.nkscroll_view_y = this.maps.wy;
 					this.nkscroll_vx = 1;
 					this.nkscroll_vy = 0;
@@ -30846,7 +30806,6 @@ MainProgram.prototype.aMove = function()
 				characterobject.gf = false;
 			}
 			this.souko_count1++;
-			var flag14 = false;
 			var l1 = 0;
 			do
 			{
@@ -31021,7 +30980,7 @@ MainProgram.prototype.aMove = function()
 				l3 += rounddown(characterobject.vy / 10);
 			if(this.maps.getBGCode(k3, l3 + characterobject.c5 + 1) >= 20)
 			{
-				l3 = ((l3 + characterobject.c5 + 1) >> 5) * 32 - characterobject.c5 - 1;
+				l3 = rightShiftIgnoreSign(l3 + characterobject.c5 + 1, 5) * 32 - characterobject.c5 - 1;
 				characterobject.vy = -92;
 			}
 			if(l3 - characterobject.c5 >= this.ochiru_y)
@@ -31074,13 +31033,13 @@ MainProgram.prototype.aMove = function()
 						characterobject.c3 = 1;
 						characterobject.pt = 3710;
 						this.gs.rsAddSound(23);
-						var k76 = k3 >> 5;
-						var j82 = l3 >> 5;
+						var k76 = rightShiftIgnoreSign(k3, 5);
+						var j82 = rightShiftIgnoreSign(l3, 5);
 						if(characterobject.c4 == 1)
 							this.onASwitch(k76 - 5, j82 - 5, k76 + 5, j82 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.onASwitch(1, 10, 180, 40, 2);
+							this.onASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.onASwitch(k76 - 10, j82 - 10, k76 + 10, j82 + 10);
 					}
@@ -31099,13 +31058,13 @@ MainProgram.prototype.aMove = function()
 						characterobject.c3 = 101;
 						characterobject.pt = 3700;
 						this.gs.rsAddSound(23);
-						var l76 = k3 >> 5;
-						var k82 = l3 >> 5;
+						var l76 = rightShiftIgnoreSign(k3, 5);
+						var k82 = rightShiftIgnoreSign(l3, 5);
 						if(characterobject.c4 == 1)
 							this.offASwitch(l76 - 5, k82 - 5, l76 + 5, k82 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.offASwitch(1, 10, 180, 40, 2);
+							this.offASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.offASwitch(l76 - 10, k82 - 10, l76 + 10, k82 + 10);
 					}
@@ -31131,13 +31090,13 @@ MainProgram.prototype.aMove = function()
 						characterobject.c3 = 100;
 						characterobject.pt = 3710;
 						this.gs.rsAddSound(23);
-						var i77 = k3 >> 5;
-						var l82 = l3 >> 5;
+						var i77 = rightShiftIgnoreSign(k3, 5);
+						var l82 = rightShiftIgnoreSign(l3, 5);
 						if(characterobject.c4 == 1)
 							this.onASwitch(i77 - 5, l82 - 5, i77 + 5, l82 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.onASwitch(1, 10, 180, 40, 2);
+							this.onASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.onASwitch(i77 - 10, l82 - 10, i77 + 10, l82 + 10);
 					}
@@ -31149,13 +31108,13 @@ MainProgram.prototype.aMove = function()
 						characterobject.c3 = 0;
 						characterobject.pt = 3700;
 						this.gs.rsAddSound(23);
-						var j77 = k3 >> 5;
-						var i83 = l3 >> 5;
+						var j77 = rightShiftIgnoreSign(k3, 5);
+						var i83 = rightShiftIgnoreSign(l3, 5);
 						if(characterobject.c4 == 1)
 							this.offASwitch(j77 - 5, i83 - 5, j77 + 5, i83 + 5);
 						else
 						if(characterobject.c4 == 2)
-							this.offASwitch(1, 10, 180, 40, 2);
+							this.offASwitch(1, 10, this.mapWidth, this.mapHeight + 10, 2);
 						else
 							this.offASwitch(j77 - 10, i83 - 10, j77 + 10, i83 + 10);
 					}
@@ -31320,7 +31279,7 @@ MainProgram.prototype.aMove = function()
 						{
 							this.dkey_count[0]--;
 							characterobject.c3 = 100;
-							this.maps.putBGCode(k3 >> 5, l3 >> 5, 31);
+							this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 31);
 							this.gs.rsAddSound(13);
 						}
 					} else
@@ -31330,7 +31289,7 @@ MainProgram.prototype.aMove = function()
 						{
 							this.dkey_count[1]--;
 							characterobject.c3 = 100;
-							this.maps.putBGCode(k3 >> 5, l3 >> 5, 31);
+							this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 31);
 							this.gs.rsAddSound(13);
 						}
 					} else
@@ -31340,7 +31299,7 @@ MainProgram.prototype.aMove = function()
 						{
 							this.dkey_count[0] -= 3;
 							characterobject.c3 = 100;
-							this.maps.putBGCode(k3 >> 5, l3 >> 5, 31);
+							this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 31);
 							this.gs.rsAddSound(13);
 						}
 					} else
@@ -31348,7 +31307,7 @@ MainProgram.prototype.aMove = function()
 					{
 						this.dkey_count[1] -= 3;
 						characterobject.c3 = 100;
-						this.maps.putBGCode(k3 >> 5, l3 >> 5, 31);
+						this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 31);
 						this.gs.rsAddSound(13);
 					}
 			} else
@@ -31358,23 +31317,23 @@ MainProgram.prototype.aMove = function()
 				if(characterobject.c3 == 102 || characterobject.c3 == 106)
 				{
 					if(characterobject.c4 == 0)
-						this.maps.putBGCode(k3 >> 5, l3 >> 5, 213);
+						this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 213);
 					else
 					if(characterobject.c4 == 1)
-						this.maps.putBGCode(k3 >> 5, l3 >> 5, 214);
+						this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 214);
 					else
 					if(characterobject.c4 == 2)
-						this.maps.putBGCode(k3 >> 5, l3 >> 5, 215);
+						this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 215);
 					else
 					if(characterobject.c4 == 3)
-						this.maps.putBGCode(k3 >> 5, l3 >> 5, 212);
+						this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 212);
 				} else
 				if(characterobject.c3 == 104)
-					this.maps.putBGCode(k3 >> 5, l3 >> 5, 31);
+					this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 31);
 				else
 				if(characterobject.c3 >= 108)
 				{
-					this.maps.putBGCode(k3 >> 5, l3 >> 5, 0);
+					this.maps.putBGCode(rightShiftIgnoreSign(k3, 5), rightShiftIgnoreSign(l3, 5), 0);
 					characterobject.c = 0;
 				}
 			}
@@ -31408,7 +31367,7 @@ MainProgram.prototype.aMove = function()
 				characterobject.c3 = 1;
 			else
 			if(((l3 += 4) + 31) % 32 <= 4 && this.maps.getBGCode(k3 + 15, l3 + 31) >= 20)
-				l3 = ((l3 + 31) >> 5) * 32 - 32;
+				l3 = rightShiftIgnoreSign(l3 + 31, 5) * 32 - 32;
 			else
 			if(l3 >= this.ochiru_y)
 			{
@@ -31451,8 +31410,8 @@ MainProgram.prototype.aMove = function()
 						characterobject.pt = 0;
 						this.mSet(k3, l3, 65);
 						characterobject.gf = false;
-						var k77 = k3 >> 5;
-						var j83 = l3 >> 5;
+						var k77 = rightShiftIgnoreSign(k3, 5);
+						var j83 = rightShiftIgnoreSign(l3, 5);
 						if(characterobject.c4 == 1)
 							this.onASwitch(k77 - 5, j83 - 5, k77 + 5, j83 + 5);
 						else
@@ -31465,8 +31424,8 @@ MainProgram.prototype.aMove = function()
 					{
 						characterobject.c = 0;
 						characterobject.gf = false;
-						var l77 = k3 >> 5;
-						var k83 = l3 >> 5;
+						var l77 = rightShiftIgnoreSign(k3, 5);
+						var k83 = rightShiftIgnoreSign(l3, 5);
 						if(this.maps.map_bg[l77][k83 - 1] == 4)
 							this.maps.putBGCode(l77, k83, 4);
 						else
@@ -31485,8 +31444,8 @@ MainProgram.prototype.aMove = function()
 			characterobject.pt = 0;
 			if(characterobject.c3 == 0)
 			{
-				var i78 = k3 >> 5;
-				var l83 = l3 >> 5;
+				var i78 = rightShiftIgnoreSign(k3, 5);
+				var l83 = rightShiftIgnoreSign(l3, 5);
 				for(var i2 = 0; i2 <= 3 && (this.maps.map_bg[i78][l83 + i2] == 0 || this.maps.map_bg[i78][l83 + i2] == 4); i2++)
 					this.maps.putBGCode(i78, l83 + i2, 23);
 
@@ -31496,8 +31455,8 @@ MainProgram.prototype.aMove = function()
 			{
 				if(characterobject.c5 == 1)
 				{
-					var j78 = k3 >> 5;
-					var i84 = l3 >> 5;
+					var j78 = rightShiftIgnoreSign(k3, 5);
+					var i84 = rightShiftIgnoreSign(l3, 5);
 					for(var j2 = 0; j2 <= 3 && this.maps.map_bg[j78][i84 + j2] == 23; j2++)
 						this.maps.putBGCode(j78, i84 + j2, 0);
 
@@ -31506,8 +31465,8 @@ MainProgram.prototype.aMove = function()
 			} else
 			if(characterobject.c5 == 0)
 			{
-				var k78 = k3 >> 5;
-				var j84 = l3 >> 5;
+				var k78 = rightShiftIgnoreSign(k3, 5);
+				var j84 = rightShiftIgnoreSign(l3, 5);
 				for(var k2 = 0; k2 <= 3 && (this.maps.map_bg[k78][j84 + k2] == 0 || this.maps.map_bg[k78][j84 + k2] == 4); k2++)
 					this.maps.putBGCode(k78, j84 + k2, 23);
 
@@ -31523,8 +31482,8 @@ MainProgram.prototype.aMove = function()
 			{
 				if(characterobject.c5 == 1)
 				{
-					var l78 = k3 >> 5;
-					var k84 = l3 >> 5;
+					var l78 = rightShiftIgnoreSign(k3, 5);
+					var k84 = rightShiftIgnoreSign(l3, 5);
 					for(var l2 = 0; l2 <= 3 && (this.maps.map_bg[l78][k84 + l2] == 0 || this.maps.map_bg[l78][k84 + l2] == 4); l2++)
 						this.maps.putBGCode(l78, k84 + l2, 23);
 
@@ -31533,8 +31492,8 @@ MainProgram.prototype.aMove = function()
 			} else
 			if(characterobject.c5 == 0)
 			{
-				var i79 = k3 >> 5;
-				var l84 = l3 >> 5;
+				var i79 = rightShiftIgnoreSign(k3, 5);
+				var l84 = rightShiftIgnoreSign(l3, 5);
 				for(var i3 = 0; i3 <= 3 && this.maps.map_bg[i79][l84 + i3] == 23; i3++)
 					this.maps.putBGCode(i79, l84 + i3, 0);
 
@@ -31670,6 +31629,11 @@ MainProgram.prototype.aMove = function()
 	}
 }
 
+/**
+ * 仕掛けの更新処理のうち一部の仕掛けの処理を行う {@link MainProgram#aMove}から呼び出される
+ * @param i {number} 更新する仕掛けのco_a内のインデックス
+ * @see {@link MainProgram#aMove}
+ */
 MainProgram.prototype.aMoveOption = function(i)
 {
 	var characterobject = this.co_a[i];
@@ -31772,7 +31736,7 @@ MainProgram.prototype.aMoveOption = function(i)
 				this.co_j.y = k - 32;
 			if(k < characterobject.y && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 18)
 			{
-				this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+				this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 				this.jShinu(3);
 			}
 			if(this.co_j.x + 15 >= j && this.co_j.x <= j + 64 && this.co_j.y + 31 >= k && this.co_j.y <= k + 13)
@@ -31783,7 +31747,7 @@ MainProgram.prototype.aMoveOption = function(i)
 						this.j_hashigo_f = true;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18)
 					{
-						this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 						this.jShinu(3);
 					}
 				} else
@@ -31887,17 +31851,17 @@ MainProgram.prototype.aMoveOption = function(i)
 			this.co_j.x += j - characterobject.x;
 			if(j > characterobject.x)
 			{
-				var l = (this.co_j.x + 15) >> 5;
-				var k3 = this.co_j.y >> 5;
-				var l5 = (this.co_j.y + 31) >> 5;
+				var l = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+				var k3 = rightShiftIgnoreSign(this.co_j.y, 5);
+				var l5 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 				if(this.maps.map_bg[l][k3] >= 18 || this.maps.map_bg[l][l5] >= 18)
 					this.co_j.x = l * 32 - 16;
 			} else
 			if(j < characterobject.x)
 			{
-				var i1 = (this.co_j.x + 15) >> 5;
-				var l3 = this.co_j.y >> 5;
-				var i6 = (this.co_j.y + 31) >> 5;
+				var i1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+				var l3 = rightShiftIgnoreSign(this.co_j.y, 5);
+				var i6 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 				if(this.maps.map_bg[i1][l3] >= 18 || this.maps.map_bg[i1][i6] >= 18)
 					this.co_j.x = (i1 * 32 + 32) - 14;
 			}
@@ -31907,9 +31871,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		if(j > characterobject.x)
 		{
 			this.co_j.x = j + 65;
-			var j1 = (this.co_j.x + 15) >> 5;
-			var i4 = this.co_j.y >> 5;
-			var j6 = (this.co_j.y + 31) >> 5;
+			var j1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+			var i4 = rightShiftIgnoreSign(this.co_j.y, 5);
+			var j6 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 			if(this.maps.map_bg[j1][i4] >= 20 || this.maps.map_bg[j1][j6] >= 20)
 			{
 				this.co_j.x = (j1 * 32 - 32) + 11;
@@ -31918,9 +31882,9 @@ MainProgram.prototype.aMoveOption = function(i)
 			break;
 		}
 		this.co_j.x = j - 16;
-		var k1 = (this.co_j.x + 15) >> 5;
-		var j4 = this.co_j.y >> 5;
-		var k6 = (this.co_j.y + 31) >> 5;
+		var k1 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+		var j4 = rightShiftIgnoreSign(this.co_j.y, 5);
+		var k6 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		if(this.maps.map_bg[k1][j4] >= 20 || this.maps.map_bg[k1][k6] >= 20)
 		{
 			this.co_j.x = (k1 * 32 + 32) - 11;
@@ -31934,21 +31898,21 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.pt = 0;
 		if(characterobject.c3 == 0)
 		{
-			this.maps.putBGCode(j >> 5, k >> 5, 213);
+			this.maps.putBGCode(rightShiftIgnoreSign(j, 5), rightShiftIgnoreSign(k, 5), 213);
 			characterobject.c3 = 100;
 		}
 		if(characterobject.c3 == 100)
 		{
 			if(characterobject.c5 == 1)
 			{
-				this.maps.putBGCode(j >> 5, k >> 5, 0);
+				this.maps.putBGCode(rightShiftIgnoreSign(j, 5), rightShiftIgnoreSign(k, 5), 0);
 				characterobject.c3 = 200;
 			}
 			break;
 		}
 		if(characterobject.c5 == 0)
 		{
-			this.maps.putBGCode(j >> 5, k >> 5, 213);
+			this.maps.putBGCode(rightShiftIgnoreSign(j, 5), rightShiftIgnoreSign(k, 5), 213);
 			characterobject.c3 = 100;
 		}
 		break;
@@ -31961,14 +31925,14 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 == 1)
 			{
-				this.maps.putBGCode(j >> 5, k >> 5, 214);
+				this.maps.putBGCode(rightShiftIgnoreSign(j, 5), rightShiftIgnoreSign(k, 5), 214);
 				characterobject.c3 = 200;
 			}
 			break;
 		}
 		if(characterobject.c5 == 0)
 		{
-			this.maps.putBGCode(j >> 5, k >> 5, 0);
+			this.maps.putBGCode(rightShiftIgnoreSign(j, 5), rightShiftIgnoreSign(k, 5), 0);
 			characterobject.c3 = 100;
 		}
 		break;
@@ -31979,9 +31943,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.pt = 0;
 		if(characterobject.c3 == 0)
 		{
-			var l7 = j >> 5;
-			var l13 = k >> 5;
-			for(var l19 = 0; l19 <= 3 && l7 + l19 <= 180 && (this.maps.map_bg[l7 + l19][l13] == 0 || this.maps.map_bg[l7 + l19][l13] == 4); l19++)
+			var l7 = rightShiftIgnoreSign(j, 5);
+			var l13 = rightShiftIgnoreSign(k, 5);
+			for(var l19 = 0; l19 <= 3 && l7 + l19 <= this.mapWidth && (this.maps.map_bg[l7 + l19][l13] == 0 || this.maps.map_bg[l7 + l19][l13] == 4); l19++)
 				this.maps.putBGCode(l7 + l19, l13, 5);
 
 			characterobject.c3 = 100;
@@ -31990,9 +31954,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var i8 = j >> 5;
-			var i14 = k >> 5;
-			for(var i20 = 0; i20 <= 3 && i8 + i20 <= 180 && (this.maps.map_bg[i8 + i20][i14] == 0 || this.maps.map_bg[i8 + i20][i14] == 4 || this.maps.map_bg[i8 + i20][i14] == 5); i20++)
+			var i8 = rightShiftIgnoreSign(j, 5);
+			var i14 = rightShiftIgnoreSign(k, 5);
+			for(var i20 = 0; i20 <= 3 && i8 + i20 <= this.mapWidth && (this.maps.map_bg[i8 + i20][i14] == 0 || this.maps.map_bg[i8 + i20][i14] == 4 || this.maps.map_bg[i8 + i20][i14] == 5); i20++)
 				this.maps.putBGCode(i8 + i20, i14, 23);
 
 			characterobject.c3 = 200;
@@ -32000,9 +31964,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var j8 = j >> 5;
-		var j14 = k >> 5;
-		for(var j20 = 0; j20 <= 3 && j8 + j20 <= 180 && (this.maps.map_bg[j8 + j20][j14] == 0 || this.maps.map_bg[j8 + j20][j14] == 4 || this.maps.map_bg[j8 + j20][j14] == 23); j20++)
+		var j8 = rightShiftIgnoreSign(j, 5);
+		var j14 = rightShiftIgnoreSign(k, 5);
+		for(var j20 = 0; j20 <= 3 && j8 + j20 <= this.mapWidth && (this.maps.map_bg[j8 + j20][j14] == 0 || this.maps.map_bg[j8 + j20][j14] == 4 || this.maps.map_bg[j8 + j20][j14] == 23); j20++)
 			this.maps.putBGCode(j8 + j20, j14, 5);
 
 		characterobject.c3 = 100;
@@ -32014,9 +31978,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.pt = 0;
 		if(characterobject.c3 == 0)
 		{
-			var k8 = j >> 5;
-			var k14 = k >> 5;
-			for(var k20 = 0; k20 <= 3 && k8 + k20 <= 180 && (this.maps.map_bg[k8 + k20][k14] == 0 || this.maps.map_bg[k8 + k20][k14] == 4); k20++)
+			var k8 = rightShiftIgnoreSign(j, 5);
+			var k14 = rightShiftIgnoreSign(k, 5);
+			for(var k20 = 0; k20 <= 3 && k8 + k20 <= this.mapWidth && (this.maps.map_bg[k8 + k20][k14] == 0 || this.maps.map_bg[k8 + k20][k14] == 4); k20++)
 				this.maps.putBGCode(k8 + k20, k14, 23);
 
 			characterobject.c3 = 100;
@@ -32025,9 +31989,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var l8 = j >> 5;
-			var l14 = k >> 5;
-			for(var l20 = 0; l20 <= 3 && l8 + l20 <= 180 && (this.maps.map_bg[l8 + l20][l14] == 0 || this.maps.map_bg[l8 + l20][l14] == 4 || this.maps.map_bg[l8 + l20][l14] == 23); l20++)
+			var l8 = rightShiftIgnoreSign(j, 5);
+			var l14 = rightShiftIgnoreSign(k, 5);
+			for(var l20 = 0; l20 <= 3 && l8 + l20 <= this.mapWidth && (this.maps.map_bg[l8 + l20][l14] == 0 || this.maps.map_bg[l8 + l20][l14] == 4 || this.maps.map_bg[l8 + l20][l14] == 23); l20++)
 				this.maps.putBGCode(l8 + l20, l14, 5);
 
 			characterobject.c3 = 200;
@@ -32035,9 +31999,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var i9 = j >> 5;
-		var i15 = k >> 5;
-		for(var i21 = 0; i21 <= 3 && i9 + i21 <= 180 && (this.maps.map_bg[i9 + i21][i15] == 0 || this.maps.map_bg[i9 + i21][i15] == 4 || this.maps.map_bg[i9 + i21][i15] == 5); i21++)
+		var i9 = rightShiftIgnoreSign(j, 5);
+		var i15 = rightShiftIgnoreSign(k, 5);
+		for(var i21 = 0; i21 <= 3 && i9 + i21 <= this.mapWidth && (this.maps.map_bg[i9 + i21][i15] == 0 || this.maps.map_bg[i9 + i21][i15] == 4 || this.maps.map_bg[i9 + i21][i15] == 5); i21++)
 			this.maps.putBGCode(i9 + i21, i15, 23);
 
 		characterobject.c3 = 100;
@@ -32049,9 +32013,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.pt = 0;
 		if(characterobject.c3 == 0)
 		{
-			var j9 = j >> 5;
-			var j15 = k >> 5;
-			for(var j21 = 0; j21 <= 3 && j9 + j21 <= 180 && (this.maps.map_bg[j9 + j21][j15] == 0 || this.maps.map_bg[j9 + j21][j15] == 4); j21++)
+			var j9 = rightShiftIgnoreSign(j, 5);
+			var j15 = rightShiftIgnoreSign(k, 5);
+			for(var j21 = 0; j21 <= 3 && j9 + j21 <= this.mapWidth && (this.maps.map_bg[j9 + j21][j15] == 0 || this.maps.map_bg[j9 + j21][j15] == 4); j21++)
 				this.maps.putBGCode(j9 + j21, j15, 6);
 
 			characterobject.c3 = 100;
@@ -32060,9 +32024,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var k9 = j >> 5;
-			var k15 = k >> 5;
-			for(var k21 = 0; k21 <= 3 && k9 + k21 <= 180 && this.maps.map_bg[k9 + k21][k15] == 6; k21++)
+			var k9 = rightShiftIgnoreSign(j, 5);
+			var k15 = rightShiftIgnoreSign(k, 5);
+			for(var k21 = 0; k21 <= 3 && k9 + k21 <= this.mapWidth && this.maps.map_bg[k9 + k21][k15] == 6; k21++)
 				this.maps.putBGCode(k9 + k21, k15, 0);
 
 			characterobject.c3 = 200;
@@ -32070,9 +32034,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var l9 = j >> 5;
-		var l15 = k >> 5;
-		for(var l21 = 0; l21 <= 3 && l9 + l21 <= 180 && (this.maps.map_bg[l9 + l21][l15] == 0 || this.maps.map_bg[l9 + l21][l15] == 4); l21++)
+		var l9 = rightShiftIgnoreSign(j, 5);
+		var l15 = rightShiftIgnoreSign(k, 5);
+		for(var l21 = 0; l21 <= 3 && l9 + l21 <= this.mapWidth && (this.maps.map_bg[l9 + l21][l15] == 0 || this.maps.map_bg[l9 + l21][l15] == 4); l21++)
 			this.maps.putBGCode(l9 + l21, l15, 6);
 
 		characterobject.c3 = 100;
@@ -32086,9 +32050,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var i10 = j >> 5;
-			var i16 = k >> 5;
-			for(var i22 = 0; i22 <= 3 && i10 + i22 <= 180 && (this.maps.map_bg[i10 + i22][i16] == 0 || this.maps.map_bg[i10 + i22][i16] == 4); i22++)
+			var i10 = rightShiftIgnoreSign(j, 5);
+			var i16 = rightShiftIgnoreSign(k, 5);
+			for(var i22 = 0; i22 <= 3 && i10 + i22 <= this.mapWidth && (this.maps.map_bg[i10 + i22][i16] == 0 || this.maps.map_bg[i10 + i22][i16] == 4); i22++)
 				this.maps.putBGCode(i10 + i22, i16, 6);
 
 			characterobject.c3 = 200;
@@ -32096,9 +32060,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var j10 = j >> 5;
-		var j16 = k >> 5;
-		for(var j22 = 0; j22 <= 3 && j10 + j22 <= 180 && this.maps.map_bg[j10 + j22][j16] == 6; j22++)
+		var j10 = rightShiftIgnoreSign(j, 5);
+		var j16 = rightShiftIgnoreSign(k, 5);
+		for(var j22 = 0; j22 <= 3 && j10 + j22 <= this.mapWidth && this.maps.map_bg[j10 + j22][j16] == 6; j22++)
 			this.maps.putBGCode(j10 + j22, j16, 0);
 
 		characterobject.c3 = 100;
@@ -32110,9 +32074,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.pt = 0;
 		if(characterobject.c3 == 0)
 		{
-			var k10 = j >> 5;
-			var k16 = k >> 5;
-			for(var k22 = 0; k22 <= 9 && k16 + k22 <= 39 && (this.maps.map_bg[k10][k16 + k22] == 0 || this.maps.map_bg[k10][k16 + k22] == 4); k22++)
+			var k10 = rightShiftIgnoreSign(j, 5);
+			var k16 = rightShiftIgnoreSign(k, 5);
+			for(var k22 = 0; k22 <= 9 && k16 + k22 <= this.mapHeight + 9 && (this.maps.map_bg[k10][k16 + k22] == 0 || this.maps.map_bg[k10][k16 + k22] == 4); k22++)
 				this.maps.putBGCode(k10, k16 + k22, 10);
 
 			characterobject.c3 = 100;
@@ -32121,9 +32085,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var l10 = j >> 5;
-			var l16 = k >> 5;
-			for(var l22 = 0; l22 <= 9 && l16 + l22 <= 39 && this.maps.map_bg[l10][l16 + l22] == 10; l22++)
+			var l10 = rightShiftIgnoreSign(j, 5);
+			var l16 = rightShiftIgnoreSign(k, 5);
+			for(var l22 = 0; l22 <= 9 && l16 + l22 <= this.mapHeight + 9 && this.maps.map_bg[l10][l16 + l22] == 10; l22++)
 				this.maps.putBGCode(l10, l16 + l22, 0);
 
 			characterobject.c3 = 200;
@@ -32131,9 +32095,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var i11 = j >> 5;
-		var i17 = k >> 5;
-		for(var i23 = 0; i23 <= 9 && i17 + i23 <= 39 && (this.maps.map_bg[i11][i17 + i23] == 0 || this.maps.map_bg[i11][i17 + i23] == 4); i23++)
+		var i11 = rightShiftIgnoreSign(j, 5);
+		var i17 = rightShiftIgnoreSign(k, 5);
+		for(var i23 = 0; i23 <= 9 && i17 + i23 <= this.mapHeight + 9 && (this.maps.map_bg[i11][i17 + i23] == 0 || this.maps.map_bg[i11][i17 + i23] == 4); i23++)
 			this.maps.putBGCode(i11, i17 + i23, 10);
 
 		characterobject.c3 = 100;
@@ -32147,9 +32111,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var j11 = j >> 5;
-			var j17 = k >> 5;
-			for(var j23 = 0; j23 <= 9 && j17 + j23 <= 39 && (this.maps.map_bg[j11][j17 + j23] == 0 || this.maps.map_bg[j11][j17 + j23] == 4); j23++)
+			var j11 = rightShiftIgnoreSign(j, 5);
+			var j17 = rightShiftIgnoreSign(k, 5);
+			for(var j23 = 0; j23 <= 9 && j17 + j23 <= this.mapHeight + 9 && (this.maps.map_bg[j11][j17 + j23] == 0 || this.maps.map_bg[j11][j17 + j23] == 4); j23++)
 				this.maps.putBGCode(j11, j17 + j23, 10);
 
 			characterobject.c3 = 200;
@@ -32157,9 +32121,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var k11 = j >> 5;
-		var k17 = k >> 5;
-		for(var k23 = 0; k23 <= 9 && k17 + k23 <= 39 && this.maps.map_bg[k11][k17 + k23] == 10; k23++)
+		var k11 = rightShiftIgnoreSign(j, 5);
+		var k17 = rightShiftIgnoreSign(k, 5);
+		for(var k23 = 0; k23 <= 9 && k17 + k23 <= this.mapHeight + 9 && this.maps.map_bg[k11][k17 + k23] == 10; k23++)
 			this.maps.putBGCode(k11, k17 + k23, 0);
 
 		characterobject.c3 = 100;
@@ -32698,9 +32662,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.pt = 0;
 		if(characterobject.c3 == 0)
 		{
-			var l11 = j >> 5;
-			var l17 = k >> 5;
-			for(var l23 = 0; l23 <= 3 && l11 + l23 <= 180 && (this.maps.map_bg[l11 + l23][l17] == 0 || this.maps.map_bg[l11 + l23][l17] == 4); l23++)
+			var l11 = rightShiftIgnoreSign(j, 5);
+			var l17 = rightShiftIgnoreSign(k, 5);
+			for(var l23 = 0; l23 <= 3 && l11 + l23 <= this.mapWidth && (this.maps.map_bg[l11 + l23][l17] == 0 || this.maps.map_bg[l11 + l23][l17] == 4); l23++)
 				this.maps.putBGCode(l11 + l23, l17, 23);
 
 			characterobject.c3 = 100;
@@ -32709,9 +32673,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var i12 = j >> 5;
-			var i18 = k >> 5;
-			for(var i24 = 0; i24 <= 3 && i12 + i24 <= 180 && this.maps.map_bg[i12 + i24][i18] == 23; i24++)
+			var i12 = rightShiftIgnoreSign(j, 5);
+			var i18 = rightShiftIgnoreSign(k, 5);
+			for(var i24 = 0; i24 <= 3 && i12 + i24 <= this.mapWidth && this.maps.map_bg[i12 + i24][i18] == 23; i24++)
 				this.maps.putBGCode(i12 + i24, i18, 0);
 
 			characterobject.c3 = 200;
@@ -32719,9 +32683,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var j12 = j >> 5;
-		var j18 = k >> 5;
-		for(var j24 = 0; j24 <= 3 && j12 + j24 <= 180 && (this.maps.map_bg[j12 + j24][j18] == 0 || this.maps.map_bg[j12 + j24][j18] == 4); j24++)
+		var j12 = rightShiftIgnoreSign(j, 5);
+		var j18 = rightShiftIgnoreSign(k, 5);
+		for(var j24 = 0; j24 <= 3 && j12 + j24 <= this.mapWidth && (this.maps.map_bg[j12 + j24][j18] == 0 || this.maps.map_bg[j12 + j24][j18] == 4); j24++)
 			this.maps.putBGCode(j12 + j24, j18, 23);
 
 		characterobject.c3 = 100;
@@ -32735,9 +32699,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		{
 			if(characterobject.c5 != 1)
 				break;
-			var k12 = j >> 5;
-			var k18 = k >> 5;
-			for(var k24 = 0; k24 <= 3 && k12 + k24 <= 180 && (this.maps.map_bg[k12 + k24][k18] == 0 || this.maps.map_bg[k12 + k24][k18] == 4); k24++)
+			var k12 = rightShiftIgnoreSign(j, 5);
+			var k18 = rightShiftIgnoreSign(k, 5);
+			for(var k24 = 0; k24 <= 3 && k12 + k24 <= this.mapWidth && (this.maps.map_bg[k12 + k24][k18] == 0 || this.maps.map_bg[k12 + k24][k18] == 4); k24++)
 				this.maps.putBGCode(k12 + k24, k18, 23);
 
 			characterobject.c3 = 200;
@@ -32745,9 +32709,9 @@ MainProgram.prototype.aMoveOption = function(i)
 		}
 		if(characterobject.c5 != 0)
 			break;
-		var l12 = j >> 5;
-		var l18 = k >> 5;
-		for(var l24 = 0; l24 <= 3 && l12 + l24 <= 180 && this.maps.map_bg[l12 + l24][l18] == 23; l24++)
+		var l12 = rightShiftIgnoreSign(j, 5);
+		var l18 = rightShiftIgnoreSign(k, 5);
+		for(var l24 = 0; l24 <= 3 && l12 + l24 <= this.mapWidth && this.maps.map_bg[l12 + l24][l18] == 23; l24++)
 			this.maps.putBGCode(l12 + l24, l18, 0);
 
 		characterobject.c3 = 100;
@@ -33074,8 +33038,8 @@ MainProgram.prototype.aMoveOption = function(i)
 						this.km.activeSerifu(8, 8, 86, 252, Color.cyan);
 						this.dkey_count[0] -= l2;
 						this.gs.rsAddSound(13);
-						var i13 = j >> 5;
-						var i19 = k >> 5;
+						var i13 = rightShiftIgnoreSign(j, 5);
+						var i19 = rightShiftIgnoreSign(k, 5);
 						this.onASwitch(i13 - 10, i19 - 10, i13 + 10, i19 + 10);
 						this.km.mode = 230;
 						characterobject.c3 = 1;
@@ -33225,8 +33189,8 @@ MainProgram.prototype.aMoveOption = function(i)
 						this.km.activeSerifu(8, 8, 86, 252, Color.cyan);
 						this.dkey_count[1] -= i3;
 						this.gs.rsAddSound(13);
-						var j13 = j >> 5;
-						var j19 = k >> 5;
+						var j13 = rightShiftIgnoreSign(j, 5);
+						var j19 = rightShiftIgnoreSign(k, 5);
 						this.onASwitch(j13 - 10, j19 - 10, j13 + 10, j19 + 10);
 						this.km.mode = 230;
 						characterobject.c3 = 1;
@@ -33288,8 +33252,8 @@ MainProgram.prototype.aMoveOption = function(i)
 		characterobject.c3++;
 		if(characterobject.c3 < 108)
 			break;
-		var k13 = j >> 5;
-		var k19 = k >> 5;
+		var k13 = rightShiftIgnoreSign(j, 5);
+		var k19 = rightShiftIgnoreSign(k, 5);
 		if(this.maps.map_bg[k13][k19 - 1] == 4)
 			this.maps.putBGCode(k13, k19, 4);
 		else
@@ -33460,6 +33424,14 @@ MainProgram.prototype.aMoveOption = function(i)
 	characterobject.y = k;
 }
 
+/**
+ * 範囲内に存在するスイッチ式の仕掛けをON状態にする
+ * @param x1 {number} 始点X座標 (ブロック座標)
+ * @param y1 {number} 始点Y座標 (プロック座標)
+ * @param x2 {number} 終点X座標 (プロック座標)
+ * @param y2 {number} 終点Y座標 (プロック座標)
+ * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
+ */
 MainProgram.prototype.onASwitch = function(i, j, k, l, i1)
 {
 	if(arguments.length == 4) i1 = 1;
@@ -33468,29 +33440,39 @@ MainProgram.prototype.onASwitch = function(i, j, k, l, i1)
 		var k2 = this.co_a[j1].c;
 		if(k2 == 3700 || k2 == 3710 || k2 == 3800 || k2 == 3810 || k2 == 3900 || k2 == 3910 || k2 == 4000 || k2 == 4010 || k2 == 4100 || k2 == 4110 || k2 == 4200 || k2 == 4210 || k2 == 4300 || k2 == 4400 || k2 == 4410 || k2 == 4500 || k2 == 5200 || k2 == 5210)
 		{
-			var k1 = this.co_a[j1].x >> 5;
-			var i2 = this.co_a[j1].y >> 5;
+			var k1 = rightShiftIgnoreSign(this.co_a[j1].x, 5);
+			var i2 = rightShiftIgnoreSign(this.co_a[j1].y, 5);
 			if(k1 >= i && k1 <= k && i2 >= j && i2 <= l)
 				this.co_a[j1].c5 = 1;
 			continue;
 		}
 		if(k2 == 150 || k2 == 160)
 		{
-			var l1 = this.co_a[j1].vx >> 5;
-			var j2 = this.co_a[j1].vy >> 5;
+			var l1 = rightShiftIgnoreSign(this.co_a[j1].vx, 5);
+			var j2 = rightShiftIgnoreSign(this.co_a[j1].vy, 5);
 			if(l1 >= i && l1 <= k && j2 >= j && j2 <= l)
 				this.co_a[j1].c5 = 1;
 			continue;
 		}
 		if(i1 != 2 || k2 != 3500 && k2 != 3600 || this.co_a[j1].c4 != 2)
 			continue;
+		// k2 == 3600 スイッチ ↑キーでON/OFF
 		this.co_a[j1].c3 = 100;
+		// k2 == 3500 スイッチ 重なるとON/OFF
 		if(k2 == 3500)
 			this.co_a[j1].c3 = 1;
 	}
 
 }
 
+/**
+ * 範囲内に存在するスイッチ式の仕掛けをOFF状態にする
+ * @param x1 {number} 始点X座標 (ブロック座標)
+ * @param y1 {number} 始点Y座標 (プロック座標)
+ * @param x2 {number} 終点X座標 (プロック座標)
+ * @param y2 {number} 終点Y座標 (プロック座標)
+ * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
+ */
 MainProgram.prototype.offASwitch = function(i, j, k, l, i1)
 {
 	if(arguments.length == 4) i1 = 1;
@@ -33499,16 +33481,16 @@ MainProgram.prototype.offASwitch = function(i, j, k, l, i1)
 		var k2 = this.co_a[j1].c;
 		if(k2 == 3700 || k2 == 3710 || k2 == 3800 || k2 == 3810 || k2 == 3900 || k2 == 3910 || k2 == 4000 || k2 == 4010 || k2 == 4100 || k2 == 4110 || k2 == 4200 || k2 == 4210 || k2 == 4300 || k2 == 4400 || k2 == 4410 || k2 == 4500 || k2 == 5200 || k2 == 5210)
 		{
-			var k1 = this.co_a[j1].x >> 5;
-			var i2 = this.co_a[j1].y >> 5;
+			var k1 = rightShiftIgnoreSign(this.co_a[j1].x, 5);
+			var i2 = rightShiftIgnoreSign(this.co_a[j1].y, 5);
 			if(k1 >= i && k1 <= k && i2 >= j && i2 <= l)
 				this.co_a[j1].c5 = 0;
 			continue;
 		}
 		if(k2 == 150 || k2 == 160)
 		{
-			var l1 = this.co_a[j1].vx >> 5;
-			var j2 = this.co_a[j1].vy >> 5;
+			var l1 = rightShiftIgnoreSign(this.co_a[j1].vx, 5);
+			var j2 = rightShiftIgnoreSign(this.co_a[j1].vy, 5);
 			if(l1 >= i && l1 <= k && j2 >= j && j2 <= l)
 				this.co_a[j1].c5 = 0;
 			continue;
@@ -33522,6 +33504,9 @@ MainProgram.prototype.offASwitch = function(i, j, k, l, i1)
 
 }
 
+/**
+ * ボスの更新処理
+ */
 MainProgram.prototype.bMove = function()
 {
 	if(this.co_b.x >= this.maps.wx + 1024)
@@ -33529,7 +33514,7 @@ MainProgram.prototype.bMove = function()
 	this.boss_attack_mode = false;
 	switch(this.co_b.c)
 	{
-	case 40: // '('
+	case 40:
 		if(this.co_b.c1 < 20)
 			this.co_b.c1++;
 		if(this.co_b.c1 == 15)
@@ -33545,7 +33530,7 @@ MainProgram.prototype.bMove = function()
 		this.co_b.pt = 0;
 		break;
 
-	case 60: // '<'
+	case 60:
 		this.co_b.c1++;
 		if(this.co_b.c4 <= 0)
 		{
@@ -33566,14 +33551,14 @@ MainProgram.prototype.bMove = function()
 		this.co_b.pt = 1010;
 		break;
 
-	case 65: // 'A'
+	case 65:
 		this.co_b.c1++;
 		if(this.co_b.c1 >= 11)
 			this.co_b.c = 155;
 		this.co_b.pt = 1015;
 		break;
 
-	case 67: // 'C'
+	case 67:
 		this.co_b.vy += 4;
 		if(this.co_b.vy > 28)
 			this.co_b.vy = 28;
@@ -33601,7 +33586,7 @@ MainProgram.prototype.bMove = function()
 			this.co_b.pt = 1000;
 		break;
 
-	case 70: // 'F'
+	case 70:
 		this.co_b.c1++;
 		if(this.co_b.c4 <= 0)
 		{
@@ -33622,14 +33607,14 @@ MainProgram.prototype.bMove = function()
 		this.co_b.pt = 1110;
 		break;
 
-	case 75: // 'K'
+	case 75:
 		this.co_b.c1++;
 		if(this.co_b.c1 >= 11)
 			this.co_b.c = 255;
 		this.co_b.pt = 1115;
 		break;
 
-	case 77: // 'M'
+	case 77:
 		this.co_b.vy += 4;
 		if(this.co_b.vy > 28)
 			this.co_b.vy = 28;
@@ -33657,7 +33642,7 @@ MainProgram.prototype.bMove = function()
 			this.co_b.pt = 1100;
 		break;
 
-	case 80: // 'P'
+	case 80:
 		this.co_b.c1++;
 		if(this.co_b.c4 <= 0)
 		{
@@ -33678,14 +33663,14 @@ MainProgram.prototype.bMove = function()
 		this.co_b.pt = 1210;
 		break;
 
-	case 85: // 'U'
+	case 85:
 		this.co_b.c1++;
 		if(this.co_b.c1 >= 11)
 			this.co_b.c = 355;
 		this.co_b.pt = 1215;
 		break;
 
-	case 87: // 'W'
+	case 87:
 		this.co_b.vy += 4;
 		if(this.co_b.vy > 28)
 			this.co_b.vy = 28;
@@ -33713,7 +33698,7 @@ MainProgram.prototype.bMove = function()
 			this.co_b.pt = 1200;
 		break;
 
-	case 100: // 'd'
+	case 100:
 		if(this.sl_step == 2 || this.sl_step == 3)
 			if(this.boss_destroy_type == 2)
 			{
@@ -33734,11 +33719,11 @@ MainProgram.prototype.bMove = function()
 		this.co_b.pt = 1000;
 		break;
 
-	case 110: // 'n'
+	case 110:
 		this.boss_attack_mode = true;
 		if(this.boss_type == 2)
 		{
-			var c = 0226;
+			var c = 150;
 			this.co_b.c1++;
 			if(this.co_b.c1 == 1)
 			{
@@ -33956,11 +33941,11 @@ MainProgram.prototype.bMove = function()
 		this.co_b.pt = 1000;
 		break;
 
-	case 115: // 's'
+	case 115:
 		this.boss_attack_mode = true;
 		if(this.boss_type == 2)
 		{
-			var c3 = 0226;
+			var c3 = 150;
 			this.co_b.c1++;
 			if(this.co_b.c1 == 1)
 			{
@@ -35691,6 +35676,14 @@ MainProgram.prototype.bMove = function()
 	}
 }
 
+/**
+ * 指定座標(ブロック単位)の位置に、指定したコードの？ブロックを設置します
+ * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet} を参照
+ * @param blockX {number} X座標(ブロック単位)
+ * @param blockY {number} Y座標(ブロック単位)
+ * @param code {number} 設置するブロックのコード
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
+ */
 MainProgram.prototype.hSet = function(i, j, k)
 {
 	var l = 0;
@@ -35710,6 +35703,12 @@ MainProgram.prototype.hSet = function(i, j, k)
 	} while(true);
 }
 
+/**
+ * ？ブロックを叩かれた後の状態にして無効化する 一度取った後の1UPブロックに使用
+ * @param x {number} X座標(ブロック単位)
+ * @param y {number} Y座標(ブロック単位)
+ * @param c 無効化対象のブロックのコード これとCaracterObject.cの値が一致していれば無効化される
+ */
 MainProgram.prototype.hDelete = function(i, j, k)
 {
 	for(var l = 0; l <= 79; l++)
@@ -35721,6 +35720,11 @@ MainProgram.prototype.hDelete = function(i, j, k)
 
 }
 
+/**
+ * ？ブロックを叩いたときの処理
+ * @param x {number} X座標(ブロック単位)
+ * @param y {number} Y座標(ブロック単位)
+ */
 MainProgram.prototype.hAttack = function(i, j)
 {
 	var k = 0;
@@ -35736,7 +35740,7 @@ MainProgram.prototype.hAttack = function(i, j)
 			default:
 				break;
 
-			case 100: // 'd'
+			case 100:
 				this.mSet(i * 32, j * 32 - 32, 2000);
 				this.gs.rsAddSound(6);
 				break;
@@ -35801,7 +35805,7 @@ MainProgram.prototype.hAttack = function(i, j)
 					if(l > 10)
 						break;
 					var k4 = i + l;
-					if(k4 > 180 || this.maps.map_bg[k4][j] != 0 && this.maps.map_bg[k4][j] != 4)
+					if(k4 > this.mapWidth || this.maps.map_bg[k4][j] != 0 && this.maps.map_bg[k4][j] != 4)
 						break;
 					this.maps.putBGCode(k4, j, 20);
 					l++;
@@ -35875,7 +35879,7 @@ MainProgram.prototype.hAttack = function(i, j)
 					if(j1 > 2)
 						break;
 					var l5 = i + j1;
-					if(l5 > 180 || this.maps.map_bg[l5][j] != 0 && this.maps.map_bg[l5][j] != 4)
+					if(l5 > this.mapWidth || this.maps.map_bg[l5][j] != 0 && this.maps.map_bg[l5][j] != 4)
 						break;
 					this.maps.putBGCode(l5, j, 20);
 					j1++;
@@ -35912,7 +35916,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var k3 = -10; k3 <= 10; k3++)
 				{
 					for(var l1 = -10; l1 <= 10; l1++)
-						if(i + l1 >= 1 && i + l1 <= 180 && j + k3 >= 10 && j + k3 <= 39 && this.maps.map_bg[i + l1][j + k3] == 5)
+						if(i + l1 >= 1 && i + l1 <= this.mapWidth && j + k3 >= 10 && j + k3 <= this.mapHeight + 9 && this.maps.map_bg[i + l1][j + k3] == 5)
 							this.maps.putBGCode(i + l1, j + k3, 9);
 
 				}
@@ -35924,7 +35928,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var l3 = -10; l3 <= 10; l3++)
 				{
 					for(var i2 = -10; i2 <= 10; i2++)
-						if(i + i2 >= 1 && i + i2 <= 180 && j + l3 >= 10 && j + l3 <= 39 && this.maps.map_bg[i + i2][j + l3] == 5)
+						if(i + i2 >= 1 && i + i2 <= this.mapWidth && j + l3 >= 10 && j + l3 <= this.mapHeight + 9 && this.maps.map_bg[i + i2][j + l3] == 5)
 							this.maps.putBGCode(i + i2, j + l3, 20);
 
 				}
@@ -35936,7 +35940,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var i4 = -10; i4 <= 10; i4++)
 				{
 					for(var j2 = -10; j2 <= 10; j2++)
-						if(i + j2 >= 1 && i + j2 <= 180 && j + i4 >= 10 && j + i4 <= 39 && this.maps.map_bg[i + j2][j + i4] == 20)
+						if(i + j2 >= 1 && i + j2 <= this.mapWidth && j + i4 >= 10 && j + i4 <= this.mapHeight + 9 && this.maps.map_bg[i + j2][j + i4] == 20)
 							this.maps.putBGCode(i + j2, j + i4, 9);
 
 				}
@@ -35948,7 +35952,7 @@ MainProgram.prototype.hAttack = function(i, j)
 				for(var j4 = -10; j4 <= 10; j4++)
 				{
 					for(var k2 = -10; k2 <= 10; k2++)
-						if(i + k2 >= 1 && i + k2 <= 180 && j + j4 >= 10 && j + j4 <= 39 && this.maps.map_bg[i + k2][j + j4] == 23)
+						if(i + k2 >= 1 && i + k2 <= this.mapWidth && j + j4 >= 10 && j + j4 <= this.mapHeight + 9 && this.maps.map_bg[i + k2][j + j4] == 23)
 							this.maps.putBGCode(i + k2, j + j4, 0);
 
 				}
@@ -36069,6 +36073,41 @@ MainProgram.prototype.hAttack = function(i, j)
 	} while(true);
 }
 
+/**
+ * 新しく床を生成し、床IDを返します。
+ * 床の位置、大きさ、形及び画像を指定できます。
+ *
+ * 床の形は次のように指定します。
+ *
+ * * `"line"`: 線分
+ * * `"triangle"`: 直角三角形
+ * * `"mount"`: 台形
+ * * `"circle"`: 円
+ * * `"half_circle"`: 上半分の半円
+ * * `"half_circle_line"`: 上半分の半円（線のみ）
+ * * `"wave_up"`: 右上がりの曲線
+ * * `"wave_up_line"`: 右上がりの曲線（線のみ）
+ * * `"wave_down"`: 右下がりの曲線
+ * * `"wave_down_line"`: 右下がりの曲線（線のみ）
+ * * `"rect"`: 矩形
+ * * `"pattern"`: 矩形（画像は{@link MasaoJSS#setYukaPattern|setYukaPattern}で設定）
+ * * その他: 矩形（ファイル名を指定）
+ *
+ * 引数`x2`, `y2`の意味は`type`の値によって変わります。
+ * `type`が`line`, `triangle`, `mount`の場合は線分の右下の座標です。
+ * `rect`, `pattern`および画像の場合は矩形の大きさです。
+ * `circie`の場合は`x2`が円の半径となり、`y2`は無視されます。
+ * その他の床は大きさが固定となり、`x2`も`y2`も無視されます。
+ *
+ * @param {number} x 床のX座標
+ * @param {number} y 床のY座標
+ * @param {number} x2 X方向大きさまたは右下の座標
+ * @param {number} y2 Y方向大きさまたは右下の座標
+ * @param {string} type 床の形
+ *
+ * @returns {number} 床ID 失敗した場合は-1
+ * @see {@link MasaoJSS#newYuka}
+ */
 MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 {
 	var j = 32;
@@ -36089,8 +36128,8 @@ MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 	var i = 0;
 	do
 	{
-		if(i > 127)
-			break;
+		if (i > this.yuka_id_max)
+			this.yo.push(new YukaObject());
 		if(this.yo[i].con == 0)
 		{
 			if(s4 == "line")
@@ -36223,18 +36262,25 @@ MainProgram.prototype.newYuka = function(s, s1, s2, s3, s4)
 				this.yo[i].height = i1;
 				this.yo[i].img = this.gg.loadImage(s4);
 			}
-			if(i > this.yuka_id_max)
-				this.yuka_id_max = i;
 			break;
 		}
 		i++;
 	} while(true);
-	if(i > 127)
-		return -1;
-	else
-		return i;
+	return i;
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の位置を変更します。
+ * 引数が3つの場合位置のみ、5つの場合は床の大きさも変更します。
+ *
+ * @param {number} id 床ID
+ * @param {number} x X座標
+ * @param {number} y Y座標
+ * @param {number} [x2] X方向大きさまたは右下の座標
+ * @param {number} [y2] Y方向大きさまたは右下の座標
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaPosition}
+ */
 MainProgram.prototype.setYukaPosition = function(s, s1, s2, s3, s4)
 {
 	if(arguments.length == 3)
@@ -36307,6 +36353,15 @@ MainProgram.prototype.setYukaPosition = function(s, s1, s2, s3, s4)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の当たり判定を変更します。
+ * `type`に2を与えると当たり判定がなくなり、その他の値だと当たり判定ありになります。
+ *
+ * @param {number} id 床ID
+ * @param {number} type type値
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaType}
+ */
 MainProgram.prototype.setYukaType = function(s, s1)
 {
 	var i = 0;
@@ -36334,6 +36389,13 @@ MainProgram.prototype.setYukaType = function(s, s1)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床を消去します。
+ *
+ * @param {number} id 床ID
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#disposeYuka}
+ */
 MainProgram.prototype.disposeYuka = function(s)
 {
 	var i = 0;
@@ -36358,6 +36420,18 @@ MainProgram.prototype.disposeYuka = function(s)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の色を設定します。
+ * 色の各成分は0から255の整数で与えます。
+ *
+ * @param {number} id 床ID
+ * @param {number} r R値
+ * @param {number} g G値
+ * @param {number} b B値
+ * @param {number} alpha 不透明度
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaColor}
+ */
 MainProgram.prototype.setYukaColor = function(index, color)
 {
 	if(arguments.length == 5)
@@ -36409,6 +36483,16 @@ MainProgram.prototype.setYukaColor = function(index, color)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床のパターン画像を設定します。
+ * `type`が`"pattern"`の床に対して有効です。
+ *
+ * @param {number} id 床ID
+ * @param {number} pattern パターンコード
+ * @param {number} direction 向き（0ならそのまま、1なら左右逆
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaPattern}
+ */
 MainProgram.prototype.setYukaPattern = function(s, s1, s2)
 {
 	var i = 0;
@@ -36442,6 +36526,15 @@ MainProgram.prototype.setYukaPattern = function(s, s1, s2)
 	}
 }
 
+/**
+ * {@link MainProgram#newYuka}で作った床の画像を変更します。
+ * `type`が`rect`, `pattern`及びその他で作成した床を対象にできます。
+ *
+ * @param {number} id 床ID
+ * @param {String|ImageBuff} image ファイル名または画像オブジェクト
+ * @returns {boolean} 成功したかどうか
+ * @see {@link MasaoJSS#setYukaImage}
+ */
 MainProgram.prototype.setYukaImage = function(s, a2)
 {
 	var i = 0;
@@ -36469,6 +36562,15 @@ MainProgram.prototype.setYukaImage = function(s, a2)
 	}
 }
 
+/**
+ * 主人公がある床に乗っているかどうかを判定します。
+ * 乗っていれば1、乗っていなければ0、それ以外の場合には-1が返ります。
+ *
+ * @param {number} id 床ID
+ *
+ * @returns {number}
+ * @see {@link MasaoJSS#isRideYuka}
+ */
 MainProgram.prototype.isRideYuka = function(s)
 {
 	var i = 0;
@@ -36519,6 +36621,14 @@ MainProgram.prototype.isRideYuka = function(s)
 	}
 }
 
+/**
+ * 主人公が地面に立っているかを判定します。
+ * 立っているなら1、いないなら0、それ以外の場合は-1を返します。
+ * 地面ではなく床に乗っている場合は0になります。
+ *
+ * @returns {number} 地面に立っているか
+ * @see {@link MasaoJSS#isRideGround}
+ */
 MainProgram.prototype.isRideGround = function()
 {
 	if(this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96)
@@ -36545,6 +36655,9 @@ MainProgram.prototype.isRideGround = function()
 	return 0;
 }
 
+/**
+ * 床オブジェクトの更新処理
+ */
 MainProgram.prototype.moveYuka = function()
 {
 	if(this.yuka_id_max < 0)
@@ -36579,9 +36692,9 @@ MainProgram.prototype.moveYuka = function()
 					var k = yukaobject.x_buff - yukaobject.x;
 					yukaobject.x = yukaobject.x_buff;
 					this.co_j.x = this.co_j.x + k;
-					var i3 = (this.co_j.x + 15) >> 5;
-					var k5 = this.co_j.y >> 5;
-					var i8 = (this.co_j.y + 31) >> 5;
+					var i3 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					var k5 = rightShiftIgnoreSign(this.co_j.y, 5);
+					var i8 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 					if(this.maps.map_bg[i3][k5] >= 20 || this.maps.map_bg[i3][i8] >= 20)
 						this.co_j.x = (i3 * 32 + 32) - 14;
 				} else
@@ -36594,9 +36707,9 @@ MainProgram.prototype.moveYuka = function()
 							this.co_j.x = yukaobject.x - 32;
 							if(this.co_j.vx > 0)
 								this.co_j.vx = 0;
-							var j3 = this.co_j.x >> 5;
-							var l5 = this.co_j.y >> 5;
-							var j8 = (this.co_j.y + 31) >> 5;
+							var j3 = rightShiftIgnoreSign(this.co_j.x, 5);
+							var l5 = rightShiftIgnoreSign(this.co_j.y, 5);
+							var j8 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 							if(this.maps.map_bg[j3][l5] >= 20 || this.maps.map_bg[j3][j8] >= 20)
 								this.jShinu(4);
 						}
@@ -36606,9 +36719,9 @@ MainProgram.prototype.moveYuka = function()
 						this.co_j.x = yukaobject.x - 16;
 						if(this.co_j.vx > 0)
 							this.co_j.vx = 0;
-						var k3 = (this.co_j.x + 15) >> 5;
-						var i6 = this.co_j.y >> 5;
-						var k8 = (this.co_j.y + 31) >> 5;
+						var k3 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var i6 = rightShiftIgnoreSign(this.co_j.y, 5);
+						var k8 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 						if(this.maps.map_bg[k3][i6] >= 20 || this.maps.map_bg[k3][k8] >= 20)
 						{
 							this.co_j.x = k3 * 32 + 15;
@@ -36623,9 +36736,9 @@ MainProgram.prototype.moveYuka = function()
 					var l = yukaobject.x_buff - yukaobject.x;
 					yukaobject.x = yukaobject.x_buff;
 					this.co_j.x = this.co_j.x + l;
-					var l3 = (this.co_j.x + 15) >> 5;
-					var j6 = this.co_j.y >> 5;
-					var l8 = (this.co_j.y + 31) >> 5;
+					var l3 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+					var j6 = rightShiftIgnoreSign(this.co_j.y, 5);
+					var l8 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 					if(this.maps.map_bg[l3][j6] >= 20 || this.maps.map_bg[l3][l8] >= 20)
 						this.co_j.x = l3 * 32 - 16;
 				} else
@@ -36638,9 +36751,9 @@ MainProgram.prototype.moveYuka = function()
 							this.co_j.x = yukaobject.x + yukaobject.width;
 							if(this.co_j.vx < 0)
 								this.co_j.vx = 0;
-							var i4 = (this.co_j.x + 31) >> 5;
-							var k6 = this.co_j.y >> 5;
-							var i9 = (this.co_j.y + 31) >> 5;
+							var i4 = rightShiftIgnoreSign(this.co_j.x + 31, 5);
+							var k6 = rightShiftIgnoreSign(this.co_j.y, 5);
+							var i9 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 							if(this.maps.map_bg[i4][k6] >= 20 || this.maps.map_bg[i4][i9] >= 20)
 								this.jShinu(4);
 						}
@@ -36650,9 +36763,8 @@ MainProgram.prototype.moveYuka = function()
 						this.co_j.x = (yukaobject.x + yukaobject.width) - 15;
 						if(this.co_j.vx < 0)
 							this.co_j.vx = 0;
-						var j4 = (this.co_j.x + 15) >> 5;
-						var l6 = this.co_j.y >> 5;
-						var j9 = (this.co_j.y + 31) >> 5;
+						var j4 = rightShiftIgnoreSign(this.co_j.x + 15, 5);
+						var l6 = rightShiftIgnoreSign(this.co_j.y, 5);
 						if(this.maps.map_bg[j4][l6] >= 20 || this.maps.map_bg[j4][l6] >= 20)
 						{
 							this.co_j.x = (j4 * 32 - 32) + 15;
@@ -36668,7 +36780,7 @@ MainProgram.prototype.moveYuka = function()
 					this.co_j.y = yukaobject.y - 32;
 					if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 18)
 					{
-						this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+						this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 						this.jShinu(3);
 					}
 					continue;
@@ -36691,7 +36803,7 @@ MainProgram.prototype.moveYuka = function()
 				this.yuka_ride_id = i;
 				if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 18)
 				{
-					this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 16;
 					this.jShinu(3);
 				}
 				continue;
@@ -36725,7 +36837,7 @@ MainProgram.prototype.moveYuka = function()
 				this.co_j.vy = 160;
 			if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
 			{
-				this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				this.jShinu(3);
 			}
 			continue;
@@ -36784,8 +36896,8 @@ MainProgram.prototype.moveYuka = function()
 					this.co_j.y = j1;
 				if(this.co_j.x < 17)
 					this.co_j.x = 17;
-				if(this.co_j.x + 15 >= 5792)
-					this.co_j.x = 5776;
+				if(this.co_j.x + 15 >= (this.mapWidth + 1) * 32)
+					this.co_j.x = this.mapWidth * 32 + 16;
 			} else
 			{
 				yukaobject.x = yukaobject.x_buff;
@@ -36826,7 +36938,7 @@ MainProgram.prototype.moveYuka = function()
 				this.co_j.y = this.co_j.y + i7;
 				if(i7 < 0 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 18)
 				{
-					this.co_j.y = ((this.co_j.y >> 5) * 32 + 32) - 16;
+					this.co_j.y = (rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 32) - 16;
 					this.jShinu(3);
 				}
 				continue;
@@ -36843,7 +36955,7 @@ MainProgram.prototype.moveYuka = function()
 					this.co_j.vy = 0;
 				if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
 				{
-					this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 					this.jShinu(3);
 				}
 			} else
@@ -36978,6 +37090,9 @@ MainProgram.prototype.moveYuka = function()
 	}
 }
 
+/**
+ * 床オブジェクトの描画処理
+ */
 MainProgram.prototype.drawYuka = function()
 {
 	var j20 = 0;
@@ -37043,9 +37158,7 @@ label0:
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var j3 = yukaobject.view_x;
-			var l5 = yukaobject.view_y;
 			var j8 = this.yo[i].x2 - this.maps.wx;
-			var l10 = this.yo[i].y2 - this.maps.wy;
 			if(j3 < 0 && j8 < 0 || j3 >= 512 && j8 >= 512)
 			{
 				yukaobject.draw_f = false;
@@ -37217,7 +37330,6 @@ label0:
 			var j4 = yukaobject.view_x;
 			var l6 = yukaobject.view_y;
 			var j9 = yukaobject.view_x + 240;
-			var l11 = yukaobject.view_y + 64;
 			if(j9 < 0 || j4 > 512 || l6 > 320)
 			{
 				yukaobject.draw_f = false;
@@ -37264,7 +37376,6 @@ label0:
 			var k4 = yukaobject.view_x;
 			var i7 = yukaobject.view_y;
 			var k9 = yukaobject.view_x + 240;
-			var i12 = yukaobject.view_y + 64;
 			if(k9 < 0 || k4 > 512 || i7 > 320)
 			{
 				yukaobject.draw_f = false;
@@ -37510,6 +37621,10 @@ label0:
 
 }
 
+/**
+ * 主人公と床オブジェクトとの当たり判定処理
+ * @param direction {number} 判定を行う向き 0,1,2,3のいずれか
+ */
 MainProgram.prototype.atariYuka = function(i)
 {
 	if(this.yuka_id_max < 0)
@@ -37568,7 +37683,7 @@ MainProgram.prototype.atariYuka = function(i)
 						this.co_j.vy = 0;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 18 && this.co_j.c < 200)
 						{
-							this.co_j.y = ((this.co_j.y >> 5) * 32 + 32) - 16;
+							this.co_j.y = (rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 32) - 16;
 							this.co_j.pt = 114;
 							this.jShinu(3);
 						}
@@ -37674,7 +37789,7 @@ MainProgram.prototype.atariYuka = function(i)
 						this.co_j.vy = 0;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 18 && this.co_j.c < 200)
 						{
-							this.co_j.y = ((this.co_j.y >> 5) * 32 + 32) - 16;
+							this.co_j.y = (rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 32) - 16;
 							this.co_j.pt = 114;
 							this.jShinu(3);
 						}
@@ -37758,7 +37873,7 @@ MainProgram.prototype.atariYuka = function(i)
 							this.co_j.vy = 0;
 						if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20 && this.co_j.c < 200)
 						{
-							this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+							this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 							this.jShinu(3);
 						}
 					}
@@ -37821,7 +37936,7 @@ MainProgram.prototype.atariYuka = function(i)
 					this.co_j.vy = 0;
 				if(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20)
 				{
-					this.co_j.y = ((this.co_j.y + 31) >> 5) * 32 - 32;
+					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 					this.jShinu(3);
 				}
 				continue;
@@ -37862,6 +37977,10 @@ MainProgram.prototype.atariYuka = function(i)
 	}
 }
 
+/**
+ * 床と主人公が重なった状態かどうかを判定する
+ * @returns {boolean} 主人公に重なっている床オブジェクトが存在するならtrue
+ */
 MainProgram.prototype.isYukaCross = function()
 {
 	var flag = false;
@@ -38007,3 +38126,682 @@ MainProgram.prototype.getSWDownOY = function(i, j, k, l, i1)
 	}
 	return k2;
 }
+
+/**
+ * マップのパーツコードを受け取り、`maps.map_bg`に格納されるべき値を返すと同時にパーツの追加に必要な処理を行う
+ * @param x {number} X座標(ブロック単位)
+ * @param y {number} Y座標(ブロック単位)
+ * @param id パーツコード
+ * @returns {number} `maps.map_bg`に格納されるべき値
+ */
+MainProgram.prototype.setChipValue = function (x, y, id) {
+	var word1 = -1;
+	switch (id) {
+		case 46:
+		case 0:
+			break;
+		case 49:
+			word1 = 1;
+			break;
+		case 50:
+			word1 = 2;
+			break;
+		case 51:
+			word1 = 3;
+			break;
+		case 52:
+			word1 = 4;
+			break;
+		case 53:
+			word1 = 5;
+			break;
+		case 54:
+			word1 = 6;
+			break;
+		case 55:
+			word1 = 7;
+			break;
+		case 56:
+			word1 = 8;
+			break;
+		case 57:
+			word1 = 9;
+			break;
+		case 97:
+			word1 = 20;
+			break;
+		case 98:
+			word1 = 21;
+			break;
+		case 99:
+			word1 = 22;
+			break;
+		case 100:
+			word1 = 23;
+			break;
+		case 101:
+			word1 = 24;
+			break;
+		case 102:
+			word1 = 25;
+			break;
+		case 103:
+			word1 = 26;
+			break;
+		case 104:
+			word1 = 27;
+			break;
+		case 105:
+			word1 = 28;
+			break;
+		case 91:
+			word1 = 15;
+			break;
+		case 93:
+			word1 = 10;
+			break;
+		case 60:
+			word1 = 18;
+			break;
+		case 62:
+			word1 = 19;
+			break;
+		case 106:
+			word1 = 29;
+			break;
+		case 107:
+			if (this.coin1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.coin1_type, x, y);
+				if (word1 == -99) {
+					word1 = 40;
+					this.hSet(x, y, 100);
+				}
+			} else if (this.j_tokugi == 14)
+				this.mSet(x * 32, y * 32, 2181);
+			else if (this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2000);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 100);
+			}
+			break;
+		case 108:
+			if (this.coin3_type >= 2) {
+				word1 = this.setAthleticOnMap(this.coin3_type, x, y);
+				if (word1 == -99) {
+					word1 = 40;
+					this.hSet(x, y, 200);
+				}
+			} else if (this.j_tokugi == 14)
+				this.mSet(x * 32, y * 32, 2182);
+			else if (this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2010);
+				this.mSet(x * 32, y * 32, 2020);
+				this.mSet(x * 32, y * 32, 2000);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 200);
+			}
+			break;
+		case 109:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2100);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 300);
+			}
+			break;
+		case 110:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2110);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 400);
+			}
+			break;
+		case 111:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2120);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 500);
+			}
+			break;
+		case 112:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2130);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 600);
+			}
+			break;
+		case 113:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2140);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 700);
+			}
+			break;
+		case 114:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2150);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 800);
+			}
+			break;
+		case 115:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2160);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 900);
+			}
+			break;
+		case 116:
+			if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+				this.mSet(x * 32, y * 32, 2170);
+			} else {
+				word1 = 40;
+				this.hSet(x, y, 1000);
+			}
+			break;
+		case 117:
+			if (this.dokan1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan1_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 300, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 300, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 118:
+			if (this.dokan2_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan2_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 310, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 310, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 119:
+			if (this.dokan3_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan3_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 320, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 320, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 120:
+			if (this.dokan4_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dokan4_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32, 330, x * 32);
+					if (this.maps.map_bg[x - 1][y] == 4)
+						word1 = 4;
+				}
+			} else {
+				this.aSet(x * 32, y * 32, 330, x * 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+		case 121:
+			if (this.stage_1up_f[this.stage - 1] || this.j_tokugi == 17) {
+				if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+					this.mSet(x * 32, y * 32, 2180);
+				} else {
+					word1 = 40;
+					this.hSet(x, y, 1100);
+				}
+			} else {
+				word1 = 41;
+			}
+			break;
+		case 122:
+			word1 = 69;
+			break;
+		case 43:
+			this.aSet(x * 32, y * 32, 80, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 45:
+			this.aSet(x * 32, y * 32, 81, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 42:
+			this.aSet(x * 32, y * 32, 82, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 47:
+			this.aSet(x * 32, y * 32, 83, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 65:
+			this.co_j.x = x * 32;
+			this.co_j.y = y * 32;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 66:
+			this.tSet(x * 32, y * 32, 100, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 67:
+			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 68:
+			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
+			this.tSet(x * 32 + 75, y * 32, 110, x * 32 - 512 - 32);
+			this.tSet(x * 32 + 150, y * 32, 110, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 69:
+			if (this.dengeki_mkf == 3)
+				this.tSet(x * 32, y * 32, 201, x * 32 - 512 - 32);
+			else if (this.dengeki_mkf == 4)
+				this.tSet(x * 32, y * 32, 202, x * 32 - 512 - 32);
+			else if (this.dengeki_mkf == 5)
+				this.tSet(x * 32, y * 32, 203, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 200, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 70:
+			if (this.chikorin_attack >= 2 && this.chikorin_attack <= 5)
+				this.tSet(x * 32, y * 32, 308 + this.chikorin_attack, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 6)
+				this.tSet(x * 32, y * 32, 301, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 7)
+				this.tSet(x * 32, y * 32, 320, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 8)
+				this.tSet(x * 32, y * 32, 330, x * 32 - 512 - 32);
+			else if (this.chikorin_attack == 9)
+				this.tSet(x * 32, y * 32, 335, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 300, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 71:
+			this.tSet(x * 32, y * 32, 400, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 72:
+			this.tSet(x * 32, y * 32, 500, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 73:
+			if (this.poppie_attack == 2)
+				this.tSet(x * 32, y * 32, 520, x * 32 - 512 - 32);
+			else if (this.poppie_attack == 3)
+				this.tSet(x * 32, y * 32, 530, x * 32 - 512 - 32);
+			else if (this.poppie_attack == 4)
+				this.tSet(x * 32, y * 32, 540, x * 32 - 512 - 32);
+			else if (this.poppie_attack == 5)
+				this.tSet(x * 32, y * 32, 550, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 74:
+			this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32 - 32);
+			this.tSet(x * 32 + 80, y * 32 - 40, 510, x * 32 - 512 - 32 - 32);
+			this.tSet(x * 32 + 140, y * 32 + 38, 510, x * 32 - 512 - 32 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 75:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.ugokuyuka1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.ugokuyuka1_type, x, y);
+				if (word1 == -99)
+					this.aSet(x * 32, y * 32, 100, x * 32);
+			} else {
+				this.aSet(x * 32, y * 32, 100, x * 32);
+			}
+			break;
+		case 76:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.ugokuyuka2_type >= 2) {
+				word1 = this.setAthleticOnMap(this.ugokuyuka2_type, x, y);
+				if (word1 == -99)
+					this.aSet(x * 32, y * 32 + 9, 110, x * 32 - 16);
+			} else {
+				this.aSet(x * 32, y * 32 + 9, 110, x * 32 - 16);
+			}
+			break;
+		case 77:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.ugokuyuka3_type >= 2) {
+				word1 = this.setAthleticOnMap(this.ugokuyuka3_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32, y * 32 + 9, 115, x * 32 - 16);
+					this.aSet(x * 32, y * 32 + 9, 116, x * 32 - 16);
+				}
+			} else {
+				this.aSet(x * 32, y * 32 + 9, 115, x * 32 - 16);
+				this.aSet(x * 32, y * 32 + 9, 116, x * 32 - 16);
+			}
+			break;
+		case 78:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.dossunsun_type >= 2) {
+				word1 = this.setAthleticOnMap(this.dossunsun_type, x, y);
+				if (word1 == -99)
+					this.aSet(x * 32 - 32, y * 32, 400, x * 32);
+			} else {
+				this.aSet(x * 32 - 32, y * 32, 400, x * 32);
+			}
+			break;
+		case 79:
+			if (this.mariri_attack == 2)
+				this.tSet(x * 32, y * 32, 601, x * 32 - 512 - 32);
+			else if (this.mariri_attack == 3)
+				this.tSet(x * 32, y * 32, 602, x * 32 - 512 - 32);
+			else if (this.mariri_attack == 4)
+				this.tSet(x * 32, y * 32, 660, x * 32 - 512 - 32);
+			else if (this.mariri_attack == 5)
+				this.tSet(x * 32, y * 32, 670, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 600, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 80:
+			if (this.yachamo_attack >= 1 && this.yachamo_attack <= 5)
+				this.tSet(x * 32, y * 32, 699 + this.yachamo_attack, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 6)
+				this.tSet(x * 32, y * 32, 710, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 7)
+				this.tSet(x * 32, y * 32, 711, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 8)
+				this.tSet(x * 32, y * 32, 720, x * 32 - 512 - 32);
+			else if (this.yachamo_attack == 9)
+				this.tSet(x * 32, y * 32, 725, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 700, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 81:
+			if (this.j_tokugi == 14)
+				this.tSet(x * 32, y * 32, 850, x * 32 - 512 - 32);
+			else if (this.mizutaro_attack >= 1 && this.mizutaro_attack <= 5)
+				this.tSet(x * 32, y * 32, 799 + this.mizutaro_attack, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 800, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 82:
+			if (this.airms_kf == 2)
+				this.tSet(x * 32, y * 32, 950, x * 32 - 512 - 32);
+			else if (this.airms_kf == 3)
+				this.tSet(x * 32, y * 32, 920, x * 32 - 512 - 32);
+			else if (this.airms_kf == 4)
+				this.tSet(x * 32, y * 32, 921, x * 32 - 512 - 32);
+			else if (this.airms_kf == 5)
+				this.tSet(x * 32, y * 32, 930, x * 32 - 512 - 32);
+			else
+				this.tSet(x * 32, y * 32, 900, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 83:
+			this.co_b.c = 100;
+			this.co_b.c4 = 3;
+			this.co_b.x = x * 32;
+			this.co_b.y = y * 32 - 16;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.co_b.x < 448)
+				this.co_b.x = 448;
+			else if (this.co_b.x > (this.mapWidth - 3) * 32)
+				this.co_b.x = (this.mapWidth - 3) * 32;
+			if (this.sl_step == 10)
+				this.sl_step = 11;
+			else
+				this.sl_step = 1;
+			this.sl_wx = this.co_b.x - 384;
+			this.sl_wy = this.mapHeight * 32;
+			if (this.boss_destroy_type == 2)
+				this.co_b.x += 160;
+			break;
+		case 84:
+			this.co_b.c = 200;
+			this.co_b.c4 = 3;
+			this.co_b.x = x * 32;
+			this.co_b.y = y * 32 - 16;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.co_b.x < 448)
+				this.co_b.x = 448;
+			else if (this.co_b.x > (this.mapWidth - 3) * 32)
+				this.co_b.x = (this.mapWidth - 3) * 32;
+			if (this.sl_step == 10)
+				this.sl_step = 11;
+			else
+				this.sl_step = 1;
+			this.sl_wx = this.co_b.x - 384;
+			this.sl_wy = this.mapHeight * 32;
+			if (this.boss_destroy_type == 2)
+				this.co_b.x += 160;
+			break;
+		case 85:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.firebar1_type >= 2) {
+				word1 = this.setAthleticOnMap(this.firebar1_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32 + 16, y * 32 + 16, 70, x * 32);
+					word1 = 50;
+				}
+			} else {
+				this.aSet(x * 32 + 16, y * 32 + 16, 70, x * 32);
+				word1 = 50;
+			}
+			break;
+		case 86:
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.firebar2_type >= 2) {
+				word1 = this.setAthleticOnMap(this.firebar2_type, x, y);
+				if (word1 == -99) {
+					this.aSet(x * 32 + 16, y * 32 + 16, 71, x * 32);
+					word1 = 50;
+				}
+			} else {
+				this.aSet(x * 32 + 16, y * 32 + 16, 71, x * 32);
+				word1 = 50;
+			}
+			break;
+		case 87:
+			if (this.taiking_attack == 2)
+				this.tSet(x * 32, y * 32, 1050, x * 32 - 512 - 32);
+			else if (this.taiking_attack == 3)
+				this.tSet(x * 32, y * 32, 1060, x * 32 - 512 - 32);
+			else if (this.taiking_attack == 4)
+				this.tSet(x * 32, y * 32, 1070, x * 32 - 512 - 32);
+			else if (this.taiking_attack == 5)
+				this.tSet(x * 32, y * 32, 1080, x * 32 - 512 - 32 - 32);
+			else if (this.j_tokugi == 14)
+				this.tSet(x * 32, y * 32, 1002, x * 32 - 512 - 32 - 32);
+			else if (this.j_tokugi == 15)
+				this.tSet(x * 32, y * 32, 1003, x * 32 - 512 - 32);
+			else {
+				this.tSet(x * 32, y * 32 - 16, 1000, x * 32 - 512 - 32 - 32);
+				word1 = 4;
+			}
+			if (this.maps.map_bg[x - 1][y] == 4 || this.maps.map_bg[x][y - 1] == 4)
+				word1 = 4;
+			break;
+		case 88:
+			if (this.kuragesso_attack == 2)
+				this.tSet(x * 32, y * 32, 1150, x * 32 - 512 - 32);
+			else if (this.kuragesso_attack == 3)
+				this.tSet(x * 32, y * 32, 1160, x * 32 - 512 - 32);
+			else if (this.kuragesso_attack == 4)
+				this.tSet(x * 32, y * 32, 1170, x * 32 - 512 - 32);
+			else if (this.kuragesso_attack == 5)
+				this.tSet(x * 32, y * 32, 1180, x * 32 - 512 - 32 - 32);
+			else if (this.j_tokugi == 14)
+				this.tSet(x * 32, y * 32, 1102, x * 32 - 512 - 32);
+			else if (this.j_tokugi == 15)
+				this.tSet(x * 32, y * 32, 1103, x * 32 - 512 - 32);
+			else {
+				this.tSet(x * 32, y * 32, 1100, x * 32 - 512 - 32);
+				word1 = 4;
+			}
+			if (this.maps.map_bg[x - 1][y] == 4 || this.maps.map_bg[x][y - 1] == 4)
+				word1 = 4;
+			break;
+		case 89:
+			this.aSet(x * 32, y * 32, 60, x * 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 90:
+			this.co_b.c = 300;
+			this.co_b.c4 = 3;
+			this.co_b.x = x * 32;
+			this.co_b.y = y * 32 - 16;
+			this.boss_kijyun_y = this.co_b.y;
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			if (this.co_b.x < 448)
+				this.co_b.x = 448;
+			else if (this.co_b.x > (this.mapWidth - 3) * 32)
+				this.co_b.x = (this.mapWidth - 3) * 32;
+			if (this.sl_step == 10)
+				this.sl_step = 11;
+			else
+				this.sl_step = 1;
+			this.sl_wx = this.co_b.x - 384;
+			this.sl_wy = this.mapHeight * 32;
+			if (this.boss_destroy_type == 2)
+				this.co_b.x += 160;
+			break;
+		case 123:
+			this.tSet(x * 32, y * 32, 1200, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+		case 125:
+			this.tSet(x * 32, y * 32, 1400, x * 32 - 512 - 32);
+			if (this.maps.map_bg[x - 1][y] == 4)
+				word1 = 4;
+			break;
+
+		default:
+			if (id >= 1000 && id < 5000) {
+				word1 = this.setAthleticOnMap(id - 1000, x, y);
+			}
+			else if (id >= 5000 && id < 10000) {
+				this.tSet(x * 32, y * 32, id - 5000, x * 32 - 512 - 32);
+				if (this.maps.map_bg[x - 1][y] == 4)
+					word1 = 4;
+			}
+			break;
+	}
+	return word1;
+}
+
+/**
+ * 現在のゲーム状態を表すスナップショットオブジェクトを作成して返します。
+ */
+MainProgram.prototype.getSnapshot = function()
+{
+	// 出力すべきプロパティの一覧
+	var props = ["ran_seed","ana_kazu","ochiru_y","j_hashiru_f","j_jump_level","j_jump_type","j_zan_f","j_zan_cf","j_zan_p","j_zan_nagasa","j_zan_c","j_a_id","j_mizu_f","j_mizu_ac","j_mizu_awa_c","j_left","j_jdai_f","boss_hp","showm_c","showi_c","showi_x","showi_y","time","m_kazu","jm_kazu","a_hf","j_fire_f","j_v_c","j_v_kakudo","j_jet_c","j_jet_kf","j_jet_fuel","j_helm_f","j_drell_f","j_tail_f","j_tail_ac","j_gr_kazu","sl_step","sl_wx","sl_wy","sl_speed","ks_wx","ks_wy","j_tail_hf","j_tail_type","yachamo_attack","poppie_attack","hitokoto_num","boss_kijyun_y","coin_kazu","tpika_p","setmyw_w","setmyw_pt","setmyw_muki","souko_count1","souko_count2","souko_count3","heh","system_draw_mode","ml_mode","ml_mode_c","score","highscore","score_1up_1","score_1up_2","stage","stage_cc","g_c1","g_c2","g_c3","g_ac","g_ac2","tr1_c","tr2_c","left_dcc","right_dcc","xkey_c","vo_x","vo_y","ana_c","ana_x","ana_y","j_zan_x","j_zan_y","j_zan_pt","j_zan_pth","j_zan_img","j_zan_zs_x","j_zan_zs_y","j_shitakara_mushi_y","j_hashigo_f","j_hashigo_mushi_x","j_djump_kf","j_speed","j_fire_range","j_rope_id","j_rope_r","j_rope_cf","j_cannon_c","j_cannon_type","saka_mushi_y","dkey_count","j_hp_v","j_hp","j_hp_max","j_muteki_c","j_4_muki","showm_data","showi_img","setmapc_f","setbacki_f","setbacki_img","showr_c","showr_x","showr_y","showr_width","showr_height","showo_c","showo_x","showo_y","showo_width","showo_height","js_mes","gauge_v","gauge_value","gauge_text","vo_pa_x","vo_pa_y","stage_1up_f","j_fire_type","mu_ato_x","mu_ato_y","mu_ato_p","j_double_f","view_move_type","hitokoto_c","title_lock_f","start_game_f","mode_wait_ending","mode_wait_gameover","mode_wait_stagestart","attacktail_yf","mhouse_c","mhouse_x","mhouse_y","yuka_ride_id","dso_cf","spot_c","spot_r","spot_r_mokuhyou","draw_lock_f","nkscroll_con","nkscroll_view_x","nkscroll_view_y","nkscroll_my_view_x","nkscroll_my_view_y","nkscroll_speed_x","nkscroll_vx","nkscroll_vy","nkscroll_zsc","boss_attack_mode","cpoint_con","cpoint_stage","cpoint_x","cpoint_y","jst_slow_down","jst_key_down","jst_fast_run_attack","jst_fly_left_right","jst_fire_xkey_only","jst_kabe_kick","jst_double_jump","jst_fast_run","jst_high_sjump","jst_jump_level_fix","jst_auto_right","jst_syouryuuken","jst_pc_attack","up_key_c","down_key_c"];
+	var result = {};
+	props.forEach(function(key){
+		result[key] = this[key];
+	}, this);
+	// map_data_optionは巨大なので圧縮する
+	result.map_data_option = compressSparseBooleanArray2(this.map_data_option);
+    result.co_j = serializeCharacterObject(this.co_j);
+    // CharacterObjectの配列も小さくする
+    ["co_t","co_m","co_a","co_jm","co_mu"].forEach(function(key){
+        result[key] = compressCharacterObjectArray(this[key]);
+    }, this);
+    // YukaObjectの配列も小さくする
+    result.yo = this.yo.map(serializeYukaObject);
+	return result;
+	// boolean値2次元配列をtrueのインデックスの列に変換
+	function compressSparseBooleanArray2(arr) {
+		var width = arr.length;
+		var height = arr[0] && arr[0].length || 0;
+		var result_arr = [];
+		for (var x=0; y<width; x++) {
+			for (var y=0; y<height; y++) {
+				if (arr[x][y]) {
+					result_arr.push({
+						x: x,
+						y: y,
+					});
+				}
+			}
+		}
+		return {
+			width: width,
+			height: height,
+			arr: result_arr,
+		};
+	}
+    // CharacterObjectの配列を変換
+    function compressCharacterObjectArray(arr) {
+        return arr.map(function(obj) {
+            if (obj.c <= 0) {
+                // Cが0なのは使われていないオブジェクト
+                return 0;
+            } else {
+                return serializeCharacterObject(obj);
+            }
+        });
+    }
+    // CharacterObjectをシリアライズ
+    function serializeCharacterObject(obj) {
+        // スナップショットにコンストラクタ名が現れるのを防ぐためにJSON文字列化する
+        return JSON.stringify(obj);
+    }
+    // YukaObjectをシリアライズ
+    function serializeYukaObject(obj) {
+        return JSON.stringify(obj);
+    }
+}
+
+export { MainProgram };
