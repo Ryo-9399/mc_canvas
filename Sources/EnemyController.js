@@ -1,3 +1,5 @@
+import { rightShiftIgnoreSign } from "./GlobalFunctions";
+
 /*
  * フハハハハ！！　エネミーコントローラー！
  * ライフを1000払い　左 右 A B！
@@ -6273,3 +6275,4 @@ EnemyController.available = {
     1400: EnemyController.PikachieChaser,
 };
 
+export { EnemyController };

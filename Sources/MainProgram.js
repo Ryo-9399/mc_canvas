@@ -5,6 +5,7 @@ import { Color, Font, ImageBuff } from "./ImageBuff";
 import { KeyboardMenu } from "./KeyboardMenu";
 import { MapSystem } from "./MapSystem";
 import { YukaObject } from "./YukaObject";
+import { EnemyController } from "./EnemyController";
 
 /**
  * ゲーム本体
