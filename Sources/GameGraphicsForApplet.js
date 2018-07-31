@@ -1,3 +1,5 @@
+import { Dimension, createNDimensionArray, waitFor } from "./GlobalFunctions";
+import { Color, ImageBuff } from "./ImageBuff";
 
 function GameGraphicsForApplet(paramTagDataBase, paramApplet)
 {
@@ -188,6 +190,7 @@ GameGraphicsForApplet.prototype.setMapchipImage = function(paramString)
 		return;
 
 	// ■■■32x32にカットする処理(mapchip)
+	var n, m, i, j, localG;
 	if (this.layer_mode == 2)
 	{
 		for (n = 0; n <= 15; n++) {
@@ -336,4 +339,4 @@ GameGraphicsForApplet.prototype.drawListImage = function(paramInt1, paramInt2, p
 
 
 
-
+export { GameGraphicsForApplet };

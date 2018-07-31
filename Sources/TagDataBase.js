@@ -703,3 +703,5 @@ TagDataBase.prototype.setValueFromHTMLText = function(paramString)
 	}
 	return true;
 }
+
+export { TagDataBase };

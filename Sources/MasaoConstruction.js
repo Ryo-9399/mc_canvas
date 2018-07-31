@@ -1,3 +1,12 @@
+import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
+import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
+import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
+import { GameSoundForApplet } from "./GameSoundForApplet";
+import { AudioClip, Game, rightShiftIgnoreSign, waitFor } from "./GlobalFunctions";
+import { Color, Font, ImageBuff } from "./ImageBuff";
+import { MainProgram } from "./MainProgram";
+import { MasaoJSS } from "./MasaoJSS";
+import { TagDataBase } from "./TagDataBase";
 
 function MasaoConstruction(params, __canvas, __game, options)
 {
@@ -293,14 +302,19 @@ MasaoConstruction.prototype.run = function()
 		if(this.options.userJSCallback)
 		{
 			mode = this.getMode();
-			if(mode >= 100 && mode < 200)
-			{
-				// 引数にアプレットエミュレータを追加してuserJSを呼び出す
-				this.options.userJSCallback(this.gg.os_g_bk, mode, this.mp.maps.wx, this.mp.maps.wy, this.masaoJSSAppletEmulator);
-			}
-			else
-			{
-				this.options.userJSCallback(this.gg.os_g_bk, mode, -9999, -9999, this.masaoJSSAppletEmulator);
+			// ユーザーJS部分がエラーを投げてもゲームが停止しないようにtryでエラーを握りつぶす
+			try {
+				if(mode >= 100 && mode < 200)
+				{
+					// 引数にアプレットエミュレータを追加してuserJSを呼び出す
+					this.options.userJSCallback(this.gg.os_g_bk, mode, this.mp.maps.wx, this.mp.maps.wy, this.masaoJSSAppletEmulator);
+				}
+				else
+				{
+					this.options.userJSCallback(this.gg.os_g_bk, mode, -9999, -9999, this.masaoJSSAppletEmulator);
+				}
+			} catch (e) {
+				console.error(e);
 			}
 		}
 		this.__repaint();
@@ -2622,3 +2636,4 @@ MasaoConstruction.prototype.getSnapshot = function() {
 	return result;
 };
 
+export { MasaoConstruction };

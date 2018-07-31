@@ -621,14 +621,68 @@ GraphicsBk.prototype = Object.create(Graphics.prototype, {
  */
 GraphicsBk.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 {
-    if(arguments.length <= 6)
-    {
-        return Graphics.prototype.drawImage.apply(this, arguments);
+    var argsnum = arguments.length;
+    if (argsnum <= 4) {
+        this._ctx.drawImage(img._dat, a1, a2);
+        return true;
+    }
+    else if (5 <= argsnum && argsnum <= 6) {
+        // 引数5-6個の場合, (a1, a2): 描画先座標
+        // (a3, a4): 拡大/縮小後の大きさ
+        // 大きさが負の場合は反転する必要あり
+        this._ctx.save();
+        if (a3 < 0) {
+            // X方向に反転
+            this._ctx.translate(-a1, 0);
+            this._ctx.scale(-1, 1);
+            this._ctx.translate(a1, 0);
+        }
+        if (a4 < 0) {
+            // Y方向に反転
+            this._ctx.translate(0, -a2);
+            this._ctx.scale(1, -1);
+            this._ctx.translate(0, a2);
+        }
+        this._ctx.drawImage(img._dat, a1, a2, Math.abs(a3), Math.abs(a4));
+        this._ctx.restore();
+        return true;
     }
     else
     {
-        return Graphics.prototype.drawImage.call(this, img, a5, a6, a7-a5, a8-a6, a1, a2, a3-a1, a4-a2, a9);
+        // 引数9-10個の場合，(a1, a2): 描画先の左上の座標
+        // (a3, a4): 描画先の右下の座標
+        // (a5, a6): ソース図形の左上の座標
+        // (a7, a8): ソース図形の右下の座標
+        this._ctx.save();
+        if (a3 < a1) {
+            // 描画先がX方向に反転
+            this._ctx.translate(a1, 0);
+            this._ctx.scale(-1, 1);
+            this._ctx.translate(-a1, 0);
+        }
+        if (a4 < a2) {
+            // 描画先がY方向に反転
+            this._ctx.translate(0, a2);
+            this._ctx.scale(1, -1);
+            this._ctx.translate(0, -a2);
+        }
+        if (a7 < a5) {
+            // ソース画像がX方向に反転
+            this._ctx.translate(a3, 0);
+            this._ctx.scale(-1, 1);
+            this._ctx.translate(-a1, 0);
+        }
+        if (a8 < a6) {
+            // ソース画像がY方向に反転
+            this._ctx.translate(0, a4);
+            this._ctx.scale(1, -1);
+            this._ctx.translate(0, -a2);
+        }
+        this._ctx.drawImage(img._dat, a5, a6, a7 - a5, a8 - a6, a1, a2, Math.abs(a3 - a1), Math.abs(a4 - a2));
+        this._ctx.restore();
+        return true;
     }
+    return false;
 }
 
 
@@ -741,3 +795,9 @@ Font.SERIF = "Serif";
 Font.PLAIN = 0;
 Font.BOLD = 1;
 Font.ITALIC = 2;
+
+export {
+	ImageBuff,
+	Color,
+	Font,
+};

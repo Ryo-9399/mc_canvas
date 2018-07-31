@@ -1,3 +1,6 @@
+import { createNDimensionArray, rightShiftIgnoreSign } from "./GlobalFunctions";
+import { Color, Font } from "./ImageBuff";
+
 function KeyboardMenu(paramGameGraphics, paramGameKey, paramString)
 {
 	this.gg = paramGameGraphics;
@@ -739,3 +742,5 @@ KeyboardMenu.prototype.drawWindowbox = function(paramInt1, paramInt2, paramInt3,
 	this.hg.setColor(Color.black);
 	this.hg.fillRect(paramInt1 + 2, paramInt2 + 2, paramInt3 - 4, paramInt4 - 4);
 }
+
+export { KeyboardMenu };

@@ -1,3 +1,11 @@
+import { CharacterObject } from "./CharacterObject";
+import { createNDimensionArray, rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { IdouGamen } from "./IdouGamen";
+import { Color, Font, ImageBuff } from "./ImageBuff";
+import { KeyboardMenu } from "./KeyboardMenu";
+import { MapSystem } from "./MapSystem";
+import { YukaObject } from "./YukaObject";
+
 /**
  * ゲーム本体
  * @param gamegraphics {GameGraphicsForApplet}
@@ -34197,3 +34205,5 @@ MainProgram.prototype.getSnapshot = function()
         return JSON.stringify(obj);
     }
 }
+
+export { MainProgram };

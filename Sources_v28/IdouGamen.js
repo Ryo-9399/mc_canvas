@@ -1,3 +1,6 @@
+import { CharacterObject } from "./CharacterObject";
+import { createNDimensionArray } from "./GlobalFunctions";
+import { Color } from "./ImageBuff";
 
 function IdouGamen(gamegraphics, gamekey, keyboardmenu, mainprogram)
 {
@@ -1044,3 +1047,5 @@ IdouGamen.prototype.squareCLS = function(paramInt1, paramInt2)
 	this.gg.os_g.fillPolygon(this.cc_p1_x, this.cc_p1_y, 7);
 	this.gg.os_g.fillPolygon(this.cc_p2_x, this.cc_p2_y, 7);
 }
+
+export { IdouGamen };
