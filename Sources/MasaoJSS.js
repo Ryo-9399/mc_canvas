@@ -3976,6 +3976,28 @@ function MasaoJSS(mc, caseInsensitive)
 		}
 	}
 
+    /**
+     * 指定したパーツIDの定義オブジェクトを返します。
+     *
+     * @param {(number|string)} code パーツID（数値：ネイティブパーツ、文字列：カスタムパーツ）
+     * @returns {Object} パーツの定義オブジェクト
+     * ↓TODO↓
+     * @since カスタムパーツ 
+     */
+    this.getPartsDefinition = function (code) {
+        var customParts = mc.mp.customParts;
+        if (customParts && customParts[code]) {
+            // カスタムパーツだ
+            return customParts[code];
+        }
+        if (5000 <= code && code < 10000) {
+            // 敵コードだ
+            return mc.mp.getEnemyDefinition(code - 5000);
+        }
+        return null;
+    };
+
+
     if (caseInsensitive && 'undefined' !== typeof Proxy) {
         // メソッドの大文字小文字の違いを無視するフラグが立っている
         // 関数名を集める

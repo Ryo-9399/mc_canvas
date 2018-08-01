@@ -87,9 +87,15 @@ MasaoConstruction.prototype.stop = function()
 	}
 }
 
+/**
+ * MasaoConstructionとそれに関連するリソースを開放します。
+ */
 MasaoConstruction.prototype.destroy = function()
 {
-	this.th_jm = 10;
+    this.stop();
+    if (this.gs != null) {
+        this.gs.kill();
+    }
 }
 
 MasaoConstruction.prototype.paint = function(paramGraphics)

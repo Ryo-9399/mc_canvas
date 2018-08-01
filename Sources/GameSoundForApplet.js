@@ -309,6 +309,12 @@ GameSoundForApplet.prototype.playUserBGMFileLoop = function(paramString)
 }
 
 /**
+ * リソースを開放
+ */
+GameSoundForApplet.prototype.kill = function() {
+};
+
+/**
  * WebAudioを用いたゲーム音声
  */
 function GameSoundWebAudio(paramTagDataBase, paramApplet){
@@ -534,6 +540,12 @@ GameSoundWebAudio.prototype.playUserBGMFile = function(paramString, loopflg)
 GameSoundWebAudio.prototype.playUserBGMFileLoop = function(paramString)
 {
     this.playUserBGMFile(paramString, true);
+};
+GameSoundWebAudio.prototype.kill = function() {
+    // AudioContextを開放
+    this.context.close().catch(function(err) {
+        console.error(err);
+    });
 };
 
 /**

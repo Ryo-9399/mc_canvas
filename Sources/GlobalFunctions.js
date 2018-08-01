@@ -345,7 +345,7 @@ Game.padAccessor = (function()
  */
 Game.prototype.kill = function(){
     //ゲームを止める
-    this.__mc.stop();
+    this.__mc.destroy();
     //__resourceListの中身を全部後始末してあげる
     for(var rl=this.__resourceList,i=0,l=rl.length;i<l;i++){
         if(rl[i].type==="setInterval"){
