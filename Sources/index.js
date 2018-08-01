@@ -1,4 +1,4 @@
-import * as CanvasMasao from './CanvasMasao';
+import * as CanvasMasao from "./CanvasMasao";
 
 window.CanvasMasao = CanvasMasao;
 window.JSMasao = CanvasMasao.Game;

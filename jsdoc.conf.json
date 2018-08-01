@@ -1,9 +1,11 @@
 {
-    "plugins": ["plugins/markdown"],
-    "markdown": {
-        "hardwrap": true
-    },
-    "templates": {
-        "systemName": "mc_canvas"
-    }
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "markdown": {
+    "hardwrap": true
+  },
+  "templates": {
+    "systemName": "mc_canvas"
+  }
 }

@@ -1,6 +1,6 @@
 import { Game } from "./GlobalFunctions";
 
 window.CanvasMasao = {
-    Game: Game,
+	Game: Game
 };
 window.JSMasao = Game;
