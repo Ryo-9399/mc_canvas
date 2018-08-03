@@ -1,7 +1,6 @@
 import { Color } from "./ImageBuff";
 
-function YukaObject()
-{
+function YukaObject() {
 	this.con = 0;
 	this.x = 32;
 	this.y = 320;
@@ -24,8 +23,7 @@ function YukaObject()
 	this.type = 1;
 }
 
-YukaObject.prototype.init = function()
-{
+YukaObject.prototype.init = function() {
 	this.con = 0;
 	this.x = 32;
 	this.y = 320;
@@ -46,12 +44,11 @@ YukaObject.prototype.init = function()
 	this.pth = 0;
 	this.draw_f = false;
 	this.type = 1;
-}
+};
 
-YukaObject.prototype.setImage = function(paramImage)
-{
+YukaObject.prototype.setImage = function(paramImage) {
 	this.img = paramImage;
 	return true;
-}
+};
 
 export { YukaObject };

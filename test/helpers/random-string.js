@@ -3,10 +3,10 @@
  * @returns String ランダムな文字列
  */
 export default function randomID() {
-  return (
-    'a' +
-    Math.random()
-      .toString(36)
-      .slice(2)
-  );
+	return (
+		"a" +
+		Math.random()
+			.toString(36)
+			.slice(2)
+	);
 }

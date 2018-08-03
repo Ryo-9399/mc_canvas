@@ -2,8 +2,7 @@
  * 神クラス
  * @constructor
  */
-function CharacterObject()
-{
+function CharacterObject() {
 	this.c = 0;
 	this.x = 0;
 	this.y = 0;
@@ -29,18 +28,17 @@ function CharacterObject()
 	this.score = 0;
 	this.ss = 0;
 	this.gf = false;
-    /**
-     * このオブジェクトの動作を制御する関数
-     * @private
-     */
-    this.controller = undefined;
+	/**
+	 * このオブジェクトの動作を制御する関数
+	 * @private
+	 */
+	this.controller = undefined;
 }
 
 /**
  * キャラクターオブジェクトを初期化する
  */
-CharacterObject.prototype.init = function()
-{
+CharacterObject.prototype.init = function() {
 	this.c = 0;
 	this.x = 0;
 	this.y = 0;
@@ -66,12 +64,12 @@ CharacterObject.prototype.init = function()
 	this.score = 0;
 	this.ss = 0;
 	this.gf = false;
-    this.controller = undefined;
-}
+	this.controller = undefined;
+};
 
 /**
  * 未使用
  */
-CharacterObject.prototype.setPattern = function(paramString) {}
+CharacterObject.prototype.setPattern = function(paramString) {};
 
 export { CharacterObject };

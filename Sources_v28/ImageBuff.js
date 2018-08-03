@@ -8,10 +8,8 @@
  * @param h {number} 画像の高さ
  * @constructor
  */
-function ImageBuff(w, h)
-{
-	if(arguments.length == 2)
-	{
+function ImageBuff(w, h) {
+	if (arguments.length == 2) {
 		this._dat = document.createElement("canvas");
 		this._dat.width = w;
 		this._dat.height = h;
@@ -21,9 +19,7 @@ function ImageBuff(w, h)
 		ctx.lineWidth = 1.6;
 		ctx.lineCap = "round";
 		ctx.save();
-	}
-	else
-	{
+	} else {
 		this._dat = null;
 		this._width = -1;
 		this._height = -1;
@@ -37,62 +33,52 @@ function ImageBuff(w, h)
  * 画像を読み込む
  * @param url {string} 読み込む画像のパス(相対パス、URLともに可)
  */
-ImageBuff.prototype.load = function(url)
-{
+ImageBuff.prototype.load = function(url) {
 	this._loaded = false;
 	this._error = false;
 	this._width = -1;
 	this._height = -1;
 	this._dat = new Image();
 	var _this = this;
-	this._dat.onload = function()
-	{
+	this._dat.onload = function() {
 		ImageBuff_onload(_this);
 	};
-	this._dat.onerror = function()
-	{
+	this._dat.onerror = function() {
 		ImageBuff_onerror(_this);
 	};
-	this._dat.onabort = function()
-	{
+	this._dat.onabort = function() {
 		ImageBuff_onerror(_this);
 	};
-	this._dat.ontimeout = function()
-	{
+	this._dat.ontimeout = function() {
 		ImageBuff_onerror(_this);
 	};
 	this._dat.src = url;
-	if(this._dat.complete)
-	{
+	if (this._dat.complete) {
 		this.onload();
 	}
-}
+};
 
 /**
  * 画像のロード完了時に行われる処理
  */
-ImageBuff.prototype.onload = function()
-{
+ImageBuff.prototype.onload = function() {
 	this._loaded = true;
 	this._width = this._dat.naturalWidth;
 	this._height = this._dat.naturalHeight;
-}
-function ImageBuff_onload(obj)
-{
+};
+function ImageBuff_onload(obj) {
 	obj.onload();
 }
 
 /**
  * 画像のロード時にエラーが発生した場合に行われる処理
  */
-ImageBuff.prototype.onerror = function()
-{
+ImageBuff.prototype.onerror = function() {
 	this._error = true;
 	this._dat = null;
-}
+};
 
-function ImageBuff_onerror(obj)
-{
+function ImageBuff_onerror(obj) {
 	obj.onerror();
 }
 
@@ -101,39 +87,28 @@ function ImageBuff_onerror(obj)
  * Canvasモードでないと使えない
  * @returns {Graphics} Graphicsオブジェクト
  */
-ImageBuff.prototype.getGraphics = function()
-{
-	if(this._width < 0) return null;
+ImageBuff.prototype.getGraphics = function() {
+	if (this._width < 0) return null;
 	this._g = new Graphics(this);
 	return this._g;
-}
+};
 
 /**
  * getGraphicsの別名
  * @returns {Graphics}
  */
-ImageBuff.prototype.createGraphics = function()
-{
+ImageBuff.prototype.createGraphics = function() {
 	return this.getGraphics();
-}
-
-
-
-
-
-
-
+};
 
 /**
  * 画像編集クラス
  * @param img {ImageBuff} もととなるImageBuffオブジェクト
  * @constructor
  */
-function Graphics(img)
-{
+function Graphics(img) {
 	this._ctx = img._dat.getContext("2d");
-	if(this._ctx)
-	{
+	if (this._ctx) {
 		this._ctx.restore();
 		this._ctx.save();
 	}
@@ -149,15 +124,14 @@ function Graphics(img)
  * @param y2 {number} 終点のY座標
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawLine = function(x1, y1, x2, y2)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.drawLine = function(x1, y1, x2, y2) {
+	if (this._ctx == null) return false;
 	this._ctx.beginPath();
 	this._ctx.moveTo(x1, y1);
 	this._ctx.lineTo(x2, y2);
 	this._ctx.stroke();
 	return true;
-}
+};
 
 /**
  * 画像を描画する
@@ -200,31 +174,34 @@ Graphics.prototype.drawLine = function(x1, y1, x2, y2)
  * @param [dh] {number} 描画される縦方向の高さ
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
-{
-	if(img._dat == null) return false;
-	if(this._ctx == null) return false;
-	try
-	{
-		if(arguments.length <= 4)
-		{
+Graphics.prototype.drawImage = function(
+	img,
+	a1,
+	a2,
+	a3,
+	a4,
+	a5,
+	a6,
+	a7,
+	a8,
+	a9
+) {
+	if (img._dat == null) return false;
+	if (this._ctx == null) return false;
+	try {
+		if (arguments.length <= 4) {
 			this._ctx.drawImage(img._dat, a1, a2);
 			return true;
-		}
-		else if(arguments.length <= 6)
-		{
+		} else if (arguments.length <= 6) {
 			this._ctx.drawImage(img._dat, a1, a2, a3, a4);
 			return true;
-		}
-		else if(arguments.length <= 10)
-		{
+		} else if (arguments.length <= 10) {
 			this._ctx.drawImage(img._dat, a1, a2, a3, a4, a5, a6, a7, a8);
 			return true;
 		}
-	}
-	catch(e) {}
+	} catch (e) {}
 	return false;
-}
+};
 
 /**
  * 矩形を描画する
@@ -234,12 +211,11 @@ Graphics.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9)
  * @param h {number} 高さ
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawRect = function(x, y, w, h)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.drawRect = function(x, y, w, h) {
+	if (this._ctx == null) return false;
 	this._ctx.strokeRect(x, y, w, h);
 	return true;
-}
+};
 
 /**
  * 矩形を塗りつぶし描画する
@@ -249,12 +225,11 @@ Graphics.prototype.drawRect = function(x, y, w, h)
  * @param h {number} 高さ
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.fillRect = function(x, y, w, h)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.fillRect = function(x, y, w, h) {
+	if (this._ctx == null) return false;
 	this._ctx.fillRect(x, y, w, h);
 	return true;
-}
+};
 
 /**
  * 多角形を描画する
@@ -263,19 +238,17 @@ Graphics.prototype.fillRect = function(x, y, w, h)
  * @param pn {number} 多角形の頂点数
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawPolygon = function(xa, ya, pn)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.drawPolygon = function(xa, ya, pn) {
+	if (this._ctx == null) return false;
 	this._ctx.beginPath();
 	this._ctx.moveTo(xa[0], ya[0]);
-	for(var i = 1; i < pn; i++)
-	{
+	for (var i = 1; i < pn; i++) {
 		this._ctx.lineTo(xa[i], ya[i]);
 	}
 	this._ctx.closePath();
 	this._ctx.stroke();
 	return true;
-}
+};
 
 /**
  * 多角形を塗りつぶし描画する
@@ -284,19 +257,17 @@ Graphics.prototype.drawPolygon = function(xa, ya, pn)
  * @param pn {number} 多角形の頂点数
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.fillPolygon = function(xa, ya, pn)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.fillPolygon = function(xa, ya, pn) {
+	if (this._ctx == null) return false;
 	this._ctx.beginPath();
 	this._ctx.moveTo(xa[0], ya[0]);
-	for(var i = 1; i < pn; i++)
-	{
+	for (var i = 1; i < pn; i++) {
 		this._ctx.lineTo(xa[i], ya[i]);
 	}
 	this._ctx.closePath();
 	this._ctx.fill();
 	return true;
-}
+};
 
 /**
  * 楕円を描画する
@@ -306,12 +277,11 @@ Graphics.prototype.fillPolygon = function(xa, ya, pn)
  * @param h {number} 高さ
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawOval = function(x, y, w, h)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.drawOval = function(x, y, w, h) {
+	if (this._ctx == null) return false;
 	this.drawArc(x, y, w, h, 0, Math.PI * 2);
 	return true;
-}
+};
 
 /**
  * 楕円を塗りつぶし描画する
@@ -321,12 +291,11 @@ Graphics.prototype.drawOval = function(x, y, w, h)
  * @param h {number} 高さ
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.fillOval = function(x, y, w, h)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.fillOval = function(x, y, w, h) {
+	if (this._ctx == null) return false;
 	this.fillArc(x, y, w, h, 0, Math.PI * 2);
 	return true;
-}
+};
 
 /**
  * 円弧を描画する
@@ -338,18 +307,24 @@ Graphics.prototype.fillOval = function(x, y, w, h)
  * @param theta {number} 始点から終点までのラジアン角
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawArc = function(x, y, w, h, angle, theta)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.drawArc = function(x, y, w, h, angle, theta) {
+	if (this._ctx == null) return false;
 	var sc = h / w;
 	this._ctx.save();
 	this._ctx.beginPath();
 	this._ctx.scale(1, sc);
-	this._ctx.arc(x + w / 2, (y + h / 2) / sc, w / 2, angle, angle + theta, (theta < 0));
+	this._ctx.arc(
+		x + w / 2,
+		(y + h / 2) / sc,
+		w / 2,
+		angle,
+		angle + theta,
+		theta < 0
+	);
 	this._ctx.stroke();
 	this._ctx.restore();
 	return true;
-}
+};
 
 /**
  * 円弧を描画する
@@ -361,71 +336,85 @@ Graphics.prototype.drawArc = function(x, y, w, h, angle, theta)
  * @param theta {number} 始点から終点までのラジアン角
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.fillArc = function(x, y, w, h, angle, theta)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.fillArc = function(x, y, w, h, angle, theta) {
+	if (this._ctx == null) return false;
 	var sc = h / w;
 	this._ctx.save();
 	this._ctx.beginPath();
 	this._ctx.scale(1, sc);
-	this._ctx.arc(x + w / 2, (y + h / 2) / sc, w / 2, angle, angle + theta, (theta < 0));
+	this._ctx.arc(
+		x + w / 2,
+		(y + h / 2) / sc,
+		w / 2,
+		angle,
+		angle + theta,
+		theta < 0
+	);
 	this._ctx.lineTo(x + w / 2, (y + h / 2) / sc);
 	this._ctx.closePath();
 	this._ctx.fill();
 	this._ctx.restore();
 	return true;
-}
+};
 
 /**
  * 広域アルファ値を設定する
  * @param a {number} 0から255までのアルファ値
  * @returns {boolean} 設定に成功したかどうか
  */
-Graphics.prototype.setGlobalAlpha = function(a)
-{
-	if(this._ctx == null) return false;
-	if(a < 0) a = 0;
-	if(a > 255) a = 255;
+Graphics.prototype.setGlobalAlpha = function(a) {
+	if (this._ctx == null) return false;
+	if (a < 0) a = 0;
+	if (a > 255) a = 255;
 	this._ctx.globalAlpha = a / 255;
 	return true;
-}
+};
 
 /**
  * 描画色をColorオブジェクトで設定する
  * @param color {Color} 描画色
  * @returns {boolean} 設定に成功したかどうか
  */
-Graphics.prototype.setColor = function(color)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.setColor = function(color) {
+	if (this._ctx == null) return false;
 	this._color = new Color(color.r, color.g, color.b, color.a);
-	var val = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + (color.a / 255) + ")";
+	var val =
+		"rgba(" +
+		color.r +
+		", " +
+		color.g +
+		", " +
+		color.b +
+		", " +
+		color.a / 255 +
+		")";
 	this._ctx.strokeStyle = val;
 	this._ctx.fillStyle = val;
 	return true;
-}
+};
 
 /**
  * 描画文字列フォントを設定する
  * @param font {Font} 設定するFontオブジェクト
  * @returns {boolean} 設定に成功したかどうか
  */
-Graphics.prototype.setFont = function(font)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.setFont = function(font) {
+	if (this._ctx == null) return false;
 	var str = "";
-	if(font._style & Font.ITALIC) str += "italic ";
-	if(font._style & Font.BOLD) str += "bold ";
+	if (font._style & Font.ITALIC) str += "italic ";
+	if (font._style & Font.BOLD) str += "bold ";
 	str += font._size + "px ";
-	if(font._name == Font.SERIF) str += "serif";
-	else if(font._name == Font.SANS_SERIF) str += "sans-serif";
-	else if(font._name == Font.MONOSPACED) str += "monospace";
-	else if(font._name == Font.DIALOG) str += "'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
+	if (font._name == Font.SERIF) str += "serif";
+	else if (font._name == Font.SANS_SERIF) str += "sans-serif";
+	else if (font._name == Font.MONOSPACED) str += "monospace";
+	else if (font._name == Font.DIALOG)
+		str +=
+			"'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
 	else str += '"' + font._name + '"';
 	this._ctx.font = str;
 	this._font = font;
 	return true;
-}
+};
 
 /**
  * 文字列を描画する
@@ -434,12 +423,11 @@ Graphics.prototype.setFont = function(font)
  * @param y {number} Y座標
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawString = function(str, x, y)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.drawString = function(str, x, y) {
+	if (this._ctx == null) return false;
 	this._ctx.fillText(str, x, y);
 	return true;
-}
+};
 
 /**
  * 座標軸を移動する
@@ -447,12 +435,11 @@ Graphics.prototype.drawString = function(str, x, y)
  * @param y {number} Y方向の移動距離
  * @returns {boolean} 成功したかどうか
  */
-Graphics.prototype.translate = function(x, y)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.translate = function(x, y) {
+	if (this._ctx == null) return false;
 	this._ctx.translate(x, y);
 	return true;
-}
+};
 
 /**
  * 座標軸を回転させる
@@ -461,21 +448,17 @@ Graphics.prototype.translate = function(x, y)
  * @param [y] {number} 回転の中心となるY座標
  * @returns {boolean} 成功したかどうか
  */
-Graphics.prototype.rotate = function(angle, x, y)
-{
-	if(this._ctx == null) return false;
-	if(arguments.length == 1)
-	{
+Graphics.prototype.rotate = function(angle, x, y) {
+	if (this._ctx == null) return false;
+	if (arguments.length == 1) {
 		this._ctx.rotate(angle);
-	}
-	else
-	{
+	} else {
 		this._ctx.translate(x, y);
 		this._ctx.rotate(angle);
 		this._ctx.translate(-x, -y);
 	}
 	return true;
-}
+};
 
 /**
  * 座標軸を拡大縮小する
@@ -483,12 +466,11 @@ Graphics.prototype.rotate = function(angle, x, y)
  * @param y {number} Y方向の拡大倍率
  * @returns {boolean} 成功したかどうか
  */
-Graphics.prototype.scale = function(x, y)
-{
-	if(this._ctx == null) return false;
+Graphics.prototype.scale = function(x, y) {
+	if (this._ctx == null) return false;
 	this._ctx.scale(x, y);
 	return true;
-}
+};
 
 /**
  * クリッピング領域を設定する
@@ -528,33 +510,33 @@ Graphics.prototype.scale = function(x, y)
  * @param pn {number} 多角形の頂点数
  * @returns {boolean}
  */
-Graphics.prototype.setClip = function(pattern)
-{
-	if(this._ctx == null) return false;
-	if(pattern == "ellipse")
-	{
+Graphics.prototype.setClip = function(pattern) {
+	if (this._ctx == null) return false;
+	if (pattern == "ellipse") {
 		var sc = arguments[4] / arguments[3];
 		this._ctx.beginPath();
 		this._ctx.save();
 		this._ctx.scale(1, sc);
-		this._ctx.arc(arguments[1] + arguments[3] / 2, (arguments[2] + arguments[4] / 2) / sc, arguments[3] / 2, 0, Math.PI * 2, false);
+		this._ctx.arc(
+			arguments[1] + arguments[3] / 2,
+			(arguments[2] + arguments[4] / 2) / sc,
+			arguments[3] / 2,
+			0,
+			Math.PI * 2,
+			false
+		);
 		this._ctx.restore();
 		this._ctx.clip();
 		return true;
-	}
-	else if(pattern == "rect")
-	{
+	} else if (pattern == "rect") {
 		this._ctx.beginPath();
 		this._ctx.rect(arguments[1], arguments[2], arguments[3], arguments[4]);
 		this._ctx.clip();
 		return true;
-	}
-	else if(pattern == "polygon")
-	{
+	} else if (pattern == "polygon") {
 		this._ctx.beginPath();
 		this._ctx.moveTo(arguments[1][0], arguments[2][0]);
-		for(var i = 1; i < arguments[3]; i++)
-		{
+		for (var i = 1; i < arguments[3]; i++) {
 			this._ctx.lineTo(arguments[1][i], arguments[2][i]);
 		}
 		this._ctx.closePath();
@@ -562,7 +544,7 @@ Graphics.prototype.setClip = function(pattern)
 		return true;
 	}
 	return false;
-}
+};
 
 /**
  * 自身の画像の一部を別の座標にコピーする
@@ -574,26 +556,29 @@ Graphics.prototype.setClip = function(pattern)
  * @param dy {number} コピー先のY座標
  * @returns {boolean}
  */
-Graphics.prototype.copyArea = function(x, y, width, height, dx, dy)
-{
-	if(this._ctx == null) return false;
-	this._ctx.drawImage(this._ctx.canvas, x, y, width, height, x+dx, y+dy, width, height);
+Graphics.prototype.copyArea = function(x, y, width, height, dx, dy) {
+	if (this._ctx == null) return false;
+	this._ctx.drawImage(
+		this._ctx.canvas,
+		x,
+		y,
+		width,
+		height,
+		x + dx,
+		y + dy,
+		width,
+		height
+	);
 	return true;
-}
+};
 
 /**
  * 描画等で加えた変更を破棄して元の画像に戻す
  */
-Graphics.prototype.dispose = function()
-{
+Graphics.prototype.dispose = function() {
 	this._ctx.restore();
 	this._ctx.save();
-}
-
-
-
-
-
+};
 
 /**
  * 色を表現するクラス
@@ -603,25 +588,21 @@ Graphics.prototype.dispose = function()
  * @param [a=255] {number} アルファ値(0-255)
  * @constructor
  */
-function Color(r, g, b, a)
-{
-	if(r > 255) this.r = 255;
-	else if(r < 0) this.r = 0;
+function Color(r, g, b, a) {
+	if (r > 255) this.r = 255;
+	else if (r < 0) this.r = 0;
 	else this.r = r;
-	if(g > 255) this.g = 255;
-	else if(g < 0) this.g = 0;
+	if (g > 255) this.g = 255;
+	else if (g < 0) this.g = 0;
 	else this.g = g;
-	if(b > 255) this.b = 255;
-	else if(b < 0) this.b = 0;
+	if (b > 255) this.b = 255;
+	else if (b < 0) this.b = 0;
 	else this.b = b;
-	if(arguments.length == 4)
-	{
-		if(a > 255) this.a = 255;
-		else if(a < 0) this.a = 0;
+	if (arguments.length == 4) {
+		if (a > 255) this.a = 255;
+		else if (a < 0) this.a = 0;
 		else this.a = a;
-	}
-	else
-	{
+	} else {
 		this.a = 255;
 	}
 }
@@ -630,28 +611,25 @@ function Color(r, g, b, a)
  * 赤色の値を取得する
  * @returns {number|*}
  */
-Color.prototype.getRed = function()
-{
+Color.prototype.getRed = function() {
 	return this.r;
-}
+};
 
 /**
  * 緑色の値を取得する
  * @returns {number|*}
  */
-Color.prototype.getGreen = function()
-{
+Color.prototype.getGreen = function() {
 	return this.g;
-}
+};
 
 /**
  * 青色の値を取得する
  * @returns {number|*}
  */
-Color.prototype.getBlue = function()
-{
+Color.prototype.getBlue = function() {
 	return this.b;
-}
+};
 
 Color.white = new Color(255, 255, 255);
 Color.WHITE = Color.white;
@@ -680,7 +658,6 @@ Color.CYAN = Color.cyan;
 Color.blue = new Color(0, 0, 255);
 Color.BLUE = Color.blue;
 
-
 /**
  * フォントを表現するクラス
  * @param name {string} フォント名
@@ -688,8 +665,7 @@ Color.BLUE = Color.blue;
  * @param size {number} フォントサイズ
  * @constructor
  */
-function Font(name, style, size)
-{
+function Font(name, style, size) {
 	this._name = name;
 	this._style = style;
 	this._size = size;
@@ -705,8 +681,4 @@ Font.PLAIN = 0;
 Font.BOLD = 1;
 Font.ITALIC = 2;
 
-export {
-	ImageBuff,
-	Color,
-	Font,
-};
+export { ImageBuff, Color, Font };
