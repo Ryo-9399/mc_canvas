@@ -297,6 +297,11 @@ GameSoundForApplet.prototype.playUserBGMFileLoop = function(paramString) {
 };
 
 /**
+ * ユーザーからのインタラクションがあったことを伝える
+ */
+GameSoundForApplet.prototype.userInteract = function() {};
+
+/**
  * リソースを開放
  */
 GameSoundForApplet.prototype.kill = function() {};
@@ -428,7 +433,12 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(
 };
 
 GameSoundWebAudio.prototype.play = function(paramInt) {
-	if (!this.use_f || this.mute_f || this.s_data[paramInt] == null) {
+	if (
+		!this.use_f ||
+		this.mute_f ||
+		this.s_data[paramInt] == null ||
+		this.context.state !== "running"
+	) {
 		return;
 	}
 	if (this.noOverlapFlag === true) {
@@ -474,7 +484,7 @@ GameSoundWebAudio.prototype.rsAddSound = function(paramInt) {
 	this.play(paramInt);
 };
 GameSoundWebAudio.prototype.playBGM = function(paramInt, loopflg) {
-	if (this.mute_f) {
+	if (this.mute_f || this.context.state !== "running") {
 		return;
 	}
 	if (this.bgm_genzai === paramInt) {
@@ -537,6 +547,14 @@ GameSoundWebAudio.prototype.playUserBGMFile = function(paramString, loopflg) {
 };
 GameSoundWebAudio.prototype.playUserBGMFileLoop = function(paramString) {
 	this.playUserBGMFile(paramString, true);
+};
+GameSoundWebAudio.prototype.userInteract = function() {
+	// ユーザーの入力に反応してWebAudioを有効化
+	if (this.context.state === "suspended") {
+		this.context.resume().catch(function(err) {
+			console.error(err);
+		});
+	}
 };
 GameSoundWebAudio.prototype.kill = function() {
 	// AudioContextを開放
