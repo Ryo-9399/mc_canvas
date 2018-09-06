@@ -435,6 +435,9 @@ MasaoConstruction.prototype.init_j = function() {
 			e.stopImmediatePropagation();
 			// このオブジェクトにフォーカスを当てる
 			Game.focus.focus(this);
+			// ユーザーインタラクションを通知
+			this.gs.userInteract();
+			// マウスイベントを発生
 			GameMouse_mousePressed(_gm, e);
 		}.bind(this)
 	);
