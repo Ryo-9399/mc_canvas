@@ -102,7 +102,7 @@ function Game(params, id, options) {
 		ss = __pad_btn.style;
 		ss.width = "24em";
 		ss.height = "2.5em";
-		__pad_btn.onclick = function() {
+		__pad_btn.onclick = () => {
 			if (__pad.style.display == "inline") __pad.style.display = "none";
 			else {
 				Game.padAccessor.show(__pad);
@@ -179,6 +179,20 @@ function Game(params, id, options) {
 			this.__pad_after[i] = false;
 		}
 		this.__pad_update();
+
+		// 画面タッチに反応してユーザーインタラクションによりサウンドを有効化
+		const touchendHandler = () => {
+			// バーチャル操作パッド表示に反応してサウンドを有効化
+			if (this.__mc.gs) {
+				this.__mc.gs.userInteract();
+				document.removeEventListener(
+					"touchend",
+					touchendHandler,
+					false
+				);
+			}
+		};
+		document.addEventListener("touchend", touchendHandler, false);
 	}
 
 	// __appimgはMasaoConstruction内へ移動

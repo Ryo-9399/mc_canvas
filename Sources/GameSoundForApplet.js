@@ -297,6 +297,11 @@ GameSoundForApplet.prototype.playUserBGMFileLoop = function(paramString) {
 };
 
 /**
+ * ユーザーからのインタラクションがあったことを伝える
+ */
+GameSoundForApplet.prototype.userInteract = function() {};
+
+/**
  * リソースを開放
  */
 GameSoundForApplet.prototype.kill = function() {};
@@ -355,7 +360,7 @@ GameSoundWebAudio.prototype._load = function() {
 	}
 };
 /**
- * ファイルをXHRで読み込みcontextAudioClipに変換
+ * 音声ファイルをXHRで読み込みcontextAudioClipに変換
  * @protected
  */
 GameSoundWebAudio.prototype._loadAudioBufferInto = function(
@@ -364,10 +369,11 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(
 	index,
 	callback
 ) {
+	const { audioCache, context } = this;
 	// まずcacheをまさぐる
-	var audioCache = this.audioCache;
 	if (audioCache[url] != null) {
 		if (audioCache[url] instanceof Array) {
+			// 現在読み込み中なのでコールバック一覧に追加
 			audioCache[url].push(function(result) {
 				target[index] = result;
 				if ("function" === typeof callback) {
@@ -375,47 +381,47 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(
 				}
 			});
 		} else {
+			// 読み込み終わっているのでコールバックをすぐに呼ぶ
 			setTimeout(function() {
-				target[index] = result;
+				target[index] = audioCache[url];
 				if ("function" === typeof callback) {
-					callback(result);
+					callback(audioCache[url]);
 				}
 			}, 0);
 		}
 		return;
 	}
-
+	// まだ読み込みが開始されていない
 	audioCache[url] = [];
 
-	var context = this.context;
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url);
 
 	xhr.responseType = "arraybuffer";
-	xhr.onload = function() {
+	xhr.onload = () => {
 		var buf = xhr.response;
 		if (buf == null || xhr.status === 0 || xhr.status >= 400) {
 			return;
 		}
-		context
-			.decodeAudioData(buf)
-			.then(function(audiobuf) {
-				target[index] = audiobuf;
+		decodeAudioData(context, buf).then(
+			function(result) {
+				target[index] = result;
 				if ("function" === typeof callback) {
-					callback(audiobuf);
+					callback(result);
 				}
 				// cache
 				audioCache[url].forEach(function(func) {
-					func(audiobuf);
+					func(result);
 				});
-				audioCache[url] = audiobuf;
-			})
-			.catch(function(err) {
+				audioCache[url] = result;
+			},
+			function(err) {
 				console.error(err);
 				if ("function" === typeof callback) {
 					callback(null);
 				}
-			});
+			}
+		);
 	};
 	xhr.onerror = function(err) {
 		console.error(err);
@@ -425,10 +431,26 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(
 	};
 
 	xhr.send();
+
+	/**
+	 * Call AudioContext#decodeAudioData and returns Promise.
+	 * iOS Safari does not support the new Promise-based API,
+	 * so it uses callback-based API.
+	 */
+	function decodeAudioData(context, buf) {
+		return new Promise((resolve, reject) => {
+			context.decodeAudioData(buf, resolve, reject);
+		});
+	}
 };
 
 GameSoundWebAudio.prototype.play = function(paramInt) {
-	if (!this.use_f || this.mute_f || this.s_data[paramInt] == null) {
+	if (
+		!this.use_f ||
+		this.mute_f ||
+		this.s_data[paramInt] == null ||
+		this.context.state !== "running"
+	) {
 		return;
 	}
 	if (this.noOverlapFlag === true) {
@@ -474,7 +496,7 @@ GameSoundWebAudio.prototype.rsAddSound = function(paramInt) {
 	this.play(paramInt);
 };
 GameSoundWebAudio.prototype.playBGM = function(paramInt, loopflg) {
-	if (this.mute_f) {
+	if (this.mute_f || this.context.state !== "running") {
 		return;
 	}
 	if (this.bgm_genzai === paramInt) {
@@ -537,6 +559,16 @@ GameSoundWebAudio.prototype.playUserBGMFile = function(paramString, loopflg) {
 };
 GameSoundWebAudio.prototype.playUserBGMFileLoop = function(paramString) {
 	this.playUserBGMFile(paramString, true);
+};
+GameSoundWebAudio.prototype.userInteract = function() {
+	const { context } = this;
+	// ユーザーの入力に反応してWebAudioを有効化
+	if (context.state === "suspended") {
+		// Chrome v70以降/iOS： ユーザー入力に反応してresumeすれば再生可
+		context.resume().catch(function(err) {
+			console.error(err);
+		});
+	}
 };
 GameSoundWebAudio.prototype.kill = function() {
 	// AudioContextを開放
