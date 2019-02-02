@@ -6145,8 +6145,6 @@ MainProgram.prototype.setAthleticOnMap = function(i, j, k) {
 
 /**
  * ゲーム画面を描画します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreen = function() {
 	var ai = new Array(26);
@@ -9961,8 +9959,8 @@ MainProgram.prototype.drawGamescreen = function() {
 
 /**
  * 主人公を描画します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenMy = function() {
 	var l = this.maps.wx;
@@ -10128,8 +10126,8 @@ MainProgram.prototype.drawGamescreenMy = function() {
 
 /**
  * 敵を描画します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenEnemy = function() {
 	var j = this.maps.wx;
@@ -10158,8 +10156,8 @@ MainProgram.prototype.drawGamescreenEnemy = function() {
 
 /**
  * HPゲージ、一言メッセージ、{@link MasaoJSS#showOval|showOval}, {@link MasaoJSS#showRect|showRect}, {@link MasaoJSS#showImage|showImage}で指定した描画物を描画します。
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenWindow = function() {
 	if (this.showr_c > 0) {
@@ -10276,8 +10274,8 @@ MainProgram.prototype.drawGamescreenWindow = function() {
 
 /**
  * 仕掛けを表示します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenUgokuyuka = function() {
 	var j2 = this.maps.wx;
@@ -17700,10 +17698,10 @@ MainProgram.prototype.tMove = function() {
 
 			case 10:
 				/*
-             * 10: まだ出現していない敵
-             * c1: 出現するためのX座標?
-             * c2: 本来の敵コード
-             */
+				 * 10: まだ出現していない敵
+				 * c1: 出現するためのX座標?
+				 * c2: 本来の敵コード
+				 */
 				if (this.maps.wx >= characterobject.c1) {
 					characterobject.c = characterobject.c2;
 					characterobject.c1 = 0;
