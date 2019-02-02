@@ -6,7 +6,7 @@
 const path = require("path");
 const fs = require("fs");
 const globby = require("globby");
-const open = require("open");
+const open = require("opn");
 const express = require("express");
 const nunjucks = require("nunjucks");
 const PORT = parseInt(process.env.PORT, 10) || 8080;
