@@ -1057,7 +1057,20 @@ MainProgram.prototype.setBossHP = function(i) {
  */
 MainProgram.prototype.getBossDirection = function() {
 	if (this.ml_mode < 100 || this.ml_mode >= 200) return 0;
-	return this.co_b.pth != 1 ? 0 : 1;
+	switch (this.co_b.pt) {
+		case 1005:
+		case 1015:
+		case 1105:
+		case 1106:
+		case 1115:
+		case 1205:
+		case 1215:
+		case 1255:
+		case 1256:
+			return 1;
+		default:
+			return 0;
+	}
 };
 
 /**
@@ -6145,8 +6158,6 @@ MainProgram.prototype.setAthleticOnMap = function(i, j, k) {
 
 /**
  * ゲーム画面を描画します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreen = function() {
 	var ai = new Array(26);
@@ -8671,19 +8682,6 @@ MainProgram.prototype.drawGamescreen = function() {
 					i16 + this.co_b.zs_y,
 					this.ap
 				);
-				if (
-					this.co_b.pt == 1005 ||
-					this.co_b.pt == 1015 ||
-					this.co_b.pt == 1105 ||
-					this.co_b.pt == 1106 ||
-					this.co_b.pt == 1115 ||
-					this.co_b.pt == 1205 ||
-					this.co_b.pt == 1215 ||
-					this.co_b.pt == 1255 ||
-					this.co_b.pt == 1256
-				)
-					this.co_b.pth = 1;
-				else this.co_b.pth = 0;
 			} else {
 				switch (this.co_b.pt) {
 					default:
@@ -8714,7 +8712,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 0;
 						break;
 
 					case 1005:
@@ -8742,7 +8739,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 1;
 						break;
 
 					case 1010:
@@ -8758,7 +8754,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 0;
 						break;
 
 					case 1015:
@@ -8774,7 +8769,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 1;
 						break;
 
 					case 1100:
@@ -8802,7 +8796,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 0;
 						break;
 
 					case 1101:
@@ -8839,7 +8832,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							this.ap
 						);
 						graphics221.dispose();
-						this.co_b.pth = 0;
 						break;
 
 					case 1105:
@@ -8867,7 +8859,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 1;
 						break;
 
 					case 1106:
@@ -8904,7 +8895,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							this.ap
 						);
 						graphics222.dispose();
-						this.co_b.pth = 1;
 						break;
 
 					case 1110:
@@ -8920,7 +8910,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 0;
 						break;
 
 					case 1115:
@@ -8936,7 +8925,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 1;
 						break;
 
 					case 1200:
@@ -8964,7 +8952,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 0;
 						break;
 
 					case 1205:
@@ -8992,7 +8979,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 1;
 						break;
 
 					case 1210:
@@ -9008,7 +8994,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 0;
 						break;
 
 					case 1215:
@@ -9024,7 +9009,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							i16 + 16,
 							this.ap
 						);
-						this.co_b.pth = 1;
 						break;
 
 					case 1250:
@@ -9074,7 +9058,6 @@ MainProgram.prototype.drawGamescreen = function() {
 						}
 
 						this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-						this.co_b.pth = 0;
 						break;
 
 					case 1251:
@@ -9111,7 +9094,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							this.ap
 						);
 						graphics223.dispose();
-						this.co_b.pth = 0;
 						break;
 
 					case 1255:
@@ -9161,7 +9143,6 @@ MainProgram.prototype.drawGamescreen = function() {
 						}
 
 						this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-						this.co_b.pth = 1;
 						break;
 
 					case 1256:
@@ -9198,7 +9179,6 @@ MainProgram.prototype.drawGamescreen = function() {
 							this.ap
 						);
 						graphics224.dispose();
-						this.co_b.pth = 1;
 						break;
 				}
 			}
@@ -9961,8 +9941,8 @@ MainProgram.prototype.drawGamescreen = function() {
 
 /**
  * 主人公を描画します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenMy = function() {
 	var l = this.maps.wx;
@@ -10128,8 +10108,8 @@ MainProgram.prototype.drawGamescreenMy = function() {
 
 /**
  * 敵を描画します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenEnemy = function() {
 	var j = this.maps.wx;
@@ -10158,8 +10138,8 @@ MainProgram.prototype.drawGamescreenEnemy = function() {
 
 /**
  * HPゲージ、一言メッセージ、{@link MasaoJSS#showOval|showOval}, {@link MasaoJSS#showRect|showRect}, {@link MasaoJSS#showImage|showImage}で指定した描画物を描画します。
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenWindow = function() {
 	if (this.showr_c > 0) {
@@ -10276,8 +10256,8 @@ MainProgram.prototype.drawGamescreenWindow = function() {
 
 /**
  * 仕掛けを表示します
- * {@link MainProgram#drawSystemObject}以外では使われていない？
- * @see {@link MainProgram#drawSystemObject}
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
  */
 MainProgram.prototype.drawGamescreenUgokuyuka = function() {
 	var j2 = this.maps.wx;
@@ -17700,10 +17680,10 @@ MainProgram.prototype.tMove = function() {
 
 			case 10:
 				/*
-             * 10: まだ出現していない敵
-             * c1: 出現するためのX座標?
-             * c2: 本来の敵コード
-             */
+				 * 10: まだ出現していない敵
+				 * c1: 出現するためのX座標?
+				 * c2: 本来の敵コード
+				 */
 				if (this.maps.wx >= characterobject.c1) {
 					characterobject.c = characterobject.c2;
 					characterobject.c1 = 0;

@@ -927,10 +927,10 @@ var timestamp =
 	window.performance && performance.now
 		? performance.now.bind(performance)
 		: Date.now
-			? Date.now.bind(Date)
-			: function() {
-					return new Date().getTime() * 1000;
-			  };
+		? Date.now.bind(Date)
+		: function() {
+				return new Date().getTime() * 1000;
+		  };
 
 /**
  * @function idle
@@ -941,31 +941,31 @@ var idle =
 	"function" === typeof requestIdleCallback
 		? requestIdleCallback
 		: "function" === typeof setImmediate
-			? function(cb) {
-					setImmediate(function() {
-						var n = timestamp();
-						var deadline = {
-							didTimeout: false,
-							timeRemaining: function() {
-								// 50ms is the maximum value recommended by Google
-								return 50 + n - timestamp();
-							}
-						};
-						cb(deadline);
-					});
-			  }
-			: function(cb) {
-					setTimeout(function() {
-						var n = timestamp();
-						var deadline = {
-							didTimeout: false,
-							timeRemaining: function() {
-								// 50ms is the maximum value recommended by Google
-								return 50 + n - timestamp();
-							}
-						};
-						cb(deadline);
-					}, 1);
-			  };
+		? function(cb) {
+				setImmediate(function() {
+					var n = timestamp();
+					var deadline = {
+						didTimeout: false,
+						timeRemaining: function() {
+							// 50ms is the maximum value recommended by Google
+							return 50 + n - timestamp();
+						}
+					};
+					cb(deadline);
+				});
+		  }
+		: function(cb) {
+				setTimeout(function() {
+					var n = timestamp();
+					var deadline = {
+						didTimeout: false,
+						timeRemaining: function() {
+							// 50ms is the maximum value recommended by Google
+							return 50 + n - timestamp();
+						}
+					};
+					cb(deadline);
+				}, 1);
+		  };
 
 export { Game, Dimension, createNDimensionArray, rounddown };

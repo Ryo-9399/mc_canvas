@@ -1,7 +1,7 @@
 /*
  * Input Recorder: キー入力を保存
  *
- * 使い方: 
+ * 使い方:
  *   CanvasMasao.Gameに以下のオプションを渡す
  *   {
  *     extensions: [CanvasMasao.InputRecorder],
