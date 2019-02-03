@@ -3490,23 +3490,30 @@ MainProgram.prototype.jZutuki = function(i, j, k) {
 		}
 };
 
-MainProgram.prototype.tSet = function(i, j, k, l) {
-	for (var i1 = 0; i1 <= 119; i1++) {
-		if (this.co_t[i1].c > 0) continue;
-		var characterobject = this.co_t[i1];
+/**
+ * 敵を追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @param teki_type {(string|number)} 敵の種類
+ * @param l {number} その敵が出現するスクロール位置
+ */
+MainProgram.prototype.tSet = function(x, y, teki_type, l) {
+	for (let i = 0; i <= 119; i++) {
+		if (this.co_t[i].c > 0) continue;
+		const characterobject = this.co_t[i];
 		characterobject.c = 10;
 		characterobject.c1 = l;
-		characterobject.c2 = k;
-		characterobject.c3 = i;
-		characterobject.c4 = j;
-		characterobject.x = i;
-		characterobject.y = j;
+		characterobject.c2 = teki_type;
+		characterobject.c3 = x;
+		characterobject.c4 = y;
+		characterobject.x = x;
+		characterobject.y = y;
 		this.t_kazu++;
-		switch (k) {
+		switch (teki_type) {
 			case 500:
-				characterobject.y = j - 12;
-				characterobject.c3 = j - 52;
-				characterobject.c4 = j - 12;
+				characterobject.y = y - 12;
+				characterobject.c3 = y - 52;
+				characterobject.c4 = y - 12;
 				characterobject.vy = -4;
 				break;
 

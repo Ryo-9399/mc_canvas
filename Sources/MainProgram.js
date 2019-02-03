@@ -17442,31 +17442,31 @@ MainProgram.prototype.checkWater = function(i, j) {
  * 敵を追加する
  * @param x {number} X座標(ピクセル座標)
  * @param y {number} Y座標(ピクセル座標)
- * @param k {(string|number)} 敵の種類
+ * @param teki_type {(string|number)} 敵の種類
  * @param l {number} その敵が出現するスクロール位置
  */
-MainProgram.prototype.tSet = function(i, j, k, l) {
+MainProgram.prototype.tSet = function(x, y, teki_type, l) {
 	// 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
-	var t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
+	const t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
 
-	var i1 = 0;
+	let i = 0;
 	do {
-		if (i1 > t_limit) break;
-		if (i1 > this.t_kazu) this.co_t.push(new CharacterObject());
-		if (this.co_t[i1].c <= 0) {
+		if (i > t_limit) break;
+		if (i > this.t_kazu) this.co_t.push(new CharacterObject());
+		if (this.co_t[i].c <= 0) {
 			// 未使用の敵オブジェクトがあったのでこれを利用
 
-			this.co_t[i1].init();
-			var characterobject = this.co_t[i1];
+			this.co_t[i].init();
+			const characterobject = this.co_t[i];
 			characterobject.c = 10;
 			characterobject.c1 = l;
-			characterobject.c2 = k;
-			characterobject.c3 = i;
-			characterobject.c4 = j;
-			characterobject.x = i;
-			characterobject.y = j;
+			characterobject.c2 = teki_type;
+			characterobject.c3 = x;
+			characterobject.c4 = y;
+			characterobject.x = x;
+			characterobject.y = y;
 			// パーツの定義を探す
-			var partsDefinition = this.getEnemyDefinition(k);
+			const partsDefinition = this.getEnemyDefinition(teki_type);
 			if (partsDefinition != null) {
 				// オブジェクトの初期化
 				characterobject.c2 = partsDefinition.nativeCode - 5000;
@@ -17481,21 +17481,21 @@ MainProgram.prototype.tSet = function(i, j, k, l) {
 				break;
 			}
 			// EnemyController未対応の敵コードの処理
-			switch (k) {
+			switch (teki_type) {
 				case 1190:
-					characterobject.c3 = i - 64;
+					characterobject.c3 = x - 64;
 					characterobject.c5 = 0;
 					break;
 
 				case 1191:
 					characterobject.c2 = 1190;
-					characterobject.c3 = i - 64;
+					characterobject.c3 = x - 64;
 					characterobject.c5 = 1;
 					break;
 			}
 			break;
 		}
-		i1++;
+		i++;
 	} while (true);
 };
 
