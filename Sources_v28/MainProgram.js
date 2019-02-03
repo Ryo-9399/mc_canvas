@@ -7642,13 +7642,23 @@ MainProgram.prototype.bMove = function() {
 	}
 };
 
-MainProgram.prototype.hSet = function(i, j, k) {
-	for (var l = 0; l <= 63; l++) {
-		if (this.co_h[l].c > 0) continue;
-		var characterobject = this.co_h[l];
-		characterobject.c = k;
-		characterobject.x = i;
-		characterobject.y = j;
+/**
+ * 指定座標(ブロック単位)の位置に、指定したコードの？ブロックを設置します
+ * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet} を参照
+ * v28では個数制限は64個
+ * @param blockX {number} X座標(ブロック単位)
+ * @param blockY {number} Y座標(ブロック単位)
+ * @param code {number} 設置するブロックのコード
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
+ */
+MainProgram.prototype.hSet = function(blockX, blockY, code) {
+	for (let i = 0; i <= 63; i++) {
+		// まだ使われていないものを探して追加する
+		if (this.co_h[i].c > 0) continue;
+		const characterobject = this.co_h[i];
+		characterobject.c = code;
+		characterobject.x = blockX;
+		characterobject.y = blockY;
 		break;
 	}
 };
