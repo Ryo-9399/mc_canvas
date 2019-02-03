@@ -218,42 +218,30 @@ MainProgram.prototype.drawScore = function() {
 	this.gg.os_g.drawString(str, display_x, display_y);
 };
 
+/**
+ * 画面上部にスコア・残機のみを描画します
+ * TODO: 要調査:呼び出される条件
+ */
 MainProgram.prototype.drawScore2 = function() {
-	if (!this.score_v) {
-		var i = 14 + this.moji_size;
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		var s;
-		if (this.j_left_shoki <= 0 && this.j_left <= 0) s = "";
-		else s = this.moji_left + this.j_left;
-		this.gg.os_g.drawString(s, 40, i);
-	} else {
-		var j = 14 + this.moji_size;
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		var s1;
-		if (this.j_left_shoki <= 0 && this.j_left <= 0)
-			s1 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore;
-		else
-			s1 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore +
-				this.moji_left +
-				this.j_left;
-		this.gg.os_g.drawString(s1, 40, j);
+	this.gg.os_g.setColor(this.gamecolor_score);
+	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+
+	// 描画座標
+	const display_x = 40;
+	const display_y = this.moji_size + 14;
+
+	let str = "";
+	if (this.score_v) {
+		// 得点を表示する
+		let str = `${this.moji_score} ${this.score}    ${this.moji_highscore} ${
+			this.highscore
+		}`;
 	}
+	if (this.j_left_shoki > 0 || this.j_left > 0) {
+		// 残機を表示
+		str += `${this.moji_left}${this.j_left}`;
+	}
+	this.gg.os_g.drawString(str, display_x, display_y);
 };
 
 MainProgram.prototype.addScore = function(i) {
