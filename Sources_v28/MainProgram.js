@@ -188,33 +188,39 @@ MainProgram.prototype.ranInt = function(i) {
 	return (ran_seed * 2.3283064365386963e-10 * i) | 0;
 };
 
+/**
+ * 画面上部のスコア・残り時間・HP・残機を描画します
+ */
 MainProgram.prototype.drawScore = function() {
+	// 描画座標
+	const display_x = 40;
+	const display_y = this.moji_size + 14;
 	if (!this.score_v) {
+		// 得点を表示する
 		if (this.time_max > 0) {
-			var i = rounddown(this.time / 1000);
-			var k = 14 + this.moji_size;
+			// 制限時間あり
+			const time_sec = Math.floor(this.time / 1000);
 			this.gg.os_g.setColor(this.gamecolor_score);
 			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 			var s;
 			if (this.j_left_shoki <= 0 && this.j_left <= 0) {
-				s = this.moji_time + i;
+				s = this.moji_time + time_sec;
 			} else {
+				// 残機を表示
 				s = this.moji_left + this.j_left;
-				s = s + this.moji_time + i;
+				s = s + this.moji_time + time_sec;
 			}
-			this.gg.os_g.drawString(s, 40, k);
+			this.gg.os_g.drawString(s, display_x, display_y);
 		} else {
-			var l = 14 + this.moji_size;
 			this.gg.os_g.setColor(this.gamecolor_score);
 			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 			var s1;
 			if (this.j_left_shoki <= 0 && this.j_left <= 0) s1 = "";
 			else s1 = this.moji_left + this.j_left;
-			this.gg.os_g.drawString(s1, 40, l);
+			this.gg.os_g.drawString(s1, display_x, display_y);
 		}
 	} else if (this.time_max > 0) {
 		var j = rounddown(this.time / 1000);
-		var i1 = 14 + this.moji_size;
 		this.gg.os_g.setColor(this.gamecolor_score);
 		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 		var s2;
@@ -242,9 +248,8 @@ MainProgram.prototype.drawScore = function() {
 				this.j_left;
 			s2 = s2 + this.moji_time + j;
 		}
-		this.gg.os_g.drawString(s2, 40, i1);
+		this.gg.os_g.drawString(s2, display_x, display_y);
 	} else {
-		var j1 = 14 + this.moji_size;
 		this.gg.os_g.setColor(this.gamecolor_score);
 		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 		var s3;
@@ -268,7 +273,7 @@ MainProgram.prototype.drawScore = function() {
 				this.highscore +
 				this.moji_left +
 				this.j_left;
-		this.gg.os_g.drawString(s3, 40, j1);
+		this.gg.os_g.drawString(s3, display_x, display_y);
 	}
 };
 

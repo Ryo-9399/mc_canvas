@@ -2518,40 +2518,43 @@ MainProgram.prototype.ranInt = function(i) {
  * 画面上部のスコア・残り時間・HP・残機を描画します
  */
 MainProgram.prototype.drawScore = function() {
+	// 描画座標
+	const display_x = 40;
+	const display_y = this.moji_size + 14;
+	// 2行目
+	const display_y2 = display_y * 2 - 6;
 	if (!this.score_v) {
+		// 得点を表示する
 		if (this.time_max > 0) {
-			var i = Math.floor(this.time / 1000);
-			var k = 14 + this.moji_size;
+			const time_sec = Math.floor(this.time / 1000);
 			this.gg.os_g.setColor(this.gamecolor_score);
 			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 			var s;
 			if (this.j_left_shoki <= 0 && this.j_left <= 0) {
-				s = "" + this.moji_time + " " + i;
+				s = "" + this.moji_time + " " + time_sec;
 			} else {
 				s = "" + this.moji_left + " " + this.j_left;
-				s = "" + s + "  " + this.moji_time + " " + i;
+				s = "" + s + "  " + this.moji_time + " " + time_sec;
 			}
-			this.gg.os_g.drawString(s, 40, k);
+			this.gg.os_g.drawString(s, 40, display_y);
 			if (this.j_hp_v && this.ml_mode == 100) {
 				var s1 = "" + this.j_hp_moji + " " + this.j_hp;
-				this.gg.os_g.drawString(s1, 40, k * 2 - 6);
+				this.gg.os_g.drawString(s1, display_x, display_y2);
 			}
 		} else {
-			var l = 14 + this.moji_size;
 			this.gg.os_g.setColor(this.gamecolor_score);
 			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 			var s2;
 			if (this.j_left_shoki <= 0 && this.j_left <= 0) s2 = "";
 			else s2 = "" + this.moji_left + " " + this.j_left;
-			this.gg.os_g.drawString(s2, 40, l);
+			this.gg.os_g.drawString(s2, display_x, display_y);
 			if (this.j_hp_v && this.ml_mode == 100) {
 				var s3 = "" + this.j_hp_moji + " " + this.j_hp;
-				this.gg.os_g.drawString(s3, 40, l * 2 - 6);
+				this.gg.os_g.drawString(s3, display_x, display_y2);
 			}
 		}
 	} else if (this.time_max > 0) {
 		var j = Math.floor(this.time / 1000);
-		var i1 = 14 + this.moji_size;
 		this.gg.os_g.setColor(this.gamecolor_score);
 		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 		var s4;
@@ -2581,13 +2584,12 @@ MainProgram.prototype.drawScore = function() {
 				this.j_left;
 			s4 = "" + s4 + this.moji_time + j;
 		}
-		this.gg.os_g.drawString(s4, 40, i1);
+		this.gg.os_g.drawString(s4, 40, display_y);
 		if (this.j_hp_v && this.ml_mode == 100) {
 			var s5 = "" + this.j_hp_moji + " " + this.j_hp;
-			this.gg.os_g.drawString(s5, 40, i1 * 2 - 6);
+			this.gg.os_g.drawString(s5, display_x, display_y2);
 		}
 	} else {
-		var j1 = 14 + this.moji_size;
 		this.gg.os_g.setColor(this.gamecolor_score);
 		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
 		var s6;
@@ -2613,10 +2615,10 @@ MainProgram.prototype.drawScore = function() {
 				this.highscore +
 				this.moji_left +
 				this.j_left;
-		this.gg.os_g.drawString(s6, 40, j1);
+		this.gg.os_g.drawString(s6, display_x, display_y);
 		if (this.j_hp_v && this.ml_mode == 100) {
 			var s7 = "" + this.j_hp_moji + " " + this.j_hp;
-			this.gg.os_g.drawString(s7, 40, j1 * 2 - 6);
+			this.gg.os_g.drawString(s7, display_x, display_y2);
 		}
 	}
 };
