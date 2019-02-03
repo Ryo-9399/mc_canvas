@@ -121,169 +121,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case 110:
-				// 長さが同じ配列をまとめる
-				const zip = (a, b) => a.map((v, i) => [v, b[i]]);
-				if (mp.boss_type === 2) {
-					this.c1++;
-					const attack_count = [
-						1,
-						5,
-						7,
-						9,
-						21,
-						91,
-						95,
-						97,
-						99,
-						111,
-						170,
-						180
-					];
-					const attack_mode = [
-						-2,
-						-4,
-						-6,
-						-8,
-						-2,
-						-2,
-						-4,
-						-6,
-						-8,
-						-2,
-						-4,
-						-2
-					];
-					for (const [count, mode] of zip(
-						attack_count,
-						attack_mode
-					)) {
-						if (this.c1 === count) {
-							mp.tSetBoss(this.x, this.y, 150, mode);
-							break;
-						}
-					}
-					if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type === 3) {
-					this.c1++;
-					const attack_count = [5, 20, 35, 50, 65, 80, 95, 110];
-					for (const count of attack_count) {
-						if (this.c1 === count) {
-							mp.tSetBoss(this.x, this.y, 450, -3);
-							break;
-						}
-					}
-					if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type === 4) {
-					this.c1++;
-					const attack_count = [1, 15, 29, 81, 95, 109, 165];
-					const attack_mode = [-5, -3, -2, -5, -3, -2, -3];
-					for (const [count, mode] of zip(
-						attack_count,
-						attack_mode
-					)) {
-						if (this.c1 === count) {
-							mp.tSetBoss(this.x, this.y, 650, mode);
-							break;
-						}
-					}
-					if (this.c1 > 250) this.c1 = 250;
-				} else {
-					this.c1++;
-					if (this.c1 === 3) {
-						mp.mSet2(this.x, this.y, 500, -4, -18);
-						mp.mSet2(this.x, this.y, 500, 4, -18);
-					} else if (this.c1 === 14) {
-						mp.mSet2(this.x, this.y, 500, -6, -20);
-						mp.mSet2(this.x, this.y, 500, 6, -20);
-					} else if (this.c1 === 20) {
-						mp.mSet2(this.x, this.y, 500, -3, -24);
-						mp.mSet2(this.x, this.y, 500, 3, -24);
-					} else if (this.c1 >= 28 && this.c1 <= 98) {
-						if (this.c1 % 7 === 0)
-							mp.mSet2(
-								this.x,
-								this.y,
-								500,
-								-15 + mp.ranInt(20),
-								-30
-							);
-					} else if (this.c1 === 130) {
-						const dir = mp.ranInt(8) + 3;
-						mp.mSet2(this.x, this.y, 500, dir, -30);
-						mp.mSet2(this.x, this.y, 500, -dir, -30);
-					} else if (this.c1 >= 150) this.c1 = 98;
-				}
+				this.boss1Attack(mp, 0);
 				this.pt = 1000;
 				break;
 
 			case 115:
-				if (mp.boss_type == 2) {
-					var c3 = 150;
-					this.c1++;
-					if (this.c1 == 1) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 5) mp.tSetBoss(this.x, this.y, c3, 4);
-					else if (this.c1 == 7) mp.tSetBoss(this.x, this.y, c3, 6);
-					else if (this.c1 == 9 && mp.boss_type != 3)
-						mp.tSetBoss(this.x, this.y, c3, 8);
-					else if (this.c1 == 21) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 91) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 95) mp.tSetBoss(this.x, this.y, c3, 4);
-					else if (this.c1 == 97) mp.tSetBoss(this.x, this.y, c3, 6);
-					else if (this.c1 == 99 && mp.boss_type != 3)
-						mp.tSetBoss(this.x, this.y, c3, 8);
-					else if (this.c1 == 111) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 170) mp.tSetBoss(this.x, this.y, c3, 4);
-					else if (this.c1 == 180) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type == 3) {
-					var c4 = 0x01c2;
-					this.c1++;
-					if (this.c1 == 5) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 20) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 35) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 50) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 65) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 80) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 95) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 110) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type == 4) {
-					var c5 = 0x028a;
-					this.c1++;
-					if (this.c1 == 1) mp.tSetBoss(this.x, this.y, c5, 5);
-					else if (this.c1 == 15) mp.tSetBoss(this.x, this.y, c5, 3);
-					else if (this.c1 == 29) mp.tSetBoss(this.x, this.y, c5, 2);
-					else if (this.c1 == 81) mp.tSetBoss(this.x, this.y, c5, 5);
-					else if (this.c1 == 95) mp.tSetBoss(this.x, this.y, c5, 3);
-					else if (this.c1 == 109) mp.tSetBoss(this.x, this.y, c5, 2);
-					else if (this.c1 == 165) mp.tSetBoss(this.x, this.y, c5, 3);
-					else if (this.c1 > 250) this.c1 = 250;
-				} else {
-					this.c1++;
-					if (this.c1 == 3) {
-						mp.mSet2(this.x, this.y, 500, -4, -18);
-						mp.mSet2(this.x, this.y, 500, 4, -18);
-					} else if (this.c1 == 14) {
-						mp.mSet2(this.x, this.y, 500, -6, -20);
-						mp.mSet2(this.x, this.y, 500, 6, -20);
-					} else if (this.c1 == 20) {
-						mp.mSet2(this.x, this.y, 500, -3, -24);
-						mp.mSet2(this.x, this.y, 500, 3, -24);
-					} else if (this.c1 >= 28 && this.c1 <= 98) {
-						if (this.c1 % 7 == 0)
-							mp.mSet2(
-								this.x,
-								this.y,
-								500,
-								15 - mp.ranInt(20),
-								-30
-							);
-					} else if (this.c1 == 130) {
-						var i2 = mp.ranInt(8) + 3;
-						mp.mSet2(this.x, this.y, 500, i2, -30);
-						mp.mSet2(this.x, this.y, 500, -i2, -30);
-					} else if (this.c1 >= 150) this.c1 = 98;
-				}
+				this.boss1Attack(mp, 1);
 				this.pt = 1005;
 				break;
 
@@ -643,6 +486,102 @@ class Boss extends CharacterObject {
 					}
 				}
 				break;
+		}
+	}
+
+	/**
+	 * boss1の攻撃中の動作
+	 * @param {MainProgram} mp
+	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 */
+	boss1Attack(mp, direction = 0) {
+		// 左向きなら1 右向きなら-1
+		const mirror = direction === 1 ? -1 : 1;
+		// 長さが同じ配列をまとめる
+		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
+		if (mp.boss_type === 2) {
+			this.c1++;
+			const attack_count = [
+				1,
+				5,
+				7,
+				9,
+				21,
+				91,
+				95,
+				97,
+				99,
+				111,
+				170,
+				180
+			];
+			const attack_mode = [
+				-2,
+				-4,
+				-6,
+				-8,
+				-2,
+				-2,
+				-4,
+				-6,
+				-8,
+				-2,
+				-4,
+				-2
+			];
+			for (const [count, mode] of zip(attack_count, attack_mode)) {
+				if (this.c1 === count) {
+					mp.tSetBoss(this.x, this.y, 150, mode * mirror);
+					break;
+				}
+			}
+			if (this.c1 > 250) this.c1 = 250;
+		} else if (mp.boss_type === 3) {
+			this.c1++;
+			const attack_count = [5, 20, 35, 50, 65, 80, 95, 110];
+			for (const count of attack_count) {
+				if (this.c1 === count) {
+					mp.tSetBoss(this.x, this.y, 450, -3 * mirror);
+					break;
+				}
+			}
+			if (this.c1 > 250) this.c1 = 250;
+		} else if (mp.boss_type === 4) {
+			this.c1++;
+			const attack_count = [1, 15, 29, 81, 95, 109, 165];
+			const attack_mode = [-5, -3, -2, -5, -3, -2, -3];
+			for (const [count, mode] of zip(attack_count, attack_mode)) {
+				if (this.c1 === count) {
+					mp.tSetBoss(this.x, this.y, 650, mode * mirror);
+					break;
+				}
+			}
+			if (this.c1 > 250) this.c1 = 250;
+		} else {
+			this.c1++;
+			if (this.c1 === 3) {
+				mp.mSet2(this.x, this.y, 500, -4, -18);
+				mp.mSet2(this.x, this.y, 500, 4, -18);
+			} else if (this.c1 === 14) {
+				mp.mSet2(this.x, this.y, 500, -6, -20);
+				mp.mSet2(this.x, this.y, 500, 6, -20);
+			} else if (this.c1 === 20) {
+				mp.mSet2(this.x, this.y, 500, -3, -24);
+				mp.mSet2(this.x, this.y, 500, 3, -24);
+			} else if (this.c1 >= 28 && this.c1 <= 98) {
+				if (this.c1 % 7 === 0)
+					mp.mSet2(
+						this.x,
+						this.y,
+						500,
+						(-15 + mp.ranInt(20)) * mirror,
+						-30
+					);
+			} else if (this.c1 === 130) {
+				const dir = mp.ranInt(8) + 3;
+				mp.mSet2(this.x, this.y, 500, dir, -30);
+				mp.mSet2(this.x, this.y, 500, -dir, -30);
+			} else if (this.c1 >= 150) this.c1 = 98;
 		}
 	}
 

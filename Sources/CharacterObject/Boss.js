@@ -203,358 +203,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case 110:
-				// 長さが同じ配列をまとめる
-				const zip = (a, b) => a.map((v, i) => [v, b[i]]);
-				mp.boss_attack_mode = true;
-				if (mp.boss_type === 2) {
-					this.c1++;
-					const attack_count = [
-						1,
-						5,
-						7,
-						9,
-						21,
-						91,
-						95,
-						97,
-						99,
-						111,
-						170,
-						180
-					];
-					const attack_mode = [
-						-2,
-						-4,
-						-6,
-						-8,
-						-2,
-						-2,
-						-4,
-						-6,
-						-8,
-						-2,
-						-4,
-						-2
-					];
-					if (this.c1 === 1) mp.gs.rsAddSound(17);
-					for (const [count, mode] of zip(
-						attack_count,
-						attack_mode
-					)) {
-						if (this.c1 === count) {
-							mp.tSetBoss(this.x, this.y, 150, mode);
-							break;
-						}
-					}
-					if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type === 3) {
-					this.c1++;
-					const attack_count = [5, 20, 35, 50, 65, 80, 95, 110];
-					if (this.c1 === 5) mp.gs.rsAddSound(17);
-					for (const count of attack_count) {
-						if (this.c1 === count) {
-							mp.tSetBoss(this.x, this.y, 450, -3);
-							break;
-						}
-					}
-					if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type === 4) {
-					this.c1++;
-					const attack_count = [1, 15, 29, 81, 95, 109, 165];
-					const attack_mode = [-5, -3, -2, -5, -3, -2, -3];
-					if (this.c1 === 1) mp.gs.rsAddSound(17);
-					for (const [count, mode] of zip(
-						attack_count,
-						attack_mode
-					)) {
-						if (this.c1 === count) {
-							mp.tSetBoss(this.x, this.y, 650, mode);
-							break;
-						}
-					}
-					if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type === 5) {
-					this.c1++;
-					const attack_count = [
-						1,
-						8,
-						16,
-						24,
-						32,
-						40,
-						48,
-						64,
-						72,
-						80,
-						88,
-						96,
-						104,
-						112
-					];
-					const directions = [
-						4.8844447135925293,
-						4.5355558395385742,
-						4.1866669654846191,
-						3.8377780914306641,
-						3.4888889789581299,
-						3.1400001049041748,
-						3.3144445419311523,
-						3.6633334159851074,
-						4.0122222900390625,
-						4.3611111640930176,
-						4.1866669654846191,
-						3.8377780914306641,
-						3.4888889789581299,
-						3.1400001049041748
-					];
-					if (this.c1 === 1) mp.gs.rsAddSound(17);
-					for (const [count, dir] of zip(attack_count, directions)) {
-						if (this.c1 === count) {
-							const x = Math.floor(Math.cos(dir) * 12);
-							const y = Math.floor(Math.sin(dir) * 10);
-							mp.mSet2(this.x, this.y + 16, 740, x, y);
-							break;
-						}
-					}
-					if (this.c1 >= 200) this.c1 = 0;
-				} else {
-					this.c1++;
-					if (this.c1 === 3) mp.gs.rsAddSound(17);
-					if (this.c1 === 3) {
-						mp.mSet2(this.x, this.y, 500, -4, -18);
-						mp.mSet2(this.x, this.y, 500, 4, -18);
-					} else if (this.c1 === 14) {
-						mp.mSet2(this.x, this.y, 500, -6, -20);
-						mp.mSet2(this.x, this.y, 500, 6, -20);
-					} else if (this.c1 === 20) {
-						mp.mSet2(this.x, this.y, 500, -3, -24);
-						mp.mSet2(this.x, this.y, 500, 3, -24);
-					} else if (this.c1 >= 28 && this.c1 <= 98) {
-						if (this.c1 % 7 === 0)
-							mp.mSet2(
-								this.x,
-								this.y,
-								500,
-								-15 + mp.ranInt(20),
-								-30
-							);
-					} else if (this.c1 === 130) {
-						const dir = mp.ranInt(8) + 3;
-						mp.mSet2(this.x, this.y, 500, dir, -30);
-						mp.mSet2(this.x, this.y, 500, -dir, -30);
-					} else if (this.c1 >= 150) this.c1 = 98;
-				}
+				this.boss1Attack(mp, 0);
 				this.pt = 1000;
 				break;
 
 			case 115:
-				mp.boss_attack_mode = true;
-				if (mp.boss_type == 2) {
-					var c3 = 150;
-					this.c1++;
-					if (this.c1 == 1) {
-						mp.tSetBoss(this.x, this.y, c3, 2);
-						mp.gs.rsAddSound(17);
-					} else if (this.c1 == 5) mp.tSetBoss(this.x, this.y, c3, 4);
-					else if (this.c1 == 7) mp.tSetBoss(this.x, this.y, c3, 6);
-					else if (this.c1 == 9 && mp.boss_type != 3)
-						mp.tSetBoss(this.x, this.y, c3, 8);
-					else if (this.c1 == 21) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 91) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 95) mp.tSetBoss(this.x, this.y, c3, 4);
-					else if (this.c1 == 97) mp.tSetBoss(this.x, this.y, c3, 6);
-					else if (this.c1 == 99 && mp.boss_type != 3)
-						mp.tSetBoss(this.x, this.y, c3, 8);
-					else if (this.c1 == 111) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 == 170) mp.tSetBoss(this.x, this.y, c3, 4);
-					else if (this.c1 == 180) mp.tSetBoss(this.x, this.y, c3, 2);
-					else if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type == 3) {
-					var c4 = 0x01c2;
-					this.c1++;
-					if (this.c1 == 5) {
-						mp.tSetBoss(this.x, this.y, c4, 3);
-						mp.gs.rsAddSound(17);
-					} else if (this.c1 == 20)
-						mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 35) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 50) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 65) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 80) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 95) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 == 110) mp.tSetBoss(this.x, this.y, c4, 3);
-					else if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type == 4) {
-					var c5 = 0x028a;
-					this.c1++;
-					if (this.c1 == 1) {
-						mp.tSetBoss(this.x, this.y, c5, 5);
-						mp.gs.rsAddSound(17);
-					} else if (this.c1 == 15)
-						mp.tSetBoss(this.x, this.y, c5, 3);
-					else if (this.c1 == 29) mp.tSetBoss(this.x, this.y, c5, 2);
-					else if (this.c1 == 81) mp.tSetBoss(this.x, this.y, c5, 5);
-					else if (this.c1 == 95) mp.tSetBoss(this.x, this.y, c5, 3);
-					else if (this.c1 == 109) mp.tSetBoss(this.x, this.y, c5, 2);
-					else if (this.c1 == 165) mp.tSetBoss(this.x, this.y, c5, 3);
-					else if (this.c1 > 250) this.c1 = 250;
-				} else if (mp.boss_type == 5) {
-					this.c1++;
-					if (this.c1 == 1) {
-						mp.gs.rsAddSound(17);
-						var d14 = 4.5355558395385742;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d14) * 12),
-							Math.floor(Math.sin(d14) * 10)
-						);
-					} else if (this.c1 == 8) {
-						var d15 = 4.8844447135925293;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d15) * 12),
-							Math.floor(Math.sin(d15) * 10)
-						);
-					} else if (this.c1 == 16) {
-						var d16 = 5.2333335876464844;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d16) * 12),
-							Math.floor(Math.sin(d16) * 10)
-						);
-					} else if (this.c1 == 24) {
-						var d17 = 5.5822224617004395;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d17) * 12),
-							Math.floor(Math.sin(d17) * 10)
-						);
-					} else if (this.c1 == 32) {
-						var d18 = 5.9311108589172363;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d18) * 12),
-							Math.floor(Math.sin(d18) * 10)
-						);
-					} else if (this.c1 == 40) {
-						var d19 = 0.0;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d19) * 12),
-							Math.floor(Math.sin(d19) * 10)
-						);
-					} else if (this.c1 == 48) {
-						var d20 = 6.105555534362793;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d20) * 12),
-							Math.floor(Math.sin(d20) * 10)
-						);
-					} else if (this.c1 == 64) {
-						var d21 = 5.7566671371459961;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d21) * 12),
-							Math.floor(Math.sin(d21) * 10)
-						);
-					} else if (this.c1 == 72) {
-						var d22 = 5.4077777862548828;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d22) * 12),
-							Math.floor(Math.sin(d22) * 10)
-						);
-					} else if (this.c1 == 80) {
-						var d23 = 5.0588889122009277;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d23) * 12),
-							Math.floor(Math.sin(d23) * 10)
-						);
-					} else if (this.c1 == 88) {
-						var d24 = 5.2333335876464844;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d24) * 12),
-							Math.floor(Math.sin(d24) * 10)
-						);
-					} else if (this.c1 == 96) {
-						var d25 = 5.5822224617004395;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d25) * 12),
-							Math.floor(Math.sin(d25) * 10)
-						);
-					} else if (this.c1 == 104) {
-						var d26 = 5.9311108589172363;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d26) * 12),
-							Math.floor(Math.sin(d26) * 10)
-						);
-					} else if (this.c1 == 112) {
-						var d27 = 0.0;
-						mp.mSet2(
-							this.x,
-							this.y + 16,
-							740,
-							Math.floor(Math.cos(d27) * 12),
-							Math.floor(Math.sin(d27) * 10)
-						);
-					} else if (this.c1 >= 200) this.c1 = 0;
-				} else {
-					this.c1++;
-					if (this.c1 == 3) {
-						mp.mSet2(this.x, this.y, 500, -4, -18);
-						mp.mSet2(this.x, this.y, 500, 4, -18);
-						mp.gs.rsAddSound(17);
-					} else if (this.c1 == 14) {
-						mp.mSet2(this.x, this.y, 500, -6, -20);
-						mp.mSet2(this.x, this.y, 500, 6, -20);
-					} else if (this.c1 == 20) {
-						mp.mSet2(this.x, this.y, 500, -3, -24);
-						mp.mSet2(this.x, this.y, 500, 3, -24);
-					} else if (this.c1 >= 28 && this.c1 <= 98) {
-						if (this.c1 % 7 == 0)
-							mp.mSet2(
-								this.x,
-								this.y,
-								500,
-								15 - mp.ranInt(20),
-								-30
-							);
-					} else if (this.c1 == 130) {
-						var j5 = mp.ranInt(8) + 3;
-						mp.mSet2(this.x, this.y, 500, j5, -30);
-						mp.mSet2(this.x, this.y, 500, -j5, -30);
-					} else if (this.c1 >= 150) this.c1 = 98;
-				}
+				this.boss1Attack(mp, 1);
 				this.pt = 1005;
 				break;
 
@@ -2050,6 +1704,169 @@ class Boss extends CharacterObject {
 					}
 				}
 				break;
+		}
+	}
+
+	/**
+	 * boss1の攻撃中の動作
+	 * @param {MainProgram} mp
+	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 */
+	boss1Attack(mp, direction = 0) {
+		// 左向きなら1 右向きなら-1
+		const mirror = direction === 1 ? -1 : 1;
+		// 長さが同じ配列をまとめる
+		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
+		mp.boss_attack_mode = true;
+		if (mp.boss_type === 2) {
+			this.c1++;
+			const attack_count = [
+				1,
+				5,
+				7,
+				9,
+				21,
+				91,
+				95,
+				97,
+				99,
+				111,
+				170,
+				180
+			];
+			const attack_mode = [
+				-2,
+				-4,
+				-6,
+				-8,
+				-2,
+				-2,
+				-4,
+				-6,
+				-8,
+				-2,
+				-4,
+				-2
+			];
+			if (this.c1 === 1) mp.gs.rsAddSound(17);
+			for (const [count, mode] of zip(attack_count, attack_mode)) {
+				if (this.c1 === count) {
+					mp.tSetBoss(this.x, this.y, 150, mode * mirror);
+					break;
+				}
+			}
+			if (this.c1 > 250) this.c1 = 250;
+		} else if (mp.boss_type === 3) {
+			this.c1++;
+			const attack_count = [5, 20, 35, 50, 65, 80, 95, 110];
+			if (this.c1 === 5) mp.gs.rsAddSound(17);
+			for (const count of attack_count) {
+				if (this.c1 === count) {
+					mp.tSetBoss(this.x, this.y, 450, -3 * mirror);
+					break;
+				}
+			}
+			if (this.c1 > 250) this.c1 = 250;
+		} else if (mp.boss_type === 4) {
+			this.c1++;
+			const attack_count = [1, 15, 29, 81, 95, 109, 165];
+			const attack_mode = [-5, -3, -2, -5, -3, -2, -3];
+			if (this.c1 === 1) mp.gs.rsAddSound(17);
+			for (const [count, mode] of zip(attack_count, attack_mode)) {
+				if (this.c1 === count) {
+					mp.tSetBoss(this.x, this.y, 650, mode * mirror);
+					break;
+				}
+			}
+			if (this.c1 > 250) this.c1 = 250;
+		} else if (mp.boss_type === 5) {
+			this.c1++;
+			const attack_count = [
+				1,
+				8,
+				16,
+				24,
+				32,
+				40,
+				48,
+				64,
+				72,
+				80,
+				88,
+				96,
+				104,
+				112
+			];
+			const directions =
+				direction !== 1
+					? [
+							4.8844447135925293,
+							4.5355558395385742,
+							4.1866669654846191,
+							3.8377780914306641,
+							3.4888889789581299,
+							3.1400001049041748,
+							3.3144445419311523,
+							3.6633334159851074,
+							4.0122222900390625,
+							4.3611111640930176,
+							4.1866669654846191,
+							3.8377780914306641,
+							3.4888889789581299,
+							3.1400001049041748
+					  ]
+					: [
+							4.5355558395385742,
+							4.8844447135925293,
+							5.2333335876464844,
+							5.5822224617004395,
+							5.9311108589172363,
+							0.0,
+							6.105555534362793,
+							5.7566671371459961,
+							5.4077777862548828,
+							5.0588889122009277,
+							5.2333335876464844,
+							5.5822224617004395,
+							5.9311108589172363,
+							0.0
+					  ];
+			if (this.c1 === 1) mp.gs.rsAddSound(17);
+			for (const [count, dir] of zip(attack_count, directions)) {
+				if (this.c1 === count) {
+					const x = Math.floor(Math.cos(dir) * 12);
+					const y = Math.floor(Math.sin(dir) * 10);
+					mp.mSet2(this.x, this.y + 16, 740, x, y);
+					break;
+				}
+			}
+			if (this.c1 >= 200) this.c1 = 0;
+		} else {
+			this.c1++;
+			if (this.c1 === 3) mp.gs.rsAddSound(17);
+			if (this.c1 === 3) {
+				mp.mSet2(this.x, this.y, 500, -4, -18);
+				mp.mSet2(this.x, this.y, 500, 4, -18);
+			} else if (this.c1 === 14) {
+				mp.mSet2(this.x, this.y, 500, -6, -20);
+				mp.mSet2(this.x, this.y, 500, 6, -20);
+			} else if (this.c1 === 20) {
+				mp.mSet2(this.x, this.y, 500, -3, -24);
+				mp.mSet2(this.x, this.y, 500, 3, -24);
+			} else if (this.c1 >= 28 && this.c1 <= 98) {
+				if (this.c1 % 7 === 0)
+					mp.mSet2(
+						this.x,
+						this.y,
+						500,
+						(-15 + mp.ranInt(20)) * mirror,
+						-30
+					);
+			} else if (this.c1 === 130) {
+				const dir = mp.ranInt(8) + 3;
+				mp.mSet2(this.x, this.y, 500, dir, -30);
+				mp.mSet2(this.x, this.y, 500, -dir, -30);
+			} else if (this.c1 >= 150) this.c1 = 98;
 		}
 	}
 
