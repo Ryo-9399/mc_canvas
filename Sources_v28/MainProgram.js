@@ -192,54 +192,30 @@ MainProgram.prototype.ranInt = function(i) {
  * 画面上部のスコア・残り時間・HP・残機を描画します
  */
 MainProgram.prototype.drawScore = function() {
+	this.gg.os_g.setColor(this.gamecolor_score);
+	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+
 	// 描画座標
 	const display_x = 40;
 	const display_y = this.moji_size + 14;
-	if (!this.score_v) {
-		// 得点を表示しない
-		if (this.time_max > 0) {
-			const time_sec = Math.floor(this.time / 1000);
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-			let s = "";
-			if (this.j_left_shoki > 0 || this.j_left > 0) {
-				// 残機を表示
-				s += `${this.moji_left}${this.j_left}`;
-			}
-			s += `${this.moji_time}${time_sec}`;
-			this.gg.os_g.drawString(s, display_x, display_y);
-		} else {
-			// 制限時間なし
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-			let s1 = "";
-			if (this.j_left_shoki > 0 || this.j_left > 0)
-				s1 = `${this.moji_left}${this.j_left}`;
-			this.gg.os_g.drawString(s1, display_x, display_y);
-		}
-	} else if (this.time_max > 0) {
-		const time_sec = Math.floor(this.time / 1000);
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		let s3 = `${this.moji_score} ${this.score}    ${this.moji_highscore} ${
+
+	let str = "";
+	if (this.score_v) {
+		// 得点を表示する
+		str += `${this.moji_score} ${this.score}    ${this.moji_highscore} ${
 			this.highscore
 		}`;
-		if (this.j_left_shoki > 0 || this.j_left > 0) {
-			s3 += this.moji_left + this.j_left;
-		}
-		s3 += this.moji_time + time_sec;
-		this.gg.os_g.drawString(s3, display_x, display_y);
-	} else {
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		let s3 = `${this.moji_score} ${this.score}    ${this.moji_highscore} ${
-			this.highscore
-		}`;
-		if (this.j_left_shoki > 0 || this.j_left > 0) {
-			s3 += this.moji_left + this.j_left;
-		}
-		this.gg.os_g.drawString(s3, display_x, display_y);
 	}
+	if (this.j_left_shoki > 0 || this.j_left > 0) {
+		// 残機を表示
+		str += `${this.moji_left}${this.j_left}`;
+	}
+	if (this.time_max > 0) {
+		// 制限時間を表示
+		const time_sec = Math.floor(this.time / 1000);
+		str += `${this.moji_time}${time_sec}`;
+	}
+	this.gg.os_g.drawString(str, display_x, display_y);
 };
 
 MainProgram.prototype.drawScore2 = function() {

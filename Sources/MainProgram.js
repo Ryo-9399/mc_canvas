@@ -2518,75 +2518,40 @@ MainProgram.prototype.ranInt = function(i) {
  * 画面上部のスコア・残り時間・HP・残機を描画します
  */
 MainProgram.prototype.drawScore = function() {
+	this.gg.os_g.setColor(this.gamecolor_score);
+	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+
 	// 描画座標
 	const display_x = 40;
 	const display_y = this.moji_size + 14;
-	// 2行目
-	const display_y2 = display_y * 2 - 6;
-	if (!this.score_v) {
-		// 得点を表示しない
-		if (this.time_max > 0) {
-			const time_sec = Math.floor(this.time / 1000);
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-			let s = "";
-			if (this.j_left_shoki > 0 || this.j_left > 0) {
-				// 残機を表示
-				s += `${this.moji_left} ${this.j_left}`;
-			}
-			s += ` ${this.moji_time} ${time_sec}`;
-			this.gg.os_g.drawString(s, display_x, display_y);
-			// HP表示
-			if (this.j_hp_v && this.ml_mode == 100) {
-				const s1 = `${this.j_hp_moji} ${this.j_hp}`;
-				this.gg.os_g.drawString(s1, display_x, display_y2);
-			}
-		} else {
-			// 制限時間なし
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-			let s2 = "";
-			if (this.j_left_shoki > 0 || this.j_left > 0)
-				s2 = `${this.moji_left} ${this.j_left}`;
-			this.gg.os_g.drawString(s2, display_x, display_y);
-			// HP表示
-			if (this.j_hp_v && this.ml_mode == 100) {
-				const s3 = `${this.j_hp_moji} ${this.j_hp}`;
-				this.gg.os_g.drawString(s3, display_x, display_y2);
-			}
-		}
-	} else if (this.time_max > 0) {
+
+	// NOTE: 謎の仕様なので廃止検討
+	// スコアを表示しない場合のみスペースが挿入される部分がある
+	const spacer = this.score_v ? "" : " ";
+	let str = "";
+	if (this.score_v) {
+		// 得点を表示する
+		str += `${this.moji_score} ${this.score}  ${this.moji_highscore} ${
+			this.highscore
+		}`;
+	}
+	if (this.j_left_shoki > 0 || this.j_left > 0) {
+		// 残機を表示
+		str += `${this.moji_left}${spacer}${this.j_left}`;
+	}
+	if (this.time_max > 0) {
+		// 制限時間を表示
 		const time_sec = Math.floor(this.time / 1000);
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		let s3 = `${this.moji_score} ${this.score}  ${this.moji_highscore} ${
-			this.highscore
-		}`;
-		if (this.j_left_shoki > 0 || this.j_left > 0) {
-			s3 += this.moji_left + this.j_left;
-		}
-		s3 += this.moji_time + time_sec;
-		this.gg.os_g.drawString(s3, display_x, display_y);
-		if (this.j_hp_v && this.ml_mode == 100) {
-			// HP表示
-			const s5 = `${this.j_hp_moji} ${this.j_hp}`;
-			this.gg.os_g.drawString(s5, display_x, display_y2);
-		}
-	} else {
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		let s6 = `${this.moji_score} ${this.score}  ${this.moji_highscore} ${
-			this.highscore
-		}`;
-		if (this.j_left_shoki > 0 || this.j_left > 0) {
-			s6 += this.moji_left + this.j_left;
-		}
-		this.gg.os_g.drawString(s6, display_x, display_y);
-		if (this.j_hp_v && this.ml_mode == 100) {
-			// HP表示
-			const s7 = `${this.j_hp_moji} ${this.j_hp}`;
-			this.gg.os_g.drawString(s7, display_x, display_y2);
-		}
+		str += `${spacer}${this.moji_time}${spacer}${time_sec}`;
+	}
+	this.gg.os_g.drawString(str, display_x, display_y);
+
+	// 2行目Y座標
+	const display_y2 = display_y * 2 - 6;
+	// HP表示
+	if (this.j_hp_v && this.ml_mode === 100) {
+		const str_hp = `${this.j_hp_moji} ${this.j_hp}`;
+		this.gg.os_g.drawString(str_hp, display_x, display_y2);
 	}
 };
 
@@ -5588,6 +5553,7 @@ MainProgram.prototype.readCustomParts = function(customParts) {
 		});
 	}
 	return result;
+
 	/**
 	 * ES6のObject.assignっぽい関数
 	 * 1番目移行の引数のオブジェクトのプロパティを0番目の引数に書き込む
@@ -39695,6 +39661,7 @@ MainProgram.prototype.getSnapshot = function() {
 	// YukaObjectの配列も小さくする
 	result.yo = this.yo.map(serializeYukaObject);
 	return result;
+
 	// boolean値2次元配列をtrueのインデックスの列に変換
 	function compressSparseBooleanArray2(arr) {
 		var width = arr.length;
@@ -39716,6 +39683,7 @@ MainProgram.prototype.getSnapshot = function() {
 			arr: result_arr
 		};
 	}
+
 	// CharacterObjectの配列を変換
 	function compressCharacterObjectArray(arr) {
 		return arr.map(function(obj) {
@@ -39727,11 +39695,13 @@ MainProgram.prototype.getSnapshot = function() {
 			}
 		});
 	}
+
 	// CharacterObjectをシリアライズ
 	function serializeCharacterObject(obj) {
 		// スナップショットにコンストラクタ名が現れるのを防ぐためにJSON文字列化する
 		return JSON.stringify(obj);
 	}
+
 	// YukaObjectをシリアライズ
 	function serializeYukaObject(obj) {
 		return JSON.stringify(obj);
