@@ -220,7 +220,7 @@ MainProgram.prototype.drawScore = function() {
 
 /**
  * 画面上部にスコア・残機のみを描画します
- * TODO: 要調査:呼び出される条件
+ * TODO: 要調査:地図画面でのスコア表示に使われる？
  */
 MainProgram.prototype.drawScore2 = function() {
 	this.gg.os_g.setColor(this.gamecolor_score);
@@ -250,8 +250,8 @@ MainProgram.prototype.drawScore2 = function() {
  *
  * @param {number} score 加算するスコア
  */
-MainProgram.prototype.addScore = function(i) {
-	this.score += i;
+MainProgram.prototype.addScore = function(score) {
+	this.score += score;
 	if (this.score_1up_1 > 0 && this.score >= this.score_1up_1) {
 		this.j_left++;
 		this.score_1up_1 = 0;
@@ -262,13 +262,17 @@ MainProgram.prototype.addScore = function(i) {
 	}
 };
 
-MainProgram.prototype.addSerifu = function(i, j, k) {
-	for (var l = 1; l <= k; l++) {
-		var s = this.gg.ap.getParameter("serifu" + j + "-" + l);
-		var i1;
-		i1 = parseInt(s);
-		if (isNaN(i1)) i1 = -1;
-		if (i1 != 0) this.km.addItem(i, s);
+/**
+ * TODO: 加筆求む
+ * @param {number} index 追加する場所(？) TODO: 要調査
+ * @param {number} person_id セリフを言う人の番号
+ * @param {number} max_row 1からmax_row行目までを表示する
+ */
+MainProgram.prototype.addSerifu = function(index, person_id, max_row) {
+	for (let i = 1; i <= max_row; i++) {
+		const message = this.gg.ap.getParameter("serifu" + person_id + "-" + i);
+		// NOTE: issue #34
+		if (parseInt(message, 10) != 0) this.km.addItem(index, message);
 	}
 };
 
