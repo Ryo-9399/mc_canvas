@@ -1,4 +1,5 @@
 import { CharacterObject } from "./CharacterObject";
+import { Boss } from "./CharacterObject/Boss";
 import {
 	createNDimensionArray,
 	rightShiftIgnoreSign,
@@ -335,7 +336,7 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase) {
 
 	for (var i1 = 0; i1 <= 8; i1++) this.co_jm[i1] = new CharacterObject();
 
-	this.co_b = new CharacterObject();
+	this.co_b = new Boss();
 	for (var j1 = 0; j1 <= 1; j1++) this.co_mu[j1] = new CharacterObject();
 
 	var l1 = this.tdb.getValueInt("stage_select");
@@ -35808,71 +35809,10 @@ MainProgram.prototype.bMove = function() {
 			}
 			break;
 	}
-	if (
-		this.co_j.c >= 100 &&
-		this.co_j.c < 200 &&
-		this.co_b.c >= 100 &&
-		Math.abs(this.co_b.x - this.co_j.x) < 42 &&
-		this.co_j.y > this.co_b.y - 20 &&
-		this.co_j.y < this.co_b.y + 40
-	)
-		if (
-			this.co_b.pt == 1250 ||
-			this.co_b.pt == 1255 ||
-			this.co_b.pt == 1251 ||
-			this.co_b.pt == 1256 ||
-			this.j_tokugi == 10 ||
-			(this.j_tokugi >= 12 && this.j_tokugi <= 15) ||
-			this.boss_destroy_type == 2
-		)
-			this.jShinu(2);
-		else if (
-			(Math.abs(this.co_b.x - this.co_j.x) < 34 || this.easy_mode == 2) &&
-			this.co_j.vy > 0
-		) {
-			if (this.co_b.c < 200) {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 65;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1015;
-				} else {
-					this.co_b.c = 60;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1010;
-				}
-				this.gs.rsAddSound(8);
-			} else if (this.co_b.c < 300) {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 75;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1115;
-				} else {
-					this.co_b.c = 70;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1110;
-				}
-				this.gs.rsAddSound(8);
-			} else {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 85;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1215;
-				} else {
-					this.co_b.c = 80;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1210;
-				}
-				this.gs.rsAddSound(8);
-			}
-			this.co_j.y = this.co_b.y;
-			this.co_j.vy = -320;
-			this.j_jump_type = 1;
-			this.co_j.c = 110;
-			this.co_j.c1 = -4;
-			this.co_j.pt = 109;
+	if (this.co_b.checkHit(this.co_j))
+		if (!this.co_b.isFumuable(this)) this.jShinu(2);
+		else if (this.co_b.checkFumu(this)) {
+			this.co_b.fumuDamage(this);
 		} else {
 			this.jShinu(2);
 		}

@@ -1,4 +1,5 @@
 import { CharacterObject } from "./CharacterObject";
+import { Boss } from "./CharacterObject/Boss";
 import { createNDimensionArray, rounddown } from "./GlobalFunctions";
 import { IdouGamen } from "./IdouGamen";
 import { Color, Font } from "./ImageBuff";
@@ -62,7 +63,7 @@ function MainProgram(gamegraphics, gamemouse, gamekey) {
 
 	for (var i1 = 0; i1 <= 1; i1++) this.co_jm[i1] = new CharacterObject();
 
-	this.co_b = new CharacterObject();
+	this.co_b = new Boss();
 	var j1 = this.paraInt("stage_select");
 	if (j1 == 2) {
 		this.stage_select = 2;
@@ -7528,56 +7529,10 @@ MainProgram.prototype.bMove = function() {
 			}
 			break;
 	}
-	if (
-		this.co_j.c >= 100 &&
-		this.co_j.c < 200 &&
-		this.co_b.c >= 100 &&
-		Math.abs(this.co_b.x - this.co_j.x) < 42 &&
-		this.co_j.y > this.co_b.y - 20 &&
-		this.co_j.y < this.co_b.y + 40
-	)
-		if (this.co_b.pt == 1250 || this.co_b.pt == 1255) this.jShinu(2);
-		else if (Math.abs(this.co_b.x - this.co_j.x) < 34 && this.co_j.vy > 0) {
-			if (this.co_b.c < 200) {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 65;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1015;
-				} else {
-					this.co_b.c = 60;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1010;
-				}
-			} else if (this.co_b.c < 300) {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 75;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1115;
-				} else {
-					this.co_b.c = 70;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1110;
-				}
-			} else {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 85;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1215;
-				} else {
-					this.co_b.c = 80;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1210;
-				}
-			}
-			this.co_j.y = this.co_b.y;
-			this.co_j.vy = -320;
-			this.j_jump_type = 1;
-			this.co_j.c = 110;
-			this.co_j.c1 = -4;
-			this.co_j.pt = 109;
+	if (this.co_b.checkHit(this.co_j))
+		if (!this.co_b.isFumuable(this)) this.jShinu(2);
+		else if (this.co_b.checkFumu(this)) {
+			this.co_b.fumuDamage(this);
 		} else {
 			this.jShinu(2);
 		}
