@@ -2589,8 +2589,8 @@ MainProgram.prototype.drawScore2 = function() {
  *
  * @see {@link MasaoJSS#addScore}
  */
-MainProgram.prototype.addScore = function(i) {
-	this.score += i;
+MainProgram.prototype.addScore = function(score) {
+	this.score += score;
 	if (this.score_1up_1 > 0 && this.score >= this.score_1up_1) {
 		this.j_left++;
 		this.score_1up_1 = 0;

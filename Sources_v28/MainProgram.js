@@ -244,6 +244,12 @@ MainProgram.prototype.drawScore2 = function() {
 	this.gg.os_g.drawString(str, display_x, display_y);
 };
 
+/**
+ * スコアを加算します。
+ * 負の値を渡すとスコアが減ります。
+ *
+ * @param {number} score 加算するスコア
+ */
 MainProgram.prototype.addScore = function(i) {
 	this.score += i;
 	if (this.score_1up_1 > 0 && this.score >= this.score_1up_1) {
