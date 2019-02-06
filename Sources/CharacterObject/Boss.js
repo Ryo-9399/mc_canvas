@@ -1,9 +1,17 @@
 import { CharacterObject } from "../CharacterObject";
 
+export const DYING = 40;
+export const BOSS1_DAMAGE_LEFT = 60;
+export const BOSS1_DAMAGE_RIGHT = 65;
+export const BOSS1_STANDBY = 100;
+export const BOSS1_ATTACK_LEFT = 110;
+export const BOSS1_ATTACK_RIGHT = 115;
+export const BOSS1_MOVING_LEFT = 150;
+export const BOSS1_MOVING_RIGHT = 155;
 class Boss extends CharacterObject {
 	move(mp) {
 		switch (this.c) {
-			case 40:
+			case DYING:
 				// 死亡
 				// 消えてからしばらくして人面星が出現する
 				if (this.c1 < 20) this.c1++;
@@ -19,13 +27,13 @@ class Boss extends CharacterObject {
 				this.pt = 0;
 				break;
 
-			case 60:
+			case BOSS1_DAMAGE_LEFT:
 				// 踏まれた
 				this.c1++;
 				if (this.c4 <= 0) {
 					// 死亡
 					if (this.c1 >= 26) {
-						this.c = 40;
+						this.c = DYING;
 						this.c1 = 0;
 						if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
 							// シューティングモード、四方向移動モードの場合は100点加算
@@ -34,14 +42,14 @@ class Boss extends CharacterObject {
 						// HPゲージを閉じる
 						if (mp.boss_destroy_type === 2) mp.hideGauge();
 					}
-				} else if (this.c1 >= 11) this.c = 150;
+				} else if (this.c1 >= 11) this.c = BOSS1_MOVING_LEFT;
 				this.pt = 1010;
 				break;
 
-			case 65:
+			case BOSS1_DAMAGE_RIGHT:
 				// 右を向いている時に踏まれて死ぬことはない
 				this.c1++;
-				if (this.c1 >= 11) this.c = 155;
+				if (this.c1 >= 11) this.c = BOSS1_MOVING_RIGHT;
 				this.pt = 1015;
 				break;
 
@@ -174,7 +182,7 @@ class Boss extends CharacterObject {
 				else this.pt = 1200;
 				break;
 
-			case 100:
+			case BOSS1_STANDBY:
 				if (mp.sl_step == 2 || mp.sl_step == 3)
 					if (mp.boss_destroy_type == 2) {
 						this.x -= 8;
@@ -192,41 +200,41 @@ class Boss extends CharacterObject {
 									"/" +
 									mp.boss_hp_max
 							);
-							this.c = 110;
+							this.c = BOSS1_ATTACK_LEFT;
 							this.c1 = 0;
 						}
 					} else {
-						this.c = 110;
+						this.c = BOSS1_ATTACK_LEFT;
 						this.c1 = 0;
 					}
 				this.pt = 1000;
 				break;
 
-			case 110:
+			case BOSS1_ATTACK_LEFT:
 				this.boss1Attack(mp, 0);
 				this.pt = 1000;
 				break;
 
-			case 115:
+			case BOSS1_ATTACK_RIGHT:
 				this.boss1Attack(mp, 1);
 				this.pt = 1005;
 				break;
 
-			case 150:
+			case BOSS1_MOVING_LEFT:
 				this.x -= 14;
 				if (this.x <= mp.sl_wx + 96) {
 					this.x = mp.sl_wx + 96;
-					this.c = 115;
+					this.c = BOSS1_ATTACK_RIGHT;
 					this.c1 = 0;
 				}
 				this.pt = 1000;
 				break;
 
-			case 155:
+			case BOSS1_MOVING_RIGHT:
 				this.x += 14;
 				if (this.x >= mp.sl_wx + 512 - 96 - 32) {
 					this.x = mp.sl_wx + 512 - 96 - 32;
-					this.c = 110;
+					this.c = BOSS1_ATTACK_LEFT;
 					this.c1 = 0;
 				}
 				this.pt = 1005;
