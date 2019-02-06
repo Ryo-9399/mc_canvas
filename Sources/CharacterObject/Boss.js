@@ -282,155 +282,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 215:
-				mp.boss_attack_mode = true;
-				this.c1++;
-				if (mp.boss2_type == 2) {
-					if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
-						for (var j2 = 0; j2 <= 7; j2++) {
-							const d = (j2 * 45 * 3.14) / 180;
-							var j7 = Math.floor(Math.cos(d) * 8);
-							var l8 = Math.floor(Math.sin(d) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, j7, l8);
-							mp.gs.rsAddSound(18);
-						}
-					} else if (
-						this.c1 == 35 ||
-						this.c1 == 110 ||
-						this.c1 == 295
-					) {
-						for (var k2 = 0; k2 <= 7; k2++) {
-							const d = ((k2 * 45 + 15) * 3.14) / 180;
-							var k7 = Math.floor(Math.cos(d) * 8);
-							var i9 = Math.floor(Math.sin(d) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, k7, i9);
-							mp.gs.rsAddSound(18);
-						}
-					} else if (
-						this.c1 == 60 ||
-						this.c1 == 135 ||
-						this.c1 == 375
-					) {
-						for (var l2 = 0; l2 <= 7; l2++) {
-							const d = ((l2 * 45 + 30) * 3.14) / 180;
-							var l7 = Math.floor(Math.cos(d) * 8);
-							var j9 = Math.floor(Math.sin(d) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, l7, j9);
-							mp.gs.rsAddSound(18);
-						}
-					} else if (this.c1 > 445) this.c1 = 0;
-				} else if (mp.boss2_type == 3) {
-					if (this.c1 == 5 || this.c1 == 125) {
-						for (var i3 = 0; i3 <= 270; i3 += 90)
-							mp.mSet2(this.x, this.y, 980, i3, 0);
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 45) {
-						for (var j3 = 30; j3 <= 300; j3 += 90)
-							mp.mSet2(this.x, this.y, 980, j3, 0);
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 85) {
-						for (var k3 = 60; k3 <= 330; k3 += 90)
-							mp.mSet2(this.x, this.y, 980, k3, 0);
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 > 250) this.c1 = 0;
-				} else if (mp.boss2_type == 4) {
-					let d1 = null;
-					let d2 = null;
-					if (this.c1 === 1) {
-						mp.gs.rsAddSound(18);
-					}
-					if (this.c1 === 1) {
-						d1 = 4.5355558395385742;
-						d2 = 1.7444444894790649;
-					} else if (this.c1 === 8) {
-						d1 = 4.8844447135925293;
-						d2 = 1.3955556154251099;
-					} else if (this.c1 === 16) {
-						d1 = 5.2333335876464844;
-						d2 = 1.0466667413711548;
-					} else if (this.c1 === 24) {
-						d1 = 5.5822224617004395;
-						d2 = 0.69777780771255493;
-					} else if (this.c1 === 32) {
-						d1 = 6.0183334350585938;
-						d2 = 0.2616666853427887;
-					} else if (this.c1 === 56) {
-						d1 = 0.0;
-					} else if (this.c1 === 72) {
-						d1 = 6.0183334350585938;
-						d2 = 0.2616666853427887;
-					} else if (this.c1 === 80) {
-						d1 = 5.5822224617004395;
-						d2 = 0.69777780771255493;
-					} else if (this.c1 === 88) {
-						d1 = 5.2333335876464844;
-						d2 = 1.0466667413711548;
-					} else if (this.c1 === 96) {
-						d1 = 4.8844447135925293;
-						d2 = 1.3955556154251099;
-					}
-					if (d1 !== null) {
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d1) * 12),
-							Math.floor(Math.sin(d1) * 10)
-						);
-					}
-					if (d2 !== null) {
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					}
-					if (this.c1 >= 200) this.c1 = 0;
-				} else if (mp.boss2_type == 5) {
-					if (this.c1 == 5) {
-						for (var i = 10; i <= 310; i += 60) {
-							mp.mSet2(this.x, this.y, 901, i, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - i, 0);
-						}
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 45) {
-						for (var i = 30; i <= 330; i += 60) {
-							mp.mSet2(this.x, this.y, 901, i, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - i, 0);
-						}
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 85) {
-						for (var i = 50; i <= 350; i += 60) {
-							mp.mSet2(this.x, this.y, 901, i, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - i, 0);
-						}
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 > 270) this.c1 = 0;
-				} else if (mp.boss2_type == 6) {
-					boss2Attack6Right(mp);
-				} else if (mp.boss2_type == 7) this.c1 = 0;
-				else if (mp.boss2_type == 8) {
-					if (this.c1 == 5 || this.c1 == 45 || this.c1 == 85) {
-						mp.mSet(this.x, this.y, 96);
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 > 165) this.c1 = 4;
-				} else if (
-					this.c1 == 5 ||
-					this.c1 == 35 ||
-					this.c1 == 65 ||
-					this.c1 == 110 ||
-					this.c1 == 185
-				) {
-					mp.mSet(this.x, this.y, 90);
-					mp.gs.rsAddSound(18);
-				} else if (this.c1 > 185) this.c1 = 110;
+				this.boss2Attack(mp, 1);
 				this.pt = 1105;
 				if (mp.boss2_type == 6) this.pt = 1106;
 				break;
@@ -1219,8 +1071,10 @@ class Boss extends CharacterObject {
 			// 何もしない
 			this.c1 = 0;
 		} else if (mp.boss2_type === 8) {
+			// 水の波動  直進
 			if (this.c1 === 5 || this.c1 === 45 || this.c1 === 85) {
-				mp.mSet(this.x, this.y, 95);
+				const attack = direction === 1 ? 96 : 95;
+				mp.mSet(this.x, this.y, attack);
 				mp.gs.rsAddSound(18);
 			}
 			if (this.c1 > 165) this.c1 = 4;
