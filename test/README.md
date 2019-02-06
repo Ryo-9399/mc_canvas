@@ -35,3 +35,5 @@
 - `hokanozidou75.masao.json`: [ドッスンスンを動かして2 - !のウェブサイト](http://bi.81.la/masao/hokanozidou/hokanozidou75.html)
 - `hokanozidou87.masao.json`: [人間大砲＜バネ - !のウェブサイト](http://bi.81.la/masao/hokanozidou/hokanozidou87.html)
 - `hokanozidou92.masao.json`: [坂道で急上昇 - !のウェブサイト](http://bi.81.la/masao/hokanozidou/hokanozidou92.html)
+
+- `uzushio.masao.json`: 作者: !
