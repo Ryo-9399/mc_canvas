@@ -336,68 +336,51 @@ class Boss extends CharacterObject {
 						mp.gs.rsAddSound(18);
 					} else if (this.c1 > 250) this.c1 = 0;
 				} else if (mp.boss2_type == 4) {
-					if (this.c1 == 1) {
+					let d1 = null;
+					let d2 = null;
+					if (this.c1 === 1) {
 						mp.gs.rsAddSound(18);
-						const d = 4.5355558395385742;
+					}
+					if (this.c1 === 1) {
+						d1 = 4.5355558395385742;
+						d2 = 1.7444444894790649;
+					} else if (this.c1 === 8) {
+						d1 = 4.8844447135925293;
+						d2 = 1.3955556154251099;
+					} else if (this.c1 === 16) {
+						d1 = 5.2333335876464844;
+						d2 = 1.0466667413711548;
+					} else if (this.c1 === 24) {
+						d1 = 5.5822224617004395;
+						d2 = 0.69777780771255493;
+					} else if (this.c1 === 32) {
+						d1 = 6.0183334350585938;
+						d2 = 0.2616666853427887;
+					} else if (this.c1 === 56) {
+						d1 = 0.0;
+					} else if (this.c1 === 72) {
+						d1 = 6.0183334350585938;
+						d2 = 0.2616666853427887;
+					} else if (this.c1 === 80) {
+						d1 = 5.5822224617004395;
+						d2 = 0.69777780771255493;
+					} else if (this.c1 === 88) {
+						d1 = 5.2333335876464844;
+						d2 = 1.0466667413711548;
+					} else if (this.c1 === 96) {
+						d1 = 4.8844447135925293;
+						d2 = 1.3955556154251099;
+					}
+					if (d1 !== null) {
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
+							Math.floor(Math.cos(d1) * 12),
+							Math.floor(Math.sin(d1) * 10)
 						);
-						const d2 = 1.7444444894790649;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 8) {
-						const d = 4.8844447135925293;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 1.3955556154251099;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 16) {
-						const d = 5.2333335876464844;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 1.0466667413711548;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 24) {
-						const d = 5.5822224617004395;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 0.69777780771255493;
+					}
+					if (d2 !== null) {
 						mp.mSet2(
 							this.x,
 							this.y,
@@ -405,101 +388,8 @@ class Boss extends CharacterObject {
 							Math.floor(Math.cos(d2) * 12),
 							Math.floor(Math.sin(d2) * 10)
 						);
-					} else if (this.c1 == 32) {
-						const d = 6.0183334350585938;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 0.2616666853427887;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 56) {
-						const d = 0.0;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-					} else if (this.c1 == 72) {
-						const d = 6.0183334350585938;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 0.2616666853427887;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 80) {
-						const d = 5.5822224617004395;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 0.69777780771255493;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 88) {
-						const d = 5.2333335876464844;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 1.0466667413711548;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 == 96) {
-						const d = 4.8844447135925293;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d) * 12),
-							Math.floor(Math.sin(d) * 10)
-						);
-						const d2 = 1.3955556154251099;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d2) * 12),
-							Math.floor(Math.sin(d2) * 10)
-						);
-					} else if (this.c1 >= 200) this.c1 = 0;
+					}
+					if (this.c1 >= 200) this.c1 = 0;
 				} else if (mp.boss2_type == 5) {
 					if (this.c1 == 5) {
 						for (var l3 = 10; l3 <= 310; l3 += 60) {
@@ -1439,128 +1329,89 @@ class Boss extends CharacterObject {
 			}
 			if (this.c1 > 250) this.c1 = 0;
 		} else if (mp.boss2_type == 4) {
-			if (this.c1 == 1) {
+			// バブル光線連射
+			if (this.c1 === 1) {
 				mp.gs.rsAddSound(18);
-				const d = 4.8844447135925293;
+			}
+			let d1 = null;
+			let d2 = null;
+			// TODO: もうちょっとだけましにしたい
+			if (direction !== 1) {
+				// 左向き
+				if (this.c1 === 1) {
+					d1 = 4.8844447135925293;
+					d2 = 1.3955556154251099;
+				} else if (this.c1 === 8) {
+					d1 = 4.5355558395385742;
+					d2 = 1.7444444894790649;
+				} else if (this.c1 === 16) {
+					d1 = 4.1866669654846191;
+					d2 = 2.0933334827423096;
+				} else if (this.c1 === 24) {
+					d1 = 3.8377780914306641;
+					d2 = 2.4422223567962646;
+				} else if (this.c1 === 32) {
+					d1 = 3.4016668796539307;
+					d2 = 2.878333568572998;
+				} else if (this.c1 === 56) {
+					d1 = 3.1400001049041748;
+				} else if (this.c1 === 72) {
+					d1 = 3.4016668796539307;
+					d2 = 2.878333568572998;
+				} else if (this.c1 === 80) {
+					d1 = 3.8377780914306641;
+					d2 = 2.4422223567962646;
+				} else if (this.c1 === 88) {
+					d1 = 4.1866669654846191;
+					d2 = 2.0933334827423096;
+				} else if (this.c1 === 96) {
+					d1 = 4.5355558395385742;
+					d2 = 1.7444444894790649;
+				}
+			} else {
+				// 右向き
+				if (this.c1 === 1) {
+					d1 = 4.5355558395385742;
+					d2 = 1.7444444894790649;
+				} else if (this.c1 === 8) {
+					d1 = 4.8844447135925293;
+					d2 = 1.3955556154251099;
+				} else if (this.c1 === 16) {
+					d1 = 5.2333335876464844;
+					d2 = 1.0466667413711548;
+				} else if (this.c1 === 24) {
+					d1 = 5.5822224617004395;
+					d2 = 0.69777780771255493;
+				} else if (this.c1 === 32) {
+					d1 = 6.0183334350585938;
+					d2 = 0.2616666853427887;
+				} else if (this.c1 === 56) {
+					d1 = 0.0;
+				} else if (this.c1 === 72) {
+					d1 = 6.0183334350585938;
+					d2 = 0.2616666853427887;
+				} else if (this.c1 === 80) {
+					d1 = 5.5822224617004395;
+					d2 = 0.69777780771255493;
+				} else if (this.c1 === 88) {
+					d1 = 5.2333335876464844;
+					d2 = 1.0466667413711548;
+				} else if (this.c1 === 96) {
+					d1 = 4.8844447135925293;
+					d2 = 1.3955556154251099;
+				}
+			}
+
+			if (d1 !== null) {
 				mp.mSet2(
 					this.x,
 					this.y,
 					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
+					Math.floor(Math.cos(d1) * 12),
+					Math.floor(Math.sin(d1) * 10)
 				);
-				const d2 = 1.3955556154251099;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 == 8) {
-				const d = 4.5355558395385742;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 1.7444444894790649;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 == 16) {
-				const d = 4.1866669654846191;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 2.0933334827423096;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 == 24) {
-				const d = 3.8377780914306641;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 2.4422223567962646;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 == 32) {
-				const d = 3.4016668796539307;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 2.878333568572998;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 == 56) {
-				const d = 3.1400001049041748;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-			} else if (this.c1 == 72) {
-				const d = 3.4016668796539307;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 2.878333568572998;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-			} else if (this.c1 == 80) {
-				const d = 3.8377780914306641;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 2.4422223567962646;
+			}
+			if (d2 !== null) {
 				mp.mSet2(
 					this.x,
 					this.y,
@@ -1568,41 +1419,9 @@ class Boss extends CharacterObject {
 					Math.floor(Math.cos(d2) * 12),
 					Math.floor(Math.sin(d2) * 10)
 				);
-			} else if (this.c1 == 88) {
-				const d = 4.1866669654846191;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 2.0933334827423096;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 == 96) {
-				const d = 4.5355558395385742;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d) * 12),
-					Math.floor(Math.sin(d) * 10)
-				);
-				const d2 = 1.7444444894790649;
-				mp.mSet2(
-					this.x,
-					this.y,
-					710,
-					Math.floor(Math.cos(d2) * 12),
-					Math.floor(Math.sin(d2) * 10)
-				);
-			} else if (this.c1 >= 200) this.c1 = 0;
+			}
+
+			if (this.c1 >= 200) this.c1 = 0;
 		} else if (mp.boss2_type == 5) {
 			if (this.c1 == 5) {
 				for (var k1 = 10; k1 <= 310; k1 += 60) {
