@@ -1,0 +1,108 @@
+{
+	"_author": "!",
+	"params": {
+		"boss2_type": "3",
+		"filename_chizu": "chizu.gif",
+		"filename_ending": "ending.gif",
+		"filename_gameover": "gameover.gif",
+		"filename_haikei": "haikei.gif",
+		"filename_haikei2": "haikei.gif",
+		"filename_haikei3": "haikei.gif",
+		"filename_haikei4": "haikei.gif",
+		"filename_mapchip": "mapchip.gif",
+		"filename_pattern": "pattern.gif",
+		"filename_title": "title.gif",
+		"game_speed": "25",
+		"j_tokugi": "18",
+		"pause_switch": "2",
+		"score_v": "2",
+		"time_max": "0",
+		"map0-0": ".."
+	},
+	"advanced-map": {
+		"stages": [
+			{
+				"size": { "x": 180, "y": 30 },
+				"layers": [
+					{
+						"type": "main",
+						"map": [
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[],
+							[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 97],
+							[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 97],
+							[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 97],
+							[0, 97, 0, 0, 0, 0, 0, 0, 0, 1077, 1007, 0, 52, 97],
+							[0, 0, 0, 0, 0, 0, 1217, 0, 1236, 55, 0, 0, 0, 97],
+							[0, 0, 0, 0, 0, 0, 1007],
+							[],
+							[],
+							[0, 0, 0, 0, 0, 0, 0, 0, 0, 1198, 55],
+							[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1007],
+							[0, 0, 0, 0, 0, 0, 0, 1007, 84],
+							[0, 65, 0, 0, 1007, 0, 0, 1078],
+							[
+								0,
+								1007,
+								0,
+								0,
+								0,
+								0,
+								0,
+								0,
+								1007,
+								122,
+								122,
+								122,
+								122,
+								122,
+								122,
+								122,
+								122
+							]
+						]
+					},
+					{ "type": "mapchip", "map": [] }
+				]
+			},
+			{
+				"size": { "x": 180, "y": 13 },
+				"layers": [
+					{ "type": "main", "map": [] },
+					{ "type": "mapchip", "map": [] }
+				]
+			},
+			{
+				"size": { "x": 180, "y": 30 },
+				"layers": [
+					{ "type": "main", "map": [] },
+					{ "type": "mapchip", "map": [] }
+				]
+			},
+			{
+				"size": { "x": 180, "y": 30 },
+				"layers": [
+					{ "type": "main", "map": [] },
+					{ "type": "mapchip", "map": [] }
+				]
+			}
+		]
+	},
+	"_snapshot-frames": [130, 250, 399],
+	"_ran_seed": 12345678
+}
