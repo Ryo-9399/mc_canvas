@@ -1350,7 +1350,7 @@ class Boss extends CharacterObject {
 			// イージーモードの場合は当たり判定が大きい
 			return this.checkHit(j);
 		}
-		return Math.abs(b.x - j.x) < 34;
+		return Math.abs(this.x - j.x) < 34;
 	}
 
 	/**
