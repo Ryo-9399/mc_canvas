@@ -48,3 +48,4 @@
 
 - `uzushio.masao.json`: 作者: !
 - `boss2-babururensya.masao.json`: 作者: !
+- `boss2-hariken.masao.json`: 作者: !
