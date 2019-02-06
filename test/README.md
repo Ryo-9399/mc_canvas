@@ -47,3 +47,7 @@
 - `hokanozidou92.masao.json`: [坂道で急上昇 - !のウェブサイト](http://bi.81.la/masao/hokanozidou/hokanozidou92.html)
 
 - `uzushio.masao.json`: 作者: !
+- `boss2-babururensya.masao.json`: 作者: !
+- `boss2-hariken.masao.json`: 作者: !
+- `boss2-baburukaiten.masao.json`: 作者: !
+- `boss2-hadoutyokusin.masao.json`: 作者: !
