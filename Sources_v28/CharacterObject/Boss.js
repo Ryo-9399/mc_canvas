@@ -174,92 +174,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case 210:
-				this.c1++;
-				if (mp.boss2_type == 2) {
-					if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
-						for (var i = 0; i <= 7; i++) {
-							var d = (i * 45 * 3.14) / 180;
-							var j2 = Math.floor(Math.cos(d) * 8);
-							var l3 = Math.floor(Math.sin(d) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, j2, l3);
-						}
-					} else if (
-						this.c1 == 35 ||
-						this.c1 == 110 ||
-						this.c1 == 295
-					) {
-						for (var j = 0; j <= 7; j++) {
-							var d1 = ((j * 45 + 15) * 3.14) / 180;
-							var k2 = Math.floor(Math.cos(d1) * 8);
-							var i4 = Math.floor(Math.sin(d1) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, k2, i4);
-						}
-					} else if (
-						this.c1 == 60 ||
-						this.c1 == 135 ||
-						this.c1 == 375
-					) {
-						for (var k = 0; k <= 7; k++) {
-							var d2 = ((k * 45 + 30) * 3.14) / 180;
-							var l2 = Math.floor(Math.cos(d2) * 8);
-							var j4 = Math.floor(Math.sin(d2) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, l2, j4);
-						}
-					} else if (this.c1 > 445) this.c1 = 0;
-				} else if (
-					this.c1 == 5 ||
-					this.c1 == 35 ||
-					this.c1 == 65 ||
-					this.c1 == 110 ||
-					this.c1 == 185
-				)
-					mp.mSet(this.x, this.y, 90);
-				else if (this.c1 > 185) this.c1 = 110;
+				this.boss2Attack(mp, 0);
 				this.pt = 1100;
 				break;
 
 			case 215:
-				this.c1++;
-				if (mp.boss2_type == 2) {
-					if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
-						for (var l = 0; l <= 7; l++) {
-							var d3 = (l * 45 * 3.14) / 180;
-							var i3 = Math.floor(Math.cos(d3) * 8);
-							var k4 = Math.floor(Math.sin(d3) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, i3, k4);
-						}
-					} else if (
-						this.c1 == 35 ||
-						this.c1 == 110 ||
-						this.c1 == 295
-					) {
-						for (var i1 = 0; i1 <= 7; i1++) {
-							var d4 = ((i1 * 45 + 15) * 3.14) / 180;
-							var j3 = Math.floor(Math.cos(d4) * 8);
-							var l4 = Math.floor(Math.sin(d4) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, j3, l4);
-						}
-					} else if (
-						this.c1 == 60 ||
-						this.c1 == 135 ||
-						this.c1 == 375
-					) {
-						for (var j1 = 0; j1 <= 7; j1++) {
-							var d5 = ((j1 * 45 + 30) * 3.14) / 180;
-							var k3 = Math.floor(Math.cos(d5) * 8);
-							var i5 = Math.floor(Math.sin(d5) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, k3, i5);
-						}
-					} else if (this.c1 > 445) this.c1 = 0;
-				} else if (
-					this.c1 == 5 ||
-					this.c1 == 35 ||
-					this.c1 == 65 ||
-					this.c1 == 110 ||
-					this.c1 == 185
-				)
-					mp.mSet(this.x, this.y, 90);
-				else if (this.c1 > 185) this.c1 = 110;
+				this.boss2Attack(mp, 1);
 				this.pt = 1105;
 				break;
 
@@ -532,7 +452,7 @@ class Boss extends CharacterObject {
 				170,
 				180
 			];
-			const attack_mode = [
+			const attack_power = [
 				-2,
 				-4,
 				-6,
@@ -546,9 +466,9 @@ class Boss extends CharacterObject {
 				-4,
 				-2
 			];
-			for (const [count, mode] of zip(attack_count, attack_mode)) {
+			for (const [count, power] of zip(attack_count, attack_power)) {
 				if (this.c1 === count) {
-					mp.tSetBoss(this.x, this.y, 150, mode * mirror);
+					mp.tSetBoss(this.x, this.y, 150, power * mirror);
 					break;
 				}
 			}
@@ -598,7 +518,61 @@ class Boss extends CharacterObject {
 				const dir = mp.ranInt(8) + 3;
 				mp.mSet2(this.x, this.y, 500, dir, -30);
 				mp.mSet2(this.x, this.y, 500, -dir, -30);
-			} else if (this.c1 >= 150) this.c1 = 98;
+			}
+			if (this.c1 >= 150) this.c1 = 98;
+		}
+	}
+
+	/**
+	 * boss2の攻撃中の動作
+	 * @param {MainProgram} mp
+	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 */
+	boss2Attack(mp, direction = 0) {
+		// 左向きなら1 右向きなら-1
+		// NOTE: このボスでは使わない
+		const mirror = direction === 1 ? -1 : 1;
+		// 長さが同じ配列をまとめる
+		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
+
+		this.c1++;
+		if (mp.boss2_type == 2) {
+			// バブル光線
+			if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
+				this.boss2BubbleBeam(mp, 0);
+			} else if (this.c1 == 35 || this.c1 == 110 || this.c1 == 295) {
+				this.boss2BubbleBeam(mp, 15);
+			} else if (this.c1 == 60 || this.c1 == 135 || this.c1 == 375) {
+				this.boss2BubbleBeam(mp, 30);
+			}
+			if (this.c1 > 445) this.c1 = 0;
+		} else {
+			// 水の波動
+			if (
+				this.c1 == 5 ||
+				this.c1 == 35 ||
+				this.c1 == 65 ||
+				this.c1 == 110 ||
+				this.c1 == 185
+			) {
+				mp.mSet(this.x, this.y, 90);
+			}
+			if (this.c1 > 185) this.c1 = 110;
+		}
+	}
+
+	/**
+	 * バブル光線
+	 * @param {MainProgram} mp
+	 * @param {number} direction ずらす角度(度数法)
+	 */
+	boss2BubbleBeam(mp, direction) {
+		for (let i = 0; i < 8; i++) {
+			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
+			const d = ((i * 45 + direction) * 3.14) / 180;
+			const cos = Math.floor(Math.cos(d) * 8);
+			const sin = -Math.floor(Math.sin(d) * 8);
+			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 		}
 	}
 

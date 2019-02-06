@@ -276,496 +276,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 210:
-				mp.boss_attack_mode = true;
-				this.c1++;
-				if (mp.boss2_type == 2) {
-					if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
-						for (var i = 0; i <= 7; i++) {
-							var d28 = (i * 45 * 3.14) / 180;
-							var k6 = Math.floor(Math.cos(d28) * 8);
-							var i8 = Math.floor(Math.sin(d28) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, k6, i8);
-							mp.gs.rsAddSound(18);
-						}
-					} else if (
-						this.c1 == 35 ||
-						this.c1 == 110 ||
-						this.c1 == 295
-					) {
-						for (var j = 0; j <= 7; j++) {
-							var d29 = ((j * 45 + 15) * 3.14) / 180;
-							var l6 = Math.floor(Math.cos(d29) * 8);
-							var j8 = Math.floor(Math.sin(d29) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, l6, j8);
-							mp.gs.rsAddSound(18);
-						}
-					} else if (
-						this.c1 == 60 ||
-						this.c1 == 135 ||
-						this.c1 == 375
-					) {
-						for (var k = 0; k <= 7; k++) {
-							var d30 = ((k * 45 + 30) * 3.14) / 180;
-							var i7 = Math.floor(Math.cos(d30) * 8);
-							var k8 = Math.floor(Math.sin(d30) * 8) * -1;
-							mp.mSet2(this.x, this.y - 8, 710, i7, k8);
-							mp.gs.rsAddSound(18);
-						}
-					} else if (this.c1 > 445) this.c1 = 0;
-				} else if (mp.boss2_type == 3) {
-					if (this.c1 == 5 || this.c1 == 125) {
-						for (var l = 0; l <= 270; l += 90)
-							mp.mSet2(this.x, this.y, 970, l, 0);
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 45) {
-						for (var i1 = 30; i1 <= 300; i1 += 90)
-							mp.mSet2(this.x, this.y, 970, i1, 0);
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 85) {
-						for (var j1 = 60; j1 <= 330; j1 += 90)
-							mp.mSet2(this.x, this.y, 970, j1, 0);
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 > 250) this.c1 = 0;
-				} else if (mp.boss2_type == 4) {
-					if (this.c1 == 1) {
-						mp.gs.rsAddSound(18);
-						var d31 = 4.8844447135925293;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d31) * 12),
-							Math.floor(Math.sin(d31) * 10)
-						);
-						d31 = 1.3955556154251099;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d31) * 12),
-							Math.floor(Math.sin(d31) * 10)
-						);
-					} else if (this.c1 == 8) {
-						var d32 = 4.5355558395385742;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d32) * 12),
-							Math.floor(Math.sin(d32) * 10)
-						);
-						d32 = 1.7444444894790649;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d32) * 12),
-							Math.floor(Math.sin(d32) * 10)
-						);
-					} else if (this.c1 == 16) {
-						var d33 = 4.1866669654846191;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d33) * 12),
-							Math.floor(Math.sin(d33) * 10)
-						);
-						d33 = 2.0933334827423096;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d33) * 12),
-							Math.floor(Math.sin(d33) * 10)
-						);
-					} else if (this.c1 == 24) {
-						var d34 = 3.8377780914306641;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d34) * 12),
-							Math.floor(Math.sin(d34) * 10)
-						);
-						d34 = 2.4422223567962646;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d34) * 12),
-							Math.floor(Math.sin(d34) * 10)
-						);
-					} else if (this.c1 == 32) {
-						var d35 = 3.4016668796539307;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d35) * 12),
-							Math.floor(Math.sin(d35) * 10)
-						);
-						d35 = 2.878333568572998;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d35) * 12),
-							Math.floor(Math.sin(d35) * 10)
-						);
-					} else if (this.c1 == 56) {
-						var d36 = 3.1400001049041748;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d36) * 12),
-							Math.floor(Math.sin(d36) * 10)
-						);
-					} else if (this.c1 == 72) {
-						var d37 = 3.4016668796539307;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d37) * 12),
-							Math.floor(Math.sin(d37) * 10)
-						);
-						d37 = 2.878333568572998;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d37) * 12),
-							Math.floor(Math.sin(d37) * 10)
-						);
-					} else if (this.c1 == 80) {
-						var d38 = 3.8377780914306641;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d38) * 12),
-							Math.floor(Math.sin(d38) * 10)
-						);
-						d38 = 2.4422223567962646;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d38) * 12),
-							Math.floor(Math.sin(d38) * 10)
-						);
-					} else if (this.c1 == 88) {
-						var d39 = 4.1866669654846191;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d39) * 12),
-							Math.floor(Math.sin(d39) * 10)
-						);
-						d39 = 2.0933334827423096;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d39) * 12),
-							Math.floor(Math.sin(d39) * 10)
-						);
-					} else if (this.c1 == 96) {
-						var d40 = 4.5355558395385742;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d40) * 12),
-							Math.floor(Math.sin(d40) * 10)
-						);
-						d40 = 1.7444444894790649;
-						mp.mSet2(
-							this.x,
-							this.y,
-							710,
-							Math.floor(Math.cos(d40) * 12),
-							Math.floor(Math.sin(d40) * 10)
-						);
-					} else if (this.c1 >= 200) this.c1 = 0;
-				} else if (mp.boss2_type == 5) {
-					if (this.c1 == 5) {
-						for (var k1 = 10; k1 <= 310; k1 += 60) {
-							mp.mSet2(this.x, this.y, 901, k1, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - k1, 0);
-						}
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 45) {
-						for (var l1 = 30; l1 <= 330; l1 += 60) {
-							mp.mSet2(this.x, this.y, 901, l1, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - l1, 0);
-						}
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 == 85) {
-						for (var i2 = 50; i2 <= 350; i2 += 60) {
-							mp.mSet2(this.x, this.y, 901, i2, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - i2, 0);
-						}
-
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 > 270) this.c1 = 0;
-				} else if (mp.boss2_type == 6) {
-					this.c1--;
-					if (this.c1 <= 0) {
-						this.c2 = 0;
-						this.c1 = 100;
-						mp.gs.rsAddSound(18);
-						var d41 = 3.1400001049041748;
-						mp.mSet2(
-							this.x,
-							this.y,
-							711,
-							Math.floor(Math.cos(d41) * 12),
-							Math.floor(Math.sin(d41) * 8)
-						);
-					} else if (this.c1 <= 100) {
-						this.c2 += 10;
-						if (this.c2 == 40) {
-							var d42 = 3.8377780914306641;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d42) * 12),
-								Math.floor(Math.sin(d42) * 8)
-							);
-						} else if (this.c2 == 70) {
-							var d43 = 4.3611111640930176;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d43) * 12),
-								Math.floor(Math.sin(d43) * 8)
-							);
-						} else if (this.c2 >= 90) {
-							this.c2 = 90;
-							var d44 = 4.8844447135925293;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d44) * 12),
-								Math.floor(Math.sin(d44) * 8)
-							);
-							this.c1 = 200;
-						}
-					} else if (this.c1 <= 200) {
-						this.c2 -= 5;
-						if (this.c2 == 80) {
-							var d45 = 4.5355558395385742;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d45) * 12),
-								Math.floor(Math.sin(d45) * 8)
-							);
-						} else if (this.c2 == 60) {
-							var d46 = 4.1866669654846191;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d46) * 12),
-								Math.floor(Math.sin(d46) * 8)
-							);
-						} else if (this.c2 == 30) {
-							var d47 = 3.6633334159851074;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d47) * 12),
-								Math.floor(Math.sin(d47) * 8)
-							);
-						} else if (this.c2 == 0) {
-							var d48 = 3.1400001049041748;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d48) * 12),
-								Math.floor(Math.sin(d48) * 8)
-							);
-						} else if (this.c2 == -40) {
-							var d49 = 2.4422223567962646;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d49) * 12),
-								Math.floor(Math.sin(d49) * 8)
-							);
-						} else if (this.c2 == -70) {
-							var d50 = 1.918889045715332;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d50) * 12),
-								Math.floor(Math.sin(d50) * 8)
-							);
-						} else if (this.c2 <= -100) {
-							this.c2 = -100;
-							var d51 = 1.3955556154251099;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d51) * 12),
-								Math.floor(Math.sin(d51) * 8)
-							);
-							this.c1 = 300;
-						}
-					} else if (this.c1 <= 300) {
-						this.c2 += 2;
-						if (this.c2 == -60) {
-							var d52 = 2.0933334827423096;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d52) * 12),
-								Math.floor(Math.sin(d52) * 8)
-							);
-						} else if (this.c2 == -30) {
-							var d53 = 2.6166667938232422;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d53) * 12),
-								Math.floor(Math.sin(d53) * 8)
-							);
-						} else if (this.c2 == 0) {
-							var d54 = 3.1400001049041748;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d54) * 12),
-								Math.floor(Math.sin(d54) * 8)
-							);
-						} else if (this.c2 == 30) {
-							var d55 = 3.6633334159851074;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d55) * 12),
-								Math.floor(Math.sin(d55) * 8)
-							);
-						} else if (this.c2 == 60) {
-							var d56 = 4.1866669654846191;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d56) * 12),
-								Math.floor(Math.sin(d56) * 8)
-							);
-						} else if (this.c2 >= 90) {
-							this.c2 = 90;
-							var d57 = 4.7100000381469727;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d57) * 12),
-								Math.floor(Math.sin(d57) * 8)
-							);
-							this.c1 = 400;
-						}
-					} else {
-						this.c2 -= 2;
-						if (this.c2 == 60) {
-							var d58 = 4.1866669654846191;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d58) * 12),
-								Math.floor(Math.sin(d58) * 8)
-							);
-						} else if (this.c2 == 30) {
-							var d59 = 3.6633334159851074;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d59) * 12),
-								Math.floor(Math.sin(d59) * 8)
-							);
-						} else if (this.c2 == 0) {
-							var d60 = 3.1400001049041748;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d60) * 12),
-								Math.floor(Math.sin(d60) * 8)
-							);
-						} else if (this.c2 == -30) {
-							var d61 = 2.6166667938232422;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d61) * 12),
-								Math.floor(Math.sin(d61) * 8)
-							);
-						} else if (this.c2 == -60) {
-							var d62 = 2.0933334827423096;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d62) * 12),
-								Math.floor(Math.sin(d62) * 8)
-							);
-						} else if (this.c2 <= -90) {
-							this.c2 = -90;
-							var d63 = 1.5700000524520874;
-							mp.mSet2(
-								this.x,
-								this.y,
-								711,
-								Math.floor(Math.cos(d63) * 12),
-								Math.floor(Math.sin(d63) * 8)
-							);
-							this.c1 = 300;
-						}
-					}
-				} else if (mp.boss2_type == 7) this.c1 = 0;
-				else if (mp.boss2_type == 8) {
-					if (this.c1 == 5 || this.c1 == 45 || this.c1 == 85) {
-						mp.mSet(this.x, this.y, 95);
-						mp.gs.rsAddSound(18);
-					} else if (this.c1 > 165) this.c1 = 4;
-				} else if (
-					this.c1 == 5 ||
-					this.c1 == 35 ||
-					this.c1 == 65 ||
-					this.c1 == 110 ||
-					this.c1 == 185
-				) {
-					mp.mSet(this.x, this.y, 90);
-					mp.gs.rsAddSound(18);
-				} else if (this.c1 > 185) this.c1 = 110;
+				this.boss2Attack(mp, 0);
 				this.pt = 1100;
 				if (mp.boss2_type == 6) this.pt = 1101;
 				break;
@@ -776,9 +287,9 @@ class Boss extends CharacterObject {
 				if (mp.boss2_type == 2) {
 					if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
 						for (var j2 = 0; j2 <= 7; j2++) {
-							var d64 = (j2 * 45 * 3.14) / 180;
-							var j7 = Math.floor(Math.cos(d64) * 8);
-							var l8 = Math.floor(Math.sin(d64) * 8) * -1;
+							const d = (j2 * 45 * 3.14) / 180;
+							var j7 = Math.floor(Math.cos(d) * 8);
+							var l8 = Math.floor(Math.sin(d) * 8) * -1;
 							mp.mSet2(this.x, this.y - 8, 710, j7, l8);
 							mp.gs.rsAddSound(18);
 						}
@@ -788,9 +299,9 @@ class Boss extends CharacterObject {
 						this.c1 == 295
 					) {
 						for (var k2 = 0; k2 <= 7; k2++) {
-							var d65 = ((k2 * 45 + 15) * 3.14) / 180;
-							var k7 = Math.floor(Math.cos(d65) * 8);
-							var i9 = Math.floor(Math.sin(d65) * 8) * -1;
+							const d = ((k2 * 45 + 15) * 3.14) / 180;
+							var k7 = Math.floor(Math.cos(d) * 8);
+							var i9 = Math.floor(Math.sin(d) * 8) * -1;
 							mp.mSet2(this.x, this.y - 8, 710, k7, i9);
 							mp.gs.rsAddSound(18);
 						}
@@ -800,9 +311,9 @@ class Boss extends CharacterObject {
 						this.c1 == 375
 					) {
 						for (var l2 = 0; l2 <= 7; l2++) {
-							var d66 = ((l2 * 45 + 30) * 3.14) / 180;
-							var l7 = Math.floor(Math.cos(d66) * 8);
-							var j9 = Math.floor(Math.sin(d66) * 8) * -1;
+							const d = ((l2 * 45 + 30) * 3.14) / 180;
+							var l7 = Math.floor(Math.cos(d) * 8);
+							var j9 = Math.floor(Math.sin(d) * 8) * -1;
 							mp.mSet2(this.x, this.y - 8, 710, l7, j9);
 							mp.gs.rsAddSound(18);
 						}
@@ -827,166 +338,166 @@ class Boss extends CharacterObject {
 				} else if (mp.boss2_type == 4) {
 					if (this.c1 == 1) {
 						mp.gs.rsAddSound(18);
-						var d67 = 4.5355558395385742;
+						const d = 4.5355558395385742;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d67) * 12),
-							Math.floor(Math.sin(d67) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d67 = 1.7444444894790649;
+						const d2 = 1.7444444894790649;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d67) * 12),
-							Math.floor(Math.sin(d67) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 8) {
-						var d68 = 4.8844447135925293;
+						const d = 4.8844447135925293;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d68) * 12),
-							Math.floor(Math.sin(d68) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d68 = 1.3955556154251099;
+						const d2 = 1.3955556154251099;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d68) * 12),
-							Math.floor(Math.sin(d68) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 16) {
-						var d69 = 5.2333335876464844;
+						const d = 5.2333335876464844;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d69) * 12),
-							Math.floor(Math.sin(d69) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d69 = 1.0466667413711548;
+						const d2 = 1.0466667413711548;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d69) * 12),
-							Math.floor(Math.sin(d69) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 24) {
-						var d70 = 5.5822224617004395;
+						const d = 5.5822224617004395;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d70) * 12),
-							Math.floor(Math.sin(d70) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d70 = 0.69777780771255493;
+						const d2 = 0.69777780771255493;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d70) * 12),
-							Math.floor(Math.sin(d70) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 32) {
-						var d71 = 6.0183334350585938;
+						const d = 6.0183334350585938;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d71) * 12),
-							Math.floor(Math.sin(d71) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d71 = 0.2616666853427887;
+						const d2 = 0.2616666853427887;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d71) * 12),
-							Math.floor(Math.sin(d71) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 56) {
-						var d72 = 0.0;
+						const d = 0.0;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d72) * 12),
-							Math.floor(Math.sin(d72) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
 					} else if (this.c1 == 72) {
-						var d73 = 6.0183334350585938;
+						const d = 6.0183334350585938;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d73) * 12),
-							Math.floor(Math.sin(d73) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d73 = 0.2616666853427887;
+						const d2 = 0.2616666853427887;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d73) * 12),
-							Math.floor(Math.sin(d73) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 80) {
-						var d74 = 5.5822224617004395;
+						const d = 5.5822224617004395;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d74) * 12),
-							Math.floor(Math.sin(d74) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d74 = 0.69777780771255493;
+						const d2 = 0.69777780771255493;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d74) * 12),
-							Math.floor(Math.sin(d74) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 88) {
-						var d75 = 5.2333335876464844;
+						const d = 5.2333335876464844;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d75) * 12),
-							Math.floor(Math.sin(d75) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d75 = 1.0466667413711548;
+						const d2 = 1.0466667413711548;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d75) * 12),
-							Math.floor(Math.sin(d75) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 == 96) {
-						var d76 = 4.8844447135925293;
+						const d = 4.8844447135925293;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d76) * 12),
-							Math.floor(Math.sin(d76) * 10)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 10)
 						);
-						d76 = 1.3955556154251099;
+						const d2 = 1.3955556154251099;
 						mp.mSet2(
 							this.x,
 							this.y,
 							710,
-							Math.floor(Math.cos(d76) * 12),
-							Math.floor(Math.sin(d76) * 10)
+							Math.floor(Math.cos(d2) * 12),
+							Math.floor(Math.sin(d2) * 10)
 						);
 					} else if (this.c1 >= 200) this.c1 = 0;
 				} else if (mp.boss2_type == 5) {
@@ -1018,229 +529,229 @@ class Boss extends CharacterObject {
 						this.c2 = 0;
 						this.c1 = 100;
 						mp.gs.rsAddSound(18);
-						var d77 = 0.0;
+						const d = 0.0;
 						mp.mSet2(
 							this.x,
 							this.y,
 							711,
-							Math.floor(Math.cos(d77) * 12),
-							Math.floor(Math.sin(d77) * 8)
+							Math.floor(Math.cos(d) * 12),
+							Math.floor(Math.sin(d) * 8)
 						);
 					} else if (this.c1 <= 100) {
 						this.c2 -= 10;
 						if (this.c2 == -40) {
-							var d78 = 5.5822224617004395;
+							const d = 5.5822224617004395;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d78) * 12),
-								Math.floor(Math.sin(d78) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == -70) {
-							var d79 = 5.0588889122009277;
+							const d = 5.0588889122009277;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d79) * 12),
-								Math.floor(Math.sin(d79) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 <= -90) {
 							this.c2 = -90;
-							var d80 = 4.5355558395385742;
+							const d = 4.5355558395385742;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d80) * 12),
-								Math.floor(Math.sin(d80) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 							this.c1 = 200;
 						}
 					} else if (this.c1 <= 200) {
 						this.c2 += 5;
 						if (this.c2 == -80) {
-							var d81 = 4.8844447135925293;
+							const d = 4.8844447135925293;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d81) * 12),
-								Math.floor(Math.sin(d81) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == -60) {
-							var d82 = 5.2333335876464844;
+							const d = 5.2333335876464844;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d82) * 12),
-								Math.floor(Math.sin(d82) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == -30) {
-							var d83 = 5.7566671371459961;
+							const d = 5.7566671371459961;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d83) * 12),
-								Math.floor(Math.sin(d83) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 0) {
-							var d84 = 0.0;
+							const d = 0.0;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d84) * 12),
-								Math.floor(Math.sin(d84) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 40) {
-							var d85 = 0.69777780771255493;
+							const d = 0.69777780771255493;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d85) * 12),
-								Math.floor(Math.sin(d85) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 70) {
-							var d86 = 1.2211111783981323;
+							const d = 1.2211111783981323;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d86) * 12),
-								Math.floor(Math.sin(d86) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 >= 100) {
 							this.c2 = 100;
-							var d87 = 1.7444444894790649;
+							const d = 1.7444444894790649;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d87) * 12),
-								Math.floor(Math.sin(d87) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 							this.c1 = 300;
 						}
 					} else if (this.c1 <= 300) {
 						this.c2 -= 2;
 						if (this.c2 == 60) {
-							var d88 = 1.0466667413711548;
+							const d = 1.0466667413711548;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d88) * 12),
-								Math.floor(Math.sin(d88) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 30) {
-							var d89 = 0.52333337068557739;
+							const d = 0.52333337068557739;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d89) * 12),
-								Math.floor(Math.sin(d89) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 0) {
-							var d90 = 0.0;
+							const d = 0.0;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d90) * 12),
-								Math.floor(Math.sin(d90) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == -30) {
-							var d91 = 5.7566671371459961;
+							const d = 5.7566671371459961;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d91) * 12),
-								Math.floor(Math.sin(d91) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == -60) {
-							var d92 = 5.2333335876464844;
+							const d = 5.2333335876464844;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d92) * 12),
-								Math.floor(Math.sin(d92) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 <= -90) {
 							this.c2 = -90;
-							var d93 = 4.7100000381469727;
+							const d = 4.7100000381469727;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d93) * 12),
-								Math.floor(Math.sin(d93) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 							this.c1 = 400;
 						}
 					} else {
 						this.c2 += 2;
 						if (this.c2 == -60) {
-							var d94 = 5.2333335876464844;
+							const d = 5.2333335876464844;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d94) * 12),
-								Math.floor(Math.sin(d94) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == -30) {
-							var d95 = 5.7566671371459961;
+							const d = 5.7566671371459961;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d95) * 12),
-								Math.floor(Math.sin(d95) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 0) {
-							var d96 = 0.0;
+							const d = 0.0;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d96) * 12),
-								Math.floor(Math.sin(d96) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 30) {
-							var d97 = 0.52333337068557739;
+							const d = 0.52333337068557739;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d97) * 12),
-								Math.floor(Math.sin(d97) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 == 60) {
-							var d98 = 1.0466667413711548;
+							const d = 1.0466667413711548;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d98) * 12),
-								Math.floor(Math.sin(d98) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 						} else if (this.c2 >= 90) {
 							this.c2 = 90;
-							var d99 = 1.5700000524520874;
+							const d = 1.5700000524520874;
 							mp.mSet2(
 								this.x,
 								this.y,
 								711,
-								Math.floor(Math.cos(d99) * 12),
-								Math.floor(Math.sin(d99) * 8)
+								Math.floor(Math.cos(d) * 12),
+								Math.floor(Math.sin(d) * 8)
 							);
 							this.c1 = 300;
 						}
@@ -1751,7 +1262,7 @@ class Boss extends CharacterObject {
 				170,
 				180
 			];
-			const attack_mode = [
+			const attack_power = [
 				-2,
 				-4,
 				-6,
@@ -1766,9 +1277,9 @@ class Boss extends CharacterObject {
 				-2
 			];
 			if (this.c1 === 1) mp.gs.rsAddSound(17);
-			for (const [count, mode] of zip(attack_count, attack_mode)) {
+			for (const [count, power] of zip(attack_count, attack_power)) {
 				if (this.c1 === count) {
-					mp.tSetBoss(this.x, this.y, 150, mode * mirror);
+					mp.tSetBoss(this.x, this.y, 150, power * mirror);
 					break;
 				}
 			}
@@ -1884,6 +1395,508 @@ class Boss extends CharacterObject {
 				mp.mSet2(this.x, this.y, 500, dir, -30);
 				mp.mSet2(this.x, this.y, 500, -dir, -30);
 			} else if (this.c1 >= 150) this.c1 = 98;
+		}
+	}
+
+	/**
+	 * boss2の攻撃中の動作
+	 * @param {MainProgram} mp
+	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 */
+	boss2Attack(mp, direction = 0) {
+		// 左向きなら1 右向きなら-1
+		const mirror = direction === 1 ? -1 : 1;
+		// 長さが同じ配列をまとめる
+		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
+
+		mp.boss_attack_mode = true;
+		this.c1++;
+		if (mp.boss2_type == 2) {
+			// バブル光線
+			if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
+				this.boss2BubbleBeam(mp, 0);
+			} else if (this.c1 == 35 || this.c1 == 110 || this.c1 == 295) {
+				this.boss2BubbleBeam(mp, 15);
+			} else if (this.c1 == 60 || this.c1 == 135 || this.c1 == 375) {
+				this.boss2BubbleBeam(mp, 30);
+			}
+			if (this.c1 > 445) this.c1 = 0;
+		} else if (mp.boss2_type == 3) {
+			// うずしお
+			const whirlpool = d => {
+				for (var i = 0; i < 4; i++) {
+					const attack = direction === 1 ? 980 : 970;
+					mp.mSet2(this.x, this.y, attack, i * 90 + d, 0);
+				}
+				mp.gs.rsAddSound(18);
+			};
+			if (this.c1 == 5 || this.c1 == 125) {
+				whirlpool(0);
+			} else if (this.c1 == 45) {
+				whirlpool(30);
+			} else if (this.c1 == 85) {
+				whirlpool(60);
+			}
+			if (this.c1 > 250) this.c1 = 0;
+		} else if (mp.boss2_type == 4) {
+			if (this.c1 == 1) {
+				mp.gs.rsAddSound(18);
+				const d = 4.8844447135925293;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 1.3955556154251099;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 8) {
+				const d = 4.5355558395385742;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 1.7444444894790649;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 16) {
+				const d = 4.1866669654846191;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 2.0933334827423096;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 24) {
+				const d = 3.8377780914306641;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 2.4422223567962646;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 32) {
+				const d = 3.4016668796539307;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 2.878333568572998;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 56) {
+				const d = 3.1400001049041748;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+			} else if (this.c1 == 72) {
+				const d = 3.4016668796539307;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 2.878333568572998;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+			} else if (this.c1 == 80) {
+				const d = 3.8377780914306641;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 2.4422223567962646;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 88) {
+				const d = 4.1866669654846191;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 2.0933334827423096;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 == 96) {
+				const d = 4.5355558395385742;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 10)
+				);
+				const d2 = 1.7444444894790649;
+				mp.mSet2(
+					this.x,
+					this.y,
+					710,
+					Math.floor(Math.cos(d2) * 12),
+					Math.floor(Math.sin(d2) * 10)
+				);
+			} else if (this.c1 >= 200) this.c1 = 0;
+		} else if (mp.boss2_type == 5) {
+			if (this.c1 == 5) {
+				for (var k1 = 10; k1 <= 310; k1 += 60) {
+					mp.mSet2(this.x, this.y, 901, k1, 0);
+					mp.mSet2(this.x, this.y, 911, 300 - k1, 0);
+				}
+
+				mp.gs.rsAddSound(18);
+			} else if (this.c1 == 45) {
+				for (var l1 = 30; l1 <= 330; l1 += 60) {
+					mp.mSet2(this.x, this.y, 901, l1, 0);
+					mp.mSet2(this.x, this.y, 911, 300 - l1, 0);
+				}
+
+				mp.gs.rsAddSound(18);
+			} else if (this.c1 == 85) {
+				for (var i2 = 50; i2 <= 350; i2 += 60) {
+					mp.mSet2(this.x, this.y, 901, i2, 0);
+					mp.mSet2(this.x, this.y, 911, 300 - i2, 0);
+				}
+
+				mp.gs.rsAddSound(18);
+			} else if (this.c1 > 270) this.c1 = 0;
+		} else if (mp.boss2_type == 6) {
+			this.c1--;
+			if (this.c1 <= 0) {
+				this.c2 = 0;
+				this.c1 = 100;
+				mp.gs.rsAddSound(18);
+				const d = 3.1400001049041748;
+				mp.mSet2(
+					this.x,
+					this.y,
+					711,
+					Math.floor(Math.cos(d) * 12),
+					Math.floor(Math.sin(d) * 8)
+				);
+			} else if (this.c1 <= 100) {
+				this.c2 += 10;
+				if (this.c2 == 40) {
+					const d = 3.8377780914306641;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 70) {
+					const d = 4.3611111640930176;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 >= 90) {
+					this.c2 = 90;
+					const d = 4.8844447135925293;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+					this.c1 = 200;
+				}
+			} else if (this.c1 <= 200) {
+				this.c2 -= 5;
+				if (this.c2 == 80) {
+					const d = 4.5355558395385742;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 60) {
+					const d = 4.1866669654846191;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 30) {
+					const d = 3.6633334159851074;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 0) {
+					const d = 3.1400001049041748;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == -40) {
+					const d = 2.4422223567962646;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == -70) {
+					const d = 1.918889045715332;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 <= -100) {
+					this.c2 = -100;
+					const d = 1.3955556154251099;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+					this.c1 = 300;
+				}
+			} else if (this.c1 <= 300) {
+				this.c2 += 2;
+				if (this.c2 == -60) {
+					const d = 2.0933334827423096;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == -30) {
+					const d = 2.6166667938232422;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 0) {
+					const d = 3.1400001049041748;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 30) {
+					const d = 3.6633334159851074;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 60) {
+					const d = 4.1866669654846191;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 >= 90) {
+					this.c2 = 90;
+					const d = 4.7100000381469727;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+					this.c1 = 400;
+				}
+			} else {
+				this.c2 -= 2;
+				if (this.c2 == 60) {
+					const d = 4.1866669654846191;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 30) {
+					const d = 3.6633334159851074;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == 0) {
+					const d = 3.1400001049041748;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == -30) {
+					const d = 2.6166667938232422;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 == -60) {
+					const d = 2.0933334827423096;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+				} else if (this.c2 <= -90) {
+					this.c2 = -90;
+					const d = 1.5700000524520874;
+					mp.mSet2(
+						this.x,
+						this.y,
+						711,
+						Math.floor(Math.cos(d) * 12),
+						Math.floor(Math.sin(d) * 8)
+					);
+					this.c1 = 300;
+				}
+			}
+		} else if (mp.boss2_type == 7) {
+			// 何もしない
+			this.c1 = 0;
+		} else if (mp.boss2_type == 8) {
+			if (this.c1 == 5 || this.c1 == 45 || this.c1 == 85) {
+				mp.mSet(this.x, this.y, 95);
+				mp.gs.rsAddSound(18);
+			}
+			if (this.c1 > 165) this.c1 = 4;
+		} else {
+			// 水の波動
+			if (
+				this.c1 == 5 ||
+				this.c1 == 35 ||
+				this.c1 == 65 ||
+				this.c1 == 110 ||
+				this.c1 == 185
+			) {
+				mp.mSet(this.x, this.y, 90);
+				mp.gs.rsAddSound(18);
+			}
+			if (this.c1 > 185) this.c1 = 110;
+		}
+	}
+
+	/**
+	 * バブル光線
+	 * @param {MainProgram} mp
+	 * @param {number} direction ずらす角度(度数法)
+	 */
+	boss2BubbleBeam(mp, direction) {
+		for (let i = 0; i < 8; i++) {
+			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
+			const d = ((i * 45 + direction) * 3.14) / 180;
+			const cos = Math.floor(Math.cos(d) * 8);
+			const sin = -Math.floor(Math.sin(d) * 8);
+			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
+			mp.gs.rsAddSound(18);
 		}
 	}
 
