@@ -8,7 +8,14 @@ export const BOSS1_ATTACK_LEFT = 110;
 export const BOSS1_ATTACK_RIGHT = 115;
 export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
+
 class Boss extends CharacterObject {
+	/*
+	 * this.c: 状態
+	 * this.c1: タイマー用カウンタ
+	 * this.c2, c3: 未使用(？)
+	 * this.c4: HP
+	 */
 	move(mp) {
 		switch (this.c) {
 			case DYING:
@@ -1725,9 +1732,11 @@ class Boss extends CharacterObject {
 		const mirror = direction === 1 ? -1 : 1;
 		// 長さが同じ配列をまとめる
 		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
+
 		mp.boss_attack_mode = true;
+		this.c1++;
 		if (mp.boss_type === 2) {
-			this.c1++;
+			// 亀を投げる
 			const attack_count = [
 				1,
 				5,
@@ -1765,7 +1774,7 @@ class Boss extends CharacterObject {
 			}
 			if (this.c1 > 250) this.c1 = 250;
 		} else if (mp.boss_type === 3) {
-			this.c1++;
+			// ヒノララシを投げる
 			const attack_count = [5, 20, 35, 50, 65, 80, 95, 110];
 			if (this.c1 === 5) mp.gs.rsAddSound(17);
 			for (const count of attack_count) {
@@ -1776,19 +1785,19 @@ class Boss extends CharacterObject {
 			}
 			if (this.c1 > 250) this.c1 = 250;
 		} else if (mp.boss_type === 4) {
-			this.c1++;
+			// マリリを投げる
 			const attack_count = [1, 15, 29, 81, 95, 109, 165];
-			const attack_mode = [-5, -3, -2, -5, -3, -2, -3];
+			const attack_power = [-5, -3, -2, -5, -3, -2, -3];
 			if (this.c1 === 1) mp.gs.rsAddSound(17);
-			for (const [count, mode] of zip(attack_count, attack_mode)) {
+			for (const [count, power] of zip(attack_count, attack_power)) {
 				if (this.c1 === count) {
-					mp.tSetBoss(this.x, this.y, 650, mode * mirror);
+					mp.tSetBoss(this.x, this.y, 650, power * mirror);
 					break;
 				}
 			}
 			if (this.c1 > 250) this.c1 = 250;
 		} else if (mp.boss_type === 5) {
-			this.c1++;
+			// がんせきほう
 			const attack_count = [
 				1,
 				8,
@@ -1850,7 +1859,7 @@ class Boss extends CharacterObject {
 			}
 			if (this.c1 >= 200) this.c1 = 0;
 		} else {
-			this.c1++;
+			// 噴火
 			if (this.c1 === 3) mp.gs.rsAddSound(17);
 			if (this.c1 === 3) {
 				mp.mSet2(this.x, this.y, 500, -4, -18);
@@ -1935,7 +1944,7 @@ class Boss extends CharacterObject {
 		const j = mp.co_j;
 		this.c4--;
 		if (this.c < 200) {
-			this.c = 60;
+			this.c = BOSS1_DAMAGE_LEFT;
 			this.pt = 1010;
 		} else if (this.c < 300) {
 			this.c = 70;
@@ -1946,6 +1955,7 @@ class Boss extends CharacterObject {
 		}
 		if (this.c4 === 1) {
 			// 右向き
+			// TODO: やっぱり定数を直接代入する
 			this.c += 5;
 			this.pt += 5;
 		}
