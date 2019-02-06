@@ -392,23 +392,23 @@ class Boss extends CharacterObject {
 					if (this.c1 >= 200) this.c1 = 0;
 				} else if (mp.boss2_type == 5) {
 					if (this.c1 == 5) {
-						for (var l3 = 10; l3 <= 310; l3 += 60) {
-							mp.mSet2(this.x, this.y, 901, l3, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - l3, 0);
+						for (var i = 10; i <= 310; i += 60) {
+							mp.mSet2(this.x, this.y, 901, i, 0);
+							mp.mSet2(this.x, this.y, 911, 300 - i, 0);
 						}
 
 						mp.gs.rsAddSound(18);
 					} else if (this.c1 == 45) {
-						for (var i4 = 30; i4 <= 330; i4 += 60) {
-							mp.mSet2(this.x, this.y, 901, i4, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - i4, 0);
+						for (var i = 30; i <= 330; i += 60) {
+							mp.mSet2(this.x, this.y, 901, i, 0);
+							mp.mSet2(this.x, this.y, 911, 300 - i, 0);
 						}
 
 						mp.gs.rsAddSound(18);
 					} else if (this.c1 == 85) {
-						for (var j4 = 50; j4 <= 350; j4 += 60) {
-							mp.mSet2(this.x, this.y, 901, j4, 0);
-							mp.mSet2(this.x, this.y, 911, 300 - j4, 0);
+						for (var i = 50; i <= 350; i += 60) {
+							mp.mSet2(this.x, this.y, 901, i, 0);
+							mp.mSet2(this.x, this.y, 911, 300 - i, 0);
 						}
 
 						mp.gs.rsAddSound(18);
@@ -1301,34 +1301,34 @@ class Boss extends CharacterObject {
 
 		mp.boss_attack_mode = true;
 		this.c1++;
-		if (mp.boss2_type == 2) {
+		if (mp.boss2_type === 2) {
 			// バブル光線
-			if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
+			if (this.c1 === 10 || this.c1 === 85 || this.c1 === 215) {
 				this.boss2BubbleBeam(mp, 0);
-			} else if (this.c1 == 35 || this.c1 == 110 || this.c1 == 295) {
+			} else if (this.c1 === 35 || this.c1 === 110 || this.c1 === 295) {
 				this.boss2BubbleBeam(mp, 15);
-			} else if (this.c1 == 60 || this.c1 == 135 || this.c1 == 375) {
+			} else if (this.c1 === 60 || this.c1 === 135 || this.c1 === 375) {
 				this.boss2BubbleBeam(mp, 30);
 			}
 			if (this.c1 > 445) this.c1 = 0;
-		} else if (mp.boss2_type == 3) {
+		} else if (mp.boss2_type === 3) {
 			// うずしお
 			const whirlpool = d => {
-				for (var i = 0; i < 4; i++) {
+				for (var i = 0; i < 360; i += 90) {
 					const attack = direction === 1 ? 980 : 970;
-					mp.mSet2(this.x, this.y, attack, i * 90 + d, 0);
+					mp.mSet2(this.x, this.y, attack, i + d, 0);
 				}
 				mp.gs.rsAddSound(18);
 			};
-			if (this.c1 == 5 || this.c1 == 125) {
+			if (this.c1 === 5 || this.c1 === 125) {
 				whirlpool(0);
-			} else if (this.c1 == 45) {
+			} else if (this.c1 === 45) {
 				whirlpool(30);
-			} else if (this.c1 == 85) {
+			} else if (this.c1 === 85) {
 				whirlpool(60);
 			}
 			if (this.c1 > 250) this.c1 = 0;
-		} else if (mp.boss2_type == 4) {
+		} else if (mp.boss2_type === 4) {
 			// バブル光線連射
 			if (this.c1 === 1) {
 				mp.gs.rsAddSound(18);
@@ -1422,30 +1422,24 @@ class Boss extends CharacterObject {
 			}
 
 			if (this.c1 >= 200) this.c1 = 0;
-		} else if (mp.boss2_type == 5) {
-			if (this.c1 == 5) {
-				for (var k1 = 10; k1 <= 310; k1 += 60) {
-					mp.mSet2(this.x, this.y, 901, k1, 0);
-					mp.mSet2(this.x, this.y, 911, 300 - k1, 0);
+		} else if (mp.boss2_type === 5) {
+			// ハリケンブラスト
+			const hurricaneBlast = d => {
+				for (let i = 0; i < 360; i += 60) {
+					mp.mSet2(this.x, this.y, 901, i + d, 0);
+					mp.mSet2(this.x, this.y, 911, 300 - (i + d), 0);
 				}
-
 				mp.gs.rsAddSound(18);
-			} else if (this.c1 == 45) {
-				for (var l1 = 30; l1 <= 330; l1 += 60) {
-					mp.mSet2(this.x, this.y, 901, l1, 0);
-					mp.mSet2(this.x, this.y, 911, 300 - l1, 0);
-				}
-
-				mp.gs.rsAddSound(18);
-			} else if (this.c1 == 85) {
-				for (var i2 = 50; i2 <= 350; i2 += 60) {
-					mp.mSet2(this.x, this.y, 901, i2, 0);
-					mp.mSet2(this.x, this.y, 911, 300 - i2, 0);
-				}
-
-				mp.gs.rsAddSound(18);
-			} else if (this.c1 > 270) this.c1 = 0;
-		} else if (mp.boss2_type == 6) {
+			};
+			if (this.c1 === 5) {
+				hurricaneBlast(10);
+			} else if (this.c1 === 45) {
+				hurricaneBlast(30);
+			} else if (this.c1 === 85) {
+				hurricaneBlast(50);
+			}
+			if (this.c1 > 270) this.c1 = 0;
+		} else if (mp.boss2_type === 6) {
 			this.c1--;
 			if (this.c1 <= 0) {
 				this.c2 = 0;
@@ -1461,7 +1455,7 @@ class Boss extends CharacterObject {
 				);
 			} else if (this.c1 <= 100) {
 				this.c2 += 10;
-				if (this.c2 == 40) {
+				if (this.c2 === 40) {
 					const d = 3.8377780914306641;
 					mp.mSet2(
 						this.x,
@@ -1470,7 +1464,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 70) {
+				} else if (this.c2 === 70) {
 					const d = 4.3611111640930176;
 					mp.mSet2(
 						this.x,
@@ -1493,7 +1487,7 @@ class Boss extends CharacterObject {
 				}
 			} else if (this.c1 <= 200) {
 				this.c2 -= 5;
-				if (this.c2 == 80) {
+				if (this.c2 === 80) {
 					const d = 4.5355558395385742;
 					mp.mSet2(
 						this.x,
@@ -1502,7 +1496,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 60) {
+				} else if (this.c2 === 60) {
 					const d = 4.1866669654846191;
 					mp.mSet2(
 						this.x,
@@ -1511,7 +1505,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 30) {
+				} else if (this.c2 === 30) {
 					const d = 3.6633334159851074;
 					mp.mSet2(
 						this.x,
@@ -1520,7 +1514,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 0) {
+				} else if (this.c2 === 0) {
 					const d = 3.1400001049041748;
 					mp.mSet2(
 						this.x,
@@ -1529,7 +1523,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == -40) {
+				} else if (this.c2 === -40) {
 					const d = 2.4422223567962646;
 					mp.mSet2(
 						this.x,
@@ -1538,7 +1532,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == -70) {
+				} else if (this.c2 === -70) {
 					const d = 1.918889045715332;
 					mp.mSet2(
 						this.x,
@@ -1561,7 +1555,7 @@ class Boss extends CharacterObject {
 				}
 			} else if (this.c1 <= 300) {
 				this.c2 += 2;
-				if (this.c2 == -60) {
+				if (this.c2 === -60) {
 					const d = 2.0933334827423096;
 					mp.mSet2(
 						this.x,
@@ -1570,7 +1564,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == -30) {
+				} else if (this.c2 === -30) {
 					const d = 2.6166667938232422;
 					mp.mSet2(
 						this.x,
@@ -1579,7 +1573,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 0) {
+				} else if (this.c2 === 0) {
 					const d = 3.1400001049041748;
 					mp.mSet2(
 						this.x,
@@ -1588,7 +1582,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 30) {
+				} else if (this.c2 === 30) {
 					const d = 3.6633334159851074;
 					mp.mSet2(
 						this.x,
@@ -1597,7 +1591,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 60) {
+				} else if (this.c2 === 60) {
 					const d = 4.1866669654846191;
 					mp.mSet2(
 						this.x,
@@ -1620,7 +1614,7 @@ class Boss extends CharacterObject {
 				}
 			} else {
 				this.c2 -= 2;
-				if (this.c2 == 60) {
+				if (this.c2 === 60) {
 					const d = 4.1866669654846191;
 					mp.mSet2(
 						this.x,
@@ -1629,7 +1623,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 30) {
+				} else if (this.c2 === 30) {
 					const d = 3.6633334159851074;
 					mp.mSet2(
 						this.x,
@@ -1638,7 +1632,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == 0) {
+				} else if (this.c2 === 0) {
 					const d = 3.1400001049041748;
 					mp.mSet2(
 						this.x,
@@ -1647,7 +1641,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == -30) {
+				} else if (this.c2 === -30) {
 					const d = 2.6166667938232422;
 					mp.mSet2(
 						this.x,
@@ -1656,7 +1650,7 @@ class Boss extends CharacterObject {
 						Math.floor(Math.cos(d) * 12),
 						Math.floor(Math.sin(d) * 8)
 					);
-				} else if (this.c2 == -60) {
+				} else if (this.c2 === -60) {
 					const d = 2.0933334827423096;
 					mp.mSet2(
 						this.x,
@@ -1678,11 +1672,11 @@ class Boss extends CharacterObject {
 					this.c1 = 300;
 				}
 			}
-		} else if (mp.boss2_type == 7) {
+		} else if (mp.boss2_type === 7) {
 			// 何もしない
 			this.c1 = 0;
-		} else if (mp.boss2_type == 8) {
-			if (this.c1 == 5 || this.c1 == 45 || this.c1 == 85) {
+		} else if (mp.boss2_type === 8) {
+			if (this.c1 === 5 || this.c1 === 45 || this.c1 === 85) {
 				mp.mSet(this.x, this.y, 95);
 				mp.gs.rsAddSound(18);
 			}
@@ -1690,11 +1684,11 @@ class Boss extends CharacterObject {
 		} else {
 			// 水の波動
 			if (
-				this.c1 == 5 ||
-				this.c1 == 35 ||
-				this.c1 == 65 ||
-				this.c1 == 110 ||
-				this.c1 == 185
+				this.c1 === 5 ||
+				this.c1 === 35 ||
+				this.c1 === 65 ||
+				this.c1 === 110 ||
+				this.c1 === 185
 			) {
 				mp.mSet(this.x, this.y, 90);
 				mp.gs.rsAddSound(18);
