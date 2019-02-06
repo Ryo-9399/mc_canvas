@@ -50,3 +50,4 @@
 - `boss2-babururensya.masao.json`: 作者: !
 - `boss2-hariken.masao.json`: 作者: !
 - `boss2-baburukaiten.masao.json`: 作者: !
+- `boss2-hadoutyokusin.masao.json`: 作者: !
