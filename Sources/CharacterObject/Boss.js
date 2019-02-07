@@ -17,6 +17,9 @@ class Boss extends CharacterObject {
 	 * this.c4: HP
 	 */
 	move(mp) {
+		// ボスが居座るX座標
+		const x_standby_left = mp.sl_wx + 96;
+		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 		switch (this.c) {
 			case DYING:
 				// 死亡
@@ -229,8 +232,8 @@ class Boss extends CharacterObject {
 
 			case BOSS1_MOVING_LEFT:
 				this.x -= 14;
-				if (this.x <= mp.sl_wx + 96) {
-					this.x = mp.sl_wx + 96;
+				if (this.x <= x_standby_left) {
+					this.x = x_standby_left;
 					this.c = BOSS1_ATTACK_RIGHT;
 					this.c1 = 0;
 				}
@@ -239,8 +242,8 @@ class Boss extends CharacterObject {
 
 			case BOSS1_MOVING_RIGHT:
 				this.x += 14;
-				if (this.x >= mp.sl_wx + 512 - 96 - 32) {
-					this.x = mp.sl_wx + 512 - 96 - 32;
+				if (this.x >= x_standby_right) {
+					this.x = x_standby_right;
 					this.c = BOSS1_ATTACK_LEFT;
 					this.c1 = 0;
 				}
@@ -289,8 +292,8 @@ class Boss extends CharacterObject {
 
 			case 250:
 				this.x -= 14;
-				if (this.x <= mp.sl_wx + 96) {
-					this.x = mp.sl_wx + 96;
+				if (this.x <= x_standby_left) {
+					this.x = x_standby_left;
 					this.c = 215;
 					this.c1 = 0;
 				}
@@ -299,8 +302,8 @@ class Boss extends CharacterObject {
 
 			case 255:
 				this.x += 14;
-				if (this.x >= mp.sl_wx + 512 - 96 - 32) {
-					this.x = mp.sl_wx + 512 - 96 - 32;
+				if (this.x >= x_standby_right) {
+					this.x = x_standby_right;
 					this.c = 210;
 					this.c1 = 0;
 				}
@@ -365,8 +368,8 @@ class Boss extends CharacterObject {
 
 			case 350:
 				this.x -= 14;
-				if (this.x <= mp.sl_wx + 96) {
-					this.x = mp.sl_wx + 96;
+				if (this.x <= x_standby_left) {
+					this.x = x_standby_left;
 					if (
 						(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
 						(mp.boss3_type >= 6 && mp.boss3_type <= 8)
@@ -383,8 +386,8 @@ class Boss extends CharacterObject {
 
 			case 355:
 				this.x += 14;
-				if (this.x >= mp.sl_wx + 512 - 96 - 32) {
-					this.x = mp.sl_wx + 512 - 96 - 32;
+				if (this.x >= x_standby_right) {
+					this.x = x_standby_right;
 					if (
 						(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
 						(mp.boss3_type >= 6 && mp.boss3_type <= 8)
@@ -400,176 +403,33 @@ class Boss extends CharacterObject {
 				break;
 
 			case 360:
-				this.pt = 1200;
-				if (this.c1 < 5) {
-					this.c1++;
-					this.c2 = 0;
-				} else if (this.c1 < 25) {
-					this.c1++;
-					mp.boss_attack_mode = true;
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
+				if (this.c1 <= 25) {
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1251;
-						this.c2 -= 15;
-						if (mp.boss3_type == 7) this.c2 -= 15;
-						if (this.c2 < 0) this.c2 += 360;
-					}
-				} else if (this.c1 == 25) {
-					mp.boss_attack_mode = true;
-					if (mp.boss3_type == 3 || mp.boss3_type == 7) {
-						this.x -= 18;
-						if (this.x <= mp.sl_wx + 16) {
-							this.x = mp.sl_wx + 16;
-							this.c1 = 30;
-						}
-					} else if (mp.boss3_type == 4 || mp.boss3_type == 8) {
-						this.x -= 3;
-						this.vy += 2;
-						if (this.vy > 24) this.vy = 24;
-						this.y += this.vy;
-						if (this.y >= mp.boss_kijyun_y) {
-							this.y = mp.boss_kijyun_y;
-							this.vy = -24;
-							if (this.x <= mp.sl_wx + 16) this.c1 = 30;
-						}
-					} else {
-						this.x -= 12;
-						if (this.x <= mp.sl_wx + 16) {
-							this.x = mp.sl_wx + 16;
-							this.c1 = 30;
-						}
-					}
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
-						this.pt = 1251;
-						this.c2 -= 15;
-						if (mp.boss3_type == 7) this.c2 -= 15;
-						if (this.c2 < 0) this.c2 += 360;
-					}
-				} else if (this.c1 == 30) {
-					mp.boss_attack_mode = true;
-					if (mp.boss3_type == 3 || mp.boss3_type == 7) {
-						this.x += 18;
-						if (this.x >= mp.sl_wx + 512 - 48) {
-							this.x = mp.sl_wx + 512 - 48;
-							this.c1 = 40;
-						}
-					} else if (mp.boss3_type == 4 || mp.boss3_type == 8) {
-						this.x += 4;
-						this.vy += 2;
-						if (this.vy > 24) this.vy = 24;
-						this.y += this.vy;
-						if (this.y >= mp.boss_kijyun_y) {
-							this.y = mp.boss_kijyun_y;
-							this.vy = -24;
-							if (this.x >= mp.sl_wx + 512 - 48) this.c1 = 40;
-						}
-					} else {
-						this.x += 8;
-						if (this.x >= mp.sl_wx + 512 - 48) {
-							this.x = mp.sl_wx + 512 - 48;
-							this.c1 = 40;
-						}
-					}
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
+					else this.pt = 1250;
+				} else if (this.c1 === 30) {
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1256;
-						this.c2 += 15;
-						if (mp.boss3_type == 7) this.c2 += 15;
-						if (this.c2 >= 360) this.c2 -= 360;
-					}
-				} else if (this.c1 == 40) {
-					this.x -= 2;
-					if (this.x <= mp.sl_wx + 512 - 96 - 32) {
-						this.x = mp.sl_wx + 512 - 96 - 32;
-						this.c1 = -20;
-					}
+					else this.pt = 1255;
+				} else {
+					this.pt = 1200;
 				}
+				this.boss3TackleAttack(mp, 0);
 				break;
 
 			case 365:
-				this.pt = 1205;
-				if (this.c1 < 5) this.c1++;
-				else if (this.c1 < 25) {
-					this.c1++;
-					mp.boss_attack_mode = true;
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
+				if (this.c1 <= 25) {
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1256;
-						this.c2 += 15;
-						if (mp.boss3_type == 7) this.c2 += 15;
-						if (this.c2 >= 360) this.c2 -= 360;
-					}
-				} else if (this.c1 == 25) {
-					if (mp.boss3_type == 3 || mp.boss3_type == 7) {
-						this.x += 18;
-						if (this.x >= mp.sl_wx + 512 - 48) {
-							this.x = mp.sl_wx + 512 - 48;
-							this.c1 = 30;
-						}
-					} else if (mp.boss3_type == 4 || mp.boss3_type == 8) {
-						this.x += 3;
-						this.vy += 2;
-						if (this.vy > 24) this.vy = 24;
-						this.y += this.vy;
-						if (this.y >= mp.boss_kijyun_y) {
-							this.y = mp.boss_kijyun_y;
-							this.vy = -24;
-							if (this.x >= mp.sl_wx + 512 - 48) this.c1 = 30;
-						}
-					} else {
-						this.x += 12;
-						if (this.x >= mp.sl_wx + 512 - 48) {
-							this.x = mp.sl_wx + 512 - 48;
-							this.c1 = 30;
-						}
-					}
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
-						this.pt = 1256;
-						this.c2 += 15;
-						if (mp.boss3_type == 7) this.c2 += 15;
-						if (this.c2 >= 360) this.c2 -= 360;
-					}
-				} else if (this.c1 == 30) {
-					mp.boss_attack_mode = true;
-					if (mp.boss3_type == 3 || mp.boss3_type == 7) {
-						this.x -= 18;
-						if (this.x <= mp.sl_wx + 16) {
-							this.x = mp.sl_wx + 16;
-							this.c1 = 40;
-						}
-					} else if (mp.boss3_type == 4 || mp.boss3_type == 8) {
-						this.x -= 4;
-						this.vy += 2;
-						if (this.vy > 24) this.vy = 24;
-						this.y += this.vy;
-						if (this.y >= mp.boss_kijyun_y) {
-							this.y = mp.boss_kijyun_y;
-							this.vy = -24;
-							if (this.x <= mp.sl_wx + 16) this.c1 = 40;
-						}
-					} else {
-						this.x -= 8;
-						if (this.x <= mp.sl_wx + 16) {
-							this.x = mp.sl_wx + 16;
-							this.c1 = 40;
-						}
-					}
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
+					else this.pt = 1255;
+				} else if (this.c1 === 30) {
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1251;
-						this.c2 -= 15;
-						if (mp.boss3_type == 7) this.c2 -= 15;
-						if (this.c2 < 0) this.c2 += 360;
-					}
-				} else if (this.c1 == 40) {
-					this.x += 2;
-					if (this.x >= mp.sl_wx + 96) {
-						this.x = mp.sl_wx + 96;
-						this.c1 = -20;
-					}
+					else this.pt = 1250;
+				} else {
+					this.pt = 1205;
 				}
+				this.boss3TackleAttack(mp, 1);
 				break;
 		}
 	}
@@ -1135,7 +995,7 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * boss3の攻撃中の動作
+	 * boss3の攻撃中の動作(りゅうせいぐん・グレネード)
 	 * @param {MainProgram} mp
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
@@ -1219,6 +1079,122 @@ class Boss extends CharacterObject {
 			if (this.c1 === 15 && mp.co_j.x > this.x - 64) this.c1 = 500;
 			if (this.c1 === 237) this.c1 = 0;
 			if (this.c1 >= 530) this.c1 = 1;
+		}
+	}
+
+	/**
+	 * boss3の体当たり攻撃
+	 * @param {MainProgram} mp
+	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 */
+	boss3TackleAttack(mp, direction = 0) {
+		// 左向きなら1 右向きなら-1
+		const mirror = direction === 1 ? -1 : 1;
+
+		if (this.c1 < 25) this.c1++;
+		if (direction !== 1 && this.c1 < 5) this.c2 = 0;
+		// NOTE: ここのdirection判定はおそらく元のコードのバグ
+		// TODO: リファクタリング中なので挙動維持のため残すが、おそらくdirection !== 1の判定は消して問題ない
+		if (
+			this.c1 < 25 ||
+			(direction !== 1 && this.c1 === 25) ||
+			this.c1 === 30
+		)
+			mp.boss_attack_mode = true;
+
+		// 画面外判定に用いる座標
+		const x_border_left = mp.sl_wx + 16;
+		const x_border_right = mp.sl_wx + 16 + 512 - 64;
+
+		if (this.c1 == 25) {
+			// 体当たり 行き
+			if (mp.boss3_type == 4 || mp.boss3_type == 8) {
+				// ジャンプ移動
+				this.x -= 3 * mirror;
+				this.vy += 2;
+				if (this.vy > 24) this.vy = 24;
+				this.y += this.vy;
+				if (this.y >= mp.boss_kijyun_y) {
+					this.y = mp.boss_kijyun_y;
+					this.vy = -24;
+					// 画面外に出たら反転する
+					if (
+						(direction !== 1 && this.x <= x_border_left) ||
+						(direction === 1 && this.x >= x_border_right)
+					)
+						this.c1 = 30;
+				}
+			} else {
+				if (mp.boss3_type == 3 || mp.boss3_type == 7)
+					this.x -= 18 * mirror;
+				else this.x -= 12 * mirror;
+
+				// 画面外に出たら反転する
+				if (direction !== 1 && this.x <= x_border_left) {
+					this.x = x_border_left;
+					this.c1 = 30;
+				} else if (direction === 1 && this.x >= x_border_right) {
+					this.x = x_border_right;
+					this.c1 = 30;
+				}
+			}
+		} else if (this.c1 == 30) {
+			// 体当たり 帰り
+			if (mp.boss3_type == 4 || mp.boss3_type == 8) {
+				// ジャンプ移動
+				this.x += 4 * mirror;
+				this.vy += 2;
+				if (this.vy > 24) this.vy = 24;
+				this.y += this.vy;
+				if (this.y >= mp.boss_kijyun_y) {
+					this.y = mp.boss_kijyun_y;
+					this.vy = -24;
+					// 画面外に出たら反転する
+					if (
+						(direction !== 1 && this.x >= x_border_right) ||
+						(direction === 1 && this.x <= x_border_left)
+					)
+						this.c1 = 40;
+				}
+			} else {
+				if (mp.boss3_type == 3 || mp.boss3_type == 7)
+					this.x += 18 * mirror;
+				else this.x += 8 * mirror;
+				if (direction !== 1 && this.x >= x_border_right) {
+					this.x = x_border_right;
+					this.c1 = 40;
+				}
+				if (direction === 1 && this.x <= x_border_left) {
+					this.x = x_border_left;
+					this.c1 = 40;
+				}
+			}
+		} else if (this.c1 == 40) {
+			// 元の位置に戻る
+			this.x -= 2 * mirror;
+			if (direction !== 1 && this.x <= x_standby_right) {
+				this.x = x_standby_right;
+				this.c1 = -20;
+			}
+			if (direction === 1 && this.x >= x_standby_left) {
+				this.x = x_standby_left;
+				this.c1 = -20;
+			}
+		}
+
+		// 回転
+		if (mp.boss3_type >= 6 && mp.boss3_type <= 8) {
+			// boss3_type === 7: 高速回転
+			const degree = mp.boss3_type === 7 ? 30 : 15;
+			if (this.c1 <= 25) {
+				this.c2 -= degree * mirror;
+				if (this.c2 < 0) this.c2 += 360;
+				if (this.c2 >= 360) this.c2 -= 360;
+			} else if (this.c1 === 30) {
+				this.c2 += degree * mirror;
+				if (this.c2 < 0) this.c2 += 360;
+				if (this.c2 >= 360) this.c2 -= 360;
+			}
 		}
 	}
 
