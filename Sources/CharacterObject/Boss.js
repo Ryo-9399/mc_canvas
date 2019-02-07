@@ -354,182 +354,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case 310:
-				mp.boss_attack_mode = true;
-				this.c1++;
-				if (mp.boss3_type == 5) {
-					if (
-						this.c1 == 1 ||
-						this.c1 == 20 ||
-						this.c1 == 40 ||
-						this.c1 == 60 ||
-						this.c1 == 80 ||
-						this.c1 == 100 ||
-						this.c1 == 120 ||
-						this.c1 == 140
-					) {
-						if (this.c1 == 1) mp.gs.rsAddSound(22);
-						if (this.c1 <= 45)
-							mp.mSet2(
-								mp.maps.wx + 512 - 32 - mp.ranInt(10) * 8,
-								mp.maps.wy - 32,
-								740,
-								-4,
-								9
-							);
-						mp.mSet2(
-							mp.maps.wx + 512 - 32 - 8 * (mp.ranInt(35) + 14),
-							mp.maps.wy - 32,
-							740,
-							-4,
-							9
-						);
-					} else if (
-						this.c1 == 15 ||
-						this.c1 == 35 ||
-						this.c1 == 55 ||
-						this.c1 == 75 ||
-						this.c1 == 95 ||
-						this.c1 == 115 ||
-						this.c1 == 135 ||
-						this.c1 == 155
-					) {
-						if (this.c1 <= 55)
-							mp.mSet2(
-								mp.maps.wx + 512 - 32 - mp.ranInt(10) * 8,
-								mp.maps.wy - 32,
-								740,
-								-4,
-								11
-							);
-						mp.mSet2(
-							mp.maps.wx + 512 - 32 - 8 * (mp.ranInt(35) + 14),
-							mp.maps.wy - 32,
-							740,
-							-4,
-							11
-						);
-					} else if (this.c1 >= 250) this.c1 = 55;
-				} else if (this.c1 == 1) {
-					mp.mSet2(this.x, this.y, 800, -5, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 15) {
-					mp.mSet2(this.x, this.y, 800, -10, -32);
-					mp.gs.rsAddSound(22);
-					if (mp.co_j.x > this.x - 64) this.c1 = 500;
-				} else if (this.c1 == 29) {
-					mp.mSet2(this.x, this.y, 800, -15, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 65) {
-					mp.mSet2(this.x - 2, this.y, 800, -20, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 80) {
-					mp.mSet2(this.x, this.y, 800, -5, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 105) {
-					mp.mSet2(this.x, this.y, 800, -15, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 147) {
-					mp.mSet2(this.x, this.y, 800, -10, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 237) this.c1 = 0;
-				else if (this.c1 == 520) {
-					mp.mSet2(this.x, this.y, 800, 4, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 530) {
-					mp.mSet2(this.x, this.y, 800, -5, -32);
-					mp.gs.rsAddSound(22);
-					this.c1 = 1;
-				} else if (this.c1 > 530) this.c1 = 1;
+				this.boss3Attack(mp, 0);
 				this.pt = 1200;
 				break;
 
 			case 315:
-				mp.boss_attack_mode = true;
-				this.c1++;
-				if (mp.boss3_type == 5) {
-					if (
-						this.c1 == 1 ||
-						this.c1 == 20 ||
-						this.c1 == 40 ||
-						this.c1 == 60 ||
-						this.c1 == 80 ||
-						this.c1 == 100 ||
-						this.c1 == 120 ||
-						this.c1 == 140
-					) {
-						if (this.c1 == 1) mp.gs.rsAddSound(22);
-						if (this.c1 <= 45)
-							mp.mSet2(
-								mp.maps.wx + mp.ranInt(10) * 8,
-								mp.maps.wy - 32,
-								740,
-								4,
-								9
-							);
-						mp.mSet2(
-							mp.maps.wx + 8 * (mp.ranInt(35) + 14),
-							mp.maps.wy - 32,
-							740,
-							4,
-							9
-						);
-					} else if (
-						this.c1 == 15 ||
-						this.c1 == 35 ||
-						this.c1 == 55 ||
-						this.c1 == 75 ||
-						this.c1 == 95 ||
-						this.c1 == 115 ||
-						this.c1 == 135 ||
-						this.c1 == 155
-					) {
-						if (this.c1 <= 55)
-							mp.mSet2(
-								mp.maps.wx + mp.ranInt(10) * 8,
-								mp.maps.wy - 32,
-								740,
-								4,
-								11
-							);
-						mp.mSet2(
-							mp.maps.wx + 8 * (mp.ranInt(35) + 14),
-							mp.maps.wy - 32,
-							740,
-							4,
-							11
-						);
-					} else if (this.c1 >= 250) this.c1 = 55;
-				} else if (this.c1 == 1) {
-					mp.mSet2(this.x, this.y, 800, 5, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 15) {
-					mp.mSet2(this.x, this.y, 800, 10, -32);
-					mp.gs.rsAddSound(22);
-					if (mp.co_j.x < this.x + 64) this.c1 = 500;
-				} else if (this.c1 == 29) {
-					mp.mSet2(this.x, this.y, 800, 15, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 65) {
-					mp.mSet2(this.x + 2, this.y, 800, 20, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 80) {
-					mp.mSet2(this.x, this.y, 800, 5, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 105) {
-					mp.mSet2(this.x, this.y, 800, 15, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 147) {
-					mp.mSet2(this.x, this.y, 800, 10, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 237) this.c1 = 0;
-				else if (this.c1 == 520) {
-					mp.mSet2(this.x, this.y, 800, -4, -32);
-					mp.gs.rsAddSound(22);
-				} else if (this.c1 == 530) {
-					mp.mSet2(this.x, this.y, 800, 5, -32);
-					mp.gs.rsAddSound(22);
-					this.c1 = 1;
-				} else if (this.c1 > 530) this.c1 = 1;
+				this.boss3Attack(mp, 1);
 				this.pt = 1205;
 				break;
 
@@ -1301,6 +1131,94 @@ class Boss extends CharacterObject {
 				Math.floor(Math.cos(d) * 12),
 				Math.floor(Math.sin(d) * 8)
 			);
+		}
+	}
+
+	/**
+	 * boss3の攻撃中の動作
+	 * @param {MainProgram} mp
+	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 */
+	boss3Attack(mp, direction = 0) {
+		// 左向きなら1 右向きなら-1
+		const mirror = direction === 1 ? -1 : 1;
+		// 長さが同じ配列をまとめる
+		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
+
+		mp.boss_attack_mode = true;
+		this.c1++;
+		if (mp.boss3_type === 5) {
+			// りゅうせいぐん
+			if (this.c1 === 1) mp.gs.rsAddSound(22);
+			if (
+				this.c1 === 1 ||
+				this.c1 === 20 ||
+				this.c1 === 40 ||
+				this.c1 === 60 ||
+				this.c1 === 80 ||
+				this.c1 === 100 ||
+				this.c1 === 120 ||
+				this.c1 === 140
+			) {
+				const dx = direction === 1 ? 0 : 512 - 32;
+				if (this.c1 <= 45)
+					mp.mSet2(
+						mp.maps.wx + dx - mirror * 8 * mp.ranInt(10),
+						mp.maps.wy - 32,
+						740,
+						-4 * mirror,
+						9
+					);
+				mp.mSet2(
+					mp.maps.wx + dx - mirror * 8 * (mp.ranInt(35) + 14),
+					mp.maps.wy - 32,
+					740,
+					-4 * mirror,
+					9
+				);
+			} else if (
+				this.c1 === 15 ||
+				this.c1 === 35 ||
+				this.c1 === 55 ||
+				this.c1 === 75 ||
+				this.c1 === 95 ||
+				this.c1 === 115 ||
+				this.c1 === 135 ||
+				this.c1 === 155
+			) {
+				const dx = direction === 1 ? 0 : 512 - 32;
+				if (this.c1 <= 55)
+					mp.mSet2(
+						mp.maps.wx + dx - mirror * 8 * mp.ranInt(10),
+						mp.maps.wy - 32,
+						740,
+						-4 * mirror,
+						11
+					);
+				mp.mSet2(
+					mp.maps.wx + dx - mirror * 8 * (mp.ranInt(35) + 14),
+					mp.maps.wy - 32,
+					740,
+					-4 * mirror,
+					11
+				);
+			}
+			if (this.c1 >= 250) this.c1 = 55;
+		} else {
+			// グレネード
+			const attack_count = [1, 15, 29, 65, 80, 105, 147, 237, 520, 530];
+			const attack_power = [-5, -10, -15, -20, -5, -15, -10, 4, -5];
+			for (const [count, power] of zip(attack_count, attack_power)) {
+				if (this.c1 === count) {
+					mp.mSet2(this.x, this.y, 800, power * mirror, -32);
+					mp.gs.rsAddSound(22);
+					break;
+				}
+			}
+			// 主人公の位置に応じた行動分岐
+			if (this.c1 === 15 && mp.co_j.x > this.x - 64) this.c1 = 500;
+			if (this.c1 === 237) this.c1 = 0;
+			if (this.c1 >= 530) this.c1 = 1;
 		}
 	}
 
