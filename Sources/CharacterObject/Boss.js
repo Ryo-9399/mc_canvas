@@ -1075,10 +1075,13 @@ class Boss extends CharacterObject {
 					break;
 				}
 			}
-			// 主人公の位置に応じた行動分岐
-			if (this.c1 === 15 && mp.co_j.x > this.x - 64) this.c1 = 500;
-			if (this.c1 === 237) this.c1 = 0;
-			if (this.c1 >= 530) this.c1 = 1;
+
+			if (this.c1 === 15) {
+				// 主人公の位置に応じた行動分岐
+				if (direction !== 1 && mp.co_j.x > this.x - 64) this.c1 = 500;
+				if (direction === 1 && mp.co_j.x < this.x + 64) this.c1 = 500;
+			} else if (this.c1 === 237) this.c1 = 0;
+			else if (this.c1 >= 530) this.c1 = 1;
 		}
 	}
 
