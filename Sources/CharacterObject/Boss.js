@@ -1066,7 +1066,7 @@ class Boss extends CharacterObject {
 			if (this.c1 >= 250) this.c1 = 55;
 		} else {
 			// グレネード
-			const attack_count = [1, 15, 29, 65, 80, 105, 147, 237, 520, 530];
+			const attack_count = [1, 15, 29, 65, 80, 105, 147, 520, 530];
 			const attack_power = [-5, -10, -15, -20, -5, -15, -10, 4, -5];
 			for (const [count, power] of zip(attack_count, attack_power)) {
 				if (this.c1 === count) {
