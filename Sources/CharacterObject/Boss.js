@@ -1108,6 +1108,9 @@ class Boss extends CharacterObject {
 		// 画面外判定に用いる座標
 		const x_border_left = mp.sl_wx + 16;
 		const x_border_right = mp.sl_wx + 16 + 512 - 64;
+		// ボスが居座るX座標
+		const x_standby_left = mp.sl_wx + 96;
+		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 
 		if (this.c1 == 25) {
 			// 体当たり 行き
