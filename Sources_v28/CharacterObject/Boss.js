@@ -13,7 +13,7 @@ class Boss extends CharacterObject {
 	/*
 	 * this.c: 状態
 	 * this.c1: タイマー用カウンタ
-	 * this.c2, c3: 未使用(？)
+	 * this.c2: 第2カウンタ(一部で使用)
 	 * this.c4: HP
 	 */
 	move(mp) {
@@ -25,9 +25,10 @@ class Boss extends CharacterObject {
 				// 死亡
 				// 消えてからしばらくして人面星が出現する
 				if (this.c1 < 20) this.c1++;
-				// 人面星を配置する
-				if (this.c1 === 15)
+				if (this.c1 === 15) {
+					// 人面星を配置する
 					mp.mSet(mp.maps.wx + 256, mp.maps.wy + 128, 2200);
+				}
 				this.pt = 0;
 				break;
 

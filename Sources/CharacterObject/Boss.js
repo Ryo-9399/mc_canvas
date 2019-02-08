@@ -25,7 +25,7 @@ class Boss extends CharacterObject {
 				// 死亡
 				// 消えてからしばらくして人面星が出現する
 				if (this.c1 < 20) this.c1++;
-				if (this.c1 === 15)
+				if (this.c1 === 15) {
 					if (mp.j_tokugi === 14 || mp.j_tokugi === 15) {
 						// シューティングモード、四方向移動モードの場合は直接クリアさせる
 						mp.setStageClear();
@@ -34,6 +34,7 @@ class Boss extends CharacterObject {
 						mp.mSet(mp.maps.wx + 256, mp.maps.wy + 128, 2200);
 						mp.gs.rsAddSound(13);
 					}
+				}
 				this.pt = 0;
 				break;
 
@@ -45,8 +46,8 @@ class Boss extends CharacterObject {
 					if (this.c1 >= 26) {
 						this.c = DYING;
 						this.c1 = 0;
+						// シューティングモード、四方向移動モードの場合は100点加算
 						if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
-							// シューティングモード、四方向移動モードの場合は100点加算
 							mp.addScore(100);
 						else mp.addScore(10);
 						// HPゲージを閉じる
@@ -311,7 +312,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 300:
-				if (mp.sl_step == 2 || mp.sl_step == 3)
+				if (mp.sl_step == 2 || mp.sl_step == 3) {
 					if (mp.boss_destroy_type == 2) {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
@@ -353,6 +354,7 @@ class Boss extends CharacterObject {
 						this.c1 = 0;
 						this.c2 = 0;
 					}
+				}
 				this.pt = 1200;
 				break;
 
@@ -594,7 +596,8 @@ class Boss extends CharacterObject {
 				const dir = mp.ranInt(8) + 3;
 				mp.mSet2(this.x, this.y, 500, dir, -30);
 				mp.mSet2(this.x, this.y, 500, -dir, -30);
-			} else if (this.c1 >= 150) this.c1 = 98;
+			}
+			if (this.c1 >= 150) this.c1 = 98;
 		}
 	}
 
@@ -1175,17 +1178,15 @@ class Boss extends CharacterObject {
 	 * @returns {boolean}
 	 */
 	isFumuable(mp) {
-		if (
+		if (mp.j_tokugi === 10 || (this.j_tokugi >= 12 && this.j_tokugi <= 15))
+			return false;
+		if (mp.boss_destroy_type === 2) return false;
+		return !(
 			this.pt === 1250 ||
 			this.pt === 1255 ||
 			this.pt === 1251 ||
 			this.pt === 1256
-		)
-			return false;
-		if (mp.j_tokugi === 10 || (this.j_tokugi >= 12 && this.j_tokugi <= 15))
-			return false;
-		if (mp.boss_destroy_type === 2) return false;
-		return true;
+		);
 	}
 
 	/**
