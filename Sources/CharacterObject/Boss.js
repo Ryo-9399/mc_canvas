@@ -439,7 +439,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
-	boss1Attack(mp, direction = 0) {
+	boss1Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 		// 長さが同じ配列をまとめる
@@ -604,7 +604,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
-	boss2Attack(mp, direction = 0) {
+	boss2Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 		// 長さが同じ配列をまとめる
@@ -999,7 +999,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
-	boss3Attack(mp, direction = 0) {
+	boss3Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 		// 長さが同じ配列をまとめる
@@ -1090,7 +1090,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
-	boss3TackleAttack(mp, direction = 0) {
+	boss3TackleAttack(mp, direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 
@@ -1134,7 +1134,6 @@ class Boss extends CharacterObject {
 				if (mp.boss3_type == 3 || mp.boss3_type == 7)
 					this.x -= 18 * mirror;
 				else this.x -= 12 * mirror;
-
 				// 画面外に出たら反転する
 				if (direction !== 1 && this.x <= x_border_left) {
 					this.x = x_border_left;
