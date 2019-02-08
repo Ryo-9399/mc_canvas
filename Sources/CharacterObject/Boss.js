@@ -605,11 +605,6 @@ class Boss extends CharacterObject {
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
 	boss2Attack(mp, direction) {
-		// 左向きなら1 右向きなら-1
-		const mirror = direction === 1 ? -1 : 1;
-		// 長さが同じ配列をまとめる
-		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
-
 		mp.boss_attack_mode = true;
 		this.c1++;
 		if (mp.boss2_type === 2) {
@@ -625,7 +620,7 @@ class Boss extends CharacterObject {
 		} else if (mp.boss2_type === 3) {
 			// うずしお
 			const whirlpool = d => {
-				for (var i = 0; i < 360; i += 90) {
+				for (let i = 0; i < 360; i += 90) {
 					const attack = direction === 1 ? 980 : 970;
 					mp.mSet2(this.x, this.y, attack, i + d, 0);
 				}
@@ -1095,6 +1090,7 @@ class Boss extends CharacterObject {
 		const mirror = direction === 1 ? -1 : 1;
 
 		if (this.c1 < 25) this.c1++;
+		// TODO: 消して良いのでは？
 		if (direction !== 1 && this.c1 < 5) this.c2 = 0;
 		// NOTE: ここのdirection判定はおそらく元のコードのバグ
 		// TODO: リファクタリング中なので挙動維持のため残すが、おそらくdirection !== 1の判定は消して問題ない
@@ -1112,9 +1108,9 @@ class Boss extends CharacterObject {
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 
-		if (this.c1 == 25) {
+		if (this.c1 === 25) {
 			// 体当たり 行き
-			if (mp.boss3_type == 4 || mp.boss3_type == 8) {
+			if (mp.boss3_type === 4 || mp.boss3_type === 8) {
 				// ジャンプ移動
 				this.x -= 3 * mirror;
 				this.vy += 2;
@@ -1131,7 +1127,7 @@ class Boss extends CharacterObject {
 						this.c1 = 30;
 				}
 			} else {
-				if (mp.boss3_type == 3 || mp.boss3_type == 7)
+				if (mp.boss3_type === 3 || mp.boss3_type === 7)
 					this.x -= 18 * mirror;
 				else this.x -= 12 * mirror;
 				// 画面外に出たら反転する
@@ -1143,9 +1139,9 @@ class Boss extends CharacterObject {
 					this.c1 = 30;
 				}
 			}
-		} else if (this.c1 == 30) {
+		} else if (this.c1 === 30) {
 			// 体当たり 帰り
-			if (mp.boss3_type == 4 || mp.boss3_type == 8) {
+			if (mp.boss3_type === 4 || mp.boss3_type === 8) {
 				// ジャンプ移動
 				this.x += 4 * mirror;
 				this.vy += 2;
@@ -1162,7 +1158,7 @@ class Boss extends CharacterObject {
 						this.c1 = 40;
 				}
 			} else {
-				if (mp.boss3_type == 3 || mp.boss3_type == 7)
+				if (mp.boss3_type === 3 || mp.boss3_type === 7)
 					this.x += 18 * mirror;
 				else this.x += 8 * mirror;
 				if (direction !== 1 && this.x >= x_border_right) {
@@ -1174,7 +1170,7 @@ class Boss extends CharacterObject {
 					this.c1 = 40;
 				}
 			}
-		} else if (this.c1 == 40) {
+		} else if (this.c1 === 40) {
 			// 元の位置に戻る
 			this.x -= 2 * mirror;
 			if (direction !== 1 && this.x <= x_standby_right) {

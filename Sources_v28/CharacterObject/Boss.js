@@ -262,7 +262,7 @@ class Boss extends CharacterObject {
 			case 360:
 				if (this.c1 <= 25) {
 					this.pt = 1250;
-				} else if (this.c1 == 30) {
+				} else if (this.c1 === 30) {
 					this.pt = 1255;
 				} else {
 					this.pt = 1200;
@@ -273,7 +273,7 @@ class Boss extends CharacterObject {
 			case 365:
 				if (this.c1 <= 25) {
 					this.pt = 1255;
-				} else if (this.c1 == 30) {
+				} else if (this.c1 === 30) {
 					this.pt = 1250;
 				} else {
 					this.pt = 1205;
@@ -388,31 +388,25 @@ class Boss extends CharacterObject {
 	 * @param {number} direction default:0 ボスの向き 1なら左向き
 	 */
 	boss2Attack(mp, direction) {
-		// 左向きなら1 右向きなら-1
-		// NOTE: このボスでは使わない
-		const mirror = direction === 1 ? -1 : 1;
-		// 長さが同じ配列をまとめる
-		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
-
 		this.c1++;
-		if (mp.boss2_type == 2) {
+		if (mp.boss2_type === 2) {
 			// バブル光線
-			if (this.c1 == 10 || this.c1 == 85 || this.c1 == 215) {
+			if (this.c1 === 10 || this.c1 === 85 || this.c1 === 215) {
 				this.boss2BubbleBeam(mp, 0);
-			} else if (this.c1 == 35 || this.c1 == 110 || this.c1 == 295) {
+			} else if (this.c1 === 35 || this.c1 === 110 || this.c1 === 295) {
 				this.boss2BubbleBeam(mp, 15);
-			} else if (this.c1 == 60 || this.c1 == 135 || this.c1 == 375) {
+			} else if (this.c1 === 60 || this.c1 === 135 || this.c1 === 375) {
 				this.boss2BubbleBeam(mp, 30);
 			}
 			if (this.c1 > 445) this.c1 = 0;
 		} else {
 			// 水の波動
 			if (
-				this.c1 == 5 ||
-				this.c1 == 35 ||
-				this.c1 == 65 ||
-				this.c1 == 110 ||
-				this.c1 == 185
+				this.c1 === 5 ||
+				this.c1 === 35 ||
+				this.c1 === 65 ||
+				this.c1 === 110 ||
+				this.c1 === 185
 			) {
 				mp.mSet(this.x, this.y, 90);
 			}
@@ -483,9 +477,9 @@ class Boss extends CharacterObject {
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 
-		if (this.c1 == 25) {
+		if (this.c1 === 25) {
 			// 体当たり 行き
-			if (mp.boss3_type == 4) {
+			if (mp.boss3_type === 4) {
 				// ジャンプ移動
 				this.x -= 3 * mirror;
 				this.vy += 2;
@@ -502,7 +496,7 @@ class Boss extends CharacterObject {
 						this.c1 = 30;
 				}
 			} else {
-				if (mp.boss3_type == 3) this.x -= 18 * mirror;
+				if (mp.boss3_type === 3) this.x -= 18 * mirror;
 				else this.x -= 12 * mirror;
 				// 画面外に出たら反転する
 				if (direction !== 1 && this.x <= x_border_left) {
@@ -513,9 +507,9 @@ class Boss extends CharacterObject {
 					this.c1 = 30;
 				}
 			}
-		} else if (this.c1 == 30) {
+		} else if (this.c1 === 30) {
 			// 体当たり 帰り
-			if (mp.boss3_type == 4) {
+			if (mp.boss3_type === 4) {
 				// ジャンプ移動
 				this.x += 4 * mirror;
 				this.vy += 2;
@@ -532,7 +526,7 @@ class Boss extends CharacterObject {
 						this.c1 = 40;
 				}
 			} else {
-				if (mp.boss3_type == 3) this.x += 18 * mirror;
+				if (mp.boss3_type === 3) this.x += 18 * mirror;
 				else this.x += 8 * mirror;
 				if (direction !== 1 && this.x >= x_border_right) {
 					this.x = x_border_right;
@@ -543,7 +537,7 @@ class Boss extends CharacterObject {
 					this.c1 = 40;
 				}
 			}
-		} else if (this.c1 == 40) {
+		} else if (this.c1 === 40) {
 			// 元の位置に戻る
 			this.x -= 2 * mirror;
 			if (direction !== 1 && this.x <= x_standby_right) {
