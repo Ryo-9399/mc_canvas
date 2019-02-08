@@ -760,13 +760,19 @@ class Boss extends CharacterObject {
 	boss2Attack6Left(mp) {
 		this.c1--;
 		let d = null;
+
+		if (this.c1 <= 100) this.c2 += 10;
+		else if (this.c1 <= 200) this.c2 -= 5;
+		else if (this.c1 <= 300) this.c2 += 2;
+		else this.c2 -= 2;
+
 		if (this.c1 <= 0) {
-			this.c2 = 0;
-			this.c1 = 100;
 			mp.gs.rsAddSound(18);
+		}
+
+		if (this.c1 <= 0) {
 			d = 3.1400001049041748;
 		} else if (this.c1 <= 100) {
-			this.c2 += 10;
 			if (this.c2 === 40) {
 				d = 3.8377780914306641;
 			} else if (this.c2 === 70) {
@@ -774,12 +780,7 @@ class Boss extends CharacterObject {
 			} else if (this.c2 === 90) {
 				d = 4.8844447135925293;
 			}
-			if (this.c2 >= 90) {
-				this.c2 = 90;
-				this.c1 = 200;
-			}
 		} else if (this.c1 <= 200) {
-			this.c2 -= 5;
 			if (this.c2 === 80) {
 				d = 4.5355558395385742;
 			} else if (this.c2 === 60) {
@@ -795,12 +796,7 @@ class Boss extends CharacterObject {
 			} else if (this.c2 === -100) {
 				d = 1.3955556154251099;
 			}
-			if (this.c2 <= -100) {
-				this.c2 = -100;
-				this.c1 = 300;
-			}
 		} else if (this.c1 <= 300) {
-			this.c2 += 2;
 			if (this.c2 === -60) {
 				d = 2.0933334827423096;
 			} else if (this.c2 === -30) {
@@ -814,12 +810,7 @@ class Boss extends CharacterObject {
 			} else if (this.c2 === 90) {
 				d = 4.7100000381469727;
 			}
-			if (this.c2 >= 90) {
-				this.c2 = 90;
-				this.c1 = 400;
-			}
 		} else {
-			this.c2 -= 2;
 			if (this.c2 === 60) {
 				d = 4.1866669654846191;
 			} else if (this.c2 === 30) {
@@ -833,11 +824,33 @@ class Boss extends CharacterObject {
 			} else if (this.c2 <= -90) {
 				d = 1.5700000524520874;
 			}
+		}
+
+		if (this.c1 <= 0) {
+			this.c2 = 0;
+			this.c1 = 100;
+		} else if (this.c1 <= 100) {
+			if (this.c2 >= 90) {
+				this.c2 = 90;
+				this.c1 = 200;
+			}
+		} else if (this.c1 <= 200) {
+			if (this.c2 <= -100) {
+				this.c2 = -100;
+				this.c1 = 300;
+			}
+		} else if (this.c1 <= 300) {
+			if (this.c2 >= 90) {
+				this.c2 = 90;
+				this.c1 = 400;
+			}
+		} else {
 			if (this.c2 <= -90) {
 				this.c2 = -90;
 				this.c1 = 300;
 			}
 		}
+
 		if (d !== null) {
 			mp.mSet2(
 				this.x,
@@ -857,10 +870,17 @@ class Boss extends CharacterObject {
 	boss2Attack6Right(mp) {
 		this.c1--;
 		let d = null;
+
+		if (this.c1 <= 100) this.c2 -= 10;
+		else if (this.c1 <= 200) this.c2 += 5;
+		else if (this.c1 <= 300) this.c2 -= 2;
+		else this.c2 += 2;
+
 		if (this.c1 <= 0) {
-			this.c2 = 0;
-			this.c1 = 100;
 			mp.gs.rsAddSound(18);
+		}
+
+		if (this.c1 <= 0) {
 			d = 0.0;
 		} else if (this.c1 <= 100) {
 			this.c2 -= 10;
@@ -871,12 +891,7 @@ class Boss extends CharacterObject {
 			} else if (this.c2 === -90) {
 				d = 4.5355558395385742;
 			}
-			if (this.c2 <= -90) {
-				this.c2 = -90;
-				this.c1 = 200;
-			}
 		} else if (this.c1 <= 200) {
-			this.c2 += 5;
 			if (this.c2 === -80) {
 				d = 4.8844447135925293;
 			} else if (this.c2 === -60) {
@@ -891,10 +906,6 @@ class Boss extends CharacterObject {
 				d = 1.2211111783981323;
 			} else if (this.c2 === 100) {
 				d = 1.7444444894790649;
-			}
-			if (this.c2 >= 100) {
-				this.c2 = 100;
-				this.c1 = 300;
 			}
 		} else if (this.c1 <= 300) {
 			this.c2 -= 2;
@@ -911,10 +922,6 @@ class Boss extends CharacterObject {
 			} else if (this.c2 === -90) {
 				d = 4.7100000381469727;
 			}
-			if (this.c2 <= -90) {
-				this.c2 = -90;
-				this.c1 = 400;
-			}
 		} else {
 			this.c2 += 2;
 			if (this.c2 === -60) {
@@ -930,11 +937,33 @@ class Boss extends CharacterObject {
 			} else if (this.c2 === 90) {
 				d = 1.5700000524520874;
 			}
+		}
+
+		if (this.c1 <= 0) {
+			this.c2 = 0;
+			this.c1 = 100;
+		} else if (this.c1 <= 100) {
+			if (this.c2 <= -90) {
+				this.c2 = -90;
+				this.c1 = 200;
+			}
+		} else if (this.c1 <= 200) {
+			if (this.c2 >= 100) {
+				this.c2 = 100;
+				this.c1 = 300;
+			}
+		} else if (this.c1 <= 300) {
+			if (this.c2 <= -90) {
+				this.c2 = -90;
+				this.c1 = 400;
+			}
+		} else {
 			if (this.c2 >= 90) {
 				this.c2 = 90;
 				this.c1 = 300;
 			}
 		}
+
 		if (d !== null) {
 			mp.mSet2(
 				this.x,
