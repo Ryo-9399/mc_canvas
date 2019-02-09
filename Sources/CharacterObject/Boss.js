@@ -406,7 +406,7 @@ class Boss extends CharacterObject {
 						// グレネードではないものが当たった場合、消滅させる
 						characterobject.c = 0;
 						mp.jm_kazu--;
-						this.hitWithFireball(mp, characterobject);
+						this.hitWithFireball(mp);
 					}
 				}
 			}
@@ -1097,43 +1097,12 @@ class Boss extends CharacterObject {
 	/**
 	 * ファイヤーボールとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
-	 * @param {CharacterObject} characterobject ファイヤーボール
 	 */
-	hitWithFireball(mp, characterobject) {
+	hitWithFireball(mp) {
 		// ボスがバリアを張っている場合はダメージを与えられない
 		if (this.pt === 1250 || this.pt === 1255) return;
-
-		if (mp.boss_destroy_type === 2) {
-			// ファイヤーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
-			if (
-				this.c === BOSS1_STANDBY ||
-				this.c === BOSS2_STANDBY ||
-				this.c === BOSS3_STANDBY
-			)
-				return;
-		} else {
-			// 主人公がジャンプできないような特技を持たない場合はダメージを与えられない
-			if (
-				!(
-					mp.j_tokugi === 10 ||
-					(mp.j_tokugi >= 12 && mp.j_tokugi <= 15)
-				)
-			)
-				return;
-		}
-
-		// ボスにダメージを与える
-		mp.boss_hp--;
-		if (mp.boss_hp <= 0) {
-			// 死亡
-			mp.boss_hp = 0;
-			this.killNormalAttack(mp);
-		}
-
-		if (mp.boss_destroy_type === 2) {
-			// ボスのHPゲージの値を更新する
-			this.showBossHPGauge(mp);
-		}
+		// HPを1減らす
+		this.setHP(mp, mp.boss_hp - 1);
 	}
 
 	/**
@@ -1143,22 +1112,13 @@ class Boss extends CharacterObject {
 	hitWithTail(mp) {
 		// しっぽでボスにダメージを与えられない場合は処理しない
 		if (mp.boss_destroy_type !== 2) return;
-		if (mp.j_tail_ap_boss < 1 || mp.j_tail_ac !== 5) return;
-		if (this.c < 100 || this.c === 100 || this.c === 200 || this.c === 300)
-			return;
 		if (this.pt === 1250 || this.pt === 1255) return;
+		if (mp.j_tail_ap_boss < 1 || mp.j_tail_ac !== 5) return;
 
 		// ボスにダメージを与える
-		mp.gs.rsAddSound(9);
-		mp.boss_hp -= mp.j_tail_ap_boss;
-		if (mp.boss_hp <= 0) {
-			// 死亡
-			mp.boss_hp = 0;
-			this.killNormalAttack(mp);
-		}
-
-		// ボスのHPゲージの値を更新する
-		this.showBossHPGauge(mp);
+		const result = this.setHP(mp, mp.boss_hp - mp.j_tail_ap_boss);
+		// ダメージを与えることに成功した場合は音を鳴らす
+		if (result) mp.gs.rsAddSound(9);
 	}
 
 	/**
