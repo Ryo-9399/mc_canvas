@@ -76,7 +76,7 @@ class Boss extends CharacterObject {
 			const fumu_flag = Math.abs(this.x - j.x) < 34 && j.vy > 0;
 			if (fumu_flag && this.isFumuable(mp)) {
 				// 主人公がボスにダメージを与える
-				this.fumuDamage(mp);
+				this.fumu(mp);
 			} else {
 				// 主人公が死亡する
 				mp.jShinu(2);
@@ -623,7 +623,7 @@ class Boss extends CharacterObject {
 	 * ボスが主人公に踏まれてダメージを受けたときの処理をします
 	 * @param {MainProgram} mp
 	 */
-	fumuDamage(mp) {
+	fumu(mp) {
 		const j = mp.co_j;
 		this.c4--;
 		if (this.c < 200) {

@@ -78,7 +78,7 @@ class Boss extends CharacterObject {
 				(Math.abs(this.x - j.x) < 34 || mp.easy_mode === 2) && j.vy > 0;
 			if (fumu_flag && this.isFumuable(mp)) {
 				// 主人公がボスにダメージを与える
-				this.fumuDamage(mp);
+				this.fumu(mp);
 			} else {
 				// 主人公が死亡する
 				mp.jShinu(2);
@@ -138,7 +138,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS1_DYING_BY_GRENADE:
-				this.dyingByGrenade(mp, 1);
+				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
 				break;
@@ -154,7 +154,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS2_DYING_BY_GRENADE:
-				this.dyingByGrenade(mp, 2);
+				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
 				break;
@@ -170,7 +170,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_DYING_BY_GRENADE:
-				this.dyingByGrenade(mp, 3);
+				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
 				break;
@@ -183,7 +183,7 @@ class Boss extends CharacterObject {
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
 
-							this.showBossHPGauge(mp, 1);
+							this.showBossHPGauge(mp);
 							this.c = BOSS1_ATTACK_LEFT;
 							this.c1 = 0;
 						}
@@ -232,7 +232,7 @@ class Boss extends CharacterObject {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							this.showBossHPGauge(mp, 2);
+							this.showBossHPGauge(mp);
 							this.c = BOSS2_ATTACK_LEFT;
 							this.c1 = 0;
 						}
@@ -283,7 +283,7 @@ class Boss extends CharacterObject {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							this.showBossHPGauge(mp, 3);
+							this.showBossHPGauge(mp);
 							if (
 								(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
 								(mp.boss3_type >= 6 && mp.boss3_type <= 8)
@@ -974,7 +974,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} boss_type ボスの種類 1,2,3のいずれか
 	 */
-	dyingByGrenade(mp, boss_type) {
+	dyingByGrenade(mp) {
 		// 落下していく
 		this.vy += 4;
 		if (this.vy > 28) this.vy = 28;
@@ -982,7 +982,7 @@ class Boss extends CharacterObject {
 		this.y += this.vy;
 		if (mp.boss_destroy_type === 2) {
 			mp.boss_hp = 0;
-			this.showBossHPGauge(mp, boss_type);
+			this.showBossHPGauge(mp);
 		}
 		if (this.y >= mp.maps.wy + 320 + 16) {
 			// 画面下まで落ちた
@@ -1018,7 +1018,7 @@ class Boss extends CharacterObject {
 	 * ボスが主人公に踏まれてダメージを受けたときの処理をします
 	 * @param {MainProgram} mp
 	 */
-	fumuDamage(mp) {
+	fumu(mp) {
 		const j = mp.co_j;
 		this.c4--;
 		if (this.c < 200) {
@@ -1105,16 +1105,7 @@ class Boss extends CharacterObject {
 
 				if (mp.boss_destroy_type === 2) {
 					// ボスのHPゲージの値を更新する
-					if ((this.c >= 100 && this.c < 200) || this.c === 60) {
-						this.showBossHPGauge(mp, 1);
-					} else if (
-						(this.c >= 200 && this.c < 300) ||
-						this.c === 70
-					) {
-						this.showBossHPGauge(mp, 2);
-					} else {
-						this.showBossHPGauge(mp, 3);
-					}
+					this.showBossHPGauge(mp);
 				}
 			}
 		}
@@ -1201,13 +1192,7 @@ class Boss extends CharacterObject {
 			}
 
 			// ボスのHPゲージの値を更新する
-			if ((this.c >= 100 && this.c < 200) || this.c === 60) {
-				this.showBossHPGauge(mp, 1);
-			} else if ((this.c >= 200 && this.c < 300) || this.c === 70) {
-				this.showBossHPGauge(mp, 2);
-			} else {
-				this.showBossHPGauge(mp, 3);
-			}
+			this.showBossHPGauge(mp);
 		}
 	}
 
@@ -1236,15 +1221,33 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * ボスのHPゲージを表示します
-	 * ただしボスのHPはmp.boss_hpとmp.boss_hp_maxが参照されます
-	 * @param {MainProgram} mp
-	 * @param {number} boss_type ボスの種類 1,2,3のいずれか
+	 * ボスの種類を返します
+	 * 現在のボスの状態をもとに判定します
+	 * 1: グラーダ
+	 * 2: カイオール
+	 * 3: センクウザ
+	 * -1: 不明
 	 */
-	showBossHPGauge(mp, boss_type) {
+	getBossNumber() {
+		if (this.c >= 60 && this.c < 70) return 1;
+		if (this.c >= 100 && this.c < 200) return 1;
+		if (this.c >= 70 && this.c < 80) return 2;
+		if (this.c >= 200 && this.c < 300) return 2;
+		if (this.c >= 80 && this.c < 90) return 3;
+		if (this.c >= 300 && this.c < 400) return 3;
+		return -1;
+	}
+
+	/**
+	 * ボスのHPゲージを表示します
+	 * ただしボスのHPはmp.boss_hpとmp.boss_hp_maxの値が参照されます
+	 * @param {MainProgram} mp
+	 */
+	showBossHPGauge(mp) {
+		const boss_number = this.getBossNumber();
 		let param_name = "boss_name";
-		if (boss_type === 2) param_name = "boss2_name";
-		if (boss_type === 3) param_name = "boss3_name";
+		if (boss_number === 2) param_name = "boss2_name";
+		if (boss_number === 3) param_name = "boss3_name";
 
 		const boss_name = mp.tdb.getValue(param_name);
 		const gauge_value = Math.floor((mp.boss_hp * 200) / mp.boss_hp_max);
