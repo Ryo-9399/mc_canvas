@@ -9,6 +9,18 @@ export const BOSS1_ATTACK_RIGHT = 115;
 export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
 
+/**
+ * 長さが同じ配列をまとめる
+ * [1,2,3],[4,5,6]=>[[1,4],[2,5],[3,6]]
+ * @param {Array} a
+ * @param {Array} b
+ */
+const zip = (a, b) => {
+	if (a.length !== b.length)
+		throw new Error("The given arrays do not have the same length.");
+	return a.map((v, i) => [v, b[i]]);
+};
+
 class Boss extends CharacterObject {
 	/*
 	 * this.c: 状態
@@ -292,8 +304,6 @@ class Boss extends CharacterObject {
 	boss1Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
-		// 長さが同じ配列をまとめる
-		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
 
 		this.c1++;
 		if (mp.boss_type === 2) {
@@ -312,21 +322,8 @@ class Boss extends CharacterObject {
 				170,
 				180
 			];
-			const attack_power = [
-				-2,
-				-4,
-				-6,
-				-8,
-				-2,
-				-2,
-				-4,
-				-6,
-				-8,
-				-2,
-				-4,
-				-2
-			];
-			for (const [count, power] of zip(attack_count, attack_power)) {
+			const powers = [-2, -4, -6, -8, -2, -2, -4, -6, -8, -2, -4, -2];
+			for (const [count, power] of zip(attack_count, powers)) {
 				if (this.c1 === count) {
 					mp.tSetBoss(this.x, this.y, 150, power * mirror);
 					break;
@@ -346,8 +343,8 @@ class Boss extends CharacterObject {
 		} else if (mp.boss_type === 4) {
 			// マリリを投げる
 			const attack_count = [1, 15, 29, 81, 95, 109, 165];
-			const attack_power = [-5, -3, -2, -5, -3, -2, -3];
-			for (const [count, power] of zip(attack_count, attack_power)) {
+			const powers = [-5, -3, -2, -5, -3, -2, -3];
+			for (const [count, power] of zip(attack_count, powers)) {
 				if (this.c1 === count) {
 					mp.tSetBoss(this.x, this.y, 650, power * mirror);
 					break;
@@ -438,14 +435,12 @@ class Boss extends CharacterObject {
 	boss3Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
-		// 長さが同じ配列をまとめる
-		const zip = (a, b) => a.map((v, i) => [v, b[i]]);
 
 		this.c1++;
 		// グレネード
 		const attack_count = [1, 15, 29, 65, 80, 105, 147, 520, 530];
-		const attack_power = [-5, -10, -15, -20, -5, -15, -10, 4, -5];
-		for (const [count, power] of zip(attack_count, attack_power)) {
+		const powers = [-5, -10, -15, -20, -5, -15, -10, 4, -5];
+		for (const [count, power] of zip(attack_count, powers)) {
 			if (this.c1 === count) {
 				mp.mSet2(this.x, this.y, 800, power * mirror, -32);
 				break;
