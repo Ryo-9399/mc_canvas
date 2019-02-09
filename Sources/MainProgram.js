@@ -33645,187 +33645,26 @@ MainProgram.prototype.bMove = function() {
 	if (this.co_b.x >= this.maps.wx + 1024) return;
 	this.boss_attack_mode = false;
 	this.co_b.move(this);
-	if (this.co_b.checkHit(this.co_j))
+	// 主人公とボスの当たり判定
+	if (this.co_b.checkCollideWIthPlayer(this.co_j)) {
 		if (!this.co_b.isFumuable(this)) this.jShinu(2);
 		else if (this.co_b.checkFumu(this)) {
 			this.co_b.fumuDamage(this);
 		} else {
 			this.jShinu(2);
 		}
+	}
+	// 主人公の攻撃とボスの当たり判定
 	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
-		for (var k4 = 0; k4 <= 8; k4++) {
-			if (this.co_jm[k4].c < 100) continue;
-			var characterobject = this.co_jm[k4];
+		for (let i = 0; i <= 8; i++) {
+			if (this.co_jm[i].c < 100) continue;
+			var characterobject = this.co_jm[i];
 			if (
 				Math.abs(this.co_b.x - characterobject.x) >= 34 ||
 				Math.abs(this.co_b.y - characterobject.y) >= 30
 			)
 				continue;
-			if (characterobject.c == 200) {
-				characterobject.c = 50;
-				characterobject.c1 = 1;
-				characterobject.c2 = 20;
-				if (this.grenade_type != 1 && this.grenade_type != 5) continue;
-				if (this.j_tokugi == 14 || this.j_tokugi == 15) {
-					if (this.co_b.c < 200) {
-						this.co_b.c4 = 0;
-						this.co_b.c = 60;
-						this.co_b.c1 = 0;
-						this.co_b.pt = 1010;
-						this.co_b.y -= 16;
-						this.gs.rsAddSound(8);
-						continue;
-					}
-					if (this.co_b.c < 300) {
-						this.co_b.c4 = 0;
-						this.co_b.c = 70;
-						this.co_b.c1 = 0;
-						this.co_b.pt = 1110;
-						this.co_b.y -= 16;
-						this.gs.rsAddSound(8);
-					} else {
-						this.co_b.c4 = 0;
-						this.co_b.c = 80;
-						this.co_b.c1 = 0;
-						this.co_b.pt = 1210;
-						this.co_b.y -= 16;
-						this.gs.rsAddSound(8);
-					}
-					continue;
-				}
-				if (this.co_b.c < 200) {
-					this.co_b.c = 67;
-					this.co_b.vy = -24;
-					this.co_b.c1 = 0;
-					if (characterobject.vx < 0) {
-						this.co_b.muki = 1;
-						this.co_b.pt = 1005;
-						this.co_b.vx = -4;
-					} else {
-						this.co_b.muki = 0;
-						this.co_b.pt = 1000;
-						this.co_b.vx = 4;
-					}
-					this.gs.rsAddSound(9);
-					continue;
-				}
-				if (this.co_b.c < 300) {
-					this.co_b.c = 77;
-					this.co_b.vy = -24;
-					this.co_b.c1 = 0;
-					if (characterobject.vx < 0) {
-						this.co_b.muki = 1;
-						this.co_b.pt = 1105;
-						this.co_b.vx = -4;
-					} else {
-						this.co_b.muki = 0;
-						this.co_b.pt = 1100;
-						this.co_b.vx = 4;
-					}
-					this.gs.rsAddSound(9);
-					continue;
-				}
-				this.co_b.c = 87;
-				this.co_b.vy = -24;
-				this.co_b.c1 = 0;
-				if (characterobject.vx < 0) {
-					this.co_b.muki = 1;
-					this.co_b.pt = 1205;
-					this.co_b.vx = -4;
-				} else {
-					this.co_b.muki = 0;
-					this.co_b.pt = 1200;
-					this.co_b.vx = 4;
-				}
-				this.gs.rsAddSound(9);
-				continue;
-			}
-			characterobject.c = 0;
-			this.jm_kazu--;
-			if (
-				this.j_tokugi == 10 ||
-				(this.j_tokugi >= 12 && this.j_tokugi <= 15) ||
-				this.boss_destroy_type == 2
-			) {
-				if (
-					(this.boss_destroy_type != 2 ||
-						(this.co_b.c != 100 &&
-							this.co_b.c != 200 &&
-							this.co_b.c != 300)) &&
-					this.co_b.pt != 1250 &&
-					this.co_b.pt != 1255
-				)
-					this.boss_hp--;
-				if (this.boss_hp <= 0) {
-					this.boss_hp = 0;
-					if (this.co_b.c < 200) {
-						this.co_b.c4 = 0;
-						this.co_b.c = 60;
-						this.co_b.c1 = 0;
-						this.co_b.pt = 1010;
-						if (this.boss_destroy_type != 2) this.co_b.y -= 16;
-						this.gs.rsAddSound(8);
-					} else if (this.co_b.c < 300) {
-						this.co_b.c4 = 0;
-						this.co_b.c = 70;
-						this.co_b.c1 = 0;
-						this.co_b.pt = 1110;
-						this.co_b.y -= 16;
-						this.gs.rsAddSound(8);
-					} else {
-						this.co_b.c4 = 0;
-						this.co_b.c = 80;
-						this.co_b.c1 = 0;
-						this.co_b.pt = 1210;
-						this.co_b.y -= 16;
-						this.gs.rsAddSound(8);
-					}
-				}
-			}
-			if (
-				this.boss_destroy_type != 2 ||
-				(this.boss_destroy_type == 2 &&
-					(this.co_b.c == 100 ||
-						this.co_b.c == 200 ||
-						this.co_b.c == 300))
-			)
-				continue;
-			var i6 = Math.floor((this.boss_hp * 200) / this.boss_hp_max);
-			if (
-				(this.co_b.c >= 100 && this.co_b.c < 200) ||
-				this.co_b.c == 60
-			) {
-				this.showGauge(
-					String(i6),
-					"" +
-						this.tdb.getValue("boss_name") +
-						"  " +
-						this.boss_hp +
-						"/" +
-						this.boss_hp_max
-				);
-				continue;
-			}
-			if ((this.co_b.c >= 200 && this.co_b.c < 300) || this.co_b.c == 70)
-				this.showGauge(
-					String(i6),
-					"" +
-						this.tdb.getValue("boss2_name") +
-						"  " +
-						this.boss_hp +
-						"/" +
-						this.boss_hp_max
-				);
-			else
-				this.showGauge(
-					String(i6),
-					"" +
-						this.tdb.getValue("boss3_name") +
-						"  " +
-						this.boss_hp +
-						"/" +
-						this.boss_hp_max
-				);
+			this.co_b.checkDamageWithPlayerAttack(this, characterobject);
 		}
 	}
 	if (

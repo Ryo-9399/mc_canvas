@@ -6851,71 +6851,27 @@ MainProgram.prototype.aMove = function() {
 MainProgram.prototype.bMove = function() {
 	if (this.co_b.x >= this.maps.wx + 1024) return;
 	this.co_b.move(this);
-	if (this.co_b.checkHit(this.co_j))
+	// 主人公とボスの当たり判定
+	if (this.co_b.checkCollideWIthPlayer(this.co_j)) {
 		if (!this.co_b.isFumuable(this)) this.jShinu(2);
 		else if (this.co_b.checkFumu(this)) {
 			this.co_b.fumuDamage(this);
 		} else {
 			this.jShinu(2);
 		}
+	}
+	// 主人公の攻撃とボスの当たり判定
 	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
-		for (var k1 = 0; k1 <= 1; k1++)
-			if (this.co_jm[k1].c >= 100) {
-				var characterobject = this.co_jm[k1];
-				if (
-					Math.abs(this.co_b.x - characterobject.x) < 34 &&
-					Math.abs(this.co_b.y - characterobject.y) < 30
-				)
-					if (characterobject.c == 200) {
-						characterobject.c = 50;
-						characterobject.c1 = 1;
-						characterobject.c2 = 20;
-						if (this.grenade_type == 1 || this.grenade_type == 5)
-							if (this.co_b.c < 200) {
-								this.co_b.c = 67;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.vx < 0) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1005;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1000;
-									this.co_b.vx = 4;
-								}
-							} else if (this.co_b.c < 300) {
-								this.co_b.c = 77;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.vx < 0) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1105;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1100;
-									this.co_b.vx = 4;
-								}
-							} else {
-								this.co_b.c = 87;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.vx < 0) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1205;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1200;
-									this.co_b.vx = 4;
-								}
-							}
-					} else {
-						characterobject.c = 0;
-						this.jm_kazu--;
-					}
-			}
+		for (let i = 0; i <= 1; i++) {
+			if (this.co_jm[i].c >= 100) continue;
+			var characterobject = this.co_jm[i];
+			if (
+				Math.abs(this.co_b.x - characterobject.x) >= 34 ||
+				Math.abs(this.co_b.y - characterobject.y) >= 30
+			)
+				continue;
+			this.co_b.checkDamageWithPlayerAttack(this, characterobject);
+		}
 	}
 };
 

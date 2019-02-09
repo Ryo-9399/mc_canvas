@@ -567,7 +567,7 @@ class Boss extends CharacterObject {
 	 * @param {CharacterObject} j 主人公
 	 * @returns {boolean}
 	 */
-	checkHit(j) {
+	checkCollideWIthPlayer(j) {
 		return (
 			j.c >= 100 &&
 			j.c < 200 &&
@@ -628,6 +628,63 @@ class Boss extends CharacterObject {
 		j.c = 110;
 		j.c1 = -4;
 		j.pt = 109;
+	}
+
+	/**
+	 * 主人公の攻撃とボスとの当たり判定処理を行います
+	 * @param {MainProgram} mp
+	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
+	 */
+	checkDamageWithPlayerAttack(mp, characterobject) {
+		if (characterobject.c == 200) {
+			characterobject.c = 50;
+			characterobject.c1 = 1;
+			characterobject.c2 = 20;
+			if (mp.grenade_type == 1 || mp.grenade_type == 5)
+				if (this.c < 200) {
+					this.c = 67;
+					this.vy = -24;
+					this.c1 = 0;
+					if (characterobject.vx < 0) {
+						this.muki = 1;
+						this.pt = 1005;
+						this.vx = -4;
+					} else {
+						this.muki = 0;
+						this.pt = 1000;
+						this.vx = 4;
+					}
+				} else if (this.c < 300) {
+					this.c = 77;
+					this.vy = -24;
+					this.c1 = 0;
+					if (characterobject.vx < 0) {
+						this.muki = 1;
+						this.pt = 1105;
+						this.vx = -4;
+					} else {
+						this.muki = 0;
+						this.pt = 1100;
+						this.vx = 4;
+					}
+				} else {
+					this.c = 87;
+					this.vy = -24;
+					this.c1 = 0;
+					if (characterobject.vx < 0) {
+						this.muki = 1;
+						this.pt = 1205;
+						this.vx = -4;
+					} else {
+						this.muki = 0;
+						this.pt = 1200;
+						this.vx = 4;
+					}
+				}
+		} else {
+			characterobject.c = 0;
+			mp.jm_kazu--;
+		}
 	}
 }
 

@@ -947,7 +947,7 @@ class Boss extends CharacterObject {
 	 * @param {CharacterObject} j 主人公
 	 * @returns {boolean}
 	 */
-	checkHit(j) {
+	checkCollideWIthPlayer(j) {
 		return (
 			j.c >= 100 &&
 			j.c < 200 &&
@@ -984,7 +984,7 @@ class Boss extends CharacterObject {
 		if (j.vy <= 0) return false;
 		if (mp.easy_mode === 2) {
 			// イージーモードの場合は当たり判定が大きい
-			return this.checkHit(j);
+			return this.checkCollideWIthPlayer(j);
 		}
 		return Math.abs(this.x - j.x) < 34;
 	}
@@ -1022,6 +1022,172 @@ class Boss extends CharacterObject {
 		j.c = 110;
 		j.c1 = -4;
 		j.pt = 109;
+	}
+
+	/**
+	 * 主人公の攻撃とボスとの当たり判定処理を行います
+	 * @param {MainProgram} mp
+	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
+	 */
+	checkDamageWithPlayerAttack(mp, characterobject) {
+		if (characterobject.c == 200) {
+			characterobject.c = 50;
+			characterobject.c1 = 1;
+			characterobject.c2 = 20;
+			if (mp.grenade_type != 1 && mp.grenade_type != 5) return;
+			if (mp.j_tokugi == 14 || mp.j_tokugi == 15) {
+				if (this.c < 200) {
+					this.c4 = 0;
+					this.c = 60;
+					this.c1 = 0;
+					this.pt = 1010;
+					this.y -= 16;
+					mp.gs.rsAddSound(8);
+					return;
+				}
+				if (this.c < 300) {
+					this.c4 = 0;
+					this.c = 70;
+					this.c1 = 0;
+					this.pt = 1110;
+					this.y -= 16;
+					mp.gs.rsAddSound(8);
+				} else {
+					this.c4 = 0;
+					this.c = 80;
+					this.c1 = 0;
+					this.pt = 1210;
+					this.y -= 16;
+					mp.gs.rsAddSound(8);
+				}
+				return;
+			}
+			if (this.c < 200) {
+				this.c = 67;
+				this.vy = -24;
+				this.c1 = 0;
+				if (characterobject.vx < 0) {
+					this.muki = 1;
+					this.pt = 1005;
+					this.vx = -4;
+				} else {
+					this.muki = 0;
+					this.pt = 1000;
+					this.vx = 4;
+				}
+				mp.gs.rsAddSound(9);
+				return;
+			}
+			if (this.c < 300) {
+				this.c = 77;
+				this.vy = -24;
+				this.c1 = 0;
+				if (characterobject.vx < 0) {
+					this.muki = 1;
+					this.pt = 1105;
+					this.vx = -4;
+				} else {
+					this.muki = 0;
+					this.pt = 1100;
+					this.vx = 4;
+				}
+				mp.gs.rsAddSound(9);
+				return;
+			}
+			this.c = 87;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1205;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1200;
+				this.vx = 4;
+			}
+			mp.gs.rsAddSound(9);
+			return;
+		}
+		characterobject.c = 0;
+		mp.jm_kazu--;
+		if (
+			mp.j_tokugi == 10 ||
+			(mp.j_tokugi >= 12 && mp.j_tokugi <= 15) ||
+			mp.boss_destroy_type == 2
+		) {
+			if (
+				(mp.boss_destroy_type != 2 ||
+					(this.c != 100 && this.c != 200 && this.c != 300)) &&
+				this.pt != 1250 &&
+				this.pt != 1255
+			)
+				mp.boss_hp--;
+			if (mp.boss_hp <= 0) {
+				mp.boss_hp = 0;
+				if (this.c < 200) {
+					this.c4 = 0;
+					this.c = 60;
+					this.c1 = 0;
+					this.pt = 1010;
+					if (mp.boss_destroy_type != 2) this.y -= 16;
+					mp.gs.rsAddSound(8);
+				} else if (this.c < 300) {
+					this.c4 = 0;
+					this.c = 70;
+					this.c1 = 0;
+					this.pt = 1110;
+					this.y -= 16;
+					mp.gs.rsAddSound(8);
+				} else {
+					this.c4 = 0;
+					this.c = 80;
+					this.c1 = 0;
+					this.pt = 1210;
+					this.y -= 16;
+					mp.gs.rsAddSound(8);
+				}
+			}
+		}
+		if (
+			mp.boss_destroy_type != 2 ||
+			(mp.boss_destroy_type == 2 &&
+				(this.c == 100 || this.c == 200 || this.c == 300))
+		)
+			return;
+		var i6 = Math.floor((mp.boss_hp * 200) / mp.boss_hp_max);
+		if ((this.c >= 100 && this.c < 200) || this.c == 60) {
+			mp.showGauge(
+				String(i6),
+				"" +
+					mp.tdb.getValue("boss_name") +
+					"  " +
+					mp.boss_hp +
+					"/" +
+					mp.boss_hp_max
+			);
+			return;
+		}
+		if ((this.c >= 200 && this.c < 300) || this.c == 70)
+			mp.showGauge(
+				String(i6),
+				"" +
+					mp.tdb.getValue("boss2_name") +
+					"  " +
+					mp.boss_hp +
+					"/" +
+					mp.boss_hp_max
+			);
+		else
+			mp.showGauge(
+				String(i6),
+				"" +
+					mp.tdb.getValue("boss3_name") +
+					"  " +
+					mp.boss_hp +
+					"/" +
+					mp.boss_hp_max
+			);
 	}
 
 	/**
