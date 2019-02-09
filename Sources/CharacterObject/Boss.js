@@ -55,75 +55,14 @@ class Boss extends CharacterObject {
 	 */
 
 	/**
-	 * フレームごとのボスの行動と当たり判定の処理を行う
+	 * フレームごとの処理を行う
 	 * @param {MainProgram} mp
 	 */
 	update(mp) {
 		if (this.x >= mp.maps.wx + 1024) return;
 		mp.boss_attack_mode = false;
 		this.move(mp);
-		// 主人公とボスの当たり判定
-		const j = mp.co_j;
-		const hit_flag =
-			j.c >= 100 &&
-			j.c < 200 &&
-			this.c >= 100 &&
-			Math.abs(this.x - j.x) < 42 &&
-			j.y > this.y - 20 &&
-			j.y < this.y + 40;
-
-		if (hit_flag) {
-			// 主人公とボスが接触している
-			const fumu_flag =
-				(Math.abs(this.x - j.x) < 34 || mp.easy_mode === 2) && j.vy > 0;
-			if (fumu_flag && this.isFumuable(mp)) {
-				// 主人公がボスにダメージを与える
-				this.fumu(mp);
-
-				// 主人公が敵を踏んだ状態にする
-				j.y = this.y;
-				j.vy = -320;
-				mp.j_jump_type = 1;
-				j.c = 110;
-				j.c1 = -4;
-				j.pt = 109;
-			} else {
-				// 主人公が死亡する
-				mp.jShinu(2);
-			}
-		}
-		// 主人公の攻撃とボスの当たり判定
-		if (mp.jm_kazu > 0 && this.c >= 100) {
-			for (let i = 0; i <= 8; i++) {
-				const characterobject = mp.co_jm[i];
-				if (characterobject.c < 100) continue;
-				if (
-					Math.abs(this.x - characterobject.x) < 34 &&
-					Math.abs(this.y - characterobject.y) < 30
-				) {
-					if (characterobject.c === 200) {
-						// グレネード
-						this.damageWithGrenade(mp, characterobject);
-					} else {
-						// グレネードではないものが当たった場合、消滅させる
-						characterobject.c = 0;
-						mp.jm_kazu--;
-						this.damageWithFireball(mp, characterobject);
-					}
-				}
-			}
-		}
-		// 主人公の攻撃としっぽの当たり判定
-		const tail_left = this.muki === 1 ? j.x + 16 : j.x - 32;
-		const tail_right = this.muki === 1 ? j.x + 63 : j.x + 16;
-		const tail_flag =
-			tail_left <= this.x + 47 &&
-			tail_right >= this.x - 16 &&
-			Math.abs(j.y - this.y) < 48;
-		// しっぽとボスが接触している
-		if (tail_flag) {
-			this.damageWithTail(mp);
-		}
+		this.checkCollision(mp);
 	}
 
 	/**
@@ -413,6 +352,75 @@ class Boss extends CharacterObject {
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
+		}
+	}
+
+	/**
+	 * 当たり判定処理
+	 * @param {MainProgram} mp
+	 */
+	checkCollision(mp) {
+		// 主人公とボスの当たり判定
+		const j = mp.co_j;
+		const hit_flag =
+			j.c >= 100 &&
+			j.c < 200 &&
+			this.c >= 100 &&
+			Math.abs(this.x - j.x) < 42 &&
+			j.y > this.y - 20 &&
+			j.y < this.y + 40;
+
+		if (hit_flag) {
+			// 主人公とボスが接触している
+			const fumu_flag =
+				(Math.abs(this.x - j.x) < 34 || mp.easy_mode === 2) && j.vy > 0;
+			if (fumu_flag && this.isFumuable(mp)) {
+				// 主人公がボスにダメージを与える
+				this.fumu(mp);
+
+				// 主人公が敵を踏んだ状態にする
+				j.y = this.y;
+				j.vy = -320;
+				mp.j_jump_type = 1;
+				j.c = 110;
+				j.c1 = -4;
+				j.pt = 109;
+			} else {
+				// 主人公が死亡する
+				mp.jShinu(2);
+			}
+		}
+		// 主人公の攻撃とボスの当たり判定
+		if (mp.jm_kazu > 0 && this.c >= 100) {
+			for (let i = 0; i <= 8; i++) {
+				const characterobject = mp.co_jm[i];
+				if (characterobject.c < 100) continue;
+				if (
+					Math.abs(this.x - characterobject.x) < 34 &&
+					Math.abs(this.y - characterobject.y) < 30
+				) {
+					if (characterobject.c === 200) {
+						// グレネード
+						this.hitWithGrenade(mp, characterobject);
+					} else {
+						// グレネードではないものが当たった場合、消滅させる
+						characterobject.c = 0;
+						mp.jm_kazu--;
+						this.hitWithFireball(mp, characterobject);
+					}
+				}
+			}
+		}
+		// 主人公の攻撃としっぽの当たり判定
+		const tail_left = this.muki === 1 ? j.x + 16 : j.x - 32;
+		const tail_right = this.muki === 1 ? j.x + 63 : j.x + 16;
+		const tail_flag =
+			tail_left <= this.x + 47 &&
+			tail_right >= this.x - 16 &&
+			Math.abs(j.y - this.y) < 48;
+		// しっぽとボスが接触している
+		if (tail_flag) {
+			this.hitWithTail(mp);
 		}
 	}
 
@@ -1043,25 +1051,24 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 */
 	fumu(mp) {
-		const j = mp.co_j;
 		this.c4--;
-		if (this.c < 200) {
-			this.c = BOSS1_DAMAGE_LEFT;
-			this.pt = 1010;
-		} else if (this.c < 300) {
-			this.c = BOSS2_DAMAGE_LEFT;
-			this.pt = 1110;
-		} else {
-			this.c = BOSS3_DAMAGE_LEFT;
-			this.pt = 1210;
-		}
-		if (this.c4 === 1) {
-			// 右向き
-			// TODO: やっぱり定数を直接代入する
-			this.c += 5;
-			this.pt += 5;
-		}
 		this.c1 = 0;
+		// HP1のときは右向き
+		const direction = this.c4 === 1 ? 1 : 0;
+		switch (this.getBossNumber()) {
+			case 1:
+				this.c = direction ? BOSS1_DAMAGE_RIGHT : BOSS1_DAMAGE_LEFT;
+				this.pt = direction ? 1015 : 1010;
+				break;
+			case 2:
+				this.c = direction ? BOSS2_DAMAGE_RIGHT : BOSS2_DAMAGE_LEFT;
+				this.pt = direction ? 1115 : 1110;
+				break;
+			case 3:
+				this.c = direction ? BOSS3_DAMAGE_RIGHT : BOSS3_DAMAGE_LEFT;
+				this.pt = direction ? 1215 : 1210;
+				break;
+		}
 		mp.gs.rsAddSound(8);
 	}
 
@@ -1070,9 +1077,9 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject ファイヤーボール
 	 */
-	damageWithFireball(mp, characterobject) {
+	hitWithFireball(mp, characterobject) {
 		if (mp.boss_destroy_type === 2) {
-			// ファイアーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
+			// ファイヤーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
 			if (
 				this.c === BOSS1_STANDBY ||
 				this.c === BOSS2_STANDBY ||
@@ -1097,22 +1104,7 @@ class Boss extends CharacterObject {
 		if (mp.boss_hp <= 0) {
 			// 死亡
 			mp.boss_hp = 0;
-			this.c4 = 0;
-			this.c1 = 0;
-			if (this.c < 200) {
-				this.c = BOSS1_DAMAGE_LEFT;
-				this.pt = 1010;
-			} else if (this.c < 300) {
-				this.c = BOSS2_DAMAGE_LEFT;
-				this.pt = 1110;
-			} else {
-				this.c = BOSS3_DAMAGE_LEFT;
-				this.pt = 1210;
-			}
-			// TODO: 以下の二行は無意味な気がするので要調査
-			this.y -= 16;
-			if (this.c < 200 && mp.boss_destroy_type === 2) this.y += 16;
-			mp.gs.rsAddSound(8);
+			this.killNormalAttack(mp);
 		}
 
 		if (mp.boss_destroy_type === 2) {
@@ -1126,7 +1118,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject グレネード
 	 */
-	damageWithGrenade(mp, characterobject) {
+	hitWithGrenade(mp, characterobject) {
 		// グレネードでないなら処理しない
 		if (characterobject.c !== 200) return;
 		if (this.co_b.c < 100) return;
@@ -1137,30 +1129,17 @@ class Boss extends CharacterObject {
 		// ボスを倒す
 		// シューティングモードの場合
 		if (mp.j_tokugi === 14 || mp.j_tokugi === 15) {
-			this.c4 = 0;
-			this.c1 = 0;
-			this.y -= 16;
-			if (this.c < 200) {
-				this.c = BOSS1_DAMAGE_LEFT;
-				this.pt = 1010;
-			} else if (this.c < 300) {
-				this.c = BOSS2_DAMAGE_LEFT;
-				this.pt = 1110;
-			} else {
-				this.c = BOSS3_DAMAGE_LEFT;
-				this.pt = 1210;
-			}
-			mp.gs.rsAddSound(8);
+			this.killNormalAttack(mp);
 		} else {
 			this.killGrenade(mp, characterobject.vx < 0 ? 1 : 0);
 		}
 	}
 
 	/**
-	 * ボスと主人公のしっぽの当たり判定を行います
+	 * しっぽとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 */
-	damageWithTail(mp) {
+	hitWithTail(mp) {
 		// しっぽでボスにダメージを与えられない場合は処理しない
 		if (mp.boss_destroy_type !== 2) return;
 		if (mp.j_tail_ap_boss < 1 || mp.j_tail_ac !== 5) return;
@@ -1174,26 +1153,38 @@ class Boss extends CharacterObject {
 		if (mp.boss_hp <= 0) {
 			// 死亡
 			mp.boss_hp = 0;
-			this.c4 = 0;
-			this.c1 = 0;
-			if (this.c < 200) {
-				this.c = BOSS1_DAMAGE_LEFT;
-				this.pt = 1010;
-			} else if (this.c < 300) {
-				this.c = BOSS2_DAMAGE_LEFT;
-				this.pt = 1110;
-			} else {
-				this.c = BOSS3_DAMAGE_LEFT;
-				this.pt = 1210;
-			}
-			// TODO: 以下の二行は無意味な気がするので要調査
-			this.y -= 16;
-			if (this.c < 200 && mp.boss_destroy_type === 2) this.y += 16;
-			mp.gs.rsAddSound(8);
+			this.killNormalAttack(mp);
 		}
 
 		// ボスのHPゲージの値を更新する
 		this.showBossHPGauge(mp);
+	}
+
+	/**
+	 * ボスを殺します
+	 * (ファイヤーボール・しっぽの攻撃で倒された場合の処理)
+	 * @param {MainProgram} mp
+	 */
+	killNormalAttack(mp) {
+		// ファイヤーボール・しっぽの攻撃で倒される場合、ボスは常に左向き
+		this.c4 = 0;
+		this.c1 = 0;
+		this.y -= 16;
+		switch (this.getBossNumber()) {
+			case 1:
+				this.c = BOSS1_DAMAGE_LEFT;
+				this.pt = 1010;
+				break;
+			case 2:
+				this.c = BOSS2_DAMAGE_LEFT;
+				this.pt = 1110;
+				break;
+			case 3:
+				this.c = BOSS3_DAMAGE_LEFT;
+				this.pt = 1210;
+				break;
+		}
+		mp.gs.rsAddSound(8);
 	}
 
 	/**
@@ -1207,15 +1198,19 @@ class Boss extends CharacterObject {
 		this.c1 = 0;
 		this.muki = direction;
 		this.vx = this.muki ? -4 : 4;
-		if (this.c < 200) {
-			this.c = BOSS1_DYING_BY_GRENADE;
-			this.pt = this.muki ? 1005 : 1000;
-		} else if (this.c < 300) {
-			this.c = BOSS2_DYING_BY_GRENADE;
-			this.pt = this.muki ? 1105 : 1100;
-		} else {
-			this.c = BOSS3_DYING_BY_GRENADE;
-			this.pt = this.muki ? 1205 : 1200;
+		switch (this.getBossNumber()) {
+			case 1:
+				this.c = BOSS1_DYING_BY_GRENADE;
+				this.pt = this.muki ? 1005 : 1000;
+				break;
+			case 2:
+				this.c = BOSS2_DYING_BY_GRENADE;
+				this.pt = this.muki ? 1105 : 1100;
+				break;
+			case 3:
+				this.c = BOSS3_DYING_BY_GRENADE;
+				this.pt = this.muki ? 1205 : 1200;
+				break;
 		}
 		mp.gs.rsAddSound(9);
 	}
@@ -1247,7 +1242,7 @@ class Boss extends CharacterObject {
 		const boss_number = this.getBossNumber();
 		let param_name = "boss_name";
 		if (boss_number === 2) param_name = "boss2_name";
-		if (boss_number === 3) param_name = "boss3_name";
+		else if (boss_number === 3) param_name = "boss3_name";
 
 		const boss_name = mp.tdb.getValue(param_name);
 		const gauge_value = Math.floor((mp.boss_hp * 200) / mp.boss_hp_max);

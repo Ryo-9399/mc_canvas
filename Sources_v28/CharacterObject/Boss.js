@@ -55,61 +55,13 @@ class Boss extends CharacterObject {
 	 */
 
 	/**
-	 * フレームごとのボスの行動と当たり判定の処理を行う
+	 * フレームごとの処理を行う
 	 * @param {MainProgram} mp
 	 */
 	update(mp) {
 		if (this.x >= mp.maps.wx + 1024) return;
 		this.move(mp);
-		// 主人公とボスの当たり判定
-		const j = mp.co_j;
-		const hit_flag =
-			j.c >= 100 &&
-			j.c < 200 &&
-			this.c >= 100 &&
-			Math.abs(this.x - j.x) < 42 &&
-			j.y > this.y - 20 &&
-			j.y < this.y + 40;
-
-		if (hit_flag) {
-			// 主人公とボスが接触している
-			const fumu_flag = Math.abs(this.x - j.x) < 34 && j.vy > 0;
-			if (fumu_flag && this.isFumuable(mp)) {
-				// 主人公がボスにダメージを与える
-				this.fumu(mp);
-
-				// 主人公が敵を踏んだ状態にする
-				j.y = this.y;
-				j.vy = -320;
-				mp.j_jump_type = 1;
-				j.c = 110;
-				j.c1 = -4;
-				j.pt = 109;
-			} else {
-				// 主人公が死亡する
-				mp.jShinu(2);
-			}
-		}
-		// 主人公の攻撃とボスの当たり判定
-		if (mp.jm_kazu > 0 && this.c >= 100) {
-			for (let i = 0; i <= 1; i++) {
-				const characterobject = mp.co_jm[i];
-				if (characterobject.c < 100) continue;
-				if (
-					Math.abs(this.x - characterobject.x) < 34 &&
-					Math.abs(this.y - characterobject.y) < 30
-				) {
-					if (characterobject.c === 200) {
-						// グレネード
-						this.damageWithGrenade(mp, characterobject);
-					} else {
-						// グレネードではないものが当たった場合、消滅させる
-						characterobject.c = 0;
-						mp.jm_kazu--;
-					}
-				}
-			}
-		}
+		this.checkCollision(mp);
 	}
 
 	/**
@@ -330,6 +282,62 @@ class Boss extends CharacterObject {
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
+		}
+	}
+
+	/**
+	 * 当たり判定処理
+	 * @param {MainProgram} mp
+	 */
+	checkCollision(mp) {
+		// 主人公とボスの当たり判定
+		const j = mp.co_j;
+		const hit_flag =
+			j.c >= 100 &&
+			j.c < 200 &&
+			this.c >= 100 &&
+			Math.abs(this.x - j.x) < 42 &&
+			j.y > this.y - 20 &&
+			j.y < this.y + 40;
+
+		if (hit_flag) {
+			// 主人公とボスが接触している
+			const fumu_flag = Math.abs(this.x - j.x) < 34 && j.vy > 0;
+			if (fumu_flag && this.isFumuable(mp)) {
+				// 主人公がボスにダメージを与える
+				this.fumu(mp);
+
+				// 主人公が敵を踏んだ状態にする
+				j.y = this.y;
+				j.vy = -320;
+				mp.j_jump_type = 1;
+				j.c = 110;
+				j.c1 = -4;
+				j.pt = 109;
+			} else {
+				// 主人公が死亡する
+				mp.jShinu(2);
+			}
+		}
+		// 主人公の攻撃とボスの当たり判定
+		if (mp.jm_kazu > 0 && this.c >= 100) {
+			for (let i = 0; i <= 1; i++) {
+				const characterobject = mp.co_jm[i];
+				if (characterobject.c < 100) continue;
+				if (
+					Math.abs(this.x - characterobject.x) < 34 &&
+					Math.abs(this.y - characterobject.y) < 30
+				) {
+					if (characterobject.c === 200) {
+						// グレネード
+						this.hitWithGrenade(mp, characterobject);
+					} else {
+						// グレネードではないものが当たった場合、消滅させる
+						characterobject.c = 0;
+						mp.jm_kazu--;
+					}
+				}
+			}
 		}
 	}
 
@@ -639,25 +647,24 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 */
 	fumu(mp) {
-		const j = mp.co_j;
 		this.c4--;
-		if (this.c < 200) {
-			this.c = BOSS1_DAMAGE_LEFT;
-			this.pt = 1010;
-		} else if (this.c < 300) {
-			this.c = BOSS2_DAMAGE_LEFT;
-			this.pt = 1110;
-		} else {
-			this.c = BOSS3_DAMAGE_LEFT;
-			this.pt = 1210;
-		}
-		if (this.c4 === 1) {
-			// 右向き
-			// TODO: やっぱり定数を直接代入する
-			this.c += 5;
-			this.pt += 5;
-		}
 		this.c1 = 0;
+		// HP1のときは右向き
+		const direction = this.c4 === 1 ? 1 : 0;
+		switch (this.getBossNumber()) {
+			case 1:
+				this.c = direction ? BOSS1_DAMAGE_RIGHT : BOSS1_DAMAGE_LEFT;
+				this.pt = direction ? 1015 : 1010;
+				break;
+			case 2:
+				this.c = direction ? BOSS2_DAMAGE_RIGHT : BOSS2_DAMAGE_LEFT;
+				this.pt = direction ? 1115 : 1110;
+				break;
+			case 3:
+				this.c = direction ? BOSS3_DAMAGE_RIGHT : BOSS3_DAMAGE_LEFT;
+				this.pt = direction ? 1215 : 1210;
+				break;
+		}
 	}
 
 	/**
@@ -665,7 +672,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject グレネード
 	 */
-	damageWithGrenade(mp, characterobject) {
+	hitWithGrenade(mp, characterobject) {
 		// グレネードでないなら処理しない
 		if (characterobject.c !== 200) return;
 		if (this.co_b.c < 100) return;
@@ -688,16 +695,38 @@ class Boss extends CharacterObject {
 		this.c1 = 0;
 		this.muki = direction;
 		this.vx = this.muki ? -4 : 4;
-		if (this.c < 200) {
-			this.c = BOSS1_DYING_BY_GRENADE;
-			this.pt = this.muki ? 1005 : 1000;
-		} else if (this.c < 300) {
-			this.c = BOSS2_DYING_BY_GRENADE;
-			this.pt = this.muki ? 1105 : 1100;
-		} else {
-			this.c = BOSS3_DYING_BY_GRENADE;
-			this.pt = this.muki ? 1205 : 1200;
+		switch (this.getBossNumber()) {
+			case 1:
+				this.c = BOSS1_DYING_BY_GRENADE;
+				this.pt = this.muki ? 1005 : 1000;
+				break;
+			case 2:
+				this.c = BOSS2_DYING_BY_GRENADE;
+				this.pt = this.muki ? 1105 : 1100;
+				break;
+			case 3:
+				this.c = BOSS3_DYING_BY_GRENADE;
+				this.pt = this.muki ? 1205 : 1200;
+				break;
 		}
+	}
+
+	/**
+	 * ボスの種類を返します
+	 * 現在のボスの状態をもとに判定します
+	 * 1: グラーダ
+	 * 2: カイオール
+	 * 3: センクウザ
+	 * -1: 不明
+	 */
+	getBossNumber() {
+		if (this.c >= 60 && this.c < 70) return 1;
+		if (this.c >= 100 && this.c < 200) return 1;
+		if (this.c >= 70 && this.c < 80) return 2;
+		if (this.c >= 200 && this.c < 300) return 2;
+		if (this.c >= 80 && this.c < 90) return 3;
+		if (this.c >= 300 && this.c < 400) return 3;
+		return -1;
 	}
 }
 
