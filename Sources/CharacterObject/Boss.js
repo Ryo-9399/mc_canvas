@@ -1073,47 +1073,6 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * ファイヤーボールとボスが接触した場合の処理を行います
-	 * @param {MainProgram} mp
-	 * @param {CharacterObject} characterobject ファイヤーボール
-	 */
-	hitWithFireball(mp, characterobject) {
-		if (mp.boss_destroy_type === 2) {
-			// ファイヤーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
-			if (
-				this.c === BOSS1_STANDBY ||
-				this.c === BOSS2_STANDBY ||
-				this.c === BOSS3_STANDBY
-			)
-				return;
-		} else {
-			// 主人公がジャンプできないような特技を持たない場合はダメージを与えられない
-			if (
-				!(
-					mp.j_tokugi === 10 ||
-					(mp.j_tokugi >= 12 && mp.j_tokugi <= 15)
-				)
-			)
-				return;
-		}
-		// ボスがバリアを張っている場合はダメージを与えられない
-		if (this.pt === 1250 || this.pt === 1255) return;
-
-		// ボスにダメージを与える
-		mp.boss_hp--;
-		if (mp.boss_hp <= 0) {
-			// 死亡
-			mp.boss_hp = 0;
-			this.killNormalAttack(mp);
-		}
-
-		if (mp.boss_destroy_type === 2) {
-			// ボスのHPゲージの値を更新する
-			this.showBossHPGauge(mp);
-		}
-	}
-
-	/**
 	 * グレネードとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject グレネード
@@ -1132,6 +1091,48 @@ class Boss extends CharacterObject {
 			this.killNormalAttack(mp);
 		} else {
 			this.killGrenade(mp, characterobject.vx < 0 ? 1 : 0);
+		}
+	}
+
+	/**
+	 * ファイヤーボールとボスが接触した場合の処理を行います
+	 * @param {MainProgram} mp
+	 * @param {CharacterObject} characterobject ファイヤーボール
+	 */
+	hitWithFireball(mp, characterobject) {
+		// ボスがバリアを張っている場合はダメージを与えられない
+		if (this.pt === 1250 || this.pt === 1255) return;
+
+		if (mp.boss_destroy_type === 2) {
+			// ファイヤーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
+			if (
+				this.c === BOSS1_STANDBY ||
+				this.c === BOSS2_STANDBY ||
+				this.c === BOSS3_STANDBY
+			)
+				return;
+		} else {
+			// 主人公がジャンプできないような特技を持たない場合はダメージを与えられない
+			if (
+				!(
+					mp.j_tokugi === 10 ||
+					(mp.j_tokugi >= 12 && mp.j_tokugi <= 15)
+				)
+			)
+				return;
+		}
+
+		// ボスにダメージを与える
+		mp.boss_hp--;
+		if (mp.boss_hp <= 0) {
+			// 死亡
+			mp.boss_hp = 0;
+			this.killNormalAttack(mp);
+		}
+
+		if (mp.boss_destroy_type === 2) {
+			// ボスのHPゲージの値を更新する
+			this.showBossHPGauge(mp);
 		}
 	}
 
@@ -1216,12 +1217,59 @@ class Boss extends CharacterObject {
 	}
 
 	/**
+	 * ボスのHPを設定します
+	 * @param {MainProgram} mp
+	 * @param {number} hp 新しいHP
+	 * @returns {boolean} 設定に成功したかどうか
+	 * @see {@link MasaoJSS#setBossHP}
+	 */
+	setHP(mp, hp) {
+		if (this.c < 100) return false;
+
+		if (mp.boss_destroy_type === 2) {
+			// ファイヤーボールとしっぽで倒すボスの場合、登場中はHPの設定ができない
+			// ただし戻り値はtrueとなる
+			// TODO: もともとあったバグかと思われるので修正してよいかも
+			if (
+				this.c === BOSS1_STANDBY ||
+				this.c === BOSS2_STANDBY ||
+				this.c === BOSS3_STANDBY
+			)
+				return true;
+		} else {
+			// 主人公がジャンプできないような特技を持たない場合はHPの設定ができない
+			if (
+				!(
+					mp.j_tokugi === 10 ||
+					(mp.j_tokugi >= 12 && mp.j_tokugi <= 15)
+				)
+			)
+				return false;
+		}
+
+		// ボスのHPを設定する
+		mp.boss_hp = hp;
+		if (mp.boss_hp <= 0) {
+			// 死亡
+			mp.boss_hp = 0;
+			this.killNormalAttack(mp);
+		}
+
+		if (mp.boss_destroy_type === 2) {
+			// ボスのHPゲージの値を更新する
+			this.showBossHPGauge(mp);
+		}
+		return true;
+	}
+
+	/**
 	 * ボスの種類を返します
 	 * 現在のボスの状態をもとに判定します
 	 * 1: グラーダ
 	 * 2: カイオール
 	 * 3: センクウザ
 	 * -1: 不明
+	 * @returns {number}
 	 */
 	getBossNumber() {
 		if (this.c >= 60 && this.c < 70) return 1;
@@ -1250,6 +1298,27 @@ class Boss extends CharacterObject {
 			gauge_value,
 			`${boss_name}  ${mp.boss_hp}/${mp.boss_hp_max}`
 		);
+	}
+
+	/**
+	 * this.ptの値をもとにボスの向きを取得します
+	 * @returns {number} ボスの向き 0:左向き 1:右向き
+	 */
+	getBossDirectionFromPattern() {
+		switch (this.pt) {
+			case 1005:
+			case 1015:
+			case 1105:
+			case 1106:
+			case 1115:
+			case 1205:
+			case 1215:
+			case 1255:
+			case 1256:
+				return 1;
+			default:
+				return 0;
+		}
 	}
 }
 

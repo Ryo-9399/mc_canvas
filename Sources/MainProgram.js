@@ -971,82 +971,9 @@ MainProgram.prototype.getBossHP = function() {
  * @returns {boolean} 設定に成功したかどうか
  * @see {@link MasaoJSS#setBossHP}
  */
-MainProgram.prototype.setBossHP = function(i) {
+MainProgram.prototype.setBossHP = function(hp) {
 	if (this.ml_mode < 100 || this.ml_mode >= 200) return false;
-	if (this.co_b.c < 100) return false;
-	if (
-		this.j_tokugi == 10 ||
-		(this.j_tokugi >= 12 && this.j_tokugi <= 15) ||
-		this.boss_destroy_type == 2
-	) {
-		if (
-			this.boss_destroy_type != 2 ||
-			(this.co_b.c != 100 && this.co_b.c != 200 && this.co_b.c != 300)
-		)
-			this.boss_hp = i;
-		if (this.boss_hp <= 0) {
-			this.boss_hp = 0;
-			if (this.co_b.c < 200) {
-				this.co_b.c4 = 0;
-				this.co_b.c = 60;
-				this.co_b.c1 = 0;
-				this.co_b.pt = 1010;
-				if (this.boss_destroy_type != 2) this.co_b.y -= 16;
-				this.gs.rsAddSound(8);
-			} else if (this.co_b.c < 300) {
-				this.co_b.c4 = 0;
-				this.co_b.c = 70;
-				this.co_b.c1 = 0;
-				this.co_b.pt = 1110;
-				this.co_b.y -= 16;
-				this.gs.rsAddSound(8);
-			} else {
-				this.co_b.c4 = 0;
-				this.co_b.c = 80;
-				this.co_b.c1 = 0;
-				this.co_b.pt = 1210;
-				this.co_b.y -= 16;
-				this.gs.rsAddSound(8);
-			}
-		}
-	} else {
-		return false;
-	}
-	if (
-		this.boss_destroy_type == 2 &&
-		(this.boss_destroy_type != 2 ||
-			(this.co_b.c != 100 && this.co_b.c != 200 && this.co_b.c != 300))
-	) {
-		var j = Math.floor((this.boss_hp * 200) / this.boss_hp_max);
-		if ((this.co_b.c >= 100 && this.co_b.c < 200) || this.co_b.c == 60)
-			this.showGauge(
-				String(j),
-				this.tdb.getValue("boss_name") +
-					"  " +
-					this.boss_hp +
-					"/" +
-					this.boss_hp_max
-			);
-		else if ((this.co_b.c >= 200 && this.co_b.c < 300) || this.co_b.c == 70)
-			this.showGauge(
-				String(j),
-				this.tdb.getValue("boss2_name") +
-					"  " +
-					this.boss_hp +
-					"/" +
-					this.boss_hp_max
-			);
-		else
-			this.showGauge(
-				String(j),
-				this.tdb.getValue("boss3_name") +
-					"  " +
-					this.boss_hp +
-					"/" +
-					this.boss_hp_max
-			);
-	}
-	return true;
+	return this.co_b.setHP(this, hp);
 };
 
 /**
@@ -1058,20 +985,7 @@ MainProgram.prototype.setBossHP = function(i) {
  */
 MainProgram.prototype.getBossDirection = function() {
 	if (this.ml_mode < 100 || this.ml_mode >= 200) return 0;
-	switch (this.co_b.pt) {
-		case 1005:
-		case 1015:
-		case 1105:
-		case 1106:
-		case 1115:
-		case 1205:
-		case 1215:
-		case 1255:
-		case 1256:
-			return 1;
-		default:
-			return 0;
-	}
+	this.co_b.getBossDirectionFromPattern();
 };
 
 /**
