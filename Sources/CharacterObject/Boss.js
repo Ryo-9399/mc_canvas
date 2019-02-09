@@ -87,19 +87,19 @@ class Boss extends CharacterObject {
 				if (this.vy > 28) this.vy = 28;
 				this.x += this.vx;
 				this.y += this.vy;
-				if (mp.boss_destroy_type == 2) {
+				if (mp.boss_destroy_type === 2) {
 					mp.boss_hp = 0;
-					showBossHPGauge(mp, 1);
+					this.showBossHPGauge(mp, 1);
 				}
 				if (this.y >= mp.maps.wy + 320 + 16) {
 					this.c = DYING;
 					this.c1 = 0;
-					if (mp.j_tokugi == 14 || mp.j_tokugi == 15)
+					if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
 						mp.addScore(100);
 					else mp.addScore(10);
-					if (mp.boss_destroy_type == 2) mp.hideGauge();
+					if (mp.boss_destroy_type === 2) mp.hideGauge();
 				}
-				if (this.muki == 1) this.pt = 1005;
+				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
 				break;
 
@@ -118,19 +118,19 @@ class Boss extends CharacterObject {
 				if (this.vy > 28) this.vy = 28;
 				this.x += this.vx;
 				this.y += this.vy;
-				if (mp.boss_destroy_type == 2) {
+				if (mp.boss_destroy_type === 2) {
 					mp.boss_hp = 0;
-					showBossHPGauge(mp, 2);
+					this.showBossHPGauge(mp, 2);
 				}
 				if (this.y >= mp.maps.wy + 320 + 16) {
 					this.c = DYING;
 					this.c1 = 0;
-					if (mp.j_tokugi == 14 || mp.j_tokugi == 15)
+					if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
 						mp.addScore(100);
 					else mp.addScore(10);
-					if (mp.boss_destroy_type == 2) mp.hideGauge();
+					if (mp.boss_destroy_type === 2) mp.hideGauge();
 				}
-				if (this.muki == 1) this.pt = 1105;
+				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
 				break;
 
@@ -149,30 +149,30 @@ class Boss extends CharacterObject {
 				if (this.vy > 28) this.vy = 28;
 				this.x += this.vx;
 				this.y += this.vy;
-				if (mp.boss_destroy_type == 2) {
+				if (mp.boss_destroy_type === 2) {
 					mp.boss_hp = 0;
-					showBossHPGauge(mp, 3);
+					this.showBossHPGauge(mp, 3);
 				}
 				if (this.y >= mp.maps.wy + 320 + 16) {
 					this.c = DYING;
 					this.c1 = 0;
-					if (mp.j_tokugi == 14 || mp.j_tokugi == 15)
+					if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
 						mp.addScore(100);
 					else mp.addScore(10);
-					if (mp.boss_destroy_type == 2) mp.hideGauge();
+					if (mp.boss_destroy_type === 2) mp.hideGauge();
 				}
-				if (this.muki == 1) this.pt = 1205;
+				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
 				break;
 
 			case BOSS1_STANDBY:
-				if (mp.sl_step == 2 || mp.sl_step == 3)
-					if (mp.boss_destroy_type == 2) {
+				if (mp.sl_step === 2 || mp.sl_step === 3)
+					if (mp.boss_destroy_type === 2) {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
 
-							showBossHPGauge(mp, 1);
+							this.showBossHPGauge(mp, 1);
 							this.c = BOSS1_ATTACK_LEFT;
 							this.c1 = 0;
 						}
@@ -214,12 +214,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS2_STANDBY:
-				if (mp.sl_step == 2 || mp.sl_step == 3)
-					if (mp.boss_destroy_type == 2) {
+				if (mp.sl_step === 2 || mp.sl_step === 3)
+					if (mp.boss_destroy_type === 2) {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							showBossHPGauge(mp, 2);
+							this.showBossHPGauge(mp, 2);
 							this.c = BOSS2_ATTACK_LEFT;
 							this.c1 = 0;
 						}
@@ -233,13 +233,13 @@ class Boss extends CharacterObject {
 			case BOSS2_ATTACK_LEFT:
 				this.boss2Attack(mp, 0);
 				this.pt = 1100;
-				if (mp.boss2_type == 6) this.pt = 1101;
+				if (mp.boss2_type === 6) this.pt = 1101;
 				break;
 
 			case BOSS2_ATTACK_RIGHT:
 				this.boss2Attack(mp, 1);
 				this.pt = 1105;
-				if (mp.boss2_type == 6) this.pt = 1106;
+				if (mp.boss2_type === 6) this.pt = 1106;
 				break;
 
 			case BOSS2_MOVING_LEFT:
@@ -263,12 +263,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_STANDBY:
-				if (mp.sl_step == 2 || mp.sl_step == 3) {
-					if (mp.boss_destroy_type == 2) {
+				if (mp.sl_step === 2 || mp.sl_step === 3) {
+					if (mp.boss_destroy_type === 2) {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							showBossHPGauge(mp, 3);
+							this.showBossHPGauge(mp, 3);
 							if (
 								(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
 								(mp.boss3_type >= 6 && mp.boss3_type <= 8)
@@ -519,9 +519,6 @@ class Boss extends CharacterObject {
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss2Attack(mp, direction) {
-		// 左向きなら1 右向きなら-1
-		const mirror = direction === 1 ? -1 : 1;
-
 		mp.boss_attack_mode = true;
 		this.c1++;
 		if (mp.boss2_type === 2) {
@@ -933,7 +930,6 @@ class Boss extends CharacterObject {
 	/**
 	 * 踏まれて潰れている最中のボスの処理
 	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 * @param {number} return_state ダメージから回復後に復帰するボスの状態
 	 */
 	updateDamage(mp, return_state) {

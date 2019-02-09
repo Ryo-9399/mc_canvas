@@ -86,7 +86,7 @@ class Boss extends CharacterObject {
 					this.c1 = 0;
 					mp.addScore(10);
 				}
-				if (this.muki == 1) this.pt = 1005;
+				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
 				break;
 
@@ -106,11 +106,11 @@ class Boss extends CharacterObject {
 				this.x += this.vx;
 				this.y += this.vy;
 				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = 40;
+					this.c = DYING;
 					this.c1 = 0;
 					mp.addScore(10);
 				}
-				if (this.muki == 1) this.pt = 1105;
+				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
 				break;
 
@@ -134,12 +134,12 @@ class Boss extends CharacterObject {
 					this.c1 = 0;
 					mp.addScore(10);
 				}
-				if (this.muki == 1) this.pt = 1205;
+				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
 				break;
 
 			case BOSS1_STANDBY:
-				if (mp.sl_step == 2 || mp.sl_step == 3) {
+				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					this.c = BOSS1_ATTACK_LEFT;
 					this.c1 = 0;
 				}
@@ -177,7 +177,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS2_STANDBY:
-				if (mp.sl_step == 2 || mp.sl_step == 3) {
+				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					this.c = BOSS2_ATTACK_LEFT;
 					this.c1 = 0;
 				}
@@ -215,7 +215,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_STANDBY:
-				if (mp.sl_step == 2 || mp.sl_step == 3) {
+				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss3_type >= 2 && mp.boss3_type <= 4) {
 						this.c = BOSS3_TACKLE_ATTACK_LEFT;
 						this.vy = -24;
@@ -545,7 +545,6 @@ class Boss extends CharacterObject {
 	/**
 	 * 踏まれて潰れている最中のボスの処理
 	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 * @param {number} return_state ダメージから回復後に復帰するボスの状態
 	 */
 	updateDamage(mp, return_state) {
