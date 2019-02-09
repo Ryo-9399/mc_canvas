@@ -77,6 +77,14 @@ class Boss extends CharacterObject {
 			if (fumu_flag && this.isFumuable(mp)) {
 				// 主人公がボスにダメージを与える
 				this.fumu(mp);
+
+				// 主人公が敵を踏んだ状態にする
+				j.y = this.y;
+				j.vy = -320;
+				mp.j_jump_type = 1;
+				j.c = 110;
+				j.c1 = -4;
+				j.pt = 109;
 			} else {
 				// 主人公が死亡する
 				mp.jShinu(2);
@@ -643,14 +651,6 @@ class Boss extends CharacterObject {
 			this.pt += 5;
 		}
 		this.c1 = 0;
-
-		// 主人公が敵を踏んだ状態にする
-		j.y = this.y;
-		j.vy = -320;
-		mp.j_jump_type = 1;
-		j.c = 110;
-		j.c1 = -4;
-		j.pt = 109;
 	}
 
 	/**

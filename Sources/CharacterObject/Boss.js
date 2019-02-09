@@ -79,6 +79,14 @@ class Boss extends CharacterObject {
 			if (fumu_flag && this.isFumuable(mp)) {
 				// 主人公がボスにダメージを与える
 				this.fumu(mp);
+
+				// 主人公が敵を踏んだ状態にする
+				j.y = this.y;
+				j.vy = -320;
+				mp.j_jump_type = 1;
+				j.c = 110;
+				j.c1 = -4;
+				j.pt = 109;
 			} else {
 				// 主人公が死亡する
 				mp.jShinu(2);
@@ -972,7 +980,6 @@ class Boss extends CharacterObject {
 	/**
 	 * グレネードで吹き飛んでいる状態の処理
 	 * @param {MainProgram} mp
-	 * @param {number} boss_type ボスの種類 1,2,3のいずれか
 	 */
 	dyingByGrenade(mp) {
 		// 落下していく
@@ -1039,14 +1046,6 @@ class Boss extends CharacterObject {
 		}
 		this.c1 = 0;
 		mp.gs.rsAddSound(8);
-
-		// 主人公が敵を踏んだ状態にする
-		j.y = this.y;
-		j.vy = -320;
-		mp.j_jump_type = 1;
-		j.c = 110;
-		j.c1 = -4;
-		j.pt = 109;
 	}
 
 	/**
@@ -1161,6 +1160,8 @@ class Boss extends CharacterObject {
 
 		const j = mp.co_j;
 		// 当たり判定
+		const tail_left = this.muki === 1 ? j.x + 16 : j.x - 32;
+		const tail_right = this.muki === 1 ? j.x + 63 : j.x + 16;
 		const damage_flag =
 			tail_left <= this.x + 47 &&
 			tail_right >= this.x - 16 &&
