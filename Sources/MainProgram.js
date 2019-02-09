@@ -20475,20 +20475,7 @@ MainProgram.prototype.jmMove = function() {
 						// グレネードの爆風でボスを倒す
 						if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 							// シューティングモード
-							this.co_b.c4 = 0;
-							this.co_b.c1 = 0;
-							this.co_b.y -= 16;
-							if (this.co_b.c < 200) {
-								this.co_b.c = 60;
-								this.co_b.pt = 1010;
-							} else if (this.co_b.c < 300) {
-								this.co_b.c = 70;
-								this.co_b.pt = 1110;
-							} else {
-								this.co_b.c = 80;
-								this.co_b.pt = 1210;
-							}
-							this.gs.rsAddSound(8);
+							this.co_b.killNormalAttack(this);
 						} else {
 							this.co_b.killGrenade(
 								this,
@@ -20572,20 +20559,7 @@ MainProgram.prototype.jmMove = function() {
 					// 左向きエネルギー砲でボスを倒す
 					if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 						// シューティングモード
-						this.co_b.c4 = 0;
-						this.co_b.c1 = 0;
-						this.co_b.y -= 16;
-						if (this.co_b.c < 200) {
-							this.co_b.c = 60;
-							this.co_b.pt = 1010;
-						} else if (this.co_b.c < 300) {
-							this.co_b.c = 70;
-							this.co_b.pt = 1110;
-						} else {
-							this.co_b.c = 80;
-							this.co_b.pt = 1210;
-						}
-						this.gs.rsAddSound(8);
+						this.co_b.killNormalAttack(this);
 					} else {
 						this.co_b.killGrenade(this, 1);
 					}
@@ -20666,20 +20640,7 @@ MainProgram.prototype.jmMove = function() {
 					// 右向きエネルギー砲でボスを倒す
 					if (this.j_tokugi == 14 || this.j_tokugi == 15) {
 						// シューティングモード
-						this.co_b.c4 = 0;
-						this.co_b.c1 = 0;
-						this.co_b.y -= 16;
-						if (this.co_b.c < 200) {
-							this.co_b.c = 60;
-							this.co_b.pt = 1010;
-						} else if (this.co_b.c < 300) {
-							this.co_b.c = 70;
-							this.co_b.pt = 1110;
-						} else {
-							this.co_b.c = 80;
-							this.co_b.pt = 1210;
-						}
-						this.gs.rsAddSound(8);
+						this.co_b.killNormalAttack(this);
 					} else {
 						this.co_b.killGrenade(this, 0);
 					}
