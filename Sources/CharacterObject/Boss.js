@@ -708,12 +708,12 @@ class Boss extends CharacterObject {
 	/**
 	 * バブル光線
 	 * @param {MainProgram} mp
-	 * @param {number} direction ずらす角度(度数法)
+	 * @param {number} degree ずらす角度(度数法)
 	 */
-	boss2BubbleBeam(mp, direction) {
+	boss2BubbleBeam(mp, degree) {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
-			const d = ((i * 45 + direction) * 3.14) / 180;
+			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
 			const cos = Math.floor(Math.cos(d) * 8);
 			const sin = -Math.floor(Math.sin(d) * 8);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
@@ -741,75 +741,28 @@ class Boss extends CharacterObject {
 		}
 
 		let rad = null;
-		let attacks = [];
-		// TODO: もうちょっとだけましにしたい
-		if (direction !== 1) {
-			// 左向き
-			if (this.c1 <= 0) {
-				rad = 3.1400001049041748;
-			} else if (this.c1 <= 100) {
-				attacks = [[40, 220], [70, 250], [90, 280]];
-			} else if (this.c1 <= 200) {
-				attacks = [
-					[80, 260],
-					[60, 240],
-					[30, 210],
-					[0, 180],
-					[-40, 140],
-					[-70, 110],
-					[-100, 80]
-				];
-			} else if (this.c1 <= 300) {
-				attacks = [
-					[-60, 120],
-					[-30, 150],
-					[0, 180],
-					[30, 210],
-					[60, 240],
-					[90, 270]
-				];
-			} else {
-				attacks = [
-					[60, 240],
-					[30, 210],
-					[0, 180],
-					[-30, 150],
-					[-60, 120],
-					[-90, 90]
-				];
-			}
+		if (this.c1 <= 0) {
+			rad = direction !== 1 ? 3.14 : 0;
 		} else {
-			// 右向き
-			if (this.c1 <= 0) {
-				rad = 0.0;
-			} else if (this.c1 <= 100) {
-				attacks = [[-40, 320], [-70, 290], [-90, 260]];
+			let attack_counts = [];
+			let degrees = [];
+			if (this.c1 <= 100) {
+				attack_counts = [40, 70, 90];
+				degrees = [40, 70, 100];
 			} else if (this.c1 <= 200) {
-				attacks = [[-40, 320], [-70, 290], [-90, 260]];
+				degrees = attack_counts = [80, 60, 30, 0, -40, -70, -100];
 			} else if (this.c1 <= 300) {
-				attacks = [
-					[60, 60],
-					[30, 30],
-					[0, 0],
-					[-30, 330],
-					[-60, 300],
-					[-90, 270]
-				];
+				degrees = attack_counts = [-60, -30, 0, 30, 60, 90];
 			} else {
-				attacks = [
-					[-60, 300],
-					[-30, 330],
-					[0, 0],
-					[30, 30],
-					[60, 60],
-					[90, 90]
-				];
+				degrees = attack_counts = [60, 30, 0, -30, -60, -90];
 			}
-		}
-		for (const [count, degree] of attacks) {
-			if (this.c2 === count) {
-				rad = (normalizeDegree(degree) * 3.14) / 180;
-				break;
+			for (const [count, degree] of zip(attack_counts, degrees)) {
+				// 左向きの場合は角度に180度足す
+				const dd = direction !== 1 ? 180 : 0;
+				if (this.c2 === count * mirror) {
+					rad = (normalizeDegree(degree * mirror + dd) * 3.14) / 180;
+					break;
+				}
 			}
 		}
 		if (rad !== null) {

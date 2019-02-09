@@ -10,6 +10,12 @@ export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
 
 /**
+ * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
+ * @param {number} degree
+ */
+const normalizeDegree = degree => ((degree % 360) + 360) % 360;
+
+/**
  * 長さが同じ配列をまとめる
  * [1,2,3],[4,5,6]=>[[1,4],[2,5],[3,6]]
  * @param {Array} a
@@ -415,12 +421,12 @@ class Boss extends CharacterObject {
 	/**
 	 * バブル光線
 	 * @param {MainProgram} mp
-	 * @param {number} direction ずらす角度(度数法)
+	 * @param {number} degree ずらす角度(度数法)
 	 */
-	boss2BubbleBeam(mp, direction) {
+	boss2BubbleBeam(mp, degree) {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
-			const d = ((i * 45 + direction) * 3.14) / 180;
+			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
 			const cos = Math.floor(Math.cos(d) * 8);
 			const sin = -Math.floor(Math.sin(d) * 8);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
