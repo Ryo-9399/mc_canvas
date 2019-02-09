@@ -631,59 +631,71 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * 主人公の攻撃とボスとの当たり判定処理を行います
+	 * 主人公の攻撃とボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
 	 */
-	checkDamageWithPlayerAttack(mp, characterobject) {
+	damageWithPlayerAttack(mp, characterobject) {
 		if (characterobject.c == 200) {
-			characterobject.c = 50;
-			characterobject.c1 = 1;
-			characterobject.c2 = 20;
-			if (mp.grenade_type == 1 || mp.grenade_type == 5)
-				if (this.c < 200) {
-					this.c = 67;
-					this.vy = -24;
-					this.c1 = 0;
-					if (characterobject.vx < 0) {
-						this.muki = 1;
-						this.pt = 1005;
-						this.vx = -4;
-					} else {
-						this.muki = 0;
-						this.pt = 1000;
-						this.vx = 4;
-					}
-				} else if (this.c < 300) {
-					this.c = 77;
-					this.vy = -24;
-					this.c1 = 0;
-					if (characterobject.vx < 0) {
-						this.muki = 1;
-						this.pt = 1105;
-						this.vx = -4;
-					} else {
-						this.muki = 0;
-						this.pt = 1100;
-						this.vx = 4;
-					}
-				} else {
-					this.c = 87;
-					this.vy = -24;
-					this.c1 = 0;
-					if (characterobject.vx < 0) {
-						this.muki = 1;
-						this.pt = 1205;
-						this.vx = -4;
-					} else {
-						this.muki = 0;
-						this.pt = 1200;
-						this.vx = 4;
-					}
-				}
+			// グレネード
+			this.damageWithGrenade(mp, characterobject);
 		} else {
 			characterobject.c = 0;
 			mp.jm_kazu--;
+		}
+	}
+	/**
+	 * グレネードとボスが接触した場合の処理を行います
+	 * @param {MainProgram} mp
+	 * @param {CharacterObject} characterobject グレネード
+	 */
+	damageWithGrenade(mp, characterobject) {
+		// グレネードでないなら処理しない
+		if (characterobject.c !== 200) return;
+		characterobject.c = 50;
+		characterobject.c1 = 1;
+		characterobject.c2 = 20;
+		// ボスを倒せるもののみ判定する
+		if (mp.grenade_type != 1 && mp.grenade_type != 5) return;
+		if (this.c < 200) {
+			this.c = 67;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1005;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1000;
+				this.vx = 4;
+			}
+		} else if (this.c < 300) {
+			this.c = 77;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1105;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1100;
+				this.vx = 4;
+			}
+		} else {
+			this.c = 87;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1205;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1200;
+				this.vx = 4;
+			}
 		}
 	}
 }

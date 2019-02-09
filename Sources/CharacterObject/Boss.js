@@ -1025,88 +1025,14 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * 主人公の攻撃とボスとの当たり判定処理を行います
+	 * 主人公の攻撃とボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
 	 */
-	checkDamageWithPlayerAttack(mp, characterobject) {
+	damageWithPlayerAttack(mp, characterobject) {
 		if (characterobject.c == 200) {
-			characterobject.c = 50;
-			characterobject.c1 = 1;
-			characterobject.c2 = 20;
-			if (mp.grenade_type != 1 && mp.grenade_type != 5) return;
-			if (mp.j_tokugi == 14 || mp.j_tokugi == 15) {
-				if (this.c < 200) {
-					this.c4 = 0;
-					this.c = 60;
-					this.c1 = 0;
-					this.pt = 1010;
-					this.y -= 16;
-					mp.gs.rsAddSound(8);
-					return;
-				}
-				if (this.c < 300) {
-					this.c4 = 0;
-					this.c = 70;
-					this.c1 = 0;
-					this.pt = 1110;
-					this.y -= 16;
-					mp.gs.rsAddSound(8);
-				} else {
-					this.c4 = 0;
-					this.c = 80;
-					this.c1 = 0;
-					this.pt = 1210;
-					this.y -= 16;
-					mp.gs.rsAddSound(8);
-				}
-				return;
-			}
-			if (this.c < 200) {
-				this.c = 67;
-				this.vy = -24;
-				this.c1 = 0;
-				if (characterobject.vx < 0) {
-					this.muki = 1;
-					this.pt = 1005;
-					this.vx = -4;
-				} else {
-					this.muki = 0;
-					this.pt = 1000;
-					this.vx = 4;
-				}
-				mp.gs.rsAddSound(9);
-				return;
-			}
-			if (this.c < 300) {
-				this.c = 77;
-				this.vy = -24;
-				this.c1 = 0;
-				if (characterobject.vx < 0) {
-					this.muki = 1;
-					this.pt = 1105;
-					this.vx = -4;
-				} else {
-					this.muki = 0;
-					this.pt = 1100;
-					this.vx = 4;
-				}
-				mp.gs.rsAddSound(9);
-				return;
-			}
-			this.c = 87;
-			this.vy = -24;
-			this.c1 = 0;
-			if (characterobject.vx < 0) {
-				this.muki = 1;
-				this.pt = 1205;
-				this.vx = -4;
-			} else {
-				this.muki = 0;
-				this.pt = 1200;
-				this.vx = 4;
-			}
-			mp.gs.rsAddSound(9);
+			// グレネード
+			this.damageWithGrenade(mp, characterobject);
 			return;
 		}
 		characterobject.c = 0;
@@ -1188,6 +1114,83 @@ class Boss extends CharacterObject {
 					"/" +
 					mp.boss_hp_max
 			);
+	}
+
+	/**
+	 * グレネードとボスが接触した場合の処理を行います
+	 * @param {MainProgram} mp
+	 * @param {CharacterObject} characterobject グレネード
+	 */
+	damageWithGrenade(mp, characterobject) {
+		// グレネードでないなら処理しない
+		if (characterobject.c !== 200) return;
+		characterobject.c = 50;
+		characterobject.c1 = 1;
+		characterobject.c2 = 20;
+		// ボスを倒せるもののみ判定する
+		if (mp.grenade_type != 1 && mp.grenade_type != 5) return;
+
+		// シューティングモードの場合
+		if (mp.j_tokugi == 14 || mp.j_tokugi == 15) {
+			if (this.c < 200) {
+				this.c = 60;
+				this.pt = 1010;
+			} else if (this.c < 300) {
+				this.c = 70;
+				this.pt = 1110;
+			} else {
+				this.c = 80;
+				this.pt = 1210;
+			}
+			this.c4 = 0;
+			this.c1 = 0;
+			this.y -= 16;
+			mp.gs.rsAddSound(8);
+			return;
+		}
+		if (this.c < 200) {
+			this.c = 67;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1005;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1000;
+				this.vx = 4;
+			}
+			mp.gs.rsAddSound(9);
+		} else if (this.c < 300) {
+			this.c = 77;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1105;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1100;
+				this.vx = 4;
+			}
+			mp.gs.rsAddSound(9);
+		} else {
+			this.c = 87;
+			this.vy = -24;
+			this.c1 = 0;
+			if (characterobject.vx < 0) {
+				this.muki = 1;
+				this.pt = 1205;
+				this.vx = -4;
+			} else {
+				this.muki = 0;
+				this.pt = 1200;
+				this.vx = 4;
+			}
+			mp.gs.rsAddSound(9);
+		}
 	}
 
 	/**

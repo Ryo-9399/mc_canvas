@@ -33664,7 +33664,7 @@ MainProgram.prototype.bMove = function() {
 				Math.abs(this.co_b.y - characterobject.y) >= 30
 			)
 				continue;
-			this.co_b.checkDamageWithPlayerAttack(this, characterobject);
+			this.co_b.damageWithPlayerAttack(this, characterobject);
 		}
 	}
 	if (
