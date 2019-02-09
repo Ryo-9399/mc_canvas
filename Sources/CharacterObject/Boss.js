@@ -89,15 +89,7 @@ class Boss extends CharacterObject {
 				this.y += this.vy;
 				if (mp.boss_destroy_type == 2) {
 					mp.boss_hp = 0;
-					mp.showGauge(
-						String(mp.boss_hp),
-						"" +
-							mp.tdb.getValue("boss_name") +
-							"  " +
-							mp.boss_hp +
-							"/" +
-							mp.boss_hp_max
-					);
+					showBossHPGauge(mp, 1);
 				}
 				if (this.y >= mp.maps.wy + 320 + 16) {
 					this.c = DYING;
@@ -128,15 +120,7 @@ class Boss extends CharacterObject {
 				this.y += this.vy;
 				if (mp.boss_destroy_type == 2) {
 					mp.boss_hp = 0;
-					mp.showGauge(
-						String(mp.boss_hp),
-						"" +
-							mp.tdb.getValue("boss2_name") +
-							"  " +
-							mp.boss_hp +
-							"/" +
-							mp.boss_hp_max
-					);
+					showBossHPGauge(mp, 2);
 				}
 				if (this.y >= mp.maps.wy + 320 + 16) {
 					this.c = DYING;
@@ -167,15 +151,7 @@ class Boss extends CharacterObject {
 				this.y += this.vy;
 				if (mp.boss_destroy_type == 2) {
 					mp.boss_hp = 0;
-					mp.showGauge(
-						String(mp.boss_hp),
-						"" +
-							mp.tdb.getValue("boss3_name") +
-							"  " +
-							mp.boss_hp +
-							"/" +
-							mp.boss_hp_max
-					);
+					showBossHPGauge(mp, 3);
 				}
 				if (this.y >= mp.maps.wy + 320 + 16) {
 					this.c = DYING;
@@ -195,18 +171,8 @@ class Boss extends CharacterObject {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							var l4 = Math.floor(
-								(mp.boss_hp * 200) / mp.boss_hp_max
-							);
-							mp.showGauge(
-								String(l4),
-								"" +
-									mp.tdb.getValue("boss_name") +
-									"  " +
-									mp.boss_hp +
-									"/" +
-									mp.boss_hp_max
-							);
+
+							showBossHPGauge(mp, 1);
 							this.c = BOSS1_ATTACK_LEFT;
 							this.c1 = 0;
 						}
@@ -253,18 +219,7 @@ class Boss extends CharacterObject {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							var k5 = Math.floor(
-								(mp.boss_hp * 200) / mp.boss_hp_max
-							);
-							mp.showGauge(
-								String(k5),
-								"" +
-									mp.tdb.getValue("boss2_name") +
-									"  " +
-									mp.boss_hp +
-									"/" +
-									mp.boss_hp_max
-							);
+							showBossHPGauge(mp, 2);
 							this.c = BOSS2_ATTACK_LEFT;
 							this.c1 = 0;
 						}
@@ -313,18 +268,7 @@ class Boss extends CharacterObject {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
-							var l5 = Math.floor(
-								(mp.boss_hp * 200) / mp.boss_hp_max
-							);
-							mp.showGauge(
-								String(l5),
-								"" +
-									mp.tdb.getValue("boss3_name") +
-									"  " +
-									mp.boss_hp +
-									"/" +
-									mp.boss_hp_max
-							);
+							showBossHPGauge(mp, 3);
 							if (
 								(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
 								(mp.boss3_type >= 6 && mp.boss3_type <= 8)
@@ -1094,6 +1038,25 @@ class Boss extends CharacterObject {
 		j.c = 110;
 		j.c1 = -4;
 		j.pt = 109;
+	}
+
+	/**
+	 * ボスのHPゲージを表示します
+	 * ただしボスのHPはmp.boss_hpとmp.boss_hp_maxが参照されます
+	 * @param {MainProgram} mp
+	 * @param {number} boss_type  ボスの種類 1,2,3のいずれか
+	 */
+	showBossHPGauge(mp, boss_type) {
+		let param_name = "boss_name";
+		if (boss_type === 2) param_name = "boss2_name";
+		if (boss_type === 3) param_name = "boss3_name";
+
+		const boss_name = mp.tdb.getValue(param_name);
+		const gauge_value = Math.floor((mp.boss_hp * 200) / mp.boss_hp_max);
+		mp.showGauge(
+			gauge_value,
+			`${boss_name}  ${mp.boss_hp}/${mp.boss_hp_max}`
+		);
 	}
 }
 
