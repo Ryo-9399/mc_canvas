@@ -1041,13 +1041,12 @@ class Boss extends CharacterObject {
 			characterobject.c = 0;
 			mp.jm_kazu--;
 			// ファイアーボールでダメージを与えられるかどうか調べる
-			let damage_flg = mp.boss_destroy_type === 2;
+			let damage_flag = mp.boss_destroy_type === 2;
 			// 主人公がジャンプできないような特技を持つ場合はダメージを与えられる
-			if (mp.j_tokugi === 10) damage_flg = true;
-			if (mp.j_tokugi >= 12 && mp.j_tokugi <= 15) damage_flg = true;
-
+			if (mp.j_tokugi === 10) damage_flag = true;
+			if (mp.j_tokugi >= 12 && mp.j_tokugi <= 15) damage_flag = true;
 			// ボスがバリアを張っている場合はダメージを与えられない
-			if (this.pt === 1250 || this.pt === 1255) damage_flg = false;
+			if (this.pt === 1250 || this.pt === 1255) damage_flag = false;
 			// ファイアーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
 			if (
 				mp.boss_destroy_type === 2 &&
@@ -1055,12 +1054,13 @@ class Boss extends CharacterObject {
 					this.c === BOSS2_STANDBY ||
 					this.c === BOSS3_STANDBY)
 			)
-				damage_flg = false;
+				damage_flag = false;
+
 			// ボスにダメージを与える
-			if (damage_flg) {
+			if (damage_flag) {
 				mp.boss_hp--;
-				// 死亡
 				if (mp.boss_hp <= 0) {
+					// 死亡
 					mp.boss_hp = 0;
 					this.c4 = 0;
 					this.c1 = 0;
@@ -1083,11 +1083,11 @@ class Boss extends CharacterObject {
 
 				if (mp.boss_destroy_type === 2) {
 					// ボスのHPゲージの値を更新する
-					if ((this.c >= 100 && this.c < 200) || this.c == 60) {
+					if ((this.c >= 100 && this.c < 200) || this.c === 60) {
 						this.showBossHPGauge(mp, 1);
 					} else if (
 						(this.c >= 200 && this.c < 300) ||
-						this.c == 70
+						this.c === 70
 					) {
 						this.showBossHPGauge(mp, 2);
 					} else {
@@ -1145,6 +1145,61 @@ class Boss extends CharacterObject {
 				this.pt = this.muki ? 1205 : 1200;
 			}
 			mp.gs.rsAddSound(9);
+		}
+	}
+
+	/**
+	 * ボスと主人公のしっぽの当たり判定を行います
+	 * @param {MainProgram} mp
+	 */
+	collideWithTail(mp) {
+		// しっぽでボスにダメージを与えられる場合のみ判定する
+		if (mp.boss_destroy_type !== 2) return;
+		if (mp.j_tail_ap_boss < 1 || mp.j_tail_ac !== 5) return;
+		if (this.c < 100 || this.c === 100 || this.c === 200 || this.c === 300)
+			return;
+		if (this.pt === 1250 || this.pt === 1255) return;
+
+		const j = mp.co_j;
+		// 当たり判定
+		const damage_flag =
+			tail_left <= this.x + 47 &&
+			tail_right >= this.x - 16 &&
+			Math.abs(j.y - this.y) < 48;
+
+		// ボスにダメージを与える
+		if (damage_flag) {
+			mp.gs.rsAddSound(9);
+			mp.boss_hp -= mp.j_tail_ap_boss;
+			if (mp.boss_hp <= 0) {
+				// 死亡
+				mp.boss_hp = 0;
+				this.c4 = 0;
+				this.c1 = 0;
+				if (this.c < 200) {
+					this.c = BOSS1_DAMAGE_LEFT;
+					this.pt = 1010;
+				} else if (this.c < 300) {
+					this.c = BOSS2_DAMAGE_LEFT;
+					this.pt = 1110;
+				} else {
+					this.c = BOSS3_DAMAGE_LEFT;
+					this.pt = 1210;
+				}
+				// TODO: 以下の二行は無意味な気がするので要調査
+				this.y -= 16;
+				if (this.c < 200 && mp.boss_destroy_type === 2) this.y += 16;
+				mp.gs.rsAddSound(8);
+			}
+
+			// ボスのHPゲージの値を更新する
+			if ((this.c >= 100 && this.c < 200) || this.c === 60) {
+				this.showBossHPGauge(mp, 1);
+			} else if ((this.c >= 200 && this.c < 300) || this.c === 70) {
+				this.showBossHPGauge(mp, 2);
+			} else {
+				this.showBossHPGauge(mp, 3);
+			}
 		}
 	}
 

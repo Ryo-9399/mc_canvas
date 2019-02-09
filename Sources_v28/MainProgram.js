@@ -6864,13 +6864,13 @@ MainProgram.prototype.bMove = function() {
 	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
 		for (let i = 0; i <= 1; i++) {
 			if (this.co_jm[i].c >= 100) continue;
-			var characterobject = this.co_jm[i];
+			const characterobject = this.co_jm[i];
 			if (
-				Math.abs(this.co_b.x - characterobject.x) >= 34 ||
-				Math.abs(this.co_b.y - characterobject.y) >= 30
-			)
-				continue;
-			this.co_b.checkDamageWithPlayerAttack(this, characterobject);
+				Math.abs(this.co_b.x - characterobject.x) < 34 &&
+				Math.abs(this.co_b.y - characterobject.y) < 30
+			) {
+				this.co_b.checkDamageWithPlayerAttack(this, characterobject);
+			}
 		}
 	}
 };

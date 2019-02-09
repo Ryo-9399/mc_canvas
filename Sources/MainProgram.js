@@ -33658,103 +33658,17 @@ MainProgram.prototype.bMove = function() {
 	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
 		for (let i = 0; i <= 8; i++) {
 			if (this.co_jm[i].c < 100) continue;
-			var characterobject = this.co_jm[i];
+			const characterobject = this.co_jm[i];
 			if (
-				Math.abs(this.co_b.x - characterobject.x) >= 34 ||
-				Math.abs(this.co_b.y - characterobject.y) >= 30
-			)
-				continue;
-			this.co_b.damageWithPlayerAttack(this, characterobject);
+				Math.abs(this.co_b.x - characterobject.x) < 34 &&
+				Math.abs(this.co_b.y - characterobject.y) < 30
+			) {
+				this.co_b.damageWithPlayerAttack(this, characterobject);
+			}
 		}
 	}
-	if (
-		this.boss_destroy_type == 2 &&
-		this.j_tail_ap_boss >= 1 &&
-		this.j_tail_ac == 5 &&
-		this.co_b.c >= 100 &&
-		this.co_b.c != 100 &&
-		this.co_b.c != 200 &&
-		this.co_b.c != 300 &&
-		this.co_b.pt != 1250 &&
-		this.co_b.pt != 1255
-	) {
-		var flag = false;
-		if (this.co_j.muki == 1) {
-			if (
-				this.co_j.x + 63 >= this.co_b.x - 16 &&
-				this.co_j.x + 16 <= this.co_b.x + 47 &&
-				Math.abs(this.co_j.y - this.co_b.y) < 48
-			)
-				flag = true;
-		} else if (
-			this.co_j.x - 32 <= this.co_b.x + 47 &&
-			this.co_j.x + 16 >= this.co_b.x - 16 &&
-			Math.abs(this.co_j.y - this.co_b.y) < 48
-		)
-			flag = true;
-		if (flag) {
-			this.boss_hp -= this.j_tail_ap_boss;
-			if (this.boss_hp < 0) this.boss_hp = 0;
-			this.gs.rsAddSound(9);
-			var j6 = Math.floor((this.boss_hp * 200) / this.boss_hp_max);
-			if ((this.co_b.c >= 100 && this.co_b.c < 200) || this.co_b.c == 60)
-				this.showGauge(
-					String(j6),
-					"" +
-						this.tdb.getValue("boss_name") +
-						"  " +
-						this.boss_hp +
-						"/" +
-						this.boss_hp_max
-				);
-			else if (
-				(this.co_b.c >= 200 && this.co_b.c < 300) ||
-				this.co_b.c == 70
-			)
-				this.showGauge(
-					String(j6),
-					"" +
-						this.tdb.getValue("boss2_name") +
-						"  " +
-						this.boss_hp +
-						"/" +
-						this.boss_hp_max
-				);
-			else
-				this.showGauge(
-					String(j6),
-					"" +
-						this.tdb.getValue("boss3_name") +
-						"  " +
-						this.boss_hp +
-						"/" +
-						this.boss_hp_max
-				);
-			if (this.boss_hp <= 0)
-				if (this.co_b.c < 200) {
-					this.co_b.c4 = 0;
-					this.co_b.c = 60;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1010;
-					if (this.boss_destroy_type != 2) this.co_b.y -= 16;
-					this.gs.rsAddSound(8);
-				} else if (this.co_b.c < 300) {
-					this.co_b.c4 = 0;
-					this.co_b.c = 70;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1110;
-					this.co_b.y -= 16;
-					this.gs.rsAddSound(8);
-				} else {
-					this.co_b.c4 = 0;
-					this.co_b.c = 80;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1210;
-					this.co_b.y -= 16;
-					this.gs.rsAddSound(8);
-				}
-		}
-	}
+	// 主人公の攻撃としっぽの当たり判定
+	this.co_b.collideWithTail(this);
 };
 
 /**
