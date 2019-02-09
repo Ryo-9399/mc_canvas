@@ -1188,12 +1188,14 @@ class Boss extends CharacterObject {
 
 		if (mp.boss_destroy_type === 2) {
 			// ファイヤーボールとしっぽで倒すボスの場合、登場中はHPの設定ができない
+			// ただし戻り値はtrueとなる
+			// TODO: もともとあったバグかと思われるので修正してよいかも
 			if (
 				this.c === BOSS1_STANDBY ||
 				this.c === BOSS2_STANDBY ||
 				this.c === BOSS3_STANDBY
 			)
-				return false;
+				return true;
 		} else {
 			// 主人公がジャンプできないような特技を持たない場合はHPの設定ができない
 			if (
