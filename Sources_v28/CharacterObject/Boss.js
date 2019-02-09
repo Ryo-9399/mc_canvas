@@ -61,6 +61,7 @@ class Boss extends CharacterObject {
 	update(mp) {
 		if (this.x >= mp.maps.wx + 1024) return;
 		this.move(mp);
+		// 主人公とボスの当たり判定
 		const j = mp.co_j;
 		const hit_flag =
 			j.c >= 100 &&
@@ -69,12 +70,15 @@ class Boss extends CharacterObject {
 			Math.abs(this.x - j.x) < 42 &&
 			j.y > this.y - 20 &&
 			j.y < this.y + 40;
-		// 主人公とボスの当たり判定
+
 		if (hit_flag) {
-			if (!this.isFumuable(mp)) mp.jShinu(2);
-			else if (this.checkFumu(mp)) {
+			// 主人公とボスが接触している
+			const fumu_flag = Math.abs(this.x - j.x) < 34 && j.vy > 0;
+			if (fumu_flag && this.isFumuable(mp)) {
+				// 主人公がボスにダメージを与える
 				this.fumuDamage(mp);
 			} else {
+				// 主人公が死亡する
 				mp.jShinu(2);
 			}
 		}
@@ -82,12 +86,12 @@ class Boss extends CharacterObject {
 		if (mp.jm_kazu > 0 && this.c >= 100) {
 			for (let i = 0; i <= 1; i++) {
 				const characterobject = mp.co_jm[i];
-				if (characterobject.c >= 100) continue;
+				if (characterobject.c < 100) continue;
 				if (
 					Math.abs(this.x - characterobject.x) < 34 &&
 					Math.abs(this.y - characterobject.y) < 30
 				) {
-					this.checkDamageWithPlayerAttack(mp, characterobject);
+					this.damageWithPlayerAttack(mp, characterobject);
 				}
 			}
 		}
@@ -613,15 +617,6 @@ class Boss extends CharacterObject {
 	 */
 	isFumuable(mp) {
 		return !(this.pt === 1250 || this.pt === 1255);
-	}
-
-	/**
-	 * 主人公がボスを踏んでいるか判定します
-	 * @param {MainProgram} mp
-	 */
-	checkFumu(mp) {
-		const j = mp.co_j;
-		return Math.abs(this.x - j.x) < 34 && j.vy > 0;
 	}
 
 	/**

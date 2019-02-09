@@ -71,11 +71,16 @@ class Boss extends CharacterObject {
 			Math.abs(this.x - j.x) < 42 &&
 			j.y > this.y - 20 &&
 			j.y < this.y + 40;
+
 		if (hit_flag) {
-			if (!this.isFumuable(mp)) mp.jShinu(2);
-			else if (this.checkFumu(mp)) {
+			// 主人公とボスが接触している
+			const fumu_flag =
+				(Math.abs(this.x - j.x) < 34 || mp.easy_mode === 2) && j.vy > 0;
+			if (fumu_flag && this.isFumuable(mp)) {
+				// 主人公がボスにダメージを与える
 				this.fumuDamage(mp);
 			} else {
+				// 主人公が死亡する
 				mp.jShinu(2);
 			}
 		}
@@ -1007,27 +1012,6 @@ class Boss extends CharacterObject {
 			this.pt === 1251 ||
 			this.pt === 1256
 		);
-	}
-
-	/**
-	 * 主人公がボスを踏んでいるか判定します
-	 * @param {MainProgram} mp
-	 */
-	checkFumu(mp) {
-		const j = mp.co_j;
-		if (j.vy <= 0) return false;
-		if (mp.easy_mode === 2) {
-			// イージーモードの場合は当たり判定が大きい
-			return (
-				j.c >= 100 &&
-				j.c < 200 &&
-				this.c >= 100 &&
-				Math.abs(this.x - j.x) < 42 &&
-				j.y > this.y - 20 &&
-				j.y < this.y + 40
-			);
-		}
-		return Math.abs(this.x - j.x) < 34;
 	}
 
 	/**
