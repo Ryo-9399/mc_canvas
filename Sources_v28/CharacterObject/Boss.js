@@ -67,23 +67,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS1_DAMAGE_LEFT:
-				// 踏まれた
-				this.c1++;
-				if (this.c4 <= 0) {
-					// 死亡
-					if (this.c1 >= 26) {
-						this.c = DYING;
-						this.c1 = 0;
-						mp.addScore(10);
-					}
-				} else if (this.c1 >= 11) this.c = BOSS1_MOVING_LEFT;
+				this.updateDamage(mp, BOSS1_MOVING_LEFT);
 				this.pt = 1010;
 				break;
 
 			case BOSS1_DAMAGE_RIGHT:
-				// 右を向いている時に踏まれて死ぬことはない
-				this.c1++;
-				if (this.c1 >= 11) this.c = BOSS1_MOVING_RIGHT;
+				this.updateDamage(mp, BOSS1_MOVING_RIGHT);
 				this.pt = 1015;
 				break;
 
@@ -102,20 +91,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS2_DAMAGE_LEFT:
-				this.c1++;
-				if (this.c4 <= 0) {
-					if (this.c1 >= 26) {
-						this.c = DYING;
-						this.c1 = 0;
-						mp.addScore(10);
-					}
-				} else if (this.c1 >= 11) this.c = BOSS2_MOVING_LEFT;
+				this.updateDamage(mp, BOSS2_MOVING_LEFT);
 				this.pt = 1110;
 				break;
 
 			case BOSS2_DAMAGE_RIGHT:
-				this.c1++;
-				if (this.c1 >= 11) this.c = BOSS2_MOVING_RIGHT;
+				this.updateDamage(mp, BOSS2_MOVING_RIGHT);
 				this.pt = 1115;
 				break;
 
@@ -134,20 +115,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_DAMAGE_LEFT:
-				this.c1++;
-				if (this.c4 <= 0) {
-					if (this.c1 >= 26) {
-						this.c = DYING;
-						this.c1 = 0;
-						mp.addScore(10);
-					}
-				} else if (this.c1 >= 11) this.c = BOSS3_MOVING_LEFT;
+				this.updateDamage(mp, BOSS3_MOVING_LEFT);
 				this.pt = 1210;
 				break;
 
 			case BOSS3_DAMAGE_RIGHT:
-				this.c1++;
-				if (this.c1 >= 11) this.c = BOSS3_MOVING_RIGHT;
+				this.updateDamage(mp, BOSS3_MOVING_RIGHT);
 				this.pt = 1215;
 				break;
 
@@ -565,6 +538,30 @@ class Boss extends CharacterObject {
 			if (direction === 1 && this.x >= x_standby_left) {
 				this.x = x_standby_left;
 				this.c1 = -20;
+			}
+		}
+	}
+
+	/**
+	 * 踏まれて潰れている最中のボスの処理
+	 * @param {MainProgram} mp
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param {number} return_state ダメージから回復後に復帰するボスの状態
+	 */
+	updateDamage(mp, return_state) {
+		this.c1++;
+		if (this.c4 <= 0) {
+			// 死亡
+			if (this.c1 >= 26) {
+				this.c = DYING;
+				this.c1 = 0;
+				mp.addScore(10);
+			}
+		} else {
+			// 体力がまだ残っている
+			if (this.c1 >= 11) {
+				// ダメージから回復する
+				this.c = return_state;
 			}
 		}
 	}

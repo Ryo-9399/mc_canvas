@@ -73,28 +73,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS1_DAMAGE_LEFT:
-				// 踏まれた
-				this.c1++;
-				if (this.c4 <= 0) {
-					// 死亡
-					if (this.c1 >= 26) {
-						this.c = DYING;
-						this.c1 = 0;
-						// シューティングモード、四方向移動モードの場合は100点加算
-						if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
-							mp.addScore(100);
-						else mp.addScore(10);
-						// HPゲージを閉じる
-						if (mp.boss_destroy_type === 2) mp.hideGauge();
-					}
-				} else if (this.c1 >= 11) this.c = BOSS1_MOVING_LEFT;
+				this.updateDamage(mp, BOSS1_MOVING_LEFT);
 				this.pt = 1010;
 				break;
 
 			case BOSS1_DAMAGE_RIGHT:
-				// 右を向いている時に踏まれて死ぬことはない
-				this.c1++;
-				if (this.c1 >= 11) this.c = BOSS1_MOVING_RIGHT;
+				this.updateDamage(mp, BOSS1_MOVING_RIGHT);
 				this.pt = 1015;
 				break;
 
@@ -128,23 +112,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS2_DAMAGE_LEFT:
-				this.c1++;
-				if (this.c4 <= 0) {
-					if (this.c1 >= 26) {
-						this.c = DYING;
-						this.c1 = 0;
-						if (mp.j_tokugi == 14 || mp.j_tokugi == 15)
-							mp.addScore(100);
-						else mp.addScore(10);
-						if (mp.boss_destroy_type == 2) mp.hideGauge();
-					}
-				} else if (this.c1 >= 11) this.c = BOSS2_MOVING_LEFT;
+				this.updateDamage(mp, BOSS2_MOVING_LEFT);
 				this.pt = 1110;
 				break;
 
 			case BOSS2_DAMAGE_RIGHT:
-				this.c1++;
-				if (this.c1 >= 11) this.c = BOSS2_MOVING_RIGHT;
+				this.updateDamage(mp, BOSS2_MOVING_RIGHT);
 				this.pt = 1115;
 				break;
 
@@ -178,23 +151,12 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_DAMAGE_LEFT:
-				this.c1++;
-				if (this.c4 <= 0) {
-					if (this.c1 >= 26) {
-						this.c = DYING;
-						this.c1 = 0;
-						if (mp.j_tokugi == 14 || mp.j_tokugi == 15)
-							mp.addScore(100);
-						else mp.addScore(10);
-						if (mp.boss_destroy_type == 2) mp.hideGauge();
-					}
-				} else if (this.c1 >= 11) this.c = BOSS3_MOVING_LEFT;
+				this.updateDamage(mp, BOSS3_MOVING_LEFT);
 				this.pt = 1210;
 				break;
 
 			case BOSS3_DAMAGE_RIGHT:
-				this.c1++;
-				if (this.c1 >= 11) this.c = BOSS3_MOVING_RIGHT;
+				this.updateDamage(mp, BOSS3_MOVING_RIGHT);
 				this.pt = 1215;
 				break;
 
@@ -747,6 +709,7 @@ class Boss extends CharacterObject {
 		const mirror = direction === 1 ? -1 : 1;
 		this.c1--;
 
+		// 回転する
 		if (this.c1 <= 100) this.c2 += 10 * mirror;
 		else if (this.c1 <= 200) this.c2 -= 5 * mirror;
 		else if (this.c1 <= 300) this.c2 += 2 * mirror;
@@ -756,6 +719,7 @@ class Boss extends CharacterObject {
 			mp.gs.rsAddSound(18);
 		}
 
+		// 攻撃
 		let rad = null;
 		if (this.c1 <= 0) {
 			rad = direction !== 1 ? 3.14 : 0;
@@ -787,6 +751,7 @@ class Boss extends CharacterObject {
 			mp.mSet2(this.x, this.y, 711, cos, sin);
 		}
 
+		// 回転する方向を変える
 		if (this.c1 <= 0) {
 			this.c2 = 0;
 			this.c1 = 100;
@@ -1017,6 +982,34 @@ class Boss extends CharacterObject {
 				this.c2 += degree * mirror;
 				if (this.c2 < 0) this.c2 += 360;
 				if (this.c2 >= 360) this.c2 -= 360;
+			}
+		}
+	}
+
+	/**
+	 * 踏まれて潰れている最中のボスの処理
+	 * @param {MainProgram} mp
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param {number} return_state ダメージから回復後に復帰するボスの状態
+	 */
+	updateDamage(mp, return_state) {
+		this.c1++;
+		if (this.c4 <= 0) {
+			// 死亡
+			if (this.c1 >= 26) {
+				this.c = DYING;
+				this.c1 = 0;
+				// シューティングモード、四方向移動モードの場合は100点加算
+				if (mp.j_tokugi === 14 || mp.j_tokugi === 15) mp.addScore(100);
+				else mp.addScore(10);
+				// HPゲージを閉じる
+				if (mp.boss_destroy_type === 2) mp.hideGauge();
+			}
+		} else {
+			// 体力がまだ残っている
+			if (this.c1 >= 11) {
+				// ダメージから回復する
+				this.c = return_state;
 			}
 		}
 	}
