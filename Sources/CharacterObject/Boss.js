@@ -1154,36 +1154,22 @@ class Boss extends CharacterObject {
 
 		// シューティングモードの場合
 		if (mp.j_tokugi === 14 || mp.j_tokugi === 15) {
-			if (this.c < 200) {
-				this.c = 60;
-				this.pt = 1010;
-			} else if (this.c < 300) {
-				this.c = 70;
-				this.pt = 1110;
-			} else {
-				this.c = 80;
-				this.pt = 1210;
-			}
 			this.c4 = 0;
 			this.c1 = 0;
 			this.y -= 16;
+			if (this.c < 200) {
+				this.c = BOSS1_DAMAGE_LEFT;
+				this.pt = 1010;
+			} else if (this.c < 300) {
+				this.c = BOSS2_DAMAGE_LEFT;
+				this.pt = 1110;
+			} else {
+				this.c = BOSS3_DAMAGE_LEFT;
+				this.pt = 1210;
+			}
 			mp.gs.rsAddSound(8);
 		} else {
-			this.vy = -24;
-			this.c1 = 0;
-			this.muki = characterobject.vx < 0 ? 1 : 0;
-			this.vx = this.muki ? -4 : 4;
-			if (this.c < 200) {
-				this.c = 67;
-				this.pt = this.muki ? 1005 : 1000;
-			} else if (this.c < 300) {
-				this.c = 77;
-				this.pt = this.muki ? 1105 : 1100;
-			} else {
-				this.c = 87;
-				this.pt = this.muki ? 1205 : 1200;
-			}
-			mp.gs.rsAddSound(9);
+			this.killGrenade(mp, characterobject.vx < 0 ? 1 : 0);
 		}
 	}
 
@@ -1240,6 +1226,30 @@ class Boss extends CharacterObject {
 				this.showBossHPGauge(mp, 3);
 			}
 		}
+	}
+
+	/**
+	 * ボスを殺します
+	 * (グレネードで弾き飛ばされた場合の処理)
+	 * @param {MainProgram} mp
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き ※向いている方向とは反対側に飛んでいく
+	 */
+	killGrenade(mp, direction) {
+		this.vy = -24;
+		this.c1 = 0;
+		this.muki = direction;
+		this.vx = this.muki ? -4 : 4;
+		if (this.c < 200) {
+			this.c = BOSS1_DYING_BY_GRENADE;
+			this.pt = this.muki ? 1005 : 1000;
+		} else if (this.c < 300) {
+			this.c = BOSS2_DYING_BY_GRENADE;
+			this.pt = this.muki ? 1105 : 1100;
+		} else {
+			this.c = BOSS3_DYING_BY_GRENADE;
+			this.pt = this.muki ? 1205 : 1200;
+		}
+		mp.gs.rsAddSound(9);
 	}
 
 	/**

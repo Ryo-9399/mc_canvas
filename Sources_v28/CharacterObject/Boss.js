@@ -696,18 +696,28 @@ class Boss extends CharacterObject {
 		characterobject.c2 = 20;
 		// ボスを倒せるもののみ判定する
 		if (mp.grenade_type !== 1 && mp.grenade_type !== 5) return;
+		this.killGrenade(mp, characterobject.vx < 0 ? 1 : 0);
+	}
+
+	/**
+	 * ボスを殺します
+	 * (グレネードで弾き飛ばされた場合の処理)
+	 * @param {MainProgram} mp
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き ※向いている方向とは反対側に飛んでいく
+	 */
+	killGrenade(mp, direction) {
 		this.vy = -24;
 		this.c1 = 0;
-		this.muki = characterobject.vx < 0 ? 1 : 0;
+		this.muki = direction;
 		this.vx = this.muki ? -4 : 4;
 		if (this.c < 200) {
-			this.c = 67;
+			this.c = BOSS1_DYING_BY_GRENADE;
 			this.pt = this.muki ? 1005 : 1000;
 		} else if (this.c < 300) {
-			this.c = 77;
+			this.c = BOSS2_DYING_BY_GRENADE;
 			this.pt = this.muki ? 1105 : 1100;
 		} else {
-			this.c = 87;
+			this.c = BOSS3_DYING_BY_GRENADE;
 			this.pt = this.muki ? 1205 : 1200;
 		}
 	}
