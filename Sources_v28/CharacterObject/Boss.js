@@ -644,6 +644,7 @@ class Boss extends CharacterObject {
 			mp.jm_kazu--;
 		}
 	}
+
 	/**
 	 * グレネードとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
@@ -652,50 +653,25 @@ class Boss extends CharacterObject {
 	damageWithGrenade(mp, characterobject) {
 		// グレネードでないなら処理しない
 		if (characterobject.c !== 200) return;
+		if (this.co_b.c < 100) return;
 		characterobject.c = 50;
 		characterobject.c1 = 1;
 		characterobject.c2 = 20;
 		// ボスを倒せるもののみ判定する
-		if (mp.grenade_type != 1 && mp.grenade_type != 5) return;
+		if (mp.grenade_type !== 1 && mp.grenade_type !== 5) return;
+		this.vy = -24;
+		this.c1 = 0;
+		this.muki = characterobject.vx < 0 ? 1 : 0;
+		this.vx = this.muki ? -4 : 4;
 		if (this.c < 200) {
 			this.c = 67;
-			this.vy = -24;
-			this.c1 = 0;
-			if (characterobject.vx < 0) {
-				this.muki = 1;
-				this.pt = 1005;
-				this.vx = -4;
-			} else {
-				this.muki = 0;
-				this.pt = 1000;
-				this.vx = 4;
-			}
+			this.pt = this.muki ? 1005 : 1000;
 		} else if (this.c < 300) {
 			this.c = 77;
-			this.vy = -24;
-			this.c1 = 0;
-			if (characterobject.vx < 0) {
-				this.muki = 1;
-				this.pt = 1105;
-				this.vx = -4;
-			} else {
-				this.muki = 0;
-				this.pt = 1100;
-				this.vx = 4;
-			}
+			this.pt = this.muki ? 1105 : 1100;
 		} else {
 			this.c = 87;
-			this.vy = -24;
-			this.c1 = 0;
-			if (characterobject.vx < 0) {
-				this.muki = 1;
-				this.pt = 1205;
-				this.vx = -4;
-			} else {
-				this.muki = 0;
-				this.pt = 1200;
-				this.vx = 4;
-			}
+			this.pt = this.muki ? 1205 : 1200;
 		}
 	}
 }
