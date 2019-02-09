@@ -636,10 +636,11 @@ class Boss extends CharacterObject {
 	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
 	 */
 	damageWithPlayerAttack(mp, characterobject) {
-		if (characterobject.c == 200) {
+		if (characterobject.c === 200) {
 			// グレネード
 			this.damageWithGrenade(mp, characterobject);
 		} else {
+			// グレネードではないものが当たった場合、消滅させる
 			characterobject.c = 0;
 			mp.jm_kazu--;
 		}

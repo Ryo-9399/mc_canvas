@@ -126,6 +126,7 @@ class Boss extends CharacterObject {
 			case BOSS1_STANDBY:
 				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
+						// 画面外から登場する
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
@@ -175,6 +176,7 @@ class Boss extends CharacterObject {
 			case BOSS2_STANDBY:
 				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
+						// 画面外から登場する
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
@@ -225,6 +227,7 @@ class Boss extends CharacterObject {
 			case BOSS3_STANDBY:
 				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
+						// 画面外から登場する
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
@@ -1030,90 +1033,69 @@ class Boss extends CharacterObject {
 	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
 	 */
 	damageWithPlayerAttack(mp, characterobject) {
-		if (characterobject.c == 200) {
+		if (characterobject.c === 200) {
 			// グレネード
 			this.damageWithGrenade(mp, characterobject);
-			return;
-		}
-		characterobject.c = 0;
-		mp.jm_kazu--;
-		if (
-			mp.j_tokugi == 10 ||
-			(mp.j_tokugi >= 12 && mp.j_tokugi <= 15) ||
-			mp.boss_destroy_type == 2
-		) {
+		} else {
+			// グレネードではないものが当たった場合、消滅させる
+			characterobject.c = 0;
+			mp.jm_kazu--;
+			// ファイアーボールでダメージを与えられるかどうか調べる
+			let damage_flg = mp.boss_destroy_type === 2;
+			// 主人公がジャンプできないような特技を持つ場合はダメージを与えられる
+			if (mp.j_tokugi === 10) damage_flg = true;
+			if (mp.j_tokugi >= 12 && mp.j_tokugi <= 15) damage_flg = true;
+
+			// ボスがバリアを張っている場合はダメージを与えられない
+			if (this.pt === 1250 || this.pt === 1255) damage_flg = false;
+			// ファイアーボールとしっぽで倒すボスの場合、登場中はダメージを与えられない
 			if (
-				(mp.boss_destroy_type != 2 ||
-					(this.c != 100 && this.c != 200 && this.c != 300)) &&
-				this.pt != 1250 &&
-				this.pt != 1255
+				mp.boss_destroy_type === 2 &&
+				(this.c === BOSS1_STANDBY ||
+					this.c === BOSS2_STANDBY ||
+					this.c === BOSS3_STANDBY)
 			)
+				damage_flg = false;
+			// ボスにダメージを与える
+			if (damage_flg) {
 				mp.boss_hp--;
-			if (mp.boss_hp <= 0) {
-				mp.boss_hp = 0;
-				if (this.c < 200) {
+				// 死亡
+				if (mp.boss_hp <= 0) {
+					mp.boss_hp = 0;
 					this.c4 = 0;
-					this.c = 60;
 					this.c1 = 0;
-					this.pt = 1010;
-					if (mp.boss_destroy_type != 2) this.y -= 16;
-					mp.gs.rsAddSound(8);
-				} else if (this.c < 300) {
-					this.c4 = 0;
-					this.c = 70;
-					this.c1 = 0;
-					this.pt = 1110;
+					if (this.c < 200) {
+						this.c = BOSS1_DAMAGE_LEFT;
+						this.pt = 1010;
+					} else if (this.c < 300) {
+						this.c = BOSS2_DAMAGE_LEFT;
+						this.pt = 1110;
+					} else {
+						this.c = BOSS3_DAMAGE_LEFT;
+						this.pt = 1210;
+					}
+					// TODO: 以下の二行は無意味な気がするので要調査
 					this.y -= 16;
+					if (this.c < 200 && mp.boss_destroy_type === 2)
+						this.y += 16;
 					mp.gs.rsAddSound(8);
-				} else {
-					this.c4 = 0;
-					this.c = 80;
-					this.c1 = 0;
-					this.pt = 1210;
-					this.y -= 16;
-					mp.gs.rsAddSound(8);
+				}
+
+				if (mp.boss_destroy_type === 2) {
+					// ボスのHPゲージの値を更新する
+					if ((this.c >= 100 && this.c < 200) || this.c == 60) {
+						this.showBossHPGauge(mp, 1);
+					} else if (
+						(this.c >= 200 && this.c < 300) ||
+						this.c == 70
+					) {
+						this.showBossHPGauge(mp, 2);
+					} else {
+						this.showBossHPGauge(mp, 3);
+					}
 				}
 			}
 		}
-		if (
-			mp.boss_destroy_type != 2 ||
-			(mp.boss_destroy_type == 2 &&
-				(this.c == 100 || this.c == 200 || this.c == 300))
-		)
-			return;
-		var i6 = Math.floor((mp.boss_hp * 200) / mp.boss_hp_max);
-		if ((this.c >= 100 && this.c < 200) || this.c == 60) {
-			mp.showGauge(
-				String(i6),
-				"" +
-					mp.tdb.getValue("boss_name") +
-					"  " +
-					mp.boss_hp +
-					"/" +
-					mp.boss_hp_max
-			);
-			return;
-		}
-		if ((this.c >= 200 && this.c < 300) || this.c == 70)
-			mp.showGauge(
-				String(i6),
-				"" +
-					mp.tdb.getValue("boss2_name") +
-					"  " +
-					mp.boss_hp +
-					"/" +
-					mp.boss_hp_max
-			);
-		else
-			mp.showGauge(
-				String(i6),
-				"" +
-					mp.tdb.getValue("boss3_name") +
-					"  " +
-					mp.boss_hp +
-					"/" +
-					mp.boss_hp_max
-			);
 	}
 
 	/**
@@ -1132,7 +1114,7 @@ class Boss extends CharacterObject {
 		if (mp.grenade_type !== 1 && mp.grenade_type !== 5) return;
 
 		// シューティングモードの場合
-		if (mp.j_tokugi == 14 || mp.j_tokugi == 15) {
+		if (mp.j_tokugi === 14 || mp.j_tokugi === 15) {
 			if (this.c < 200) {
 				this.c = 60;
 				this.pt = 1010;
