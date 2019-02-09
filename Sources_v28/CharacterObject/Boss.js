@@ -99,7 +99,14 @@ class Boss extends CharacterObject {
 					Math.abs(this.x - characterobject.x) < 34 &&
 					Math.abs(this.y - characterobject.y) < 30
 				) {
-					this.damageWithPlayerAttack(mp, characterobject);
+					if (characterobject.c === 200) {
+						// グレネード
+						this.damageWithGrenade(mp, characterobject);
+					} else {
+						// グレネードではないものが当たった場合、消滅させる
+						characterobject.c = 0;
+						mp.jm_kazu--;
+					}
 				}
 			}
 		}
@@ -654,22 +661,6 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * 主人公の攻撃とボスが接触した場合の処理を行います
-	 * @param {MainProgram} mp
-	 * @param {CharacterObject} characterobject 主人公の飛び道具 // TODO: もっと具体的なクラス名を指定する
-	 */
-	damageWithPlayerAttack(mp, characterobject) {
-		if (characterobject.c === 200) {
-			// グレネード
-			this.damageWithGrenade(mp, characterobject);
-		} else {
-			// グレネードではないものが当たった場合、消滅させる
-			characterobject.c = 0;
-			mp.jm_kazu--;
-		}
-	}
-
-	/**
 	 * グレネードとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject グレネード
@@ -681,8 +672,8 @@ class Boss extends CharacterObject {
 		characterobject.c = 50;
 		characterobject.c1 = 1;
 		characterobject.c2 = 20;
-		// ボスを倒せるもののみ判定する
 		if (mp.grenade_type !== 1 && mp.grenade_type !== 5) return;
+		// ボスを倒す
 		this.killGrenade(mp, characterobject.vx < 0 ? 1 : 0);
 	}
 
