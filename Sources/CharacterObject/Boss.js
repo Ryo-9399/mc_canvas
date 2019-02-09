@@ -3,6 +3,7 @@ import { CharacterObject } from "../CharacterObject";
 export const DYING = 40;
 export const BOSS1_DAMAGE_LEFT = 60;
 export const BOSS1_DAMAGE_RIGHT = 65;
+export const BOSS1_DYING_BY_GRENADE = 67;
 export const BOSS1_STANDBY = 100;
 export const BOSS1_ATTACK_LEFT = 110;
 export const BOSS1_ATTACK_RIGHT = 115;
@@ -10,6 +11,7 @@ export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
 export const BOSS2_DAMAGE_LEFT = 70;
 export const BOSS2_DAMAGE_RIGHT = 75;
+export const BOSS2_DYING_BY_GRENADE = 77;
 export const BOSS2_STANDBY = 200;
 export const BOSS2_ATTACK_LEFT = 210;
 export const BOSS2_ATTACK_RIGHT = 215;
@@ -17,6 +19,7 @@ export const BOSS2_MOVING_LEFT = 250;
 export const BOSS2_MOVING_RIGHT = 255;
 export const BOSS3_DAMAGE_LEFT = 80;
 export const BOSS3_DAMAGE_RIGHT = 85;
+export const BOSS3_DYING_BY_GRENADE = 87;
 export const BOSS3_STANDBY = 300;
 export const BOSS3_ATTACK_LEFT = 310;
 export const BOSS3_ATTACK_RIGHT = 315;
@@ -82,7 +85,7 @@ class Boss extends CharacterObject {
 				this.pt = 1015;
 				break;
 
-			case 67:
+			case BOSS1_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp, 1);
 				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
@@ -98,7 +101,7 @@ class Boss extends CharacterObject {
 				this.pt = 1115;
 				break;
 
-			case 77:
+			case BOSS2_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp, 2);
 				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
@@ -114,14 +117,14 @@ class Boss extends CharacterObject {
 				this.pt = 1215;
 				break;
 
-			case 87:
+			case BOSS3_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp, 3);
 				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
 				break;
 
 			case BOSS1_STANDBY:
-				if (mp.sl_step === 2 || mp.sl_step === 3)
+				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
@@ -135,6 +138,7 @@ class Boss extends CharacterObject {
 						this.c = BOSS1_ATTACK_LEFT;
 						this.c1 = 0;
 					}
+				}
 				this.pt = 1000;
 				break;
 
@@ -169,7 +173,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS2_STANDBY:
-				if (mp.sl_step === 2 || mp.sl_step === 3)
+				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
 						this.x -= 8;
 						if (this.x <= mp.sl_wx + 512 - 128) {
@@ -182,6 +186,7 @@ class Boss extends CharacterObject {
 						this.c = BOSS2_ATTACK_LEFT;
 						this.c1 = 0;
 					}
+				}
 				this.pt = 1100;
 				break;
 

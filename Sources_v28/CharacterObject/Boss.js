@@ -3,6 +3,7 @@ import { CharacterObject } from "../CharacterObject";
 export const DYING = 40;
 export const BOSS1_DAMAGE_LEFT = 60;
 export const BOSS1_DAMAGE_RIGHT = 65;
+export const BOSS1_DYING_BY_GRENADE = 67;
 export const BOSS1_STANDBY = 100;
 export const BOSS1_ATTACK_LEFT = 110;
 export const BOSS1_ATTACK_RIGHT = 115;
@@ -10,6 +11,7 @@ export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
 export const BOSS2_DAMAGE_LEFT = 70;
 export const BOSS2_DAMAGE_RIGHT = 75;
+export const BOSS2_DYING_BY_GRENADE = 77;
 export const BOSS2_STANDBY = 200;
 export const BOSS2_ATTACK_LEFT = 210;
 export const BOSS2_ATTACK_RIGHT = 215;
@@ -17,6 +19,7 @@ export const BOSS2_MOVING_LEFT = 250;
 export const BOSS2_MOVING_RIGHT = 255;
 export const BOSS3_DAMAGE_LEFT = 80;
 export const BOSS3_DAMAGE_RIGHT = 85;
+export const BOSS3_DYING_BY_GRENADE = 87;
 export const BOSS3_STANDBY = 300;
 export const BOSS3_ATTACK_LEFT = 310;
 export const BOSS3_ATTACK_RIGHT = 315;
@@ -51,7 +54,7 @@ class Boss extends CharacterObject {
 	 * this.c4: HP
 	 */
 	move(mp) {
-		// ボスが居座るX座標s
+		// ボスが居座るX座標
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 		switch (this.c) {
@@ -76,7 +79,7 @@ class Boss extends CharacterObject {
 				this.pt = 1015;
 				break;
 
-			case 67:
+			case BOSS1_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
@@ -92,7 +95,7 @@ class Boss extends CharacterObject {
 				this.pt = 1115;
 				break;
 
-			case 77:
+			case BOSS2_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
@@ -108,7 +111,7 @@ class Boss extends CharacterObject {
 				this.pt = 1215;
 				break;
 
-			case 87:
+			case BOSS3_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
