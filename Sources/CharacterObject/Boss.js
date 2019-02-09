@@ -9,6 +9,12 @@ export const BOSS1_ATTACK_RIGHT = 115;
 export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
 
+/**
+ * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
+ * @param {number} degree
+ */
+const normalizeDegree = degree => ((degree % 360) + 360) % 360;
+
 class Boss extends CharacterObject {
 	/*
 	 * this.c: 状態
@@ -528,42 +534,29 @@ class Boss extends CharacterObject {
 				104,
 				112
 			];
-			const rads_left = [
-				4.8844447135925293,
-				4.5355558395385742,
-				4.1866669654846191,
-				3.8377780914306641,
-				3.4888889789581299,
-				3.1400001049041748,
-				3.3144445419311523,
-				3.6633334159851074,
-				4.0122222900390625,
-				4.3611111640930176,
-				4.1866669654846191,
-				3.8377780914306641,
-				3.4888889789581299,
-				3.1400001049041748
+			const degrees = [
+				100,
+				80,
+				60,
+				40,
+				20,
+				0,
+				10,
+				30,
+				50,
+				70,
+				60,
+				40,
+				20,
+				0
 			];
-			const rads_right = [
-				4.5355558395385742,
-				4.8844447135925293,
-				5.2333335876464844,
-				5.5822224617004395,
-				5.9311108589172363,
-				0.0,
-				6.105555534362793,
-				5.7566671371459961,
-				5.4077777862548828,
-				5.0588889122009277,
-				5.2333335876464844,
-				5.5822224617004395,
-				5.9311108589172363,
-				0.0
-			];
-			const rads = direction !== 1 ? rads_left : rads_right;
 			if (this.c1 === 1) mp.gs.rsAddSound(17);
-			for (const [count, rad] of zip(attack_count, rads)) {
+			for (const [count, degree] of zip(attack_count, degrees)) {
 				if (this.c1 === count) {
+					// 左向きの場合は角度に180度足す
+					const dd = direction !== 1 ? 180 : 0;
+					const rad =
+						(normalizeDegree(degree * mirror + dd) * 3.14) / 180;
 					const x = Math.floor(Math.cos(rad) * 12);
 					const y = Math.floor(Math.sin(rad) * 10);
 					mp.mSet2(this.x, this.y + 16, 740, x, y);
@@ -647,37 +640,22 @@ class Boss extends CharacterObject {
 				mp.gs.rsAddSound(18);
 			}
 			const attack_count = [1, 8, 16, 24, 32, 56, 72, 80, 88, 96];
-			const attack_rads_left = [
-				[4.8844447135925293, 1.3955556154251099],
-				[4.5355558395385742, 1.7444444894790649],
-				[4.1866669654846191, 2.0933334827423096],
-				[3.8377780914306641, 2.4422223567962646],
-				[3.4016668796539307, 2.878333568572998],
-				[3.1400001049041748, null],
-				[3.4016668796539307, 2.878333568572998],
-				[3.8377780914306641, 2.4422223567962646],
-				[4.1866669654846191, 2.0933334827423096],
-				[4.5355558395385742, 1.7444444894790649]
-			];
-			const attack_rads_right = [
-				[4.5355558395385742, 1.7444444894790649],
-				[4.8844447135925293, 1.3955556154251099],
-				[5.2333335876464844, 1.0466667413711548],
-				[5.5822224617004395, 0.69777780771255493],
-				[6.0183334350585938, 0.2616666853427887],
-				[0.0, null],
-				[6.0183334350585938, 0.2616666853427887],
-				[5.5822224617004395, 0.69777780771255493],
-				[5.2333335876464844, 1.0466667413711548],
-				[4.8844447135925293, 1.3955556154251099]
-			];
-			const attack_rad =
-				direction !== 1 ? attack_rads_left : attack_rads_right;
-
-			for (const [count, rads] of zip(attack_count, attack_rad)) {
+			const degrees = [100, 80, 60, 40, 15, 0, 15, 40, 60, 80];
+			for (const [count, degree] of zip(attack_count, degrees)) {
 				if (this.c1 !== count) continue;
+				// 左向きの場合は角度に180度足す
+				const dd = direction !== 1 ? 180 : 0;
+				// 0から359の間の角度になるようにする
+				const degree_normalized = normalizeDegree(degree + dd);
+				// 角度にマイナス1をかける
+				const degree_inversed = normalizeDegree(degree_normalized * -1);
+				// 反転したものとあわせて二発発射する
+				const rads = [];
+				rads.push((degree_normalized * 3.14) / 180);
+				// 反転しても角度が同じ場合は一発しか出さない
+				if (degree_normalized !== degree_inversed)
+					rads.push((degree_inversed * 3.14) / 180);
 				for (const rad of rads) {
-					if (rad === null) continue;
 					const cos = Math.floor(Math.cos(rad) * 12);
 					const sin = Math.floor(Math.sin(rad) * 10);
 					mp.mSet2(this.x, this.y, 710, cos, sin);
