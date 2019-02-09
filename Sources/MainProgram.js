@@ -33642,33 +33642,7 @@ MainProgram.prototype.offASwitch = function(i, j, k, l, i1) {
  * ボスの更新処理
  */
 MainProgram.prototype.bMove = function() {
-	if (this.co_b.x >= this.maps.wx + 1024) return;
-	this.boss_attack_mode = false;
-	this.co_b.move(this);
-	// 主人公とボスの当たり判定
-	if (this.co_b.checkCollideWIthPlayer(this.co_j)) {
-		if (!this.co_b.isFumuable(this)) this.jShinu(2);
-		else if (this.co_b.checkFumu(this)) {
-			this.co_b.fumuDamage(this);
-		} else {
-			this.jShinu(2);
-		}
-	}
-	// 主人公の攻撃とボスの当たり判定
-	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
-		for (let i = 0; i <= 8; i++) {
-			if (this.co_jm[i].c < 100) continue;
-			const characterobject = this.co_jm[i];
-			if (
-				Math.abs(this.co_b.x - characterobject.x) < 34 &&
-				Math.abs(this.co_b.y - characterobject.y) < 30
-			) {
-				this.co_b.damageWithPlayerAttack(this, characterobject);
-			}
-		}
-	}
-	// 主人公の攻撃としっぽの当たり判定
-	this.co_b.collideWithTail(this);
+	this.co_b.update(this);
 };
 
 /**

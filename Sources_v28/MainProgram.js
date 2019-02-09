@@ -6849,30 +6849,7 @@ MainProgram.prototype.aMove = function() {
 };
 
 MainProgram.prototype.bMove = function() {
-	if (this.co_b.x >= this.maps.wx + 1024) return;
-	this.co_b.move(this);
-	// 主人公とボスの当たり判定
-	if (this.co_b.checkCollideWIthPlayer(this.co_j)) {
-		if (!this.co_b.isFumuable(this)) this.jShinu(2);
-		else if (this.co_b.checkFumu(this)) {
-			this.co_b.fumuDamage(this);
-		} else {
-			this.jShinu(2);
-		}
-	}
-	// 主人公の攻撃とボスの当たり判定
-	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
-		for (let i = 0; i <= 1; i++) {
-			if (this.co_jm[i].c >= 100) continue;
-			const characterobject = this.co_jm[i];
-			if (
-				Math.abs(this.co_b.x - characterobject.x) < 34 &&
-				Math.abs(this.co_b.y - characterobject.y) < 30
-			) {
-				this.co_b.checkDamageWithPlayerAttack(this, characterobject);
-			}
-		}
-	}
+	this.co_b.update(this);
 };
 
 /**

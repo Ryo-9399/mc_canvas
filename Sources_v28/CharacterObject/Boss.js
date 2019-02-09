@@ -53,6 +53,42 @@ class Boss extends CharacterObject {
 	 * this.c2: 第2カウンタ(一部で使用)
 	 * this.c4: HP
 	 */
+
+	/**
+	 * フレームごとのボスの行動と当たり判定の処理を行う
+	 * @param {MainProgram} mp
+	 */
+	update(mp) {
+		if (this.x >= mp.maps.wx + 1024) return;
+		this.move(mp);
+		// 主人公とボスの当たり判定
+		if (this.checkCollideWIthPlayer(mp.co_j)) {
+			if (!this.isFumuable(mp)) mp.jShinu(2);
+			else if (this.checkFumu(mp)) {
+				this.fumuDamage(mp);
+			} else {
+				mp.jShinu(2);
+			}
+		}
+		// 主人公の攻撃とボスの当たり判定
+		if (mp.jm_kazu > 0 && this.c >= 100) {
+			for (let i = 0; i <= 1; i++) {
+				const characterobject = mp.co_jm[i];
+				if (characterobject.c >= 100) continue;
+				if (
+					Math.abs(this.x - characterobject.x) < 34 &&
+					Math.abs(this.y - characterobject.y) < 30
+				) {
+					this.checkDamageWithPlayerAttack(mp, characterobject);
+				}
+			}
+		}
+	}
+
+	/**
+	 * ボスの行動処理
+	 * @param {MainProgram} mp
+	 */
 	move(mp) {
 		// ボスが居座るX座標
 		const x_standby_left = mp.sl_wx + 96;
