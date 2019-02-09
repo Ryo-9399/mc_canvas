@@ -61,8 +61,16 @@ class Boss extends CharacterObject {
 	update(mp) {
 		if (this.x >= mp.maps.wx + 1024) return;
 		this.move(mp);
+		const j = mp.co_j;
+		const hit_flag =
+			j.c >= 100 &&
+			j.c < 200 &&
+			this.c >= 100 &&
+			Math.abs(this.x - j.x) < 42 &&
+			j.y > this.y - 20 &&
+			j.y < this.y + 40;
 		// 主人公とボスの当たり判定
-		if (this.checkCollideWIthPlayer(mp.co_j)) {
+		if (hit_flag) {
 			if (!this.isFumuable(mp)) mp.jShinu(2);
 			else if (this.checkFumu(mp)) {
 				this.fumuDamage(mp);
@@ -596,22 +604,6 @@ class Boss extends CharacterObject {
 			this.c1 = 0;
 			mp.addScore(10);
 		}
-	}
-
-	/**
-	 * 主人公とボスが接触しているかどうか判定します
-	 * @param {CharacterObject} j 主人公
-	 * @returns {boolean}
-	 */
-	checkCollideWIthPlayer(j) {
-		return (
-			j.c >= 100 &&
-			j.c < 200 &&
-			this.c >= 100 &&
-			Math.abs(this.x - j.x) < 42 &&
-			j.y > this.y - 20 &&
-			j.y < this.y + 40
-		);
 	}
 
 	/**

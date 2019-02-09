@@ -63,7 +63,15 @@ class Boss extends CharacterObject {
 		mp.boss_attack_mode = false;
 		this.move(mp);
 		// 主人公とボスの当たり判定
-		if (this.checkCollideWIthPlayer(mp.co_j)) {
+		const j = mp.co_j;
+		const hit_flag =
+			j.c >= 100 &&
+			j.c < 200 &&
+			this.c >= 100 &&
+			Math.abs(this.x - j.x) < 42 &&
+			j.y > this.y - 20 &&
+			j.y < this.y + 40;
+		if (hit_flag) {
 			if (!this.isFumuable(mp)) mp.jShinu(2);
 			else if (this.checkFumu(mp)) {
 				this.fumuDamage(mp);
@@ -985,22 +993,6 @@ class Boss extends CharacterObject {
 	}
 
 	/**
-	 * 主人公とボスが接触しているかどうか判定します
-	 * @param {CharacterObject} j 主人公
-	 * @returns {boolean}
-	 */
-	checkCollideWIthPlayer(j) {
-		return (
-			j.c >= 100 &&
-			j.c < 200 &&
-			this.c >= 100 &&
-			Math.abs(this.x - j.x) < 42 &&
-			j.y > this.y - 20 &&
-			j.y < this.y + 40
-		);
-	}
-
-	/**
 	 * ボスが踏むことのできる状態かどうか判定します
 	 * @param {MainProgram} mp
 	 * @returns {boolean}
@@ -1026,7 +1018,14 @@ class Boss extends CharacterObject {
 		if (j.vy <= 0) return false;
 		if (mp.easy_mode === 2) {
 			// イージーモードの場合は当たり判定が大きい
-			return this.checkCollideWIthPlayer(j);
+			return (
+				j.c >= 100 &&
+				j.c < 200 &&
+				this.c >= 100 &&
+				Math.abs(this.x - j.x) < 42 &&
+				j.y > this.y - 20 &&
+				j.y < this.y + 40
+			);
 		}
 		return Math.abs(this.x - j.x) < 34;
 	}
