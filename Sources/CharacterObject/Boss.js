@@ -457,7 +457,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss1の攻撃中の動作
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss1Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -594,7 +594,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss2の攻撃中の動作
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss2Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -724,7 +724,7 @@ class Boss extends CharacterObject {
 	/**
 	 * バブル光線回転連射
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss2Attack6(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -744,6 +744,7 @@ class Boss extends CharacterObject {
 		let attacks = [];
 		// TODO: もうちょっとだけましにしたい
 		if (direction !== 1) {
+			// 左向き
 			if (this.c1 <= 0) {
 				rad = 3.1400001049041748;
 			} else if (this.c1 <= 100) {
@@ -782,6 +783,7 @@ class Boss extends CharacterObject {
 				];
 			}
 		} else {
+			// 右向き
 			if (this.c1 <= 0) {
 				rad = 0.0;
 			} else if (this.c1 <= 100) {
@@ -861,7 +863,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss3の攻撃中の動作(りゅうせいぐん・グレネード)
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss3Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -885,14 +887,14 @@ class Boss extends CharacterObject {
 				const dx = direction === 1 ? 0 : 512 - 32;
 				if (this.c1 <= 45)
 					mp.mSet2(
-						mp.maps.wx + dx - mirror * 8 * mp.ranInt(10),
+						mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror,
 						mp.maps.wy - 32,
 						740,
 						-4 * mirror,
 						9
 					);
 				mp.mSet2(
-					mp.maps.wx + dx - mirror * 8 * (mp.ranInt(35) + 14),
+					mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror,
 					mp.maps.wy - 32,
 					740,
 					-4 * mirror,
@@ -911,14 +913,14 @@ class Boss extends CharacterObject {
 				const dx = direction === 1 ? 0 : 512 - 32;
 				if (this.c1 <= 55)
 					mp.mSet2(
-						mp.maps.wx + dx - mirror * 8 * mp.ranInt(10),
+						mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror,
 						mp.maps.wy - 32,
 						740,
 						-4 * mirror,
 						11
 					);
 				mp.mSet2(
-					mp.maps.wx + dx - mirror * 8 * (mp.ranInt(35) + 14),
+					mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror,
 					mp.maps.wy - 32,
 					740,
 					-4 * mirror,
@@ -950,7 +952,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss3の体当たり攻撃
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss3TackleAttack(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -959,7 +961,7 @@ class Boss extends CharacterObject {
 		if (this.c1 < 25) this.c1++;
 		// TODO: 消して良いのでは？
 		if (direction !== 1 && this.c1 < 5) this.c2 = 0;
-		// NOTE: ここのdirection判定はおそらく元のコードのバグ
+		// NOTE: ここのdirection!==1の判定はおそらく元のコードのバグ
 		// TODO: リファクタリング中なので挙動維持のため残すが、おそらくdirection !== 1の判定は消して問題ない
 		if (
 			this.c1 < 25 ||

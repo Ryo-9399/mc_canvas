@@ -299,7 +299,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss1の攻撃中の動作
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss1Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -383,7 +383,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss2の攻撃中の動作
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss2Attack(mp, direction) {
 		this.c1++;
@@ -430,7 +430,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss3の攻撃中の動作(グレネード)
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss3Attack(mp, direction) {
 		// 左向きなら1 右向きなら-1
@@ -458,7 +458,7 @@ class Boss extends CharacterObject {
 	/**
 	 * boss3の体当たり攻撃
 	 * @param {MainProgram} mp
-	 * @param {number} direction default:0 ボスの向き 1なら左向き
+	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss3TackleAttack(mp, direction) {
 		// 左向きなら1 右向きなら-1
