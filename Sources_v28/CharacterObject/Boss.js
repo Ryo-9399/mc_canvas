@@ -8,6 +8,22 @@ export const BOSS1_ATTACK_LEFT = 110;
 export const BOSS1_ATTACK_RIGHT = 115;
 export const BOSS1_MOVING_LEFT = 150;
 export const BOSS1_MOVING_RIGHT = 155;
+export const BOSS2_DAMAGE_LEFT = 70;
+export const BOSS2_DAMAGE_RIGHT = 75;
+export const BOSS2_STANDBY = 200;
+export const BOSS2_ATTACK_LEFT = 210;
+export const BOSS2_ATTACK_RIGHT = 215;
+export const BOSS2_MOVING_LEFT = 250;
+export const BOSS2_MOVING_RIGHT = 255;
+export const BOSS3_DAMAGE_LEFT = 80;
+export const BOSS3_DAMAGE_RIGHT = 85;
+export const BOSS3_STANDBY = 300;
+export const BOSS3_ATTACK_LEFT = 310;
+export const BOSS3_ATTACK_RIGHT = 315;
+export const BOSS3_MOVING_LEFT = 350;
+export const BOSS3_MOVING_RIGHT = 355;
+export const BOSS3_TACKLE_ATTACK_LEFT = 360;
+export const BOSS3_TACKLE_ATTACK_RIGHT = 365;
 
 /**
  * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
@@ -77,7 +93,7 @@ class Boss extends CharacterObject {
 				this.x += this.vx;
 				this.y += this.vy;
 				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = 40;
+					this.c = DYING;
 					this.c1 = 0;
 					mp.addScore(10);
 				}
@@ -85,21 +101,21 @@ class Boss extends CharacterObject {
 				else this.pt = 1000;
 				break;
 
-			case 70:
+			case BOSS2_DAMAGE_LEFT:
 				this.c1++;
 				if (this.c4 <= 0) {
 					if (this.c1 >= 26) {
-						this.c = 40;
+						this.c = DYING;
 						this.c1 = 0;
 						mp.addScore(10);
 					}
-				} else if (this.c1 >= 11) this.c = 250;
+				} else if (this.c1 >= 11) this.c = BOSS2_MOVING_LEFT;
 				this.pt = 1110;
 				break;
 
-			case 75:
+			case BOSS2_DAMAGE_RIGHT:
 				this.c1++;
-				if (this.c1 >= 11) this.c = 255;
+				if (this.c1 >= 11) this.c = BOSS2_MOVING_RIGHT;
 				this.pt = 1115;
 				break;
 
@@ -117,21 +133,21 @@ class Boss extends CharacterObject {
 				else this.pt = 1100;
 				break;
 
-			case 80:
+			case BOSS3_DAMAGE_LEFT:
 				this.c1++;
 				if (this.c4 <= 0) {
 					if (this.c1 >= 26) {
-						this.c = 40;
+						this.c = DYING;
 						this.c1 = 0;
 						mp.addScore(10);
 					}
-				} else if (this.c1 >= 11) this.c = 350;
+				} else if (this.c1 >= 11) this.c = BOSS3_MOVING_LEFT;
 				this.pt = 1210;
 				break;
 
-			case 85:
+			case BOSS3_DAMAGE_RIGHT:
 				this.c1++;
-				if (this.c1 >= 11) this.c = 355;
+				if (this.c1 >= 11) this.c = BOSS3_MOVING_RIGHT;
 				this.pt = 1215;
 				break;
 
@@ -141,7 +157,7 @@ class Boss extends CharacterObject {
 				this.x += this.vx;
 				this.y += this.vy;
 				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = 40;
+					this.c = DYING;
 					this.c1 = 0;
 					mp.addScore(10);
 				}
@@ -187,98 +203,98 @@ class Boss extends CharacterObject {
 				this.pt = 1005;
 				break;
 
-			case 200:
+			case BOSS2_STANDBY:
 				if (mp.sl_step == 2 || mp.sl_step == 3) {
-					this.c = 210;
+					this.c = BOSS2_ATTACK_LEFT;
 					this.c1 = 0;
 				}
 				this.pt = 1100;
 				break;
 
-			case 210:
+			case BOSS2_ATTACK_LEFT:
 				this.boss2Attack(mp, 0);
 				this.pt = 1100;
 				break;
 
-			case 215:
+			case BOSS2_ATTACK_RIGHT:
 				this.boss2Attack(mp, 1);
 				this.pt = 1105;
 				break;
 
-			case 250:
+			case BOSS2_MOVING_LEFT:
 				this.x -= 14;
 				if (this.x <= x_standby_left) {
 					this.x = x_standby_left;
-					this.c = 215;
+					this.c = BOSS2_ATTACK_RIGHT;
 					this.c1 = 0;
 				}
 				this.pt = 1100;
 				break;
 
-			case 255:
+			case BOSS2_MOVING_RIGHT:
 				this.x += 14;
 				if (this.x >= x_standby_right) {
 					this.x = x_standby_right;
-					this.c = 210;
+					this.c = BOSS2_ATTACK_LEFT;
 					this.c1 = 0;
 				}
 				this.pt = 1105;
 				break;
 
-			case 300:
+			case BOSS3_STANDBY:
 				if (mp.sl_step == 2 || mp.sl_step == 3) {
 					if (mp.boss3_type >= 2 && mp.boss3_type <= 4) {
-						this.c = 360;
+						this.c = BOSS3_TACKLE_ATTACK_LEFT;
 						this.vy = -24;
 					} else {
-						this.c = 310;
+						this.c = BOSS3_ATTACK_LEFT;
 					}
 					this.c1 = 0;
 				}
 				this.pt = 1200;
 				break;
 
-			case 310:
+			case BOSS3_ATTACK_LEFT:
 				this.boss3Attack(mp, 0);
 				this.pt = 1200;
 				break;
 
-			case 315:
+			case BOSS3_ATTACK_RIGHT:
 				this.boss3Attack(mp, 1);
 				this.pt = 1205;
 				break;
 
-			case 350:
+			case BOSS3_MOVING_LEFT:
 				this.x -= 14;
 				if (this.x <= x_standby_left) {
 					this.x = x_standby_left;
 					if (mp.boss3_type >= 2 && mp.boss3_type <= 4) {
-						this.c = 365;
+						this.c = BOSS3_TACKLE_ATTACK_RIGHT;
 						this.vy = -24;
 					} else {
-						this.c = 315;
+						this.c = BOSS3_ATTACK_RIGHT;
 					}
 					this.c1 = 0;
 				}
 				this.pt = 1200;
 				break;
 
-			case 355:
+			case BOSS3_MOVING_RIGHT:
 				this.x += 14;
 				if (this.x >= x_standby_right) {
 					this.x = x_standby_right;
 					if (mp.boss3_type >= 2 && mp.boss3_type <= 4) {
-						this.c = 360;
+						this.c = BOSS3_TACKLE_ATTACK_LEFT;
 						this.vy = -24;
 					} else {
-						this.c = 310;
+						this.c = BOSS3_ATTACK_LEFT;
 					}
 					this.c1 = 0;
 				}
 				this.pt = 1205;
 				break;
 
-			case 360:
+			case BOSS3_TACKLE_ATTACK_LEFT:
 				if (this.c1 <= 25) {
 					this.pt = 1250;
 				} else if (this.c1 === 30) {
@@ -289,7 +305,7 @@ class Boss extends CharacterObject {
 				this.boss3TackleAttack(mp, 0);
 				break;
 
-			case 365:
+			case BOSS3_TACKLE_ATTACK_RIGHT:
 				if (this.c1 <= 25) {
 					this.pt = 1255;
 				} else if (this.c1 === 30) {
@@ -598,10 +614,10 @@ class Boss extends CharacterObject {
 			this.c = BOSS1_DAMAGE_LEFT;
 			this.pt = 1010;
 		} else if (this.c < 300) {
-			this.c = 70;
+			this.c = BOSS2_DAMAGE_LEFT;
 			this.pt = 1110;
 		} else {
-			this.c = 80;
+			this.c = BOSS3_DAMAGE_LEFT;
 			this.pt = 1210;
 		}
 		if (this.c4 === 1) {
