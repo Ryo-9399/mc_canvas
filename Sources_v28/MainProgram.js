@@ -5403,47 +5403,23 @@ MainProgram.prototype.jmMove = function() {
 						var k1 = this.co_b.x - characterobject.x;
 						var i2 = this.co_b.y - characterobject.y;
 						var k2 = Math.floor(Math.sqrt(k1 * k1 + i2 * i2));
-						if (k2 <= characterobject.c2 + 20)
+						if (k2 <= characterobject.c2 + 20) {
+							// グレネードの爆風でボスを倒す
+							this.co_b.vy = -24;
+							this.co_b.c1 = 0;
+							this.muki = characterobject.x > this.co_b.x ? 1 : 0;
+							this.vx = this.muki ? -4 : 4;
 							if (this.co_b.c < 200) {
 								this.co_b.c = 67;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.x > this.co_b.x) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1005;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1000;
-									this.co_b.vx = 4;
-								}
+								this.co_b.pt = this.muki ? 1005 : 1000;
 							} else if (this.co_b.c < 300) {
 								this.co_b.c = 77;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.x > this.co_b.x) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1105;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1100;
-									this.co_b.vx = 4;
-								}
+								this.co_b.pt = this.muki ? 1105 : 1100;
 							} else {
 								this.co_b.c = 87;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.x > this.co_b.x) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1205;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1200;
-									this.co_b.vx = 4;
-								}
+								this.co_b.pt = this.muki ? 1205 : 1200;
 							}
+						}
 					}
 					characterobject.pt = 1000;
 					characterobject.pth = 0;
@@ -5485,29 +5461,23 @@ MainProgram.prototype.jmMove = function() {
 						this.co_b.x > characterobject.x - 24 &&
 						this.co_b.x < characterobject.vx + 24 &&
 						Math.abs(this.co_b.y - characterobject.y) < 36
-					)
+					) {
+						// 左向きエネルギー砲でボスを倒す
+						this.co_b.vy = -24;
+						this.co_b.c1 = 0;
+						this.co_b.muki = 1;
+						this.co_b.vx = -4;
 						if (this.co_b.c < 200) {
 							this.co_b.c = 67;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 1;
 							this.co_b.pt = 1005;
-							this.co_b.vx = -4;
 						} else if (this.co_b.c < 300) {
 							this.co_b.c = 77;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 1;
 							this.co_b.pt = 1105;
-							this.co_b.vx = -4;
 						} else {
 							this.co_b.c = 87;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 1;
 							this.co_b.pt = 1205;
-							this.co_b.vx = -4;
 						}
+					}
 					if (this.co_j.c < 100 || this.co_j.c >= 200)
 						characterobject.c = 0;
 					characterobject.pt = 1200;
@@ -5549,29 +5519,23 @@ MainProgram.prototype.jmMove = function() {
 						this.co_b.x > characterobject.vx - 24 &&
 						this.co_b.x < characterobject.x + 24 &&
 						Math.abs(this.co_b.y - characterobject.y) < 36
-					)
+					) {
+						// 右向きエネルギー砲でボスを倒す
+						this.co_b.vy = -24;
+						this.co_b.c1 = 0;
+						this.co_b.muki = 0;
+						this.co_b.vx = 4;
 						if (this.co_b.c < 200) {
 							this.co_b.c = 67;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 0;
 							this.co_b.pt = 1000;
-							this.co_b.vx = 4;
 						} else if (this.co_b.c < 300) {
 							this.co_b.c = 77;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 0;
 							this.co_b.pt = 1100;
-							this.co_b.vx = 4;
 						} else {
 							this.co_b.c = 87;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 0;
 							this.co_b.pt = 1200;
-							this.co_b.vx = 4;
 						}
+					}
 					if (this.co_j.c < 100 || this.co_j.c >= 200)
 						characterobject.c = 0;
 					characterobject.pt = 1205;

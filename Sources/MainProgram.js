@@ -20471,73 +20471,42 @@ MainProgram.prototype.jmMove = function() {
 					var i10 = this.co_b.x - characterobject.x;
 					var k13 = this.co_b.y - characterobject.y;
 					var i17 = Math.floor(Math.sqrt(i10 * i10 + k13 * k13));
-					if (i17 <= characterobject.c2 + 20)
+					if (i17 <= characterobject.c2 + 20) {
+						// グレネードの爆風でボスを倒す
 						if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+							// シューティングモード
+							this.co_b.c4 = 0;
+							this.co_b.c1 = 0;
+							this.co_b.y -= 16;
 							if (this.co_b.c < 200) {
-								this.co_b.c4 = 0;
 								this.co_b.c = 60;
-								this.co_b.c1 = 0;
 								this.co_b.pt = 1010;
-								this.co_b.y -= 16;
-								this.gs.rsAddSound(8);
 							} else if (this.co_b.c < 300) {
-								this.co_b.c4 = 0;
 								this.co_b.c = 70;
-								this.co_b.c1 = 0;
 								this.co_b.pt = 1110;
-								this.co_b.y -= 16;
-								this.gs.rsAddSound(8);
 							} else {
-								this.co_b.c4 = 0;
 								this.co_b.c = 80;
-								this.co_b.c1 = 0;
 								this.co_b.pt = 1210;
-								this.co_b.y -= 16;
-								this.gs.rsAddSound(8);
 							}
-						} else if (this.co_b.c < 200) {
-							this.co_b.c = 67;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							if (characterobject.x > this.co_b.x) {
-								this.co_b.muki = 1;
-								this.co_b.pt = 1005;
-								this.co_b.vx = -4;
-							} else {
-								this.co_b.muki = 0;
-								this.co_b.pt = 1000;
-								this.co_b.vx = 4;
-							}
-							this.gs.rsAddSound(9);
-						} else if (this.co_b.c < 300) {
-							this.co_b.c = 77;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							if (characterobject.x > this.co_b.x) {
-								this.co_b.muki = 1;
-								this.co_b.pt = 1105;
-								this.co_b.vx = -4;
-							} else {
-								this.co_b.muki = 0;
-								this.co_b.pt = 1100;
-								this.co_b.vx = 4;
-							}
-							this.gs.rsAddSound(9);
+							this.gs.rsAddSound(8);
 						} else {
-							this.co_b.c = 87;
 							this.co_b.vy = -24;
 							this.co_b.c1 = 0;
-							if (characterobject.x > this.co_b.x) {
-								this.co_b.muki = 1;
-								this.co_b.pt = 1205;
-								this.co_b.vx = -4;
+							this.muki = characterobject.x > this.co_b.x ? 1 : 0;
+							this.vx = this.muki ? -4 : 4;
+							if (this.co_b.c < 200) {
+								this.co_b.c = 67;
+								this.co_b.pt = this.muki ? 1005 : 1000;
+							} else if (this.co_b.c < 300) {
+								this.co_b.c = 77;
+								this.co_b.pt = this.muki ? 1105 : 1100;
 							} else {
-								this.co_b.muki = 0;
-								this.co_b.pt = 1200;
-								this.co_b.vx = 4;
+								this.co_b.c = 87;
+								this.co_b.pt = this.muki ? 1205 : 1200;
 							}
 							this.gs.rsAddSound(9);
 						}
+					}
 				}
 				characterobject.pt = 1000;
 				characterobject.pth = 0;
@@ -20610,55 +20579,42 @@ MainProgram.prototype.jmMove = function() {
 					this.co_b.x > characterobject.x - 24 &&
 					this.co_b.x < characterobject.vx + 24 &&
 					Math.abs(this.co_b.y - characterobject.y) < 36
-				)
+				) {
+					// 左向きエネルギー砲でボスを倒す
 					if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+						// シューティングモード
+						this.co_b.c4 = 0;
+						this.co_b.c1 = 0;
+						this.co_b.y -= 16;
 						if (this.co_b.c < 200) {
-							this.co_b.c4 = 0;
 							this.co_b.c = 60;
-							this.co_b.c1 = 0;
 							this.co_b.pt = 1010;
-							this.co_b.y -= 16;
-							this.gs.rsAddSound(8);
 						} else if (this.co_b.c < 300) {
-							this.co_b.c4 = 0;
 							this.co_b.c = 70;
-							this.co_b.c1 = 0;
 							this.co_b.pt = 1110;
-							this.co_b.y -= 16;
-							this.gs.rsAddSound(8);
 						} else {
-							this.co_b.c4 = 0;
 							this.co_b.c = 80;
-							this.co_b.c1 = 0;
 							this.co_b.pt = 1210;
-							this.co_b.y -= 16;
-							this.gs.rsAddSound(8);
 						}
-					} else if (this.co_b.c < 200) {
-						this.co_b.c = 67;
-						this.co_b.vy = -24;
-						this.co_b.c1 = 0;
-						this.co_b.muki = 1;
-						this.co_b.pt = 1005;
-						this.co_b.vx = -4;
-						this.gs.rsAddSound(9);
-					} else if (this.co_b.c < 300) {
-						this.co_b.c = 77;
-						this.co_b.vy = -24;
-						this.co_b.c1 = 0;
-						this.co_b.muki = 1;
-						this.co_b.pt = 1105;
-						this.co_b.vx = -4;
-						this.gs.rsAddSound(9);
+						this.gs.rsAddSound(8);
 					} else {
-						this.co_b.c = 87;
 						this.co_b.vy = -24;
 						this.co_b.c1 = 0;
 						this.co_b.muki = 1;
-						this.co_b.pt = 1205;
 						this.co_b.vx = -4;
+						if (this.co_b.c < 200) {
+							this.co_b.c = 67;
+							this.co_b.pt = 1005;
+						} else if (this.co_b.c < 300) {
+							this.co_b.c = 77;
+							this.co_b.pt = 1105;
+						} else {
+							this.co_b.c = 87;
+							this.co_b.pt = 1205;
+						}
 						this.gs.rsAddSound(9);
 					}
+				}
 				if (this.co_j.c < 100 || this.co_j.c >= 200)
 					characterobject.c = 0;
 				characterobject.pt = 1200;
@@ -20731,55 +20687,42 @@ MainProgram.prototype.jmMove = function() {
 					this.co_b.x > characterobject.vx - 24 &&
 					this.co_b.x < characterobject.x + 24 &&
 					Math.abs(this.co_b.y - characterobject.y) < 36
-				)
+				) {
+					// 右向きエネルギー砲でボスを倒す
 					if (this.j_tokugi == 14 || this.j_tokugi == 15) {
+						// シューティングモード
+						this.co_b.c4 = 0;
+						this.co_b.c1 = 0;
+						this.co_b.y -= 16;
 						if (this.co_b.c < 200) {
-							this.co_b.c4 = 0;
 							this.co_b.c = 60;
-							this.co_b.c1 = 0;
 							this.co_b.pt = 1010;
-							this.co_b.y -= 16;
-							this.gs.rsAddSound(8);
 						} else if (this.co_b.c < 300) {
-							this.co_b.c4 = 0;
 							this.co_b.c = 70;
-							this.co_b.c1 = 0;
 							this.co_b.pt = 1110;
-							this.co_b.y -= 16;
-							this.gs.rsAddSound(8);
 						} else {
-							this.co_b.c4 = 0;
 							this.co_b.c = 80;
-							this.co_b.c1 = 0;
 							this.co_b.pt = 1210;
-							this.co_b.y -= 16;
-							this.gs.rsAddSound(8);
 						}
-					} else if (this.co_b.c < 200) {
-						this.co_b.c = 67;
-						this.co_b.vy = -24;
-						this.co_b.c1 = 0;
-						this.co_b.muki = 0;
-						this.co_b.pt = 1000;
-						this.co_b.vx = 4;
-						this.gs.rsAddSound(9);
-					} else if (this.co_b.c < 300) {
-						this.co_b.c = 77;
-						this.co_b.vy = -24;
-						this.co_b.c1 = 0;
-						this.co_b.muki = 0;
-						this.co_b.pt = 1100;
-						this.co_b.vx = 4;
-						this.gs.rsAddSound(9);
+						this.gs.rsAddSound(8);
 					} else {
-						this.co_b.c = 87;
 						this.co_b.vy = -24;
 						this.co_b.c1 = 0;
 						this.co_b.muki = 0;
-						this.co_b.pt = 1200;
 						this.co_b.vx = 4;
+						if (this.co_b.c < 200) {
+							this.co_b.c = 67;
+							this.co_b.pt = 1000;
+						} else if (this.co_b.c < 300) {
+							this.co_b.c = 77;
+							this.co_b.pt = 1100;
+						} else {
+							this.co_b.c = 87;
+							this.co_b.pt = 1200;
+						}
 						this.gs.rsAddSound(9);
 					}
+				}
 				if (this.co_j.c < 100 || this.co_j.c >= 200)
 					characterobject.c = 0;
 				characterobject.pt = 1205;
