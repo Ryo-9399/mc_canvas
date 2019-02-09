@@ -83,22 +83,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 67:
-				this.vy += 4;
-				if (this.vy > 28) this.vy = 28;
-				this.x += this.vx;
-				this.y += this.vy;
-				if (mp.boss_destroy_type === 2) {
-					mp.boss_hp = 0;
-					this.showBossHPGauge(mp, 1);
-				}
-				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = DYING;
-					this.c1 = 0;
-					if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
-						mp.addScore(100);
-					else mp.addScore(10);
-					if (mp.boss_destroy_type === 2) mp.hideGauge();
-				}
+				this.dyingByGrenade(mp, 1);
 				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
 				break;
@@ -114,22 +99,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 77:
-				this.vy += 4;
-				if (this.vy > 28) this.vy = 28;
-				this.x += this.vx;
-				this.y += this.vy;
-				if (mp.boss_destroy_type === 2) {
-					mp.boss_hp = 0;
-					this.showBossHPGauge(mp, 2);
-				}
-				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = DYING;
-					this.c1 = 0;
-					if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
-						mp.addScore(100);
-					else mp.addScore(10);
-					if (mp.boss_destroy_type === 2) mp.hideGauge();
-				}
+				this.dyingByGrenade(mp, 2);
 				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
 				break;
@@ -145,22 +115,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 87:
-				this.vy += 4;
-				if (this.vy > 28) this.vy = 28;
-				this.x += this.vx;
-				this.y += this.vy;
-				if (mp.boss_destroy_type === 2) {
-					mp.boss_hp = 0;
-					this.showBossHPGauge(mp, 3);
-				}
-				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = DYING;
-					this.c1 = 0;
-					if (mp.j_tokugi === 14 || mp.j_tokugi === 15)
-						mp.addScore(100);
-					else mp.addScore(10);
-					if (mp.boss_destroy_type === 2) mp.hideGauge();
-				}
+				this.dyingByGrenade(mp, 3);
 				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
 				break;
@@ -955,6 +910,34 @@ class Boss extends CharacterObject {
 	}
 
 	/**
+	 * グレネードで吹き飛んでいる状態の処理
+	 * @param {MainProgram} mp
+	 * @param {number} boss_type ボスの種類 1,2,3のいずれか
+	 */
+	dyingByGrenade(mp, boss_type) {
+		// 落下していく
+		this.vy += 4;
+		if (this.vy > 28) this.vy = 28;
+		this.x += this.vx;
+		this.y += this.vy;
+		if (mp.boss_destroy_type === 2) {
+			mp.boss_hp = 0;
+			this.showBossHPGauge(mp, boss_type);
+		}
+		if (this.y >= mp.maps.wy + 320 + 16) {
+			// 画面下まで落ちた
+			this.c = DYING;
+			this.c1 = 0;
+			if (mp.j_tokugi === 14 || mp.j_tokugi === 15) {
+				// シューティングモード、四方向移動モードの場合は100点加算
+				mp.addScore(100);
+			} else mp.addScore(10);
+			// HPゲージを閉じる
+			if (mp.boss_destroy_type === 2) mp.hideGauge();
+		}
+	}
+
+	/**
 	 * 主人公とボスが接触しているかどうか判定します
 	 * @param {CharacterObject} j 主人公
 	 * @returns {boolean}
@@ -1040,7 +1023,7 @@ class Boss extends CharacterObject {
 	 * ボスのHPゲージを表示します
 	 * ただしボスのHPはmp.boss_hpとmp.boss_hp_maxが参照されます
 	 * @param {MainProgram} mp
-	 * @param {number} boss_type  ボスの種類 1,2,3のいずれか
+	 * @param {number} boss_type ボスの種類 1,2,3のいずれか
 	 */
 	showBossHPGauge(mp, boss_type) {
 		let param_name = "boss_name";

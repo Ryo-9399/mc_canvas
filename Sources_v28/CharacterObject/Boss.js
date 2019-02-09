@@ -51,7 +51,7 @@ class Boss extends CharacterObject {
 	 * this.c4: HP
 	 */
 	move(mp) {
-		// ボスが居座るX座標
+		// ボスが居座るX座標s
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 		switch (this.c) {
@@ -77,15 +77,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 67:
-				this.vy += 4;
-				if (this.vy > 28) this.vy = 28;
-				this.x += this.vx;
-				this.y += this.vy;
-				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = DYING;
-					this.c1 = 0;
-					mp.addScore(10);
-				}
+				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1005;
 				else this.pt = 1000;
 				break;
@@ -101,15 +93,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 77:
-				this.vy += 4;
-				if (this.vy > 28) this.vy = 28;
-				this.x += this.vx;
-				this.y += this.vy;
-				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = DYING;
-					this.c1 = 0;
-					mp.addScore(10);
-				}
+				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1105;
 				else this.pt = 1100;
 				break;
@@ -125,15 +109,7 @@ class Boss extends CharacterObject {
 				break;
 
 			case 87:
-				this.vy += 4;
-				if (this.vy > 28) this.vy = 28;
-				this.x += this.vx;
-				this.y += this.vy;
-				if (this.y >= mp.maps.wy + 320 + 16) {
-					this.c = DYING;
-					this.c1 = 0;
-					mp.addScore(10);
-				}
+				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = 1205;
 				else this.pt = 1200;
 				break;
@@ -562,6 +538,24 @@ class Boss extends CharacterObject {
 				// ダメージから回復する
 				this.c = return_state;
 			}
+		}
+	}
+
+	/**
+	 * グレネードで吹き飛んでいる状態の処理
+	 * @param {MainProgram} mp
+	 */
+	dyingByGrenade(mp) {
+		// 落下していく
+		this.vy += 4;
+		if (this.vy > 28) this.vy = 28;
+		this.x += this.vx;
+		this.y += this.vy;
+		if (this.y >= mp.maps.wy + 320 + 16) {
+			// 画面下まで落ちた
+			this.c = DYING;
+			this.c1 = 0;
+			mp.addScore(10);
 		}
 	}
 
