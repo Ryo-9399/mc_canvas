@@ -51,3 +51,7 @@
 - `boss2-hariken.masao.json`: 作者: !
 - `boss2-baburukaiten.masao.json`: 作者: !
 - `boss2-hadoutyokusin.masao.json`: 作者: !
+- `boss3-ryuuseigun.masao.json`: 作者: !
+- `boss3-kaitentaiatari.masao.json`: 作者: !
+- `boss3-kousokukaitentaiatari.masao.json`: 作者: !
+- `boss3-kaitenjump.masao.json`: 作者: !
