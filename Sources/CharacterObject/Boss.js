@@ -885,35 +885,19 @@ class Boss extends CharacterObject {
 		const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
 
 		/**
-		 * 回転
-		 * @param degree 回転角度 (時計回り)
+		 * @param speed {number} ボスのX速度
+		 * @param left {number} 左側の境界
+		 * @param right {number} 右側の境界
+		 * @param fix_position {boolean} 境界外に出た場合にX座標を境界に合わせるかどうか
+		 * @param next_c1 {number} 境界外に出た際に移行するc1の値
 		 */
-		const rotate = degree => {
-			// boss3_type === 7: 高速回転
-			if (mp.boss3_type === 7) degree *= 2;
-			this.c2 = normalizeDegree(this.c2 + degree);
-		};
-
-		/**
-		 * ジャンプ攻撃
-		 * @param {number} speed X速度
-		 * @param {number} next_state 画面外に出た際に移行するc1の値
-		 */
-		const jumpTackle = (speed, next_state) => {
-			// ジャンプ移動
-			this.x += speed;
-			this.vy += 2;
-			if (this.vy > 24) this.vy = 24;
-			this.y += this.vy;
-			if (this.y >= mp.boss_kijyun_y) {
-				this.y = mp.boss_kijyun_y;
-				this.vy = -24;
-				// 画面外に出たら反転する
-				if (speed < 0) {
-					if (this.x <= x_border_left) this.c1 = next_state;
-				} else {
-					if (this.x >= x_border_right) this.c1 = next_state;
-				}
+		const checkBorder = (speed, left, right, fix_position, next_c1) => {
+			if (speed <= 0 && this.x <= left) {
+				if (fix_position) this.x = left;
+				this.c1 = next_c1;
+			} else if (speed >= 0 && this.x >= right) {
+				if (fix_position) this.x = right;
+				this.c1 = next_c1;
 			}
 		};
 
@@ -926,70 +910,63 @@ class Boss extends CharacterObject {
 		)
 			mp.boss_attack_mode = true;
 
-		if (this.c1 < 5) {
-			if (direction !== 1) this.c2 = 0;
+		// 回転
+		if (this.c1 < 5 && direction !== 1) this.c2 = 0;
+		if (flag_type_rotate) {
+			let degree = 0;
+			if ((this.c1 >= 5 && this.c1 < 25) || this.c1 === 25) degree = -15;
+			else if (this.c2 === 30) degree = 15;
+			// boss3_type === 7: 高速回転
+			if (mp.boss3_type === 7) degree *= 2;
+			if (degree !== 0) this.c2 = normalizeDegree(this.c2 + degree);
+		}
+
+		if (this.c1 < 25) {
 			this.c1++;
-		} else if (this.c1 < 25) {
-			if (flag_type_rotate) rotate(-15 * mirror);
-			this.c1++;
-		} else if (this.c1 === 25) {
-			// 体当たり 行き
+		} else if (this.c1 === 25 || this.c1 === 30) {
+			const flag_on_the_way = this.c1 === 25;
+			const next_c1 = flag_on_the_way ? 30 : 40;
 			if (flag_type_jump) {
-				// ジャンプ移動
-				jumpTackle(-3 * mirror, 30);
-			} else {
-				if (flag_type_fast) this.x -= 18 * mirror;
-				else this.x -= 12 * mirror;
-				// 画面外に出たら反転する
-				if (direction !== 1) {
-					if (this.x <= x_border_left) {
-						this.x = x_border_left;
-						this.c1 = 30;
-					}
-				} else {
-					if (this.x >= x_border_right) {
-						this.x = x_border_right;
-						this.c1 = 30;
-					}
+				// ジャンプ
+				const speed = (flag_on_the_way ? -3 : 4) * mirror;
+				this.x += speed;
+				// 落下
+				if (this.vy < 24) this.vy = Math.min(this.vy + 2, 24);
+				this.y += this.vy;
+				if (this.y >= mp.boss_kijyun_y) {
+					// 基準となるY座標まで落ちたら再度ジャンプ
+					this.y = mp.boss_kijyun_y;
+					this.vy = -24;
+					// 画面外に出ていたら反転する
+					checkBorder(
+						speed,
+						x_border_left,
+						x_border_right,
+						false,
+						next_c1
+					);
 				}
-			}
-			if (flag_type_rotate) rotate(-15 * mirror);
-		} else if (this.c1 === 30) {
-			// 体当たり 帰り
-			if (flag_type_jump) {
-				// ジャンプ移動
-				jumpTackle(4 * mirror, 40);
 			} else {
-				if (flag_type_fast) this.x += 18 * mirror;
-				else this.x += 8 * mirror;
+				// 体当たり
+				let speed = 0;
+				if (flag_on_the_way) speed = flag_type_fast ? -18 : -12;
+				else speed = flag_type_fast ? 18 : 8;
+				speed *= mirror;
+				this.x += speed;
 				// 画面外に出たら反転する
-				if (direction !== 1) {
-					if (this.x >= x_border_right) {
-						this.x = x_border_right;
-						this.c1 = 40;
-					}
-				} else {
-					if (this.x <= x_border_left) {
-						this.x = x_border_left;
-						this.c1 = 40;
-					}
-				}
+				checkBorder(
+					speed,
+					x_border_left,
+					x_border_right,
+					true,
+					next_c1
+				);
 			}
-			if (flag_type_rotate) rotate(15 * mirror);
 		} else if (this.c1 === 40) {
 			// 元の位置に戻る
-			this.x -= 2 * mirror;
-			if (direction !== 1) {
-				if (this.x <= x_standby_right) {
-					this.x = x_standby_right;
-					this.c1 = -20;
-				}
-			} else {
-				if (this.x >= x_standby_left) {
-					this.x = x_standby_left;
-					this.c1 = -20;
-				}
-			}
+			const speed = -2 * mirror;
+			this.x += speed;
+			checkBorder(speed, x_standby_left, x_standby_right, true, -20);
 		}
 	}
 
