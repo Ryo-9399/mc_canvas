@@ -513,10 +513,17 @@ class Boss extends CharacterObject {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 
+		// 画面外判定に用いる座標
+		const x_border_left = mp.sl_wx + 16;
+		const x_border_right = mp.sl_wx + 16 + 512 - 64;
+		// ボスが居座るX座標
+		const x_standby_left = mp.sl_wx + 96;
+		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
+
 		if (this.c1 < 25) {
 			this.c1++;
-		} else if (this.c1 == 25) {
-			if (mp.boss3_type == 4) {
+		} else if (this.c1 === 25) {
+			if (mp.boss3_type === 4) {
 				this.x -= 3 * mirror;
 				this.vy += 2;
 				if (this.vy > 24) this.vy = 24;
@@ -524,30 +531,29 @@ class Boss extends CharacterObject {
 				if (this.y >= mp.boss_kijyun_y) {
 					this.y = mp.boss_kijyun_y;
 					this.vy = -24;
-
 					if (direction !== 1) {
-						if (this.x <= mp.sl_wx + 16) this.c1 = 30;
+						if (this.x <= x_border_left) this.c1 = 30;
 					} else {
-						if (this.x >= mp.sl_wx + 512 - 48) this.c1 = 30;
+						if (this.x >= x_border_right) this.c1 = 30;
 					}
 				}
 			} else {
-				if (mp.boss3_type == 3) this.x -= 18 * mirror;
+				if (mp.boss3_type === 3) this.x -= 18 * mirror;
 				else this.x -= 12 * mirror;
 				if (direction !== 1) {
-					if (this.x <= mp.sl_wx + 16) {
-						this.x = mp.sl_wx + 16;
+					if (this.x <= x_border_left) {
+						this.x = x_border_left;
 						this.c1 = 30;
 					}
 				} else {
-					if (this.x >= mp.sl_wx + 512 - 48) {
-						this.x = mp.sl_wx + 512 - 48;
+					if (this.x >= x_border_right) {
+						this.x = x_border_right;
 						this.c1 = 30;
 					}
 				}
 			}
-		} else if (this.c1 == 30) {
-			if (mp.boss3_type == 4) {
+		} else if (this.c1 === 30) {
+			if (mp.boss3_type === 4) {
 				this.x += 4 * mirror;
 				this.vy += 2;
 				if (this.vy > 24) this.vy = 24;
@@ -556,36 +562,36 @@ class Boss extends CharacterObject {
 					this.y = mp.boss_kijyun_y;
 					this.vy = -24;
 					if (direction !== 1) {
-						if (this.x >= mp.sl_wx + 512 - 48) this.c1 = 40;
+						if (this.x >= x_border_right) this.c1 = 40;
 					} else {
-						if (this.x <= mp.sl_wx + 16) this.c1 = 40;
+						if (this.x <= x_border_left) this.c1 = 40;
 					}
 				}
 			} else {
-				if (mp.boss3_type == 3) this.x += 18 * mirror;
+				if (mp.boss3_type === 3) this.x += 18 * mirror;
 				else this.x += 8 * mirror;
 				if (direction !== 1) {
-					if (this.x >= mp.sl_wx + 512 - 48) {
-						this.x = mp.sl_wx + 512 - 48;
+					if (this.x >= x_border_right) {
+						this.x = x_border_right;
 						this.c1 = 40;
 					}
 				} else {
-					if (this.x <= mp.sl_wx + 16) {
-						this.x = mp.sl_wx + 16;
+					if (this.x <= x_border_left) {
+						this.x = x_border_left;
 						this.c1 = 40;
 					}
 				}
 			}
-		} else if (this.c1 == 40) {
+		} else if (this.c1 === 40) {
 			this.x -= 2 * mirror;
 			if (direction !== 1) {
-				if (this.x <= mp.sl_wx + 512 - 96 - 32) {
-					this.x = mp.sl_wx + 512 - 96 - 32;
+				if (this.x <= x_standby_right) {
+					this.x = x_standby_right;
 					this.c1 = -20;
 				}
 			} else {
-				if (this.x >= mp.sl_wx + 96) {
-					this.x = mp.sl_wx + 96;
+				if (this.x >= x_standby_left) {
+					this.x = x_standby_left;
 					this.c1 = -20;
 				}
 			}
