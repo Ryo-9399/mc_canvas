@@ -915,7 +915,7 @@ class Boss extends CharacterObject {
 		if (flag_type_rotate) {
 			let degree = 0;
 			if ((this.c1 >= 5 && this.c1 < 25) || this.c1 === 25) degree = -15;
-			else if (this.c2 === 30) degree = 15;
+			else if (this.c1 === 30) degree = 15;
 			// boss3_type === 7: 高速回転
 			if (mp.boss3_type === 7) degree *= 2;
 			if (degree !== 0) this.c2 = normalizeDegree(this.c2 + degree);
