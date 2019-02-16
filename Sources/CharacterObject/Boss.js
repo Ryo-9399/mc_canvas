@@ -880,20 +880,41 @@ class Boss extends CharacterObject {
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 
-		const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
 		const flag_type_fast = mp.boss3_type === 3 || mp.boss3_type === 7;
 		const flag_type_jump = mp.boss3_type === 4 || mp.boss3_type === 8;
+		const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
 
 		/**
 		 * 回転
-		 * @param dir 回転方向 0:ボスの向いている方向(direction基準) 1:逆方向
+		 * @param degree 回転角度 (時計回り)
 		 */
-		const rotate = dir => {
-			let degree = 15;
+		const rotate = degree => {
 			// boss3_type === 7: 高速回転
 			if (mp.boss3_type === 7) degree *= 2;
-			if (dir !== 1) degree *= -1;
-			this.c2 = normalizeDegree(this.c2 + degree * mirror);
+			this.c2 = normalizeDegree(this.c2 + degree);
+		};
+
+		/**
+		 * ジャンプ攻撃
+		 * @param {number} speed X速度
+		 * @param {number} next_state 画面外に出た際に移行するc1の値
+		 */
+		const jumpTackle = (speed, next_state) => {
+			// ジャンプ移動
+			this.x += speed;
+			this.vy += 2;
+			if (this.vy > 24) this.vy = 24;
+			this.y += this.vy;
+			if (this.y >= mp.boss_kijyun_y) {
+				this.y = mp.boss_kijyun_y;
+				this.vy = -24;
+				// 画面外に出たら反転する
+				if (speed < 0) {
+					if (this.x <= x_border_left) this.c1 = next_state;
+				} else {
+					if (this.x >= x_border_right) this.c1 = next_state;
+				}
+			}
 		};
 
 		// NOTE: ここのdirection!==1の判定はおそらく元のコードのバグ
@@ -909,26 +930,13 @@ class Boss extends CharacterObject {
 			if (direction !== 1) this.c2 = 0;
 			this.c1++;
 		} else if (this.c1 < 25) {
-			if (flag_type_rotate) rotate(0);
+			if (flag_type_rotate) rotate(-15 * mirror);
 			this.c1++;
 		} else if (this.c1 === 25) {
 			// 体当たり 行き
 			if (flag_type_jump) {
 				// ジャンプ移動
-				this.x -= 3 * mirror;
-				this.vy += 2;
-				if (this.vy > 24) this.vy = 24;
-				this.y += this.vy;
-				if (this.y >= mp.boss_kijyun_y) {
-					this.y = mp.boss_kijyun_y;
-					this.vy = -24;
-					// 画面外に出たら反転する
-					if (direction !== 1) {
-						if (this.x <= x_border_left) this.c1 = 30;
-					} else {
-						if (this.x >= x_border_right) this.c1 = 30;
-					}
-				}
+				jumpTackle(-3 * mirror, 30);
 			} else {
 				if (flag_type_fast) this.x -= 18 * mirror;
 				else this.x -= 12 * mirror;
@@ -945,24 +953,12 @@ class Boss extends CharacterObject {
 					}
 				}
 			}
-			if (flag_type_rotate) rotate(0);
+			if (flag_type_rotate) rotate(-15 * mirror);
 		} else if (this.c1 === 30) {
 			// 体当たり 帰り
 			if (flag_type_jump) {
-				this.x += 4 * mirror;
-				this.vy += 2;
-				if (this.vy > 24) this.vy = 24;
-				this.y += this.vy;
-				if (this.y >= mp.boss_kijyun_y) {
-					this.y = mp.boss_kijyun_y;
-					this.vy = -24;
-					// 画面外に出たら反転する
-					if (direction !== 1) {
-						if (this.x >= x_border_right) this.c1 = 40;
-					} else {
-						if (this.x <= x_border_left) this.c1 = 40;
-					}
-				}
+				// ジャンプ移動
+				jumpTackle(4 * mirror, 40);
 			} else {
 				if (flag_type_fast) this.x += 18 * mirror;
 				else this.x += 8 * mirror;
@@ -979,7 +975,7 @@ class Boss extends CharacterObject {
 					}
 				}
 			}
-			if (flag_type_rotate) rotate(1);
+			if (flag_type_rotate) rotate(15 * mirror);
 		} else if (this.c1 === 40) {
 			// 元の位置に戻る
 			this.x -= 2 * mirror;
