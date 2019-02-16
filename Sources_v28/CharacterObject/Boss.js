@@ -262,23 +262,27 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_TACKLE_ATTACK_LEFT:
-				if (this.c1 <= 25) {
+				this.pt = 1200;
+				if (this.c1 < 5) {
+				} else if (this.c1 < 25) {
+					this.pt = 1250;
+				} else if (this.c1 === 25) {
 					this.pt = 1250;
 				} else if (this.c1 === 30) {
 					this.pt = 1255;
-				} else {
-					this.pt = 1200;
 				}
 				this.boss3TackleAttack(mp, 0);
 				break;
 
 			case BOSS3_TACKLE_ATTACK_RIGHT:
-				if (this.c1 <= 25) {
+				this.pt = 1205;
+				if (this.c1 < 5) {
+				} else if (this.c1 < 25) {
+					this.pt = 1255;
+				} else if (this.c1 === 25) {
 					this.pt = 1255;
 				} else if (this.c1 === 30) {
 					this.pt = 1250;
-				} else {
-					this.pt = 1205;
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;

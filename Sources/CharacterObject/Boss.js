@@ -324,31 +324,39 @@ class Boss extends CharacterObject {
 				break;
 
 			case BOSS3_TACKLE_ATTACK_LEFT:
-				if (this.c1 <= 25) {
+				this.pt = 1200;
+				if (this.c1 < 5) {
+				} else if (this.c1 < 25) {
+					this.pt = 1250;
 					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1251;
-					else this.pt = 1250;
+				} else if (this.c1 === 25) {
+					this.pt = 1250;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
+						this.pt = 1251;
 				} else if (this.c1 === 30) {
+					this.pt = 1255;
 					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1256;
-					else this.pt = 1255;
-				} else {
-					this.pt = 1200;
 				}
 				this.boss3TackleAttack(mp, 0);
 				break;
 
 			case BOSS3_TACKLE_ATTACK_RIGHT:
-				if (this.c1 <= 25) {
+				this.pt = 1205;
+				if (this.c1 < 5) {
+				} else if (this.c1 < 25) {
+					this.pt = 1255;
 					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1256;
-					else this.pt = 1255;
+				} else if (this.c1 === 25) {
+					this.pt = 1255;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
+						this.pt = 1256;
 				} else if (this.c1 === 30) {
+					this.pt = 1250;
 					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
 						this.pt = 1251;
-					else this.pt = 1250;
-				} else {
-					this.pt = 1205;
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
@@ -865,7 +873,6 @@ class Boss extends CharacterObject {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 
-		if (this.c1 < 25) this.c1++;
 		// TODO: 消して良いのでは？
 		if (direction !== 1 && this.c1 < 5) this.c2 = 0;
 		// NOTE: ここのdirection!==1の判定はおそらく元のコードのバグ
@@ -973,6 +980,7 @@ class Boss extends CharacterObject {
 				if (this.c2 >= 360) this.c2 -= 360;
 			}
 		}
+		if (this.c1 < 25) this.c1++;
 	}
 
 	/**
