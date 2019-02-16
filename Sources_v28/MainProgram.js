@@ -1,4 +1,5 @@
 import { CharacterObject } from "./CharacterObject";
+import { Boss } from "./CharacterObject/Boss";
 import { createNDimensionArray, rounddown } from "./GlobalFunctions";
 import { IdouGamen } from "./IdouGamen";
 import { Color, Font } from "./ImageBuff";
@@ -62,7 +63,7 @@ function MainProgram(gamegraphics, gamemouse, gamekey) {
 
 	for (var i1 = 0; i1 <= 1; i1++) this.co_jm[i1] = new CharacterObject();
 
-	this.co_b = new CharacterObject();
+	this.co_b = new Boss();
 	var j1 = this.paraInt("stage_select");
 	if (j1 == 2) {
 		this.stage_select = 2;
@@ -188,130 +189,70 @@ MainProgram.prototype.ranInt = function(i) {
 	return (ran_seed * 2.3283064365386963e-10 * i) | 0;
 };
 
+/**
+ * 画面上部のスコア・残り時間・HP・残機を描画します
+ */
 MainProgram.prototype.drawScore = function() {
-	if (!this.score_v) {
-		if (this.time_max > 0) {
-			var i = rounddown(this.time / 1000);
-			var k = 14 + this.moji_size;
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-			var s;
-			if (this.j_left_shoki <= 0 && this.j_left <= 0) {
-				s = this.moji_time + i;
-			} else {
-				s = this.moji_left + this.j_left;
-				s = s + this.moji_time + i;
-			}
-			this.gg.os_g.drawString(s, 40, k);
-		} else {
-			var l = 14 + this.moji_size;
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-			var s1;
-			if (this.j_left_shoki <= 0 && this.j_left <= 0) s1 = "";
-			else s1 = this.moji_left + this.j_left;
-			this.gg.os_g.drawString(s1, 40, l);
-		}
-	} else if (this.time_max > 0) {
-		var j = rounddown(this.time / 1000);
-		var i1 = 14 + this.moji_size;
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		var s2;
-		if (this.j_left_shoki <= 0 && this.j_left <= 0) {
-			s2 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore +
-				this.moji_time +
-				j;
-		} else {
-			s2 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore +
-				this.moji_left +
-				this.j_left;
-			s2 = s2 + this.moji_time + j;
-		}
-		this.gg.os_g.drawString(s2, 40, i1);
-	} else {
-		var j1 = 14 + this.moji_size;
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		var s3;
-		if (this.j_left_shoki <= 0 && this.j_left <= 0)
-			s3 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore;
-		else
-			s3 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore +
-				this.moji_left +
-				this.j_left;
-		this.gg.os_g.drawString(s3, 40, j1);
+	this.gg.os_g.setColor(this.gamecolor_score);
+	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+
+	// 描画座標
+	const display_x = 40;
+	const display_y = this.moji_size + 14;
+
+	let str = "";
+	if (this.score_v) {
+		// 得点を表示する
+		str += `${this.moji_score} ${this.score}    ${this.moji_highscore} ${
+			this.highscore
+		}`;
 	}
+	if (this.j_left_shoki > 0 || this.j_left > 0) {
+		// 残機を表示
+		str += `${this.moji_left}${this.j_left}`;
+	}
+	if (this.time_max > 0) {
+		// 制限時間を表示
+		const time_sec = Math.floor(this.time / 1000);
+		str += `${this.moji_time}${time_sec}`;
+	}
+	this.gg.os_g.drawString(str, display_x, display_y);
 };
 
+/**
+ * 画面上部にスコア・残機のみを描画します
+ * TODO: 要調査:地図画面でのスコア表示に使われる？
+ */
 MainProgram.prototype.drawScore2 = function() {
-	if (!this.score_v) {
-		var i = 14 + this.moji_size;
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		var s;
-		if (this.j_left_shoki <= 0 && this.j_left <= 0) s = "";
-		else s = this.moji_left + this.j_left;
-		this.gg.os_g.drawString(s, 40, i);
-	} else {
-		var j = 14 + this.moji_size;
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
-		var s1;
-		if (this.j_left_shoki <= 0 && this.j_left <= 0)
-			s1 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore;
-		else
-			s1 =
-				this.moji_score +
-				" " +
-				this.score +
-				"    " +
-				this.moji_highscore +
-				" " +
-				this.highscore +
-				this.moji_left +
-				this.j_left;
-		this.gg.os_g.drawString(s1, 40, j);
+	this.gg.os_g.setColor(this.gamecolor_score);
+	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+
+	// 描画座標
+	const display_x = 40;
+	const display_y = this.moji_size + 14;
+
+	let str = "";
+	if (this.score_v) {
+		// 得点を表示する
+		let str = `${this.moji_score} ${this.score}    ${this.moji_highscore} ${
+			this.highscore
+		}`;
 	}
+	if (this.j_left_shoki > 0 || this.j_left > 0) {
+		// 残機を表示
+		str += `${this.moji_left}${this.j_left}`;
+	}
+	this.gg.os_g.drawString(str, display_x, display_y);
 };
 
-MainProgram.prototype.addScore = function(i) {
-	this.score += i;
+/**
+ * スコアを加算します。
+ * 負の値を渡すとスコアが減ります。
+ *
+ * @param {number} score 加算するスコア
+ */
+MainProgram.prototype.addScore = function(score) {
+	this.score += score;
 	if (this.score_1up_1 > 0 && this.score >= this.score_1up_1) {
 		this.j_left++;
 		this.score_1up_1 = 0;
@@ -322,13 +263,17 @@ MainProgram.prototype.addScore = function(i) {
 	}
 };
 
-MainProgram.prototype.addSerifu = function(i, j, k) {
-	for (var l = 1; l <= k; l++) {
-		var s = this.gg.ap.getParameter("serifu" + j + "-" + l);
-		var i1;
-		i1 = parseInt(s);
-		if (isNaN(i1)) i1 = -1;
-		if (i1 != 0) this.km.addItem(i, s);
+/**
+ * TODO: 加筆求む
+ * @param {number} index 追加する場所(？) TODO: 要調査
+ * @param {number} person_id セリフを言う人の番号
+ * @param {number} max_row 1からmax_row行目までを表示する
+ */
+MainProgram.prototype.addSerifu = function(index, person_id, max_row) {
+	for (let i = 1; i <= max_row; i++) {
+		const message = this.gg.ap.getParameter("serifu" + person_id + "-" + i);
+		// NOTE: issue #34
+		if (parseInt(message, 10) != 0) this.km.addItem(index, message);
 	}
 };
 
@@ -3546,23 +3491,30 @@ MainProgram.prototype.jZutuki = function(i, j, k) {
 		}
 };
 
-MainProgram.prototype.tSet = function(i, j, k, l) {
-	for (var i1 = 0; i1 <= 119; i1++) {
-		if (this.co_t[i1].c > 0) continue;
-		var characterobject = this.co_t[i1];
+/**
+ * 敵を追加する
+ * @param x {number} X座標(ピクセル座標)
+ * @param y {number} Y座標(ピクセル座標)
+ * @param teki_type {(string|number)} 敵の種類
+ * @param l {number} その敵が出現するスクロール位置
+ */
+MainProgram.prototype.tSet = function(x, y, teki_type, l) {
+	for (let i = 0; i <= 119; i++) {
+		if (this.co_t[i].c > 0) continue;
+		const characterobject = this.co_t[i];
 		characterobject.c = 10;
 		characterobject.c1 = l;
-		characterobject.c2 = k;
-		characterobject.c3 = i;
-		characterobject.c4 = j;
-		characterobject.x = i;
-		characterobject.y = j;
+		characterobject.c2 = teki_type;
+		characterobject.c3 = x;
+		characterobject.c4 = y;
+		characterobject.x = x;
+		characterobject.y = y;
 		this.t_kazu++;
-		switch (k) {
+		switch (teki_type) {
 			case 500:
-				characterobject.y = j - 12;
-				characterobject.c3 = j - 52;
-				characterobject.c4 = j - 12;
+				characterobject.y = y - 12;
+				characterobject.c3 = y - 52;
+				characterobject.c4 = y - 12;
 				characterobject.vy = -4;
 				break;
 
@@ -5451,47 +5403,13 @@ MainProgram.prototype.jmMove = function() {
 						var k1 = this.co_b.x - characterobject.x;
 						var i2 = this.co_b.y - characterobject.y;
 						var k2 = Math.floor(Math.sqrt(k1 * k1 + i2 * i2));
-						if (k2 <= characterobject.c2 + 20)
-							if (this.co_b.c < 200) {
-								this.co_b.c = 67;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.x > this.co_b.x) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1005;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1000;
-									this.co_b.vx = 4;
-								}
-							} else if (this.co_b.c < 300) {
-								this.co_b.c = 77;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.x > this.co_b.x) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1105;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1100;
-									this.co_b.vx = 4;
-								}
-							} else {
-								this.co_b.c = 87;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.x > this.co_b.x) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1205;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1200;
-									this.co_b.vx = 4;
-								}
-							}
+						if (k2 <= characterobject.c2 + 20) {
+							// グレネードの爆風でボスを倒す
+							this.co_b.killGrenade(
+								this,
+								characterobject.x > this.co_b.x ? 1 : 0
+							);
+						}
 					}
 					characterobject.pt = 1000;
 					characterobject.pth = 0;
@@ -5533,29 +5451,10 @@ MainProgram.prototype.jmMove = function() {
 						this.co_b.x > characterobject.x - 24 &&
 						this.co_b.x < characterobject.vx + 24 &&
 						Math.abs(this.co_b.y - characterobject.y) < 36
-					)
-						if (this.co_b.c < 200) {
-							this.co_b.c = 67;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 1;
-							this.co_b.pt = 1005;
-							this.co_b.vx = -4;
-						} else if (this.co_b.c < 300) {
-							this.co_b.c = 77;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 1;
-							this.co_b.pt = 1105;
-							this.co_b.vx = -4;
-						} else {
-							this.co_b.c = 87;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 1;
-							this.co_b.pt = 1205;
-							this.co_b.vx = -4;
-						}
+					) {
+						// 左向きエネルギー砲でボスを倒す
+						this.co_b.killGrenade(this, 1);
+					}
 					if (this.co_j.c < 100 || this.co_j.c >= 200)
 						characterobject.c = 0;
 					characterobject.pt = 1200;
@@ -5597,29 +5496,10 @@ MainProgram.prototype.jmMove = function() {
 						this.co_b.x > characterobject.vx - 24 &&
 						this.co_b.x < characterobject.x + 24 &&
 						Math.abs(this.co_b.y - characterobject.y) < 36
-					)
-						if (this.co_b.c < 200) {
-							this.co_b.c = 67;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 0;
-							this.co_b.pt = 1000;
-							this.co_b.vx = 4;
-						} else if (this.co_b.c < 300) {
-							this.co_b.c = 77;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 0;
-							this.co_b.pt = 1100;
-							this.co_b.vx = 4;
-						} else {
-							this.co_b.c = 87;
-							this.co_b.vy = -24;
-							this.co_b.c1 = 0;
-							this.co_b.muki = 0;
-							this.co_b.pt = 1200;
-							this.co_b.vx = 4;
-						}
+					) {
+						// 右向きエネルギー砲でボスを倒す
+						this.co_b.killGrenade(this, 0);
+					}
 					if (this.co_j.c < 100 || this.co_j.c >= 200)
 						characterobject.c = 0;
 					characterobject.pt = 1205;
@@ -6897,807 +6777,26 @@ MainProgram.prototype.aMove = function() {
 };
 
 MainProgram.prototype.bMove = function() {
-	if (this.co_b.x >= this.maps.wx + 1024) return;
-	switch (this.co_b.c) {
-		case 40:
-			if (this.co_b.c1 < 20) this.co_b.c1++;
-			if (this.co_b.c1 == 15)
-				this.mSet(this.maps.wx + 256, this.maps.wy + 128, 2200);
-			this.co_b.pt = 0;
-			break;
-
-		case 60:
-			this.co_b.c1++;
-			if (this.co_b.c4 <= 0) {
-				if (this.co_b.c1 >= 26) {
-					this.co_b.c = 40;
-					this.co_b.c1 = 0;
-					this.addScore(10);
-				}
-			} else if (this.co_b.c1 >= 11) this.co_b.c = 150;
-			this.co_b.pt = 1010;
-			break;
-
-		case 65:
-			this.co_b.c1++;
-			if (this.co_b.c1 >= 11) this.co_b.c = 155;
-			this.co_b.pt = 1015;
-			break;
-
-		case 67:
-			this.co_b.vy += 4;
-			if (this.co_b.vy > 28) this.co_b.vy = 28;
-			this.co_b.x += this.co_b.vx;
-			this.co_b.y += this.co_b.vy;
-			if (this.co_b.y >= this.maps.wy + 320 + 16) {
-				this.co_b.c = 40;
-				this.co_b.c1 = 0;
-				this.addScore(10);
-			}
-			if (this.co_b.muki == 1) this.co_b.pt = 1005;
-			else this.co_b.pt = 1000;
-			break;
-
-		case 70:
-			this.co_b.c1++;
-			if (this.co_b.c4 <= 0) {
-				if (this.co_b.c1 >= 26) {
-					this.co_b.c = 40;
-					this.co_b.c1 = 0;
-					this.addScore(10);
-				}
-			} else if (this.co_b.c1 >= 11) this.co_b.c = 250;
-			this.co_b.pt = 1110;
-			break;
-
-		case 75:
-			this.co_b.c1++;
-			if (this.co_b.c1 >= 11) this.co_b.c = 255;
-			this.co_b.pt = 1115;
-			break;
-
-		case 77:
-			this.co_b.vy += 4;
-			if (this.co_b.vy > 28) this.co_b.vy = 28;
-			this.co_b.x += this.co_b.vx;
-			this.co_b.y += this.co_b.vy;
-			if (this.co_b.y >= this.maps.wy + 320 + 16) {
-				this.co_b.c = 40;
-				this.co_b.c1 = 0;
-				this.addScore(10);
-			}
-			if (this.co_b.muki == 1) this.co_b.pt = 1105;
-			else this.co_b.pt = 1100;
-			break;
-
-		case 80:
-			this.co_b.c1++;
-			if (this.co_b.c4 <= 0) {
-				if (this.co_b.c1 >= 26) {
-					this.co_b.c = 40;
-					this.co_b.c1 = 0;
-					this.addScore(10);
-				}
-			} else if (this.co_b.c1 >= 11) this.co_b.c = 350;
-			this.co_b.pt = 1210;
-			break;
-
-		case 85:
-			this.co_b.c1++;
-			if (this.co_b.c1 >= 11) this.co_b.c = 355;
-			this.co_b.pt = 1215;
-			break;
-
-		case 87:
-			this.co_b.vy += 4;
-			if (this.co_b.vy > 28) this.co_b.vy = 28;
-			this.co_b.x += this.co_b.vx;
-			this.co_b.y += this.co_b.vy;
-			if (this.co_b.y >= this.maps.wy + 320 + 16) {
-				this.co_b.c = 40;
-				this.co_b.c1 = 0;
-				this.addScore(10);
-			}
-			if (this.co_b.muki == 1) this.co_b.pt = 1205;
-			else this.co_b.pt = 1200;
-			break;
-
-		case 100:
-			if (this.sl_step == 2 || this.sl_step == 3) {
-				this.co_b.c = 110;
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1000;
-			break;
-
-		case 110:
-			if (this.boss_type == 2) {
-				var c = 150;
-				this.co_b.c1++;
-				if (this.co_b.c1 == 1)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -2);
-				else if (this.co_b.c1 == 5)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -4);
-				else if (this.co_b.c1 == 7)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -6);
-				else if (this.co_b.c1 == 9)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -8);
-				else if (this.co_b.c1 == 21)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -2);
-				else if (this.co_b.c1 == 91)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -2);
-				else if (this.co_b.c1 == 95)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -4);
-				else if (this.co_b.c1 == 97)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -6);
-				else if (this.co_b.c1 == 99)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -8);
-				else if (this.co_b.c1 == 111)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -2);
-				else if (this.co_b.c1 == 170)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -4);
-				else if (this.co_b.c1 == 180)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c, -2);
-				else if (this.co_b.c1 > 250) this.co_b.c1 = 250;
-			} else if (this.boss_type == 3) {
-				var c1 = 0x01c2;
-				this.co_b.c1++;
-				if (this.co_b.c1 == 5)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 20)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 35)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 50)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 65)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 80)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 95)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 == 110)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c1, -3);
-				else if (this.co_b.c1 > 250) this.co_b.c1 = 250;
-			} else if (this.boss_type == 4) {
-				var c2 = 0x028a;
-				this.co_b.c1++;
-				if (this.co_b.c1 == 1)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -5);
-				else if (this.co_b.c1 == 15)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -3);
-				else if (this.co_b.c1 == 29)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -2);
-				else if (this.co_b.c1 == 81)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -5);
-				else if (this.co_b.c1 == 95)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -3);
-				else if (this.co_b.c1 == 109)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -2);
-				else if (this.co_b.c1 == 165)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c2, -3);
-				else if (this.co_b.c1 > 250) this.co_b.c1 = 250;
-			} else {
-				this.co_b.c1++;
-				if (this.co_b.c1 == 3) {
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -4, -18);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, 4, -18);
-				} else if (this.co_b.c1 == 14) {
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -6, -20);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, 6, -20);
-				} else if (this.co_b.c1 == 20) {
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -3, -24);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, 3, -24);
-				} else if (this.co_b.c1 >= 28 && this.co_b.c1 <= 98) {
-					if (this.co_b.c1 % 7 == 0)
-						this.mSet2(
-							this.co_b.x,
-							this.co_b.y,
-							500,
-							-15 + this.ranInt(20),
-							-30
-						);
-				} else if (this.co_b.c1 == 130) {
-					var l1 = this.ranInt(8) + 3;
-					this.mSet2(this.co_b.x, this.co_b.y, 500, l1, -30);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -l1, -30);
-				} else if (this.co_b.c1 >= 150) this.co_b.c1 = 98;
-			}
-			this.co_b.pt = 1000;
-			break;
-
-		case 115:
-			if (this.boss_type == 2) {
-				var c3 = 150;
-				this.co_b.c1++;
-				if (this.co_b.c1 == 1)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 2);
-				else if (this.co_b.c1 == 5)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 4);
-				else if (this.co_b.c1 == 7)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 6);
-				else if (this.co_b.c1 == 9 && this.boss_type != 3)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 8);
-				else if (this.co_b.c1 == 21)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 2);
-				else if (this.co_b.c1 == 91)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 2);
-				else if (this.co_b.c1 == 95)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 4);
-				else if (this.co_b.c1 == 97)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 6);
-				else if (this.co_b.c1 == 99 && this.boss_type != 3)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 8);
-				else if (this.co_b.c1 == 111)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 2);
-				else if (this.co_b.c1 == 170)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 4);
-				else if (this.co_b.c1 == 180)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c3, 2);
-				else if (this.co_b.c1 > 250) this.co_b.c1 = 250;
-			} else if (this.boss_type == 3) {
-				var c4 = 0x01c2;
-				this.co_b.c1++;
-				if (this.co_b.c1 == 5)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 20)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 35)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 50)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 65)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 80)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 95)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 == 110)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c4, 3);
-				else if (this.co_b.c1 > 250) this.co_b.c1 = 250;
-			} else if (this.boss_type == 4) {
-				var c5 = 0x028a;
-				this.co_b.c1++;
-				if (this.co_b.c1 == 1)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 5);
-				else if (this.co_b.c1 == 15)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 3);
-				else if (this.co_b.c1 == 29)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 2);
-				else if (this.co_b.c1 == 81)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 5);
-				else if (this.co_b.c1 == 95)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 3);
-				else if (this.co_b.c1 == 109)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 2);
-				else if (this.co_b.c1 == 165)
-					this.tSetBoss(this.co_b.x, this.co_b.y, c5, 3);
-				else if (this.co_b.c1 > 250) this.co_b.c1 = 250;
-			} else {
-				this.co_b.c1++;
-				if (this.co_b.c1 == 3) {
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -4, -18);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, 4, -18);
-				} else if (this.co_b.c1 == 14) {
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -6, -20);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, 6, -20);
-				} else if (this.co_b.c1 == 20) {
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -3, -24);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, 3, -24);
-				} else if (this.co_b.c1 >= 28 && this.co_b.c1 <= 98) {
-					if (this.co_b.c1 % 7 == 0)
-						this.mSet2(
-							this.co_b.x,
-							this.co_b.y,
-							500,
-							15 - this.ranInt(20),
-							-30
-						);
-				} else if (this.co_b.c1 == 130) {
-					var i2 = this.ranInt(8) + 3;
-					this.mSet2(this.co_b.x, this.co_b.y, 500, i2, -30);
-					this.mSet2(this.co_b.x, this.co_b.y, 500, -i2, -30);
-				} else if (this.co_b.c1 >= 150) this.co_b.c1 = 98;
-			}
-			this.co_b.pt = 1005;
-			break;
-
-		case 150:
-			this.co_b.x -= 14;
-			if (this.co_b.x <= this.sl_wx + 96) {
-				this.co_b.x = this.sl_wx + 96;
-				this.co_b.c = 115;
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1000;
-			break;
-
-		case 155:
-			this.co_b.x += 14;
-			if (this.co_b.x >= this.sl_wx + 512 - 96 - 32) {
-				this.co_b.x = this.sl_wx + 512 - 96 - 32;
-				this.co_b.c = 110;
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1005;
-			break;
-
-		case 200:
-			if (this.sl_step == 2 || this.sl_step == 3) {
-				this.co_b.c = 210;
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1100;
-			break;
-
-		case 210:
-			this.co_b.c1++;
-			if (this.boss2_type == 2) {
-				if (
-					this.co_b.c1 == 10 ||
-					this.co_b.c1 == 85 ||
-					this.co_b.c1 == 215
-				) {
-					for (var i = 0; i <= 7; i++) {
-						var d = (i * 45 * 3.14) / 180;
-						var j2 = Math.floor(Math.cos(d) * 8);
-						var l3 = Math.floor(Math.sin(d) * 8) * -1;
-						this.mSet2(this.co_b.x, this.co_b.y - 8, 710, j2, l3);
-					}
-				} else if (
-					this.co_b.c1 == 35 ||
-					this.co_b.c1 == 110 ||
-					this.co_b.c1 == 295
-				) {
-					for (var j = 0; j <= 7; j++) {
-						var d1 = ((j * 45 + 15) * 3.14) / 180;
-						var k2 = Math.floor(Math.cos(d1) * 8);
-						var i4 = Math.floor(Math.sin(d1) * 8) * -1;
-						this.mSet2(this.co_b.x, this.co_b.y - 8, 710, k2, i4);
-					}
-				} else if (
-					this.co_b.c1 == 60 ||
-					this.co_b.c1 == 135 ||
-					this.co_b.c1 == 375
-				) {
-					for (var k = 0; k <= 7; k++) {
-						var d2 = ((k * 45 + 30) * 3.14) / 180;
-						var l2 = Math.floor(Math.cos(d2) * 8);
-						var j4 = Math.floor(Math.sin(d2) * 8) * -1;
-						this.mSet2(this.co_b.x, this.co_b.y - 8, 710, l2, j4);
-					}
-				} else if (this.co_b.c1 > 445) this.co_b.c1 = 0;
-			} else if (
-				this.co_b.c1 == 5 ||
-				this.co_b.c1 == 35 ||
-				this.co_b.c1 == 65 ||
-				this.co_b.c1 == 110 ||
-				this.co_b.c1 == 185
-			)
-				this.mSet(this.co_b.x, this.co_b.y, 90);
-			else if (this.co_b.c1 > 185) this.co_b.c1 = 110;
-			this.co_b.pt = 1100;
-			break;
-
-		case 215:
-			this.co_b.c1++;
-			if (this.boss2_type == 2) {
-				if (
-					this.co_b.c1 == 10 ||
-					this.co_b.c1 == 85 ||
-					this.co_b.c1 == 215
-				) {
-					for (var l = 0; l <= 7; l++) {
-						var d3 = (l * 45 * 3.14) / 180;
-						var i3 = Math.floor(Math.cos(d3) * 8);
-						var k4 = Math.floor(Math.sin(d3) * 8) * -1;
-						this.mSet2(this.co_b.x, this.co_b.y - 8, 710, i3, k4);
-					}
-				} else if (
-					this.co_b.c1 == 35 ||
-					this.co_b.c1 == 110 ||
-					this.co_b.c1 == 295
-				) {
-					for (var i1 = 0; i1 <= 7; i1++) {
-						var d4 = ((i1 * 45 + 15) * 3.14) / 180;
-						var j3 = Math.floor(Math.cos(d4) * 8);
-						var l4 = Math.floor(Math.sin(d4) * 8) * -1;
-						this.mSet2(this.co_b.x, this.co_b.y - 8, 710, j3, l4);
-					}
-				} else if (
-					this.co_b.c1 == 60 ||
-					this.co_b.c1 == 135 ||
-					this.co_b.c1 == 375
-				) {
-					for (var j1 = 0; j1 <= 7; j1++) {
-						var d5 = ((j1 * 45 + 30) * 3.14) / 180;
-						var k3 = Math.floor(Math.cos(d5) * 8);
-						var i5 = Math.floor(Math.sin(d5) * 8) * -1;
-						this.mSet2(this.co_b.x, this.co_b.y - 8, 710, k3, i5);
-					}
-				} else if (this.co_b.c1 > 445) this.co_b.c1 = 0;
-			} else if (
-				this.co_b.c1 == 5 ||
-				this.co_b.c1 == 35 ||
-				this.co_b.c1 == 65 ||
-				this.co_b.c1 == 110 ||
-				this.co_b.c1 == 185
-			)
-				this.mSet(this.co_b.x, this.co_b.y, 90);
-			else if (this.co_b.c1 > 185) this.co_b.c1 = 110;
-			this.co_b.pt = 1105;
-			break;
-
-		case 250:
-			this.co_b.x -= 14;
-			if (this.co_b.x <= this.sl_wx + 96) {
-				this.co_b.x = this.sl_wx + 96;
-				this.co_b.c = 215;
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1100;
-			break;
-
-		case 255:
-			this.co_b.x += 14;
-			if (this.co_b.x >= this.sl_wx + 512 - 96 - 32) {
-				this.co_b.x = this.sl_wx + 512 - 96 - 32;
-				this.co_b.c = 210;
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1105;
-			break;
-
-		case 300:
-			if (this.sl_step == 2 || this.sl_step == 3) {
-				if (this.boss3_type >= 2 && this.boss3_type <= 4) {
-					this.co_b.c = 360;
-					this.co_b.vy = -24;
-				} else {
-					this.co_b.c = 310;
-				}
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1200;
-			break;
-
-		case 310:
-			this.co_b.c1++;
-			if (this.co_b.c1 == 1)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -5, -32);
-			else if (this.co_b.c1 == 15) {
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -10, -32);
-				if (this.co_j.x > this.co_b.x - 64) this.co_b.c1 = 500;
-			} else if (this.co_b.c1 == 29)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -15, -32);
-			else if (this.co_b.c1 == 65)
-				this.mSet2(this.co_b.x - 2, this.co_b.y, 800, -20, -32);
-			else if (this.co_b.c1 == 80)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -5, -32);
-			else if (this.co_b.c1 == 105)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -15, -32);
-			else if (this.co_b.c1 == 147)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -10, -32);
-			else if (this.co_b.c1 == 237) this.co_b.c1 = 0;
-			else if (this.co_b.c1 == 520)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 4, -32);
-			else if (this.co_b.c1 == 530) {
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -5, -32);
-				this.co_b.c1 = 1;
-			} else if (this.co_b.c1 > 530) this.co_b.c1 = 1;
-			this.co_b.pt = 1200;
-			break;
-
-		case 315:
-			this.co_b.c1++;
-			if (this.co_b.c1 == 1)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 5, -32);
-			else if (this.co_b.c1 == 15) {
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 10, -32);
-				if (this.co_j.x < this.co_b.x + 64) this.co_b.c1 = 500;
-			} else if (this.co_b.c1 == 29)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 15, -32);
-			else if (this.co_b.c1 == 65)
-				this.mSet2(this.co_b.x + 2, this.co_b.y, 800, 20, -32);
-			else if (this.co_b.c1 == 80)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 5, -32);
-			else if (this.co_b.c1 == 105)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 15, -32);
-			else if (this.co_b.c1 == 147)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 10, -32);
-			else if (this.co_b.c1 == 237) this.co_b.c1 = 0;
-			else if (this.co_b.c1 == 520)
-				this.mSet2(this.co_b.x, this.co_b.y, 800, -4, -32);
-			else if (this.co_b.c1 == 530) {
-				this.mSet2(this.co_b.x, this.co_b.y, 800, 5, -32);
-				this.co_b.c1 = 1;
-			} else if (this.co_b.c1 > 530) this.co_b.c1 = 1;
-			this.co_b.pt = 1205;
-			break;
-
-		case 350:
-			this.co_b.x -= 14;
-			if (this.co_b.x <= this.sl_wx + 96) {
-				this.co_b.x = this.sl_wx + 96;
-				if (this.boss3_type >= 2 && this.boss3_type <= 4) {
-					this.co_b.c = 365;
-					this.co_b.vy = -24;
-				} else {
-					this.co_b.c = 315;
-				}
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1200;
-			break;
-
-		case 355:
-			this.co_b.x += 14;
-			if (this.co_b.x >= this.sl_wx + 512 - 96 - 32) {
-				this.co_b.x = this.sl_wx + 512 - 96 - 32;
-				if (this.boss3_type >= 2 && this.boss3_type <= 4) {
-					this.co_b.c = 360;
-					this.co_b.vy = -24;
-				} else {
-					this.co_b.c = 310;
-				}
-				this.co_b.c1 = 0;
-			}
-			this.co_b.pt = 1205;
-			break;
-
-		case 360:
-			this.co_b.pt = 1200;
-			if (this.co_b.c1 < 5) this.co_b.c1++;
-			else if (this.co_b.c1 < 25) {
-				this.co_b.c1++;
-				this.co_b.pt = 1250;
-			} else if (this.co_b.c1 == 25) {
-				if (this.boss3_type == 3) {
-					this.co_b.x -= 18;
-					if (this.co_b.x <= this.sl_wx + 16) {
-						this.co_b.x = this.sl_wx + 16;
-						this.co_b.c1 = 30;
-					}
-				} else if (this.boss3_type == 4) {
-					this.co_b.x -= 3;
-					this.co_b.vy += 2;
-					if (this.co_b.vy > 24) this.co_b.vy = 24;
-					this.co_b.y += this.co_b.vy;
-					if (this.co_b.y >= this.boss_kijyun_y) {
-						this.co_b.y = this.boss_kijyun_y;
-						this.co_b.vy = -24;
-						if (this.co_b.x <= this.sl_wx + 16) this.co_b.c1 = 30;
-					}
-				} else {
-					this.co_b.x -= 12;
-					if (this.co_b.x <= this.sl_wx + 16) {
-						this.co_b.x = this.sl_wx + 16;
-						this.co_b.c1 = 30;
-					}
-				}
-				this.co_b.pt = 1250;
-			} else if (this.co_b.c1 == 30) {
-				if (this.boss3_type == 3) {
-					this.co_b.x += 18;
-					if (this.co_b.x >= this.sl_wx + 512 - 48) {
-						this.co_b.x = this.sl_wx + 512 - 48;
-						this.co_b.c1 = 40;
-					}
-				} else if (this.boss3_type == 4) {
-					this.co_b.x += 4;
-					this.co_b.vy += 2;
-					if (this.co_b.vy > 24) this.co_b.vy = 24;
-					this.co_b.y += this.co_b.vy;
-					if (this.co_b.y >= this.boss_kijyun_y) {
-						this.co_b.y = this.boss_kijyun_y;
-						this.co_b.vy = -24;
-						if (this.co_b.x >= this.sl_wx + 512 - 48)
-							this.co_b.c1 = 40;
-					}
-				} else {
-					this.co_b.x += 8;
-					if (this.co_b.x >= this.sl_wx + 512 - 48) {
-						this.co_b.x = this.sl_wx + 512 - 48;
-						this.co_b.c1 = 40;
-					}
-				}
-				this.co_b.pt = 1255;
-			} else if (this.co_b.c1 == 40) {
-				this.co_b.x -= 2;
-				if (this.co_b.x <= this.sl_wx + 512 - 96 - 32) {
-					this.co_b.x = this.sl_wx + 512 - 96 - 32;
-					this.co_b.c1 = -20;
-				}
-			}
-			break;
-
-		case 365:
-			this.co_b.pt = 1205;
-			if (this.co_b.c1 < 5) this.co_b.c1++;
-			else if (this.co_b.c1 < 25) {
-				this.co_b.c1++;
-				this.co_b.pt = 1255;
-			} else if (this.co_b.c1 == 25) {
-				if (this.boss3_type == 3) {
-					this.co_b.x += 18;
-					if (this.co_b.x >= this.sl_wx + 512 - 48) {
-						this.co_b.x = this.sl_wx + 512 - 48;
-						this.co_b.c1 = 30;
-					}
-				} else if (this.boss3_type == 4) {
-					this.co_b.x += 3;
-					this.co_b.vy += 2;
-					if (this.co_b.vy > 24) this.co_b.vy = 24;
-					this.co_b.y += this.co_b.vy;
-					if (this.co_b.y >= this.boss_kijyun_y) {
-						this.co_b.y = this.boss_kijyun_y;
-						this.co_b.vy = -24;
-						if (this.co_b.x >= this.sl_wx + 512 - 48)
-							this.co_b.c1 = 30;
-					}
-				} else {
-					this.co_b.x += 12;
-					if (this.co_b.x >= this.sl_wx + 512 - 48) {
-						this.co_b.x = this.sl_wx + 512 - 48;
-						this.co_b.c1 = 30;
-					}
-				}
-				this.co_b.pt = 1255;
-			} else if (this.co_b.c1 == 30) {
-				if (this.boss3_type == 3) {
-					this.co_b.x -= 18;
-					if (this.co_b.x <= this.sl_wx + 16) {
-						this.co_b.x = this.sl_wx + 16;
-						this.co_b.c1 = 40;
-					}
-				} else if (this.boss3_type == 4) {
-					this.co_b.x -= 4;
-					this.co_b.vy += 2;
-					if (this.co_b.vy > 24) this.co_b.vy = 24;
-					this.co_b.y += this.co_b.vy;
-					if (this.co_b.y >= this.boss_kijyun_y) {
-						this.co_b.y = this.boss_kijyun_y;
-						this.co_b.vy = -24;
-						if (this.co_b.x <= this.sl_wx + 16) this.co_b.c1 = 40;
-					}
-				} else {
-					this.co_b.x -= 8;
-					if (this.co_b.x <= this.sl_wx + 16) {
-						this.co_b.x = this.sl_wx + 16;
-						this.co_b.c1 = 40;
-					}
-				}
-				this.co_b.pt = 1250;
-			} else if (this.co_b.c1 == 40) {
-				this.co_b.x += 2;
-				if (this.co_b.x >= this.sl_wx + 96) {
-					this.co_b.x = this.sl_wx + 96;
-					this.co_b.c1 = -20;
-				}
-			}
-			break;
-	}
-	if (
-		this.co_j.c >= 100 &&
-		this.co_j.c < 200 &&
-		this.co_b.c >= 100 &&
-		Math.abs(this.co_b.x - this.co_j.x) < 42 &&
-		this.co_j.y > this.co_b.y - 20 &&
-		this.co_j.y < this.co_b.y + 40
-	)
-		if (this.co_b.pt == 1250 || this.co_b.pt == 1255) this.jShinu(2);
-		else if (Math.abs(this.co_b.x - this.co_j.x) < 34 && this.co_j.vy > 0) {
-			if (this.co_b.c < 200) {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 65;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1015;
-				} else {
-					this.co_b.c = 60;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1010;
-				}
-			} else if (this.co_b.c < 300) {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 75;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1115;
-				} else {
-					this.co_b.c = 70;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1110;
-				}
-			} else {
-				this.co_b.c4--;
-				if (this.co_b.c4 == 1) {
-					this.co_b.c = 85;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1215;
-				} else {
-					this.co_b.c = 80;
-					this.co_b.c1 = 0;
-					this.co_b.pt = 1210;
-				}
-			}
-			this.co_j.y = this.co_b.y;
-			this.co_j.vy = -320;
-			this.j_jump_type = 1;
-			this.co_j.c = 110;
-			this.co_j.c1 = -4;
-			this.co_j.pt = 109;
-		} else {
-			this.jShinu(2);
-		}
-	if (this.jm_kazu > 0 && this.co_b.c >= 100) {
-		for (var k1 = 0; k1 <= 1; k1++)
-			if (this.co_jm[k1].c >= 100) {
-				var characterobject = this.co_jm[k1];
-				if (
-					Math.abs(this.co_b.x - characterobject.x) < 34 &&
-					Math.abs(this.co_b.y - characterobject.y) < 30
-				)
-					if (characterobject.c == 200) {
-						characterobject.c = 50;
-						characterobject.c1 = 1;
-						characterobject.c2 = 20;
-						if (this.grenade_type == 1 || this.grenade_type == 5)
-							if (this.co_b.c < 200) {
-								this.co_b.c = 67;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.vx < 0) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1005;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1000;
-									this.co_b.vx = 4;
-								}
-							} else if (this.co_b.c < 300) {
-								this.co_b.c = 77;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.vx < 0) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1105;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1100;
-									this.co_b.vx = 4;
-								}
-							} else {
-								this.co_b.c = 87;
-								this.co_b.vy = -24;
-								this.co_b.c1 = 0;
-								if (characterobject.vx < 0) {
-									this.co_b.muki = 1;
-									this.co_b.pt = 1205;
-									this.co_b.vx = -4;
-								} else {
-									this.co_b.muki = 0;
-									this.co_b.pt = 1200;
-									this.co_b.vx = 4;
-								}
-							}
-					} else {
-						characterobject.c = 0;
-						this.jm_kazu--;
-					}
-			}
-	}
+	this.co_b.update(this);
 };
 
-MainProgram.prototype.hSet = function(i, j, k) {
-	for (var l = 0; l <= 63; l++) {
-		if (this.co_h[l].c > 0) continue;
-		var characterobject = this.co_h[l];
-		characterobject.c = k;
-		characterobject.x = i;
-		characterobject.y = j;
+/**
+ * 指定座標(ブロック単位)の位置に、指定したコードの？ブロックを設置します
+ * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet} を参照
+ * v28では個数制限は64個
+ * @param blockX {number} X座標(ブロック単位)
+ * @param blockY {number} Y座標(ブロック単位)
+ * @param code {number} 設置するブロックのコード
+ * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
+ */
+MainProgram.prototype.hSet = function(blockX, blockY, code) {
+	for (let i = 0; i <= 63; i++) {
+		// まだ使われていないものを探して追加する
+		if (this.co_h[i].c > 0) continue;
+		const characterobject = this.co_h[i];
+		characterobject.c = code;
+		characterobject.x = blockX;
+		characterobject.y = blockY;
 		break;
 	}
 };
