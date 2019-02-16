@@ -520,10 +520,15 @@ class Boss extends CharacterObject {
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
 
+		const flag_type_fast = mp.boss3_type === 3;
+		const flag_type_jump = mp.boss3_type === 4;
+
 		if (this.c1 < 25) {
 			this.c1++;
 		} else if (this.c1 === 25) {
-			if (mp.boss3_type === 4) {
+			// 体当たり 行き
+			if (flag_type_jump) {
+				// ジャンプ移動
 				this.x -= 3 * mirror;
 				this.vy += 2;
 				if (this.vy > 24) this.vy = 24;
@@ -531,6 +536,7 @@ class Boss extends CharacterObject {
 				if (this.y >= mp.boss_kijyun_y) {
 					this.y = mp.boss_kijyun_y;
 					this.vy = -24;
+					// 画面外に出たら反転する
 					if (direction !== 1) {
 						if (this.x <= x_border_left) this.c1 = 30;
 					} else {
@@ -538,8 +544,9 @@ class Boss extends CharacterObject {
 					}
 				}
 			} else {
-				if (mp.boss3_type === 3) this.x -= 18 * mirror;
+				if (flag_type_fast) this.x -= 18 * mirror;
 				else this.x -= 12 * mirror;
+				// 画面外に出たら反転する
 				if (direction !== 1) {
 					if (this.x <= x_border_left) {
 						this.x = x_border_left;
@@ -553,7 +560,8 @@ class Boss extends CharacterObject {
 				}
 			}
 		} else if (this.c1 === 30) {
-			if (mp.boss3_type === 4) {
+			// 体当たり 帰り
+			if (flag_type_jump) {
 				this.x += 4 * mirror;
 				this.vy += 2;
 				if (this.vy > 24) this.vy = 24;
@@ -561,6 +569,7 @@ class Boss extends CharacterObject {
 				if (this.y >= mp.boss_kijyun_y) {
 					this.y = mp.boss_kijyun_y;
 					this.vy = -24;
+					// 画面外に出たら反転する
 					if (direction !== 1) {
 						if (this.x >= x_border_right) this.c1 = 40;
 					} else {
@@ -568,8 +577,9 @@ class Boss extends CharacterObject {
 					}
 				}
 			} else {
-				if (mp.boss3_type === 3) this.x += 18 * mirror;
+				if (flag_type_fast) this.x += 18 * mirror;
 				else this.x += 8 * mirror;
+				// 画面外に出たら反転する
 				if (direction !== 1) {
 					if (this.x >= x_border_right) {
 						this.x = x_border_right;
@@ -583,6 +593,7 @@ class Boss extends CharacterObject {
 				}
 			}
 		} else if (this.c1 === 40) {
+			// 元の位置に戻る
 			this.x -= 2 * mirror;
 			if (direction !== 1) {
 				if (this.x <= x_standby_right) {
