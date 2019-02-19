@@ -41,8 +41,7 @@ const normalizeDegree = degree => ((degree % 360) + 360) % 360;
  * @param {Array} b
  */
 const zip = (a, b) => {
-	if (a.length !== b.length)
-		throw new Error("The given arrays do not have the same length.");
+	if (a.length !== b.length) throw new Error("The given arrays do not have the same length.");
 	return a.map((v, i) => [v, b[i]]);
 };
 
@@ -261,10 +260,7 @@ class Boss extends CharacterObject {
 							this.c2 = 0;
 						}
 					} else {
-						if (
-							(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
-							(mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						) {
+						if ((mp.boss3_type >= 2 && mp.boss3_type <= 4) || (mp.boss3_type >= 6 && mp.boss3_type <= 8)) {
 							this.c = BOSS3_TACKLE_ATTACK_LEFT;
 							this.vy = -24;
 						} else {
@@ -291,10 +287,7 @@ class Boss extends CharacterObject {
 				this.x -= 14;
 				if (this.x <= x_standby_left) {
 					this.x = x_standby_left;
-					if (
-						(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
-						(mp.boss3_type >= 6 && mp.boss3_type <= 8)
-					) {
+					if ((mp.boss3_type >= 2 && mp.boss3_type <= 4) || (mp.boss3_type >= 6 && mp.boss3_type <= 8)) {
 						this.c = BOSS3_TACKLE_ATTACK_RIGHT;
 						this.vy = -24;
 					} else {
@@ -309,10 +302,7 @@ class Boss extends CharacterObject {
 				this.x += 14;
 				if (this.x >= x_standby_right) {
 					this.x = x_standby_right;
-					if (
-						(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
-						(mp.boss3_type >= 6 && mp.boss3_type <= 8)
-					) {
+					if ((mp.boss3_type >= 2 && mp.boss3_type <= 4) || (mp.boss3_type >= 6 && mp.boss3_type <= 8)) {
 						this.c = BOSS3_TACKLE_ATTACK_LEFT;
 						this.vy = -24;
 					} else {
@@ -328,16 +318,13 @@ class Boss extends CharacterObject {
 				if (this.c1 < 5) {
 				} else if (this.c1 < 25) {
 					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						this.pt = 1251;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
 				} else if (this.c1 === 25) {
 					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						this.pt = 1251;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
 				} else if (this.c1 === 30) {
 					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						this.pt = 1256;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
 				}
 				this.boss3TackleAttack(mp, 0);
 				break;
@@ -347,16 +334,13 @@ class Boss extends CharacterObject {
 				if (this.c1 < 5) {
 				} else if (this.c1 < 25) {
 					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						this.pt = 1256;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
 				} else if (this.c1 === 25) {
 					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						this.pt = 1256;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
 				} else if (this.c1 === 30) {
 					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8)
-						this.pt = 1251;
+					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
@@ -380,8 +364,7 @@ class Boss extends CharacterObject {
 
 		if (hit_flag) {
 			// 主人公とボスが接触している
-			const fumu_flag =
-				(Math.abs(this.x - j.x) < 34 || mp.easy_mode === 2) && j.vy > 0;
+			const fumu_flag = (Math.abs(this.x - j.x) < 34 || mp.easy_mode === 2) && j.vy > 0;
 			if (fumu_flag && this.isFumuable(mp)) {
 				// 主人公がボスにダメージを与える
 				this.fumu(mp);
@@ -403,10 +386,7 @@ class Boss extends CharacterObject {
 			for (let i = 0; i <= 8; i++) {
 				const characterobject = mp.co_jm[i];
 				if (characterobject.c < 100) continue;
-				if (
-					Math.abs(this.x - characterobject.x) < 34 &&
-					Math.abs(this.y - characterobject.y) < 30
-				) {
+				if (Math.abs(this.x - characterobject.x) < 34 && Math.abs(this.y - characterobject.y) < 30) {
 					if (characterobject.c === 200) {
 						// グレネード
 						this.hitWithGrenade(mp, characterobject);
@@ -422,10 +402,7 @@ class Boss extends CharacterObject {
 		// 主人公の攻撃としっぽの当たり判定
 		const tail_left = this.muki === 1 ? j.x + 16 : j.x - 32;
 		const tail_right = this.muki === 1 ? j.x + 63 : j.x + 16;
-		const tail_flag =
-			tail_left <= this.x + 47 &&
-			tail_right >= this.x - 16 &&
-			Math.abs(j.y - this.y) < 48;
+		const tail_flag = tail_left <= this.x + 47 && tail_right >= this.x - 16 && Math.abs(j.y - this.y) < 48;
 		// しっぽとボスが接触している
 		if (tail_flag) {
 			this.hitWithTail(mp);
@@ -445,20 +422,7 @@ class Boss extends CharacterObject {
 		this.c1++;
 		if (mp.boss_type === 2) {
 			// 亀を投げる
-			const attack_count = [
-				1,
-				5,
-				7,
-				9,
-				21,
-				91,
-				95,
-				97,
-				99,
-				111,
-				170,
-				180
-			];
+			const attack_count = [1, 5, 7, 9, 21, 91, 95, 97, 99, 111, 170, 180];
 			const powers = [-2, -4, -6, -8, -2, -2, -4, -6, -8, -2, -4, -2];
 			if (this.c1 === 1) mp.gs.rsAddSound(17);
 			for (const [count, power] of zip(attack_count, powers)) {
@@ -493,45 +457,14 @@ class Boss extends CharacterObject {
 			if (this.c1 > 250) this.c1 = 250;
 		} else if (mp.boss_type === 5) {
 			// がんせきほう
-			const attack_count = [
-				1,
-				8,
-				16,
-				24,
-				32,
-				40,
-				48,
-				64,
-				72,
-				80,
-				88,
-				96,
-				104,
-				112
-			];
-			const degrees = [
-				100,
-				80,
-				60,
-				40,
-				20,
-				0,
-				10,
-				30,
-				50,
-				70,
-				60,
-				40,
-				20,
-				0
-			];
+			const attack_count = [1, 8, 16, 24, 32, 40, 48, 64, 72, 80, 88, 96, 104, 112];
+			const degrees = [100, 80, 60, 40, 20, 0, 10, 30, 50, 70, 60, 40, 20, 0];
 			if (this.c1 === 1) mp.gs.rsAddSound(17);
 			for (const [count, degree] of zip(attack_count, degrees)) {
 				if (this.c1 === count) {
 					// 左向きの場合は角度に180度足す
 					const dd = direction !== 1 ? 180 : 0;
-					const rad =
-						(normalizeDegree(degree * mirror + dd) * 3.14) / 180;
+					const rad = (normalizeDegree(degree * mirror + dd) * 3.14) / 180;
 					const x = Math.floor(Math.cos(rad) * 12);
 					const y = Math.floor(Math.sin(rad) * 10);
 					mp.mSet2(this.x, this.y + 16, 740, x, y);
@@ -552,14 +485,7 @@ class Boss extends CharacterObject {
 				mp.mSet2(this.x, this.y, 500, -3, -24);
 				mp.mSet2(this.x, this.y, 500, 3, -24);
 			} else if (this.c1 >= 28 && this.c1 <= 98) {
-				if (this.c1 % 7 === 0)
-					mp.mSet2(
-						this.x,
-						this.y,
-						500,
-						(-15 + mp.ranInt(20)) * mirror,
-						-30
-					);
+				if (this.c1 % 7 === 0) mp.mSet2(this.x, this.y, 500, (-15 + mp.ranInt(20)) * mirror, -30);
 			} else if (this.c1 === 130) {
 				const dir = mp.ranInt(8) + 3;
 				mp.mSet2(this.x, this.y, 500, dir, -30);
@@ -623,8 +549,7 @@ class Boss extends CharacterObject {
 				const rads = [];
 				rads.push((degree_normalized * 3.14) / 180);
 				// 反転しても角度が同じ場合は一発しか出さない
-				if (degree_normalized !== degree_inversed)
-					rads.push((degree_inversed * 3.14) / 180);
+				if (degree_normalized !== degree_inversed) rads.push((degree_inversed * 3.14) / 180);
 				for (const rad of rads) {
 					const cos = Math.floor(Math.cos(rad) * 12);
 					const sin = Math.floor(Math.sin(rad) * 10);
@@ -666,13 +591,7 @@ class Boss extends CharacterObject {
 			if (this.c1 > 165) this.c1 = 4;
 		} else {
 			// 水の波動
-			if (
-				this.c1 === 5 ||
-				this.c1 === 35 ||
-				this.c1 === 65 ||
-				this.c1 === 110 ||
-				this.c1 === 185
-			) {
+			if (this.c1 === 5 || this.c1 === 35 || this.c1 === 65 || this.c1 === 110 || this.c1 === 185) {
 				mp.mSet(this.x, this.y, 90);
 				mp.gs.rsAddSound(18);
 			}
@@ -801,20 +720,8 @@ class Boss extends CharacterObject {
 			) {
 				const dx = direction === 1 ? 0 : 512 - 32;
 				if (this.c1 <= 45)
-					mp.mSet2(
-						mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror,
-						mp.maps.wy - 32,
-						740,
-						-4 * mirror,
-						9
-					);
-				mp.mSet2(
-					mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror,
-					mp.maps.wy - 32,
-					740,
-					-4 * mirror,
-					9
-				);
+					mp.mSet2(mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
+				mp.mSet2(mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
 			} else if (
 				this.c1 === 15 ||
 				this.c1 === 35 ||
@@ -827,20 +734,8 @@ class Boss extends CharacterObject {
 			) {
 				const dx = direction === 1 ? 0 : 512 - 32;
 				if (this.c1 <= 55)
-					mp.mSet2(
-						mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror,
-						mp.maps.wy - 32,
-						740,
-						-4 * mirror,
-						11
-					);
-				mp.mSet2(
-					mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror,
-					mp.maps.wy - 32,
-					740,
-					-4 * mirror,
-					11
-				);
+					mp.mSet2(mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 11);
+				mp.mSet2(mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 11);
 			}
 			if (this.c1 >= 250) this.c1 = 55;
 		} else {
@@ -903,11 +798,7 @@ class Boss extends CharacterObject {
 
 		// NOTE: ここのdirection!==1の判定はおそらく元のコードのバグ
 		// TODO: リファクタリング中なので挙動維持のため残すが、おそらくdirection !== 1の判定は消して問題ない
-		if (
-			(this.c1 >= 5 && this.c1 < 25) ||
-			(direction !== 1 && this.c1 === 25) ||
-			this.c1 === 30
-		)
+		if ((this.c1 >= 5 && this.c1 < 25) || (direction !== 1 && this.c1 === 25) || this.c1 === 30)
 			mp.boss_attack_mode = true;
 
 		// 回転
@@ -938,13 +829,7 @@ class Boss extends CharacterObject {
 					this.y = mp.boss_kijyun_y;
 					this.vy = -24;
 					// 画面外に出ていたら反転する
-					checkBorder(
-						speed,
-						x_border_left,
-						x_border_right,
-						false,
-						next_c1
-					);
+					checkBorder(speed, x_border_left, x_border_right, false, next_c1);
 				}
 			} else {
 				// 体当たり
@@ -954,13 +839,7 @@ class Boss extends CharacterObject {
 				speed *= mirror;
 				this.x += speed;
 				// 画面外に出たら反転する
-				checkBorder(
-					speed,
-					x_border_left,
-					x_border_right,
-					true,
-					next_c1
-				);
+				checkBorder(speed, x_border_left, x_border_right, true, next_c1);
 			}
 		} else if (this.c1 === 40) {
 			// 元の位置に戻る
@@ -1030,15 +909,9 @@ class Boss extends CharacterObject {
 	 * @returns {boolean}
 	 */
 	isFumuable(mp) {
-		if (mp.j_tokugi === 10 || (this.j_tokugi >= 12 && this.j_tokugi <= 15))
-			return false;
+		if (mp.j_tokugi === 10 || (this.j_tokugi >= 12 && this.j_tokugi <= 15)) return false;
 		if (mp.boss_destroy_type === 2) return false;
-		return !(
-			this.pt === 1250 ||
-			this.pt === 1255 ||
-			this.pt === 1251 ||
-			this.pt === 1256
-		);
+		return !(this.pt === 1250 || this.pt === 1255 || this.pt === 1251 || this.pt === 1256);
 	}
 
 	/**
@@ -1185,21 +1058,10 @@ class Boss extends CharacterObject {
 			// ファイヤーボールとしっぽで倒すボスの場合、登場中はHPの設定ができない
 			// ただし戻り値はtrueとなる
 			// TODO: もともとあったバグかと思われるので修正してよいかも
-			if (
-				this.c === BOSS1_STANDBY ||
-				this.c === BOSS2_STANDBY ||
-				this.c === BOSS3_STANDBY
-			)
-				return true;
+			if (this.c === BOSS1_STANDBY || this.c === BOSS2_STANDBY || this.c === BOSS3_STANDBY) return true;
 		} else {
 			// 主人公がジャンプできないような特技を持たない場合はHPの設定ができない
-			if (
-				!(
-					mp.j_tokugi === 10 ||
-					(mp.j_tokugi >= 12 && mp.j_tokugi <= 15)
-				)
-			)
-				return false;
+			if (!(mp.j_tokugi === 10 || (mp.j_tokugi >= 12 && mp.j_tokugi <= 15))) return false;
 		}
 
 		// ボスのHPを設定する
@@ -1249,10 +1111,7 @@ class Boss extends CharacterObject {
 
 		const boss_name = mp.tdb.getValue(param_name);
 		const gauge_value = Math.floor((mp.boss_hp * 200) / mp.boss_hp_max);
-		mp.showGauge(
-			gauge_value,
-			`${boss_name}  ${mp.boss_hp}/${mp.boss_hp_max}`
-		);
+		mp.showGauge(gauge_value, `${boss_name}  ${mp.boss_hp}/${mp.boss_hp_max}`);
 	}
 
 	/**

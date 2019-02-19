@@ -1,10 +1,6 @@
 import { GameGraphics } from "./GameGraphics";
 import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
-import {
-	GameMouse,
-	GameMouse_mousePressed,
-	GameMouse_mouseReleased
-} from "./GameMouse";
+import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
 import { Game } from "./GlobalFunctions";
 import { ImageBuff, Color } from "./ImageBuff";
 import { MainProgram } from "./MainProgram";

@@ -61,10 +61,7 @@ function MasaoJSS(mc, caseInsensitive) {
 			else if (j >= 200 && j < 300) i = 400;
 			else if (j >= 300 && j <= 310) i = 200;
 			else if (j >= 400 && j <= 410) i = 300;
-			else if (
-				mc.mp.ml_mode == 100 &&
-				(mc.mp.sl_step == 2 || mc.mp.sl_step == 3)
-			) {
+			else if (mc.mp.ml_mode == 100 && (mc.mp.sl_step == 2 || mc.mp.sl_step == 3)) {
 				i = 150;
 			} else {
 				i = 100;
@@ -137,11 +134,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.getMyX = function() {
 		if (mc.mp) {
-			if (
-				mc.mp.ml_mode == 100 &&
-				mc.mp.co_j.c >= 100 &&
-				mc.mp.co_j.c < 200
-			) {
+			if (mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = rightShiftIgnoreSign(mc.mp.co_j.x + 15, 5) - 1;
 				if (i < 0) i = 0;
 				if (i >= mc.mp.mapWidth) i = mc.mp.mapWidth - 1;
@@ -166,11 +159,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.getMyY = function() {
 		if (mc.mp) {
-			if (
-				mc.mp.ml_mode == 100 &&
-				mc.mp.co_j.c >= 100 &&
-				mc.mp.co_j.c < 200
-			) {
+			if (mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = rightShiftIgnoreSign(mc.mp.co_j.y + 15, 5) - 10;
 				if (i < 0) i = 0;
 				if (i >= mc.mp.mapHeight) i = mc.mp.mapHeight - 1;
@@ -229,12 +218,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @returns {boolean}
 	 */
 	this.setMyPosition = function(s, s1) {
-		if (
-			mc.mp &&
-			mc.mp.ml_mode == 100 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			var j;
 			i = parseInt(s);
@@ -394,13 +378,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * 左キーを入力し、さらにダッシュ状態にします。
 	 */
 	this.pressLeft2 = function() {
-		if (
-			mc.gk &&
-			mc.mp &&
-			mc.mp.ml_mode == 100 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			mc.gk.left_f = true;
 			mc.gk.left_c = 2;
 			mc.mp.j_hashiru_f = true;
@@ -438,13 +416,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * 右キーを入力し、さらにダッシュ状態にします。
 	 */
 	this.pressRight2 = function() {
-		if (
-			mc.gk &&
-			mc.mp &&
-			mc.mp.ml_mode == 100 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			mc.gk.right_f = true;
 			mc.gk.right_c = 2;
 			mc.mp.j_hashiru_f = true;
@@ -614,13 +586,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} time 持続時間（フレーム数）
 	 */
 	this.equipBarrier = function(s) {
-		if (
-			mc.gk &&
-			mc.mp &&
-			mc.mp.ml_mode == 100 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) i = 0;
@@ -642,13 +608,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} fuel 新しい残り燃料数
 	 */
 	this.setJetFuel = function(s) {
-		if (
-			mc.gk &&
-			mc.mp &&
-			mc.mp.ml_mode == 100 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -733,12 +693,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @returns {number} 主人公のX座標
 	 */
 	this.getMyXReal = function() {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i = mc.mp.co_j.x;
 			return i;
 		} else {
@@ -753,12 +708,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @returns {number} 主人公のX座標
 	 */
 	this.getMyYReal = function() {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i = mc.mp.co_j.y;
 			return i;
 		} else {
@@ -773,12 +723,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} x X座標
 	 */
 	this.setMyXReal = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -799,12 +744,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} y X座標
 	 */
 	this.setMyYReal = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -824,12 +764,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} 主人公のX方向速度
 	 */
 	this.getMyVX = function() {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i = mc.mp.co_j.vx;
 			return i;
 		} else {
@@ -843,12 +778,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} 主人公のY方向速度
 	 */
 	this.getMyVY = function() {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i = mc.mp.co_j.vy;
 			return i;
 		} else {
@@ -894,8 +824,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	this.getEnemyTotal = function() {
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			var i = 0;
-			for (var j = 0; j <= mc.mp.t_kazu; j++)
-				if (mc.mp.co_t[j].c >= 100 || mc.mp.co_t[j].c == 10) i++;
+			for (var j = 0; j <= mc.mp.t_kazu; j++) if (mc.mp.co_t[j].c >= 100 || mc.mp.co_t[j].c == 10) i++;
 
 			return i;
 		} else {
@@ -942,12 +871,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} [type=1] 死因
 	 */
 	this.setMyMiss = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -970,12 +894,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} [type=1] 高さ
 	 */
 	this.setMyPress = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -1001,8 +920,7 @@ function MasaoJSS(mc, caseInsensitive) {
 			i = -1;
 		}
 		if (i >= 1 && i <= 27) {
-			if (this.getMode() >= 100 && this.getMode() < 200)
-				mc.gs.rsAddSound(i - 1);
+			if (this.getMode() >= 100 && this.getMode() < 200) mc.gs.rsAddSound(i - 1);
 			else mc.gs.play(i - 1);
 			return true;
 		} else {
@@ -1038,8 +956,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.setScrollLock = function(s) {
 		var flag = false;
-		if (this.getMode() >= 100 && this.getMode() < 200)
-			flag = mc.mp.setScrollLock(s);
+		if (this.getMode() >= 100 && this.getMode() < 200) flag = mc.mp.setScrollLock(s);
 		return flag;
 	};
 
@@ -1056,8 +973,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.attackFire = function(s, s1, s2, s3) {
 		var i = 0;
-		if (this.getMode() >= 100 && this.getMode() < 200)
-			i = mc.mp.attackFire(s, s1, s2, s3);
+		if (this.getMode() >= 100 && this.getMode() < 200) i = mc.mp.attackFire(s, s1, s2, s3);
 		return i;
 	};
 
@@ -1244,12 +1160,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @see {@link MasaoJSS#setGrenadeCount|setGrenadeCount}と同じです。
 	 */
 	this.equipGrenade = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -1431,8 +1342,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.attackTail = function(s, s1, s2, s3) {
 		var i = 0;
-		if (this.getMode() >= 100 && this.getMode() < 200)
-			i = mc.mp.attackTail(s, s1, s2, s3);
+		if (this.getMode() >= 100 && this.getMode() < 200) i = mc.mp.attackTail(s, s1, s2, s3);
 		return i;
 	};
 
@@ -1447,8 +1357,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.destroyEnemy = function(s, s1, s2, s3) {
 		var i = -1;
-		if (this.getMode() >= 100 && this.getMode() < 200)
-			i = mc.mp.destroyEnemy(s, s1, s2, s3);
+		if (this.getMode() >= 100 && this.getMode() < 200) i = mc.mp.destroyEnemy(s, s1, s2, s3);
 		return i;
 	};
 
@@ -1503,12 +1412,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @see {@link MasaoJSS#getMyDirection|getMyDirection}
 	 */
 	this.setMyDirection = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i = parseInt(s);
 			if (isNaN(i)) i = -1;
 			if (i < 0) return false;
@@ -1595,8 +1499,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.setYukaPosition = function(s, s1, s2, s3, s4) {
 		if (mc.mp) {
-			if (typeof s3 == "undefined")
-				return mc.mp.setYukaPosition(s, s1, s2);
+			if (typeof s3 == "undefined") return mc.mp.setYukaPosition(s, s1, s2);
 			else return mc.mp.setYukaPosition(s, s1, s2, s3, s4);
 		} else return false;
 	};
@@ -1660,12 +1563,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} vx X方向速度
 	 */
 	this.setMyVX = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -1688,12 +1586,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} vy Y方向速度
 	 */
 	this.setMyVY = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -1757,12 +1650,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @param {number} speed 主人公の移動速度
 	 */
 	this.setMySpeed = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -1916,34 +1804,16 @@ function MasaoJSS(mc, caseInsensitive) {
 				return true;
 			}
 			if (i == 4) {
-				mc.mp.maps.drawMapLayer(
-					mc.mp.maps.wx,
-					mc.mp.maps.wy,
-					mc.mp.g_ac2,
-					mc.mp.gazou_scroll,
-					2
-				);
+				mc.mp.maps.drawMapLayer(mc.mp.maps.wx, mc.mp.maps.wy, mc.mp.g_ac2, mc.mp.gazou_scroll, 2);
 				return true;
 			}
 			if (i == 5) {
 				if (mc.gg.layer_mode == 2)
-					mc.mp.maps.drawMapLayer(
-						mc.mp.maps.wx,
-						mc.mp.maps.wy,
-						mc.mp.g_ac2,
-						mc.mp.gazou_scroll,
-						3
-					);
+					mc.mp.maps.drawMapLayer(mc.mp.maps.wx, mc.mp.maps.wy, mc.mp.g_ac2, mc.mp.gazou_scroll, 3);
 				return true;
 			}
 			if (i == 6) {
-				mc.mp.maps.drawMapLayer(
-					mc.mp.maps.wx,
-					mc.mp.maps.wy,
-					mc.mp.g_ac2,
-					mc.mp.gazou_scroll,
-					4
-				);
+				mc.mp.maps.drawMapLayer(mc.mp.maps.wx, mc.mp.maps.wy, mc.mp.g_ac2, mc.mp.gazou_scroll, 4);
 				return true;
 			}
 			if (i == 7) {
@@ -2006,8 +1876,7 @@ function MasaoJSS(mc, caseInsensitive) {
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			var i;
 			if (mc.mp.j_tokugi == 15) i = mc.mp.j_4_muki;
-			else if (mc.mp.co_j.direction == 2 || mc.mp.co_j.direction == 3)
-				i = mc.mp.co_j.direction;
+			else if (mc.mp.co_j.direction == 2 || mc.mp.co_j.direction == 3) i = mc.mp.co_j.direction;
 			else i = mc.mp.co_j.muki;
 			return i;
 		} else {
@@ -2769,13 +2638,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @returns {number} コインの数
 	 */
 	this.getCoinCount = function() {
-		if (mc.mp)
-			return mc.mp.getCoinCount(
-				0,
-				0,
-				mc.mp.mapWidth - 1,
-				mc.mp.mapHeight - 1
-			);
+		if (mc.mp) return mc.mp.getCoinCount(0, 0, mc.mp.mapWidth - 1, mc.mp.mapHeight - 1);
 		else return -1;
 	};
 
@@ -2852,12 +2715,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @returns {number} バリアの残り時間
 	 */
 	this.getBarrierTime = function() {
-		if (
-			mc.mp &&
-			mc.mp.ml_mode == 100 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i = mc.mp.j_v_c;
 			return i;
 		} else {
@@ -2975,12 +2833,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * @see {@link MasaoJSS#equipGrenade|equipGrenade}と同じです。
 	 */
 	this.setGrenadeCount = function(s) {
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -3027,12 +2880,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 */
 	this.getGrenadeCount = function() {
 		var i = 0;
-		if (
-			this.getMode() >= 100 &&
-			this.getMode() < 200 &&
-			mc.mp.co_j.c >= 100 &&
-			mc.mp.co_j.c < 200
-		) {
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 			i = mc.mp.j_gr_kazu;
 			if (i < 0) i = 0;
 			return i;
@@ -3216,14 +3064,7 @@ function MasaoJSS(mc, caseInsensitive) {
 				ai1[1] = parseInt(s3);
 				ai[2] = parseInt(s4);
 				ai1[2] = parseInt(s5);
-				if (
-					isNaN(ai[0]) ||
-					isNaN(ai1[0]) ||
-					isNaN(ai[1]) ||
-					isNaN(ai1[1]) ||
-					isNaN(ai[2]) ||
-					isNaN(ai1[2])
-				) {
+				if (isNaN(ai[0]) || isNaN(ai1[0]) || isNaN(ai[1]) || isNaN(ai1[1]) || isNaN(ai[2]) || isNaN(ai1[2])) {
 					ai[0] = -9999;
 				}
 				if (ai[0] == -9999) {

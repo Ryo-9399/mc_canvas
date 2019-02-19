@@ -185,18 +185,7 @@ Graphics.prototype.drawLine = function(x1, y1, x2, y2) {
  * @param [dh] {number} 描画される縦方向の高さ
  * @returns {boolean} 描画に成功したかどうか
  */
-Graphics.prototype.drawImage = function(
-	img,
-	a1,
-	a2,
-	a3,
-	a4,
-	a5,
-	a6,
-	a7,
-	a8,
-	a9
-) {
+Graphics.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
 	if (img._dat == null) return false;
 	if (this._ctx == null) return false;
 	try {
@@ -324,14 +313,7 @@ Graphics.prototype.drawArc = function(x, y, w, h, angle, theta) {
 	this._ctx.save();
 	this._ctx.beginPath();
 	this._ctx.scale(1, sc);
-	this._ctx.arc(
-		x + w / 2,
-		(y + h / 2) / sc,
-		w / 2,
-		angle,
-		angle + theta,
-		theta < 0
-	);
+	this._ctx.arc(x + w / 2, (y + h / 2) / sc, w / 2, angle, angle + theta, theta < 0);
 	this._ctx.stroke();
 	this._ctx.restore();
 	return true;
@@ -353,14 +335,7 @@ Graphics.prototype.fillArc = function(x, y, w, h, angle, theta) {
 	this._ctx.save();
 	this._ctx.beginPath();
 	this._ctx.scale(1, sc);
-	this._ctx.arc(
-		x + w / 2,
-		(y + h / 2) / sc,
-		w / 2,
-		angle,
-		angle + theta,
-		theta < 0
-	);
+	this._ctx.arc(x + w / 2, (y + h / 2) / sc, w / 2, angle, angle + theta, theta < 0);
 	this._ctx.lineTo(x + w / 2, (y + h / 2) / sc);
 	this._ctx.closePath();
 	this._ctx.fill();
@@ -389,16 +364,7 @@ Graphics.prototype.setGlobalAlpha = function(a) {
 Graphics.prototype.setColor = function(color) {
 	if (this._ctx == null) return false;
 	this._color = new Color(color.r, color.g, color.b, color.a);
-	var val =
-		"rgba(" +
-		color.r +
-		", " +
-		color.g +
-		", " +
-		color.b +
-		", " +
-		color.a / 255 +
-		")";
+	var val = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a / 255 + ")";
 	this._ctx.strokeStyle = val;
 	this._ctx.fillStyle = val;
 	return true;
@@ -419,8 +385,7 @@ Graphics.prototype.setFont = function(font) {
 	else if (font._name == Font.SANS_SERIF) str += "sans-serif";
 	else if (font._name == Font.MONOSPACED) str += "monospace";
 	else if (font._name == Font.DIALOG)
-		str +=
-			"'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
+		str += "'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
 	else str += '"' + font._name + '"';
 	this._ctx.font = str;
 	this._font = font;
@@ -569,17 +534,7 @@ Graphics.prototype.setClip = function(pattern) {
  */
 Graphics.prototype.copyArea = function(x, y, width, height, dx, dy) {
 	if (this._ctx == null) return false;
-	this._ctx.drawImage(
-		this._ctx.canvas,
-		x,
-		y,
-		width,
-		height,
-		x + dx,
-		y + dy,
-		width,
-		height
-	);
+	this._ctx.drawImage(this._ctx.canvas, x, y, width, height, x + dx, y + dy, width, height);
 	return true;
 };
 
@@ -609,18 +564,7 @@ GraphicsBk.prototype = Object.create(Graphics.prototype, {
  * 画像を描画する
  * GraphicsクラスのdrawImage()との違いは、引数を9個与えた際に幅・高さの指定の代わりに終点のX座標とY座標を指定すること
  */
-GraphicsBk.prototype.drawImage = function(
-	img,
-	a1,
-	a2,
-	a3,
-	a4,
-	a5,
-	a6,
-	a7,
-	a8,
-	a9
-) {
+GraphicsBk.prototype.drawImage = function(img, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
 	var argsnum = arguments.length;
 	if (argsnum <= 4) {
 		this._ctx.drawImage(img._dat, a1, a2);
@@ -675,17 +619,7 @@ GraphicsBk.prototype.drawImage = function(
 			this._ctx.scale(1, -1);
 			this._ctx.translate(0, -a2);
 		}
-		this._ctx.drawImage(
-			img._dat,
-			a5,
-			a6,
-			a7 - a5,
-			a8 - a6,
-			a1,
-			a2,
-			Math.abs(a3 - a1),
-			Math.abs(a4 - a2)
-		);
+		this._ctx.drawImage(img._dat, a5, a6, a7 - a5, a8 - a6, a1, a2, Math.abs(a3 - a1), Math.abs(a4 - a2));
 		this._ctx.restore();
 		return true;
 	}

@@ -205,12 +205,7 @@ GameSoundForApplet.prototype.rsAddSound = function(paramInt) {
 };
 
 GameSoundForApplet.prototype.rsPlay = function() {
-	if (
-		!this.use_f ||
-		this.mute_f ||
-		this.rs_b == -1 ||
-		this.s_data[this.rs_b] == null
-	) {
+	if (!this.use_f || this.mute_f || this.rs_b == -1 || this.s_data[this.rs_b] == null) {
 		return;
 	}
 	this.s_data[this.rs_b].stop();
@@ -228,14 +223,8 @@ GameSoundForApplet.prototype.playBGM = function(paramInt) {
 		return;
 	}
 	if (this.bgm_genzai >= 0 && paramInt >= 0) {
-		if (
-			this.bgm_filename[this.bgm_genzai] != null &&
-			this.bgm_filename[paramInt] != null
-		) {
-			if (
-				this.bgm_filename[this.bgm_genzai] ==
-				this.bgm_filename[paramInt]
-			) {
+		if (this.bgm_filename[this.bgm_genzai] != null && this.bgm_filename[paramInt] != null) {
+			if (this.bgm_filename[this.bgm_genzai] == this.bgm_filename[paramInt]) {
 				return;
 			}
 		}
@@ -323,8 +312,7 @@ GameSoundWebAudio.prototype = Object.create(GameSoundForApplet.prototype, {
 });
 
 GameSoundWebAudio.prototype._init = function() {
-	var ac =
-		"undefined" !== typeof AudioContext ? AudioContext : webkitAudioContext;
+	var ac = "undefined" !== typeof AudioContext ? AudioContext : webkitAudioContext;
 	this.context = new ac();
 	// DynamicComporessorをかませる
 	this.dest = this.context.createDynamicsCompressor();
@@ -343,11 +331,7 @@ GameSoundWebAudio.prototype._load = function() {
 	if (this.use_f) {
 		var se_filenames = this._getSEFilenames();
 		for (i = 0; i < se_filenames.length; i++) {
-			this._loadAudioBufferInto(
-				ap.getAudioURL(se_filenames[i], false),
-				this.s_data,
-				i
-			);
+			this._loadAudioBufferInto(ap.getAudioURL(se_filenames[i], false), this.s_data, i);
 		}
 	}
 	if (this.bgm_switch) {
@@ -363,12 +347,7 @@ GameSoundWebAudio.prototype._load = function() {
  * 音声ファイルをXHRで読み込みcontextAudioClipに変換
  * @protected
  */
-GameSoundWebAudio.prototype._loadAudioBufferInto = function(
-	url,
-	target,
-	index,
-	callback
-) {
+GameSoundWebAudio.prototype._loadAudioBufferInto = function(url, target, index, callback) {
 	const { audioCache, context } = this;
 	// まずcacheをまさぐる
 	if (audioCache[url] != null) {
@@ -445,12 +424,7 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(
 };
 
 GameSoundWebAudio.prototype.play = function(paramInt) {
-	if (
-		!this.use_f ||
-		this.mute_f ||
-		this.s_data[paramInt] == null ||
-		this.context.state !== "running"
-	) {
+	if (!this.use_f || this.mute_f || this.s_data[paramInt] == null || this.context.state !== "running") {
 		return;
 	}
 	if (this.noOverlapFlag === true) {
@@ -459,10 +433,7 @@ GameSoundWebAudio.prototype.play = function(paramInt) {
 			var gain = this.context.createGain();
 			gain.connect(this.dest);
 			gain.gain.value = 1;
-			gain.gain.linearRampToValueAtTime(
-				0,
-				this.context.currentTime + 0.1
-			);
+			gain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.1);
 			currentSource.disconnect();
 			currentSource.connect(gain);
 		}
@@ -503,14 +474,8 @@ GameSoundWebAudio.prototype.playBGM = function(paramInt, loopflg) {
 		return;
 	}
 	if (this.bgm_genzai >= 0 && paramInt >= 0) {
-		if (
-			this.bgm_filename[this.bgm_genzai] != null &&
-			this.bgm_filename[paramInt] != null
-		) {
-			if (
-				this.bgm_filename[this.bgm_genzai] ==
-				this.bgm_filename[paramInt]
-			) {
+		if (this.bgm_filename[this.bgm_genzai] != null && this.bgm_filename[paramInt] != null) {
+			if (this.bgm_filename[this.bgm_genzai] == this.bgm_filename[paramInt]) {
 				return;
 			}
 		}
@@ -584,8 +549,7 @@ GameSoundWebAudio.prototype.kill = function() {
  */
 GameSoundForApplet.factory = function(tdb) {
 	if (
-		("undefined" !== typeof AudioContext ||
-			"undefined" !== typeof webkitAudioContext) &&
+		("undefined" !== typeof AudioContext || "undefined" !== typeof webkitAudioContext) &&
 		/^https?:$/i.test(location.protocol) &&
 		!tdb.options["bc-no-webaudio"]
 	) {

@@ -57,8 +57,7 @@ CanvasMasao.InputPlayer = (function() {
 
 		//GameKeyを乗っ取る
 		var gk = this.mc.gk;
-		(this._keyPressed = gk.keyPressed),
-			(this._keyReleased = gk.keyReleased);
+		(this._keyPressed = gk.keyPressed), (this._keyReleased = gk.keyReleased);
 		gk.keyPressed = function(paramKeyEvent) {};
 		gk.keyReleased = function(paramKeyEvent) {};
 	};
@@ -66,16 +65,9 @@ CanvasMasao.InputPlayer = (function() {
 		//データの読み取りを初期化
 		var buf = new Uint8Array(this.inputdata /*,0,12*/);
 		//console.log(buf);
-		if (
-			buf[0] !== 0x4d ||
-			buf[1] !== 0x0e ||
-			buf[2] !== 0x50 ||
-			buf[3] !== 0x0a
-		) {
+		if (buf[0] !== 0x4d || buf[1] !== 0x0e || buf[2] !== 0x50 || buf[3] !== 0x0a) {
 			//マジックナンバーが合わない
-			console.error(
-				"入力データの読み込みに失敗しました。不明なファイル形式です。"
-			);
+			console.error("入力データの読み込みに失敗しました。不明なファイル形式です。");
 			this.playing = false;
 			return;
 		}
@@ -118,11 +110,7 @@ CanvasMasao.InputPlayer = (function() {
 		//console.log(head_idx, body_size);
 
 		//bodyを示すTypedArray
-		var body_buf = (this.body_buf = new Uint8Array(
-			this.inputdata,
-			head_idx + 16,
-			body_size
-		));
+		var body_buf = (this.body_buf = new Uint8Array(this.inputdata, head_idx + 16, body_size));
 		//次のHEADERへ進める
 		this.head_idx = head_idx + 16 + body_size;
 		this.base_frame = 0; //最終フレーム

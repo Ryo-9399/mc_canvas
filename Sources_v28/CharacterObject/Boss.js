@@ -41,8 +41,7 @@ const normalizeDegree = degree => ((degree % 360) + 360) % 360;
  * @param {Array} b
  */
 const zip = (a, b) => {
-	if (a.length !== b.length)
-		throw new Error("The given arrays do not have the same length.");
+	if (a.length !== b.length) throw new Error("The given arrays do not have the same length.");
 	return a.map((v, i) => [v, b[i]]);
 };
 
@@ -328,10 +327,7 @@ class Boss extends CharacterObject {
 			for (let i = 0; i <= 1; i++) {
 				const characterobject = mp.co_jm[i];
 				if (characterobject.c < 100) continue;
-				if (
-					Math.abs(this.x - characterobject.x) < 34 &&
-					Math.abs(this.y - characterobject.y) < 30
-				) {
+				if (Math.abs(this.x - characterobject.x) < 34 && Math.abs(this.y - characterobject.y) < 30) {
 					if (characterobject.c === 200) {
 						// グレネード
 						this.hitWithGrenade(mp, characterobject);
@@ -357,20 +353,7 @@ class Boss extends CharacterObject {
 		this.c1++;
 		if (mp.boss_type === 2) {
 			// 亀を投げる
-			const attack_count = [
-				1,
-				5,
-				7,
-				9,
-				21,
-				91,
-				95,
-				97,
-				99,
-				111,
-				170,
-				180
-			];
+			const attack_count = [1, 5, 7, 9, 21, 91, 95, 97, 99, 111, 170, 180];
 			const powers = [-2, -4, -6, -8, -2, -2, -4, -6, -8, -2, -4, -2];
 			for (const [count, power] of zip(attack_count, powers)) {
 				if (this.c1 === count) {
@@ -412,14 +395,7 @@ class Boss extends CharacterObject {
 				mp.mSet2(this.x, this.y, 500, -3, -24);
 				mp.mSet2(this.x, this.y, 500, 3, -24);
 			} else if (this.c1 >= 28 && this.c1 <= 98) {
-				if (this.c1 % 7 === 0)
-					mp.mSet2(
-						this.x,
-						this.y,
-						500,
-						(-15 + mp.ranInt(20)) * mirror,
-						-30
-					);
+				if (this.c1 % 7 === 0) mp.mSet2(this.x, this.y, 500, (-15 + mp.ranInt(20)) * mirror, -30);
 			} else if (this.c1 === 130) {
 				const dir = mp.ranInt(8) + 3;
 				mp.mSet2(this.x, this.y, 500, dir, -30);
@@ -448,13 +424,7 @@ class Boss extends CharacterObject {
 			if (this.c1 > 445) this.c1 = 0;
 		} else {
 			// 水の波動
-			if (
-				this.c1 === 5 ||
-				this.c1 === 35 ||
-				this.c1 === 65 ||
-				this.c1 === 110 ||
-				this.c1 === 185
-			) {
+			if (this.c1 === 5 || this.c1 === 35 || this.c1 === 65 || this.c1 === 110 || this.c1 === 185) {
 				mp.mSet(this.x, this.y, 90);
 			}
 			if (this.c1 > 185) this.c1 = 110;
@@ -557,13 +527,7 @@ class Boss extends CharacterObject {
 					this.y = mp.boss_kijyun_y;
 					this.vy = -24;
 					// 画面外に出ていたら反転する
-					checkBorder(
-						speed,
-						x_border_left,
-						x_border_right,
-						false,
-						next_c1
-					);
+					checkBorder(speed, x_border_left, x_border_right, false, next_c1);
 				}
 			} else {
 				// 体当たり
@@ -573,13 +537,7 @@ class Boss extends CharacterObject {
 				speed *= mirror;
 				this.x += speed;
 				// 画面外に出たら反転する
-				checkBorder(
-					speed,
-					x_border_left,
-					x_border_right,
-					true,
-					next_c1
-				);
+				checkBorder(speed, x_border_left, x_border_right, true, next_c1);
 			}
 		} else if (this.c1 === 40) {
 			// 元の位置に戻る
