@@ -313,37 +313,28 @@ class Boss extends CharacterObject {
 				this.pt = 1205;
 				break;
 
-			case BOSS3_TACKLE_ATTACK_LEFT:
+			case BOSS3_TACKLE_ATTACK_LEFT: {
 				this.pt = 1200;
-				if (this.c1 < 5) {
-				} else if (this.c1 < 25) {
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
-				} else if (this.c1 === 25) {
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
+				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
+				if (this.c1 >= 5 && this.c1 <= 25) {
+					this.pt = flag_type_rotate ? 1251 : 1250;
 				} else if (this.c1 === 30) {
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
+					this.pt = flag_type_rotate ? 1256 : 1255;
 				}
 				this.boss3TackleAttack(mp, 0);
 				break;
-
-			case BOSS3_TACKLE_ATTACK_RIGHT:
+			}
+			case BOSS3_TACKLE_ATTACK_RIGHT: {
 				this.pt = 1205;
-				if (this.c1 < 5) {
-				} else if (this.c1 < 25) {
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
-				} else if (this.c1 === 25) {
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
+				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
+				if (this.c1 >= 5 && this.c1 <= 25) {
+					this.pt = flag_type_rotate ? 1256 : 1255;
 				} else if (this.c1 === 30) {
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
+					this.pt = flag_type_rotate ? 1251 : 1250;
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
+			}
 		}
 	}
 
