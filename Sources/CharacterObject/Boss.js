@@ -400,8 +400,8 @@ class Boss extends CharacterObject {
 			}
 		}
 		// 主人公の攻撃としっぽの当たり判定
-		const tail_left = this.muki === 1 ? j.x + 16 : j.x - 32;
-		const tail_right = this.muki === 1 ? j.x + 63 : j.x + 16;
+		const tail_left = j.muki === 1 ? j.x + 16 : j.x - 32;
+		const tail_right = j.muki === 1 ? j.x + 63 : j.x + 16;
 		const tail_flag = tail_left <= this.x + 47 && tail_right >= this.x - 16 && Math.abs(j.y - this.y) < 48;
 		// しっぽとボスが接触している
 		if (tail_flag) {
