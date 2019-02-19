@@ -313,37 +313,28 @@ class Boss extends CharacterObject {
 				this.pt = 1205;
 				break;
 
-			case BOSS3_TACKLE_ATTACK_LEFT:
+			case BOSS3_TACKLE_ATTACK_LEFT: {
 				this.pt = 1200;
-				if (this.c1 < 5) {
-				} else if (this.c1 < 25) {
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
-				} else if (this.c1 === 25) {
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
+				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
+				if (this.c1 >= 5 && this.c1 <= 25) {
+					this.pt = flag_type_rotate ? 1251 : 1250;
 				} else if (this.c1 === 30) {
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
+					this.pt = flag_type_rotate ? 1256 : 1255;
 				}
 				this.boss3TackleAttack(mp, 0);
 				break;
-
-			case BOSS3_TACKLE_ATTACK_RIGHT:
+			}
+			case BOSS3_TACKLE_ATTACK_RIGHT: {
 				this.pt = 1205;
-				if (this.c1 < 5) {
-				} else if (this.c1 < 25) {
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
-				} else if (this.c1 === 25) {
-					this.pt = 1255;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1256;
+				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
+				if (this.c1 >= 5 && this.c1 <= 25) {
+					this.pt = flag_type_rotate ? 1256 : 1255;
 				} else if (this.c1 === 30) {
-					this.pt = 1250;
-					if (mp.boss3_type >= 6 && mp.boss3_type <= 8) this.pt = 1251;
+					this.pt = flag_type_rotate ? 1251 : 1250;
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
+			}
 		}
 	}
 
@@ -400,8 +391,8 @@ class Boss extends CharacterObject {
 			}
 		}
 		// 主人公の攻撃としっぽの当たり判定
-		const tail_left = this.muki === 1 ? j.x + 16 : j.x - 32;
-		const tail_right = this.muki === 1 ? j.x + 63 : j.x + 16;
+		const tail_left = j.muki === 1 ? j.x + 16 : j.x - 32;
+		const tail_right = j.muki === 1 ? j.x + 63 : j.x + 16;
 		const tail_flag = tail_left <= this.x + 47 && tail_right >= this.x - 16 && Math.abs(j.y - this.y) < 48;
 		// しっぽとボスが接触している
 		if (tail_flag) {
