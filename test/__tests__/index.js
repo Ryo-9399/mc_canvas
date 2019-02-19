@@ -37,9 +37,7 @@ for (const key in window.__json__) {
 			game.__st = -100;
 			// 乱数のseed値を固定
 			game.__mc.userInit = function() {
-				this.mp.ran_seed = isFinite(stage._ran_seed)
-					? Number(stage._ran_seed)
-					: 0x12345;
+				this.mp.ran_seed = isFinite(stage._ran_seed) ? Number(stage._ran_seed) : 0x12345;
 			};
 			// 最初のループで初期化
 			game.__loop();

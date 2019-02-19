@@ -279,17 +279,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						} else {
 							boss_jyoutai = 2600;
 							boss_vx = boss_speed * -1;
-							if (boss_x + (boss_width >> 1) < mc.mp.co_j.x + 15)
-								boss_vx = boss_speed;
+							if (boss_x + (boss_width >> 1) < mc.mp.co_j.x + 15) boss_vx = boss_speed;
 							boss_vy = 0;
 						}
 					}
-				} else if (
-					boss_ugoki == 4 ||
-					boss_ugoki == 5 ||
-					boss_ugoki == 20 ||
-					boss_ugoki == 21
-				) {
+				} else if (boss_ugoki == 4 || boss_ugoki == 5 || boss_ugoki == 20 || boss_ugoki == 21) {
 					if (boss_x <= sl_x + 320) {
 						boss_x = sl_x + 320;
 						boss_vx = 0;
@@ -425,32 +419,16 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			} else if (boss_jyoutai == 500) {
 				boss_kakudo -= boss_speed;
 				if (boss_kakudo < 0) boss_kakudo += 360;
-				boss_x =
-					boss_x_shoki -
-					256 +
-					Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) -
-					32;
-				boss_y =
-					boss_y_shoki +
-					32 +
-					Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) -
-					32;
+				boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
+				boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
 				if (boss_kakudo > 180) boss_vx = -1;
 				else boss_vx = 1;
 				shagekiBoss();
 			} else if (boss_jyoutai == 600) {
 				boss_kakudo += boss_speed;
 				if (boss_kakudo >= 360) boss_kakudo -= 360;
-				boss_x =
-					boss_x_shoki -
-					256 +
-					Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) -
-					32;
-				boss_y =
-					boss_y_shoki +
-					32 +
-					Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) -
-					32;
+				boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
+				boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
 				if (boss_kakudo < 180) boss_vx = -1;
 				else boss_vx = 1;
 				shagekiBoss();
@@ -841,16 +819,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				} else {
 					boss_kakudo -= boss_speed;
 					if (boss_kakudo < 0) boss_kakudo += 360;
-					boss_x =
-						boss_x_shoki -
-						256 +
-						Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) -
-						32;
-					boss_y =
-						boss_y_shoki +
-						32 +
-						Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) -
-						32;
+					boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
+					boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
 					if (boss_kakudo > 180) boss_vx = -1;
 					else boss_vx = 1;
 				}
@@ -864,16 +834,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				} else {
 					boss_kakudo -= boss_speed;
 					if (boss_kakudo < 0) boss_kakudo += 360;
-					boss_x =
-						boss_x_shoki -
-						256 +
-						Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) -
-						32;
-					boss_y =
-						boss_y_shoki +
-						32 +
-						Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) -
-						32;
+					boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
+					boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
 					if (boss_kakudo > 180) boss_vx = -1;
 					else boss_vx = 1;
 				}
@@ -952,20 +914,10 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			if (boss_fumeru_f != 3)
 				if (boss_kyo_f) {
 					if (
-						Applet1.getMyXReal() + 24 >
-							boss_x - ((boss_kyo_width - boss_width) >> 1) &&
-						Applet1.getMyXReal() <
-							boss_x +
-								boss_width +
-								((boss_kyo_width - boss_width) >> 1) -
-								8 &&
-						Applet1.getMyYReal() + 24 >
-							boss_y - ((boss_kyo_height - boss_height) >> 1) &&
-						Applet1.getMyYReal() <
-							boss_y +
-								boss_height +
-								((boss_kyo_height - boss_height) >> 1) -
-								8
+						Applet1.getMyXReal() + 24 > boss_x - ((boss_kyo_width - boss_width) >> 1) &&
+						Applet1.getMyXReal() < boss_x + boss_width + ((boss_kyo_width - boss_width) >> 1) - 8 &&
+						Applet1.getMyYReal() + 24 > boss_y - ((boss_kyo_height - boss_height) >> 1) &&
+						Applet1.getMyYReal() < boss_y + boss_height + ((boss_kyo_height - boss_height) >> 1) - 8
 					)
 						flag1 = true;
 				} else if (
@@ -1002,13 +954,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					boss_kyo_width - 32 + 48,
 					boss_kyo_height - 32 + 48
 				);
-			else
-				l = Applet1.attackFire(
-					boss_x - 24,
-					boss_y - 24,
-					boss_width - 32 + 48,
-					boss_height - 32 + 48
-				);
+			else l = Applet1.attackFire(boss_x - 24, boss_y - 24, boss_width - 32 + 48, boss_height - 32 + 48);
 			if (l >= 1) {
 				boss_hp = boss_hp - l;
 				if (boss_hp <= 0) {
@@ -1021,48 +967,24 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				var flag = false;
 				if (boss_kyo_f) {
 					if (
-						mc.mp.co_j.y <
-							boss_y +
-								boss_height -
-								4 +
-								((boss_kyo_height - boss_height) >> 1) &&
-						mc.mp.co_j.y + 32 >
-							boss_y + 4 - ((boss_kyo_height - boss_height) >> 1)
+						mc.mp.co_j.y < boss_y + boss_height - 4 + ((boss_kyo_height - boss_height) >> 1) &&
+						mc.mp.co_j.y + 32 > boss_y + 4 - ((boss_kyo_height - boss_height) >> 1)
 					)
 						if (mc.mp.co_j.muki == 0) {
 							if (
-								mc.mp.co_j.x - 32 - 12 <=
-									boss_x +
-										boss_width +
-										((boss_kyo_width - boss_width) >> 1) &&
-								mc.mp.co_j.x + 8 >=
-									boss_x -
-										((boss_kyo_width - boss_width) >> 1)
+								mc.mp.co_j.x - 32 - 12 <= boss_x + boss_width + ((boss_kyo_width - boss_width) >> 1) &&
+								mc.mp.co_j.x + 8 >= boss_x - ((boss_kyo_width - boss_width) >> 1)
 							)
 								flag = true;
 						} else if (
-							mc.mp.co_j.x + 32 + 32 + 12 >=
-								boss_x - ((boss_kyo_width - boss_width) >> 1) &&
-							mc.mp.co_j.x + 24 <=
-								boss_x +
-									boss_width +
-									((boss_kyo_width - boss_width) >> 1)
+							mc.mp.co_j.x + 32 + 32 + 12 >= boss_x - ((boss_kyo_width - boss_width) >> 1) &&
+							mc.mp.co_j.x + 24 <= boss_x + boss_width + ((boss_kyo_width - boss_width) >> 1)
 						)
 							flag = true;
-				} else if (
-					mc.mp.co_j.y < boss_y + boss_height - 4 &&
-					mc.mp.co_j.y + 32 > boss_y + 4
-				)
+				} else if (mc.mp.co_j.y < boss_y + boss_height - 4 && mc.mp.co_j.y + 32 > boss_y + 4)
 					if (mc.mp.co_j.muki == 0) {
-						if (
-							mc.mp.co_j.x - 32 - 12 <= boss_x + boss_width &&
-							mc.mp.co_j.x + 8 >= boss_x
-						)
-							flag = true;
-					} else if (
-						mc.mp.co_j.x + 32 + 32 + 12 >= boss_x &&
-						mc.mp.co_j.x + 24 <= boss_x + boss_width
-					)
+						if (mc.mp.co_j.x - 32 - 12 <= boss_x + boss_width && mc.mp.co_j.x + 8 >= boss_x) flag = true;
+					} else if (mc.mp.co_j.x + 32 + 32 + 12 >= boss_x && mc.mp.co_j.x + 24 <= boss_x + boss_width)
 						flag = true;
 				if (flag) {
 					mc.mp.gs.rsAddSound(9);
@@ -1083,102 +1005,36 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				if (boss_jyoutai >= 100) {
 					if (boss_vx <= 0) {
 						if (boss_ac <= 2 || boss_anime_type == 2)
-							g.drawImage(
-								boss_left1_img,
-								boss_x - i,
-								boss_y - j,
-								Applet1
-							);
-						else if (boss_left2_img != null)
-							g.drawImage(
-								boss_left2_img,
-								boss_x - i,
-								boss_y - j,
-								Applet1
-							);
+							g.drawImage(boss_left1_img, boss_x - i, boss_y - j, Applet1);
+						else if (boss_left2_img != null) g.drawImage(boss_left2_img, boss_x - i, boss_y - j, Applet1);
 					} else if (boss_ac <= 2 || boss_anime_type == 2)
-						g.drawImage(
-							boss_right1_img,
-							boss_x - i,
-							boss_y - j,
-							Applet1
-						);
-					else if (boss_right2_img != null)
-						g.drawImage(
-							boss_right2_img,
-							boss_x - i,
-							boss_y - j,
-							Applet1
-						);
+						g.drawImage(boss_right1_img, boss_x - i, boss_y - j, Applet1);
+					else if (boss_right2_img != null) g.drawImage(boss_right2_img, boss_x - i, boss_y - j, Applet1);
 				} else if (boss_jyoutai >= 50 && boss_jyoutai <= 80)
-					if (boss_vx <= 0)
-						g.drawImage(
-							boss_tubure_left_img,
-							boss_x - i,
-							boss_y - j,
-							Applet1
-						);
+					if (boss_vx <= 0) g.drawImage(boss_tubure_left_img, boss_x - i, boss_y - j, Applet1);
 					else if (boss_tubure_right_img != null)
-						g.drawImage(
-							boss_tubure_right_img,
-							boss_x - i,
-							boss_y - j,
-							Applet1
-						);
+						g.drawImage(boss_tubure_right_img, boss_x - i, boss_y - j, Applet1);
 			} else {
 				var graphics2d = mc.gg.os_img.getGraphics();
-				graphics2d.translate(
-					boss_x - i + (boss_width >> 1),
-					boss_y - j + (boss_height >> 1)
-				);
+				graphics2d.translate(boss_x - i + (boss_width >> 1), boss_y - j + (boss_height >> 1));
 				var f = boss_kyo_width / boss_width;
 				var f1 = boss_kyo_height / boss_height;
 				graphics2d.scale(f, f1);
 				if (boss_jyoutai >= 100) {
 					if (boss_vx <= 0) {
 						if (boss_ac <= 2 || boss_anime_type == 2)
-							graphics2d.drawImage(
-								boss_left1_img,
-								-(boss_width >> 1),
-								-(boss_height >> 1),
-								Applet1
-							);
+							graphics2d.drawImage(boss_left1_img, -(boss_width >> 1), -(boss_height >> 1), Applet1);
 						else if (boss_left2_img != null)
-							graphics2d.drawImage(
-								boss_left2_img,
-								-(boss_width >> 1),
-								-(boss_height >> 1),
-								Applet1
-							);
+							graphics2d.drawImage(boss_left2_img, -(boss_width >> 1), -(boss_height >> 1), Applet1);
 					} else if (boss_ac <= 2 || boss_anime_type == 2)
-						graphics2d.drawImage(
-							boss_right1_img,
-							-(boss_width >> 1),
-							-(boss_height >> 1),
-							Applet1
-						);
+						graphics2d.drawImage(boss_right1_img, -(boss_width >> 1), -(boss_height >> 1), Applet1);
 					else if (boss_right2_img != null)
-						graphics2d.drawImage(
-							boss_right2_img,
-							-(boss_width >> 1),
-							-(boss_height >> 1),
-							Applet1
-						);
+						graphics2d.drawImage(boss_right2_img, -(boss_width >> 1), -(boss_height >> 1), Applet1);
 				} else if (boss_jyoutai >= 50 && boss_jyoutai <= 80)
 					if (boss_vx <= 0)
-						graphics2d.drawImage(
-							boss_tubure_left_img,
-							-(boss_width >> 1),
-							-(boss_height >> 1),
-							Applet1
-						);
+						graphics2d.drawImage(boss_tubure_left_img, -(boss_width >> 1), -(boss_height >> 1), Applet1);
 					else if (boss_tubure_right_img != null)
-						graphics2d.drawImage(
-							boss_tubure_right_img,
-							-(boss_width >> 1),
-							-(boss_height >> 1),
-							Applet1
-						);
+						graphics2d.drawImage(boss_tubure_right_img, -(boss_width >> 1), -(boss_height >> 1), Applet1);
 				graphics2d.dispose();
 			}
 			boss_ac++;
@@ -1207,143 +1063,56 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 2) {
-				mc.mp.mSet(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + ((boss_height - 32) >> 1),
-					100
-				);
+				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 100);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 3) {
-				if (
-					boss_shageki_c2 == 1 ||
-					boss_shageki_c2 == 7 ||
-					boss_shageki_c2 == 13
-				)
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + ((boss_height - 32) >> 1),
-						100
-					);
+				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 7 || boss_shageki_c2 == 13)
+					mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 100);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(10);
 				if (boss_shageki_c2 >= 13) {
 					boss_shageki_c = k14;
 					flag = true;
 				}
 			} else if (j14 == 4) {
-				if (boss_vx <= 0)
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						200
-					);
-				else
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						205
-					);
+				if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 200);
+				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 205);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 5) {
-				if (
-					boss_shageki_c2 == 1 ||
-					boss_shageki_c2 == 9 ||
-					boss_shageki_c2 == 17
-				)
-					if (boss_vx <= 0)
-						mc.mp.mSet(
-							boss_x + ((boss_width - 32) >> 1),
-							boss_y + 16,
-							200
-						);
-					else
-						mc.mp.mSet(
-							boss_x + ((boss_width - 32) >> 1),
-							boss_y + 16,
-							205
-						);
+				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 9 || boss_shageki_c2 == 17)
+					if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 200);
+					else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 205);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
 				if (boss_shageki_c2 >= 17) {
 					boss_shageki_c = k14;
 					flag = true;
 				}
 			} else if (j14 == 6) {
-				if (boss_vx <= 0)
-					mc.mp.mSet(
-						boss_x + 32,
-						boss_y + ((boss_height - 32) >> 1),
-						300
-					);
-				else
-					mc.mp.mSet(
-						boss_x + boss_width - 32,
-						boss_y + ((boss_height - 32) >> 1),
-						305
-					);
+				if (boss_vx <= 0) mc.mp.mSet(boss_x + 32, boss_y + ((boss_height - 32) >> 1), 300);
+				else mc.mp.mSet(boss_x + boss_width - 32, boss_y + ((boss_height - 32) >> 1), 305);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 7) {
 				if (boss_vx <= 0) {
-					mc.mp.mSet(
-						boss_x + 32,
-						boss_y + ((boss_height - 32) >> 1) - 16,
-						300
-					);
-					mc.mp.mSet(
-						boss_x + 32,
-						boss_y + ((boss_height - 32) >> 1) + 16,
-						300
-					);
+					mc.mp.mSet(boss_x + 32, boss_y + ((boss_height - 32) >> 1) - 16, 300);
+					mc.mp.mSet(boss_x + 32, boss_y + ((boss_height - 32) >> 1) + 16, 300);
 				} else {
-					mc.mp.mSet(
-						boss_x + boss_width - 32,
-						boss_y + ((boss_height - 32) >> 1) - 16,
-						305
-					);
-					mc.mp.mSet(
-						boss_x + boss_width - 32,
-						boss_y + ((boss_height - 32) >> 1) + 16,
-						305
-					);
+					mc.mp.mSet(boss_x + boss_width - 32, boss_y + ((boss_height - 32) >> 1) - 16, 305);
+					mc.mp.mSet(boss_x + boss_width - 32, boss_y + ((boss_height - 32) >> 1) + 16, 305);
 				}
 				mc.mp.gs.rsAddSound(14);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 8) {
-				if (boss_vx <= 0)
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						400
-					);
-				else
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						405
-					);
+				if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 400);
+				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 405);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 9) {
-				if (boss_vx == 0)
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 16,
-						606
-					);
-				else if (boss_vx < 0)
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 16,
-						600
-					);
-				else
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 16,
-						605
-					);
+				if (boss_vx == 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 16, 606);
+				else if (boss_vx < 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 16, 600);
+				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 16, 605);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 10) {
@@ -1352,148 +1121,64 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						var d = 3.3144445419311523;
 						var j1 = Math.floor(Math.cos(d) * 12);
 						var l7 = Math.floor(Math.sin(d) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j1,
-							l7
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 						d = 2.9655554294586182;
 						j1 = Math.floor(Math.cos(d) * 12);
 						l7 = Math.floor(Math.sin(d) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j1,
-							l7
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 						d = 3.6633334159851074;
 						j1 = Math.floor(Math.cos(d) * 12);
 						l7 = Math.floor(Math.sin(d) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j1,
-							l7
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 						d = 2.6166667938232422;
 						j1 = Math.floor(Math.cos(d) * 12);
 						l7 = Math.floor(Math.sin(d) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j1,
-							l7
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 					} else {
 						var d1 = 3.3144445419311523;
 						var k1 = Math.floor(Math.cos(d1) * 12) * -1;
 						var i8 = Math.floor(Math.sin(d1) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k1,
-							i8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 						d1 = 2.9655554294586182;
 						k1 = Math.floor(Math.cos(d1) * 12) * -1;
 						i8 = Math.floor(Math.sin(d1) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k1,
-							i8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 						d1 = 3.6633334159851074;
 						k1 = Math.floor(Math.cos(d1) * 12) * -1;
 						i8 = Math.floor(Math.sin(d1) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k1,
-							i8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 						d1 = 2.6166667938232422;
 						k1 = Math.floor(Math.cos(d1) * 12) * -1;
 						i8 = Math.floor(Math.sin(d1) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k1,
-							i8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 					}
 				} else if (boss_shageki_c2 == 11)
 					if (boss_vx <= 0) {
 						var d2 = 3.1400001049041748;
 						var l1 = Math.floor(Math.cos(d2) * 12);
 						var j8 = Math.floor(Math.sin(d2) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							l1,
-							j8
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l1, j8);
 						d2 = 2.7038888931274414;
 						l1 = Math.floor(Math.cos(d2) * 12);
 						j8 = Math.floor(Math.sin(d2) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							l1,
-							j8
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l1, j8);
 						d2 = 3.5761110782623291;
 						l1 = Math.floor(Math.cos(d2) * 12);
 						j8 = Math.floor(Math.sin(d2) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							l1,
-							j8
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l1, j8);
 					} else {
 						var d3 = 3.1400001049041748;
 						var i2 = Math.floor(Math.cos(d3) * 12) * -1;
 						var k8 = Math.floor(Math.sin(d3) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							i2,
-							k8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i2, k8);
 						d3 = 2.7038888931274414;
 						i2 = Math.floor(Math.cos(d3) * 12) * -1;
 						k8 = Math.floor(Math.sin(d3) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							i2,
-							k8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i2, k8);
 						d3 = 3.5761110782623291;
 						i2 = Math.floor(Math.cos(d3) * 12) * -1;
 						k8 = Math.floor(Math.sin(d3) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							i2,
-							k8
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i2, k8);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(18);
 				if (boss_shageki_c2 >= 11) {
@@ -1506,26 +1191,14 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						var d4 = (i * 3.14) / 180;
 						var j2 = Math.floor(Math.cos(d4) * 12);
 						var l8 = Math.floor(Math.sin(d4) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j2,
-							l8
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j2, l8);
 					}
 				} else if (boss_shageki_c2 == 11) {
 					for (var j = 15; j <= 345; j += 30) {
 						var d5 = (j * 3.14) / 180;
 						var k2 = Math.floor(Math.cos(d5) * 12);
 						var i9 = Math.floor(Math.sin(d5) * 12) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k2,
-							i9
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, k2, i9);
 					}
 				}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(18);
@@ -1534,123 +1207,39 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 12) {
-				if (boss_vx <= 0)
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						150,
-						-4
-					);
-				else
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						150,
-						4
-					);
+				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, -4);
+				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, 4);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 13) {
-				if (boss_vx <= 0)
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						150,
-						2
-					);
-				else
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						150,
-						-2
-					);
+				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, 2);
+				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, -2);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 14) {
-				if (boss_vx <= 0)
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						450,
-						-6
-					);
-				else
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						450,
-						6
-					);
+				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, -6);
+				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, 6);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 15) {
-				if (boss_vx <= 0)
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						450,
-						2
-					);
-				else
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						450,
-						-2
-					);
+				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, 2);
+				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, -2);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 16) {
-				if (boss_vx <= 0)
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						650,
-						-5
-					);
-				else
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						650,
-						5
-					);
+				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, -5);
+				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, 5);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 17) {
-				if (boss_vx <= 0)
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						650,
-						2
-					);
-				else
-					mc.mp.tSetBoss(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y,
-						650,
-						-2
-					);
+				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, 2);
+				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, -2);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 18) {
 				for (var k = 10; k <= 310; k += 60) {
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + ((boss_height - 32) >> 1),
-						901,
-						k,
-						0
-					);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + ((boss_height - 32) >> 1),
-						911,
-						k,
-						0
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 901, k, 0);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 911, k, 0);
 				}
 
 				mc.mp.gs.rsAddSound(18);
@@ -1662,96 +1251,36 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						var d6 = 3.1400001049041748;
 						var l2 = Math.floor(Math.cos(d6) * 8);
 						var j9 = Math.floor(Math.sin(d6) * 8) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							l2,
-							j9
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l2, j9);
 						d6 = 2.6166667938232422;
 						l2 = Math.floor(Math.cos(d6) * 8);
 						j9 = Math.floor(Math.sin(d6) * 8) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							l2,
-							j9
-						);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							l2,
-							j9 * -1
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l2, j9);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l2, j9 * -1);
 					} else {
 						var d7 = 3.1400001049041748;
 						var i3 = Math.floor(Math.cos(d7) * 8) * -1;
 						var k9 = Math.floor(Math.sin(d7) * 8) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							i3,
-							k9
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i3, k9);
 						d7 = 2.6166667938232422;
 						i3 = Math.floor(Math.cos(d7) * 8) * -1;
 						k9 = Math.floor(Math.sin(d7) * 8) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							i3,
-							k9
-						);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							i3,
-							k9 * -1
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i3, k9);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i3, k9 * -1);
 					}
 				} else if (boss_shageki_c2 == 20)
 					if (boss_vx <= 0) {
 						var d8 = 2.7911112308502197;
 						var j3 = Math.floor(Math.cos(d8) * 8);
 						var l9 = Math.floor(Math.sin(d8) * 8) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j3,
-							l9
-						);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							j3,
-							l9 * -1
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j3, l9);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j3, l9 * -1);
 					} else {
 						var d9 = 2.7911112308502197;
 						var k3 = Math.floor(Math.cos(d9) * 8) * -1;
 						var i10 = Math.floor(Math.sin(d9) * 8) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k3,
-							i10
-						);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							710,
-							k3,
-							i10 * -1
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k3, i10);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k3, i10 * -1);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(18);
 				if (boss_shageki_c2 >= 20) {
@@ -1763,48 +1292,18 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					var d10 = 1.5700000524520874;
 					var l3 = Math.floor(Math.cos(d10) * 8);
 					var j10 = Math.floor(Math.sin(d10) * 8) * -1;
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						710,
-						l3,
-						j10
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, l3, j10);
 					d10 = 1.0466667413711548;
 					l3 = Math.floor(Math.cos(d10) * 8);
 					j10 = Math.floor(Math.sin(d10) * 8) * -1;
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						710,
-						l3,
-						j10
-					);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						710,
-						l3 * -1,
-						j10
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, l3, j10);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, l3 * -1, j10);
 				} else if (boss_shageki_c2 == 20) {
 					var d11 = 1.2211111783981323;
 					var i4 = Math.floor(Math.cos(d11) * 8);
 					var k10 = Math.floor(Math.sin(d11) * 8) * -1;
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						710,
-						i4,
-						k10
-					);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + 16,
-						710,
-						i4 * -1,
-						k10
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, i4, k10);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, i4 * -1, k10);
 				}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(18);
 				if (boss_shageki_c2 >= 20) {
@@ -1816,48 +1315,18 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					var d12 = 1.5700000524520874;
 					var j4 = Math.floor(Math.cos(d12) * 8);
 					var l10 = Math.floor(Math.sin(d12) * 8);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 48,
-						710,
-						j4,
-						l10
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, j4, l10);
 					d12 = 1.0466667413711548;
 					j4 = Math.floor(Math.cos(d12) * 8);
 					l10 = Math.floor(Math.sin(d12) * 8);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 48,
-						710,
-						j4,
-						l10
-					);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 48,
-						710,
-						j4 * -1,
-						l10
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, j4, l10);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, j4 * -1, l10);
 				} else if (boss_shageki_c2 == 20) {
 					var d13 = 1.2211111783981323;
 					var k4 = Math.floor(Math.cos(d13) * 8);
 					var i11 = Math.floor(Math.sin(d13) * 8);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 48,
-						710,
-						k4,
-						i11
-					);
-					mc.mp.mSet2(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + boss_height - 48,
-						710,
-						k4 * -1,
-						i11
-					);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k4, i11);
+					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k4 * -1, i11);
 				}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(18);
 				if (boss_shageki_c2 >= 20) {
@@ -1870,108 +1339,48 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						var d14 = 3.1400001049041748;
 						var l4 = Math.floor(Math.cos(d14) * 10);
 						var j11 = Math.floor(Math.sin(d14) * 10);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							l4,
-							j11
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l4, j11);
 						d14 = 3.8377780914306641;
 						l4 = Math.floor(Math.cos(d14) * 10);
 						j11 = Math.floor(Math.sin(d14) * 10);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							l4,
-							j11
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l4, j11);
 						d14 = 4.5355558395385742;
 						l4 = Math.floor(Math.cos(d14) * 10);
 						j11 = Math.floor(Math.sin(d14) * 10);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							l4,
-							j11
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l4, j11);
 					} else {
 						var d15 = 3.1400001049041748;
 						var i5 = Math.floor(Math.cos(d15) * 10) * -1;
 						var k11 = Math.floor(Math.sin(d15) * 10);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							i5,
-							k11
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i5, k11);
 						d15 = 3.8377780914306641;
 						i5 = Math.floor(Math.cos(d15) * 10) * -1;
 						k11 = Math.floor(Math.sin(d15) * 10);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							i5,
-							k11
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i5, k11);
 						d15 = 4.5355558395385742;
 						i5 = Math.floor(Math.cos(d15) * 10) * -1;
 						k11 = Math.floor(Math.sin(d15) * 10);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							i5,
-							k11
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i5, k11);
 					}
 				} else if (boss_shageki_c2 == 18)
 					if (boss_vx <= 0) {
 						var d16 = 3.4888889789581299;
 						var j5 = Math.floor(Math.cos(d16) * 10);
 						var l11 = Math.floor(Math.sin(d16) * 10);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							j5,
-							l11
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j5, l11);
 						d16 = 4.1866669654846191;
 						j5 = Math.floor(Math.cos(d16) * 10);
 						l11 = Math.floor(Math.sin(d16) * 10);
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							j5,
-							l11
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j5, l11);
 					} else {
 						var d17 = 3.4888889789581299;
 						var k5 = Math.floor(Math.cos(d17) * 10) * -1;
 						var i12 = Math.floor(Math.sin(d17) * 10);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							k5,
-							i12
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k5, i12);
 						d17 = 4.1866669654846191;
 						k5 = Math.floor(Math.cos(d17) * 10) * -1;
 						i12 = Math.floor(Math.sin(d17) * 10);
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							k5,
-							i12
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k5, i12);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
 				if (boss_shageki_c2 >= 18) {
@@ -1984,108 +1393,48 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						var d18 = 3.1400001049041748;
 						var l5 = Math.floor(Math.cos(d18) * 10);
 						var j12 = Math.floor(Math.sin(d18) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							l5,
-							j12
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l5, j12);
 						d18 = 3.8377780914306641;
 						l5 = Math.floor(Math.cos(d18) * 10);
 						j12 = Math.floor(Math.sin(d18) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							l5,
-							j12
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l5, j12);
 						d18 = 4.5355558395385742;
 						l5 = Math.floor(Math.cos(d18) * 10);
 						j12 = Math.floor(Math.sin(d18) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							l5,
-							j12
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l5, j12);
 					} else {
 						var d19 = 3.1400001049041748;
 						var i6 = Math.floor(Math.cos(d19) * 10) * -1;
 						var k12 = Math.floor(Math.sin(d19) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							i6,
-							k12
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i6, k12);
 						d19 = 3.8377780914306641;
 						i6 = Math.floor(Math.cos(d19) * 10) * -1;
 						k12 = Math.floor(Math.sin(d19) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							i6,
-							k12
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i6, k12);
 						d19 = 4.5355558395385742;
 						i6 = Math.floor(Math.cos(d19) * 10) * -1;
 						k12 = Math.floor(Math.sin(d19) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							i6,
-							k12
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i6, k12);
 					}
 				} else if (boss_shageki_c2 == 18)
 					if (boss_vx <= 0) {
 						var d20 = 3.4888889789581299;
 						var j6 = Math.floor(Math.cos(d20) * 10);
 						var l12 = Math.floor(Math.sin(d20) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							j6,
-							l12
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j6, l12);
 						d20 = 4.1866669654846191;
 						j6 = Math.floor(Math.cos(d20) * 10);
 						l12 = Math.floor(Math.sin(d20) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + 16,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							j6,
-							l12
-						);
+						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j6, l12);
 					} else {
 						var d21 = 3.4888889789581299;
 						var k6 = Math.floor(Math.cos(d21) * 10) * -1;
 						var i13 = Math.floor(Math.sin(d21) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							k6,
-							i13
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k6, i13);
 						d21 = 4.1866669654846191;
 						k6 = Math.floor(Math.cos(d21) * 10) * -1;
 						i13 = Math.floor(Math.sin(d21) * 10) * -1;
-						mc.mp.mSet2(
-							boss_x + boss_width - 48,
-							boss_y + ((boss_height - 32) >> 1),
-							731,
-							k6,
-							i13
-						);
+						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k6, i13);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
 				if (boss_shageki_c2 >= 18) {
@@ -2093,127 +1442,57 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 24) {
-				mc.mp.mSet(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + ((boss_height - 32) >> 1),
-					90
-				);
+				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 90);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 25) {
-				if (boss_vx <= 0)
-					mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -5, -32);
-				else
-					mc.mp.mSet2(
-						boss_x + boss_width - 48,
-						boss_y + 16,
-						800,
-						5,
-						-32
-					);
+				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -5, -32);
+				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + 16, 800, 5, -32);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 26) {
-				if (boss_vx <= 0)
-					mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -10, -32);
-				else
-					mc.mp.mSet2(
-						boss_x + boss_width - 48,
-						boss_y + 16,
-						800,
-						10,
-						-32
-					);
+				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -10, -32);
+				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + 16, 800, 10, -32);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 27) {
-				if (boss_vx <= 0)
-					mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -15, -32);
-				else
-					mc.mp.mSet2(
-						boss_x + boss_width - 48,
-						boss_y + 16,
-						800,
-						15,
-						-32
-					);
+				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -15, -32);
+				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + 16, 800, 15, -32);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 28) {
-				if (boss_vx <= 0)
-					mc.mp.mSet2(
-						boss_x + 16,
-						boss_y + ((boss_height - 32) >> 1),
-						810,
-						-12,
-						0
-					);
-				else
-					mc.mp.mSet2(
-						boss_x + boss_width - 48,
-						boss_y + ((boss_height - 32) >> 1),
-						810,
-						12,
-						0
-					);
+				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 810, -12, 0);
+				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 810, 12, 0);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 29) {
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					77,
-					-1,
-					0
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 77, -1, 0);
 				mc.mp.gs.rsAddSound(14);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 30) {
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					75,
-					-1,
-					0
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 75, -1, 0);
 				mc.mp.gs.rsAddSound(11);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 31) {
 				if (boss_vx <= 0) {
 					for (var l = 0; l <= 270; l += 90)
-						mc.mp.mSet2(
-							boss_x + ((boss_width - 32) >> 1),
-							boss_y + ((boss_height - 32) >> 1),
-							970,
-							l,
-							0
-						);
+						mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 970, l, 0);
 				} else {
 					for (var i1 = 0; i1 <= 270; i1 += 90)
-						mc.mp.mSet2(
-							boss_x + ((boss_width - 32) >> 1),
-							boss_y + ((boss_height - 32) >> 1),
-							980,
-							i1,
-							0
-						);
+						mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 980, i1, 0);
 				}
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 32) {
-				if (
-					boss_shageki_c2 == 1 ||
-					boss_shageki_c2 == 9 ||
-					boss_shageki_c2 == 17
-				)
+				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 9 || boss_shageki_c2 == 17)
 					mc.mp.mSet(boss_x + 16, boss_y + 16, 200);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
 				if (boss_shageki_c2 >= 17) {
@@ -2221,11 +1500,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 33) {
-				if (
-					boss_shageki_c2 == 1 ||
-					boss_shageki_c2 == 9 ||
-					boss_shageki_c2 == 17
-				)
+				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 9 || boss_shageki_c2 == 17)
 					mc.mp.mSet(boss_x + boss_width - 48, boss_y + 16, 205);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
 				if (boss_shageki_c2 >= 17) {
@@ -2233,79 +1508,29 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 34) {
-				if (boss_vx <= 0)
-					mc.mp.mSet2(
-						boss_x + 16,
-						boss_y + ((boss_height - 32) >> 1),
-						731,
-						-8,
-						0
-					);
-				else
-					mc.mp.mSet2(
-						boss_x + boss_width - 48,
-						boss_y + ((boss_height - 32) >> 1),
-						731,
-						8,
-						0
-					);
+				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, -8, 0);
+				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, 8, 0);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 35) {
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					731,
-					-8,
-					0
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, -8, 0);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 36) {
-				mc.mp.mSet2(
-					boss_x + boss_width - 48,
-					boss_y + ((boss_height - 32) >> 1),
-					731,
-					8,
-					0
-				);
+				mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, 8, 0);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 37) {
 				var d22 = 3.4016668796539307;
 				var l6 = Math.floor(Math.cos(d22) * 8);
 				var j13 = Math.floor(Math.sin(d22) * 8) * -1;
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					l6,
-					j13
-				);
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					l6,
-					j13 * -1
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13 * -1);
 				d22 = 3.9249999523162842;
 				l6 = Math.floor(Math.cos(d22) * 8);
 				j13 = Math.floor(Math.sin(d22) * 8) * -1;
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					l6,
-					j13
-				);
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					l6,
-					j13 * -1
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13 * -1);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
@@ -2313,188 +1538,74 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				var d23 = 3.4016668796539307;
 				var i7 = Math.floor(Math.cos(d23) * 8) * -1;
 				var k13 = Math.floor(Math.sin(d23) * 8) * -1;
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					i7,
-					k13
-				);
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					i7,
-					k13 * -1
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13 * -1);
 				d23 = 3.9249999523162842;
 				i7 = Math.floor(Math.cos(d23) * 8) * -1;
 				k13 = Math.floor(Math.sin(d23) * 8) * -1;
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					i7,
-					k13
-				);
-				mc.mp.mSet2(
-					boss_x + 16,
-					boss_y + ((boss_height - 32) >> 1),
-					710,
-					i7,
-					k13 * -1
-				);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13);
+				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13 * -1);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 39) {
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + 16,
-					710,
-					0,
-					-8
-				);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, 0, -8);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 40) {
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + boss_height - 48,
-					710,
-					0,
-					8
-				);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, 0, 8);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 41) {
 				var d24 = 4.9716668128967285;
 				var j7 = Math.floor(Math.cos(d24) * 8) * -1;
 				var l13 = Math.floor(Math.sin(d24) * 8);
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + 16,
-					710,
-					j7,
-					l13
-				);
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + 16,
-					710,
-					j7 * -1,
-					l13
-				);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7, l13);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7 * -1, l13);
 				d24 = 5.4950003623962402;
 				j7 = Math.floor(Math.cos(d24) * 8) * -1;
 				l13 = Math.floor(Math.sin(d24) * 8);
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + 16,
-					710,
-					j7,
-					l13
-				);
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + 16,
-					710,
-					j7 * -1,
-					l13
-				);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7, l13);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7 * -1, l13);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 42) {
 				var d25 = 4.9716668128967285;
 				var k7 = Math.floor(Math.cos(d25) * 8) * -1;
 				var i14 = Math.floor(Math.sin(d25) * 8) * -1;
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + boss_height - 48,
-					710,
-					k7,
-					i14
-				);
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + boss_height - 48,
-					710,
-					k7 * -1,
-					i14
-				);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7, i14);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7 * -1, i14);
 				d25 = 5.4950003623962402;
 				k7 = Math.floor(Math.cos(d25) * 8) * -1;
 				i14 = Math.floor(Math.sin(d25) * 8) * -1;
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + boss_height - 48,
-					710,
-					k7,
-					i14
-				);
-				mc.mp.mSet2(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + boss_height - 48,
-					710,
-					k7 * -1,
-					i14
-				);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7, i14);
+				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7 * -1, i14);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 43) {
 				if (boss_vx <= 0) {
 					mc.mp.mSet2(boss_x + 16, boss_y, 731, -8, 0);
-					mc.mp.mSet2(
-						boss_x + 16,
-						boss_y + boss_height - 32,
-						731,
-						-8,
-						0
-					);
+					mc.mp.mSet2(boss_x + 16, boss_y + boss_height - 32, 731, -8, 0);
 				} else {
 					mc.mp.mSet2(boss_x + boss_width - 48, boss_y, 731, 8, 0);
-					mc.mp.mSet2(
-						boss_x + boss_width - 48,
-						boss_y + boss_height - 32,
-						731,
-						8,
-						0
-					);
+					mc.mp.mSet2(boss_x + boss_width - 48, boss_y + boss_height - 32, 731, 8, 0);
 				}
 				mc.mp.gs.rsAddSound(11);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 44) {
-				if (boss_vx <= 0)
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + ((boss_height - 32) >> 1),
-						95
-					);
-				else
-					mc.mp.mSet(
-						boss_x + ((boss_width - 32) >> 1),
-						boss_y + ((boss_height - 32) >> 1),
-						96
-					);
+				if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 95);
+				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 96);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 45) {
-				mc.mp.mSet(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + ((boss_height - 32) >> 1),
-					95
-				);
+				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 95);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 46) {
-				mc.mp.mSet(
-					boss_x + ((boss_width - 32) >> 1),
-					boss_y + ((boss_height - 32) >> 1),
-					96
-				);
+				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 96);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
@@ -2516,10 +1627,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				else boss_waza_genzai = 0;
 		} else if (boss_waza_select == 5) {
 			if (flag || flag1)
-				if (boss_hp <= Math.floor(boss_hp_max / 3))
-					boss_waza_genzai = 2;
-				else if (boss_hp <= Math.floor((boss_hp_max * 2) / 3))
-					boss_waza_genzai = 1;
+				if (boss_hp <= Math.floor(boss_hp_max / 3)) boss_waza_genzai = 2;
+				else if (boss_hp <= Math.floor((boss_hp_max * 2) / 3)) boss_waza_genzai = 1;
 				else boss_waza_genzai = 0;
 		} else if (boss_waza_select == 6) {
 			if (flag)
@@ -2552,33 +1661,27 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			if (flag || flag1)
 				if (boss_ugoki == 16 || boss_ugoki == 17) {
 					if (!boss_hmove_f) boss_waza_genzai = 0;
-					else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 160)
-						boss_waza_genzai = 1;
+					else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 160) boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
 				} else if (boss_ugoki == 6 || boss_ugoki == 7) {
 					if (!boss_hmove_f) boss_waza_genzai = 0;
 					else if (boss_y < boss_y_shoki) boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
-				} else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 96)
-					boss_waza_genzai = 1;
-				else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy >= 224)
-					boss_waza_genzai = 2;
+				} else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 96) boss_waza_genzai = 1;
+				else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy >= 224) boss_waza_genzai = 2;
 				else boss_waza_genzai = 0;
 		} else if (boss_waza_select == 10) {
 			if (flag || flag1)
 				if (boss_ugoki == 16 || boss_ugoki == 17) {
 					if (boss_hmove_f) boss_waza_genzai = 0;
-					else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx > 256)
-						boss_waza_genzai = 1;
+					else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx > 256) boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
 				} else if (boss_ugoki == 6 || boss_ugoki == 7) {
 					if (boss_hmove_f) boss_waza_genzai = 0;
 					else if (boss_x > boss_x_shoki - 256) boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
-				} else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx < 128)
-					boss_waza_genzai = 2;
-				else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx >= 384)
-					boss_waza_genzai = 1;
+				} else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx < 128) boss_waza_genzai = 2;
+				else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx >= 384) boss_waza_genzai = 1;
 				else boss_waza_genzai = 0;
 		} else {
 			boss_waza_genzai = 0;
@@ -2641,9 +1744,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			var k = getParamInt("x_backimage" + s + "_view_x");
 			if (k > 0) {
 				x_backimage_view_x[j] = (k + 1) * 32;
-				x_backimage_img[j] = newImageOnLoadClassic(
-					getParameter("x_backimage" + s + "_filename")
-				);
+				x_backimage_img[j] = newImageOnLoadClassic(getParameter("x_backimage" + s + "_filename"));
 			}
 		}
 	}

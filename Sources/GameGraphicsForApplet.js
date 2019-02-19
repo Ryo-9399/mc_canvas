@@ -50,8 +50,7 @@ function GameGraphicsForApplet(paramTagDataBase, paramApplet) {
 		str = this.tdb.getValue("filename_mapchip");
 		this.amapchip_img = this.ap.getImage(str);
 		// ハック
-		if (this.amapchip_img == null)
-			this.amapchip_img = new ImageBuff(512, 512);
+		if (this.amapchip_img == null) this.amapchip_img = new ImageBuff(512, 512);
 	}
 }
 
@@ -65,34 +64,12 @@ GameGraphicsForApplet.prototype.cut = function() {
 			j = n * 10 + m;
 			this.spt_img[0][j] = new ImageBuff(32, 32);
 			localG = this.spt_img[0][j].getGraphics();
-			localG.drawImage(
-				this.apt_img,
-				m * 32,
-				n * 32,
-				32,
-				32,
-				0,
-				0,
-				32,
-				32,
-				null
-			);
+			localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 			if (n >= this.spt_h_kijyun) {
 				this.spt_img[1][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[1][j].getGraphics();
 				localG.scale(-1, 1);
-				localG.drawImage(
-					this.apt_img,
-					m * 32,
-					n * 32,
-					32,
-					32,
-					-32,
-					0,
-					32,
-					32,
-					null
-				);
+				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
 			} else {
 				this.spt_img[1][j] = this.spt_img[0][j];
 			}
@@ -128,18 +105,7 @@ GameGraphicsForApplet.prototype.cut = function() {
 			this.spt_img[0][j] = new ImageBuff(32, 32);
 			localG = this.spt_img[0][j].getGraphics();
 			localG.setGlobalAlpha(i5);
-			localG.drawImage(
-				this.apt_img,
-				m * 32,
-				n * 32,
-				32,
-				32,
-				0,
-				0,
-				32,
-				32,
-				null
-			);
+			localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 		}
 	}
 	// ■■■32x32にカットする処理(mapchip)
@@ -152,18 +118,7 @@ GameGraphicsForApplet.prototype.cut = function() {
 
 				this.smapchip_img[j] = new ImageBuff(32, 32);
 				localG = this.smapchip_img[j].getGraphics();
-				localG.drawImage(
-					this.amapchip_img,
-					m * 32,
-					n * 32,
-					32,
-					32,
-					0,
-					0,
-					32,
-					32,
-					null
-				);
+				localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 			}
 		}
 	}
@@ -181,34 +136,12 @@ GameGraphicsForApplet.prototype.setPatternImage = function(paramString) {
 			j = n * 10 + m;
 			this.spt_img[0][j] = new ImageBuff(32, 32);
 			localG = this.spt_img[0][j].getGraphics();
-			localG.drawImage(
-				this.apt_img,
-				m * 32,
-				n * 32,
-				32,
-				32,
-				0,
-				0,
-				32,
-				32,
-				null
-			);
+			localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 			if (n >= this.spt_h_kijyun) {
 				this.spt_img[1][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[1][j].getGraphics();
 				localG.scale(-1, 1);
-				localG.drawImage(
-					this.apt_img,
-					m * 32,
-					n * 32,
-					32,
-					32,
-					-32,
-					0,
-					32,
-					32,
-					null
-				);
+				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
 			} else {
 				this.spt_img[1][j] = this.spt_img[0][j];
 			}
@@ -235,18 +168,7 @@ GameGraphicsForApplet.prototype.setMapchipImage = function(paramString) {
 
 				this.smapchip_img[j] = new ImageBuff(32, 32);
 				localG = this.smapchip_img[j].getGraphics();
-				localG.drawImage(
-					this.amapchip_img,
-					m * 32,
-					n * 32,
-					32,
-					32,
-					0,
-					0,
-					32,
-					32,
-					null
-				);
+				localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 			}
 		}
 	}
@@ -258,10 +180,7 @@ GameGraphicsForApplet.prototype.addListImage = function(paramInt, paramString) {
 	this.mt.push(this.li[paramInt]);
 };
 
-GameGraphicsForApplet.prototype.addListImage2 = function(
-	paramInt,
-	paramString
-) {
+GameGraphicsForApplet.prototype.addListImage2 = function(paramInt, paramString) {
 	this.li[paramInt] = this.ap.getImage(paramString);
 };
 
@@ -304,133 +223,57 @@ GameGraphicsForApplet.prototype.setBackcolor = function(paramColor) {
 	this.backcolor = paramColor;
 };
 
-GameGraphicsForApplet.prototype.drawPT = function(
-	paramInt1,
-	paramInt2,
-	paramInt3,
-	paramInt4
-) {
-	this.os_g.drawImage(
-		this.spt_img[paramInt4][paramInt3],
-		paramInt1,
-		paramInt2,
-		this.ap
-	);
+GameGraphicsForApplet.prototype.drawPT = function(paramInt1, paramInt2, paramInt3, paramInt4) {
+	this.os_g.drawImage(this.spt_img[paramInt4][paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawPattern = function(
-	paramInt1,
-	paramInt2,
-	paramInt3,
-	paramInt4
-) {
+GameGraphicsForApplet.prototype.drawPattern = function(paramInt1, paramInt2, paramInt3, paramInt4) {
 	var i = 0;
 	if (paramInt4 == 1) {
 		i = 1;
 	}
-	this.os_g.drawImage(
-		this.spt_img[i][paramInt3],
-		paramInt1,
-		paramInt2,
-		this.ap
-	);
+	this.os_g.drawImage(this.spt_img[i][paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawPatternCut = function(
-	paramInt1,
-	paramInt2,
-	paramInt3,
-	paramInt4,
-	paramInt5
-) {
+GameGraphicsForApplet.prototype.drawPatternCut = function(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5) {
 	var i = 0;
 	if (paramInt4 == 1) {
 		i = 1;
 	}
-	this.os32_g.drawImage(
-		this.os_img,
-		paramInt1 * -1,
-		paramInt2 * -1 - paramInt5,
-		this.ap
-	);
+	this.os32_g.drawImage(this.os_img, paramInt1 * -1, paramInt2 * -1 - paramInt5, this.ap);
 
-	this.os32_g.drawImage(
-		this.spt_img[i][paramInt3],
-		0,
-		paramInt5 * -1,
-		this.ap
-	);
+	this.os32_g.drawImage(this.spt_img[i][paramInt3], 0, paramInt5 * -1, this.ap);
 
-	this.os_g.drawImage(
-		this.os32_img,
-		paramInt1,
-		paramInt2 + paramInt5,
-		this.ap
-	);
+	this.os_g.drawImage(this.os32_img, paramInt1, paramInt2 + paramInt5, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawPT2 = function(
-	paramInt1,
-	paramInt2,
-	paramInt3
-) {
+GameGraphicsForApplet.prototype.drawPT2 = function(paramInt1, paramInt2, paramInt3) {
 	this.os2_g.drawImage(this.hi[paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawBG2 = function(
-	paramInt1,
-	paramInt2,
-	paramInt3
-) {
+GameGraphicsForApplet.prototype.drawBG2 = function(paramInt1, paramInt2, paramInt3) {
 	this.os2_g.setColor(this.backcolor);
 	this.os2_g.fillRect(paramInt1, paramInt2, 32, 32);
 
 	this.os2_g.drawImage(this.hi[paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawBG3 = function(
-	paramInt1,
-	paramInt2,
-	paramInt3,
-	paramColor
-) {
+GameGraphicsForApplet.prototype.drawBG3 = function(paramInt1, paramInt2, paramInt3, paramColor) {
 	this.os2_g.setColor(paramColor);
 	this.os2_g.fillRect(paramInt1, paramInt2, 32, 32);
 
 	this.os2_g.drawImage(this.hi[paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawMapchip = function(
-	paramInt1,
-	paramInt2,
-	paramInt3
-) {
-	this.os_g.drawImage(
-		this.smapchip_img[paramInt3],
-		paramInt1,
-		paramInt2,
-		this.ap
-	);
+GameGraphicsForApplet.prototype.drawMapchip = function(paramInt1, paramInt2, paramInt3) {
+	this.os_g.drawImage(this.smapchip_img[paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawMapchip2 = function(
-	paramInt1,
-	paramInt2,
-	paramInt3
-) {
-	this.os2_g.drawImage(
-		this.smapchip_img[paramInt3],
-		paramInt1,
-		paramInt2,
-		this.ap
-	);
+GameGraphicsForApplet.prototype.drawMapchip2 = function(paramInt1, paramInt2, paramInt3) {
+	this.os2_g.drawImage(this.smapchip_img[paramInt3], paramInt1, paramInt2, this.ap);
 };
 
-GameGraphicsForApplet.prototype.drawListImage = function(
-	paramInt1,
-	paramInt2,
-	paramInt3
-) {
+GameGraphicsForApplet.prototype.drawListImage = function(paramInt1, paramInt2, paramInt3) {
 	this.os_g.drawImage(this.li[paramInt3], paramInt1, paramInt2, this.ap);
 };
 

@@ -1,17 +1,8 @@
 import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
 import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
-import {
-	GameMouse,
-	GameMouse_mousePressed,
-	GameMouse_mouseReleased
-} from "./GameMouse";
+import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
 import { GameSoundForApplet } from "./GameSoundForApplet";
-import {
-	AudioClip,
-	Game,
-	rightShiftIgnoreSign,
-	waitFor
-} from "./GlobalFunctions";
+import { AudioClip, Game, rightShiftIgnoreSign, waitFor } from "./GlobalFunctions";
 import { Color, Font, ImageBuff } from "./ImageBuff";
 import { MainProgram } from "./MainProgram";
 import { MasaoJSS } from "./MasaoJSS";
@@ -233,27 +224,11 @@ MasaoConstruction.prototype.run = function() {
 			if (this.sleep_time_visible) {
 				this.gg.os_g.setColor(this.mp.gamecolor_score);
 				this.gg.os_g.setFont(new Font("Dialog", 1, this.mp.moji_size));
-				this.gg.os_g.drawString(
-					"VARIABLE SLEEP  1",
-					40,
-					(14 + this.mp.moji_size) * 3
-				);
-				this.gg.os_g.drawString(
-					"MAIN PROGRAM TIME  " + i,
-					40,
-					(14 + this.mp.moji_size) * 4
-				);
-				this.gg.os_g.drawString(
-					"SLEEP TIME  " + j,
-					40,
-					(14 + this.mp.moji_size) * 5
-				);
+				this.gg.os_g.drawString("VARIABLE SLEEP  1", 40, (14 + this.mp.moji_size) * 3);
+				this.gg.os_g.drawString("MAIN PROGRAM TIME  " + i, 40, (14 + this.mp.moji_size) * 4);
+				this.gg.os_g.drawString("SLEEP TIME  " + j, 40, (14 + this.mp.moji_size) * 5);
 				if (this.main_time_kiroku_f) {
-					this.gg.os_g.drawString(
-						"10 TRY MAIN PROGRAM TIME  " + k,
-						40,
-						(14 + this.mp.moji_size) * 6
-					);
+					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
 
@@ -264,27 +239,11 @@ MasaoConstruction.prototype.run = function() {
 			if (this.sleep_time_visible) {
 				this.gg.os_g.setColor(this.mp.gamecolor_score);
 				this.gg.os_g.setFont(new Font("Dialog", 1, this.mp.moji_size));
-				this.gg.os_g.drawString(
-					"VARIABLE SLEEP  0",
-					40,
-					(14 + this.mp.moji_size) * 3
-				);
-				this.gg.os_g.drawString(
-					"MAIN PROGRAM TIME  " + i,
-					40,
-					(14 + this.mp.moji_size) * 4
-				);
-				this.gg.os_g.drawString(
-					"SLEEP TIME  " + this.th_interval,
-					40,
-					(14 + this.mp.moji_size) * 5
-				);
+				this.gg.os_g.drawString("VARIABLE SLEEP  0", 40, (14 + this.mp.moji_size) * 3);
+				this.gg.os_g.drawString("MAIN PROGRAM TIME  " + i, 40, (14 + this.mp.moji_size) * 4);
+				this.gg.os_g.drawString("SLEEP TIME  " + this.th_interval, 40, (14 + this.mp.moji_size) * 5);
 				if (this.main_time_kiroku_f) {
-					this.gg.os_g.drawString(
-						"10 TRY MAIN PROGRAM TIME  " + k,
-						40,
-						(14 + this.mp.moji_size) * 6
-					);
+					this.gg.os_g.drawString("10 TRY MAIN PROGRAM TIME  " + k, 40, (14 + this.mp.moji_size) * 6);
 				}
 			}
 
@@ -308,13 +267,7 @@ MasaoConstruction.prototype.run = function() {
 						this.masaoJSSAppletEmulator
 					);
 				} else {
-					this.options.userJSCallback(
-						this.gg.os_g_bk,
-						mode,
-						-9999,
-						-9999,
-						this.masaoJSSAppletEmulator
-					);
+					this.options.userJSCallback(this.gg.os_g_bk, mode, -9999, -9999, this.masaoJSSAppletEmulator);
 				}
 			} catch (e) {
 				console.error(e);
@@ -335,11 +288,7 @@ MasaoConstruction.prototype.init_j = function() {
 	for (var p = 0; p < 3; p++) {
 		for (var q = 0; q < 30; q++) {
 			var str = "map" + p + "-" + q;
-			if (
-				this.tdb.getValue(str) != null &&
-				this.tdb.getValue(str) != "." &&
-				this.tdb.getValue(str) != ""
-			) {
+			if (this.tdb.getValue(str) != null && this.tdb.getValue(str) != "." && this.tdb.getValue(str) != "") {
 				m = 1;
 				break;
 			}
@@ -394,10 +343,7 @@ MasaoConstruction.prototype.init_j = function() {
 
 	str = this.tdb.getValue("filename_gameover");
 	this.gg.addListImage(2, str);
-	if (
-		this.gg.layer_mode == 2 ||
-		this.tdb.getValueInt("mcs_haikei_visible") == 1
-	) {
+	if (this.gg.layer_mode == 2 || this.tdb.getValueInt("mcs_haikei_visible") == 1) {
 		str = this.tdb.getValue("filename_haikei");
 		this.gg.addListImage(4, str);
 	}
@@ -413,11 +359,7 @@ MasaoConstruction.prototype.init_j = function() {
 	var k;
 	k = parseInt(str);
 	if (isNaN(k)) k = 1;
-	if (
-		(this.gg.layer_mode == 2 ||
-			this.tdb.getValueInt("mcs_haikei_visible") == 1) &&
-		(i == 2 || k >= 2)
-	) {
+	if ((this.gg.layer_mode == 2 || this.tdb.getValueInt("mcs_haikei_visible") == 1) && (i == 2 || k >= 2)) {
 		str = this.tdb.getValue("filename_haikei2");
 		this.gg.addListImage2(5, str);
 		str = this.tdb.getValue("filename_haikei3");
@@ -469,18 +411,12 @@ MasaoConstruction.prototype.init_j = function() {
 		value: _handler
 	});
 
-	if (this.tdb.getValueInt("audio_se_switch_wave") == 2)
-		this.audio_se_no_wave = true;
-	if (this.tdb.getValueInt("audio_se_switch_mp3") == 2)
-		this.audio_se_no_mp3 = true;
-	if (this.tdb.getValueInt("audio_se_switch_ogg") == 2)
-		this.audio_se_no_ogg = true;
-	if (this.tdb.getValueInt("audio_bgm_switch_wave") == 2)
-		this.audio_bgm_no_wave = true;
-	if (this.tdb.getValueInt("audio_bgm_switch_mp3") == 2)
-		this.audio_bgm_no_mp3 = true;
-	if (this.tdb.getValueInt("audio_bgm_switch_ogg") == 2)
-		this.audio_bgm_no_ogg = true;
+	if (this.tdb.getValueInt("audio_se_switch_wave") == 2) this.audio_se_no_wave = true;
+	if (this.tdb.getValueInt("audio_se_switch_mp3") == 2) this.audio_se_no_mp3 = true;
+	if (this.tdb.getValueInt("audio_se_switch_ogg") == 2) this.audio_se_no_ogg = true;
+	if (this.tdb.getValueInt("audio_bgm_switch_wave") == 2) this.audio_bgm_no_wave = true;
+	if (this.tdb.getValueInt("audio_bgm_switch_mp3") == 2) this.audio_bgm_no_mp3 = true;
+	if (this.tdb.getValueInt("audio_bgm_switch_ogg") == 2) this.audio_bgm_no_ogg = true;
 	this.gs = new (GameSoundForApplet.factory(this.tdb))(this.tdb, this);
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk, this.gs, this.tdb);
@@ -494,10 +430,7 @@ MasaoConstruction.prototype.init_j = function() {
 
 	// MasaoJSS専用コールバック関数が設定されている場合、エミュレータオブジェクトを作成
 	if (this.options.userJSCallback) {
-		this.masaoJSSAppletEmulator = new MasaoJSS(
-			this,
-			!!this.options["bc-case-insensitive"]
-		);
+		this.masaoJSSAppletEmulator = new MasaoJSS(this, !!this.options["bc-case-insensitive"]);
 	}
 
 	this.__repaint();
@@ -540,10 +473,7 @@ MasaoConstruction.prototype.getMode = function() {
 			i = 200;
 		} else if (j >= 400 && j <= 410) {
 			i = 300;
-		} else if (
-			this.mp.ml_mode == 100 &&
-			(this.mp.sl_step == 2 || this.mp.sl_step == 3)
-		) {
+		} else if (this.mp.ml_mode == 100 && (this.mp.sl_step == 2 || this.mp.sl_step == 3)) {
 			i = 150;
 		} else {
 			i = 100;
@@ -589,11 +519,7 @@ MasaoConstruction.prototype.offSound = function() {
 MasaoConstruction.prototype.getMyX = function() {
 	if (this.mp != null) {
 		var i;
-		if (
-			this.mp.ml_mode == 100 &&
-			this.mp.co_j.c >= 100 &&
-			this.mp.co_j.c < 200
-		) {
+		if (this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = rightShiftIgnoreSign(this.mp.co_j.x + 15, 5) - 1;
 			if (i < 0) {
 				i = 0;
@@ -614,11 +540,7 @@ MasaoConstruction.prototype.getMyX = function() {
 MasaoConstruction.prototype.getMyY = function() {
 	if (this.mp != null) {
 		var i;
-		if (
-			this.mp.ml_mode == 100 &&
-			this.mp.co_j.c >= 100 &&
-			this.mp.co_j.c < 200
-		) {
+		if (this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = rightShiftIgnoreSign(this.mp.co_j.y + 15, 5) - 10;
 			if (i < 0) {
 				i = 0;
@@ -664,18 +586,10 @@ MasaoConstruction.prototype.getViewY = function() {
 	return -1;
 };
 
-MasaoConstruction.prototype.setMyPosition = function(
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setMyPosition = function(paramString1, paramString2) {
 	var i = 0;
 	var j = 0;
-	if (
-		this.mp != null &&
-		this.mp.ml_mode == 100 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString1);
 		j = parseInt(paramString2);
 		if (isNaN(i) || isNaN(j)) {
@@ -702,42 +616,22 @@ MasaoConstruction.prototype.showMessage = function(
 ) {
 	var bool = false;
 	if (this.mp != null) {
-		bool = this.mp.showmSet(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4,
-			paramString5
-		);
+		bool = this.mp.showmSet(paramString1, paramString2, paramString3, paramString4, paramString5);
 		return bool;
 	}
 	return false;
 };
 
-MasaoConstruction.prototype.showImage = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.showImage = function(paramString1, paramString2, paramString3, paramString4) {
 	var bool = false;
 	if (this.mp != null) {
-		bool = this.mp.showiSet(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		bool = this.mp.showiSet(paramString1, paramString2, paramString3, paramString4);
 		return bool;
 	}
 	return false;
 };
 
-MasaoConstruction.prototype.setEnemy = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setEnemy = function(paramString1, paramString2, paramString3) {
 	var bool = false;
 	if (this.mp != null) {
 		bool = this.mp.sete(paramString1, paramString2, paramString3);
@@ -746,11 +640,7 @@ MasaoConstruction.prototype.setEnemy = function(
 	return false;
 };
 
-MasaoConstruction.prototype.setMapchip = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setMapchip = function(paramString1, paramString2, paramString3) {
 	var bool = false;
 	if (this.mp != null) {
 		bool = this.mp.setmapc(paramString1, paramString2, paramString3);
@@ -766,11 +656,7 @@ MasaoConstruction.prototype.getMapchip = function(paramString1, paramString2) {
 	return -1;
 };
 
-MasaoConstruction.prototype.setMapchip2 = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setMapchip2 = function(paramString1, paramString2, paramString3) {
 	var bool = false;
 	if (this.mp != null) {
 		bool = this.mp.setmapc2(paramString1, paramString2, paramString3);
@@ -804,13 +690,7 @@ MasaoConstruction.prototype.pressLeft = function() {
 };
 
 MasaoConstruction.prototype.pressLeft2 = function() {
-	if (
-		this.gk != null &&
-		this.mp != null &&
-		this.mp.ml_mode == 100 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.gk != null && this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		this.gk.left_f = true;
 		this.gk.left_c = 2;
 		this.mp.j_hashiru_f = true;
@@ -836,13 +716,7 @@ MasaoConstruction.prototype.pressRight = function() {
 };
 
 MasaoConstruction.prototype.pressRight2 = function() {
-	if (
-		this.gk != null &&
-		this.mp != null &&
-		this.mp.ml_mode == 100 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.gk != null && this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		this.gk.right_f = true;
 		this.gk.right_c = 2;
 		this.mp.j_hashiru_f = true;
@@ -948,13 +822,7 @@ MasaoConstruction.prototype.equipFire = function() {
 
 MasaoConstruction.prototype.equipBarrier = function(paramString) {
 	var i = 0;
-	if (
-		this.gk != null &&
-		this.mp != null &&
-		this.mp.ml_mode == 100 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.gk != null && this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = 0;
 		if (i <= 0) {
@@ -971,13 +839,7 @@ MasaoConstruction.prototype.equipBarrier = function(paramString) {
 
 MasaoConstruction.prototype.setJetFuel = function(paramString) {
 	var i = 0;
-	if (
-		this.gk != null &&
-		this.mp != null &&
-		this.mp.ml_mode == 100 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.gk != null && this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = 0;
 		if (i < 0) {
@@ -1030,10 +892,7 @@ MasaoConstruction.prototype.setValue = function(paramString1, paramString2) {
 	return false;
 };
 
-MasaoConstruction.prototype.setParamValue = function(
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setParamValue = function(paramString1, paramString2) {
 	if (this.th_jm <= 0) {
 		return this.tdb.setValue(paramString1, paramString2);
 	}
@@ -1041,12 +900,7 @@ MasaoConstruction.prototype.setParamValue = function(
 };
 
 MasaoConstruction.prototype.getMyXReal = function() {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i = this.mp.co_j.x;
 		return i;
 	}
@@ -1054,12 +908,7 @@ MasaoConstruction.prototype.getMyXReal = function() {
 };
 
 MasaoConstruction.prototype.getMyYReal = function() {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i = this.mp.co_j.y;
 		return i;
 	}
@@ -1067,12 +916,7 @@ MasaoConstruction.prototype.getMyYReal = function() {
 };
 
 MasaoConstruction.prototype.setMyXReal = function(paramString) {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i;
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -9999;
@@ -1086,12 +930,7 @@ MasaoConstruction.prototype.setMyXReal = function(paramString) {
 };
 
 MasaoConstruction.prototype.setMyYReal = function(paramString) {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i;
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -9999;
@@ -1105,12 +944,7 @@ MasaoConstruction.prototype.setMyYReal = function(paramString) {
 };
 
 MasaoConstruction.prototype.getMyVX = function() {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i = this.mp.co_j.vx;
 		return i;
 	}
@@ -1118,12 +952,7 @@ MasaoConstruction.prototype.getMyVX = function() {
 };
 
 MasaoConstruction.prototype.getMyVY = function() {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i = this.mp.co_j.vy;
 		return i;
 	}
@@ -1176,12 +1005,7 @@ MasaoConstruction.prototype.getBossYReal = function() {
 };
 
 MasaoConstruction.prototype.setMyMiss = function(paramString) {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i;
 		i = parseInt(paramString);
 		if (isNaN(i)) i = 1;
@@ -1196,12 +1020,7 @@ MasaoConstruction.prototype.setMyMiss = function(paramString) {
 };
 
 MasaoConstruction.prototype.setMyPress = function(paramString) {
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		var i;
 		i = parseInt(paramString);
 		if (isNaN(i)) i = 1;
@@ -1238,20 +1057,10 @@ MasaoConstruction.prototype.setScrollLock = function(paramString) {
 	return bool;
 };
 
-MasaoConstruction.prototype.attackFire = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.attackFire = function(paramString1, paramString2, paramString3, paramString4) {
 	var i = 0;
 	if (this.getMode() >= 100 && this.getMode() < 200) {
-		i = this.mp.attackFire(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		i = this.mp.attackFire(paramString1, paramString2, paramString3, paramString4);
 	}
 	return i;
 };
@@ -1270,78 +1079,35 @@ MasaoConstruction.prototype.addScore = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.setPenColor = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setPenColor = function(paramString1, paramString2, paramString3) {
 	if (this.mp != null) {
-		var bool = this.mp.setPenColor(
-			paramString1,
-			paramString2,
-			paramString3,
-			"255"
-		);
+		var bool = this.mp.setPenColor(paramString1, paramString2, paramString3, "255");
 		return bool;
 	}
 	return true;
 };
 
-MasaoConstruction.prototype.setPenColor = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.setPenColor = function(paramString1, paramString2, paramString3, paramString4) {
 	if (this.mp != null) {
-		var bool = this.mp.setPenColor(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		var bool = this.mp.setPenColor(paramString1, paramString2, paramString3, paramString4);
 		return bool;
 	}
 	return true;
 };
 
-MasaoConstruction.prototype.showRect = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4,
-	paramString5
-) {
+MasaoConstruction.prototype.showRect = function(paramString1, paramString2, paramString3, paramString4, paramString5) {
 	var bool = false;
 	if (this.mp != null) {
-		bool = this.mp.showrSet(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4,
-			paramString5
-		);
+		bool = this.mp.showrSet(paramString1, paramString2, paramString3, paramString4, paramString5);
 		return bool;
 	}
 	return false;
 };
 
-MasaoConstruction.prototype.showOval = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4,
-	paramString5
-) {
+MasaoConstruction.prototype.showOval = function(paramString1, paramString2, paramString3, paramString4, paramString5) {
 	var bool = false;
 	if (this.mp != null) {
-		bool = this.mp.showoSet(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4,
-			paramString5
-		);
+		bool = this.mp.showoSet(paramString1, paramString2, paramString3, paramString4, paramString5);
 		return bool;
 	}
 	return false;
@@ -1398,12 +1164,7 @@ MasaoConstruction.prototype.startGame = function() {
 
 MasaoConstruction.prototype.equipGrenade = function(paramString) {
 	var i = 0;
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -1;
 		if (i < 0) {
@@ -1416,10 +1177,7 @@ MasaoConstruction.prototype.equipGrenade = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.setSystemImage = function(
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setSystemImage = function(paramString1, paramString2) {
 	if (this.mp != null) {
 		return this.mp.setSystemImage(paramString1, paramString2);
 	}
@@ -1468,11 +1226,7 @@ MasaoConstruction.prototype.setMyHPDamage = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.setMyWait = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setMyWait = function(paramString1, paramString2, paramString3) {
 	if (this.mp != null) {
 		return this.mp.setMyWait(paramString1, paramString2, paramString3);
 	}
@@ -1545,38 +1299,18 @@ MasaoConstruction.prototype.equipTail = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.attackTail = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.attackTail = function(paramString1, paramString2, paramString3, paramString4) {
 	var i = 0;
 	if (this.getMode() >= 100 && this.getMode() < 200) {
-		i = this.mp.attackTail(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		i = this.mp.attackTail(paramString1, paramString2, paramString3, paramString4);
 	}
 	return i;
 };
 
-MasaoConstruction.prototype.destroyEnemy = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.destroyEnemy = function(paramString1, paramString2, paramString3, paramString4) {
 	var i = -1;
 	if (this.getMode() >= 100 && this.getMode() < 200) {
-		i = this.mp.destroyEnemy(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		i = this.mp.destroyEnemy(paramString1, paramString2, paramString3, paramString4);
 	}
 	return i;
 };
@@ -1628,36 +1362,16 @@ MasaoConstruction.prototype.setHTMLText = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.newYuka = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4,
-	paramString5
-) {
+MasaoConstruction.prototype.newYuka = function(paramString1, paramString2, paramString3, paramString4, paramString5) {
 	if (this.mp != null) {
-		return this.mp.newYuka(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4,
-			paramString5
-		);
+		return this.mp.newYuka(paramString1, paramString2, paramString3, paramString4, paramString5);
 	}
 	return -1;
 };
 
-MasaoConstruction.prototype.setYukaPosition = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setYukaPosition = function(paramString1, paramString2, paramString3) {
 	if (this.mp != null) {
-		return this.mp.setYukaPosition(
-			paramString1,
-			paramString2,
-			paramString3
-		);
+		return this.mp.setYukaPosition(paramString1, paramString2, paramString3);
 	}
 	return false;
 };
@@ -1670,13 +1384,7 @@ MasaoConstruction.prototype.setYukaPosition = function(
 	paramString5
 ) {
 	if (this.mp != null) {
-		return this.mp.setYukaPosition(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4,
-			paramString5
-		);
+		return this.mp.setYukaPosition(paramString1, paramString2, paramString3, paramString4, paramString5);
 	}
 	return false;
 };
@@ -1703,13 +1411,7 @@ MasaoConstruction.prototype.setYukaColor = function(
 	paramString5
 ) {
 	if (this.mp != null) {
-		return this.mp.setYukaColor(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4,
-			paramString5
-		);
+		return this.mp.setYukaColor(paramString1, paramString2, paramString3, paramString4, paramString5);
 	}
 	return false;
 };
@@ -1723,12 +1425,7 @@ MasaoConstruction.prototype.isRideYuka = function(paramString) {
 
 MasaoConstruction.prototype.setMyVX = function(paramString) {
 	var i = 0;
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -9999;
 		if (i == -9999) {
@@ -1743,12 +1440,7 @@ MasaoConstruction.prototype.setMyVX = function(paramString) {
 
 MasaoConstruction.prototype.setMyVY = function(paramString) {
 	var i = 0;
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -9999;
 		if (i == -9999) {
@@ -1768,21 +1460,14 @@ MasaoConstruction.prototype.isRideGround = function() {
 	return -1;
 };
 
-MasaoConstruction.prototype.setYukaPattern = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setYukaPattern = function(paramString1, paramString2, paramString3) {
 	if (this.mp != null) {
 		return this.mp.setYukaPattern(paramString1, paramString2, paramString3);
 	}
 	return false;
 };
 
-MasaoConstruction.prototype.setYukaImage = function(
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setYukaImage = function(paramString1, paramString2) {
 	if (this.mp != null) {
 		return this.mp.setYukaImage(paramString1, paramString2);
 	}
@@ -1798,12 +1483,7 @@ MasaoConstruction.prototype.setYukaImage = function(paramString, paramImage) {
 
 MasaoConstruction.prototype.setMySpeed = function(paramString) {
 	var i = 0;
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -1;
 		if (i < 0 || i > 16) {
@@ -1819,19 +1499,9 @@ MasaoConstruction.prototype.setMySpeed = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.setScrollArea = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.setScrollArea = function(paramString1, paramString2, paramString3, paramString4) {
 	if (this.mp != null) {
-		return this.mp.setScrollArea(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		return this.mp.setScrollArea(paramString1, paramString2, paramString3, paramString4);
 	}
 	return false;
 };
@@ -1939,11 +1609,7 @@ MasaoConstruction.prototype.getMyDirection4way = function() {
 	return -1;
 };
 
-MasaoConstruction.prototype.setMyObjectImage = function(
-	paramImage,
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setMyObjectImage = function(paramImage, paramString1, paramString2) {
 	var i = 0;
 	var j = 0;
 	if (this.mp != null) {
@@ -2012,12 +1678,7 @@ MasaoConstruction.prototype.getEnemyObjectDirection = function(paramString) {
 	return 0;
 };
 
-MasaoConstruction.prototype.setEnemyObjectImage = function(
-	paramString1,
-	paramImage,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setEnemyObjectImage = function(paramString1, paramImage, paramString2, paramString3) {
 	var i = -1;
 	var j = 0;
 	var k = 0;
@@ -2045,19 +1706,9 @@ MasaoConstruction.prototype.getEnemyAC = function() {
 	return 0;
 };
 
-MasaoConstruction.prototype.setScrollAreaReal = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.setScrollAreaReal = function(paramString1, paramString2, paramString3, paramString4) {
 	if (this.mp != null) {
-		return this.mp.setScrollAreaReal(
-			paramString1,
-			paramString2,
-			paramString3,
-			paramString4
-		);
+		return this.mp.setScrollAreaReal(paramString1, paramString2, paramString3, paramString4);
 	}
 	return false;
 };
@@ -2161,11 +1812,7 @@ MasaoConstruction.prototype.setBossYReal = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.setBossObjectImage = function(
-	paramImage,
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setBossObjectImage = function(paramImage, paramString1, paramString2) {
 	var i = 0;
 	var j = 0;
 	if (this.mp != null) {
@@ -2184,10 +1831,7 @@ MasaoConstruction.prototype.setBossObjectImage = function(
 	return false;
 };
 
-MasaoConstruction.prototype.setSystemPattern = function(
-	paramString1,
-	paramString2
-) {
+MasaoConstruction.prototype.setSystemPattern = function(paramString1, paramString2) {
 	var i = 1;
 	var j = 1;
 	if (this.mp != null) {
@@ -2210,11 +1854,7 @@ MasaoConstruction.prototype.setSystemPattern = function(
 	return false;
 };
 
-MasaoConstruction.prototype.setSystemPatternImage = function(
-	paramString1,
-	paramString2,
-	paramImage
-) {
+MasaoConstruction.prototype.setSystemPatternImage = function(paramString1, paramString2, paramImage) {
 	var i = 1;
 	var j = 0;
 	if (this.mp != null) {
@@ -2236,12 +1876,7 @@ MasaoConstruction.prototype.setSystemPatternImage = function(
 	return false;
 };
 
-MasaoConstruction.prototype.getCoinCount = function(
-	paramString1,
-	paramString2,
-	paramString3,
-	paramString4
-) {
+MasaoConstruction.prototype.getCoinCount = function(paramString1, paramString2, paramString3, paramString4) {
 	var i = 0;
 	var j = 0;
 	var k = 0;
@@ -2262,12 +1897,7 @@ MasaoConstruction.prototype.getCoinCount = function(
 
 MasaoConstruction.prototype.getCoinCount = function() {
 	if (this.mp != null) {
-		return this.mp.getCoinCount(
-			0,
-			0,
-			this.mp.mapWidth - 1,
-			this.mp.mapHeight - 1
-		);
+		return this.mp.getCoinCount(0, 0, this.mp.mapWidth - 1, this.mp.mapHeight - 1);
 	}
 	return -1;
 };
@@ -2315,12 +1945,7 @@ MasaoConstruction.prototype.setScore = function(paramString) {
 
 MasaoConstruction.prototype.getBarrierTime = function() {
 	var i = 0;
-	if (
-		this.mp != null &&
-		this.mp.ml_mode == 100 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = this.mp.j_v_c;
 
 		return i;
@@ -2353,11 +1978,7 @@ MasaoConstruction.prototype.setTimeLimit = function(paramString) {
 	return false;
 };
 
-MasaoConstruction.prototype.setAthletic = function(
-	paramString1,
-	paramString2,
-	paramString3
-) {
+MasaoConstruction.prototype.setAthletic = function(paramString1, paramString2, paramString3) {
 	var i = -1;
 	var j = 0;
 	var k = 0;
@@ -2421,12 +2042,7 @@ MasaoConstruction.prototype.setSecondImage = function(paramString) {
 
 MasaoConstruction.prototype.setGrenadeCount = function(paramString) {
 	var i = 0;
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = parseInt(paramString);
 		if (isNaN(i)) i = -1;
 		if (i < 0) {
@@ -2456,12 +2072,7 @@ MasaoConstruction.prototype.setMyLeft = function(paramString) {
 
 MasaoConstruction.prototype.getGrenadeCount = function() {
 	var i = 0;
-	if (
-		this.getMode() >= 100 &&
-		this.getMode() < 200 &&
-		this.mp.co_j.c >= 100 &&
-		this.mp.co_j.c < 200
-	) {
+	if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 		i = this.mp.j_gr_kazu;
 		if (i < 0) {
 			i = 0;
@@ -2548,25 +2159,19 @@ MasaoConstruction.prototype.getAudioURL = function(url, bgmflag) {
 	var audio = new Audio();
 	if (bgmflag) {
 		// Wave形式
-		if (audio.canPlayType("audio/wav") && !this.audio_bgm_no_wave)
-			url += ".wav";
+		if (audio.canPlayType("audio/wav") && !this.audio_bgm_no_wave) url += ".wav";
 		// MP3形式
-		else if (audio.canPlayType("audio/mpeg") && !this.audio_bgm_no_mp3)
-			url += ".mp3";
+		else if (audio.canPlayType("audio/mpeg") && !this.audio_bgm_no_mp3) url += ".mp3";
 		// Ogg形式
-		else if (audio.canPlayType("audio/ogg") && !this.audio_bgm_no_ogg)
-			url += ".ogg";
+		else if (audio.canPlayType("audio/ogg") && !this.audio_bgm_no_ogg) url += ".ogg";
 		else url = "";
 	} else {
 		// Wave形式
-		if (audio.canPlayType("audio/wav") && !this.audio_se_no_wave)
-			url += ".wav";
+		if (audio.canPlayType("audio/wav") && !this.audio_se_no_wave) url += ".wav";
 		// MP3形式
-		else if (audio.canPlayType("audio/mpeg") && !this.audio_se_no_mp3)
-			url += ".mp3";
+		else if (audio.canPlayType("audio/mpeg") && !this.audio_se_no_mp3) url += ".mp3";
 		// Ogg形式
-		else if (audio.canPlayType("audio/ogg") && !this.audio_se_no_ogg)
-			url += ".ogg";
+		else if (audio.canPlayType("audio/ogg") && !this.audio_se_no_ogg) url += ".ogg";
 		else url = "";
 	}
 	return url;

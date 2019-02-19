@@ -40,28 +40,24 @@ app.get("/", (req, res, next) => {
 // 各ページ
 app.get("/__tests__/*", (req, res, next) => {
 	// ファイルを読む
-	fs.readFile(
-		path.join(__dirname, "..", req.url.slice(1)),
-		"utf8",
-		(err, data) => {
-			if (err) {
-				if (err.code === "ENOENT") {
-					res.sendStatus(404);
-				} else {
-					next(err);
-				}
-				return;
+	fs.readFile(path.join(__dirname, "..", req.url.slice(1)), "utf8", (err, data) => {
+		if (err) {
+			if (err.code === "ENOENT") {
+				res.sendStatus(404);
+			} else {
+				next(err);
 			}
-			const stage = JSON.parse(data);
-			res.render("game.njk", {
-				params: JSON.stringify(stage.params),
-				options: JSON.stringify({
-					"advanced-map": stage["advanced-map"]
-				}),
-				ran_seed: stage._ran_seed || 0x12345
-			});
+			return;
 		}
-	);
+		const stage = JSON.parse(data);
+		res.render("game.njk", {
+			params: JSON.stringify(stage.params),
+			options: JSON.stringify({
+				"advanced-map": stage["advanced-map"]
+			}),
+			ran_seed: stage._ran_seed || 0x12345
+		});
+	});
 });
 
 app.listen(PORT);
@@ -70,10 +66,7 @@ console.log(`Listening on port ${PORT}`);
 // コマンドライン引数でJSONファイルが指定されていたらそれを開く
 const arg = process.argv[2];
 if (arg) {
-	const rel = path.relative(
-		path.join(__dirname, "../__tests__"),
-		path.resolve(process.env.INIT_CWD, arg)
-	);
+	const rel = path.relative(path.join(__dirname, "../__tests__"), path.resolve(process.env.INIT_CWD, arg));
 	if (rel.slice(0, 3) !== ".." + path.sep) {
 		// この中にありそうなので開く
 		console.log(`opening ${arg}`);

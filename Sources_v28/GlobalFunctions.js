@@ -59,8 +59,7 @@ function Game(params, id, options) {
 	this.__canvas.id = this.__canvasID;
 	this.__canvas.width = options.width;
 	this.__canvas.height = options.height;
-	this.__canvas.textContent =
-		"※お使いのブラウザはHTML5に対応していないため表示できません。";
+	this.__canvas.textContent = "※お使いのブラウザはHTML5に対応していないため表示できません。";
 	this.__box.appendChild(this.__canvas);
 
 	// ソフトパッド格納Divエレメント
@@ -142,16 +141,8 @@ function Game(params, id, options) {
 				__pad.style.width = w + "px";
 				__pad.style.height = rw * Game.pad.style.rate + "px";
 				__pad.style.left = scrollX + "px";
-				if (Game.pad.avoidAD)
-					__pad.style.top =
-						scrollY +
-						h -
-						rw * Game.pad.style.rate -
-						rw * 0.16 +
-						"px";
-				else
-					__pad.style.top =
-						scrollY + h - rw * Game.pad.style.rate + "px";
+				if (Game.pad.avoidAD) __pad.style.top = scrollY + h - rw * Game.pad.style.rate - rw * 0.16 + "px";
+				else __pad.style.top = scrollY + h - rw * Game.pad.style.rate + "px";
 				this.__pad_update();
 			}.bind(this),
 			500
@@ -183,12 +174,7 @@ function Game(params, id, options) {
 
 	// __appimgはMasaoConstruction内へ移動
 	// MasaoConstructionオブジェクト
-	this.__mc = new MasaoConstruction(
-		params,
-		this.__canvas,
-		this,
-		options || {}
-	);
+	this.__mc = new MasaoConstruction(params, this.__canvas, this, options || {});
 	for (var i = 0; i < options.extensions.length; i++) {
 		options.extensions[i].inject(this.__mc, options);
 	}
@@ -477,10 +463,7 @@ Game.prototype.__pad_update = function() {
 		for (j in this.__pad_touches) {
 			sx = this.__pad_touches[j].clientX - dx;
 			sy = this.__pad_touches[j].clientY - dy;
-			this.__pad_after[i] |= c.isPointInPath(
-				(sx / r.width) * 500,
-				(sy / r.height) * 200
-			);
+			this.__pad_after[i] |= c.isPointInPath((sx / r.width) * 500, (sy / r.height) * 200);
 		}
 		if (this.__pad_after[i]) c.fill();
 	}

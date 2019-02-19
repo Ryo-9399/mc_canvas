@@ -298,12 +298,7 @@ IdouGamen.prototype.getBGZ = function(paramInt1, paramInt2) {
 IdouGamen.prototype.checkStage = function() {
 	var j = -1;
 	for (var i = 0; i <= 9; i++) {
-		if (
-			this.stage_c[i] != 100 ||
-			this.co_j.x != this.stage_x[i] ||
-			this.co_j.y != this.stage_y[i]
-		)
-			continue;
+		if (this.stage_c[i] != 100 || this.co_j.x != this.stage_x[i] || this.co_j.y != this.stage_y[i]) continue;
 		j = i + 1;
 		break;
 	}
@@ -363,11 +358,7 @@ IdouGamen.prototype.mainProgram = function() {
 				this.km.setMessage(6, this.gg.ap.getParameter("shop_serifu1"));
 				for (var i = 0; i <= 8; i++) {
 					if (this.mp.shop_item_teika[i] > 0) {
-						this.km.addItem2(
-							6,
-							this.mp.shop_item_name[i],
-							this.mp.shop_item_teika[i]
-						);
+						this.km.addItem2(6, this.mp.shop_item_name[i], this.mp.shop_item_teika[i]);
 						this.km.list_IDlist[this.km.list_kazu] = i;
 						this.km.list_kazu += 1;
 					}
@@ -392,11 +383,7 @@ IdouGamen.prototype.mainProgram = function() {
 			} else if (this.km.kettei_c == 1) {
 				this.km.list_s = this.km.list_IDlist[this.km.selectedIndex[6]];
 				this.km.init1(7);
-				this.km.setMessage(
-					7,
-					this.mp.shop_item_name[this.km.list_s] +
-						this.gg.ap.getParameter("shop_serifu2")
-				);
+				this.km.setMessage(7, this.mp.shop_item_name[this.km.list_s] + this.gg.ap.getParameter("shop_serifu2"));
 				this.km.addItem(7, this.gg.ap.getParameter("shop_serifu3"));
 				this.km.addItem(7, this.gg.ap.getParameter("shop_serifu4"));
 				this.km.activeSerifutuki(7, 48, 150, 236, this.mp.shop_name);
@@ -408,19 +395,14 @@ IdouGamen.prototype.mainProgram = function() {
 				this.km.mode = 410;
 			} else if (this.km.kettei_c == 1) {
 				if (this.km.selectedIndex[7] == 0) {
-					if (
-						this.mp.score >= this.mp.shop_item_teika[this.km.list_s]
-					) {
+					if (this.mp.score >= this.mp.shop_item_teika[this.km.list_s]) {
 						this.km.init1(3);
 						this.km.addItem(
 							3,
-							this.mp.shop_item_name[this.km.list_s] +
-								this.gg.ap.getParameter("shop_serifu5")
+							this.mp.shop_item_name[this.km.list_s] + this.gg.ap.getParameter("shop_serifu5")
 						);
 						this.km.activeIchigyou(3, 48, 240, 236);
-						this.mp.score -= this.mp.shop_item_teika[
-							this.km.list_s
-						];
+						this.mp.score -= this.mp.shop_item_teika[this.km.list_s];
 						this.shop_kattaitem = this.km.list_s;
 						if (this.shop_kattaitem == 7) {
 							this.mp.j_left += 1;
@@ -428,10 +410,7 @@ IdouGamen.prototype.mainProgram = function() {
 						this.km.mode = 430;
 					} else {
 						this.km.init1(3);
-						this.km.addItem(
-							3,
-							this.gg.ap.getParameter("shop_serifu6")
-						);
+						this.km.addItem(3, this.gg.ap.getParameter("shop_serifu6"));
 						this.km.activeIchigyou(3, 48, 240, 236);
 						this.km.mode = 430;
 					}
@@ -462,13 +441,7 @@ IdouGamen.prototype.mainProgram = function() {
 				this.km.addItem(2, this.gg.ap.getParameter("setumei_menu2"));
 				this.km.addItem(2, this.gg.ap.getParameter("setumei_menu3"));
 				this.km.addItem(2, this.gg.ap.getParameter("setumei_menu4"));
-				this.km.activeSerifutuki(
-					2,
-					120,
-					150,
-					224,
-					this.mp.setumei_name
-				);
+				this.km.activeSerifutuki(2, 120, 150, 224, this.mp.setumei_name);
 				this.km.mode = 510;
 			}
 		} else if (this.km.mode == 510) {
@@ -503,33 +476,13 @@ IdouGamen.prototype.mainProgram = function() {
 		this.km.move();
 	}
 	if (this.co_j.pt == 1000) {
-		this.gg.drawPT(
-			this.co_j.x + 16,
-			this.co_j.y + 24 - 12 - 6,
-			100,
-			this.co_j.muki
-		);
+		this.gg.drawPT(this.co_j.x + 16, this.co_j.y + 24 - 12 - 6, 100, this.co_j.muki);
 	} else if (this.co_j.pt == 1010) {
-		this.gg.drawPT(
-			this.co_j.x + 16,
-			this.co_j.y + 24 - 12 + 5,
-			100,
-			this.co_j.muki
-		);
+		this.gg.drawPT(this.co_j.x + 16, this.co_j.y + 24 - 12 + 5, 100, this.co_j.muki);
 	} else if (this.co_j.pt >= 202 && this.co_j.pt <= 205) {
-		this.gg.drawPT(
-			this.co_j.x + 16,
-			this.co_j.y + 24 - 12,
-			this.co_j.pt,
-			0
-		);
+		this.gg.drawPT(this.co_j.x + 16, this.co_j.y + 24 - 12, this.co_j.pt, 0);
 	} else {
-		this.gg.drawPT(
-			this.co_j.x + 16,
-			this.co_j.y + 24 - 12,
-			this.co_j.pt,
-			this.co_j.muki
-		);
+		this.gg.drawPT(this.co_j.x + 16, this.co_j.y + 24 - 12, this.co_j.pt, this.co_j.muki);
 	}
 	this.km.drawMenus();
 	if (this.mp_mode == 100) {
@@ -551,9 +504,7 @@ IdouGamen.prototype.mainProgram = function() {
 				var j = this.stage_y[this.stage_kcID - 1] >> 5;
 				this.map_bg[this.stage_x[this.stage_kcID - 1] >> 5][j] = 227;
 				if (this.door_koID >= 1) {
-					this.map_bg[this.ie_x[this.door_koID - 1] >> 5][
-						this.ie_y[this.door_koID - 1] >> 5
-					] = 222;
+					this.map_bg[this.ie_x[this.door_koID - 1] >> 5][this.ie_y[this.door_koID - 1] >> 5] = 222;
 				}
 				if (this.door_score_open == 1) {
 					this.map_bg[this.ie_x[9] >> 5][this.ie_y[9] >> 5] = 222;
@@ -649,17 +600,13 @@ IdouGamen.prototype.jMove = function() {
 				this.co_j.ac = 0;
 				this.dokan_khID = 0;
 				this.co_j.pt = 100;
-			} else if (
-				this.getBGZ(cx, cy) >= 206 &&
-				this.getBGZ(cx, cy) <= 209
-			) {
+			} else if (this.getBGZ(cx, cy) >= 206 && this.getBGZ(cx, cy) <= 209) {
 				if (this.mp.dokan_mode == 2) {
 					var flag = false;
 					for (var i = 0; i <= 8; i++) {
 						for (var j = 0; j <= 14; j++) {
 							if (j * 32 == cx && i * 32 == cy) continue;
-							if (this.map_bg[j][i] != this.getBGZ(cx, cy))
-								continue;
+							if (this.map_bg[j][i] != this.getBGZ(cx, cy)) continue;
 							cx = j * 32;
 							cy = i * 32;
 							this.co_j.ac = 0;
@@ -743,10 +690,7 @@ IdouGamen.prototype.jMove = function() {
 				this.co_j.vx = -4;
 				this.co_j.ac = -1;
 			}
-			if (
-				this.getBGZ(cx + 32, cy) >= 212 &&
-				this.getBGZ(cx + 32, cy) <= 215
-			) {
+			if (this.getBGZ(cx + 32, cy) >= 212 && this.getBGZ(cx + 32, cy) <= 215) {
 				this.co_j.vx = -4;
 				this.co_j.ac = -1;
 			}
@@ -756,10 +700,7 @@ IdouGamen.prototype.jMove = function() {
 				this.co_j.vx = 4;
 				this.co_j.ac = -1;
 			}
-			if (
-				this.getBGZ(cx - 32, cy) >= 212 &&
-				this.getBGZ(cx - 32, cy) <= 215
-			) {
+			if (this.getBGZ(cx - 32, cy) >= 212 && this.getBGZ(cx - 32, cy) <= 215) {
 				this.co_j.vx = 4;
 				this.co_j.ac = -1;
 			}
@@ -791,12 +732,7 @@ IdouGamen.prototype.jMove = function() {
 		}
 		if (cx % 32 == 0 && cy % 32 == 0) {
 			var bgz = this.getBGZ(cx, cy);
-			if (
-				bgz == 220 ||
-				(bgz >= 223 && bgz <= 227) ||
-				(bgz >= 216 && bgz <= 219) ||
-				(bgz >= 206 && bgz <= 209)
-			) {
+			if (bgz == 220 || (bgz >= 223 && bgz <= 227) || (bgz >= 216 && bgz <= 219) || (bgz >= 206 && bgz <= 209)) {
 				this.co_j.vx = 0;
 				this.co_j.vy = 0;
 				this.co_j.ac = 0;
@@ -857,62 +793,34 @@ IdouGamen.prototype.circleCLS = function(paramInt) {
 
 IdouGamen.prototype.squareCLS = function(paramInt1, paramInt2) {
 	var d = 0.017453292519943295;
-	this.cc_p1_x[0] =
-		Math.floor(Math.cos((this.cc_kakudo + 0) * d) * paramInt1) + 256;
-	this.cc_p1_y[0] =
-		Math.floor(Math.sin((this.cc_kakudo + 0) * d) * paramInt1) + 160;
-	this.cc_p1_x[1] =
-		Math.floor(Math.cos((this.cc_kakudo + 90) * d) * paramInt1) + 256;
-	this.cc_p1_y[1] =
-		Math.floor(Math.sin((this.cc_kakudo + 90) * d) * paramInt1) + 160;
-	this.cc_p1_x[2] =
-		Math.floor(Math.cos((this.cc_kakudo + 180) * d) * paramInt1) + 256;
-	this.cc_p1_y[2] =
-		Math.floor(Math.sin((this.cc_kakudo + 180) * d) * paramInt1) + 160;
-	this.cc_p1_x[3] =
-		Math.floor(Math.cos((this.cc_kakudo + 180) * d) * 500) + 256;
-	this.cc_p1_y[3] =
-		Math.floor(Math.sin((this.cc_kakudo + 180) * d) * 500) + 160;
-	this.cc_p1_x[4] =
-		Math.floor(Math.cos((this.cc_kakudo + 135) * d) * 700) + 256;
-	this.cc_p1_y[4] =
-		Math.floor(Math.sin((this.cc_kakudo + 135) * d) * 700) + 160;
-	this.cc_p1_x[5] =
-		Math.floor(Math.cos((this.cc_kakudo + 45) * d) * 700) + 256;
-	this.cc_p1_y[5] =
-		Math.floor(Math.sin((this.cc_kakudo + 45) * d) * 700) + 160;
-	this.cc_p1_x[6] =
-		Math.floor(Math.cos((this.cc_kakudo + 0) * d) * 500) + 256;
-	this.cc_p1_y[6] =
-		Math.floor(Math.sin((this.cc_kakudo + 0) * d) * 500) + 160;
-	this.cc_p2_x[0] =
-		Math.floor(Math.cos((this.cc_kakudo + 180) * d) * paramInt1) + 256;
-	this.cc_p2_y[0] =
-		Math.floor(Math.sin((this.cc_kakudo + 180) * d) * paramInt1) + 160;
-	this.cc_p2_x[1] =
-		Math.floor(Math.cos((this.cc_kakudo + 270) * d) * paramInt1) + 256;
-	this.cc_p2_y[1] =
-		Math.floor(Math.sin((this.cc_kakudo + 270) * d) * paramInt1) + 160;
-	this.cc_p2_x[2] =
-		Math.floor(Math.cos((this.cc_kakudo + 360) * d) * paramInt1) + 256;
-	this.cc_p2_y[2] =
-		Math.floor(Math.sin((this.cc_kakudo + 360) * d) * paramInt1) + 160;
-	this.cc_p2_x[3] =
-		Math.floor(Math.cos((this.cc_kakudo + 360) * d) * 500) + 256;
-	this.cc_p2_y[3] =
-		Math.floor(Math.sin((this.cc_kakudo + 360) * d) * 500) + 160;
-	this.cc_p2_x[4] =
-		Math.floor(Math.cos((this.cc_kakudo + 315) * d) * 700) + 256;
-	this.cc_p2_y[4] =
-		Math.floor(Math.sin((this.cc_kakudo + 315) * d) * 700) + 160;
-	this.cc_p2_x[5] =
-		Math.floor(Math.cos((this.cc_kakudo + 225) * d) * 700) + 256;
-	this.cc_p2_y[5] =
-		Math.floor(Math.sin((this.cc_kakudo + 225) * d) * 700) + 160;
-	this.cc_p2_x[6] =
-		Math.floor(Math.cos((this.cc_kakudo + 180) * d) * 500) + 256;
-	this.cc_p2_y[6] =
-		Math.floor(Math.sin((this.cc_kakudo + 180) * d) * 500) + 160;
+	this.cc_p1_x[0] = Math.floor(Math.cos((this.cc_kakudo + 0) * d) * paramInt1) + 256;
+	this.cc_p1_y[0] = Math.floor(Math.sin((this.cc_kakudo + 0) * d) * paramInt1) + 160;
+	this.cc_p1_x[1] = Math.floor(Math.cos((this.cc_kakudo + 90) * d) * paramInt1) + 256;
+	this.cc_p1_y[1] = Math.floor(Math.sin((this.cc_kakudo + 90) * d) * paramInt1) + 160;
+	this.cc_p1_x[2] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * paramInt1) + 256;
+	this.cc_p1_y[2] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * paramInt1) + 160;
+	this.cc_p1_x[3] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * 500) + 256;
+	this.cc_p1_y[3] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * 500) + 160;
+	this.cc_p1_x[4] = Math.floor(Math.cos((this.cc_kakudo + 135) * d) * 700) + 256;
+	this.cc_p1_y[4] = Math.floor(Math.sin((this.cc_kakudo + 135) * d) * 700) + 160;
+	this.cc_p1_x[5] = Math.floor(Math.cos((this.cc_kakudo + 45) * d) * 700) + 256;
+	this.cc_p1_y[5] = Math.floor(Math.sin((this.cc_kakudo + 45) * d) * 700) + 160;
+	this.cc_p1_x[6] = Math.floor(Math.cos((this.cc_kakudo + 0) * d) * 500) + 256;
+	this.cc_p1_y[6] = Math.floor(Math.sin((this.cc_kakudo + 0) * d) * 500) + 160;
+	this.cc_p2_x[0] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * paramInt1) + 256;
+	this.cc_p2_y[0] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * paramInt1) + 160;
+	this.cc_p2_x[1] = Math.floor(Math.cos((this.cc_kakudo + 270) * d) * paramInt1) + 256;
+	this.cc_p2_y[1] = Math.floor(Math.sin((this.cc_kakudo + 270) * d) * paramInt1) + 160;
+	this.cc_p2_x[2] = Math.floor(Math.cos((this.cc_kakudo + 360) * d) * paramInt1) + 256;
+	this.cc_p2_y[2] = Math.floor(Math.sin((this.cc_kakudo + 360) * d) * paramInt1) + 160;
+	this.cc_p2_x[3] = Math.floor(Math.cos((this.cc_kakudo + 360) * d) * 500) + 256;
+	this.cc_p2_y[3] = Math.floor(Math.sin((this.cc_kakudo + 360) * d) * 500) + 160;
+	this.cc_p2_x[4] = Math.floor(Math.cos((this.cc_kakudo + 315) * d) * 700) + 256;
+	this.cc_p2_y[4] = Math.floor(Math.sin((this.cc_kakudo + 315) * d) * 700) + 160;
+	this.cc_p2_x[5] = Math.floor(Math.cos((this.cc_kakudo + 225) * d) * 700) + 256;
+	this.cc_p2_y[5] = Math.floor(Math.sin((this.cc_kakudo + 225) * d) * 700) + 160;
+	this.cc_p2_x[6] = Math.floor(Math.cos((this.cc_kakudo + 180) * d) * 500) + 256;
+	this.cc_p2_y[6] = Math.floor(Math.sin((this.cc_kakudo + 180) * d) * 500) + 160;
 	this.gg.os_g.setColor(Color.black);
 	this.gg.os_g.fillPolygon(this.cc_p1_x, this.cc_p1_y, 7);
 	this.gg.os_g.fillPolygon(this.cc_p2_x, this.cc_p2_y, 7);

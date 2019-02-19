@@ -29,34 +29,12 @@ GameGraphics.prototype.cut = function() {
 			j = n * 10 + m;
 			this.spt_img[0][j] = new ImageBuff(32, 32);
 			localG = this.spt_img[0][j].getGraphics();
-			localG.drawImage(
-				this.apt_img,
-				m * 32,
-				n * 32,
-				32,
-				32,
-				0,
-				0,
-				32,
-				32,
-				null
-			);
+			localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 			if (n >= this.spt_h_kijyun) {
 				this.spt_img[1][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[1][j].getGraphics();
 				localG.scale(-1, 1);
-				localG.drawImage(
-					this.apt_img,
-					m * 32,
-					n * 32,
-					32,
-					32,
-					-32,
-					0,
-					32,
-					32,
-					null
-				);
+				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
 			} else {
 				this.spt_img[1][j] = this.spt_img[0][j];
 			}

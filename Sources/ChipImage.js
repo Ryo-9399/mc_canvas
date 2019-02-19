@@ -17,10 +17,7 @@ function ChipImage(i, j, k, l, bufferedimage) {
 	this.chip_y_count = l;
 	this.ai_width = bufferedimage._width;
 	this.ai_height = bufferedimage._height;
-	this.chip_img = createNDimensionArray(
-		this.chip_x_count * this.chip_y_count,
-		4
-	);
+	this.chip_img = createNDimensionArray(this.chip_x_count * this.chip_y_count, 4);
 	this.ai_img = bufferedimage;
 	createImageBuffer.bind(this)(0);
 
@@ -36,9 +33,7 @@ function ChipImage(i, j, k, l, bufferedimage) {
 					this.chip_img[j + l * this.chip_x_count][0] = null;
 					continue;
 				}*/
-				localG = this.chip_img[
-					j + l * this.chip_x_count
-				][0].getGraphics();
+				localG = this.chip_img[j + l * this.chip_x_count][0].getGraphics();
 				localG.drawImage(
 					this.ai_img,
 					k1,
@@ -89,10 +84,7 @@ function ChipImage(i, j, k, l, bufferedimage) {
 				//if(n == 0 && ((i + 1) * this.chip_width - 1 > this.ai_width - 1 || (k + 1) * this.chip_height - 1 > this.ai_height - 1))
 				//this.chip_img[i + k * this.chip_x_count][n] = null;
 				//else
-				this.chip_img[i + k * this.chip_x_count][n] = new ImageBuff(
-					this.chip_width,
-					this.chip_height
-				);
+				this.chip_img[i + k * this.chip_x_count][n] = new ImageBuff(this.chip_width, this.chip_height);
 			}
 		}
 	}
