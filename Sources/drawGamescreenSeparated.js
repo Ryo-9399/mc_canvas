@@ -130,40 +130,37 @@ export const drawGamescreenEnemy = function() {
  * @see {@link MasaoJSS#drawSystemObject}
  */
 export const drawGamescreenWindow = function() {
+	// MasaoJSS#showRectで設定された矩形を表示
 	if (this.showr_c > 0) {
 		this.hg.setColor(this.js_pen_color);
 		this.hg.fillRect(this.showr_x, this.showr_y, this.showr_width, this.showr_height);
 	}
+	// MasaoJSS#showOvalで設定された矩形を表示
 	if (this.showo_c > 0) {
 		this.hg.setColor(this.js_pen_color);
 		this.hg.fillOval(this.showo_x, this.showo_y, this.showo_width, this.showo_height);
 	}
-	if (this.showi_c > 0)
+	// MasaoJSS#showImageで設定された画像を表示
+	if (this.showi_c > 0) {
+		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
 		if (this.gg.ap != null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
 		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
-	if (this.gauge_v)
-		if (this.j_hp_v) {
-			var i = (14 + this.moji_size) * 2 - 6 + 32;
-			this.hg.setFont(new Font("Dialog", 1, 16));
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.hg.drawString(this.gauge_text, 40, i - 6);
-			this.gg.os_g.setColor(Color.red);
-			this.hg.fillRect(40, i, 200, 8);
-			this.gg.os_g.setColor(Color.yellow);
-			this.hg.fillRect(40, i, this.gauge_value, 8);
-			this.gg.os_g.setColor(Color.white);
-			this.hg.drawRect(39, i - 1, 201, 9);
-		} else {
-			this.hg.setFont(new Font("Dialog", 1, 16));
-			this.gg.os_g.setColor(this.gamecolor_score);
-			this.hg.drawString(this.gauge_text, 64, 58);
-			this.gg.os_g.setColor(Color.red);
-			this.hg.fillRect(64, 64, 200, 8);
-			this.gg.os_g.setColor(Color.yellow);
-			this.hg.fillRect(64, 64, this.gauge_value, 8);
-			this.gg.os_g.setColor(Color.white);
-			this.hg.drawRect(63, 63, 201, 9);
-		}
+	}
+	// ゲージを表示
+	if (this.gauge_v) {
+		// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
+		const x = this.j_hp_v ? 40 : 64;
+		const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
+		this.hg.setFont(new Font(Font.DIALOG, 1, 16));
+		this.gg.os_g.setColor(this.gamecolor_score);
+		this.hg.drawString(this.gauge_text, x, y - 6);
+		this.gg.os_g.setColor(Color.red);
+		this.hg.fillRect(x, y, 200, 8);
+		this.gg.os_g.setColor(Color.yellow);
+		this.hg.fillRect(x, y, this.gauge_value, 8);
+		this.gg.os_g.setColor(Color.white);
+		this.hg.drawRect(x - 1, y - 1, 201, 9);
+	}
 
 	// 一言メッセージ
 	if (this.hitokoto_c > -1) {
