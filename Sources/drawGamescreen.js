@@ -1,6 +1,8 @@
 import { Color, Font } from "./ImageBuff";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 
+import { drawHitokotoMessage } from "./drawGamescreenSeparated";
+
 /**
  * ゲーム画面を描画します
  */
@@ -1839,58 +1841,7 @@ export const drawGamescreen = function() {
 	if (this.hitokoto_c == 0) this.hitokoto_c = -1;
 	else if (this.hitokoto_c > 0) {
 		this.hitokoto_c--;
-		const tmp_num_01 = 208;
-		const tmp_num_02 = 56;
-		const tmp_num_03 = 224;
-		let tmp_cnt_01 = 0;
-		for (let i = 0; i <= 2; i++) {
-			let tmp_str_01;
-			if (this.hitokoto_num == 5) {
-				tmp_str_01 = this.showm_data[i + 1];
-			} else {
-				const tmp_num_11 = i + 1;
-				tmp_str_01 = "" + "hitokoto" + this.hitokoto_num + "-" + tmp_num_11;
-				tmp_str_01 = this.tdb.getValue(tmp_str_01);
-			}
-			if (tmp_str_01 == null) tmp_str_01 = "0";
-			let tmp_num_04;
-			tmp_num_04 = parseInt(tmp_str_01);
-			if (isNaN(tmp_num_04)) tmp_num_04 = -1;
-			if (tmp_num_04 != 0) tmp_cnt_01++;
-		}
-
-		const beforeFont = this.hg._font;
-		this.km.drawWindowbox(tmp_num_01, tmp_num_02, tmp_num_03, 30 + tmp_cnt_01 * 14);
-		this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
-		this.hg.setColor(Color.cyan);
-		if (this.hitokoto_num == 5) {
-			this.hg.drawString(this.showm_data[0], tmp_num_01 + 6, tmp_num_02 + 6 + 12);
-		} else {
-			const tmp_str_02 = "" + "hitokoto" + this.hitokoto_num + "_name";
-			this.hg.drawString(this.tdb.getValue(tmp_str_02), tmp_num_01 + 6, tmp_num_02 + 6 + 12);
-		}
-		this.hg.setColor(Color.white);
-		tmp_cnt_01 = 0;
-		for (let i = 0; i <= 2; i++) {
-			let tmp_str_03;
-			if (this.hitokoto_num == 5) {
-				tmp_str_03 = this.showm_data[i + 1];
-			} else {
-				const tmp_num_06 = i + 1;
-				tmp_str_03 = "" + "hitokoto" + this.hitokoto_num + "-" + tmp_num_06;
-				tmp_str_03 = this.tdb.getValue(tmp_str_03);
-			}
-			if (tmp_str_03 == null) tmp_str_03 = "0";
-			let tmp_num_05;
-			tmp_num_05 = parseInt(tmp_str_03);
-			if (isNaN(tmp_num_05)) tmp_num_05 = -1;
-			if (tmp_num_05 != 0) {
-				this.hg.drawString(tmp_str_03, tmp_num_01 + 6, tmp_num_02 + 6 + 18 + tmp_cnt_01 * 14 + 12);
-				tmp_cnt_01++;
-			}
-		}
-		// 元に戻しておく
-		this.hg.setFont(beforeFont);
+		drawHitokotoMessage.apply(this);
 	}
 	this.km.drawMenus();
 };

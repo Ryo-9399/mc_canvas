@@ -447,36 +447,43 @@ export const drawGamescreen = function() {
 	// 一言メッセージ
 	if (this.hitokoto_c > 0) {
 		this.hitokoto_c--;
-		const tmp_num_01 = 208;
-		const tmp_num_02 = 56;
-		const tmp_num_03 = 224;
-		let tmp_cnt_01 = 0;
-		for (let i = 0; i <= 2; i++) {
-			let tmp_str_04 = i + 1;
-			let tmp_str_01 = "hitokoto" + this.hitokoto_num + "-" + tmp_str_04;
-			tmp_str_01 = this.gg.ap.getParameter(tmp_str_01);
-			tmp_str_04 = parseInt(tmp_str_01);
-			if (isNaN(tmp_str_04)) tmp_str_04 = -1;
-			if (tmp_str_04 != 0) tmp_cnt_01++;
-		}
+		drawHitokotoMessage.apply(this);
+	}
+};
 
-		this.km.drawWindowbox(tmp_num_01, tmp_num_02, tmp_num_03, 30 + tmp_cnt_01 * 14);
-		this.hg.setFont(new Font("Dialog", 0, 12));
-		this.hg.setColor(Color.cyan);
-		const tmp_str_02 = "hitokoto" + this.hitokoto_num + "_name";
-		this.hg.drawString(this.gg.ap.getParameter(tmp_str_02), tmp_num_01 + 6, tmp_num_02 + 6 + 12);
-		this.hg.setColor(Color.white);
-		tmp_cnt_01 = 0;
-		for (let i = 0; i <= 2; i++) {
-			let tmp_num_05 = i + 1;
-			let tmp_str_03 = "hitokoto" + this.hitokoto_num + "-" + tmp_num_05;
-			tmp_str_03 = this.gg.ap.getParameter(tmp_str_03);
-			tmp_num_05 = parseInt(tmp_str_03);
-			if (isNaN(tmp_num_05)) tmp_num_05 = -1;
-			if (tmp_num_05 != 0) {
-				this.hg.drawString(tmp_str_03, tmp_num_01 + 6, tmp_num_02 + 6 + 18 + tmp_cnt_01 * 14 + 12);
-				tmp_cnt_01++;
-			}
+/**
+ * 一言メッセージを表示
+ */
+export const drawHitokotoMessage = function() {
+	const tmp_num_01 = 208;
+	const tmp_num_02 = 56;
+	const tmp_num_03 = 224;
+	let tmp_cnt_01 = 0;
+	for (let i = 0; i <= 2; i++) {
+		let tmp_str_04 = i + 1;
+		let tmp_str_01 = "hitokoto" + this.hitokoto_num + "-" + tmp_str_04;
+		tmp_str_01 = this.gg.ap.getParameter(tmp_str_01);
+		tmp_str_04 = parseInt(tmp_str_01);
+		if (isNaN(tmp_str_04)) tmp_str_04 = -1;
+		if (tmp_str_04 != 0) tmp_cnt_01++;
+	}
+
+	this.km.drawWindowbox(tmp_num_01, tmp_num_02, tmp_num_03, 30 + tmp_cnt_01 * 14);
+	this.hg.setFont(new Font("Dialog", 0, 12));
+	this.hg.setColor(Color.cyan);
+	const tmp_str_02 = "hitokoto" + this.hitokoto_num + "_name";
+	this.hg.drawString(this.gg.ap.getParameter(tmp_str_02), tmp_num_01 + 6, tmp_num_02 + 6 + 12);
+	this.hg.setColor(Color.white);
+	tmp_cnt_01 = 0;
+	for (let i = 0; i <= 2; i++) {
+		let tmp_num_05 = i + 1;
+		let tmp_str_03 = "hitokoto" + this.hitokoto_num + "-" + tmp_num_05;
+		tmp_str_03 = this.gg.ap.getParameter(tmp_str_03);
+		tmp_num_05 = parseInt(tmp_str_03);
+		if (isNaN(tmp_num_05)) tmp_num_05 = -1;
+		if (tmp_num_05 != 0) {
+			this.hg.drawString(tmp_str_03, tmp_num_01 + 6, tmp_num_02 + 6 + 18 + tmp_cnt_01 * 14 + 12);
+			tmp_cnt_01++;
 		}
 	}
 };
