@@ -455,33 +455,33 @@ export const drawGamescreen = function() {
  * 一言メッセージを表示
  */
 export const drawHitokotoMessage = function() {
-	const box_left_x = 208;
-	const box_top_y = 56;
+	const box_x = 208;
+	const box_y = 56;
 	const box_width = 224;
 	// メッセージ内容を取得
 	const messages = [];
 	for (let i = 1; i <= 3; i++) {
 		const param_name = `hitokoto${this.hitokoto_num}-${i}`;
 		const message = this.gg.ap.getParameter(param_name);
-		let tmp_num = parseInt(message);
-		if (isNaN(tmp_num)) tmp_num = -1;
-		if (tmp_num === 0) continue;
+		// 0と設定されている行は表示しない
+		if (parseInt(message) === 0) continue;
 		messages.push(message);
 	}
 
 	// メッセージボックスを描画
-	this.km.drawWindowbox(box_left_x, box_top_y, box_width, 30 + messages.length * 14);
+	this.km.drawWindowbox(box_x, box_y, box_width, 30 + messages.length * 14);
 
 	this.hg.setFont(new Font(Font.DIALOG, 0, 12));
 	// 名前を描画
 	this.hg.setColor(Color.cyan);
 	const param_name = `hitokoto${this.hitokoto_num}_name`;
-	this.hg.drawString(this.gg.ap.getParameter(param_name), box_left_x + 6, box_top_y + 6 + 12);
+	const name = this.gg.ap.getParameter(param_name);
+	this.hg.drawString(name, box_x + 6, box_y + 6 + 12);
 
 	// メッセージ本文を描画
 	this.hg.setColor(Color.white);
 	for (const [i, message] of messages.entries()) {
 		const dy = 18 + i * 14 + 12;
-		this.hg.drawString(message, box_left_x + 6, box_top_y + 6 + dy);
+		this.hg.drawString(message, box_x + 6, box_y + 6 + dy);
 	}
 };
