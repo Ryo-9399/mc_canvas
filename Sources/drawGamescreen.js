@@ -1733,7 +1733,9 @@ export const drawGamescreen = function() {
 		if (this.gg.ap != null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
 		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
 	}
-	if (this.second_gazou_visible && this.second_gazou_priority == 2 && this.second_gazou_img != null)
+	// セカンド画像 主人公の手前
+	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
+	if (this.second_gazou_visible && this.second_gazou_priority == 2 && this.second_gazou_img != null) {
 		if (this.second_gazou_scroll == 2) {
 			var i9 = -(rightShiftIgnoreSign(this.maps.wx - 32, 2) % 512);
 			this.hg.drawImage(this.second_gazou_img, i9, 0, this.ap);
@@ -1781,6 +1783,7 @@ export const drawGamescreen = function() {
 		} else {
 			this.hg.drawImage(this.second_gazou_img, 0, 0, this.ap);
 		}
+	}
 	// ゲージを表示
 	if (this.gauge_v) {
 		// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
@@ -1796,44 +1799,47 @@ export const drawGamescreen = function() {
 		this.gg.os_g.setColor(Color.white);
 		this.hg.drawRect(x - 1, y - 1, 201, 9);
 	}
-	if (this.spot_c != 0)
-		if (this.spot_c == 100) {
-			this.hg.setColor(Color.black);
-			var i15 = this.co_j.x + 16 - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wx;
-			if (i15 > 0) this.hg.fillRect(0, 0, i15, 320);
-			var i24 = this.co_j.x + 16 + rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wx;
-			if (i24 < 512) this.hg.fillRect(i24, 0, 512 - i24, 320);
-			var l17 = this.co_j.y + 16 - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wy;
-			if (l17 > 0) this.hg.fillRect(i15, 0, i24 - i15, l17);
-			var j30 = this.co_j.y + 16 + rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wy;
-			if (j30 < 320) this.hg.fillRect(i15, j30, i24 - i15, 320 - j30);
-			this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
-			this.hg.setColor(Color.black);
-			this.hg.fillRect(0, 0, 512, 320);
-			var graphics230 = this.gg.os_img.getGraphics();
-			graphics230.setClip(
-				"ellipse",
-				this.co_j.x + 16 - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wx,
-				this.co_j.y + 16 - rightShiftIgnoreSign(this.spot_r, 1) - this.maps.wy,
-				this.spot_r,
-				this.spot_r
-			);
-			graphics230.drawImage(this.spot_img, 0, 0, this.ap);
-			this.hg.setColor(new Color(0, 0, 0, 96));
-			this.hg.fillRect(0, 0, 512, 320);
-			graphics230.setClip(
-				"ellipse",
-				this.co_j.x + 16 - rightShiftIgnoreSign(this.spot_r - 48, 1) - this.maps.wx,
-				this.co_j.y + 16 - rightShiftIgnoreSign(this.spot_r - 48, 1) - this.maps.wy,
-				this.spot_r - 48,
-				this.spot_r - 48
-			);
-			graphics230.drawImage(this.spot_img, 0, 0, this.ap);
-			graphics230.dispose();
-		} else if (this.spot_c == 200) {
-			this.hg.setColor(Color.black);
-			this.hg.fillRect(0, 0, 512, 320);
-		}
+	// スポット処理
+	if (this.spot_c === 100) {
+		// TODO: そもそも変数名rで直径を表すな
+		const radius = rightShiftIgnoreSign(this.spot_r, 1);
+		const diameter = this.spot_r;
+		this.hg.setColor(Color.black);
+		const left_x = this.co_j.x + 16 - radius - this.maps.wx;
+		if (left_x > 0) this.hg.fillRect(0, 0, left_x, 320);
+		const right_x = this.co_j.x + 16 + radius - this.maps.wx;
+		if (right_x < 512) this.hg.fillRect(right_x, 0, 512 - right_x, 320);
+		const top_y = this.co_j.y + 16 - radius - this.maps.wy;
+		if (top_y > 0) this.hg.fillRect(left_x, 0, right_x - left_x, top_y);
+		const bottom_y = this.co_j.y + 16 + radius - this.maps.wy;
+		if (bottom_y < 320) this.hg.fillRect(left_x, bottom_y, right_x - left_x, 320 - bottom_y);
+		this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
+		this.hg.setColor(Color.black);
+		this.hg.fillRect(0, 0, 512, 320);
+		const graphics = this.gg.os_img.getGraphics();
+		graphics.setClip(
+			"ellipse",
+			this.co_j.x + 16 - radius - this.maps.wx,
+			this.co_j.y + 16 - radius - this.maps.wy,
+			diameter,
+			diameter
+		);
+		graphics.drawImage(this.spot_img, 0, 0, this.ap);
+		this.hg.setColor(new Color(0, 0, 0, 96));
+		this.hg.fillRect(0, 0, 512, 320);
+		graphics.setClip(
+			"ellipse",
+			this.co_j.x + 16 - (radius - 24) - this.maps.wx,
+			this.co_j.y + 16 - (radius - 24) - this.maps.wy,
+			diameter - 48,
+			diameter - 48
+		);
+		graphics.drawImage(this.spot_img, 0, 0, this.ap);
+		graphics.dispose();
+	} else if (this.spot_c === 200) {
+		this.hg.setColor(Color.black);
+		this.hg.fillRect(0, 0, 512, 320);
+	}
 
 	// 一言メッセージ
 	if (this.hitokoto_c == 0) this.hitokoto_c = -1;
