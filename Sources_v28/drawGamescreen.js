@@ -443,37 +443,39 @@ export const drawGamescreen = function() {
 		this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
 		this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
 	} else if (this.co_j.pt != 1110);
+
+	// 一言メッセージ
 	if (this.hitokoto_c > 0) {
 		this.hitokoto_c--;
-		var c = 208;
-		var byte0 = 56;
-		var c1 = 224;
-		var i5 = 0;
-		for (var k2 = 0; k2 <= 2; k2++) {
-			var k4 = k2 + 1;
-			var s = "hitokoto" + this.hitokoto_num + "-" + k4;
-			s = this.gg.ap.getParameter(s);
-			k4 = parseInt(s);
-			if (isNaN(k4)) k4 = -1;
-			if (k4 != 0) i5++;
+		const tmp_num_01 = 208;
+		const tmp_num_02 = 56;
+		const tmp_num_03 = 224;
+		let tmp_cnt_01 = 0;
+		for (let i = 0; i <= 2; i++) {
+			let tmp_str_04 = i + 1;
+			let tmp_str_01 = "hitokoto" + this.hitokoto_num + "-" + tmp_str_04;
+			tmp_str_01 = this.gg.ap.getParameter(tmp_str_01);
+			tmp_str_04 = parseInt(tmp_str_01);
+			if (isNaN(tmp_str_04)) tmp_str_04 = -1;
+			if (tmp_str_04 != 0) tmp_cnt_01++;
 		}
 
-		this.km.drawWindowbox(c, byte0, c1, 30 + i5 * 14);
+		this.km.drawWindowbox(tmp_num_01, tmp_num_02, tmp_num_03, 30 + tmp_cnt_01 * 14);
 		this.hg.setFont(new Font("Dialog", 0, 12));
 		this.hg.setColor(Color.cyan);
-		var s1 = "hitokoto" + this.hitokoto_num + "_name";
-		this.hg.drawString(this.gg.ap.getParameter(s1), c + 6, byte0 + 6 + 12);
+		const tmp_str_02 = "hitokoto" + this.hitokoto_num + "_name";
+		this.hg.drawString(this.gg.ap.getParameter(tmp_str_02), tmp_num_01 + 6, tmp_num_02 + 6 + 12);
 		this.hg.setColor(Color.white);
-		i5 = 0;
-		for (var l2 = 0; l2 <= 2; l2++) {
-			var l4 = l2 + 1;
-			var s2 = "hitokoto" + this.hitokoto_num + "-" + l4;
-			s2 = this.gg.ap.getParameter(s2);
-			l4 = parseInt(s2);
-			if (isNaN(l4)) l4 = -1;
-			if (l4 != 0) {
-				this.hg.drawString(s2, c + 6, byte0 + 6 + 18 + i5 * 14 + 12);
-				i5++;
+		tmp_cnt_01 = 0;
+		for (let i = 0; i <= 2; i++) {
+			let tmp_num_05 = i + 1;
+			let tmp_str_03 = "hitokoto" + this.hitokoto_num + "-" + tmp_num_05;
+			tmp_str_03 = this.gg.ap.getParameter(tmp_str_03);
+			tmp_num_05 = parseInt(tmp_str_03);
+			if (isNaN(tmp_num_05)) tmp_num_05 = -1;
+			if (tmp_num_05 != 0) {
+				this.hg.drawString(tmp_str_03, tmp_num_01 + 6, tmp_num_02 + 6 + 18 + tmp_cnt_01 * 14 + 12);
+				tmp_cnt_01++;
 			}
 		}
 	}

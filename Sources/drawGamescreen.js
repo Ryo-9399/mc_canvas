@@ -1709,6 +1709,7 @@ export const drawGamescreen = function() {
 			}
 	if (this.j_muteki_c > 0) this.j_muteki_c--;
 
+	// drawGamescreenWindow()相当部分
 	if (this.showr_c > 0) {
 		this.showr_c--;
 		this.hg.setColor(this.js_pen_color);
@@ -1833,57 +1834,59 @@ export const drawGamescreen = function() {
 			this.hg.setColor(Color.black);
 			this.hg.fillRect(0, 0, 512, 320);
 		}
+
+	// 一言メッセージ
 	if (this.hitokoto_c == 0) this.hitokoto_c = -1;
 	else if (this.hitokoto_c > 0) {
 		this.hitokoto_c--;
-		var c = 208;
-		var byte1 = 56;
-		var c1 = 224;
-		var k12 = 0;
-		for (var k3 = 0; k3 <= 2; k3++) {
-			var s1;
+		const tmp_num_01 = 208;
+		const tmp_num_02 = 56;
+		const tmp_num_03 = 224;
+		let tmp_cnt_01 = 0;
+		for (let i = 0; i <= 2; i++) {
+			let tmp_str_01;
 			if (this.hitokoto_num == 5) {
-				s1 = this.showm_data[k3 + 1];
+				tmp_str_01 = this.showm_data[i + 1];
 			} else {
-				var k10 = k3 + 1;
-				s1 = "" + "hitokoto" + this.hitokoto_num + "-" + k10;
-				s1 = this.tdb.getValue(s1);
+				const tmp_num_11 = i + 1;
+				tmp_str_01 = "" + "hitokoto" + this.hitokoto_num + "-" + tmp_num_11;
+				tmp_str_01 = this.tdb.getValue(tmp_str_01);
 			}
-			if (s1 == null) s1 = "0";
-			var l10;
-			l10 = parseInt(s1);
-			if (isNaN(l10)) l10 = -1;
-			if (l10 != 0) k12++;
+			if (tmp_str_01 == null) tmp_str_01 = "0";
+			let tmp_num_04;
+			tmp_num_04 = parseInt(tmp_str_01);
+			if (isNaN(tmp_num_04)) tmp_num_04 = -1;
+			if (tmp_num_04 != 0) tmp_cnt_01++;
 		}
 
-		var beforeFont = this.hg._font;
-		this.km.drawWindowbox(c, byte1, c1, 30 + k12 * 14);
+		const beforeFont = this.hg._font;
+		this.km.drawWindowbox(tmp_num_01, tmp_num_02, tmp_num_03, 30 + tmp_cnt_01 * 14);
 		this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
 		this.hg.setColor(Color.cyan);
 		if (this.hitokoto_num == 5) {
-			this.hg.drawString(this.showm_data[0], c + 6, byte1 + 6 + 12);
+			this.hg.drawString(this.showm_data[0], tmp_num_01 + 6, tmp_num_02 + 6 + 12);
 		} else {
-			var s2 = "" + "hitokoto" + this.hitokoto_num + "_name";
-			this.hg.drawString(this.tdb.getValue(s2), c + 6, byte1 + 6 + 12);
+			const tmp_str_02 = "" + "hitokoto" + this.hitokoto_num + "_name";
+			this.hg.drawString(this.tdb.getValue(tmp_str_02), tmp_num_01 + 6, tmp_num_02 + 6 + 12);
 		}
 		this.hg.setColor(Color.white);
-		k12 = 0;
-		for (var l3 = 0; l3 <= 2; l3++) {
-			var s3;
+		tmp_cnt_01 = 0;
+		for (let i = 0; i <= 2; i++) {
+			let tmp_str_03;
 			if (this.hitokoto_num == 5) {
-				s3 = this.showm_data[l3 + 1];
+				tmp_str_03 = this.showm_data[i + 1];
 			} else {
-				var i11 = l3 + 1;
-				s3 = "" + "hitokoto" + this.hitokoto_num + "-" + i11;
-				s3 = this.tdb.getValue(s3);
+				const tmp_num_06 = i + 1;
+				tmp_str_03 = "" + "hitokoto" + this.hitokoto_num + "-" + tmp_num_06;
+				tmp_str_03 = this.tdb.getValue(tmp_str_03);
 			}
-			if (s3 == null) s3 = "0";
-			var j11;
-			j11 = parseInt(s3);
-			if (isNaN(j11)) j11 = -1;
-			if (j11 != 0) {
-				this.hg.drawString(s3, c + 6, byte1 + 6 + 18 + k12 * 14 + 12);
-				k12++;
+			if (tmp_str_03 == null) tmp_str_03 = "0";
+			let tmp_num_05;
+			tmp_num_05 = parseInt(tmp_str_03);
+			if (isNaN(tmp_num_05)) tmp_num_05 = -1;
+			if (tmp_num_05 != 0) {
+				this.hg.drawString(tmp_str_03, tmp_num_01 + 6, tmp_num_02 + 6 + 18 + tmp_cnt_01 * 14 + 12);
+				tmp_cnt_01++;
 			}
 		}
 		// 元に戻しておく

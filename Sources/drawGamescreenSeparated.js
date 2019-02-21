@@ -164,55 +164,57 @@ export const drawGamescreenWindow = function() {
 			this.gg.os_g.setColor(Color.white);
 			this.hg.drawRect(63, 63, 201, 9);
 		}
+
+	// 一言メッセージ
 	if (this.hitokoto_c > -1) {
-		var c = 208;
-		var byte0 = 56;
-		var c1 = 224;
-		var l1 = 0;
-		for (var j = 0; j <= 2; j++) {
-			var s;
+		const tmp_num_01 = 208;
+		const tmp_num_02 = 56;
+		const tmp_num_03 = 224;
+		let tmp_cnt_01 = 0;
+		for (let i = 0; i <= 2; i++) {
+			let tmp_str_01;
 			if (this.hitokoto_num == 5) {
-				s = this.showm_data[j + 1];
+				tmp_str_01 = this.showm_data[i + 1];
 			} else {
-				var l = j + 1;
-				s = "" + "hitokoto" + this.hitokoto_num + "-" + l;
-				s = this.tdb.getValue(s);
+				const tmp_num_11 = i + 1;
+				tmp_str_01 = "" + "hitokoto" + this.hitokoto_num + "-" + tmp_num_11;
+				tmp_str_01 = this.tdb.getValue(tmp_str_01);
 			}
-			if (s == null) s = "0";
-			var i1;
-			i1 = parseInt(s);
-			if (isNaN(i1)) i1 = -1;
-			if (i1 != 0) l1++;
+			if (tmp_str_01 == null) tmp_str_01 = "0";
+			let tmp_num_04;
+			tmp_num_04 = parseInt(tmp_str_01);
+			if (isNaN(tmp_num_04)) tmp_num_04 = -1;
+			if (tmp_num_04 != 0) tmp_cnt_01++;
 		}
 
-		var beforeFont = this.hg._font;
-		this.km.drawWindowbox(c, byte0, c1, 30 + l1 * 14);
+		const beforeFont = this.hg._font;
+		this.km.drawWindowbox(tmp_num_01, tmp_num_02, tmp_num_03, 30 + tmp_cnt_01 * 14);
 		this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
 		this.hg.setColor(Color.cyan);
 		if (this.hitokoto_num == 5) {
-			this.hg.drawString(this.showm_data[0], c + 6, byte0 + 6 + 12);
+			this.hg.drawString(this.showm_data[0], tmp_num_01 + 6, tmp_num_02 + 6 + 12);
 		} else {
-			var s1 = "" + "hitokoto" + this.hitokoto_num + "_name";
-			this.hg.drawString(this.tdb.getValue(s1), c + 6, byte0 + 6 + 12);
+			const tmp_str_02 = "" + "hitokoto" + this.hitokoto_num + "_name";
+			this.hg.drawString(this.tdb.getValue(tmp_str_02), tmp_num_01 + 6, tmp_num_02 + 6 + 12);
 		}
 		this.hg.setColor(Color.white);
-		l1 = 0;
-		for (var k = 0; k <= 2; k++) {
-			var s2;
+		tmp_cnt_01 = 0;
+		for (let i = 0; i <= 2; i++) {
+			let tmp_str_03;
 			if (this.hitokoto_num == 5) {
-				s2 = this.showm_data[k + 1];
+				tmp_str_03 = this.showm_data[i + 1];
 			} else {
-				var j1 = k + 1;
-				s2 = "" + "hitokoto" + this.hitokoto_num + "-" + j1;
-				s2 = this.tdb.getValue(s2);
+				const tmp_num_06 = i + 1;
+				tmp_str_03 = "" + "hitokoto" + this.hitokoto_num + "-" + tmp_num_06;
+				tmp_str_03 = this.tdb.getValue(tmp_str_03);
 			}
-			if (s2 == null) s2 = "0";
-			var k1;
-			k1 = parseInt(s2);
-			if (isNaN(k1)) k1 = -1;
-			if (k1 != 0) {
-				this.hg.drawString(s2, c + 6, byte0 + 6 + 18 + l1 * 14 + 12);
-				l1++;
+			if (tmp_str_03 == null) tmp_str_03 = "0";
+			let tmp_num_05;
+			tmp_num_05 = parseInt(tmp_str_03);
+			if (isNaN(tmp_num_05)) tmp_num_05 = -1;
+			if (tmp_num_05 != 0) {
+				this.hg.drawString(tmp_str_03, tmp_num_01 + 6, tmp_num_02 + 6 + 18 + tmp_cnt_01 * 14 + 12);
+				tmp_cnt_01++;
 			}
 		}
 		// 元に戻しておく
