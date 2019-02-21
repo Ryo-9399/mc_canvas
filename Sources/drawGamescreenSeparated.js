@@ -178,26 +178,30 @@ export const drawHitokotoMessage = function() {
 	const box_left_x = 208;
 	const box_top_y = 56;
 	const box_width = 224;
-	// 一言メッセージの行数を数える
-	let line_count = 0;
+	// メッセージ内容を取得
+	const messages = [];
 	for (let i = 1; i <= 3; i++) {
-		let tmp_str_01;
+		let message;
 		if (this.hitokoto_num == 5) {
-			tmp_str_01 = this.showm_data[i + 1];
+			message = this.showm_data[i];
 		} else {
 			const param_name = `hitokoto${this.hitokoto_num}-${i}`;
-			tmp_str_01 = this.tdb.getValue(param_name);
+			message = this.tdb.getValue(param_name);
 		}
-		if (tmp_str_01 == null) tmp_str_01 = "0";
-		let tmp_num_04;
-		tmp_num_04 = parseInt(tmp_str_01);
-		if (isNaN(tmp_num_04)) tmp_num_04 = -1;
-		if (tmp_num_04 != 0) line_count++;
+		if (message == null) message = "0";
+		let tmp_num = parseInt(message);
+		if (isNaN(tmp_num)) tmp_num = -1;
+		if (tmp_num === 0) continue;
+		messages.push(message);
 	}
 
+	// メッセージボックスを描画
+	this.km.drawWindowbox(box_left_x, box_top_y, box_width, 30 + messages.length * 14);
+
+	// 変更前のフォントを保持
 	const beforeFont = this.hg._font;
-	this.km.drawWindowbox(box_left_x, box_top_y, box_width, 30 + line_count * 14);
 	this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
+	// 名前を描画
 	this.hg.setColor(Color.cyan);
 	if (this.hitokoto_num == 5) {
 		this.hg.drawString(this.showm_data[0], box_left_x + 6, box_top_y + 6 + 12);
@@ -205,26 +209,12 @@ export const drawHitokotoMessage = function() {
 		const param_name = `hitokoto${this.hitokoto_num}_name`;
 		this.hg.drawString(this.tdb.getValue(param_name), box_left_x + 6, box_top_y + 6 + 12);
 	}
+	// メッセージ本文を描画
 	this.hg.setColor(Color.white);
-	line_count = 0;
-	for (let i = 0; i <= 2; i++) {
-		let tmp_str_03;
-		if (this.hitokoto_num == 5) {
-			tmp_str_03 = this.showm_data[i + 1];
-		} else {
-			const tmp_num_06 = i + 1;
-			const param_name = `hitokoto${this.hitokoto_num}-${tmp_num_06}`;
-			tmp_str_03 = this.tdb.getValue(param_name);
-		}
-		if (tmp_str_03 == null) tmp_str_03 = "0";
-		let tmp_num_05;
-		tmp_num_05 = parseInt(tmp_str_03);
-		if (isNaN(tmp_num_05)) tmp_num_05 = -1;
-		if (tmp_num_05 != 0) {
-			this.hg.drawString(tmp_str_03, box_left_x + 6, box_top_y + 6 + 18 + line_count * 14 + 12);
-			line_count++;
-		}
+	for (const [i, message] of messages.entries()) {
+		const dy = 18 + i * 14 + 12;
+		this.hg.drawString(message, box_left_x + 6, box_top_y + 6 + dy);
 	}
-	// 元に戻しておく
+	// フォントを元に戻す
 	this.hg.setFont(beforeFont);
 };
