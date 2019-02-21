@@ -224,153 +224,16 @@ export const drawGamescreen = function() {
 				}
 			}
 	}
-	for (var l = 0; l <= this.t_kazu; l++)
+	for (var l = 0; l <= this.t_kazu; l++) {
 		if (this.co_t[l].c >= 50) {
 			var i6 = this.co_t[l].x - i3;
 			var l7 = this.co_t[l].y - j3;
 			if (i6 >= -64 && l7 <= 576) this.hg.drawImage(this.hih[this.co_t[l].pth][this.co_t[l].pt], i6, l7, this.ap);
 		}
-
-	if (this.co_b.c > 50) {
-		var j6 = this.co_b.x - i3;
-		if (j6 < 528) {
-			var i8 = this.co_b.y - j3;
-			switch (this.co_b.pt) {
-				default:
-					break;
-
-				case 1000:
-					this.hg.drawImage(this.hih[0][186], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][187], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][196], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][197], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1005:
-					this.hg.drawImage(this.hih[1][187], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][186], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][197], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][196], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1010:
-					this.hg.drawImage(this.hih[0][176], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][177], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1015:
-					this.hg.drawImage(this.hih[1][177], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][176], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1100:
-					this.hg.drawImage(this.hih[0][188], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][189], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][198], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][199], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1105:
-					this.hg.drawImage(this.hih[1][189], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][188], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][199], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][198], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1110:
-					this.hg.drawImage(this.hih[0][178], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][179], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1115:
-					this.hg.drawImage(this.hih[1][179], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][178], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1200:
-					this.hg.drawImage(this.hih[0][238], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][239], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][248], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][249], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1205:
-					this.hg.drawImage(this.hih[1][239], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][238], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][249], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][248], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1210:
-					this.hg.drawImage(this.hih[0][228], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][229], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1215:
-					this.hg.drawImage(this.hih[1][229], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][228], j6 + 16, i8 + 16, this.ap);
-					break;
-
-				case 1250:
-					this.hg.drawImage(this.hih[0][238], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][239], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[0][248], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[0][249], j6 + 16, i8 + 16, this.ap);
-					if (this.j_v_c <= 0) {
-						this.j_v_kakudo += 2;
-						if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
-					}
-					j6 = this.co_b.x - i3 + 16;
-					i8 = this.co_b.y - j3 + 16;
-					this.gg.os_g.setColor(Color.white);
-					var d6 = 0.017453292519943295;
-					for (var i1 = 0; i1 <= 5; i1++) {
-						var d = (this.j_v_kakudo + i1 * 60) * d6;
-						this.vo_pa_x[i1] = j6 + Math.floor(Math.cos(d) * 50);
-						this.vo_pa_y[i1] = i8 + Math.floor(Math.sin(d) * 50);
-					}
-
-					this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-					for (var j1 = 0; j1 <= 5; j1++) {
-						var d1 = (360 - this.j_v_kakudo + j1 * 60) * d6;
-						this.vo_pa_x[j1] = j6 + Math.floor(Math.cos(d1) * 50);
-						this.vo_pa_y[j1] = i8 + Math.floor(Math.sin(d1) * 50);
-					}
-
-					this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-					break;
-
-				case 1255:
-					this.hg.drawImage(this.hih[1][239], j6 - 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][238], j6 + 16, i8 - 16, this.ap);
-					this.hg.drawImage(this.hih[1][249], j6 - 16, i8 + 16, this.ap);
-					this.hg.drawImage(this.hih[1][248], j6 + 16, i8 + 16, this.ap);
-					if (this.j_v_c <= 0) {
-						this.j_v_kakudo += 2;
-						if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
-					}
-					j6 = this.co_b.x - i3 + 16;
-					i8 = this.co_b.y - j3 + 16;
-					this.gg.os_g.setColor(Color.white);
-					var d7 = 0.017453292519943295;
-					for (var k1 = 0; k1 <= 5; k1++) {
-						var d2 = (this.j_v_kakudo + k1 * 60) * d7;
-						this.vo_pa_x[k1] = j6 + Math.floor(Math.cos(d2) * 50);
-						this.vo_pa_y[k1] = i8 + Math.floor(Math.sin(d2) * 50);
-					}
-
-					this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-					for (var l1 = 0; l1 <= 5; l1++) {
-						var d3 = (360 - this.j_v_kakudo + l1 * 60) * d7;
-						this.vo_pa_x[l1] = j6 + Math.floor(Math.cos(d3) * 50);
-						this.vo_pa_y[l1] = i8 + Math.floor(Math.sin(d3) * 50);
-					}
-
-					this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-					break;
-			}
-		}
 	}
+
+	// ボスの描画
+	drawBoss.apply(this);
 
 	// 主人公の描画
 	if (this.j_jet_c >= 96)
@@ -452,7 +315,152 @@ export const drawGamescreen = function() {
 };
 
 /**
- * 一言メッセージを表示
+ * ボスを描画
+ */
+export const drawBoss = function() {
+	if (this.co_b.c <= 50) return;
+	const { wx, wy } = this.maps;
+	let boss_sx = this.co_b.x - wx;
+	let boss_sy = this.co_b.y - wy;
+	if (boss_sx >= 528) return;
+	switch (this.co_b.pt) {
+		default:
+			break;
+
+		case 1000:
+			this.hg.drawImage(this.hih[0][186], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][187], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][196], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][197], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1005:
+			this.hg.drawImage(this.hih[1][187], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][186], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][197], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][196], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1010:
+			this.hg.drawImage(this.hih[0][176], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][177], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1015:
+			this.hg.drawImage(this.hih[1][177], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][176], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1100:
+			this.hg.drawImage(this.hih[0][188], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][189], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][198], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][199], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1105:
+			this.hg.drawImage(this.hih[1][189], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][188], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][199], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][198], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1110:
+			this.hg.drawImage(this.hih[0][178], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][179], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1115:
+			this.hg.drawImage(this.hih[1][179], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][178], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1200:
+			this.hg.drawImage(this.hih[0][238], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][239], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][248], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][249], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1205:
+			this.hg.drawImage(this.hih[1][239], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][238], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][249], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][248], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1210:
+			this.hg.drawImage(this.hih[0][228], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][229], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1215:
+			this.hg.drawImage(this.hih[1][229], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][228], boss_sx + 16, boss_sy + 16, this.ap);
+			break;
+
+		case 1250:
+			this.hg.drawImage(this.hih[0][238], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][239], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[0][248], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[0][249], boss_sx + 16, boss_sy + 16, this.ap);
+			if (this.j_v_c <= 0) {
+				this.j_v_kakudo += 2;
+				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
+			}
+			boss_sx = this.co_b.x - wx + 16;
+			boss_sy = this.co_b.y - wy + 16;
+			this.gg.os_g.setColor(Color.white);
+			var d6 = 0.017453292519943295;
+			for (var i1 = 0; i1 <= 5; i1++) {
+				var d = (this.j_v_kakudo + i1 * 60) * d6;
+				this.vo_pa_x[i1] = boss_sx + Math.floor(Math.cos(d) * 50);
+				this.vo_pa_y[i1] = boss_sy + Math.floor(Math.sin(d) * 50);
+			}
+
+			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			for (var j1 = 0; j1 <= 5; j1++) {
+				var d1 = (360 - this.j_v_kakudo + j1 * 60) * d6;
+				this.vo_pa_x[j1] = boss_sx + Math.floor(Math.cos(d1) * 50);
+				this.vo_pa_y[j1] = boss_sy + Math.floor(Math.sin(d1) * 50);
+			}
+
+			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			break;
+
+		case 1255:
+			this.hg.drawImage(this.hih[1][239], boss_sx - 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][238], boss_sx + 16, boss_sy - 16, this.ap);
+			this.hg.drawImage(this.hih[1][249], boss_sx - 16, boss_sy + 16, this.ap);
+			this.hg.drawImage(this.hih[1][248], boss_sx + 16, boss_sy + 16, this.ap);
+			if (this.j_v_c <= 0) {
+				this.j_v_kakudo += 2;
+				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
+			}
+			boss_sx = this.co_b.x - wx + 16;
+			boss_sy = this.co_b.y - wy + 16;
+			this.gg.os_g.setColor(Color.white);
+			var d7 = 0.017453292519943295;
+			for (var k1 = 0; k1 <= 5; k1++) {
+				var d2 = (this.j_v_kakudo + k1 * 60) * d7;
+				this.vo_pa_x[k1] = boss_sx + Math.floor(Math.cos(d2) * 50);
+				this.vo_pa_y[k1] = boss_sy + Math.floor(Math.sin(d2) * 50);
+			}
+
+			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			for (var l1 = 0; l1 <= 5; l1++) {
+				var d3 = (360 - this.j_v_kakudo + l1 * 60) * d7;
+				this.vo_pa_x[l1] = boss_sx + Math.floor(Math.cos(d3) * 50);
+				this.vo_pa_y[l1] = boss_sy + Math.floor(Math.sin(d3) * 50);
+			}
+
+			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			break;
+	}
+};
+
+/**
+ * 一言メッセージを描画
  */
 export const drawHitokotoMessage = function() {
 	const box_x = 208;
