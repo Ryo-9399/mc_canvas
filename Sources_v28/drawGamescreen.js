@@ -359,82 +359,55 @@ export const drawBoss = function() {
 			break;
 
 		case 1000:
-			this.hg.drawImage(this.hih[0][186], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][187], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][196], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][197], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(186, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
 		case 1005:
-			this.hg.drawImage(this.hih[1][187], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][186], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][197], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][196], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(186, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
 		case 1010:
-			this.hg.drawImage(this.hih[0][176], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][177], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(176, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
 		case 1015:
-			this.hg.drawImage(this.hih[1][177], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][176], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(176, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
 		case 1100:
-			this.hg.drawImage(this.hih[0][188], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][189], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][198], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][199], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
 		case 1105:
-			this.hg.drawImage(this.hih[1][189], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][188], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][199], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][198], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
 		case 1110:
-			this.hg.drawImage(this.hih[0][178], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][179], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(178, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
 		case 1115:
-			this.hg.drawImage(this.hih[1][179], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][178], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(178, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
 		case 1200:
-			this.hg.drawImage(this.hih[0][238], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][239], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][248], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][249], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
 		case 1205:
-			this.hg.drawImage(this.hih[1][239], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][238], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][249], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][248], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
 		case 1210:
-			this.hg.drawImage(this.hih[0][228], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][229], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(228, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
 		case 1215:
-			this.hg.drawImage(this.hih[1][229], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][228], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(228, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
 		case 1250:
-			this.hg.drawImage(this.hih[0][238], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][239], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[0][248], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[0][249], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
@@ -443,27 +416,24 @@ export const drawBoss = function() {
 			boss_sy = this.co_b.y - wy + 16;
 			this.gg.os_g.setColor(Color.white);
 			var d6 = 0.017453292519943295;
-			for (var i1 = 0; i1 <= 5; i1++) {
-				var d = (this.j_v_kakudo + i1 * 60) * d6;
-				this.vo_pa_x[i1] = boss_sx + Math.floor(Math.cos(d) * 50);
-				this.vo_pa_y[i1] = boss_sy + Math.floor(Math.sin(d) * 50);
+			for (let i = 0; i <= 5; i++) {
+				var d = (this.j_v_kakudo + i * 60) * d6;
+				this.vo_pa_x[i] = boss_sx + Math.floor(Math.cos(d) * 50);
+				this.vo_pa_y[i] = boss_sy + Math.floor(Math.sin(d) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (var j1 = 0; j1 <= 5; j1++) {
-				var d1 = (360 - this.j_v_kakudo + j1 * 60) * d6;
-				this.vo_pa_x[j1] = boss_sx + Math.floor(Math.cos(d1) * 50);
-				this.vo_pa_y[j1] = boss_sy + Math.floor(Math.sin(d1) * 50);
+			for (let i = 0; i <= 5; i++) {
+				var d1 = (360 - this.j_v_kakudo + i * 60) * d6;
+				this.vo_pa_x[i] = boss_sx + Math.floor(Math.cos(d1) * 50);
+				this.vo_pa_y[i] = boss_sy + Math.floor(Math.sin(d1) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
 		case 1255:
-			this.hg.drawImage(this.hih[1][239], boss_sx - 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][238], boss_sx + 16, boss_sy - 16, this.ap);
-			this.hg.drawImage(this.hih[1][249], boss_sx - 16, boss_sy + 16, this.ap);
-			this.hg.drawImage(this.hih[1][248], boss_sx + 16, boss_sy + 16, this.ap);
+			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
