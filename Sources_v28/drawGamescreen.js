@@ -323,6 +323,37 @@ export const drawBoss = function() {
 	let boss_sx = this.co_b.x - wx;
 	let boss_sy = this.co_b.y - wy;
 	if (boss_sx >= 528) return;
+	/**
+	 * 複数枚のパターン画像を並べて描画します
+	 * @param code 左上のパターンコード
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWide = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
+	/**
+	 * 複数枚のパターン画像を並べて描画します 左右反転
+	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWideFlip = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				const code_x = nx - 1 - cx;
+				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
 	switch (this.co_b.pt) {
 		default:
 			break;
