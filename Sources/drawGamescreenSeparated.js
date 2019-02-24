@@ -237,13 +237,10 @@ export const drawBoss = function() {
 			break;
 
 		case 1101:
-			var graphics221 = this.gg.os_img.getGraphics();
-			graphics221.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
-			graphics221.drawImage(this.hih[0][188], boss_sx - 16, boss_sy - 16, this.ap);
-			graphics221.drawImage(this.hih[0][189], boss_sx + 16, boss_sy - 16, this.ap);
-			graphics221.drawImage(this.hih[0][198], boss_sx - 16, boss_sy + 16, this.ap);
-			graphics221.drawImage(this.hih[0][199], boss_sx + 16, boss_sy + 16, this.ap);
-			graphics221.dispose();
+			this.hg.dispose();
+			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			drawWide(188, 2, 2, boss_sx - 16, boss_sy - 16);
+			this.hg.dispose();
 			break;
 
 		case 1105:
@@ -251,13 +248,10 @@ export const drawBoss = function() {
 			break;
 
 		case 1106:
-			var graphics222 = this.gg.os_img.getGraphics();
-			graphics222.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
-			graphics222.drawImage(this.hih[1][189], boss_sx - 16, boss_sy - 16, this.ap);
-			graphics222.drawImage(this.hih[1][188], boss_sx + 16, boss_sy - 16, this.ap);
-			graphics222.drawImage(this.hih[1][199], boss_sx - 16, boss_sy + 16, this.ap);
-			graphics222.drawImage(this.hih[1][198], boss_sx + 16, boss_sy + 16, this.ap);
-			graphics222.dispose();
+			this.hg.dispose();
+			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			drawWideFlip(188, 2, 2, boss_sx - 16, boss_sy - 16);
+			this.hg.dispose();
 			break;
 
 		case 1110:
@@ -311,13 +305,10 @@ export const drawBoss = function() {
 			break;
 
 		case 1251:
-			var graphics223 = this.gg.os_img.getGraphics();
-			graphics223.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
-			graphics223.drawImage(this.hih[0][238], boss_sx - 16, boss_sy - 16, this.ap);
-			graphics223.drawImage(this.hih[0][239], boss_sx + 16, boss_sy - 16, this.ap);
-			graphics223.drawImage(this.hih[0][248], boss_sx - 16, boss_sy + 16, this.ap);
-			graphics223.drawImage(this.hih[0][249], boss_sx + 16, boss_sy + 16, this.ap);
-			graphics223.dispose();
+			this.hg.dispose();
+			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
+			this.hg.dispose();
 			break;
 
 		case 1255:
@@ -347,13 +338,10 @@ export const drawBoss = function() {
 			break;
 
 		case 1256:
-			var graphics224 = this.gg.os_img.getGraphics();
-			graphics224.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
-			graphics224.drawImage(this.hih[1][239], boss_sx - 16, boss_sy - 16, this.ap);
-			graphics224.drawImage(this.hih[1][238], boss_sx + 16, boss_sy - 16, this.ap);
-			graphics224.drawImage(this.hih[1][249], boss_sx - 16, boss_sy + 16, this.ap);
-			graphics224.drawImage(this.hih[1][248], boss_sx + 16, boss_sy + 16, this.ap);
-			graphics224.dispose();
+			this.hg.dispose();
+			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
+			this.hg.dispose();
 			break;
 	}
 };
