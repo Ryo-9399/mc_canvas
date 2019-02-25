@@ -1,5 +1,6 @@
 import { CharacterObject } from "../CharacterObject";
 
+// ボスの状態
 export const DYING = 40;
 export const BOSS1_DAMAGE_LEFT = 60;
 export const BOSS1_DAMAGE_RIGHT = 65;
@@ -27,6 +28,26 @@ export const BOSS3_MOVING_LEFT = 350;
 export const BOSS3_MOVING_RIGHT = 355;
 export const BOSS3_TACKLE_ATTACK_LEFT = 360;
 export const BOSS3_TACKLE_ATTACK_RIGHT = 365;
+
+// ボスの描画パターン
+export const PATTERN_BOSS1_LEFT = 1000;
+export const PATTERN_BOSS1_RIGHT = 1005;
+export const PATTERN_BOSS1_DAMAGE_LEFT = 1010;
+export const PATTERN_BOSS1_DAMAGE_RIGHT = 1015;
+export const PATTERN_BOSS2_LEFT = 1100;
+export const PATTERN_BOSS2_ROTATE_LEFT = 1101;
+export const PATTERN_BOSS2_RIGHT = 1105;
+export const PATTERN_BOSS2_ROTATE_RIGHT = 1106;
+export const PATTERN_BOSS2_DAMAGE_LEFT = 1110;
+export const PATTERN_BOSS2_DAMAGE_RIGHT = 1115;
+export const PATTERN_BOSS3_LEFT = 1200;
+export const PATTERN_BOSS3_RIGHT = 1205;
+export const PATTERN_BOSS3_DAMAGE_LEFT = 1210;
+export const PATTERN_BOSS3_DAMAGE_RIGHT = 1215;
+export const PATTERN_BOSS3_BARRIER_LEFT = 1250;
+export const PATTERN_BOSS3_ROTATE_LEFT = 1251;
+export const PATTERN_BOSS3_BARRIER_RIGHT = 1255;
+export const PATTERN_BOSS3_ROTATE_RIGHT = 1256;
 
 /**
  * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
@@ -92,50 +113,50 @@ class Boss extends CharacterObject {
 
 			case BOSS1_DAMAGE_LEFT:
 				this.updateDamage(mp, BOSS1_MOVING_LEFT);
-				this.pt = 1010;
+				this.pt = PATTERN_BOSS1_DAMAGE_LEFT;
 				break;
 
 			case BOSS1_DAMAGE_RIGHT:
 				this.updateDamage(mp, BOSS1_MOVING_RIGHT);
-				this.pt = 1015;
+				this.pt = PATTERN_BOSS1_DAMAGE_RIGHT;
 				break;
 
 			case BOSS1_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
-				if (this.muki === 1) this.pt = 1005;
-				else this.pt = 1000;
+				if (this.muki === 1) this.pt = PATTERN_BOSS1_RIGHT;
+				else this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
 			case BOSS2_DAMAGE_LEFT:
 				this.updateDamage(mp, BOSS2_MOVING_LEFT);
-				this.pt = 1110;
+				this.pt = PATTERN_BOSS2_DAMAGE_LEFT;
 				break;
 
 			case BOSS2_DAMAGE_RIGHT:
 				this.updateDamage(mp, BOSS2_MOVING_RIGHT);
-				this.pt = 1115;
+				this.pt = PATTERN_BOSS2_DAMAGE_RIGHT;
 				break;
 
 			case BOSS2_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
-				if (this.muki === 1) this.pt = 1105;
-				else this.pt = 1100;
+				if (this.muki === 1) this.pt = PATTERN_BOSS2_RIGHT;
+				else this.pt = PATTERN_BOSS2_LEFT;
 				break;
 
 			case BOSS3_DAMAGE_LEFT:
 				this.updateDamage(mp, BOSS3_MOVING_LEFT);
-				this.pt = 1210;
+				this.pt = PATTERN_BOSS3_DAMAGE_LEFT;
 				break;
 
 			case BOSS3_DAMAGE_RIGHT:
 				this.updateDamage(mp, BOSS3_MOVING_RIGHT);
-				this.pt = 1215;
+				this.pt = PATTERN_BOSS3_DAMAGE_RIGHT;
 				break;
 
 			case BOSS3_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
-				if (this.muki === 1) this.pt = 1205;
-				else this.pt = 1200;
+				if (this.muki === 1) this.pt = PATTERN_BOSS3_RIGHT;
+				else this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
 			case BOSS1_STANDBY:
@@ -155,17 +176,17 @@ class Boss extends CharacterObject {
 						this.c1 = 0;
 					}
 				}
-				this.pt = 1000;
+				this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
 			case BOSS1_ATTACK_LEFT:
 				this.boss1Attack(mp, 0);
-				this.pt = 1000;
+				this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
 			case BOSS1_ATTACK_RIGHT:
 				this.boss1Attack(mp, 1);
-				this.pt = 1005;
+				this.pt = PATTERN_BOSS1_RIGHT;
 				break;
 
 			case BOSS1_MOVING_LEFT:
@@ -175,7 +196,7 @@ class Boss extends CharacterObject {
 					this.c = BOSS1_ATTACK_RIGHT;
 					this.c1 = 0;
 				}
-				this.pt = 1000;
+				this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
 			case BOSS1_MOVING_RIGHT:
@@ -185,7 +206,7 @@ class Boss extends CharacterObject {
 					this.c = BOSS1_ATTACK_LEFT;
 					this.c1 = 0;
 				}
-				this.pt = 1005;
+				this.pt = PATTERN_BOSS1_RIGHT;
 				break;
 
 			case BOSS2_STANDBY:
@@ -204,19 +225,19 @@ class Boss extends CharacterObject {
 						this.c1 = 0;
 					}
 				}
-				this.pt = 1100;
+				this.pt = PATTERN_BOSS2_LEFT;
 				break;
 
 			case BOSS2_ATTACK_LEFT:
 				this.boss2Attack(mp, 0);
-				this.pt = 1100;
-				if (mp.boss2_type === 6) this.pt = 1101;
+				this.pt = PATTERN_BOSS2_LEFT;
+				if (mp.boss2_type === 6) this.pt = PATTERN_BOSS2_ROTATE_LEFT;
 				break;
 
 			case BOSS2_ATTACK_RIGHT:
 				this.boss2Attack(mp, 1);
-				this.pt = 1105;
-				if (mp.boss2_type === 6) this.pt = 1106;
+				this.pt = PATTERN_BOSS2_RIGHT;
+				if (mp.boss2_type === 6) this.pt = PATTERN_BOSS2_ROTATE_RIGHT;
 				break;
 
 			case BOSS2_MOVING_LEFT:
@@ -226,7 +247,7 @@ class Boss extends CharacterObject {
 					this.c = BOSS2_ATTACK_RIGHT;
 					this.c1 = 0;
 				}
-				this.pt = 1100;
+				this.pt = PATTERN_BOSS2_LEFT;
 				break;
 
 			case BOSS2_MOVING_RIGHT:
@@ -236,7 +257,7 @@ class Boss extends CharacterObject {
 					this.c = BOSS2_ATTACK_LEFT;
 					this.c1 = 0;
 				}
-				this.pt = 1105;
+				this.pt = PATTERN_BOSS2_RIGHT;
 				break;
 
 			case BOSS3_STANDBY:
@@ -270,17 +291,17 @@ class Boss extends CharacterObject {
 						this.c2 = 0;
 					}
 				}
-				this.pt = 1200;
+				this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
 			case BOSS3_ATTACK_LEFT:
 				this.boss3Attack(mp, 0);
-				this.pt = 1200;
+				this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
 			case BOSS3_ATTACK_RIGHT:
 				this.boss3Attack(mp, 1);
-				this.pt = 1205;
+				this.pt = PATTERN_BOSS3_RIGHT;
 				break;
 
 			case BOSS3_MOVING_LEFT:
@@ -295,7 +316,7 @@ class Boss extends CharacterObject {
 					}
 					this.c1 = 0;
 				}
-				this.pt = 1200;
+				this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
 			case BOSS3_MOVING_RIGHT:
@@ -310,27 +331,27 @@ class Boss extends CharacterObject {
 					}
 					this.c1 = 0;
 				}
-				this.pt = 1205;
+				this.pt = PATTERN_BOSS3_RIGHT;
 				break;
 
 			case BOSS3_TACKLE_ATTACK_LEFT: {
-				this.pt = 1200;
+				this.pt = PATTERN_BOSS3_LEFT;
 				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
 				if (this.c1 >= 5 && this.c1 <= 25) {
-					this.pt = flag_type_rotate ? 1251 : 1250;
+					this.pt = flag_type_rotate ? PATTERN_BOSS3_ROTATE_LEFT : PATTERN_BOSS3_BARRIER_LEFT;
 				} else if (this.c1 === 30) {
-					this.pt = flag_type_rotate ? 1256 : 1255;
+					this.pt = flag_type_rotate ? PATTERN_BOSS3_ROTATE_RIGHT : PATTERN_BOSS3_BARRIER_RIGHT;
 				}
 				this.boss3TackleAttack(mp, 0);
 				break;
 			}
 			case BOSS3_TACKLE_ATTACK_RIGHT: {
-				this.pt = 1205;
+				this.pt = PATTERN_BOSS3_RIGHT;
 				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
 				if (this.c1 >= 5 && this.c1 <= 25) {
-					this.pt = flag_type_rotate ? 1256 : 1255;
+					this.pt = flag_type_rotate ? PATTERN_BOSS3_ROTATE_RIGHT : PATTERN_BOSS3_BARRIER_RIGHT;
 				} else if (this.c1 === 30) {
-					this.pt = flag_type_rotate ? 1251 : 1250;
+					this.pt = flag_type_rotate ? PATTERN_BOSS3_ROTATE_LEFT : PATTERN_BOSS3_BARRIER_LEFT;
 				}
 				this.boss3TackleAttack(mp, 1);
 				break;
@@ -917,15 +938,15 @@ class Boss extends CharacterObject {
 		switch (this.getBossNumber()) {
 			case 1:
 				this.c = direction ? BOSS1_DAMAGE_RIGHT : BOSS1_DAMAGE_LEFT;
-				this.pt = direction ? 1015 : 1010;
+				this.pt = direction ? PATTERN_BOSS1_DAMAGE_RIGHT : PATTERN_BOSS1_DAMAGE_LEFT;
 				break;
 			case 2:
 				this.c = direction ? BOSS2_DAMAGE_RIGHT : BOSS2_DAMAGE_LEFT;
-				this.pt = direction ? 1115 : 1110;
+				this.pt = direction ? PATTERN_BOSS2_DAMAGE_RIGHT : PATTERN_BOSS2_DAMAGE_LEFT;
 				break;
 			case 3:
 				this.c = direction ? BOSS3_DAMAGE_RIGHT : BOSS3_DAMAGE_LEFT;
-				this.pt = direction ? 1215 : 1210;
+				this.pt = direction ? PATTERN_BOSS3_DAMAGE_RIGHT : PATTERN_BOSS3_DAMAGE_LEFT;
 				break;
 		}
 		mp.gs.rsAddSound(8);
@@ -993,15 +1014,15 @@ class Boss extends CharacterObject {
 		switch (this.getBossNumber()) {
 			case 1:
 				this.c = BOSS1_DAMAGE_LEFT;
-				this.pt = 1010;
+				this.pt = PATTERN_BOSS1_DAMAGE_LEFT;
 				break;
 			case 2:
 				this.c = BOSS2_DAMAGE_LEFT;
-				this.pt = 1110;
+				this.pt = PATTERN_BOSS2_DAMAGE_LEFT;
 				break;
 			case 3:
 				this.c = BOSS3_DAMAGE_LEFT;
-				this.pt = 1210;
+				this.pt = PATTERN_BOSS3_DAMAGE_LEFT;
 				break;
 		}
 		mp.gs.rsAddSound(8);
@@ -1021,15 +1042,15 @@ class Boss extends CharacterObject {
 		switch (this.getBossNumber()) {
 			case 1:
 				this.c = BOSS1_DYING_BY_GRENADE;
-				this.pt = this.muki ? 1005 : 1000;
+				this.pt = this.muki ? PATTERN_BOSS1_RIGHT : PATTERN_BOSS1_LEFT;
 				break;
 			case 2:
 				this.c = BOSS2_DYING_BY_GRENADE;
-				this.pt = this.muki ? 1105 : 1100;
+				this.pt = this.muki ? PATTERN_BOSS2_RIGHT : PATTERN_BOSS2_LEFT;
 				break;
 			case 3:
 				this.c = BOSS3_DYING_BY_GRENADE;
-				this.pt = this.muki ? 1205 : 1200;
+				this.pt = this.muki ? PATTERN_BOSS3_RIGHT : PATTERN_BOSS3_LEFT;
 				break;
 		}
 		mp.gs.rsAddSound(9);
