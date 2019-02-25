@@ -21,7 +21,7 @@ export const drawGamescreenMy = function() {
 			var i2 = this.co_j.x - l + 16;
 			var k2 = this.co_j.y - i1 + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d2 = 0.017453292519943295;
+			var d2 = Math.PI / 180;
 			for (var i = 0; i <= 5; i++) {
 				var d = (this.j_v_kakudo + i * 60) * d2;
 				this.vo_pa_x[i] = i2 + Math.cos(d) * 38;
@@ -174,8 +174,16 @@ export const drawGamescreenWindow = function() {
 export const drawBoss = function() {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
-	let boss_sx = this.co_b.x - wx;
-	let boss_sy = this.co_b.y - wy;
+	/**
+	 * ボスのゲーム画面上のX座標
+	 * @type {number}
+	 */
+	const boss_sx = this.co_b.x - wx;
+	/**
+	 * ボスのゲーム画面上のY座標
+	 * @type {number}
+	 */
+	const boss_sy = this.co_b.y - wy;
 	if (boss_sx > 560) return;
 	if (this.co_b.img != null) {
 		this.hg.drawImage(this.co_b.img, boss_sx + this.co_b.zs_x, boss_sy + this.co_b.zs_y, this.ap);
@@ -238,7 +246,7 @@ export const drawBoss = function() {
 
 		case 1101:
 			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWide(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;
@@ -249,7 +257,7 @@ export const drawBoss = function() {
 
 		case 1106:
 			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWideFlip(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;
@@ -284,21 +292,18 @@ export const drawBoss = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			boss_sx = this.co_b.x - wx + 16;
-			boss_sy = this.co_b.y - wy + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d6 = 0.017453292519943295;
-			for (let i = 0; i <= 5; i++) {
-				var d = (this.j_v_kakudo + i * 60) * d6;
-				this.vo_pa_x[i] = boss_sx + Math.cos(d) * 50;
-				this.vo_pa_y[i] = boss_sy + Math.sin(d) * 50;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.cos(rad) * 50;
+				this.vo_pa_y[i] = boss_sy + 16 + Math.sin(rad) * 50;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (let i = 0; i <= 5; i++) {
-				var d1 = (360 - this.j_v_kakudo + i * 60) * d6;
-				this.vo_pa_x[i] = boss_sx + Math.cos(d1) * 50;
-				this.vo_pa_y[i] = boss_sy + Math.sin(d1) * 50;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.cos(rad) * 50;
+				this.vo_pa_y[i] = boss_sy + 16 + Math.sin(rad) * 50;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -306,7 +311,7 @@ export const drawBoss = function() {
 
 		case 1251:
 			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;
@@ -317,21 +322,18 @@ export const drawBoss = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			boss_sx = this.co_b.x - wx + 16;
-			boss_sy = this.co_b.y - wy + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d7 = 0.017453292519943295;
-			for (var j2 = 0; j2 <= 5; j2++) {
-				var d2 = (this.j_v_kakudo + j2 * 60) * d7;
-				this.vo_pa_x[j2] = boss_sx + Math.cos(d2) * 50;
-				this.vo_pa_y[j2] = boss_sy + Math.sin(d2) * 50;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.cos(rad) * 50;
+				this.vo_pa_y[i] = boss_sy + 16 + Math.sin(rad) * 50;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (var k2 = 0; k2 <= 5; k2++) {
-				var d3 = (360 - this.j_v_kakudo + k2 * 60) * d7;
-				this.vo_pa_x[k2] = boss_sx + Math.cos(d3) * 50;
-				this.vo_pa_y[k2] = boss_sy + Math.sin(d3) * 50;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.cos(rad) * 50;
+				this.vo_pa_y[i] = boss_sy + 16 + Math.sin(rad) * 50;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -339,7 +341,7 @@ export const drawBoss = function() {
 
 		case 1256:
 			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * 3.1415926535897931) / 180, boss_sx + 16, boss_sy + 16);
+			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;

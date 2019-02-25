@@ -247,7 +247,7 @@ export const drawGamescreen = function() {
 			var k6 = this.co_j.x - i3 + 16;
 			var j8 = this.co_j.y - j3 + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d8 = 0.017453292519943295;
+			var d8 = Math.PI / 180;
 			for (var i2 = 0; i2 <= 5; i2++) {
 				var d4 = (this.j_v_kakudo + i2 * 60) * d8;
 				this.vo_pa_x[i2] = k6 + Math.floor(Math.cos(d4) * 38);
@@ -320,8 +320,16 @@ export const drawGamescreen = function() {
 export const drawBoss = function() {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
-	let boss_sx = this.co_b.x - wx;
-	let boss_sy = this.co_b.y - wy;
+	/**
+	 * ボスのゲーム画面上のX座標
+	 * @type {number}
+	 */
+	const boss_sx = this.co_b.x - wx;
+	/**
+	 * ボスのゲーム画面上のY座標
+	 * @type {number}
+	 */
+	const boss_sy = this.co_b.y - wy;
 	if (boss_sx >= 528) return;
 	/**
 	 * 複数枚のパターン画像を並べて描画します
@@ -412,21 +420,18 @@ export const drawBoss = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			boss_sx = this.co_b.x - wx + 16;
-			boss_sy = this.co_b.y - wy + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d6 = 0.017453292519943295;
-			for (let i = 0; i <= 5; i++) {
-				var d = (this.j_v_kakudo + i * 60) * d6;
-				this.vo_pa_x[i] = boss_sx + Math.floor(Math.cos(d) * 50);
-				this.vo_pa_y[i] = boss_sy + Math.floor(Math.sin(d) * 50);
+			for (let i = 0; i < 6; i++) {
+				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (let i = 0; i <= 5; i++) {
-				var d1 = (360 - this.j_v_kakudo + i * 60) * d6;
-				this.vo_pa_x[i] = boss_sx + Math.floor(Math.cos(d1) * 50);
-				this.vo_pa_y[i] = boss_sy + Math.floor(Math.sin(d1) * 50);
+			for (let i = 0; i < 6; i++) {
+				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -438,21 +443,18 @@ export const drawBoss = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			boss_sx = this.co_b.x - wx + 16;
-			boss_sy = this.co_b.y - wy + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d7 = 0.017453292519943295;
-			for (var k1 = 0; k1 <= 5; k1++) {
-				var d2 = (this.j_v_kakudo + k1 * 60) * d7;
-				this.vo_pa_x[k1] = boss_sx + Math.floor(Math.cos(d2) * 50);
-				this.vo_pa_y[k1] = boss_sy + Math.floor(Math.sin(d2) * 50);
+			for (let i = 0; i < 6; i++) {
+				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (var l1 = 0; l1 <= 5; l1++) {
-				var d3 = (360 - this.j_v_kakudo + l1 * 60) * d7;
-				this.vo_pa_x[l1] = boss_sx + Math.floor(Math.cos(d3) * 50);
-				this.vo_pa_y[l1] = boss_sy + Math.floor(Math.sin(d3) * 50);
+			for (let i = 0; i < 6; i++) {
+				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
