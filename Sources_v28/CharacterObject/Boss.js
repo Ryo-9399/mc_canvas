@@ -606,7 +606,7 @@ class Boss extends CharacterObject {
 	 * @returns {boolean}
 	 */
 	isFumuable(mp) {
-		return !(this.pt === 1250 || this.pt === 1255);
+		return !(this.pt === PATTERN_BOSS3_BARRIER_LEFT || this.pt === PATTERN_BOSS3_BARRIER_RIGHT);
 	}
 
 	/**

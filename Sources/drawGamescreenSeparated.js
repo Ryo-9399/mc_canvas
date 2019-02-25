@@ -1,4 +1,5 @@
 import { Color, Font } from "./ImageBuff";
+import * as Boss from "./CharacterObject/Boss";
 
 /**
  * 主人公を描画します
@@ -224,69 +225,69 @@ export const drawBoss = function() {
 		default:
 			break;
 
-		case 1000:
+		case Boss.PATTERN_BOSS1_LEFT:
 			drawWide(186, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
-		case 1005:
+		case Boss.PATTERN_BOSS1_RIGHT:
 			drawWideFlip(186, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
-		case 1010:
+		case Boss.PATTERN_BOSS1_DAMAGE_LEFT:
 			drawWide(176, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
-		case 1015:
+		case Boss.PATTERN_BOSS1_DAMAGE_RIGHT:
 			drawWideFlip(176, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
-		case 1100:
+		case Boss.PATTERN_BOSS2_LEFT:
 			drawWide(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
-		case 1101:
+		case Boss.PATTERN_BOSS2_ROTATE_LEFT:
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWide(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;
 
-		case 1105:
+		case Boss.PATTERN_BOSS2_RIGHT:
 			drawWideFlip(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
-		case 1106:
+		case Boss.PATTERN_BOSS2_ROTATE_RIGHT:
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWideFlip(188, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;
 
-		case 1110:
+		case Boss.PATTERN_BOSS2_DAMAGE_LEFT:
 			drawWide(178, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
-		case 1115:
+		case Boss.PATTERN_BOSS2_DAMAGE_RIGHT:
 			drawWideFlip(178, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
-		case 1200:
+		case Boss.PATTERN_BOSS3_LEFT:
 			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
-		case 1205:
+		case Boss.PATTERN_BOSS3_RIGHT:
 			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			break;
 
-		case 1210:
+		case Boss.PATTERN_BOSS3_DAMAGE_LEFT:
 			drawWide(228, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
-		case 1215:
+		case Boss.PATTERN_BOSS3_DAMAGE_RIGHT:
 			drawWideFlip(228, 2, 1, boss_sx - 16, boss_sy + 16);
 			break;
 
-		case 1250:
+		case Boss.PATTERN_BOSS3_BARRIER_LEFT:
 			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
@@ -309,14 +310,14 @@ export const drawBoss = function() {
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
-		case 1251:
+		case Boss.PATTERN_BOSS3_ROTATE_LEFT:
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			this.hg.dispose();
 			break;
 
-		case 1255:
+		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
 			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
@@ -339,7 +340,7 @@ export const drawBoss = function() {
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
-		case 1256:
+		case Boss.PATTERN_BOSS3_ROTATE_RIGHT:
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_sx + 16, boss_sy + 16);
 			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);

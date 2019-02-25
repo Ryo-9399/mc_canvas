@@ -923,7 +923,12 @@ class Boss extends CharacterObject {
 	isFumuable(mp) {
 		if (mp.j_tokugi === 10 || (this.j_tokugi >= 12 && this.j_tokugi <= 15)) return false;
 		if (mp.boss_destroy_type === 2) return false;
-		return !(this.pt === 1250 || this.pt === 1255 || this.pt === 1251 || this.pt === 1256);
+		return !(
+			this.pt === PATTERN_BOSS3_BARRIER_LEFT ||
+			this.pt === PATTERN_BOSS3_BARRIER_RIGHT ||
+			this.pt === PATTERN_BOSS3_ROTATE_LEFT ||
+			this.pt === PATTERN_BOSS3_ROTATE_RIGHT
+		);
 	}
 
 	/**
@@ -980,7 +985,7 @@ class Boss extends CharacterObject {
 	 */
 	hitWithFireball(mp) {
 		// ボスがバリアを張っている場合はダメージを与えられない
-		if (this.pt === 1250 || this.pt === 1255) return;
+		if (this.pt === PATTERN_BOSS3_BARRIER_LEFT || this.pt === PATTERN_BOSS3_BARRIER_RIGHT) return;
 		// HPを1減らす
 		this.setHP(mp, mp.boss_hp - 1);
 	}
@@ -992,7 +997,7 @@ class Boss extends CharacterObject {
 	hitWithTail(mp) {
 		// しっぽでボスにダメージを与えられない場合は処理しない
 		if (mp.boss_destroy_type !== 2) return;
-		if (this.pt === 1250 || this.pt === 1255) return;
+		if (this.pt === PATTERN_BOSS3_BARRIER_LEFT || this.pt === PATTERN_BOSS3_BARRIER_RIGHT) return;
 		if (mp.j_tail_ap_boss < 1 || mp.j_tail_ac !== 5) return;
 
 		// ボスにダメージを与える
@@ -1132,15 +1137,15 @@ class Boss extends CharacterObject {
 	 */
 	getBossDirectionFromPattern() {
 		switch (this.pt) {
-			case 1005:
-			case 1015:
-			case 1105:
-			case 1106:
-			case 1115:
-			case 1205:
-			case 1215:
-			case 1255:
-			case 1256:
+			case PATTERN_BOSS1_RIGHT:
+			case PATTERN_BOSS1_DAMAGE_RIGHT:
+			case PATTERN_BOSS2_RIGHT:
+			case PATTERN_BOSS2_ROTATE_RIGHT:
+			case PATTERN_BOSS2_DAMAGE_RIGHT:
+			case PATTERN_BOSS3_RIGHT:
+			case PATTERN_BOSS3_DAMAGE_RIGHT:
+			case PATTERN_BOSS3_BARRIER_RIGHT:
+			case PATTERN_BOSS3_ROTATE_RIGHT:
 				return 1;
 			default:
 				return 0;
