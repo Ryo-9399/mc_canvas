@@ -1267,268 +1267,286 @@ export const drawGamescreen = function() {
 	drawBoss.apply(this);
 
 	// 主人公の描画
-	if (this.system_draw_mode < 2 && this.j_jet_c >= 96)
-		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
-		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
-	if (this.system_draw_mode < 2 && this.j_v_c > 0) {
-		this.j_v_c--;
-		this.j_v_kakudo += 2;
-		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
-		if (this.j_v_c > 40 || this.g_ac == 1) {
-			const center_x = this.co_j.x - view_x + 16;
-			const center_y = this.co_j.y - view_y + 16;
-			this.gg.os_g.setColor(Color.white);
-			for (let i = 0; i < 6; i++) {
-				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
-				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
-			}
-
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (let i = 0; i < 6; i++) {
-				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
-				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
-			}
-
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+	if (this.system_draw_mode < 2) {
+		if (this.j_jet_c >= 96) {
+			// ジェット噴射
+			if (this.g_c1 === 0)
+				this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+			else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
 		}
-	}
-	if (this.j_zan_cf && this.system_draw_mode != 2 && this.system_draw_mode != 3 && this.system_draw_mode != 4) {
-		this.j_zan_cf = false;
-		for (let i = 0; i < 6; i++)
+		if (this.j_v_c > 0) {
+			// バリア
+			this.j_v_c--;
+			this.j_v_kakudo += 2;
+			if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
+			if (this.j_v_c > 40 || this.g_ac === 1) {
+				const center_x = this.co_j.x - view_x + 16;
+				const center_y = this.co_j.y - view_y + 16;
+				this.gg.os_g.setColor(Color.white);
+				for (let i = 0; i < 6; i++) {
+					const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+					this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
+					this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
+				}
+
+				this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+				for (let i = 0; i < 6; i++) {
+					const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+					this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
+					this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
+				}
+
+				this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			}
+		}
+		if (this.j_zan_cf) {
+			// NOTE: なにこれ
+			this.j_zan_cf = false;
+			for (let i = 0; i < 6; i++) {
+				if (this.co_j.img != null) {
+					this.j_zan_img[i] = this.co_j.img;
+					this.j_zan_zs_x[i] = this.co_j.zs_x;
+					this.j_zan_zs_y[i] = this.co_j.zs_y;
+				} else {
+					this.j_zan_img[i] = null;
+					this.j_zan_pt[i] = this.co_j.pt;
+				}
+			}
+		}
+		if (this.j_zan_f) {
+			// スーパージャンプの残像
+			let i = this.j_zan_p + (6 - this.j_zan_nagasa);
+			let j = this.j_zan_p + 1;
+			if (i > 5) i -= 6;
+			if (j > 5) j -= 6;
+			do {
+				const zan_wx = this.j_zan_x[i] - view_x;
+				const zan_wy = this.j_zan_y[i] - view_y;
+				const muki = this.j_zan_pth[i];
+				if (this.j_zan_img[i] != null)
+					this.hg.drawImage(
+						this.j_zan_img[i],
+						zan_wx + this.j_zan_zs_x[i],
+						zan_wy + this.j_zan_zs_y[i],
+						this.ap
+					);
+				else this.hg.drawImage(this.hih[muki][this.j_zan_pt[i]], zan_wx, zan_wy, this.ap);
+				if (++i > 5) i = 0;
+			} while (i != j);
+			this.j_zan_p++;
+			if (this.j_zan_p > 5) this.j_zan_p = 0;
+			this.j_zan_x[this.j_zan_p] = this.co_j.x;
+			this.j_zan_y[this.j_zan_p] = this.co_j.y;
+			this.j_zan_pt[this.j_zan_p] = this.co_j.pt;
+			this.j_zan_pth[this.j_zan_p] = this.co_j.muki;
+			if (this.j_zan_c < 9) {
+				this.j_zan_c++;
+				if (this.j_cannon_c <= 0 && this.co_j.vy >= 0) this.j_zan_c = 9;
+			} else {
+				this.j_zan_nagasa--;
+				if (this.j_zan_nagasa < 0) this.j_zan_f = false;
+			}
+		}
+		if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 != 1) {
+			// 主人公本体の描画
 			if (this.co_j.img != null) {
-				this.j_zan_img[i] = this.co_j.img;
-				this.j_zan_zs_x[i] = this.co_j.zs_x;
-				this.j_zan_zs_y[i] = this.co_j.zs_y;
-			} else {
-				this.j_zan_img[i] = null;
-				this.j_zan_pt[i] = this.co_j.pt;
+				this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
+			} else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c == 1500 && this.co_j.pt < 1000) {
+				this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
+				var characterobject4 = this.co_a[this.j_rope_id];
+				var j14 = characterobject4.x - view_x;
+				var l16 = characterobject4.y - view_y;
+				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
+				this.gg.os_g.fillOval(j14 + 16 - 19, l16 + 16 - 19, 38, 38);
+				this.vo_pa_x[0] = j14 + 16 + Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_y[0] = l16 + 16 + Math.sin(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_x[1] = j14 + 16 + Math.cos(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_y[1] = l16 + 16 + Math.sin(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_x[2] =
+					j14 +
+					16 +
+					Math.cos((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
+					Math.cos(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_y[2] =
+					l16 +
+					16 +
+					Math.sin((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
+					Math.sin(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_x[3] =
+					j14 +
+					16 +
+					Math.cos((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
+					Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
+				this.vo_pa_y[3] =
+					l16 +
+					16 +
+					Math.sin((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
+					Math.sin(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
+				this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+				this.gg.os_g.setColor(this.gamecolor_firebar2);
+				if (characterobject4.c3 == 0 || characterobject4.c3 == 1) {
+					this.vo_pa_x[0] = j14 + 16 - 6;
+					this.vo_pa_y[0] = l16 + 16 - 4;
+					this.vo_pa_x[1] = j14 + 16 + 6;
+					this.vo_pa_y[1] = l16 + 16 - 4;
+					this.vo_pa_x[2] = j14 + 16 + 12;
+					this.vo_pa_y[2] = l16 + 32 + 12;
+					this.vo_pa_x[3] = j14 + 16 - 12;
+					this.vo_pa_y[3] = l16 + 32 + 12;
+				} else if (characterobject4.c3 == 2) {
+					this.vo_pa_x[0] = j14 + 16 - 6;
+					this.vo_pa_y[0] = l16 + 16 + 4;
+					this.vo_pa_x[1] = j14 + 16 + 6;
+					this.vo_pa_y[1] = l16 + 16 + 4;
+					this.vo_pa_x[2] = j14 + 16 + 12;
+					this.vo_pa_y[2] = l16 - 32;
+					this.vo_pa_x[3] = j14 + 16 - 12;
+					this.vo_pa_y[3] = l16 - 32;
+				} else if (characterobject4.c3 == 3) {
+					this.vo_pa_x[0] = j14 + 16 - 4;
+					this.vo_pa_y[0] = l16 + 16 - 6;
+					this.vo_pa_x[1] = j14 + 16 - 4;
+					this.vo_pa_y[1] = l16 + 16 + 6;
+					this.vo_pa_x[2] = j14 + 64;
+					this.vo_pa_y[2] = l16 + 16 + 12;
+					this.vo_pa_x[3] = j14 + 64;
+					this.vo_pa_y[3] = l16 + 16 - 12;
+				} else {
+					this.vo_pa_x[0] = j14 + 16 + 4;
+					this.vo_pa_y[0] = l16 + 16 - 6;
+					this.vo_pa_x[1] = j14 + 16 + 4;
+					this.vo_pa_y[1] = l16 + 16 + 6;
+					this.vo_pa_x[2] = j14 - 32;
+					this.vo_pa_y[2] = l16 + 16 + 12;
+					this.vo_pa_x[3] = j14 - 32;
+					this.vo_pa_y[3] = l16 + 16 - 12;
+				}
+				this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+			} else if (this.co_j.pt < 1000) {
+				this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
+			} else if (this.co_j.pt == 1000) {
+				if (this.j_tokugi == 15 && this.j_4_muki == 2) {
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 211, 0);
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 210, 0);
+				} else if (this.j_tokugi == 15 && this.j_4_muki == 3) {
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 105, 0);
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 106, 0);
+				} else if (this.co_j.muki == 0) {
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, this.co_j.muki);
+					this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 117, this.co_j.muki);
+				} else {
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, 1);
+					this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
+				}
+			} else if (this.co_j.pt == 1100) {
+				if (this.co_j.c2 >= 100 && this.co_j.c2 < 200) {
+					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
+					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 100, this.co_j.muki);
+					else this.gg.drawPT(this.co_j.wx, this.co_j.wy - this.co_j.c1, 100, this.co_j.muki);
+					var graphics225 = this.gg.os_img.getGraphics();
+					var j23 = this.co_j.wx - 16 + 32;
+					var k29 = this.co_j.wy - 32 + 16;
+					graphics225.rotate(3.1415926535897931, j23, k29);
+					graphics225.drawImage(
+						this.hi[60 + (this.co_j.c2 - 100) * 2],
+						this.co_j.wx - 16,
+						this.co_j.wy - 32,
+						this.ap
+					);
+					graphics225.drawImage(
+						this.hi[61 + (this.co_j.c2 - 100) * 2],
+						this.co_j.wx + 16,
+						this.co_j.wy - 32,
+						this.ap
+					);
+					graphics225.dispose();
+				} else if (this.co_j.c2 >= 200 && this.co_j.c2 < 300) {
+					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
+					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 100, this.co_j.muki);
+					else this.gg.drawPT(this.co_j.wx + this.co_j.c1, this.co_j.wy, 100, this.co_j.muki);
+					var graphics226 = this.gg.os_img.getGraphics();
+					var k23 = this.co_j.wx + 32 + 32;
+					var l29 = this.co_j.wy - 16 + 32;
+					graphics226.rotate(4.7123889803846898, k23, l29);
+					graphics226.drawImage(
+						this.hi[60 + (this.co_j.c2 - 200) * 2],
+						this.co_j.wx + 32,
+						this.co_j.wy - 16,
+						this.ap
+					);
+					graphics226.drawImage(
+						this.hi[61 + (this.co_j.c2 - 200) * 2],
+						this.co_j.wx + 32 + 32,
+						this.co_j.wy - 16,
+						this.ap
+					);
+					graphics226.dispose();
+				} else if (this.co_j.c2 >= 300 && this.co_j.c2 < 400) {
+					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
+					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 100, this.co_j.muki);
+					else this.gg.drawPT(this.co_j.wx - this.co_j.c1, this.co_j.wy, 100, this.co_j.muki);
+					var graphics227 = this.gg.os_img.getGraphics();
+					var l23 = this.co_j.wx - 32 + 16;
+					var i30 = this.co_j.wy - 16 + 16;
+					graphics227.rotate(1.5707963267948966, l23, i30);
+					graphics227.drawImage(
+						this.hi[60 + (this.co_j.c2 - 300) * 2],
+						this.co_j.wx - 32,
+						this.co_j.wy - 16,
+						this.ap
+					);
+					graphics227.drawImage(
+						this.hi[61 + (this.co_j.c2 - 300) * 2],
+						this.co_j.wx - 32 + 32,
+						this.co_j.wy - 16,
+						this.ap
+					);
+					graphics227.dispose();
+				} else {
+					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
+					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 100, this.co_j.muki);
+					else this.gg.drawPT(this.co_j.wx, this.co_j.wy + this.co_j.c1, 100, this.co_j.muki);
+					this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
+					this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
+				}
+			} else if (this.co_j.pt != 1110) {
+				if (this.co_j.pt == 1200) {
+					var graphics228 = this.gg.os_img.getGraphics();
+					var k14 = this.co_j.wx + 16;
+					var i17 = this.co_j.wy + 16;
+					if (this.co_a[this.j_rope_id].c == 3200)
+						graphics228.rotate(((this.co_a[this.j_rope_id].vy + 90) * 3.1415926535897931) / 180, k14, i17);
+					else graphics228.rotate(((this.co_a[this.j_rope_id].vy - 90) * 3.1415926535897931) / 180, k14, i17);
+					graphics228.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
+					graphics228.dispose();
+				} else if (this.co_j.pt == 1201) {
+					var graphics229 = this.gg.os_img.getGraphics();
+					var l14 = this.co_j.wx + 16;
+					var j17 = this.co_j.wy + 16;
+					if (this.co_a[this.j_rope_id].c == 3200)
+						graphics229.rotate(((this.co_a[this.j_rope_id].vy + 90) * 3.1415926535897931) / 180, l14, j17);
+					else graphics229.rotate(((this.co_a[this.j_rope_id].vy - 90) * 3.1415926535897931) / 180, l14, j17);
+					graphics229.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
+					graphics229.dispose();
+				} else if (this.co_j.pt == 1300) {
+					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+					else this.gg.os_g.setColor(this.gamecolor_grenade2);
+					this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 101, this.co_j.muki);
+				} else if (this.co_j.pt == 1400) {
+					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+					else this.gg.os_g.setColor(this.gamecolor_grenade2);
+					this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 83, this.co_j.muki);
+				} else if (this.co_j.pt == 1500) {
+					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+					else this.gg.os_g.setColor(this.gamecolor_grenade2);
+					this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
+					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 202, this.co_j.muki);
+				}
 			}
-	}
-	if (this.system_draw_mode < 2 && this.j_zan_f) {
-		let i7 = this.j_zan_p + (6 - this.j_zan_nagasa);
-		if (i7 > 5) i7 -= 6;
-		let j7 = this.j_zan_p + 1;
-		if (j7 > 5) j7 -= 6;
-		do {
-			const i14 = this.j_zan_x[i7] - view_x;
-			const k16 = this.j_zan_y[i7] - view_y;
-			const k7 = this.j_zan_pth[i7];
-			if (this.j_zan_img[i7] != null)
-				this.hg.drawImage(this.j_zan_img[i7], i14 + this.j_zan_zs_x[i7], k16 + this.j_zan_zs_y[i7], this.ap);
-			else this.hg.drawImage(this.hih[k7][this.j_zan_pt[i7]], i14, k16, this.ap);
-			if (++i7 > 5) i7 = 0;
-		} while (i7 != j7);
-		this.j_zan_p++;
-		if (this.j_zan_p > 5) this.j_zan_p = 0;
-		this.j_zan_x[this.j_zan_p] = this.co_j.x;
-		this.j_zan_y[this.j_zan_p] = this.co_j.y;
-		this.j_zan_pt[this.j_zan_p] = this.co_j.pt;
-		this.j_zan_pth[this.j_zan_p] = this.co_j.muki;
-		if (this.j_zan_c < 9) {
-			this.j_zan_c++;
-			if (this.j_cannon_c <= 0 && this.co_j.vy >= 0) this.j_zan_c = 9;
-		} else {
-			this.j_zan_nagasa--;
-			if (this.j_zan_nagasa < 0) this.j_zan_f = false;
 		}
 	}
-	if (this.system_draw_mode < 2 && (this.j_muteki_c <= 0 || this.j_muteki_c % 2 != 1))
-		if (this.co_j.img != null)
-			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
-		else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c == 1500 && this.co_j.pt < 1000) {
-			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-			var characterobject4 = this.co_a[this.j_rope_id];
-			var j14 = characterobject4.x - view_x;
-			var l16 = characterobject4.y - view_y;
-			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
-			this.gg.os_g.fillOval(j14 + 16 - 19, l16 + 16 - 19, 38, 38);
-			this.vo_pa_x[0] = j14 + 16 + Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_y[0] = l16 + 16 + Math.sin(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_x[1] = j14 + 16 + Math.cos(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_y[1] = l16 + 16 + Math.sin(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_x[2] =
-				j14 +
-				16 +
-				Math.cos((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-				Math.cos(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_y[2] =
-				l16 +
-				16 +
-				Math.sin((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-				Math.sin(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_x[3] =
-				j14 +
-				16 +
-				Math.cos((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-				Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
-			this.vo_pa_y[3] =
-				l16 +
-				16 +
-				Math.sin((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-				Math.sin(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
-			this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-			this.gg.os_g.setColor(this.gamecolor_firebar2);
-			if (characterobject4.c3 == 0 || characterobject4.c3 == 1) {
-				this.vo_pa_x[0] = j14 + 16 - 6;
-				this.vo_pa_y[0] = l16 + 16 - 4;
-				this.vo_pa_x[1] = j14 + 16 + 6;
-				this.vo_pa_y[1] = l16 + 16 - 4;
-				this.vo_pa_x[2] = j14 + 16 + 12;
-				this.vo_pa_y[2] = l16 + 32 + 12;
-				this.vo_pa_x[3] = j14 + 16 - 12;
-				this.vo_pa_y[3] = l16 + 32 + 12;
-			} else if (characterobject4.c3 == 2) {
-				this.vo_pa_x[0] = j14 + 16 - 6;
-				this.vo_pa_y[0] = l16 + 16 + 4;
-				this.vo_pa_x[1] = j14 + 16 + 6;
-				this.vo_pa_y[1] = l16 + 16 + 4;
-				this.vo_pa_x[2] = j14 + 16 + 12;
-				this.vo_pa_y[2] = l16 - 32;
-				this.vo_pa_x[3] = j14 + 16 - 12;
-				this.vo_pa_y[3] = l16 - 32;
-			} else if (characterobject4.c3 == 3) {
-				this.vo_pa_x[0] = j14 + 16 - 4;
-				this.vo_pa_y[0] = l16 + 16 - 6;
-				this.vo_pa_x[1] = j14 + 16 - 4;
-				this.vo_pa_y[1] = l16 + 16 + 6;
-				this.vo_pa_x[2] = j14 + 64;
-				this.vo_pa_y[2] = l16 + 16 + 12;
-				this.vo_pa_x[3] = j14 + 64;
-				this.vo_pa_y[3] = l16 + 16 - 12;
-			} else {
-				this.vo_pa_x[0] = j14 + 16 + 4;
-				this.vo_pa_y[0] = l16 + 16 - 6;
-				this.vo_pa_x[1] = j14 + 16 + 4;
-				this.vo_pa_y[1] = l16 + 16 + 6;
-				this.vo_pa_x[2] = j14 - 32;
-				this.vo_pa_y[2] = l16 + 16 + 12;
-				this.vo_pa_x[3] = j14 - 32;
-				this.vo_pa_y[3] = l16 + 16 - 12;
-			}
-			this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-		} else if (this.co_j.pt < 1000) this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-		else if (this.co_j.pt == 1000) {
-			if (this.j_tokugi == 15 && this.j_4_muki == 2) {
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 211, 0);
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 210, 0);
-			} else if (this.j_tokugi == 15 && this.j_4_muki == 3) {
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 105, 0);
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 106, 0);
-			} else if (this.co_j.muki == 0) {
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, this.co_j.muki);
-				this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 117, this.co_j.muki);
-			} else {
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, 1);
-				this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
-			}
-		} else if (this.co_j.pt == 1100) {
-			if (this.co_j.c2 >= 100 && this.co_j.c2 < 200) {
-				if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-				else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 100, this.co_j.muki);
-				else this.gg.drawPT(this.co_j.wx, this.co_j.wy - this.co_j.c1, 100, this.co_j.muki);
-				var graphics225 = this.gg.os_img.getGraphics();
-				var j23 = this.co_j.wx - 16 + 32;
-				var k29 = this.co_j.wy - 32 + 16;
-				graphics225.rotate(3.1415926535897931, j23, k29);
-				graphics225.drawImage(
-					this.hi[60 + (this.co_j.c2 - 100) * 2],
-					this.co_j.wx - 16,
-					this.co_j.wy - 32,
-					this.ap
-				);
-				graphics225.drawImage(
-					this.hi[61 + (this.co_j.c2 - 100) * 2],
-					this.co_j.wx + 16,
-					this.co_j.wy - 32,
-					this.ap
-				);
-				graphics225.dispose();
-			} else if (this.co_j.c2 >= 200 && this.co_j.c2 < 300) {
-				if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-				else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 100, this.co_j.muki);
-				else this.gg.drawPT(this.co_j.wx + this.co_j.c1, this.co_j.wy, 100, this.co_j.muki);
-				var graphics226 = this.gg.os_img.getGraphics();
-				var k23 = this.co_j.wx + 32 + 32;
-				var l29 = this.co_j.wy - 16 + 32;
-				graphics226.rotate(4.7123889803846898, k23, l29);
-				graphics226.drawImage(
-					this.hi[60 + (this.co_j.c2 - 200) * 2],
-					this.co_j.wx + 32,
-					this.co_j.wy - 16,
-					this.ap
-				);
-				graphics226.drawImage(
-					this.hi[61 + (this.co_j.c2 - 200) * 2],
-					this.co_j.wx + 32 + 32,
-					this.co_j.wy - 16,
-					this.ap
-				);
-				graphics226.dispose();
-			} else if (this.co_j.c2 >= 300 && this.co_j.c2 < 400) {
-				if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-				else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 100, this.co_j.muki);
-				else this.gg.drawPT(this.co_j.wx - this.co_j.c1, this.co_j.wy, 100, this.co_j.muki);
-				var graphics227 = this.gg.os_img.getGraphics();
-				var l23 = this.co_j.wx - 32 + 16;
-				var i30 = this.co_j.wy - 16 + 16;
-				graphics227.rotate(1.5707963267948966, l23, i30);
-				graphics227.drawImage(
-					this.hi[60 + (this.co_j.c2 - 300) * 2],
-					this.co_j.wx - 32,
-					this.co_j.wy - 16,
-					this.ap
-				);
-				graphics227.drawImage(
-					this.hi[61 + (this.co_j.c2 - 300) * 2],
-					this.co_j.wx - 32 + 32,
-					this.co_j.wy - 16,
-					this.ap
-				);
-				graphics227.dispose();
-			} else {
-				if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-				else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 100, this.co_j.muki);
-				else this.gg.drawPT(this.co_j.wx, this.co_j.wy + this.co_j.c1, 100, this.co_j.muki);
-				this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
-				this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
-			}
-		} else if (this.co_j.pt != 1110)
-			if (this.co_j.pt == 1200) {
-				var graphics228 = this.gg.os_img.getGraphics();
-				var k14 = this.co_j.wx + 16;
-				var i17 = this.co_j.wy + 16;
-				if (this.co_a[this.j_rope_id].c == 3200)
-					graphics228.rotate(((this.co_a[this.j_rope_id].vy + 90) * 3.1415926535897931) / 180, k14, i17);
-				else graphics228.rotate(((this.co_a[this.j_rope_id].vy - 90) * 3.1415926535897931) / 180, k14, i17);
-				graphics228.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
-				graphics228.dispose();
-			} else if (this.co_j.pt == 1201) {
-				var graphics229 = this.gg.os_img.getGraphics();
-				var l14 = this.co_j.wx + 16;
-				var j17 = this.co_j.wy + 16;
-				if (this.co_a[this.j_rope_id].c == 3200)
-					graphics229.rotate(((this.co_a[this.j_rope_id].vy + 90) * 3.1415926535897931) / 180, l14, j17);
-				else graphics229.rotate(((this.co_a[this.j_rope_id].vy - 90) * 3.1415926535897931) / 180, l14, j17);
-				graphics229.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
-				graphics229.dispose();
-			} else if (this.co_j.pt == 1300) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 101, this.co_j.muki);
-			} else if (this.co_j.pt == 1400) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 83, this.co_j.muki);
-			} else if (this.co_j.pt == 1500) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
-				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 202, this.co_j.muki);
-			}
 	if (this.j_muteki_c > 0) this.j_muteki_c--;
 
 	// MasaoJSS#showRectで設定された矩形を表示

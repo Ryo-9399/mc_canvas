@@ -11,14 +11,17 @@ export const drawGamescreenMy = function() {
 	const view_y = this.maps.wy;
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
-	if (this.j_jet_c >= 96)
-		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+	if (this.j_jet_c >= 96) {
+		// ジェット噴射
+		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
 		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+	}
 	if (this.j_v_c > 0) {
+		// バリア
 		this.j_v_c--;
 		this.j_v_kakudo += 2;
 		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
-		if (this.j_v_c > 40 || this.g_ac == 1) {
+		if (this.j_v_c > 40 || this.g_ac === 1) {
 			const center_x = this.co_j.x - view_x + 16;
 			const center_y = this.co_j.y - view_y + 16;
 			this.gg.os_g.setColor(Color.white);
@@ -39,8 +42,9 @@ export const drawGamescreenMy = function() {
 		}
 	}
 	if (this.j_zan_cf) {
+		// NOTE: なにこれ
 		this.j_zan_cf = false;
-		for (let i = 0; i < 6; i++)
+		for (let i = 0; i < 6; i++) {
 			if (this.co_j.img != null) {
 				this.j_zan_img[i] = this.co_j.img;
 				this.j_zan_zs_x[i] = this.co_j.zs_x;
@@ -49,21 +53,23 @@ export const drawGamescreenMy = function() {
 				this.j_zan_img[i] = null;
 				this.j_zan_pt[i] = this.co_j.pt;
 			}
+		}
 	}
 	if (this.j_zan_f) {
-		let j1 = this.j_zan_p + (6 - this.j_zan_nagasa);
-		if (j1 > 5) j1 -= 6;
-		let k1 = this.j_zan_p + 1;
-		if (k1 > 5) k1 -= 6;
+		// スーパージャンプの残像
+		let i = this.j_zan_p + (6 - this.j_zan_nagasa);
+		let j = this.j_zan_p + 1;
+		if (i > 5) i -= 6;
+		if (j > 5) j -= 6;
 		do {
-			const j2 = this.j_zan_x[j1] - view_x;
-			const l2 = this.j_zan_y[j1] - view_y;
-			const l1 = this.j_zan_pth[j1];
-			if (this.j_zan_img[j1] != null)
-				this.hg.drawImage(this.j_zan_img[j1], j2 + this.j_zan_zs_x[j1], l2 + this.j_zan_zs_y[j1], this.ap);
-			else this.hg.drawImage(this.hih[l1][this.j_zan_pt[j1]], j2, l2, this.ap);
-			if (++j1 > 5) j1 = 0;
-		} while (j1 != k1);
+			const zan_wx = this.j_zan_x[i] - view_x;
+			const zan_wy = this.j_zan_y[i] - view_y;
+			const muki = this.j_zan_pth[i];
+			if (this.j_zan_img[i] != null)
+				this.hg.drawImage(this.j_zan_img[i], zan_wx + this.j_zan_zs_x[i], zan_wy + this.j_zan_zs_y[i], this.ap);
+			else this.hg.drawImage(this.hih[muki][this.j_zan_pt[i]], zan_wx, zan_wy, this.ap);
+			if (++i > 5) i = 0;
+		} while (i != j);
 		this.j_zan_p++;
 		if (this.j_zan_p > 5) this.j_zan_p = 0;
 		this.j_zan_x[this.j_zan_p] = this.co_j.x;
@@ -78,11 +84,13 @@ export const drawGamescreenMy = function() {
 			if (this.j_zan_nagasa < 0) this.j_zan_f = false;
 		}
 	}
-	if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 != 1)
-		if (this.co_j.img != null)
+	if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 != 1) {
+		// 主人公本体の描画
+		if (this.co_j.img != null) {
 			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
-		else if (this.co_j.pt < 1000) this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-		else if (this.co_j.pt == 1000) {
+		} else if (this.co_j.pt < 1000) {
+			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
+		} else if (this.co_j.pt == 1000) {
 			if (this.j_tokugi == 15 && this.j_4_muki == 2) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 211, 0);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 210, 0);
@@ -103,6 +111,7 @@ export const drawGamescreenMy = function() {
 			this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
 			this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
 		} else if (this.co_j.pt != 1110);
+	}
 };
 
 /**

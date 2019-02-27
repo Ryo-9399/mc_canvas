@@ -242,14 +242,17 @@ export const drawGamescreen = function() {
 	drawBoss.apply(this);
 
 	// 主人公の描画
-	if (this.j_jet_c >= 96)
-		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+	if (this.j_jet_c >= 96) {
+		// ジェット噴射
+		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
 		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+	}
 	if (this.j_v_c > 0) {
+		// バリア
 		this.j_v_c--;
 		this.j_v_kakudo += 2;
 		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
-		if (this.j_v_c > 50 || this.g_ac == 1) {
+		if (this.j_v_c > 50 || this.g_ac === 1) {
 			const center_x = this.co_j.x - view_x + 16;
 			const center_y = this.co_j.y - view_y + 16;
 			this.gg.os_g.setColor(Color.white);
@@ -270,17 +273,18 @@ export const drawGamescreen = function() {
 		}
 	}
 	if (this.j_zan_f) {
-		let k3 = this.j_zan_p + (6 - this.j_zan_nagasa);
-		if (k3 > 5) k3 -= 6;
-		let l3 = this.j_zan_p + 1;
-		if (l3 > 5) l3 -= 6;
+		// スーパージャンプの残像
+		let i = this.j_zan_p + (6 - this.j_zan_nagasa);
+		let j = this.j_zan_p + 1;
+		if (i > 5) i -= 6;
+		if (j > 5) j -= 6;
 		do {
-			const l6 = this.j_zan_x[k3] - view_x;
-			const k8 = this.j_zan_y[k3] - view_y;
-			const i4 = this.j_zan_pth[k3];
-			this.hg.drawImage(this.hih[i4][this.j_zan_pt[k3]], l6, k8, this.ap);
-			if (++k3 > 5) k3 = 0;
-		} while (k3 != l3);
+			const zan_wx = this.j_zan_x[i] - view_x;
+			const zan_wy = this.j_zan_y[i] - view_y;
+			const muki = this.j_zan_pth[i];
+			this.hg.drawImage(this.hih[muki][this.j_zan_pt[i]], zan_wx, zan_wy, this.ap);
+			if (++i > 5) i = 0;
+		} while (i != j);
 		this.j_zan_p++;
 		if (this.j_zan_p > 5) this.j_zan_p = 0;
 		this.j_zan_x[this.j_zan_p] = this.co_j.x;
@@ -295,6 +299,7 @@ export const drawGamescreen = function() {
 			if (this.j_zan_nagasa < 0) this.j_zan_f = false;
 		}
 	}
+	// 主人公本体の描画
 	if (this.co_j.pt < 1000) this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
 	else if (this.co_j.pt == 1000) {
 		if (this.co_j.muki == 0) {
