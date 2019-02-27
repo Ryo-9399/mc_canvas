@@ -7,33 +7,32 @@ import * as Boss from "./CharacterObject/Boss";
  * @see {@link MasaoJSS#drawSystemObject}
  */
 export const drawGamescreenMy = function() {
-	var l = this.maps.wx;
-	var i1 = this.maps.wy;
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	if (this.j_jet_c >= 96)
-		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - l, this.co_j.y - i1 + 36, this.ap);
-		else this.hg.drawImage(this.hi[135], this.co_j.x - l, this.co_j.y - i1 + 36, this.ap);
+		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
 	if (this.j_v_c > 0) {
 		this.j_v_c--;
 		this.j_v_kakudo += 2;
 		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 		if (this.j_v_c > 40 || this.g_ac == 1) {
-			var i2 = this.co_j.x - l + 16;
-			var k2 = this.co_j.y - i1 + 16;
+			const center_x = this.co_j.x - view_x + 16;
+			const center_y = this.co_j.y - view_y + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d2 = Math.PI / 180;
-			for (var i = 0; i <= 5; i++) {
-				var d = (this.j_v_kakudo + i * 60) * d2;
-				this.vo_pa_x[i] = i2 + Math.cos(d) * 38;
-				this.vo_pa_y[i] = k2 + Math.sin(d) * 38;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
+				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (var j = 0; j <= 5; j++) {
-				var d1 = (360 - this.j_v_kakudo + j * 60) * d2;
-				this.vo_pa_x[j] = i2 + Math.cos(d1) * 38;
-				this.vo_pa_y[j] = k2 + Math.sin(d1) * 38;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
+				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -41,25 +40,25 @@ export const drawGamescreenMy = function() {
 	}
 	if (this.j_zan_cf) {
 		this.j_zan_cf = false;
-		for (var k = 0; k <= 5; k++)
+		for (let i = 0; i < 6; i++)
 			if (this.co_j.img != null) {
-				this.j_zan_img[k] = this.co_j.img;
-				this.j_zan_zs_x[k] = this.co_j.zs_x;
-				this.j_zan_zs_y[k] = this.co_j.zs_y;
+				this.j_zan_img[i] = this.co_j.img;
+				this.j_zan_zs_x[i] = this.co_j.zs_x;
+				this.j_zan_zs_y[i] = this.co_j.zs_y;
 			} else {
-				this.j_zan_img[k] = null;
-				this.j_zan_pt[k] = this.co_j.pt;
+				this.j_zan_img[i] = null;
+				this.j_zan_pt[i] = this.co_j.pt;
 			}
 	}
 	if (this.j_zan_f) {
-		var j1 = this.j_zan_p + (6 - this.j_zan_nagasa);
+		let j1 = this.j_zan_p + (6 - this.j_zan_nagasa);
 		if (j1 > 5) j1 -= 6;
-		var k1 = this.j_zan_p + 1;
+		let k1 = this.j_zan_p + 1;
 		if (k1 > 5) k1 -= 6;
 		do {
-			var j2 = this.j_zan_x[j1] - l;
-			var l2 = this.j_zan_y[j1] - i1;
-			var l1 = this.j_zan_pth[j1];
+			const j2 = this.j_zan_x[j1] - view_x;
+			const l2 = this.j_zan_y[j1] - view_y;
+			const l1 = this.j_zan_pth[j1];
 			if (this.j_zan_img[j1] != null)
 				this.hg.drawImage(this.j_zan_img[j1], j2 + this.j_zan_zs_x[j1], l2 + this.j_zan_zs_y[j1], this.ap);
 			else this.hg.drawImage(this.hih[l1][this.j_zan_pt[j1]], j2, l2, this.ap);

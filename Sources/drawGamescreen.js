@@ -17,26 +17,26 @@ export const drawGamescreen = function() {
 	} else {
 		this.maps.drawMapScroll(this.g_ac2);
 	}
-	var i6 = this.maps.wx;
-	var j6 = this.maps.wy;
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	if (this.ana_kazu > 0) {
-		for (var i = 0; i <= 11; i++) {
+		for (let i = 0; i <= 11; i++) {
 			if (this.ana_c[i] <= 0) continue;
 			if (this.ana_c[i] <= 135 && this.ana_c[i] >= 129) {
 				var l7 = (136 - this.ana_c[i]) * 4;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - i6, this.ana_y[i] * 32 - j6, 20, 0, l7);
+				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, l7);
 				continue;
 			}
 			if (this.ana_c[i] <= 235 && this.ana_c[i] >= 229) {
 				var i8 = (236 - this.ana_c[i]) * 4;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - i6, this.ana_y[i] * 32 - j6, 20, 0, i8 * -1);
+				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, i8 * -1);
 				continue;
 			}
 			if (this.ana_c[i] >= 1 && this.ana_c[i] <= 15) {
 				var j8 = this.ana_c[i] * 2;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - i6, this.ana_y[i] * 32 - j6, 20, 0, j8);
+				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, j8);
 			}
 		}
 	}
@@ -44,8 +44,8 @@ export const drawGamescreen = function() {
 		for (var j = 0; j <= this.a_kazu; j++)
 			if (this.co_a[j].pt == 3300 && this.co_a[j].gf) {
 				var characterobject = this.co_a[j];
-				var l12 = characterobject.x - i6;
-				var j15 = characterobject.y - j6;
+				var l12 = characterobject.x - view_x;
+				var j15 = characterobject.y - view_y;
 				switch (characterobject.pt) {
 					default:
 						break;
@@ -65,8 +65,8 @@ export const drawGamescreen = function() {
 		for (var k = 0; k <= this.a_kazu; k++)
 			if (this.co_a[k].gf) {
 				var characterobject1 = this.co_a[k];
-				var i13 = characterobject1.x - i6;
-				var k15 = characterobject1.y - j6;
+				var i13 = characterobject1.x - view_x;
+				var k15 = characterobject1.y - view_y;
 				switch (characterobject1.pt) {
 					case 850:
 					case 2700:
@@ -311,28 +311,28 @@ export const drawGamescreen = function() {
 					case 1100:
 						i13 = Math.cos(((characterobject1.c3 + 90) * 6.2831853071795862) / 360) * 16;
 						k15 = Math.sin(((characterobject1.c3 + 90) * 6.2831853071795862) / 360) * 16;
-						this.vo_pa_x[0] = this.vo_x[k][0] - i6 + i13;
-						this.vo_pa_y[0] = this.vo_y[k][0] - j6 + k15;
-						this.vo_pa_x[1] = this.vo_x[k][0] - i6 - i13;
-						this.vo_pa_y[1] = this.vo_y[k][0] - j6 - k15;
-						this.vo_pa_x[2] = this.vo_x[k][1] - i6 - i13;
-						this.vo_pa_y[2] = this.vo_y[k][1] - j6 - k15;
-						this.vo_pa_x[3] = this.vo_x[k][1] - i6 + i13;
-						this.vo_pa_y[3] = this.vo_y[k][1] - j6 + k15;
+						this.vo_pa_x[0] = this.vo_x[k][0] - view_x + i13;
+						this.vo_pa_y[0] = this.vo_y[k][0] - view_y + k15;
+						this.vo_pa_x[1] = this.vo_x[k][0] - view_x - i13;
+						this.vo_pa_y[1] = this.vo_y[k][0] - view_y - k15;
+						this.vo_pa_x[2] = this.vo_x[k][1] - view_x - i13;
+						this.vo_pa_y[2] = this.vo_y[k][1] - view_y - k15;
+						this.vo_pa_x[3] = this.vo_x[k][1] - view_x + i13;
+						this.vo_pa_y[3] = this.vo_y[k][1] - view_y + k15;
 						this.gg.os_g.setColor(this.gamecolor_firebar1);
 						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						if (this.g_c2 >= 2) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
 							i13 = Math.cos(((characterobject1.c3 + 90) * 6.2831853071795862) / 360) * 10;
 							k15 = Math.sin(((characterobject1.c3 + 90) * 6.2831853071795862) / 360) * 10;
-							this.vo_pa_x[0] = this.vo_x[k][2] - i6 + i13;
-							this.vo_pa_y[0] = this.vo_y[k][2] - j6 + k15;
-							this.vo_pa_x[1] = this.vo_x[k][2] - i6 - i13;
-							this.vo_pa_y[1] = this.vo_y[k][2] - j6 - k15;
-							this.vo_pa_x[2] = this.vo_x[k][3] - i6 - i13;
-							this.vo_pa_y[2] = this.vo_y[k][3] - j6 - k15;
-							this.vo_pa_x[3] = this.vo_x[k][3] - i6 + i13;
-							this.vo_pa_y[3] = this.vo_y[k][3] - j6 + k15;
+							this.vo_pa_x[0] = this.vo_x[k][2] - view_x + i13;
+							this.vo_pa_y[0] = this.vo_y[k][2] - view_y + k15;
+							this.vo_pa_x[1] = this.vo_x[k][2] - view_x - i13;
+							this.vo_pa_y[1] = this.vo_y[k][2] - view_y - k15;
+							this.vo_pa_x[2] = this.vo_x[k][3] - view_x - i13;
+							this.vo_pa_y[2] = this.vo_y[k][3] - view_y - k15;
+							this.vo_pa_x[3] = this.vo_x[k][3] - view_x + i13;
+							this.vo_pa_y[3] = this.vo_y[k][3] - view_y + k15;
 							this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						}
 						break;
@@ -1025,24 +1025,24 @@ export const drawGamescreen = function() {
 			if (characterobject2.c == 50) {
 				this.hg.drawImage(
 					this.hih[characterobject2.pth][characterobject2.pt],
-					characterobject2.x - i6,
-					characterobject2.y - j6,
+					characterobject2.x - view_x,
+					characterobject2.y - view_y,
 					this.ap
 				);
 				if (this.gg.layer_mode == 2) {
 					var k8 = this.maps.getBGCode(characterobject2.x, characterobject2.y);
 					if (k8 >= 20 && k8 != 29)
 						this.gg.drawPT(
-							rightShiftIgnoreSign(characterobject2.x, 5) * 32 - i6,
-							rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6,
+							rightShiftIgnoreSign(characterobject2.x, 5) * 32 - view_x,
+							rightShiftIgnoreSign(characterobject2.y, 5) * 32 - view_y,
 							k8,
 							0
 						);
 					k8 = this.maps.getBGCode(characterobject2.x + 31, characterobject2.y);
 					if (k8 >= 20 && k8 != 29)
 						this.gg.drawPT(
-							rightShiftIgnoreSign(characterobject2.x + 31, 5) * 32 - i6,
-							rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6,
+							rightShiftIgnoreSign(characterobject2.x + 31, 5) * 32 - view_x,
+							rightShiftIgnoreSign(characterobject2.y, 5) * 32 - view_y,
 							k8,
 							0
 						);
@@ -1051,16 +1051,16 @@ export const drawGamescreen = function() {
 				var l8 = this.maps.getBGCode(characterobject2.x, characterobject2.y);
 				if (l8 >= 20)
 					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject2.x, 5) * 32 - i6,
-						rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6,
+						rightShiftIgnoreSign(characterobject2.x, 5) * 32 - view_x,
+						rightShiftIgnoreSign(characterobject2.y, 5) * 32 - view_y,
 						l8,
 						0
 					);
 				l8 = this.maps.getBGCode(characterobject2.x + 31, characterobject2.y);
 				if (l8 >= 20)
 					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject2.x + 31, 5) * 32 - i6,
-						rightShiftIgnoreSign(characterobject2.y, 5) * 32 - j6,
+						rightShiftIgnoreSign(characterobject2.x + 31, 5) * 32 - view_x,
+						rightShiftIgnoreSign(characterobject2.y, 5) * 32 - view_y,
 						l8,
 						0
 					);
@@ -1069,8 +1069,8 @@ export const drawGamescreen = function() {
 			if (characterobject2.pt == 1000) {
 				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 				this.gg.os_g.fillOval(
-					characterobject2.x - i6 + 16 - characterobject2.c2,
-					characterobject2.y - j6 + 16 - characterobject2.c2,
+					characterobject2.x - view_x + 16 - characterobject2.c2,
+					characterobject2.y - view_y + 16 - characterobject2.c2,
 					characterobject2.c2 * 2,
 					characterobject2.c2 * 2
 				);
@@ -1086,8 +1086,8 @@ export const drawGamescreen = function() {
 					)
 				);
 				this.gg.os_g.fillOval(
-					characterobject2.x - i6 + 16 - characterobject2.c2,
-					characterobject2.y - j6 + 16 - characterobject2.c2,
+					characterobject2.x - view_x + 16 - characterobject2.c2,
+					characterobject2.y - view_y + 16 - characterobject2.c2,
 					characterobject2.c2 * 2,
 					characterobject2.c2 * 2
 				);
@@ -1097,8 +1097,8 @@ export const drawGamescreen = function() {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillOval(
-					characterobject2.x - i6 + 16 - characterobject2.c2,
-					characterobject2.y - j6 + 16 - characterobject2.c2,
+					characterobject2.x - view_x + 16 - characterobject2.c2,
+					characterobject2.y - view_y + 16 - characterobject2.c2,
 					characterobject2.c2 * 2,
 					characterobject2.c2 * 2
 				);
@@ -1108,8 +1108,8 @@ export const drawGamescreen = function() {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.drawOval(
-					characterobject2.x - i6 + 16 - characterobject2.vy,
-					characterobject2.y - j6 + 16 - characterobject2.vy,
+					characterobject2.x - view_x + 16 - characterobject2.vy,
+					characterobject2.y - view_y + 16 - characterobject2.vy,
 					characterobject2.vy * 2,
 					characterobject2.vy * 2
 				);
@@ -1119,8 +1119,8 @@ export const drawGamescreen = function() {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillRect(
-					characterobject2.x - i6,
-					characterobject2.y - j6 + 11,
+					characterobject2.x - view_x,
+					characterobject2.y - view_y + 11,
 					characterobject2.vx - characterobject2.x + 1,
 					10
 				);
@@ -1130,8 +1130,8 @@ export const drawGamescreen = function() {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillRect(
-					characterobject2.vx - i6,
-					characterobject2.y - j6 + 11,
+					characterobject2.vx - view_x,
+					characterobject2.y - view_y + 11,
 					characterobject2.x - characterobject2.vx + 1,
 					10
 				);
@@ -1140,8 +1140,8 @@ export const drawGamescreen = function() {
 			if (characterobject2.pt == 1220) {
 				this.gg.os_g.setColor(this.gamecolor_grenade1);
 				this.gg.os_g.drawOval(
-					characterobject2.x - i6 + 16 - characterobject2.vy,
-					characterobject2.y - j6 + 16 - characterobject2.vy,
+					characterobject2.x - view_x + 16 - characterobject2.vy,
+					characterobject2.y - view_y + 16 - characterobject2.vy,
 					characterobject2.vy * 2,
 					characterobject2.vy * 2
 				);
@@ -1157,8 +1157,8 @@ export const drawGamescreen = function() {
 					)
 				);
 				this.gg.os_g.fillRect(
-					characterobject2.x - i6,
-					characterobject2.y - j6 + 9,
+					characterobject2.x - view_x,
+					characterobject2.y - view_y + 9,
 					characterobject2.vx - characterobject2.x + 1,
 					14
 				);
@@ -1174,20 +1174,25 @@ export const drawGamescreen = function() {
 					)
 				);
 				this.gg.os_g.fillRect(
-					characterobject2.vx - i6,
-					characterobject2.y - j6 + 9,
+					characterobject2.vx - view_x,
+					characterobject2.y - view_y + 9,
 					characterobject2.x - characterobject2.vx + 1,
 					14
 				);
 				continue;
 			}
 			if (characterobject2.pt == 1300)
-				this.hg.drawImage(this.gg.spt_option_img[0], characterobject2.x - i6, characterobject2.y - j6, this.ap);
+				this.hg.drawImage(
+					this.gg.spt_option_img[0],
+					characterobject2.x - view_x,
+					characterobject2.y - view_y,
+					this.ap
+				);
 			else
 				this.hg.drawImage(
 					this.hih[characterobject2.pth][characterobject2.pt],
-					characterobject2.x - i6,
-					characterobject2.y - j6,
+					characterobject2.x - view_x,
+					characterobject2.y - view_y,
 					this.ap
 				);
 		}
@@ -1199,8 +1204,8 @@ export const drawGamescreen = function() {
 			if (characterobject3.pt < 1000) {
 				this.hg.drawImage(
 					this.hih[characterobject3.pth][characterobject3.pt],
-					characterobject3.x - i6,
-					characterobject3.y - j6,
+					characterobject3.x - view_x,
+					characterobject3.y - view_y,
 					this.ap
 				);
 				continue;
@@ -1209,8 +1214,8 @@ export const drawGamescreen = function() {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillRect(
-					characterobject3.x - i6,
-					characterobject3.y - j6 + 12,
+					characterobject3.x - view_x,
+					characterobject3.y - view_y + 12,
 					characterobject3.vx - characterobject3.x + 1,
 					8
 				);
@@ -1220,8 +1225,8 @@ export const drawGamescreen = function() {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillRect(
-					characterobject3.vx - i6,
-					characterobject3.y - j6 + 12,
+					characterobject3.vx - view_x,
+					characterobject3.y - view_y + 12,
 					characterobject3.x - characterobject3.vx + 1,
 					8
 				);
@@ -1230,8 +1235,8 @@ export const drawGamescreen = function() {
 			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillOval(
-				characterobject3.x - i6 + 16 - characterobject3.c2,
-				characterobject3.y - j6 + 16 - characterobject3.c2,
+				characterobject3.x - view_x + 16 - characterobject3.c2,
+				characterobject3.y - view_y + 16 - characterobject3.c2,
 				characterobject3.c2 * 2,
 				characterobject3.c2 * 2
 			);
@@ -1240,13 +1245,18 @@ export const drawGamescreen = function() {
 	if (this.j_tokugi == 14) {
 		for (var j1 = 0; j1 <= 1; j1++)
 			if (this.co_mu[j1].c >= 50)
-				this.hg.drawImage(this.hih[1][105 + this.g_ac], this.co_mu[j1].x - i6, this.co_mu[j1].y - j6, this.ap);
+				this.hg.drawImage(
+					this.hih[1][105 + this.g_ac],
+					this.co_mu[j1].x - view_x,
+					this.co_mu[j1].y - view_y,
+					this.ap
+				);
 	}
 	if (this.system_draw_mode < 3) {
 		for (var k1 = 0; k1 <= this.t_kazu; k1++) {
 			if (this.co_t[k1].c < 50) continue;
-			var j13 = this.co_t[k1].x - i6;
-			var l15 = this.co_t[k1].y - j6;
+			var j13 = this.co_t[k1].x - view_x;
+			var l15 = this.co_t[k1].y - view_y;
 			if (j13 < -64 || l15 > 576) continue;
 			if (this.co_t[k1].img != null)
 				this.hg.drawImage(this.co_t[k1].img, j13 + this.co_t[k1].zs_x, l15 + this.co_t[k1].zs_y, this.ap);
@@ -1258,28 +1268,27 @@ export const drawGamescreen = function() {
 
 	// 主人公の描画
 	if (this.system_draw_mode < 2 && this.j_jet_c >= 96)
-		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - i6, this.co_j.y - j6 + 36, this.ap);
-		else this.hg.drawImage(this.hi[135], this.co_j.x - i6, this.co_j.y - j6 + 36, this.ap);
+		if (this.g_c1 == 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
 	if (this.system_draw_mode < 2 && this.j_v_c > 0) {
 		this.j_v_c--;
 		this.j_v_kakudo += 2;
 		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 		if (this.j_v_c > 40 || this.g_ac == 1) {
-			var l13 = this.co_j.x - i6 + 16;
-			var j16 = this.co_j.y - j6 + 16;
+			const center_x = this.co_j.x - view_x + 16;
+			const center_y = this.co_j.y - view_y + 16;
 			this.gg.os_g.setColor(Color.white);
-			var d8 = 0.017453292519943295;
-			for (var l2 = 0; l2 <= 5; l2++) {
-				var d4 = (this.j_v_kakudo + l2 * 60) * d8;
-				this.vo_pa_x[l2] = l13 + Math.cos(d4) * 38;
-				this.vo_pa_y[l2] = j16 + Math.sin(d4) * 38;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
+				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
-			for (var i3 = 0; i3 <= 5; i3++) {
-				var d5 = (360 - this.j_v_kakudo + i3 * 60) * d8;
-				this.vo_pa_x[i3] = l13 + Math.cos(d5) * 38;
-				this.vo_pa_y[i3] = j16 + Math.sin(d5) * 38;
+			for (let i = 0; i < 6; i++) {
+				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
+				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
+				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -1287,25 +1296,25 @@ export const drawGamescreen = function() {
 	}
 	if (this.j_zan_cf && this.system_draw_mode != 2 && this.system_draw_mode != 3 && this.system_draw_mode != 4) {
 		this.j_zan_cf = false;
-		for (var j3 = 0; j3 <= 5; j3++)
+		for (let i = 0; i < 6; i++)
 			if (this.co_j.img != null) {
-				this.j_zan_img[j3] = this.co_j.img;
-				this.j_zan_zs_x[j3] = this.co_j.zs_x;
-				this.j_zan_zs_y[j3] = this.co_j.zs_y;
+				this.j_zan_img[i] = this.co_j.img;
+				this.j_zan_zs_x[i] = this.co_j.zs_x;
+				this.j_zan_zs_y[i] = this.co_j.zs_y;
 			} else {
-				this.j_zan_img[j3] = null;
-				this.j_zan_pt[j3] = this.co_j.pt;
+				this.j_zan_img[i] = null;
+				this.j_zan_pt[i] = this.co_j.pt;
 			}
 	}
 	if (this.system_draw_mode < 2 && this.j_zan_f) {
-		var i7 = this.j_zan_p + (6 - this.j_zan_nagasa);
+		let i7 = this.j_zan_p + (6 - this.j_zan_nagasa);
 		if (i7 > 5) i7 -= 6;
-		var j7 = this.j_zan_p + 1;
+		let j7 = this.j_zan_p + 1;
 		if (j7 > 5) j7 -= 6;
 		do {
-			var i14 = this.j_zan_x[i7] - i6;
-			var k16 = this.j_zan_y[i7] - j6;
-			var k7 = this.j_zan_pth[i7];
+			const i14 = this.j_zan_x[i7] - view_x;
+			const k16 = this.j_zan_y[i7] - view_y;
+			const k7 = this.j_zan_pth[i7];
 			if (this.j_zan_img[i7] != null)
 				this.hg.drawImage(this.j_zan_img[i7], i14 + this.j_zan_zs_x[i7], k16 + this.j_zan_zs_y[i7], this.ap);
 			else this.hg.drawImage(this.hih[k7][this.j_zan_pt[i7]], i14, k16, this.ap);
@@ -1331,8 +1340,8 @@ export const drawGamescreen = function() {
 		else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c == 1500 && this.co_j.pt < 1000) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
 			var characterobject4 = this.co_a[this.j_rope_id];
-			var j14 = characterobject4.x - i6;
-			var l16 = characterobject4.y - j6;
+			var j14 = characterobject4.x - view_x;
+			var l16 = characterobject4.y - view_y;
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 			this.gg.os_g.fillOval(j14 + 16 - 19, l16 + 16 - 19, 38, 38);
 			this.vo_pa_x[0] = j14 + 16 + Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
