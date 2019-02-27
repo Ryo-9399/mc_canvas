@@ -821,7 +821,7 @@ class Boss extends CharacterObject {
 			else if (this.c1 === 30) degree = 15;
 			// boss3_type === 7: 高速回転
 			if (mp.boss3_type === 7) degree *= 2;
-			if (degree !== 0) this.c2 = normalizeDegree(this.c2 + degree);
+			if (degree !== 0) this.c2 = normalizeDegree(this.c2 + degree * mirror);
 		}
 
 		if (this.c1 < 25) {

@@ -222,7 +222,13 @@ CanvasMasao.InputRecorder = (function() {
 			//記録
 			if (required) {
 				//クリアのログを残す
-				var allbuf = (this.allbuf = this.allbuf.concat(result_buffers));
+				var allbuf = this.allbuf.concat(result_buffers);
+				if (status !== "abort") {
+					this.allbuf = allbuf;
+				} else {
+					// タイトル画面に戻ったときは過去のリプレイを捨てる
+					this.allbuf = [];
+				}
 				if (this.inputdataCallback != null) {
 					//新しいのが来たのでコールバックする
 					//METADATA blockを作る
