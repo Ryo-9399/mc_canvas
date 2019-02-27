@@ -301,8 +301,10 @@ export const drawGamescreen = function() {
 		}
 	}
 	// 主人公本体の描画
-	if (this.co_j.pt < 1000) this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-	else if (this.co_j.pt == 1000) {
+	if (this.co_j.pt < 1000) {
+		this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
+	} else if (this.co_j.pt == 1000) {
+		// しっぽを伸ばしている
 		if (this.co_j.muki == 0) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, this.co_j.muki);
 			this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 117, this.co_j.muki);
@@ -311,6 +313,7 @@ export const drawGamescreen = function() {
 			this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
 		}
 	} else if (this.co_j.pt == 1100) {
+		// 土管に入る
 		if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
 		else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 100, this.co_j.muki);
 		else this.gg.drawPT(this.co_j.wx, this.co_j.wy + this.co_j.c1, 100, this.co_j.muki);
@@ -335,13 +338,13 @@ export const drawBoss = function() {
 	 * ボスのゲーム画面上のX座標
 	 * @type {number}
 	 */
-	const boss_sx = this.co_b.x - wx;
+	const boss_wx = this.co_b.x - wx;
 	/**
 	 * ボスのゲーム画面上のY座標
 	 * @type {number}
 	 */
-	const boss_sy = this.co_b.y - wy;
-	if (boss_sx >= 528) return;
+	const boss_wy = this.co_b.y - wy;
+	if (boss_wx >= 528) return;
 	/**
 	 * 複数枚のパターン画像を並べて描画します
 	 * @param code 左上のパターンコード
@@ -378,55 +381,55 @@ export const drawBoss = function() {
 			break;
 
 		case Boss.PATTERN_BOSS1_LEFT:
-			drawWide(186, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWide(186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		case Boss.PATTERN_BOSS1_RIGHT:
-			drawWideFlip(186, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWideFlip(186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		case Boss.PATTERN_BOSS1_DAMAGE_LEFT:
-			drawWide(176, 2, 1, boss_sx - 16, boss_sy + 16);
+			drawWide(176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		case Boss.PATTERN_BOSS1_DAMAGE_RIGHT:
-			drawWideFlip(176, 2, 1, boss_sx - 16, boss_sy + 16);
+			drawWideFlip(176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		case Boss.PATTERN_BOSS2_LEFT:
-			drawWide(188, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		case Boss.PATTERN_BOSS2_RIGHT:
-			drawWideFlip(188, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		case Boss.PATTERN_BOSS2_DAMAGE_LEFT:
-			drawWide(178, 2, 1, boss_sx - 16, boss_sy + 16);
+			drawWide(178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		case Boss.PATTERN_BOSS2_DAMAGE_RIGHT:
-			drawWideFlip(178, 2, 1, boss_sx - 16, boss_sy + 16);
+			drawWideFlip(178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		case Boss.PATTERN_BOSS3_LEFT:
-			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		case Boss.PATTERN_BOSS3_RIGHT:
-			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		case Boss.PATTERN_BOSS3_DAMAGE_LEFT:
-			drawWide(228, 2, 1, boss_sx - 16, boss_sy + 16);
+			drawWide(228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		case Boss.PATTERN_BOSS3_DAMAGE_RIGHT:
-			drawWideFlip(228, 2, 1, boss_sx - 16, boss_sy + 16);
+			drawWideFlip(228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		case Boss.PATTERN_BOSS3_BARRIER_LEFT:
-			drawWide(238, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
@@ -434,22 +437,22 @@ export const drawBoss = function() {
 			this.gg.os_g.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
-				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
-				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
 		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
-			drawWideFlip(238, 2, 2, boss_sx - 16, boss_sy - 16);
+			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
@@ -457,15 +460,15 @@ export const drawBoss = function() {
 			this.gg.os_g.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
-				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_sx + 16 + Math.floor(Math.cos(rad) * 50);
-				this.vo_pa_y[i] = boss_sy + 16 + Math.floor(Math.sin(rad) * 50);
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);

@@ -1353,79 +1353,82 @@ export const drawGamescreen = function() {
 			if (this.co_j.img != null) {
 				this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
 			} else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c == 1500 && this.co_j.pt < 1000) {
+				// 人間砲台に入る
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-				var characterobject4 = this.co_a[this.j_rope_id];
-				var j14 = characterobject4.x - view_x;
-				var l16 = characterobject4.y - view_y;
+				// 主人公を隠すために人間砲台を描画
+				const characterobject = this.co_a[this.j_rope_id];
+				const co_wx = characterobject.x - view_x;
+				const co_wy = characterobject.y - view_y;
 				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
-				this.gg.os_g.fillOval(j14 + 16 - 19, l16 + 16 - 19, 38, 38);
-				this.vo_pa_x[0] = j14 + 16 + Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
-				this.vo_pa_y[0] = l16 + 16 + Math.sin(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
-				this.vo_pa_x[1] = j14 + 16 + Math.cos(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
-				this.vo_pa_y[1] = l16 + 16 + Math.sin(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+				this.gg.os_g.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
+				this.vo_pa_x[0] = co_wx + 16 + Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
+				this.vo_pa_y[0] = co_wy + 16 + Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
+				this.vo_pa_x[1] = co_wx + 16 + Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
+				this.vo_pa_y[1] = co_wy + 16 + Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
 				this.vo_pa_x[2] =
-					j14 +
+					co_wx +
 					16 +
-					Math.cos((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-					Math.cos(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+					Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
+					Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
 				this.vo_pa_y[2] =
-					l16 +
+					co_wy +
 					16 +
-					Math.sin((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-					Math.sin(((characterobject4.c4 - 90) * 3.1415926535897931) / 180) * 20;
+					Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
+					Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
 				this.vo_pa_x[3] =
-					j14 +
+					co_wx +
 					16 +
-					Math.cos((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-					Math.cos(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
+					Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
+					Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
 				this.vo_pa_y[3] =
-					l16 +
+					co_wy +
 					16 +
-					Math.sin((characterobject4.c4 * 3.1415926535897931) / 180) * 68 +
-					Math.sin(((characterobject4.c4 + 90) * 3.1415926535897931) / 180) * 20;
+					Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
+					Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
 				this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 				this.gg.os_g.setColor(this.gamecolor_firebar2);
-				if (characterobject4.c3 == 0 || characterobject4.c3 == 1) {
-					this.vo_pa_x[0] = j14 + 16 - 6;
-					this.vo_pa_y[0] = l16 + 16 - 4;
-					this.vo_pa_x[1] = j14 + 16 + 6;
-					this.vo_pa_y[1] = l16 + 16 - 4;
-					this.vo_pa_x[2] = j14 + 16 + 12;
-					this.vo_pa_y[2] = l16 + 32 + 12;
-					this.vo_pa_x[3] = j14 + 16 - 12;
-					this.vo_pa_y[3] = l16 + 32 + 12;
-				} else if (characterobject4.c3 == 2) {
-					this.vo_pa_x[0] = j14 + 16 - 6;
-					this.vo_pa_y[0] = l16 + 16 + 4;
-					this.vo_pa_x[1] = j14 + 16 + 6;
-					this.vo_pa_y[1] = l16 + 16 + 4;
-					this.vo_pa_x[2] = j14 + 16 + 12;
-					this.vo_pa_y[2] = l16 - 32;
-					this.vo_pa_x[3] = j14 + 16 - 12;
-					this.vo_pa_y[3] = l16 - 32;
-				} else if (characterobject4.c3 == 3) {
-					this.vo_pa_x[0] = j14 + 16 - 4;
-					this.vo_pa_y[0] = l16 + 16 - 6;
-					this.vo_pa_x[1] = j14 + 16 - 4;
-					this.vo_pa_y[1] = l16 + 16 + 6;
-					this.vo_pa_x[2] = j14 + 64;
-					this.vo_pa_y[2] = l16 + 16 + 12;
-					this.vo_pa_x[3] = j14 + 64;
-					this.vo_pa_y[3] = l16 + 16 - 12;
+				if (characterobject.c3 == 0 || characterobject.c3 == 1) {
+					this.vo_pa_x[0] = co_wx + 16 - 6;
+					this.vo_pa_y[0] = co_wy + 16 - 4;
+					this.vo_pa_x[1] = co_wx + 16 + 6;
+					this.vo_pa_y[1] = co_wy + 16 - 4;
+					this.vo_pa_x[2] = co_wx + 16 + 12;
+					this.vo_pa_y[2] = co_wy + 32 + 12;
+					this.vo_pa_x[3] = co_wx + 16 - 12;
+					this.vo_pa_y[3] = co_wy + 32 + 12;
+				} else if (characterobject.c3 == 2) {
+					this.vo_pa_x[0] = co_wx + 16 - 6;
+					this.vo_pa_y[0] = co_wy + 16 + 4;
+					this.vo_pa_x[1] = co_wx + 16 + 6;
+					this.vo_pa_y[1] = co_wy + 16 + 4;
+					this.vo_pa_x[2] = co_wx + 16 + 12;
+					this.vo_pa_y[2] = co_wy - 32;
+					this.vo_pa_x[3] = co_wx + 16 - 12;
+					this.vo_pa_y[3] = co_wy - 32;
+				} else if (characterobject.c3 == 3) {
+					this.vo_pa_x[0] = co_wx + 16 - 4;
+					this.vo_pa_y[0] = co_wy + 16 - 6;
+					this.vo_pa_x[1] = co_wx + 16 - 4;
+					this.vo_pa_y[1] = co_wy + 16 + 6;
+					this.vo_pa_x[2] = co_wx + 64;
+					this.vo_pa_y[2] = co_wy + 16 + 12;
+					this.vo_pa_x[3] = co_wx + 64;
+					this.vo_pa_y[3] = co_wy + 16 - 12;
 				} else {
-					this.vo_pa_x[0] = j14 + 16 + 4;
-					this.vo_pa_y[0] = l16 + 16 - 6;
-					this.vo_pa_x[1] = j14 + 16 + 4;
-					this.vo_pa_y[1] = l16 + 16 + 6;
-					this.vo_pa_x[2] = j14 - 32;
-					this.vo_pa_y[2] = l16 + 16 + 12;
-					this.vo_pa_x[3] = j14 - 32;
-					this.vo_pa_y[3] = l16 + 16 - 12;
+					this.vo_pa_x[0] = co_wx + 16 + 4;
+					this.vo_pa_y[0] = co_wy + 16 - 6;
+					this.vo_pa_x[1] = co_wx + 16 + 4;
+					this.vo_pa_y[1] = co_wy + 16 + 6;
+					this.vo_pa_x[2] = co_wx - 32;
+					this.vo_pa_y[2] = co_wy + 16 + 12;
+					this.vo_pa_x[3] = co_wx - 32;
+					this.vo_pa_y[3] = co_wy + 16 - 12;
 				}
 				this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 			} else if (this.co_j.pt < 1000) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
 			} else if (this.co_j.pt == 1000) {
+				// しっぽを伸ばしている
 				if (this.j_tokugi == 15 && this.j_4_muki == 2) {
 					this.gg.drawPT(this.co_j.wx, this.co_j.wy, 211, 0);
 					this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 210, 0);
@@ -1440,6 +1443,7 @@ export const drawGamescreen = function() {
 					this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
 				}
 			} else if (this.co_j.pt == 1100) {
+				// 土管に入る
 				if (this.co_j.c2 >= 100 && this.co_j.c2 < 200) {
 					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
 					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 100, this.co_j.muki);
@@ -1447,7 +1451,7 @@ export const drawGamescreen = function() {
 					var graphics225 = this.gg.os_img.getGraphics();
 					var j23 = this.co_j.wx - 16 + 32;
 					var k29 = this.co_j.wy - 32 + 16;
-					graphics225.rotate(3.1415926535897931, j23, k29);
+					graphics225.rotate(Math.PI, j23, k29);
 					graphics225.drawImage(
 						this.hi[60 + (this.co_j.c2 - 100) * 2],
 						this.co_j.wx - 16,
@@ -1516,8 +1520,8 @@ export const drawGamescreen = function() {
 					var k14 = this.co_j.wx + 16;
 					var i17 = this.co_j.wy + 16;
 					if (this.co_a[this.j_rope_id].c == 3200)
-						graphics228.rotate(((this.co_a[this.j_rope_id].vy + 90) * 3.1415926535897931) / 180, k14, i17);
-					else graphics228.rotate(((this.co_a[this.j_rope_id].vy - 90) * 3.1415926535897931) / 180, k14, i17);
+						graphics228.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, k14, i17);
+					else graphics228.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, k14, i17);
 					graphics228.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
 					graphics228.dispose();
 				} else if (this.co_j.pt == 1201) {
@@ -1525,8 +1529,8 @@ export const drawGamescreen = function() {
 					var l14 = this.co_j.wx + 16;
 					var j17 = this.co_j.wy + 16;
 					if (this.co_a[this.j_rope_id].c == 3200)
-						graphics229.rotate(((this.co_a[this.j_rope_id].vy + 90) * 3.1415926535897931) / 180, l14, j17);
-					else graphics229.rotate(((this.co_a[this.j_rope_id].vy - 90) * 3.1415926535897931) / 180, l14, j17);
+						graphics229.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, l14, j17);
+					else graphics229.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, l14, j17);
 					graphics229.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
 					graphics229.dispose();
 				} else if (this.co_j.pt == 1300) {
