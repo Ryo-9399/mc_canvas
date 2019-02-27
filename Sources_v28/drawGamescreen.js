@@ -274,17 +274,18 @@ export const drawGamescreen = function() {
 	}
 	if (this.j_zan_f) {
 		// スーパージャンプの残像
-		let i = this.j_zan_p + (6 - this.j_zan_nagasa);
-		let j = this.j_zan_p + 1;
-		if (i > 5) i -= 6;
-		if (j > 5) j -= 6;
-		do {
-			const zan_wx = this.j_zan_x[i] - view_x;
-			const zan_wy = this.j_zan_y[i] - view_y;
-			const muki = this.j_zan_pth[i];
-			this.hg.drawImage(this.hih[muki][this.j_zan_pt[i]], zan_wx, zan_wy, this.ap);
-			if (++i > 5) i = 0;
-		} while (i != j);
+		// NOTE: this.j_zan_nagasa+1個の残像が表示される
+		const zan_max_length = 6;
+		const tail = this.j_zan_p + zan_max_length;
+		const head = tail - this.j_zan_nagasa;
+		for (let i = head; i <= tail; i++) {
+			const index = i % zan_max_length;
+			const zan_wx = this.j_zan_x[index] - view_x;
+			const zan_wy = this.j_zan_y[index] - view_y;
+			const muki = this.j_zan_pth[index];
+			this.hg.drawImage(this.hih[muki][this.j_zan_pt[index]], zan_wx, zan_wy, this.ap);
+		}
+
 		this.j_zan_p++;
 		if (this.j_zan_p > 5) this.j_zan_p = 0;
 		this.j_zan_x[this.j_zan_p] = this.co_j.x;
