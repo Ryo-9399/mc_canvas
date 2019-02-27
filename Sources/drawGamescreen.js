@@ -1444,76 +1444,36 @@ export const drawGamescreen = function() {
 				}
 			} else if (this.co_j.pt == 1100) {
 				// 土管に入る
-				if (this.co_j.c2 >= 100 && this.co_j.c2 < 200) {
-					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 100, this.co_j.muki);
-					else this.gg.drawPT(this.co_j.wx, this.co_j.wy - this.co_j.c1, 100, this.co_j.muki);
-					var graphics225 = this.gg.os_img.getGraphics();
-					var j23 = this.co_j.wx - 16 + 32;
-					var k29 = this.co_j.wy - 32 + 16;
-					graphics225.rotate(Math.PI, j23, k29);
-					graphics225.drawImage(
-						this.hi[60 + (this.co_j.c2 - 100) * 2],
-						this.co_j.wx - 16,
-						this.co_j.wy - 32,
-						this.ap
-					);
-					graphics225.drawImage(
-						this.hi[61 + (this.co_j.c2 - 100) * 2],
-						this.co_j.wx + 16,
-						this.co_j.wy - 32,
-						this.ap
-					);
-					graphics225.dispose();
-				} else if (this.co_j.c2 >= 200 && this.co_j.c2 < 300) {
-					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 100, this.co_j.muki);
-					else this.gg.drawPT(this.co_j.wx + this.co_j.c1, this.co_j.wy, 100, this.co_j.muki);
-					var graphics226 = this.gg.os_img.getGraphics();
-					var k23 = this.co_j.wx + 32 + 32;
-					var l29 = this.co_j.wy - 16 + 32;
-					graphics226.rotate(4.7123889803846898, k23, l29);
-					graphics226.drawImage(
-						this.hi[60 + (this.co_j.c2 - 200) * 2],
-						this.co_j.wx + 32,
-						this.co_j.wy - 16,
-						this.ap
-					);
-					graphics226.drawImage(
-						this.hi[61 + (this.co_j.c2 - 200) * 2],
-						this.co_j.wx + 32 + 32,
-						this.co_j.wy - 16,
-						this.ap
-					);
-					graphics226.dispose();
-				} else if (this.co_j.c2 >= 300 && this.co_j.c2 < 400) {
-					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 100, this.co_j.muki);
-					else this.gg.drawPT(this.co_j.wx - this.co_j.c1, this.co_j.wy, 100, this.co_j.muki);
-					var graphics227 = this.gg.os_img.getGraphics();
-					var l23 = this.co_j.wx - 32 + 16;
-					var i30 = this.co_j.wy - 16 + 16;
-					graphics227.rotate(1.5707963267948966, l23, i30);
-					graphics227.drawImage(
-						this.hi[60 + (this.co_j.c2 - 300) * 2],
-						this.co_j.wx - 32,
-						this.co_j.wy - 16,
-						this.ap
-					);
-					graphics227.drawImage(
-						this.hi[61 + (this.co_j.c2 - 300) * 2],
-						this.co_j.wx - 32 + 32,
-						this.co_j.wy - 16,
-						this.ap
-					);
-					graphics227.dispose();
-				} else {
-					if (this.co_j.c1 <= 0) this.gg.drawPT(this.co_j.wx, this.co_j.wy, 100, this.co_j.muki);
-					else if (this.co_j.c1 >= 32) this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 100, this.co_j.muki);
-					else this.gg.drawPT(this.co_j.wx, this.co_j.wy + this.co_j.c1, 100, this.co_j.muki);
-					this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
-					this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
-				}
+				// 土管の種類 0がリンク土管1, 1がリンク土管2, ...
+				const dokan_id = this.co_j.c2 % 100;
+				const dokan_pt = 60 + dokan_id * 2;
+				// 0:通常 1:上向き 2:左向き 3:右向き
+				const dokan_type = Math.floor(this.co_j.c2 / 100);
+				// 主人公を少しづつ土管に入れる
+				let j_dx = 0;
+				let j_dy = 0;
+				// 主人公の位置を[0,32]の範囲に収める
+				const diff = Math.max(0, Math.min(32, this.co_j.c1));
+				if (dokan_type === 1) j_dy = -diff;
+				else if (dokan_type === 2) j_dx = diff;
+				else if (dokan_type === 3) j_dx = -diff;
+				else j_dy = diff;
+				// 位置をずらして主人公を描画
+				this.gg.drawPT(this.co_j.wx + j_dx, this.co_j.wy + j_dy, 100, this.co_j.muki);
+				// 土管の回転角度と回転の中心を算出する
+				let rad = 0;
+				if (dokan_type === 1) rad = Math.PI;
+				else if (dokan_type === 2) rad = -Math.PI / 2;
+				else if (dokan_type === 3) rad = Math.PI / 2;
+				// 土管の中心は向きに応じて主人公の中心座標から1ブロックずれる
+				const dokan_center_wx = this.co_j.wx + 16 + 32 * Math.cos(rad + Math.PI / 2);
+				const dokan_center_wy = this.co_j.wy + 16 + 32 * Math.sin(rad + Math.PI / 2);
+				// 土管を回転させて描画
+				this.hg.dispose();
+				this.hg.rotate(rad, dokan_center_wx, dokan_center_wy);
+				this.hg.drawImage(this.hi[dokan_pt], dokan_center_wx - 32, dokan_center_wy - 16, this.ap);
+				this.hg.drawImage(this.hi[dokan_pt + 1], dokan_center_wx, dokan_center_wy - 16, this.ap);
+				this.hg.dispose();
 			} else if (this.co_j.pt != 1110) {
 				if (this.co_j.pt == 1200) {
 					var graphics228 = this.gg.os_img.getGraphics();
