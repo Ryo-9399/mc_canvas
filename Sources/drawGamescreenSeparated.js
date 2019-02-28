@@ -13,8 +13,8 @@ export const drawGamescreenMy = function() {
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	if (this.j_jet_c >= 96) {
 		// ジェット噴射
-		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
-		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.wx, this.co_j.wy + 36, this.ap);
+		else this.hg.drawImage(this.hi[135], this.co_j.wx, this.co_j.wy + 36, this.ap);
 	}
 	if (this.j_v_c > 0) {
 		// バリア
@@ -22,8 +22,8 @@ export const drawGamescreenMy = function() {
 		this.j_v_kakudo += 2;
 		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 		if (this.j_v_c > 40 || this.g_ac === 1) {
-			const center_x = this.co_j.x - view_x + 16;
-			const center_y = this.co_j.y - view_y + 16;
+			const center_x = this.co_j.wx + 16;
+			const center_y = this.co_j.wy + 16;
 			this.gg.os_g.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
