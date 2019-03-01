@@ -190,45 +190,7 @@ export const drawGamescreen = function() {
 			}
 	}
 	if (this.jm_kazu > 0) {
-		for (var k = 0; k <= 1; k++)
-			if (this.co_jm[k].c >= 50) {
-				var characterobject2 = this.co_jm[k];
-				if (characterobject2.pt < 1000)
-					this.hg.drawImage(
-						this.hih[characterobject2.pth][characterobject2.pt],
-						characterobject2.x - view_x,
-						characterobject2.y - view_y,
-						this.ap
-					);
-				else if (characterobject2.pt == 1200) {
-					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-					else this.gg.os_g.setColor(this.gamecolor_grenade2);
-					this.gg.os_g.fillRect(
-						characterobject2.x - view_x,
-						characterobject2.y - view_y + 12,
-						characterobject2.vx - characterobject2.x + 1,
-						8
-					);
-				} else if (characterobject2.pt == 1205) {
-					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-					else this.gg.os_g.setColor(this.gamecolor_grenade2);
-					this.gg.os_g.fillRect(
-						characterobject2.vx - view_x,
-						characterobject2.y - view_y + 12,
-						characterobject2.x - characterobject2.vx + 1,
-						8
-					);
-				} else {
-					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-					else this.gg.os_g.setColor(this.gamecolor_grenade2);
-					this.gg.os_g.fillOval(
-						characterobject2.x - view_x + 16 - characterobject2.c2,
-						characterobject2.y - view_y + 16 - characterobject2.c2,
-						characterobject2.c2 * 2,
-						characterobject2.c2 * 2
-					);
-				}
-			}
+		drawMyAttack.apply(this);
 	}
 	for (var l = 0; l <= this.t_kazu; l++) {
 		if (this.co_t[l].c >= 50) {
@@ -327,6 +289,52 @@ export const drawGamescreen = function() {
 	}
 };
 
+/**
+ * 主人公の攻撃を描画します
+ */
+export const drawMyAttack = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	for (var k = 0; k <= 1; k++)
+		if (this.co_jm[k].c >= 50) {
+			var characterobject2 = this.co_jm[k];
+			if (characterobject2.pt < 1000)
+				this.hg.drawImage(
+					this.hih[characterobject2.pth][characterobject2.pt],
+					characterobject2.x - view_x,
+					characterobject2.y - view_y,
+					this.ap
+				);
+			else if (characterobject2.pt == 1200) {
+				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+				else this.gg.os_g.setColor(this.gamecolor_grenade2);
+				this.gg.os_g.fillRect(
+					characterobject2.x - view_x,
+					characterobject2.y - view_y + 12,
+					characterobject2.vx - characterobject2.x + 1,
+					8
+				);
+			} else if (characterobject2.pt == 1205) {
+				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+				else this.gg.os_g.setColor(this.gamecolor_grenade2);
+				this.gg.os_g.fillRect(
+					characterobject2.vx - view_x,
+					characterobject2.y - view_y + 12,
+					characterobject2.x - characterobject2.vx + 1,
+					8
+				);
+			} else {
+				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+				else this.gg.os_g.setColor(this.gamecolor_grenade2);
+				this.gg.os_g.fillOval(
+					characterobject2.x - view_x + 16 - characterobject2.c2,
+					characterobject2.y - view_y + 16 - characterobject2.c2,
+					characterobject2.c2 * 2,
+					characterobject2.c2 * 2
+				);
+			}
+		}
+};
 /**
  * ボスを描画
  */

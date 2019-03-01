@@ -1,7 +1,7 @@
 import { Color, Font } from "./ImageBuff";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 
-import { drawHitokotoMessage, drawBoss } from "./drawGamescreenSeparated";
+import { drawHitokotoMessage, drawBoss, drawMyAttack } from "./drawGamescreenSeparated";
 
 /**
  * ゲーム画面を描画します
@@ -1198,49 +1198,7 @@ export const drawGamescreen = function() {
 		}
 	}
 	if (this.jm_kazu > 0) {
-		for (var i1 = 0; i1 <= 8; i1++) {
-			if (this.co_jm[i1].c < 50) continue;
-			var characterobject3 = this.co_jm[i1];
-			if (characterobject3.pt < 1000) {
-				this.hg.drawImage(
-					this.hih[characterobject3.pth][characterobject3.pt],
-					characterobject3.x - view_x,
-					characterobject3.y - view_y,
-					this.ap
-				);
-				continue;
-			}
-			if (characterobject3.pt == 1200) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillRect(
-					characterobject3.x - view_x,
-					characterobject3.y - view_y + 12,
-					characterobject3.vx - characterobject3.x + 1,
-					8
-				);
-				continue;
-			}
-			if (characterobject3.pt == 1205) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillRect(
-					characterobject3.vx - view_x,
-					characterobject3.y - view_y + 12,
-					characterobject3.x - characterobject3.vx + 1,
-					8
-				);
-				continue;
-			}
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.fillOval(
-				characterobject3.x - view_x + 16 - characterobject3.c2,
-				characterobject3.y - view_y + 16 - characterobject3.c2,
-				characterobject3.c2 * 2,
-				characterobject3.c2 * 2
-			);
-		}
+		drawMyAttack.apply(this);
 	}
 	if (this.j_tokugi == 14) {
 		for (var j1 = 0; j1 <= 1; j1++)
@@ -1506,7 +1464,7 @@ export const drawGamescreen = function() {
 		this.hg.setColor(this.js_pen_color);
 		this.hg.fillRect(this.showr_x, this.showr_y, this.showr_width, this.showr_height);
 	}
-	// MasaoJSS#showOvalで設定された矩形を表示
+	// MasaoJSS#showOvalで設定された楕円を表示
 	if (this.showo_c > 0) {
 		// TODO: 描画関数でカウンタ更新やめろ
 		this.showo_c--;

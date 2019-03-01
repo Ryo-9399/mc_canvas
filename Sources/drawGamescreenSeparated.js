@@ -122,6 +122,57 @@ export const drawGamescreenMy = function() {
 };
 
 /**
+ * 主人公の攻撃を描画します
+ */
+export const drawMyAttack = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	for (var i1 = 0; i1 <= 8; i1++) {
+		if (this.co_jm[i1].c < 50) continue;
+		var characterobject3 = this.co_jm[i1];
+		if (characterobject3.pt < 1000) {
+			this.hg.drawImage(
+				this.hih[characterobject3.pth][characterobject3.pt],
+				characterobject3.x - view_x,
+				characterobject3.y - view_y,
+				this.ap
+			);
+			continue;
+		}
+		if (characterobject3.pt == 1200) {
+			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+			else this.gg.os_g.setColor(this.gamecolor_grenade2);
+			this.gg.os_g.fillRect(
+				characterobject3.x - view_x,
+				characterobject3.y - view_y + 12,
+				characterobject3.vx - characterobject3.x + 1,
+				8
+			);
+			continue;
+		}
+		if (characterobject3.pt == 1205) {
+			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+			else this.gg.os_g.setColor(this.gamecolor_grenade2);
+			this.gg.os_g.fillRect(
+				characterobject3.vx - view_x,
+				characterobject3.y - view_y + 12,
+				characterobject3.x - characterobject3.vx + 1,
+				8
+			);
+			continue;
+		}
+		if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		else this.gg.os_g.setColor(this.gamecolor_grenade2);
+		this.gg.os_g.fillOval(
+			characterobject3.x - view_x + 16 - characterobject3.c2,
+			characterobject3.y - view_y + 16 - characterobject3.c2,
+			characterobject3.c2 * 2,
+			characterobject3.c2 * 2
+		);
+	}
+};
+
+/**
  * 敵を描画します
  * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
@@ -137,50 +188,6 @@ export const drawGamescreenEnemy = function() {
 		if (this.co_t[i].img != null)
 			this.hg.drawImage(this.co_t[i].img, l + this.co_t[i].zs_x, i1 + this.co_t[i].zs_y, this.ap);
 		else this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], l, i1, this.ap);
-	}
-};
-
-/**
- * HPゲージ、一言メッセージ、{@link MasaoJSS#showOval|showOval}, {@link MasaoJSS#showRect|showRect}, {@link MasaoJSS#showImage|showImage}で指定した描画物を描画します。
- * {@link MasaoJSS#drawSystemObject}以外では使われていない？
- * @see {@link MasaoJSS#drawSystemObject}
- */
-export const drawGamescreenWindow = function() {
-	// MasaoJSS#showRectで設定された矩形を表示
-	if (this.showr_c > 0) {
-		this.hg.setColor(this.js_pen_color);
-		this.hg.fillRect(this.showr_x, this.showr_y, this.showr_width, this.showr_height);
-	}
-	// MasaoJSS#showOvalで設定された矩形を表示
-	if (this.showo_c > 0) {
-		this.hg.setColor(this.js_pen_color);
-		this.hg.fillOval(this.showo_x, this.showo_y, this.showo_width, this.showo_height);
-	}
-	// MasaoJSS#showImageで設定された画像を表示
-	if (this.showi_c > 0) {
-		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap != null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
-		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
-	}
-	// ゲージを表示
-	if (this.gauge_v) {
-		// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
-		const x = this.j_hp_v ? 40 : 64;
-		const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
-		this.hg.setFont(new Font(Font.DIALOG, 1, 16));
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.hg.drawString(this.gauge_text, x, y - 6);
-		this.gg.os_g.setColor(Color.red);
-		this.hg.fillRect(x, y, 200, 8);
-		this.gg.os_g.setColor(Color.yellow);
-		this.hg.fillRect(x, y, this.gauge_value, 8);
-		this.gg.os_g.setColor(Color.white);
-		this.hg.drawRect(x - 1, y - 1, 201, 9);
-	}
-
-	// 一言メッセージ
-	if (this.hitokoto_c > -1) {
-		drawHitokotoMessage.apply(this);
 	}
 };
 
@@ -361,6 +368,50 @@ export const drawBoss = function() {
 			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			this.hg.dispose();
 			break;
+	}
+};
+
+/**
+ * HPゲージ、一言メッセージ、{@link MasaoJSS#showOval|showOval}, {@link MasaoJSS#showRect|showRect}, {@link MasaoJSS#showImage|showImage}で指定した描画物を描画します。
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
+ */
+export const drawGamescreenWindow = function() {
+	// MasaoJSS#showRectで設定された矩形を表示
+	if (this.showr_c > 0) {
+		this.hg.setColor(this.js_pen_color);
+		this.hg.fillRect(this.showr_x, this.showr_y, this.showr_width, this.showr_height);
+	}
+	// MasaoJSS#showOvalで設定された楕円を表示
+	if (this.showo_c > 0) {
+		this.hg.setColor(this.js_pen_color);
+		this.hg.fillOval(this.showo_x, this.showo_y, this.showo_width, this.showo_height);
+	}
+	// MasaoJSS#showImageで設定された画像を表示
+	if (this.showi_c > 0) {
+		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
+		if (this.gg.ap != null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+	}
+	// ゲージを表示
+	if (this.gauge_v) {
+		// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
+		const x = this.j_hp_v ? 40 : 64;
+		const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
+		this.hg.setFont(new Font(Font.DIALOG, 1, 16));
+		this.gg.os_g.setColor(this.gamecolor_score);
+		this.hg.drawString(this.gauge_text, x, y - 6);
+		this.gg.os_g.setColor(Color.red);
+		this.hg.fillRect(x, y, 200, 8);
+		this.gg.os_g.setColor(Color.yellow);
+		this.hg.fillRect(x, y, this.gauge_value, 8);
+		this.gg.os_g.setColor(Color.white);
+		this.hg.drawRect(x - 1, y - 1, 201, 9);
+	}
+
+	// 一言メッセージ
+	if (this.hitokoto_c > -1) {
+		drawHitokotoMessage.apply(this);
 	}
 };
 
