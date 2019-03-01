@@ -8,100 +8,100 @@ export const drawGamescreen = function() {
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	if (this.a_hf) {
-		for (let i = 0; i <= this.a_kazu; i++)
+		for (let i = 0; i <= this.a_kazu; i++) {
 			if (this.co_a[i].gf) {
-				var characterobject = this.co_a[i];
-				var j5 = characterobject.x - view_x;
-				var i7 = characterobject.y - view_y;
+				const characterobject = this.co_a[i];
+				const co_wx = characterobject.x - view_x;
+				const co_wy = characterobject.y - view_y;
 				switch (characterobject.pt) {
 					default:
 						break;
 
 					case 100:
-						this.hg.drawImage(this.hi[190], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[191], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hi[192], j5 + 64, i7, this.ap);
+						this.hg.drawImage(this.hi[190], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[191], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hi[192], co_wx + 64, co_wy, this.ap);
 						break;
 
 					case 200:
-						this.hg.drawImage(this.hi[76], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[77], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hi[86], j5, i7 + 32, this.ap);
-						this.hg.drawImage(this.hi[87], j5 + 32, i7 + 32, this.ap);
+						this.hg.drawImage(this.hi[76], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[77], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hi[86], co_wx, co_wy + 32, this.ap);
+						this.hg.drawImage(this.hi[87], co_wx + 32, co_wy + 32, this.ap);
 						break;
 
 					case 210:
-						this.hg.drawImage(this.hi[78], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[79], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hi[88], j5, i7 + 32, this.ap);
-						this.hg.drawImage(this.hi[89], j5 + 32, i7 + 32, this.ap);
+						this.hg.drawImage(this.hi[78], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[79], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hi[88], co_wx, co_wy + 32, this.ap);
+						this.hg.drawImage(this.hi[89], co_wx + 32, co_wy + 32, this.ap);
 						break;
 
 					case 300:
-						this.hg.drawImage(this.hi[60], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[61], j5 + 32, i7, this.ap);
+						this.hg.drawImage(this.hi[60], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[61], co_wx + 32, co_wy, this.ap);
 						break;
 
 					case 310:
-						this.hg.drawImage(this.hi[62], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[63], j5 + 32, i7, this.ap);
+						this.hg.drawImage(this.hi[62], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[63], co_wx + 32, co_wy, this.ap);
 						break;
 
 					case 320:
-						this.hg.drawImage(this.hi[64], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[65], j5 + 32, i7, this.ap);
+						this.hg.drawImage(this.hi[64], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[65], co_wx + 32, co_wy, this.ap);
 						break;
 
 					case 330:
-						this.hg.drawImage(this.hi[66], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[67], j5 + 32, i7, this.ap);
+						this.hg.drawImage(this.hi[66], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[67], co_wx + 32, co_wy, this.ap);
 						break;
 
 					case 400:
-						this.hg.drawImage(this.hi[183], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[184], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hi[185], j5 + 64, i7, this.ap);
-						this.hg.drawImage(this.hi[193], j5, i7 + 32, this.ap);
-						this.hg.drawImage(this.hi[194], j5 + 32, i7 + 32, this.ap);
-						this.hg.drawImage(this.hi[195], j5 + 64, i7 + 32, this.ap);
+						this.hg.drawImage(this.hi[183], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[184], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hi[185], co_wx + 64, co_wy, this.ap);
+						this.hg.drawImage(this.hi[193], co_wx, co_wy + 32, this.ap);
+						this.hg.drawImage(this.hi[194], co_wx + 32, co_wy + 32, this.ap);
+						this.hg.drawImage(this.hi[195], co_wx + 64, co_wy + 32, this.ap);
 						break;
 
 					case 500:
-						this.hg.drawImage(this.hi[180], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[181], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hi[182], j5 + 64, i7, this.ap);
+						this.hg.drawImage(this.hi[180], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[181], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hi[182], co_wx + 64, co_wy, this.ap);
 						break;
 
 					case 600:
-						this.hg.drawImage(this.hi[188], j5, i7, this.ap);
-						this.hg.drawImage(this.hi[189], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hi[198], j5, i7 + 32, this.ap);
-						this.hg.drawImage(this.hi[199], j5 + 32, i7 + 32, this.ap);
+						this.hg.drawImage(this.hi[188], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hi[189], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hi[198], co_wx, co_wy + 32, this.ap);
+						this.hg.drawImage(this.hi[199], co_wx + 32, co_wy + 32, this.ap);
 						break;
 
 					case 605:
-						this.hg.drawImage(this.hih[1][189], j5, i7, this.ap);
-						this.hg.drawImage(this.hih[1][188], j5 + 32, i7, this.ap);
-						this.hg.drawImage(this.hih[1][199], j5, i7 + 32, this.ap);
-						this.hg.drawImage(this.hih[1][198], j5 + 32, i7 + 32, this.ap);
+						this.hg.drawImage(this.hih[1][189], co_wx, co_wy, this.ap);
+						this.hg.drawImage(this.hih[1][188], co_wx + 32, co_wy, this.ap);
+						this.hg.drawImage(this.hih[1][199], co_wx, co_wy + 32, this.ap);
+						this.hg.drawImage(this.hih[1][198], co_wx + 32, co_wy + 32, this.ap);
 						break;
 
 					case 700:
-						this.hg.drawImage(this.hi[32], j5, i7, this.ap);
+						this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
 						break;
 
 					case 710:
-						this.hg.drawImage(this.hi[33], j5, i7, this.ap);
+						this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
 						break;
 
 					case 720:
-						this.hg.drawImage(this.hi[34], j5, i7, this.ap);
+						this.hg.drawImage(this.hi[34], co_wx, co_wy, this.ap);
 						break;
 
 					case 800:
 						if (characterobject.x >= this.co_j.x)
-							this.hg.drawImage(this.hi[35 + characterobject.c3], j5, i7, this.ap);
-						else this.hg.drawImage(this.hih[1][35 + characterobject.c3], j5, i7, this.ap);
+							this.hg.drawImage(this.hi[35 + characterobject.c3], co_wx, co_wy, this.ap);
+						else this.hg.drawImage(this.hih[1][35 + characterobject.c3], co_wx, co_wy, this.ap);
 						break;
 
 					case 1100:
@@ -134,69 +134,70 @@ export const drawGamescreen = function() {
 						break;
 				}
 			}
+		}
 	}
 	if (this.m_kazu > 0) {
-		for (var j = 0; j <= 23; j++)
-			if (this.co_m[j].c >= 50) {
-				var characterobject1 = this.co_m[j];
-				if (characterobject1.c == 50) {
-					this.hg.drawImage(
-						this.hih[characterobject1.pth][characterobject1.pt],
-						characterobject1.x - view_x,
-						characterobject1.y - view_y,
-						this.ap
+		for (let i = 0; i <= 23; i++) {
+			if (this.co_m[i].c < 50) continue;
+			const characterobject = this.co_m[i];
+			if (characterobject.c == 50) {
+				this.hg.drawImage(
+					this.hih[characterobject.pth][characterobject.pt],
+					characterobject.x - view_x,
+					characterobject.y - view_y,
+					this.ap
+				);
+				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
+				if (bgc >= 20)
+					this.gg.drawPT(
+						(characterobject.x >> 5) * 32 - view_x,
+						(characterobject.y >> 5) * 32 - view_y,
+						bgc,
+						0
 					);
-					var j4 = this.maps.getBGCode(characterobject1.x, characterobject1.y);
-					if (j4 >= 20)
-						this.gg.drawPT(
-							(characterobject1.x >> 5) * 32 - view_x,
-							(characterobject1.y >> 5) * 32 - view_y,
-							j4,
-							0
-						);
-					j4 = this.maps.getBGCode(characterobject1.x + 31, characterobject1.y);
-					if (j4 >= 20)
-						this.gg.drawPT(
-							((characterobject1.x + 31) >> 5) * 32 - view_x,
-							(characterobject1.y >> 5) * 32 - view_y,
-							j4,
-							0
-						);
-				} else if (characterobject1.pt == 1000) {
-					this.gg.os_g.setColor(this.gamecolor_mizunohadou);
-					this.gg.os_g.fillOval(
-						characterobject1.x - view_x + 16 - characterobject1.c2,
-						characterobject1.y - view_y + 16 - characterobject1.c2,
-						characterobject1.c2 * 2,
-						characterobject1.c2 * 2
+				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
+				if (bgc >= 20)
+					this.gg.drawPT(
+						((characterobject.x + 31) >> 5) * 32 - view_x,
+						(characterobject.y >> 5) * 32 - view_y,
+						bgc,
+						0
 					);
-				} else if (characterobject1.pt == 1100) {
-					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-					else this.gg.os_g.setColor(this.gamecolor_grenade2);
-					this.gg.os_g.fillOval(
-						characterobject1.x - view_x + 16 - characterobject1.c2,
-						characterobject1.y - view_y + 16 - characterobject1.c2,
-						characterobject1.c2 * 2,
-						characterobject1.c2 * 2
-					);
-				} else {
-					this.hg.drawImage(
-						this.hih[characterobject1.pth][characterobject1.pt],
-						characterobject1.x - view_x,
-						characterobject1.y - view_y,
-						this.ap
-					);
-				}
+			} else if (characterobject.pt == 1000) {
+				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
+				this.gg.os_g.fillOval(
+					characterobject.x - view_x + 16 - characterobject.c2,
+					characterobject.y - view_y + 16 - characterobject.c2,
+					characterobject.c2 * 2,
+					characterobject.c2 * 2
+				);
+			} else if (characterobject.pt == 1100) {
+				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+				else this.gg.os_g.setColor(this.gamecolor_grenade2);
+				this.gg.os_g.fillOval(
+					characterobject.x - view_x + 16 - characterobject.c2,
+					characterobject.y - view_y + 16 - characterobject.c2,
+					characterobject.c2 * 2,
+					characterobject.c2 * 2
+				);
+			} else {
+				this.hg.drawImage(
+					this.hih[characterobject.pth][characterobject.pt],
+					characterobject.x - view_x,
+					characterobject.y - view_y,
+					this.ap
+				);
 			}
+		}
 	}
 	if (this.jm_kazu > 0) {
 		drawMyAttack.apply(this);
 	}
-	for (var l = 0; l <= this.t_kazu; l++) {
-		if (this.co_t[l].c >= 50) {
-			var i6 = this.co_t[l].x - view_x;
-			var l7 = this.co_t[l].y - view_y;
-			if (i6 >= -64 && l7 <= 576) this.hg.drawImage(this.hih[this.co_t[l].pth][this.co_t[l].pt], i6, l7, this.ap);
+	for (let i = 0; i <= this.t_kazu; i++) {
+		if (this.co_t[i].c >= 50) {
+			const wx = this.co_t[i].x - view_x;
+			const wy = this.co_t[i].y - view_y;
+			if (wx >= -64 && wy <= 576) this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], wx, wy, this.ap);
 		}
 	}
 
