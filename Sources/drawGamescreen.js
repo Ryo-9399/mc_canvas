@@ -27,8 +27,8 @@ export const drawGamescreen = function() {
 	}
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
-	this.co_j.wx = this.co_j.x - this.maps.wx;
-	this.co_j.wy = this.co_j.y - this.maps.wy;
+	this.co_j.wx = this.co_j.x - view_x;
+	this.co_j.wy = this.co_j.y - view_y;
 	if (this.ana_kazu > 0) {
 		drawAna.apply(this);
 	}
@@ -1212,9 +1212,8 @@ export const drawGamescreen = function() {
 	if (this.system_draw_mode < 2) {
 		if (this.j_jet_c >= 96) {
 			// ジェット噴射
-			if (this.g_c1 === 0)
-				this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
-			else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+			if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.wx, this.co_j.wy + 36, this.ap);
+			else this.hg.drawImage(this.hi[135], this.co_j.wx, this.co_j.wy + 36, this.ap);
 		}
 		if (this.j_v_c > 0) {
 			// バリア
@@ -1222,8 +1221,8 @@ export const drawGamescreen = function() {
 			this.j_v_kakudo += 2;
 			if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			if (this.j_v_c > 40 || this.g_ac === 1) {
-				const center_x = this.co_j.x - view_x + 16;
-				const center_y = this.co_j.y - view_y + 16;
+				const center_x = this.co_j.wx + 16;
+				const center_y = this.co_j.wy + 16;
 				this.gg.os_g.setColor(Color.white);
 				for (let i = 0; i < 6; i++) {
 					const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
@@ -1465,11 +1464,11 @@ export const drawGamescreen = function() {
 	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
 	if (this.second_gazou_visible && this.second_gazou_priority == 2 && this.second_gazou_img != null) {
 		if (this.second_gazou_scroll == 2) {
-			var i9 = -(rightShiftIgnoreSign(this.maps.wx - 32, 2) % 512);
+			var i9 = -(rightShiftIgnoreSign(view_x - 32, 2) % 512);
 			this.hg.drawImage(this.second_gazou_img, i9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i9 + 512, 0, this.ap);
 		} else if (this.second_gazou_scroll == 3) {
-			var j9 = -(rightShiftIgnoreSign(this.maps.wx - 32, 1) % 512);
+			var j9 = -(rightShiftIgnoreSign(view_x - 32, 1) % 512);
 			this.hg.drawImage(this.second_gazou_img, j9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, j9 + 512, 0, this.ap);
 		} else if (this.second_gazou_scroll == 4) {
@@ -1489,24 +1488,24 @@ export const drawGamescreen = function() {
 				this.ap
 			);
 		} else if (this.second_gazou_scroll == 5) {
-			var k9 = -(rightShiftIgnoreSign((this.maps.wx - 32) * 3, 1) % 512);
+			var k9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
 			this.hg.drawImage(this.second_gazou_img, k9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, k9 + 512, 0, this.ap);
 		} else if (this.second_gazou_scroll == 6) {
-			var l9 = -(rightShiftIgnoreSign((this.maps.wx - 32) * 3, 1) % 512);
-			var l11 = -(this.maps.wy - 320);
+			var l9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
+			var l11 = -(view_y - 320);
 			this.hg.drawImage(this.second_gazou_img, l9, l11, this.ap);
 			this.hg.drawImage(this.second_gazou_img, l9 + 512, l11, this.ap);
 		} else if (this.second_gazou_scroll == 7) {
-			var i10 = -((this.maps.wx - 32) % 512);
-			var i12 = -((this.maps.wy - 320) % 320);
+			var i10 = -((view_x - 32) % 512);
+			var i12 = -((view_y - 320) % 320);
 			this.hg.drawImage(this.second_gazou_img, i10, i12, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i10 + 512, i12, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i10, i12 + 320, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i10 + 512, i12 + 320, this.ap);
 		} else if (this.second_gazou_scroll == 8) {
-			var j10 = this.second_gazou_scroll_x + 32 - this.maps.wx;
-			var j12 = this.second_gazou_scroll_y + 320 - this.maps.wy;
+			var j10 = this.second_gazou_scroll_x + 32 - view_x;
+			var j12 = this.second_gazou_scroll_y + 320 - view_y;
 			if (j10 < 512 && j12 < 320) this.hg.drawImage(this.second_gazou_img, j10, j12, this.ap);
 		} else {
 			this.hg.drawImage(this.second_gazou_img, 0, 0, this.ap);

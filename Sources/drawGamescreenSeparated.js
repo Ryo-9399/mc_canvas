@@ -284,8 +284,8 @@ export const drawGamescreenMy = function() {
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	if (this.j_jet_c >= 96) {
 		// ジェット噴射
-		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
-		else this.hg.drawImage(this.hi[135], this.co_j.x - view_x, this.co_j.y - view_y + 36, this.ap);
+		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.wx, this.co_j.wy + 36, this.ap);
+		else this.hg.drawImage(this.hi[135], this.co_j.wx, this.co_j.wy + 36, this.ap);
 	}
 	if (this.j_v_c > 0) {
 		// バリア
@@ -293,8 +293,8 @@ export const drawGamescreenMy = function() {
 		this.j_v_kakudo += 2;
 		if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 		if (this.j_v_c > 40 || this.g_ac === 1) {
-			const center_x = this.co_j.x - view_x + 16;
-			const center_y = this.co_j.y - view_y + 16;
+			const center_x = this.co_j.wx + 16;
+			const center_y = this.co_j.wy + 16;
 			this.gg.os_g.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
@@ -817,37 +817,31 @@ export const drawSpot = function() {
 		const radius = rightShiftIgnoreSign(this.spot_r, 1);
 		const diameter = this.spot_r;
 		this.hg.setColor(Color.black);
-		const left_x = this.co_j.x + 16 - radius - view_x;
-		if (left_x > 0) this.hg.fillRect(0, 0, left_x, 320);
-		const right_x = this.co_j.x + 16 + radius - view_x;
-		if (right_x < 512) this.hg.fillRect(right_x, 0, 512 - right_x, 320);
-		const top_y = this.co_j.y + 16 - radius - view_y;
-		if (top_y > 0) this.hg.fillRect(left_x, 0, right_x - left_x, top_y);
-		const bottom_y = this.co_j.y + 16 + radius - view_y;
-		if (bottom_y < 320) this.hg.fillRect(left_x, bottom_y, right_x - left_x, 320 - bottom_y);
+		const left_wx = this.co_j.wx + 16 - radius;
+		if (left_wx > 0) this.hg.fillRect(0, 0, left_wx, 320);
+		const right_wx = this.co_j.wx + 16 + radius;
+		if (right_wx < 512) this.hg.fillRect(right_wx, 0, 512 - right_wx, 320);
+		const top_wy = this.co_j.wy + 16 - radius;
+		if (top_wy > 0) this.hg.fillRect(left_wx, 0, right_wx - left_wx, top_wy);
+		const bottom_wy = this.co_j.wy + 16 + radius;
+		if (bottom_wy < 320) this.hg.fillRect(left_wx, bottom_wy, right_wx - left_wx, 320 - bottom_wy);
 		this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
 		this.hg.setColor(Color.black);
 		this.hg.fillRect(0, 0, 512, 320);
-		const graphics = this.gg.os_img.getGraphics();
-		graphics.setClip(
-			"ellipse",
-			this.co_j.x + 16 - radius - view_x,
-			this.co_j.y + 16 - radius - view_y,
-			diameter,
-			diameter
-		);
-		graphics.drawImage(this.spot_img, 0, 0, this.ap);
+		this.hg.dispose();
+		this.hg.setClip("ellipse", this.co_j.wx + 16 - radius, this.co_j.wy + 16 - radius, diameter, diameter);
+		this.hg.drawImage(this.spot_img, 0, 0, this.ap);
 		this.hg.setColor(new Color(0, 0, 0, 96));
 		this.hg.fillRect(0, 0, 512, 320);
-		graphics.setClip(
+		this.hg.setClip(
 			"ellipse",
-			this.co_j.x + 16 - (radius - 24) - view_x,
-			this.co_j.y + 16 - (radius - 24) - view_y,
+			this.co_j.wx + 16 - (radius - 24),
+			this.co_j.wy + 16 - (radius - 24),
 			diameter - 48,
 			diameter - 48
 		);
-		graphics.drawImage(this.spot_img, 0, 0, this.ap);
-		graphics.dispose();
+		this.hg.drawImage(this.spot_img, 0, 0, this.ap);
+		this.hg.dispose();
 	} else if (this.spot_c === 200) {
 		this.hg.setColor(Color.black);
 		this.hg.fillRect(0, 0, 512, 320);
