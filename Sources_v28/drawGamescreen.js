@@ -295,45 +295,32 @@ export const drawGamescreen = function() {
 export const drawMyAttack = function() {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
-	for (var k = 0; k <= 1; k++)
-		if (this.co_jm[k].c >= 50) {
-			var characterobject2 = this.co_jm[k];
-			if (characterobject2.pt < 1000)
-				this.hg.drawImage(
-					this.hih[characterobject2.pth][characterobject2.pt],
-					characterobject2.x - view_x,
-					characterobject2.y - view_y,
-					this.ap
-				);
-			else if (characterobject2.pt == 1200) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillRect(
-					characterobject2.x - view_x,
-					characterobject2.y - view_y + 12,
-					characterobject2.vx - characterobject2.x + 1,
-					8
-				);
-			} else if (characterobject2.pt == 1205) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillRect(
-					characterobject2.vx - view_x,
-					characterobject2.y - view_y + 12,
-					characterobject2.x - characterobject2.vx + 1,
-					8
-				);
+	for (let i = 0; i <= 1; i++) {
+		const characterobject = this.co_jm[i];
+		if (characterobject.c < 50) continue;
+		const co_wx = characterobject.x - view_x;
+		const co_wy = characterobject.y - view_y;
+		if (characterobject.pt < 1000) {
+			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
+		} else {
+			const color = this.g_ac === 0 ? this.gamecolor_grenade1 : this.gamecolor_grenade2;
+			this.gg.os_g.setColor(color);
+			if (characterobject.pt === 1200) {
+				// エネルギー砲 左向き
+				const width = characterobject.vx - characterobject.x + 1;
+				this.gg.os_g.fillRect(co_wx, co_wy + 12, width, 8);
+			} else if (characterobject.pt === 1205) {
+				// エネルギー砲 右向き
+				// NOTE: vxという変数を左端のX座標として使うのはさすがにひどいのでは
+				const width = characterobject.x - characterobject.vx + 1;
+				this.gg.os_g.fillRect(characterobject.vx - view_x, co_wy + 12, width, 8);
 			} else {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillOval(
-					characterobject2.x - view_x + 16 - characterobject2.c2,
-					characterobject2.y - view_y + 16 - characterobject2.c2,
-					characterobject2.c2 * 2,
-					characterobject2.c2 * 2
-				);
+				// グレネードの爆発
+				const radius = characterobject.c2;
+				this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 			}
 		}
+	}
 };
 /**
  * ボスを描画

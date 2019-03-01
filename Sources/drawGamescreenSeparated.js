@@ -127,48 +127,31 @@ export const drawGamescreenMy = function() {
 export const drawMyAttack = function() {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
-	for (var i1 = 0; i1 <= 8; i1++) {
-		if (this.co_jm[i1].c < 50) continue;
-		var characterobject3 = this.co_jm[i1];
-		if (characterobject3.pt < 1000) {
-			this.hg.drawImage(
-				this.hih[characterobject3.pth][characterobject3.pt],
-				characterobject3.x - view_x,
-				characterobject3.y - view_y,
-				this.ap
-			);
-			continue;
+	for (let i = 0; i <= 8; i++) {
+		const characterobject = this.co_jm[i];
+		if (characterobject.c < 50) continue;
+		const co_wx = characterobject.x - view_x;
+		const co_wy = characterobject.y - view_y;
+		if (characterobject.pt < 1000) {
+			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
+		} else {
+			const color = this.g_ac === 0 ? this.gamecolor_grenade1 : this.gamecolor_grenade2;
+			this.gg.os_g.setColor(color);
+			if (characterobject.pt === 1200) {
+				// エネルギー砲 左向き
+				const width = characterobject.vx - characterobject.x + 1;
+				this.gg.os_g.fillRect(co_wx, co_wy + 12, width, 8);
+			} else if (characterobject.pt === 1205) {
+				// エネルギー砲 右向き
+				// NOTE: vxという変数を左端のX座標として使うのはさすがにひどいのでは
+				const width = characterobject.x - characterobject.vx + 1;
+				this.gg.os_g.fillRect(characterobject.vx - view_x, co_wy + 12, width, 8);
+			} else {
+				// グレネードの爆発
+				const radius = characterobject.c2;
+				this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+			}
 		}
-		if (characterobject3.pt == 1200) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.fillRect(
-				characterobject3.x - view_x,
-				characterobject3.y - view_y + 12,
-				characterobject3.vx - characterobject3.x + 1,
-				8
-			);
-			continue;
-		}
-		if (characterobject3.pt == 1205) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.fillRect(
-				characterobject3.vx - view_x,
-				characterobject3.y - view_y + 12,
-				characterobject3.x - characterobject3.vx + 1,
-				8
-			);
-			continue;
-		}
-		if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-		else this.gg.os_g.setColor(this.gamecolor_grenade2);
-		this.gg.os_g.fillOval(
-			characterobject3.x - view_x + 16 - characterobject3.c2,
-			characterobject3.y - view_y + 16 - characterobject3.c2,
-			characterobject3.c2 * 2,
-			characterobject3.c2 * 2
-		);
 	}
 };
 
