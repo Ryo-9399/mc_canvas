@@ -105,30 +105,34 @@ export const drawGamescreen = function() {
 						break;
 
 					case 1100:
-						var k5 = Math.floor(Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16);
-						var j7 = Math.floor(Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16);
-						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + k5;
-						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + j7;
-						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - k5;
-						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - j7;
-						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - k5;
-						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - j7;
-						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + k5;
-						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + j7;
+						const dx = Math.floor(Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16);
+						const dy = Math.floor(Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16);
+						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + dx;
+						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + dy;
+						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - dx;
+						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - dy;
+						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - dx;
+						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - dy;
+						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + dx;
+						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + dy;
 						this.gg.os_g.setColor(this.gamecolor_firebar1);
 						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						if (this.g_c2 >= 2) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							var l5 = Math.floor(Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10);
-							var k7 = Math.floor(Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10);
-							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + l5;
-							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + k7;
-							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - l5;
-							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - k7;
-							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - l5;
-							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - k7;
-							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + l5;
-							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + k7;
+							const dx = Math.floor(
+								Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10
+							);
+							const dy = Math.floor(
+								Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10
+							);
+							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
+							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + dy;
+							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - dx;
+							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - dy;
+							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - dx;
+							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - dy;
+							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + dx;
+							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + dy;
 							this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						}
 						break;
@@ -194,11 +198,11 @@ export const drawGamescreen = function() {
 		drawMyAttack.apply(this);
 	}
 	for (let i = 0; i <= this.t_kazu; i++) {
-		if (this.co_t[i].c >= 50) {
-			const wx = this.co_t[i].x - view_x;
-			const wy = this.co_t[i].y - view_y;
-			if (wx >= -64 && wy <= 576) this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], wx, wy, this.ap);
-		}
+		if (this.co_t[i].c < 50) continue;
+		const co_wx = this.co_t[i].x - view_x;
+		const co_wy = this.co_t[i].y - view_y;
+		if (co_wx < -64 || co_wy > 576) continue;
+		this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], co_wx, co_wy, this.ap);
 	}
 
 	// ボスの描画

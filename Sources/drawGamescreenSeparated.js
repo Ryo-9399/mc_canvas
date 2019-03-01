@@ -9,23 +9,7 @@ export const drawGamescreenUgokuyuka = function() {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	if (this.ana_kazu > 0) {
-		for (let i = 0; i <= 11; i++) {
-			if (this.ana_c[i] <= 0) continue;
-			if (this.ana_c[i] <= 135 && this.ana_c[i] >= 129) {
-				const l2 = (136 - this.ana_c[i]) * 4;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, l2);
-				continue;
-			}
-			if (this.ana_c[i] <= 235 && this.ana_c[i] >= 229) {
-				const i3 = (236 - this.ana_c[i]) * 4;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, i3 * -1);
-				continue;
-			}
-			if (this.ana_c[i] >= 1 && this.ana_c[i] <= 15) {
-				const j3 = this.ana_c[i] * 2;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, j3);
-			}
-		}
+		drawAna.apply(this);
 	}
 	if (this.a_hf) {
 		for (let i = 0; i <= this.a_kazu; i++) {
@@ -125,30 +109,30 @@ export const drawGamescreenUgokuyuka = function() {
 						break;
 
 					case 1100:
-						var j4 = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
-						var j5 = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
-						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + j4;
-						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + j5;
-						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - j4;
-						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - j5;
-						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - j4;
-						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - j5;
-						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + j4;
-						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + j5;
+						const dx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
+						const dy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
+						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + dx;
+						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + dy;
+						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - dx;
+						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - dy;
+						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - dx;
+						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - dy;
+						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + dx;
+						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + dy;
 						this.gg.os_g.setColor(this.gamecolor_firebar1);
 						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						if (this.g_c2 >= 2) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							var k4 = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
-							var k5 = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
-							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + k4;
-							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + k5;
-							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - k4;
-							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - k5;
-							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - k4;
-							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - k5;
-							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + k4;
-							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + k5;
+							const dx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
+							const dy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
+							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
+							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + dy;
+							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - dx;
+							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - dy;
+							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - dx;
+							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - dy;
+							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + dx;
+							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + dy;
 							this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						}
 						break;
@@ -185,27 +169,25 @@ export const drawGamescreenUgokuyuka = function() {
 							bgc,
 							0
 						);
-					continue;
+				} else {
+					let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
+					if (bgc >= 20)
+						this.gg.drawPT(
+							rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
+							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+							bgc,
+							0
+						);
+					bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
+					if (bgc >= 20)
+						this.gg.drawPT(
+							rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
+							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+							bgc,
+							0
+						);
 				}
-				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-				if (bgc >= 20)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-				if (bgc >= 20)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-				continue;
-			}
-			if (characterobject.pt == 1000) {
+			} else if (characterobject.pt == 1000) {
 				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 				this.gg.os_g.fillOval(
 					characterobject.x - view_x + 16 - characterobject.c2,
@@ -213,9 +195,7 @@ export const drawGamescreenUgokuyuka = function() {
 					characterobject.c2 * 2,
 					characterobject.c2 * 2
 				);
-				continue;
-			}
-			if (characterobject.pt == 1100) {
+			} else if (characterobject.pt == 1100) {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillOval(
@@ -249,6 +229,47 @@ export const drawGamescreenUgokuyuka = function() {
 	}
 	// ボスの描画
 	drawBossLegacy.apply(this);
+};
+
+/**
+ * 敵を描画します
+ * {@link MasaoJSS#drawSystemObject}以外では使われていない？
+ * @see {@link MasaoJSS#drawSystemObject}
+ */
+export const drawGamescreenEnemy = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	for (let i = 0; i <= this.t_kazu; i++) {
+		if (this.co_t[i].c < 50) continue;
+		const co_wx = this.co_t[i].x - view_x;
+		const co_wy = this.co_t[i].y - view_y;
+		if (co_wx < -64 || co_wy > 576) continue;
+		if (this.co_t[i].img !== null)
+			this.hg.drawImage(this.co_t[i].img, co_wx + this.co_t[i].zs_x, co_wy + this.co_t[i].zs_y, this.ap);
+		else this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], co_wx, co_wy, this.ap);
+	}
+};
+
+export const drawAna = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	for (let i = 0; i <= 11; i++) {
+		if (this.ana_c[i] <= 0) continue;
+		if (this.ana_c[i] <= 135 && this.ana_c[i] >= 129) {
+			const ana_y = (136 - this.ana_c[i]) * 4;
+			this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, ana_y);
+			continue;
+		}
+		if (this.ana_c[i] <= 235 && this.ana_c[i] >= 229) {
+			const ana_y = (236 - this.ana_c[i]) * 4;
+			this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, ana_y * -1);
+			continue;
+		}
+		if (this.ana_c[i] >= 1 && this.ana_c[i] <= 15) {
+			const ana_y = this.ana_c[i] * 2;
+			this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, ana_y);
+		}
+	}
 };
 
 /**
@@ -402,25 +423,6 @@ export const drawMyAttack = function() {
 				this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 			}
 		}
-	}
-};
-
-/**
- * 敵を描画します
- * {@link MasaoJSS#drawSystemObject}以外では使われていない？
- * @see {@link MasaoJSS#drawSystemObject}
- */
-export const drawGamescreenEnemy = function() {
-	var j = this.maps.wx;
-	var k = this.maps.wy;
-	for (var i = 0; i <= this.t_kazu; i++) {
-		if (this.co_t[i].c < 50) continue;
-		var l = this.co_t[i].x - j;
-		var i1 = this.co_t[i].y - k;
-		if (l < -64 || i1 > 576) continue;
-		if (this.co_t[i].img != null)
-			this.hg.drawImage(this.co_t[i].img, l + this.co_t[i].zs_x, i1 + this.co_t[i].zs_y, this.ap);
-		else this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], l, i1, this.ap);
 	}
 };
 
@@ -778,23 +780,77 @@ export const drawGamescreenWindow = function() {
 	}
 	// ゲージを表示
 	if (this.gauge_v) {
-		// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
-		const x = this.j_hp_v ? 40 : 64;
-		const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
-		this.hg.setFont(new Font(Font.DIALOG, 1, 16));
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.hg.drawString(this.gauge_text, x, y - 6);
-		this.gg.os_g.setColor(Color.red);
-		this.hg.fillRect(x, y, 200, 8);
-		this.gg.os_g.setColor(Color.yellow);
-		this.hg.fillRect(x, y, this.gauge_value, 8);
-		this.gg.os_g.setColor(Color.white);
-		this.hg.drawRect(x - 1, y - 1, 201, 9);
+		drawHPGauge.apply(this);
 	}
-
 	// 一言メッセージ
 	if (this.hitokoto_c > -1) {
 		drawHitokotoMessage.apply(this);
+	}
+};
+
+/**
+ * HPゲージを描画
+ */
+export const drawHPGauge = function() {
+	// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
+	const x = this.j_hp_v ? 40 : 64;
+	const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
+	this.hg.setFont(new Font(Font.DIALOG, 1, 16));
+	this.gg.os_g.setColor(this.gamecolor_score);
+	this.hg.drawString(this.gauge_text, x, y - 6);
+	this.gg.os_g.setColor(Color.red);
+	this.hg.fillRect(x, y, 200, 8);
+	this.gg.os_g.setColor(Color.yellow);
+	this.hg.fillRect(x, y, this.gauge_value, 8);
+	this.gg.os_g.setColor(Color.white);
+	this.hg.drawRect(x - 1, y - 1, 201, 9);
+};
+
+/**
+ * スポット処理
+ */
+export const drawSpot = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	if (this.spot_c === 100) {
+		// TODO: そもそも変数名rで直径を表すな
+		const radius = rightShiftIgnoreSign(this.spot_r, 1);
+		const diameter = this.spot_r;
+		this.hg.setColor(Color.black);
+		const left_x = this.co_j.x + 16 - radius - view_x;
+		if (left_x > 0) this.hg.fillRect(0, 0, left_x, 320);
+		const right_x = this.co_j.x + 16 + radius - view_x;
+		if (right_x < 512) this.hg.fillRect(right_x, 0, 512 - right_x, 320);
+		const top_y = this.co_j.y + 16 - radius - view_y;
+		if (top_y > 0) this.hg.fillRect(left_x, 0, right_x - left_x, top_y);
+		const bottom_y = this.co_j.y + 16 + radius - view_y;
+		if (bottom_y < 320) this.hg.fillRect(left_x, bottom_y, right_x - left_x, 320 - bottom_y);
+		this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
+		this.hg.setColor(Color.black);
+		this.hg.fillRect(0, 0, 512, 320);
+		const graphics = this.gg.os_img.getGraphics();
+		graphics.setClip(
+			"ellipse",
+			this.co_j.x + 16 - radius - view_x,
+			this.co_j.y + 16 - radius - view_y,
+			diameter,
+			diameter
+		);
+		graphics.drawImage(this.spot_img, 0, 0, this.ap);
+		this.hg.setColor(new Color(0, 0, 0, 96));
+		this.hg.fillRect(0, 0, 512, 320);
+		graphics.setClip(
+			"ellipse",
+			this.co_j.x + 16 - (radius - 24) - view_x,
+			this.co_j.y + 16 - (radius - 24) - view_y,
+			diameter - 48,
+			diameter - 48
+		);
+		graphics.drawImage(this.spot_img, 0, 0, this.ap);
+		graphics.dispose();
+	} else if (this.spot_c === 200) {
+		this.hg.setColor(Color.black);
+		this.hg.fillRect(0, 0, 512, 320);
 	}
 };
 

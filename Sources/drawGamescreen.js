@@ -1,7 +1,15 @@
 import { Color, Font } from "./ImageBuff";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 
-import { drawHitokotoMessage, drawBoss, drawMyAttack } from "./drawGamescreenSeparated";
+import {
+	drawGamescreenEnemy,
+	drawAna,
+	drawMyAttack,
+	drawBoss,
+	drawHPGauge,
+	drawSpot,
+	drawHitokotoMessage
+} from "./drawGamescreenSeparated";
 
 /**
  * ゲーム画面を描画します
@@ -22,23 +30,7 @@ export const drawGamescreen = function() {
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 	if (this.ana_kazu > 0) {
-		for (let i = 0; i <= 11; i++) {
-			if (this.ana_c[i] <= 0) continue;
-			if (this.ana_c[i] <= 135 && this.ana_c[i] >= 129) {
-				const l7 = (136 - this.ana_c[i]) * 4;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, l7);
-				continue;
-			}
-			if (this.ana_c[i] <= 235 && this.ana_c[i] >= 229) {
-				const i8 = (236 - this.ana_c[i]) * 4;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, i8 * -1);
-				continue;
-			}
-			if (this.ana_c[i] >= 1 && this.ana_c[i] <= 15) {
-				const j8 = this.ana_c[i] * 2;
-				this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, j8);
-			}
-		}
+		drawAna.apply(this);
 	}
 	if (this.souko_count1 >= 1) {
 		for (let i = 0; i <= this.a_kazu; i++) {
@@ -66,8 +58,8 @@ export const drawGamescreen = function() {
 		for (let i = 0; i <= this.a_kazu; i++) {
 			if (this.co_a[i].gf) {
 				const characterobject = this.co_a[i];
-				let co_wx = characterobject.x - view_x;
-				let co_wy = characterobject.y - view_y;
+				const co_wx = characterobject.x - view_x;
+				const co_wy = characterobject.y - view_y;
 				switch (characterobject.pt) {
 					case 850:
 					case 2700:
@@ -310,30 +302,30 @@ export const drawGamescreen = function() {
 						break;
 
 					case 1100:
-						co_wx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
-						co_wy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
-						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + co_wx;
-						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + co_wy;
-						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - co_wx;
-						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - co_wy;
-						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - co_wx;
-						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - co_wy;
-						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + co_wx;
-						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + co_wy;
+						const dx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
+						const dy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
+						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + dx;
+						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + dy;
+						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - dx;
+						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - dy;
+						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - dx;
+						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - dy;
+						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + dx;
+						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + dy;
 						this.gg.os_g.setColor(this.gamecolor_firebar1);
 						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						if (this.g_c2 >= 2) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							co_wx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
-							co_wy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
-							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + co_wx;
-							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + co_wy;
-							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - co_wx;
-							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - co_wy;
-							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - co_wx;
-							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - co_wy;
-							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + co_wx;
-							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + co_wy;
+							const dx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
+							const dy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
+							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
+							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + dy;
+							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - dx;
+							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - dy;
+							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - dx;
+							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - dy;
+							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + dx;
+							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + dy;
 							this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						}
 						break;
@@ -1065,27 +1057,25 @@ export const drawGamescreen = function() {
 							bgc,
 							0
 						);
-					continue;
+				} else {
+					let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
+					if (bgc >= 20)
+						this.gg.drawPT(
+							rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
+							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+							bgc,
+							0
+						);
+					bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
+					if (bgc >= 20)
+						this.gg.drawPT(
+							rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
+							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+							bgc,
+							0
+						);
 				}
-				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-				if (bgc >= 20)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-				if (bgc >= 20)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-				continue;
-			}
-			if (characterobject.pt == 1000) {
+			} else if (characterobject.pt == 1000) {
 				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 				this.gg.os_g.fillOval(
 					characterobject.x - view_x + 16 - characterobject.c2,
@@ -1093,9 +1083,7 @@ export const drawGamescreen = function() {
 					characterobject.c2 * 2,
 					characterobject.c2 * 2
 				);
-				continue;
-			}
-			if (characterobject.pt == 1010) {
+			} else if (characterobject.pt == 1010) {
 				this.gg.os_g.setColor(
 					new Color(
 						this.gamecolor_mizunohadou.getRed(),
@@ -1110,9 +1098,7 @@ export const drawGamescreen = function() {
 					characterobject.c2 * 2,
 					characterobject.c2 * 2
 				);
-				continue;
-			}
-			if (characterobject.pt == 1100) {
+			} else if (characterobject.pt == 1100) {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillOval(
@@ -1121,9 +1107,7 @@ export const drawGamescreen = function() {
 					characterobject.c2 * 2,
 					characterobject.c2 * 2
 				);
-				continue;
-			}
-			if (characterobject.pt == 1200) {
+			} else if (characterobject.pt == 1200) {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.drawOval(
@@ -1132,9 +1116,7 @@ export const drawGamescreen = function() {
 					characterobject.vy * 2,
 					characterobject.vy * 2
 				);
-				continue;
-			}
-			if (characterobject.pt == 1210) {
+			} else if (characterobject.pt == 1210) {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillRect(
@@ -1143,9 +1125,7 @@ export const drawGamescreen = function() {
 					characterobject.vx - characterobject.x + 1,
 					10
 				);
-				continue;
-			}
-			if (characterobject.pt == 1215) {
+			} else if (characterobject.pt == 1215) {
 				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillRect(
@@ -1154,9 +1134,7 @@ export const drawGamescreen = function() {
 					characterobject.x - characterobject.vx + 1,
 					10
 				);
-				continue;
-			}
-			if (characterobject.pt == 1220) {
+			} else if (characterobject.pt == 1220) {
 				this.gg.os_g.setColor(this.gamecolor_grenade1);
 				this.gg.os_g.drawOval(
 					characterobject.x - view_x + 16 - characterobject.vy,
@@ -1164,9 +1142,7 @@ export const drawGamescreen = function() {
 					characterobject.vy * 2,
 					characterobject.vy * 2
 				);
-				continue;
-			}
-			if (characterobject.pt == 1230) {
+			} else if (characterobject.pt == 1230) {
 				this.gg.os_g.setColor(
 					new Color(
 						this.gamecolor_grenade1.getRed(),
@@ -1181,9 +1157,7 @@ export const drawGamescreen = function() {
 					characterobject.vx - characterobject.x + 1,
 					14
 				);
-				continue;
-			}
-			if (characterobject.pt == 1235) {
+			} else if (characterobject.pt == 1235) {
 				this.gg.os_g.setColor(
 					new Color(
 						this.gamecolor_grenade1.getRed(),
@@ -1198,22 +1172,21 @@ export const drawGamescreen = function() {
 					characterobject.x - characterobject.vx + 1,
 					14
 				);
-				continue;
-			}
-			if (characterobject.pt == 1300)
+			} else if (characterobject.pt == 1300) {
 				this.hg.drawImage(
 					this.gg.spt_option_img[0],
 					characterobject.x - view_x,
 					characterobject.y - view_y,
 					this.ap
 				);
-			else
+			} else {
 				this.hg.drawImage(
 					this.hih[characterobject.pth][characterobject.pt],
 					characterobject.x - view_x,
 					characterobject.y - view_y,
 					this.ap
 				);
+			}
 		}
 	}
 	if (this.jm_kazu > 0) {
@@ -1230,15 +1203,7 @@ export const drawGamescreen = function() {
 				);
 	}
 	if (this.system_draw_mode < 3) {
-		for (var k1 = 0; k1 <= this.t_kazu; k1++) {
-			if (this.co_t[k1].c < 50) continue;
-			var j13 = this.co_t[k1].x - view_x;
-			var l15 = this.co_t[k1].y - view_y;
-			if (j13 < -64 || l15 > 576) continue;
-			if (this.co_t[k1].img != null)
-				this.hg.drawImage(this.co_t[k1].img, j13 + this.co_t[k1].zs_x, l15 + this.co_t[k1].zs_y, this.ap);
-			else this.hg.drawImage(this.hih[this.co_t[k1].pth][this.co_t[k1].pt], j13, l15, this.ap);
-		}
+		drawGamescreenEnemy.apply(this);
 	}
 	// ボスの描画
 	drawBoss.apply(this);
@@ -1549,61 +1514,10 @@ export const drawGamescreen = function() {
 	}
 	// ゲージを表示
 	if (this.gauge_v) {
-		// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
-		const x = this.j_hp_v ? 40 : 64;
-		const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
-		this.hg.setFont(new Font(Font.DIALOG, 1, 16));
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.hg.drawString(this.gauge_text, x, y - 6);
-		this.gg.os_g.setColor(Color.red);
-		this.hg.fillRect(x, y, 200, 8);
-		this.gg.os_g.setColor(Color.yellow);
-		this.hg.fillRect(x, y, this.gauge_value, 8);
-		this.gg.os_g.setColor(Color.white);
-		this.hg.drawRect(x - 1, y - 1, 201, 9);
+		drawHPGauge.apply(this);
 	}
 	// スポット処理
-	if (this.spot_c === 100) {
-		// TODO: そもそも変数名rで直径を表すな
-		const radius = rightShiftIgnoreSign(this.spot_r, 1);
-		const diameter = this.spot_r;
-		this.hg.setColor(Color.black);
-		const left_x = this.co_j.x + 16 - radius - this.maps.wx;
-		if (left_x > 0) this.hg.fillRect(0, 0, left_x, 320);
-		const right_x = this.co_j.x + 16 + radius - this.maps.wx;
-		if (right_x < 512) this.hg.fillRect(right_x, 0, 512 - right_x, 320);
-		const top_y = this.co_j.y + 16 - radius - this.maps.wy;
-		if (top_y > 0) this.hg.fillRect(left_x, 0, right_x - left_x, top_y);
-		const bottom_y = this.co_j.y + 16 + radius - this.maps.wy;
-		if (bottom_y < 320) this.hg.fillRect(left_x, bottom_y, right_x - left_x, 320 - bottom_y);
-		this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
-		this.hg.setColor(Color.black);
-		this.hg.fillRect(0, 0, 512, 320);
-		const graphics = this.gg.os_img.getGraphics();
-		graphics.setClip(
-			"ellipse",
-			this.co_j.x + 16 - radius - this.maps.wx,
-			this.co_j.y + 16 - radius - this.maps.wy,
-			diameter,
-			diameter
-		);
-		graphics.drawImage(this.spot_img, 0, 0, this.ap);
-		this.hg.setColor(new Color(0, 0, 0, 96));
-		this.hg.fillRect(0, 0, 512, 320);
-		graphics.setClip(
-			"ellipse",
-			this.co_j.x + 16 - (radius - 24) - this.maps.wx,
-			this.co_j.y + 16 - (radius - 24) - this.maps.wy,
-			diameter - 48,
-			diameter - 48
-		);
-		graphics.drawImage(this.spot_img, 0, 0, this.ap);
-		graphics.dispose();
-	} else if (this.spot_c === 200) {
-		this.hg.setColor(Color.black);
-		this.hg.fillRect(0, 0, 512, 320);
-	}
-
+	drawSpot.apply(this);
 	// 一言メッセージ
 	if (this.hitokoto_c == 0) this.hitokoto_c = -1;
 	else if (this.hitokoto_c > 0) {
