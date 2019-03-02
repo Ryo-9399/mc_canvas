@@ -14,7 +14,7 @@ import {
 	drawGamescreenEnemy,
 	drawGamescreenWindow,
 	drawGamescreenUgokuyuka
-} from "./drawGamescreenSeparated";
+} from "./drawGamescreenJSS";
 
 /**
  * ゲーム本体

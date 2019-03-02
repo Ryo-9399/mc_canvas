@@ -1,15 +1,7 @@
 import { Color, Font } from "./ImageBuff";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 
-import {
-	drawGamescreenEnemy,
-	drawAna,
-	drawMyAttack,
-	drawBoss,
-	drawHPGauge,
-	drawSpot,
-	drawHitokotoMessage
-} from "./drawGamescreenSeparated";
+import * as drawGameScreenJSS from "./drawGamescreenJSS";
 
 /**
  * ゲーム画面を描画します
@@ -61,7 +53,7 @@ export const drawGamescreen = function() {
 	this.co_j.wx = this.co_j.x - view_x;
 	this.co_j.wy = this.co_j.y - view_y;
 	if (this.ana_kazu > 0) {
-		drawAna.apply(this);
+		drawGameScreenJSS.drawAna.apply(this);
 	}
 	if (this.souko_count1 >= 1) {
 		for (let i = 0; i <= this.a_kazu; i++) {
@@ -1220,7 +1212,7 @@ export const drawGamescreen = function() {
 		}
 	}
 	if (this.jm_kazu > 0) {
-		drawMyAttack.apply(this);
+		drawGameScreenJSS.drawMyAttack.apply(this);
 	}
 	if (this.j_tokugi == 14) {
 		for (let i = 0; i <= 1; i++)
@@ -1233,10 +1225,10 @@ export const drawGamescreen = function() {
 				);
 	}
 	if (this.system_draw_mode < 3) {
-		drawGamescreenEnemy.apply(this);
+		drawGameScreenJSS.drawGamescreenEnemy.apply(this);
 	}
 	// ボスの描画
-	drawBoss.apply(this);
+	drawGameScreenJSS.drawBoss.apply(this);
 
 	// 主人公の描画
 	if (this.system_draw_mode < 2) {
@@ -1543,15 +1535,15 @@ export const drawGamescreen = function() {
 	}
 	// ゲージを表示
 	if (this.gauge_v) {
-		drawHPGauge.apply(this);
+		drawGameScreenJSS.drawHPGauge.apply(this);
 	}
 	// スポット処理
-	drawSpot.apply(this);
+	drawGameScreenJSS.drawSpot.apply(this);
 	// 一言メッセージ
 	if (this.hitokoto_c == 0) this.hitokoto_c = -1;
 	else if (this.hitokoto_c > 0) {
 		this.hitokoto_c--;
-		drawHitokotoMessage.apply(this);
+		drawGameScreenJSS.drawHitokotoMessage.apply(this);
 	}
 	this.km.drawMenus();
 };
