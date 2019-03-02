@@ -6,239 +6,18 @@ import { rightShiftIgnoreSign } from "./GlobalFunctions";
  * 仕掛けを描画します
  */
 export const drawGamescreenUgokuyuka = function() {
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	if (this.ana_kazu > 0) {
 		drawAna.apply(this);
 	}
 	if (this.a_hf) {
-		for (let i = 0; i <= this.a_kazu; i++) {
-			if (this.co_a[i].gf) {
-				const characterobject = this.co_a[i];
-				const co_wx = characterobject.x - view_x;
-				const co_wy = characterobject.y - view_y;
-				switch (characterobject.pt) {
-					default:
-						break;
-
-					case 100:
-						// 動く床
-						drawWide(190, 3, 1, co_wx, co_wy);
-						break;
-
-					case 200:
-						// 水草
-						drawWide(76, 2, 2, co_wx, co_wy);
-						break;
-
-					case 210:
-						// 水草
-						drawWide(78, 2, 2, co_wx, co_wy);
-						break;
-
-					case 300:
-						// リンク土管1
-						drawWide(60, 2, 1, co_wx, co_wy);
-						break;
-
-					case 310:
-						// リンク土管2
-						drawWide(62, 2, 1, co_wx, co_wy);
-						break;
-
-					case 320:
-						// リンク土管3
-						drawWide(64, 2, 1, co_wx, co_wy);
-						break;
-
-					case 330:
-						// リンク土管4
-						drawWide(66, 2, 1, co_wx, co_wy);
-						break;
-
-					case 400:
-						// ドッスンスン
-						drawWide(183, 3, 2, co_wx, co_wy);
-						break;
-
-					case 500:
-						// 落ちる床
-						drawWide(180, 3, 1, co_wx, co_wy);
-						break;
-
-					case 600:
-						// カイオール 左向き
-						drawWide(188, 2, 2, co_wx, co_wy);
-						break;
-
-					case 605:
-						// カイオール 右向き
-						drawWideFlip(188, 2, 2, co_wx, co_wy);
-						break;
-
-					case 700:
-						// ジャンプ台 伸びている
-						this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
-						break;
-
-					case 710:
-						// ジャンプ台 途中
-						this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
-						break;
-
-					case 720:
-						// ジャンプ台 縮んでいる
-						this.hg.drawImage(this.hi[34], co_wx, co_wy, this.ap);
-						break;
-
-					case 800: {
-						// 一言メッセージの人
-						const muki = characterobject.x >= this.co_j.x ? 0 : 1;
-						this.hg.drawImage(this.hih[muki][35 + characterobject.c3], co_wx, co_wy, this.ap);
-						break;
-					}
-
-					case 1100: {
-						// ファイヤーバー
-						const rad = ((characterobject.c3 + 90) * Math.PI) / 180;
-						const dx = Math.cos(rad) * 16;
-						const dy = Math.sin(rad) * 16;
-						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + dx;
-						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + dy;
-						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - dx;
-						this.vo_pa_y[1] = this.vo_y[i][0] - view_y - dy;
-						this.vo_pa_x[2] = this.vo_x[i][1] - view_x - dx;
-						this.vo_pa_y[2] = this.vo_y[i][1] - view_y - dy;
-						this.vo_pa_x[3] = this.vo_x[i][1] - view_x + dx;
-						this.vo_pa_y[3] = this.vo_y[i][1] - view_y + dy;
-						this.gg.os_g.setColor(this.gamecolor_firebar1);
-						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-						if (this.g_c2 >= 2) {
-							// 内側の色を描画
-							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							const dx = Math.cos(rad) * 10;
-							const dy = Math.sin(rad) * 10;
-							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
-							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + dy;
-							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - dx;
-							this.vo_pa_y[1] = this.vo_y[i][2] - view_y - dy;
-							this.vo_pa_x[2] = this.vo_x[i][3] - view_x - dx;
-							this.vo_pa_y[2] = this.vo_y[i][3] - view_y - dy;
-							this.vo_pa_x[3] = this.vo_x[i][3] - view_x + dx;
-							this.vo_pa_y[3] = this.vo_y[i][3] - view_y + dy;
-							this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-						}
-						break;
-					}
-				}
-			}
-		}
+		drawA.apply(this);
 	}
 
 	if (this.yuka_id_max >= 0) this.drawYuka();
 	if (this.m_kazu > 0) {
-		for (let i = 0; i <= 79; i++) {
-			if (this.co_m[i].c < 50) continue;
-			const characterobject = this.co_m[i];
-			if (characterobject.c == 50) {
-				this.hg.drawImage(
-					this.hih[characterobject.pth][characterobject.pt],
-					characterobject.x - view_x,
-					characterobject.y - view_y,
-					this.ap
-				);
-				if (this.gg.layer_mode == 2) {
-					let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-					if (bgc >= 20 && bgc != 29)
-						this.gg.drawPT(
-							rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
-							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-							bgc,
-							0
-						);
-					bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-					if (bgc >= 20 && bgc != 29)
-						this.gg.drawPT(
-							rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
-							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-							bgc,
-							0
-						);
-				} else {
-					let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-					if (bgc >= 20)
-						this.gg.drawPT(
-							rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
-							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-							bgc,
-							0
-						);
-					bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-					if (bgc >= 20)
-						this.gg.drawPT(
-							rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
-							rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-							bgc,
-							0
-						);
-				}
-			} else if (characterobject.pt == 1000) {
-				this.gg.os_g.setColor(this.gamecolor_mizunohadou);
-				this.gg.os_g.fillOval(
-					characterobject.x - view_x + 16 - characterobject.c2,
-					characterobject.y - view_y + 16 - characterobject.c2,
-					characterobject.c2 * 2,
-					characterobject.c2 * 2
-				);
-			} else if (characterobject.pt == 1100) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-				else this.gg.os_g.setColor(this.gamecolor_grenade2);
-				this.gg.os_g.fillOval(
-					characterobject.x - view_x + 16 - characterobject.c2,
-					characterobject.y - view_y + 16 - characterobject.c2,
-					characterobject.c2 * 2,
-					characterobject.c2 * 2
-				);
-			} else {
-				this.hg.drawImage(
-					this.hih[characterobject.pth][characterobject.pt],
-					characterobject.x - view_x,
-					characterobject.y - view_y,
-					this.ap
-				);
-			}
-		}
+		drawM.apply(this);
 	}
 	if (this.jm_kazu > 0) {
 		drawMyAttack.apply(this);
@@ -294,6 +73,276 @@ export const drawAna = function() {
 		if (this.ana_c[i] >= 1 && this.ana_c[i] <= 15) {
 			const ana_y = this.ana_c[i] * 2;
 			this.gg.drawPatternCut(this.ana_x[i] * 32 - view_x, this.ana_y[i] * 32 - view_y, 20, 0, ana_y);
+		}
+	}
+};
+
+/**
+ * 仕掛けを描画します
+ */
+export const drawA = function() {
+	/**
+	 * 複数枚のパターン画像を並べて描画します
+	 * @param code 左上のパターンコード
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWide = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
+	/**
+	 * 複数枚のパターン画像を並べて描画します 左右反転
+	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWideFlip = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				const code_x = nx - 1 - cx;
+				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	for (let i = 0; i <= this.a_kazu; i++) {
+		if (this.co_a[i].gf) {
+			const characterobject = this.co_a[i];
+			const co_wx = characterobject.x - view_x;
+			const co_wy = characterobject.y - view_y;
+			switch (characterobject.pt) {
+				default:
+					break;
+
+				case 100:
+					// 動く床
+					drawWide(190, 3, 1, co_wx, co_wy);
+					break;
+
+				case 200:
+					// 水草
+					drawWide(76, 2, 2, co_wx, co_wy);
+					break;
+
+				case 210:
+					// 水草
+					drawWide(78, 2, 2, co_wx, co_wy);
+					break;
+
+				case 300:
+					// リンク土管1
+					drawWide(60, 2, 1, co_wx, co_wy);
+					break;
+
+				case 310:
+					// リンク土管2
+					drawWide(62, 2, 1, co_wx, co_wy);
+					break;
+
+				case 320:
+					// リンク土管3
+					drawWide(64, 2, 1, co_wx, co_wy);
+					break;
+
+				case 330:
+					// リンク土管4
+					drawWide(66, 2, 1, co_wx, co_wy);
+					break;
+
+				case 400:
+					// ドッスンスン
+					drawWide(183, 3, 2, co_wx, co_wy);
+					break;
+
+				case 500:
+					// 落ちる床
+					drawWide(180, 3, 1, co_wx, co_wy);
+					break;
+
+				case 600:
+					// カイオール 左向き
+					drawWide(188, 2, 2, co_wx, co_wy);
+					break;
+
+				case 605:
+					// カイオール 右向き
+					drawWideFlip(188, 2, 2, co_wx, co_wy);
+					break;
+
+				case 700:
+					// ジャンプ台 伸びている
+					this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
+					break;
+
+				case 710:
+					// ジャンプ台 途中
+					this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
+					break;
+
+				case 720:
+					// ジャンプ台 縮んでいる
+					this.hg.drawImage(this.hi[34], co_wx, co_wy, this.ap);
+					break;
+
+				case 800: {
+					// 一言メッセージの人
+					const muki = characterobject.x >= this.co_j.x ? 0 : 1;
+					this.hg.drawImage(this.hih[muki][35 + characterobject.c3], co_wx, co_wy, this.ap);
+					break;
+				}
+
+				case 1100: {
+					// ファイヤーバー
+					const rad = ((characterobject.c3 + 90) * Math.PI) / 180;
+					const dx = Math.cos(rad) * 16;
+					const dy = Math.sin(rad) * 16;
+					this.vo_pa_x[0] = this.vo_x[i][0] - view_x + dx;
+					this.vo_pa_y[0] = this.vo_y[i][0] - view_y + dy;
+					this.vo_pa_x[1] = this.vo_x[i][0] - view_x - dx;
+					this.vo_pa_y[1] = this.vo_y[i][0] - view_y - dy;
+					this.vo_pa_x[2] = this.vo_x[i][1] - view_x - dx;
+					this.vo_pa_y[2] = this.vo_y[i][1] - view_y - dy;
+					this.vo_pa_x[3] = this.vo_x[i][1] - view_x + dx;
+					this.vo_pa_y[3] = this.vo_y[i][1] - view_y + dy;
+					this.gg.os_g.setColor(this.gamecolor_firebar1);
+					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+					if (this.g_c2 >= 2) {
+						// 内側の色を描画
+						this.gg.os_g.setColor(this.gamecolor_firebar2);
+						const dx = Math.cos(rad) * 10;
+						const dy = Math.sin(rad) * 10;
+						this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
+						this.vo_pa_y[0] = this.vo_y[i][2] - view_y + dy;
+						this.vo_pa_x[1] = this.vo_x[i][2] - view_x - dx;
+						this.vo_pa_y[1] = this.vo_y[i][2] - view_y - dy;
+						this.vo_pa_x[2] = this.vo_x[i][3] - view_x - dx;
+						this.vo_pa_y[2] = this.vo_y[i][3] - view_y - dy;
+						this.vo_pa_x[3] = this.vo_x[i][3] - view_x + dx;
+						this.vo_pa_y[3] = this.vo_y[i][3] - view_y + dy;
+						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+					}
+					break;
+				}
+			}
+		}
+	}
+};
+
+/**
+ * 敵の攻撃・アイテムを描画します
+ */
+export const drawM = function() {
+	/**
+	 * 複数枚のパターン画像を並べて描画します
+	 * @param code 左上のパターンコード
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWide = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
+	/**
+	 * 複数枚のパターン画像を並べて描画します 左右反転
+	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWideFlip = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				const code_x = nx - 1 - cx;
+				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	for (let i = 0; i <= 79; i++) {
+		if (this.co_m[i].c < 50) continue;
+		const characterobject = this.co_m[i];
+		if (characterobject.c == 50) {
+			this.hg.drawImage(
+				this.hih[characterobject.pth][characterobject.pt],
+				characterobject.x - view_x,
+				characterobject.y - view_y,
+				this.ap
+			);
+			if (this.gg.layer_mode == 2) {
+				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
+				if (bgc >= 20 && bgc != 29)
+					this.gg.drawPT(
+						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
+						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+						bgc,
+						0
+					);
+				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
+				if (bgc >= 20 && bgc != 29)
+					this.gg.drawPT(
+						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
+						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+						bgc,
+						0
+					);
+			} else {
+				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
+				if (bgc >= 20)
+					this.gg.drawPT(
+						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
+						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+						bgc,
+						0
+					);
+				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
+				if (bgc >= 20)
+					this.gg.drawPT(
+						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
+						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
+						bgc,
+						0
+					);
+			}
+		} else if (characterobject.pt == 1000) {
+			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
+			this.gg.os_g.fillOval(
+				characterobject.x - view_x + 16 - characterobject.c2,
+				characterobject.y - view_y + 16 - characterobject.c2,
+				characterobject.c2 * 2,
+				characterobject.c2 * 2
+			);
+		} else if (characterobject.pt == 1100) {
+			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+			else this.gg.os_g.setColor(this.gamecolor_grenade2);
+			this.gg.os_g.fillOval(
+				characterobject.x - view_x + 16 - characterobject.c2,
+				characterobject.y - view_y + 16 - characterobject.c2,
+				characterobject.c2 * 2,
+				characterobject.c2 * 2
+			);
+		} else {
+			this.hg.drawImage(
+				this.hih[characterobject.pth][characterobject.pt],
+				characterobject.x - view_x,
+				characterobject.y - view_y,
+				this.ap
+			);
 		}
 	}
 };
