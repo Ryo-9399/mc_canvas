@@ -165,6 +165,7 @@ export const drawGamescreenUgokuyuka = function() {
 			}
 		}
 	}
+
 	if (this.yuka_id_max >= 0) this.drawYuka();
 	if (this.m_kazu > 0) {
 		for (let i = 0; i <= 79; i++) {
@@ -305,8 +306,8 @@ export const drawAna = function() {
 export const drawGamescreenMy = function() {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
-	this.co_j.wx = this.co_j.x - this.maps.wx;
-	this.co_j.wy = this.co_j.y - this.maps.wy;
+	this.co_j.wx = this.co_j.x - view_x;
+	this.co_j.wy = this.co_j.y - view_y;
 	if (this.j_jet_c >= 96) {
 		// ジェット噴射
 		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.wx, this.co_j.wy + 36, this.ap);

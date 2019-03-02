@@ -1057,6 +1057,7 @@ export const drawGamescreen = function() {
 			}
 		}
 	}
+
 	if (this.yuka_id_max >= 0) this.drawYuka();
 	if (this.m_kazu > 0) {
 		for (let i = 0; i <= 79; i++) {

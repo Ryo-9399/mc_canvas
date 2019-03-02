@@ -36,8 +36,8 @@ export const drawGamescreen = function() {
 	this.maps.drawMapScroll(this.g_ac2);
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
-	this.co_j.wx = this.co_j.x - this.maps.wx;
-	this.co_j.wy = this.co_j.y - this.maps.wy;
+	this.co_j.wx = this.co_j.x - view_x;
+	this.co_j.wy = this.co_j.y - view_y;
 	if (this.a_hf) {
 		for (let i = 0; i <= this.a_kazu; i++) {
 			if (this.co_a[i].gf) {
@@ -161,6 +161,7 @@ export const drawGamescreen = function() {
 			}
 		}
 	}
+
 	if (this.m_kazu > 0) {
 		for (let i = 0; i <= 23; i++) {
 			if (this.co_m[i].c < 50) continue;
@@ -218,6 +219,25 @@ export const drawGamescreen = function() {
 	if (this.jm_kazu > 0) {
 		drawMyAttack.apply(this);
 	}
+	drawGamescreenEnemy.apply(this);
+
+	// ボスの描画
+	drawBoss.apply(this);
+
+	// 主人公の描画
+	// 一言メッセージ
+	if (this.hitokoto_c > 0) {
+		this.hitokoto_c--;
+		drawHitokotoMessage.apply(this);
+	}
+};
+
+/**
+ * 敵を描画します
+ */
+const drawGamescreenEnemy = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.t_kazu; i++) {
 		if (this.co_t[i].c < 50) continue;
 		const co_wx = this.co_t[i].x - view_x;
@@ -225,11 +245,18 @@ export const drawGamescreen = function() {
 		if (co_wx < -64 || co_wy > 576) continue;
 		this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], co_wx, co_wy, this.ap);
 	}
+};
 
-	// ボスの描画
-	drawBoss.apply(this);
-
-	// 主人公の描画
+/**
+ * 主人公を描画します
+ */
+const drawGamescreenMy = function() {
+	const view_x = this.maps.wx;
+	const view_y = this.maps.wy;
+	// NOTE: drawGamescreenでも同じ代入をしているので、drawGamescreenから呼ばれた場合同じ処理が二回行われる
+	// this.co_j.xもview_xも変化しないので、特に問題はない
+	this.co_j.wx = this.co_j.x - view_x;
+	this.co_j.wy = this.co_j.y - view_y;
 	if (this.j_jet_c >= 96) {
 		// ジェット噴射
 		if (this.g_c1 === 0) this.hg.drawImage(this.hi[134], this.co_j.wx, this.co_j.wy + 36, this.ap);
@@ -307,12 +334,6 @@ export const drawGamescreen = function() {
 		this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
 		this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
 	} else if (this.co_j.pt != 1110);
-
-	// 一言メッセージ
-	if (this.hitokoto_c > 0) {
-		this.hitokoto_c--;
-		drawHitokotoMessage.apply(this);
-	}
 };
 
 /**
@@ -352,7 +373,7 @@ export const drawMyAttack = function() {
 /**
  * ボスを描画
  */
-export const drawBoss = function() {
+const drawBoss = function() {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
 	/**
@@ -500,7 +521,7 @@ export const drawBoss = function() {
 /**
  * 一言メッセージを描画
  */
-export const drawHitokotoMessage = function() {
+const drawHitokotoMessage = function() {
 	const box_x = 208;
 	const box_y = 56;
 	const box_width = 224;
