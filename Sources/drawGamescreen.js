@@ -15,6 +15,37 @@ import {
  * ゲーム画面を描画します
  */
 export const drawGamescreen = function() {
+	/**
+	 * 複数枚のパターン画像を並べて描画します
+	 * @param code 左上のパターンコード
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWide = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
+	/**
+	 * 複数枚のパターン画像を並べて描画します 左右反転
+	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 */
+	const drawWideFlip = (code, nx, ny, x, y) => {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				const code_x = nx - 1 - cx;
+				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
+			}
+		}
+	};
 	var ai = new Array(26);
 	var ai1 = new Array(26);
 	if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1)
@@ -67,26 +98,22 @@ export const drawGamescreen = function() {
 						break;
 
 					case 100:
-						this.hg.drawImage(this.hi[190], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[191], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hi[192], co_wx + 64, co_wy, this.ap);
+						// 動く床
+						drawWide(190, 3, 1, co_wx, co_wy);
 						break;
 
 					case 200:
-						this.hg.drawImage(this.hi[76], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[77], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hi[86], co_wx, co_wy + 32, this.ap);
-						this.hg.drawImage(this.hi[87], co_wx + 32, co_wy + 32, this.ap);
+						// 水草
+						drawWide(76, 2, 2, co_wx, co_wy);
 						break;
 
 					case 210:
-						this.hg.drawImage(this.hi[78], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[79], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hi[88], co_wx, co_wy + 32, this.ap);
-						this.hg.drawImage(this.hi[89], co_wx + 32, co_wy + 32, this.ap);
+						// 水草
+						drawWide(78, 2, 2, co_wx, co_wy);
 						break;
 
 					case 300:
+						// リンク土管1
 						if (characterobject.c3 == 100) {
 							var graphics2 = this.gg.os_img.getGraphics();
 							var i18 = co_wx + 32;
@@ -122,6 +149,7 @@ export const drawGamescreen = function() {
 						break;
 
 					case 310:
+						// リンク土管2
 						if (characterobject.c3 == 101) {
 							var graphics23 = this.gg.os_img.getGraphics();
 							var l18 = co_wx + 32;
@@ -157,6 +185,7 @@ export const drawGamescreen = function() {
 						break;
 
 					case 320:
+						// リンク土管3
 						if (characterobject.c3 == 102) {
 							var graphics26 = this.gg.os_img.getGraphics();
 							var k19 = co_wx + 32;
@@ -192,6 +221,7 @@ export const drawGamescreen = function() {
 						break;
 
 					case 330:
+						// リンク土管4
 						if (characterobject.c3 == 103) {
 							var graphics29 = this.gg.os_img.getGraphics();
 							var j20 = co_wx + 32;
@@ -227,43 +257,37 @@ export const drawGamescreen = function() {
 						break;
 
 					case 400:
-						this.hg.drawImage(this.hi[183], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[184], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hi[185], co_wx + 64, co_wy, this.ap);
-						this.hg.drawImage(this.hi[193], co_wx, co_wy + 32, this.ap);
-						this.hg.drawImage(this.hi[194], co_wx + 32, co_wy + 32, this.ap);
-						this.hg.drawImage(this.hi[195], co_wx + 64, co_wy + 32, this.ap);
+						// ドッスンスン
+						drawWide(183, 3, 2, co_wx, co_wy);
 						break;
 
 					case 500:
-						this.hg.drawImage(this.hi[180], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[181], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hi[182], co_wx + 64, co_wy, this.ap);
+						// 落ちる床
+						drawWide(180, 3, 1, co_wx, co_wy);
 						break;
 
 					case 600:
-						this.hg.drawImage(this.hi[188], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[189], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hi[198], co_wx, co_wy + 32, this.ap);
-						this.hg.drawImage(this.hi[199], co_wx + 32, co_wy + 32, this.ap);
+						// カイオール 左向き
+						drawWide(188, 2, 2, co_wx, co_wy);
 						break;
 
 					case 605:
-						this.hg.drawImage(this.hih[1][189], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hih[1][188], co_wx + 32, co_wy, this.ap);
-						this.hg.drawImage(this.hih[1][199], co_wx, co_wy + 32, this.ap);
-						this.hg.drawImage(this.hih[1][198], co_wx + 32, co_wy + 32, this.ap);
+						// カイオール 右向き
+						drawWideFlip(188, 2, 2, co_wx, co_wy);
 						break;
 
 					case 700:
+						// ジャンプ台 伸びている
 						this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
 						break;
 
 					case 710:
+						// ジャンプ台 途中
 						this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
 						break;
 
 					case 720:
+						// ジャンプ台 縮んでいる
 						this.hg.drawImage(this.hi[34], co_wx, co_wy, this.ap);
 						break;
 
@@ -287,11 +311,12 @@ export const drawGamescreen = function() {
 						graphics213.dispose();
 						break;
 
-					case 800:
-						if (characterobject.x >= this.co_j.x)
-							this.hg.drawImage(this.hi[35 + characterobject.c3], co_wx, co_wy, this.ap);
-						else this.hg.drawImage(this.hih[1][35 + characterobject.c3], co_wx, co_wy, this.ap);
+					case 800: {
+						// 一言メッセージの人
+						const muki = characterobject.x >= this.co_j.x ? 0 : 1;
+						this.hg.drawImage(this.hih[muki][35 + characterobject.c3], co_wx, co_wy, this.ap);
 						break;
+					}
 
 					case 860:
 						var byte0 = 39;
@@ -301,9 +326,11 @@ export const drawGamescreen = function() {
 						else this.hg.drawImage(this.hih[1][byte0], co_wx, co_wy, this.ap);
 						break;
 
-					case 1100:
-						const dx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
-						const dy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 16;
+					case 1100: {
+						// ファイヤーバー
+						const rad = ((characterobject.c3 + 90) * Math.PI) / 180;
+						const dx = Math.cos(rad) * 16;
+						const dy = Math.sin(rad) * 16;
 						this.vo_pa_x[0] = this.vo_x[i][0] - view_x + dx;
 						this.vo_pa_y[0] = this.vo_y[i][0] - view_y + dy;
 						this.vo_pa_x[1] = this.vo_x[i][0] - view_x - dx;
@@ -315,9 +342,10 @@ export const drawGamescreen = function() {
 						this.gg.os_g.setColor(this.gamecolor_firebar1);
 						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						if (this.g_c2 >= 2) {
+							// 内側の色を描画
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							const dx = Math.cos(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
-							const dy = Math.sin(((characterobject.c3 + 90) * 6.2831853071795862) / 360) * 10;
+							const dx = Math.cos(rad) * 10;
+							const dy = Math.sin(rad) * 10;
 							this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
 							this.vo_pa_y[0] = this.vo_y[i][2] - view_y + dy;
 							this.vo_pa_x[1] = this.vo_x[i][2] - view_x - dx;
@@ -329,6 +357,7 @@ export const drawGamescreen = function() {
 							this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 						}
 						break;
+					}
 
 					case 1200:
 						this.vo_pa_x[0] =
