@@ -22,7 +22,7 @@ export const drawGamescreenUgokuyuka = function() {
 	if (this.jm_kazu > 0) {
 		drawMyAttack.apply(this);
 	}
-	if (this.j_tokugi == 14) {
+	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
 				this.hg.drawImage(
@@ -241,52 +241,21 @@ export const drawA = function() {
  * 敵の攻撃・アイテムを描画します
  */
 export const drawM = function() {
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 79; i++) {
 		if (this.co_m[i].c < 50) continue;
 		const characterobject = this.co_m[i];
-		if (characterobject.c == 50) {
+		if (characterobject.c === 50) {
 			this.hg.drawImage(
 				this.hih[characterobject.pth][characterobject.pt],
 				characterobject.x - view_x,
 				characterobject.y - view_y,
 				this.ap
 			);
-			if (this.gg.layer_mode == 2) {
+			if (this.gg.layer_mode === 2) {
 				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-				if (bgc >= 20 && bgc != 29)
+				if (bgc >= 20 && bgc !== 29)
 					this.gg.drawPT(
 						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
 						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
@@ -294,7 +263,7 @@ export const drawM = function() {
 						0
 					);
 				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-				if (bgc >= 20 && bgc != 29)
+				if (bgc >= 20 && bgc !== 29)
 					this.gg.drawPT(
 						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
 						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
@@ -319,7 +288,7 @@ export const drawM = function() {
 						0
 					);
 			}
-		} else if (characterobject.pt == 1000) {
+		} else if (characterobject.pt === 1000) {
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 			this.gg.os_g.fillOval(
 				characterobject.x - view_x + 16 - characterobject.c2,
@@ -327,8 +296,8 @@ export const drawM = function() {
 				characterobject.c2 * 2,
 				characterobject.c2 * 2
 			);
-		} else if (characterobject.pt == 1100) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		} else if (characterobject.pt === 1100) {
+			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillOval(
 				characterobject.x - view_x + 16 - characterobject.c2,
@@ -391,7 +360,7 @@ export const drawGamescreenMy = function() {
 		// NOTE: なにこれ
 		this.j_zan_cf = false;
 		for (let i = 0; i < 6; i++) {
-			if (this.co_j.img != null) {
+			if (this.co_j.img !== null) {
 				this.j_zan_img[i] = this.co_j.img;
 				this.j_zan_zs_x[i] = this.co_j.zs_x;
 				this.j_zan_zs_y[i] = this.co_j.zs_y;
@@ -412,7 +381,7 @@ export const drawGamescreenMy = function() {
 			const zan_wx = this.j_zan_x[index] - view_x;
 			const zan_wy = this.j_zan_y[index] - view_y;
 			const muki = this.j_zan_pth[index];
-			if (this.j_zan_img[index] != null)
+			if (this.j_zan_img[index] !== null)
 				this.hg.drawImage(
 					this.j_zan_img[index],
 					zan_wx + this.j_zan_zs_x[index],
@@ -436,34 +405,34 @@ export const drawGamescreenMy = function() {
 			if (this.j_zan_nagasa < 0) this.j_zan_f = false;
 		}
 	}
-	if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 != 1) {
+	if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 !== 1) {
 		// 主人公本体の描画
-		if (this.co_j.img != null) {
+		if (this.co_j.img !== null) {
 			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
 		} else if (this.co_j.pt < 1000) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-		} else if (this.co_j.pt == 1000) {
+		} else if (this.co_j.pt === 1000) {
 			// しっぽを伸ばしている
-			if (this.j_tokugi == 15 && this.j_4_muki == 2) {
+			if (this.j_tokugi === 15 && this.j_4_muki === 2) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 211, 0);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 210, 0);
-			} else if (this.j_tokugi == 15 && this.j_4_muki == 3) {
+			} else if (this.j_tokugi === 15 && this.j_4_muki === 3) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 105, 0);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 106, 0);
-			} else if (this.co_j.muki == 0) {
+			} else if (this.co_j.muki === 0) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, this.co_j.muki);
 				this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 117, this.co_j.muki);
 			} else {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, 1);
 				this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
 			}
-		} else if (this.co_j.pt == 1100) {
+		} else if (this.co_j.pt === 1100) {
 			// 土管に入る
 			const j_dy = Math.max(0, Math.min(32, this.co_j.c1));
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy + j_dy, 100, this.co_j.muki);
 			this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
 			this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
-		} else if (this.co_j.pt != 1110);
+		} else if (this.co_j.pt !== 1110);
 	}
 };
 
@@ -518,7 +487,7 @@ export const drawBoss = function() {
 	 */
 	const boss_wy = this.co_b.y - wy;
 	if (boss_wx > 560) return;
-	if (this.co_b.img != null) {
+	if (this.co_b.img !== null) {
 		this.hg.drawImage(this.co_b.img, boss_wx + this.co_b.zs_x, boss_wy + this.co_b.zs_y, this.ap);
 		return;
 	}
@@ -850,7 +819,7 @@ export const drawGamescreenWindow = function() {
 	// MasaoJSS#showImageで設定された画像を表示
 	if (this.showi_c > 0) {
 		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap != null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+		if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
 		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
 	}
 	// ゲージを表示
@@ -885,8 +854,7 @@ export const drawHPGauge = function() {
  * スポット処理
  */
 export const drawSpot = function() {
-	const view_x = this.maps.wx;
-	const view_y = this.maps.wy;
+	// TODO: co_j.wx, co_j.wyが更新されている前提の処理になっている
 	if (this.spot_c === 100) {
 		// TODO: そもそも変数名rで直径を表すな
 		const radius = rightShiftIgnoreSign(this.spot_r, 1);

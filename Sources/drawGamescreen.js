@@ -7,7 +7,7 @@ import * as drawGameScreenJSS from "./drawGamescreenJSS";
  * ゲーム画面を描画します
  */
 export const drawGamescreen = function() {
-	if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1)
+	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1)
 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
 	else if (this.setmapc_f) {
 		this.setmapc_f = false;
@@ -24,7 +24,7 @@ export const drawGamescreen = function() {
 	}
 	if (this.souko_count1 >= 1) {
 		for (let i = 0; i <= this.a_kazu; i++) {
-			if (this.co_a[i].pt == 3300 && this.co_a[i].gf) {
+			if (this.co_a[i].pt === 3300 && this.co_a[i].gf) {
 				const characterobject = this.co_a[i];
 				const co_wx = characterobject.x - view_x;
 				const co_wy = characterobject.y - view_y;
@@ -55,7 +55,7 @@ export const drawGamescreen = function() {
 	if (this.jm_kazu > 0) {
 		drawGameScreenJSS.drawMyAttack.apply(this);
 	}
-	if (this.j_tokugi == 14) {
+	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
 				this.hg.drawImage(
@@ -90,7 +90,7 @@ export const drawGamescreen = function() {
 	// MasaoJSS#showImageで設定された画像を表示
 	if (this.showi_c > 0) {
 		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap != null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+		if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
 		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
 	}
 	// TODO: 描画関数でカウンタ更新やめろ
@@ -99,16 +99,16 @@ export const drawGamescreen = function() {
 	if (this.showi_c > 0) this.showi_c--;
 	// セカンド画像 主人公の手前
 	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
-	if (this.second_gazou_visible && this.second_gazou_priority == 2 && this.second_gazou_img != null) {
-		if (this.second_gazou_scroll == 2) {
+	if (this.second_gazou_visible && this.second_gazou_priority === 2 && this.second_gazou_img !== null) {
+		if (this.second_gazou_scroll === 2) {
 			var i9 = -(rightShiftIgnoreSign(view_x - 32, 2) % 512);
 			this.hg.drawImage(this.second_gazou_img, i9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i9 + 512, 0, this.ap);
-		} else if (this.second_gazou_scroll == 3) {
+		} else if (this.second_gazou_scroll === 3) {
 			var j9 = -(rightShiftIgnoreSign(view_x - 32, 1) % 512);
 			this.hg.drawImage(this.second_gazou_img, j9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, j9 + 512, 0, this.ap);
-		} else if (this.second_gazou_scroll == 4) {
+		} else if (this.second_gazou_scroll === 4) {
 			this.maps.second_gazou_x += this.second_gazou_scroll_speed_x;
 			this.maps.second_gazou_y += this.second_gazou_scroll_speed_y;
 			if (this.maps.second_gazou_x < -512) this.maps.second_gazou_x += 512;
@@ -124,23 +124,23 @@ export const drawGamescreen = function() {
 				this.maps.second_gazou_y + 320,
 				this.ap
 			);
-		} else if (this.second_gazou_scroll == 5) {
+		} else if (this.second_gazou_scroll === 5) {
 			var k9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
 			this.hg.drawImage(this.second_gazou_img, k9, 0, this.ap);
 			this.hg.drawImage(this.second_gazou_img, k9 + 512, 0, this.ap);
-		} else if (this.second_gazou_scroll == 6) {
+		} else if (this.second_gazou_scroll === 6) {
 			var l9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
 			var l11 = -(view_y - 320);
 			this.hg.drawImage(this.second_gazou_img, l9, l11, this.ap);
 			this.hg.drawImage(this.second_gazou_img, l9 + 512, l11, this.ap);
-		} else if (this.second_gazou_scroll == 7) {
+		} else if (this.second_gazou_scroll === 7) {
 			var i10 = -((view_x - 32) % 512);
 			var i12 = -((view_y - 320) % 320);
 			this.hg.drawImage(this.second_gazou_img, i10, i12, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i10 + 512, i12, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i10, i12 + 320, this.ap);
 			this.hg.drawImage(this.second_gazou_img, i10 + 512, i12 + 320, this.ap);
-		} else if (this.second_gazou_scroll == 8) {
+		} else if (this.second_gazou_scroll === 8) {
 			var j10 = this.second_gazou_scroll_x + 32 - view_x;
 			var j12 = this.second_gazou_scroll_y + 320 - view_y;
 			if (j10 < 512 && j12 < 320) this.hg.drawImage(this.second_gazou_img, j10, j12, this.ap);
@@ -155,7 +155,7 @@ export const drawGamescreen = function() {
 	// スポット処理
 	drawGameScreenJSS.drawSpot.apply(this);
 	// 一言メッセージ
-	if (this.hitokoto_c == 0) this.hitokoto_c = -1;
+	if (this.hitokoto_c === 0) this.hitokoto_c = -1;
 	else if (this.hitokoto_c > 0) {
 		this.hitokoto_c--;
 		drawGameScreenJSS.drawHitokotoMessage.apply(this);
@@ -230,7 +230,7 @@ const drawA = function() {
 
 				case 300:
 					// リンク土管1
-					if (characterobject.c3 == 100) {
+					if (characterobject.c3 === 100) {
 						var graphics2 = this.gg.os_img.getGraphics();
 						var i18 = co_wx + 32;
 						var j24 = co_wy + 16;
@@ -240,7 +240,7 @@ const drawA = function() {
 						graphics2.dispose();
 						break;
 					}
-					if (characterobject.c3 == 200) {
+					if (characterobject.c3 === 200) {
 						var graphics21 = this.gg.os_img.getGraphics();
 						var j18 = co_wx + 32;
 						var k24 = co_wy + 32;
@@ -250,7 +250,7 @@ const drawA = function() {
 						graphics21.dispose();
 						break;
 					}
-					if (characterobject.c3 == 300) {
+					if (characterobject.c3 === 300) {
 						var graphics22 = this.gg.os_img.getGraphics();
 						var k18 = co_wx + 16;
 						var l24 = co_wy + 16;
@@ -266,7 +266,7 @@ const drawA = function() {
 
 				case 310:
 					// リンク土管2
-					if (characterobject.c3 == 101) {
+					if (characterobject.c3 === 101) {
 						var graphics23 = this.gg.os_img.getGraphics();
 						var l18 = co_wx + 32;
 						var i25 = co_wy + 16;
@@ -276,7 +276,7 @@ const drawA = function() {
 						graphics23.dispose();
 						break;
 					}
-					if (characterobject.c3 == 201) {
+					if (characterobject.c3 === 201) {
 						var graphics24 = this.gg.os_img.getGraphics();
 						var i19 = co_wx + 32;
 						var j25 = co_wy + 32;
@@ -286,7 +286,7 @@ const drawA = function() {
 						graphics24.dispose();
 						break;
 					}
-					if (characterobject.c3 == 301) {
+					if (characterobject.c3 === 301) {
 						var graphics25 = this.gg.os_img.getGraphics();
 						var j19 = co_wx + 16;
 						var k25 = co_wy + 16;
@@ -302,7 +302,7 @@ const drawA = function() {
 
 				case 320:
 					// リンク土管3
-					if (characterobject.c3 == 102) {
+					if (characterobject.c3 === 102) {
 						var graphics26 = this.gg.os_img.getGraphics();
 						var k19 = co_wx + 32;
 						var l25 = co_wy + 16;
@@ -312,7 +312,7 @@ const drawA = function() {
 						graphics26.dispose();
 						break;
 					}
-					if (characterobject.c3 == 202) {
+					if (characterobject.c3 === 202) {
 						var graphics27 = this.gg.os_img.getGraphics();
 						var l19 = co_wx + 32;
 						var i26 = co_wy + 32;
@@ -322,7 +322,7 @@ const drawA = function() {
 						graphics27.dispose();
 						break;
 					}
-					if (characterobject.c3 == 302) {
+					if (characterobject.c3 === 302) {
 						var graphics28 = this.gg.os_img.getGraphics();
 						var i20 = co_wx + 16;
 						var j26 = co_wy + 16;
@@ -338,7 +338,7 @@ const drawA = function() {
 
 				case 330:
 					// リンク土管4
-					if (characterobject.c3 == 103) {
+					if (characterobject.c3 === 103) {
 						var graphics29 = this.gg.os_img.getGraphics();
 						var j20 = co_wx + 32;
 						var k26 = co_wy + 16;
@@ -348,7 +348,7 @@ const drawA = function() {
 						graphics29.dispose();
 						break;
 					}
-					if (characterobject.c3 == 203) {
+					if (characterobject.c3 === 203) {
 						var graphics210 = this.gg.os_img.getGraphics();
 						var k20 = co_wx + 32;
 						var l26 = co_wy + 32;
@@ -358,7 +358,7 @@ const drawA = function() {
 						graphics210.dispose();
 						break;
 					}
-					if (characterobject.c3 == 303) {
+					if (characterobject.c3 === 303) {
 						var graphics211 = this.gg.os_img.getGraphics();
 						var l20 = co_wx + 16;
 						var i27 = co_wy + 16;
@@ -436,8 +436,8 @@ const drawA = function() {
 
 				case 860:
 					var byte0 = 39;
-					if (characterobject.c == 87) byte0 = 37;
-					else if (characterobject.c == 88) byte0 = 38;
+					if (characterobject.c === 87) byte0 = 37;
+					else if (characterobject.c === 88) byte0 = 38;
 					if (characterobject.x >= this.co_j.x) this.hg.drawImage(this.hi[byte0], co_wx, co_wy, this.ap);
 					else this.hg.drawImage(this.hih[1][byte0], co_wx, co_wy, this.ap);
 					break;
@@ -561,7 +561,7 @@ const drawA = function() {
 				case 1500:
 					if (characterobject.c4 <= 0) break;
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
-					if (characterobject.c3 == 1 || characterobject.c3 == 11) {
+					if (characterobject.c3 === 1 || characterobject.c3 === 11) {
 						this.gg.os_g.fillRect(co_wx + 8, co_wy, 48, characterobject.c4);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
@@ -569,7 +569,7 @@ const drawA = function() {
 						}
 						break;
 					}
-					if (characterobject.c3 == 2 || characterobject.c3 == 12) {
+					if (characterobject.c3 === 2 || characterobject.c3 === 12) {
 						this.gg.os_g.fillRect(co_wx - characterobject.c4, co_wy + 8, characterobject.c4, 48);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
@@ -582,7 +582,7 @@ const drawA = function() {
 						}
 						break;
 					}
-					if (characterobject.c3 == 3 || characterobject.c3 == 13) {
+					if (characterobject.c3 === 3 || characterobject.c3 === 13) {
 						this.gg.os_g.fillRect(co_wx, co_wy + 8, characterobject.c4, 48);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
@@ -728,7 +728,7 @@ const drawA = function() {
 						Math.sin(((characterobject.c4 + 90) * 3.1415926535897931) / 180) * 20;
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
-					if (characterobject.c3 == 0 || characterobject.c3 == 1) {
+					if (characterobject.c3 === 0 || characterobject.c3 === 1) {
 						this.vo_pa_x[0] = co_wx + 16 - 6;
 						this.vo_pa_y[0] = co_wy + 16 - 4;
 						this.vo_pa_x[1] = co_wx + 16 + 6;
@@ -737,7 +737,7 @@ const drawA = function() {
 						this.vo_pa_y[2] = co_wy + 32 + 12;
 						this.vo_pa_x[3] = co_wx + 16 - 12;
 						this.vo_pa_y[3] = co_wy + 32 + 12;
-					} else if (characterobject.c3 == 2) {
+					} else if (characterobject.c3 === 2) {
 						this.vo_pa_x[0] = co_wx + 16 - 6;
 						this.vo_pa_y[0] = co_wy + 16 + 4;
 						this.vo_pa_x[1] = co_wx + 16 + 6;
@@ -746,7 +746,7 @@ const drawA = function() {
 						this.vo_pa_y[2] = co_wy - 32;
 						this.vo_pa_x[3] = co_wx + 16 - 12;
 						this.vo_pa_y[3] = co_wy - 32;
-					} else if (characterobject.c3 == 3) {
+					} else if (characterobject.c3 === 3) {
 						this.vo_pa_x[0] = co_wx + 16 - 4;
 						this.vo_pa_y[0] = co_wy + 16 - 6;
 						this.vo_pa_x[1] = co_wx + 16 - 4;
@@ -769,7 +769,7 @@ const drawA = function() {
 					break;
 
 				case 2300:
-					if (this.control_parts_visible == 2 && characterobject.c == 1900) {
+					if (this.control_parts_visible === 2 && characterobject.c === 1900) {
 						this.gg.os_g.setColor(Color.black);
 						this.gg.os_g.fillRect(co_wx, co_wy, 32, 32);
 						var s = "" + "S " + String(characterobject.c3);
@@ -780,7 +780,7 @@ const drawA = function() {
 					break;
 
 				case 2400:
-					if (characterobject.c3 == 0) {
+					if (characterobject.c3 === 0) {
 						var graphics214 = this.gg.os_img.getGraphics();
 						graphics214.translate(co_wx + 32, co_wy + 64);
 						graphics214.scale(characterobject.vy / 100, characterobject.vy / 100);
@@ -798,7 +798,7 @@ const drawA = function() {
 						graphics214.dispose();
 						break;
 					}
-					if (characterobject.c3 == 1) {
+					if (characterobject.c3 === 1) {
 						var graphics215 = this.gg.os_img.getGraphics();
 						graphics215.translate(co_wx + 32, co_wy);
 						graphics215.scale(characterobject.vy / 100, characterobject.vy / 100);
@@ -816,7 +816,7 @@ const drawA = function() {
 						graphics215.dispose();
 						break;
 					}
-					if (characterobject.c3 != 2) break;
+					if (characterobject.c3 !== 2) break;
 					var graphics216 = this.gg.os_img.getGraphics();
 					graphics216.translate(co_wx + 32, co_wy + 32);
 					graphics216.scale(characterobject.vy / 100, characterobject.vy / 100);
@@ -1015,34 +1015,34 @@ const drawA = function() {
 					break;
 
 				case 3400:
-					if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+					if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 					else this.gg.os_g.setColor(this.gamecolor_grenade2);
 					this.gg.os_g.fillRect(co_wx, co_wy, 96, 64);
 					break;
 
 				case 3500:
-					if (characterobject.c3 != 1 && this.control_parts_visible != 2) {
+					if (characterobject.c3 !== 1 && this.control_parts_visible !== 2) {
 						this.gg.os_g.setColor(this.gamecolor_firebar2);
 						this.gg.os_g.fillRect(co_wx + 30, co_wy, 2, 128);
 					}
 					break;
 
 				case 3510:
-					if (characterobject.c3 != 1 && this.control_parts_visible != 2) {
+					if (characterobject.c3 !== 1 && this.control_parts_visible !== 2) {
 						this.gg.os_g.setColor(this.gamecolor_firebar2);
 						this.gg.os_g.fillRect(co_wx, co_wy, 2, 128);
 					}
 					break;
 
 				case 3520:
-					if (characterobject.c3 != 1 && this.control_parts_visible != 2) {
+					if (characterobject.c3 !== 1 && this.control_parts_visible !== 2) {
 						this.gg.os_g.setColor(this.gamecolor_firebar2);
 						this.gg.os_g.fillRect(co_wx, co_wy, 128, 2);
 					}
 					break;
 
 				case 3530:
-					if (characterobject.c3 != 1 && this.control_parts_visible != 2) {
+					if (characterobject.c3 !== 1 && this.control_parts_visible !== 2) {
 						this.gg.os_g.setColor(this.gamecolor_firebar2);
 						this.gg.os_g.fillRect(co_wx, co_wy + 30, 128, 2);
 					}
@@ -1061,7 +1061,7 @@ const drawA = function() {
 					break;
 
 				case 3800:
-					if (this.g_c1 == 0) {
+					if (this.g_c1 === 0) {
 						this.hg.drawImage(this.hi[120], co_wx, co_wy, this.ap);
 						this.hg.drawImage(this.hi[120], co_wx, co_wy + 32, this.ap);
 						this.hg.drawImage(this.hi[120], co_wx, co_wy + 64, this.ap);
@@ -1075,7 +1075,7 @@ const drawA = function() {
 					break;
 
 				case 3900:
-					if (this.g_c1 == 0) {
+					if (this.g_c1 === 0) {
 						this.hg.drawImage(this.hi[120], co_wx, co_wy, this.ap);
 						this.hg.drawImage(this.hi[120], co_wx + 32, co_wy, this.ap);
 						this.hg.drawImage(this.hi[120], co_wx + 64, co_wy, this.ap);
@@ -1147,52 +1147,21 @@ const drawA = function() {
  * 敵の攻撃・アイテムを描画します
  */
 const drawM = function() {
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 79; i++) {
 		if (this.co_m[i].c < 50) continue;
 		const characterobject = this.co_m[i];
-		if (characterobject.c == 50) {
+		if (characterobject.c === 50) {
 			this.hg.drawImage(
 				this.hih[characterobject.pth][characterobject.pt],
 				characterobject.x - view_x,
 				characterobject.y - view_y,
 				this.ap
 			);
-			if (this.gg.layer_mode == 2) {
+			if (this.gg.layer_mode === 2) {
 				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-				if (bgc >= 20 && bgc != 29)
+				if (bgc >= 20 && bgc !== 29)
 					this.gg.drawPT(
 						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
 						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
@@ -1200,7 +1169,7 @@ const drawM = function() {
 						0
 					);
 				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-				if (bgc >= 20 && bgc != 29)
+				if (bgc >= 20 && bgc !== 29)
 					this.gg.drawPT(
 						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
 						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
@@ -1225,7 +1194,7 @@ const drawM = function() {
 						0
 					);
 			}
-		} else if (characterobject.pt == 1000) {
+		} else if (characterobject.pt === 1000) {
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 			this.gg.os_g.fillOval(
 				characterobject.x - view_x + 16 - characterobject.c2,
@@ -1233,7 +1202,7 @@ const drawM = function() {
 				characterobject.c2 * 2,
 				characterobject.c2 * 2
 			);
-		} else if (characterobject.pt == 1010) {
+		} else if (characterobject.pt === 1010) {
 			this.gg.os_g.setColor(
 				new Color(
 					this.gamecolor_mizunohadou.getRed(),
@@ -1248,8 +1217,8 @@ const drawM = function() {
 				characterobject.c2 * 2,
 				characterobject.c2 * 2
 			);
-		} else if (characterobject.pt == 1100) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		} else if (characterobject.pt === 1100) {
+			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillOval(
 				characterobject.x - view_x + 16 - characterobject.c2,
@@ -1257,8 +1226,8 @@ const drawM = function() {
 				characterobject.c2 * 2,
 				characterobject.c2 * 2
 			);
-		} else if (characterobject.pt == 1200) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		} else if (characterobject.pt === 1200) {
+			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.drawOval(
 				characterobject.x - view_x + 16 - characterobject.vy,
@@ -1266,8 +1235,8 @@ const drawM = function() {
 				characterobject.vy * 2,
 				characterobject.vy * 2
 			);
-		} else if (characterobject.pt == 1210) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		} else if (characterobject.pt === 1210) {
+			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillRect(
 				characterobject.x - view_x,
@@ -1275,8 +1244,8 @@ const drawM = function() {
 				characterobject.vx - characterobject.x + 1,
 				10
 			);
-		} else if (characterobject.pt == 1215) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		} else if (characterobject.pt === 1215) {
+			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillRect(
 				characterobject.vx - view_x,
@@ -1284,7 +1253,7 @@ const drawM = function() {
 				characterobject.x - characterobject.vx + 1,
 				10
 			);
-		} else if (characterobject.pt == 1220) {
+		} else if (characterobject.pt === 1220) {
 			this.gg.os_g.setColor(this.gamecolor_grenade1);
 			this.gg.os_g.drawOval(
 				characterobject.x - view_x + 16 - characterobject.vy,
@@ -1292,7 +1261,7 @@ const drawM = function() {
 				characterobject.vy * 2,
 				characterobject.vy * 2
 			);
-		} else if (characterobject.pt == 1230) {
+		} else if (characterobject.pt === 1230) {
 			this.gg.os_g.setColor(
 				new Color(
 					this.gamecolor_grenade1.getRed(),
@@ -1307,7 +1276,7 @@ const drawM = function() {
 				characterobject.vx - characterobject.x + 1,
 				14
 			);
-		} else if (characterobject.pt == 1235) {
+		} else if (characterobject.pt === 1235) {
 			this.gg.os_g.setColor(
 				new Color(
 					this.gamecolor_grenade1.getRed(),
@@ -1322,7 +1291,7 @@ const drawM = function() {
 				characterobject.x - characterobject.vx + 1,
 				14
 			);
-		} else if (characterobject.pt == 1300) {
+		} else if (characterobject.pt === 1300) {
 			this.hg.drawImage(
 				this.gg.spt_option_img[0],
 				characterobject.x - view_x,
@@ -1382,7 +1351,7 @@ export const drawGamescreenMy = function() {
 		// NOTE: なにこれ
 		this.j_zan_cf = false;
 		for (let i = 0; i < 6; i++) {
-			if (this.co_j.img != null) {
+			if (this.co_j.img !== null) {
 				this.j_zan_img[i] = this.co_j.img;
 				this.j_zan_zs_x[i] = this.co_j.zs_x;
 				this.j_zan_zs_y[i] = this.co_j.zs_y;
@@ -1403,7 +1372,7 @@ export const drawGamescreenMy = function() {
 			const zan_wx = this.j_zan_x[index] - view_x;
 			const zan_wy = this.j_zan_y[index] - view_y;
 			const muki = this.j_zan_pth[index];
-			if (this.j_zan_img[index] != null)
+			if (this.j_zan_img[index] !== null)
 				this.hg.drawImage(
 					this.j_zan_img[index],
 					zan_wx + this.j_zan_zs_x[index],
@@ -1427,9 +1396,9 @@ export const drawGamescreenMy = function() {
 			if (this.j_zan_nagasa < 0) this.j_zan_f = false;
 		}
 	}
-	if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 != 1) {
+	if (this.j_muteki_c <= 0 || this.j_muteki_c % 2 !== 1) {
 		// 主人公本体の描画
-		if (this.co_j.img != null) {
+		if (this.co_j.img !== null) {
 			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
 		} else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c === 1500 && this.co_j.pt < 1000) {
 			// 人間砲台に入る
@@ -1491,22 +1460,22 @@ export const drawGamescreenMy = function() {
 			this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 		} else if (this.co_j.pt < 1000) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-		} else if (this.co_j.pt == 1000) {
+		} else if (this.co_j.pt === 1000) {
 			// しっぽを伸ばしている
-			if (this.j_tokugi == 15 && this.j_4_muki == 2) {
+			if (this.j_tokugi === 15 && this.j_4_muki === 2) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 211, 0);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy - 32, 210, 0);
-			} else if (this.j_tokugi == 15 && this.j_4_muki == 3) {
+			} else if (this.j_tokugi === 15 && this.j_4_muki === 3) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 105, 0);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy + 32, 106, 0);
-			} else if (this.co_j.muki == 0) {
+			} else if (this.co_j.muki === 0) {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, this.co_j.muki);
 				this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 117, this.co_j.muki);
 			} else {
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, 1);
 				this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
 			}
-		} else if (this.co_j.pt == 1100) {
+		} else if (this.co_j.pt === 1100) {
 			// 土管に入る
 			// 土管の種類 0がリンク土管1, 1がリンク土管2, ...
 			const dokan_id = this.co_j.c2 % 100;
@@ -1538,37 +1507,37 @@ export const drawGamescreenMy = function() {
 			this.hg.drawImage(this.hi[dokan_pt], dokan_center_wx - 32, dokan_center_wy - 16, this.ap);
 			this.hg.drawImage(this.hi[dokan_pt + 1], dokan_center_wx, dokan_center_wy - 16, this.ap);
 			this.hg.dispose();
-		} else if (this.co_j.pt != 1110) {
-			if (this.co_j.pt == 1200) {
+		} else if (this.co_j.pt !== 1110) {
+			if (this.co_j.pt === 1200) {
 				var graphics228 = this.gg.os_img.getGraphics();
 				var k14 = this.co_j.wx + 16;
 				var i17 = this.co_j.wy + 16;
-				if (this.co_a[this.j_rope_id].c == 3200)
+				if (this.co_a[this.j_rope_id].c === 3200)
 					graphics228.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, k14, i17);
 				else graphics228.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, k14, i17);
 				graphics228.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
 				graphics228.dispose();
-			} else if (this.co_j.pt == 1201) {
+			} else if (this.co_j.pt === 1201) {
 				var graphics229 = this.gg.os_img.getGraphics();
 				var l14 = this.co_j.wx + 16;
 				var j17 = this.co_j.wy + 16;
-				if (this.co_a[this.j_rope_id].c == 3200)
+				if (this.co_a[this.j_rope_id].c === 3200)
 					graphics229.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, l14, j17);
 				else graphics229.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, l14, j17);
 				graphics229.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
 				graphics229.dispose();
-			} else if (this.co_j.pt == 1300) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+			} else if (this.co_j.pt === 1300) {
+				if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 101, this.co_j.muki);
-			} else if (this.co_j.pt == 1400) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+			} else if (this.co_j.pt === 1400) {
+				if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 83, this.co_j.muki);
-			} else if (this.co_j.pt == 1500) {
-				if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+			} else if (this.co_j.pt === 1500) {
+				if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
 				this.gg.os_g.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
 				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 202, this.co_j.muki);

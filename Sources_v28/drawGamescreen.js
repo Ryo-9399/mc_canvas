@@ -209,43 +209,12 @@ const drawA = function() {
  * 敵の攻撃・アイテムを描画します
  */
 const drawM = function() {
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 23; i++) {
 		if (this.co_m[i].c < 50) continue;
 		const characterobject = this.co_m[i];
-		if (characterobject.c == 50) {
+		if (characterobject.c === 50) {
 			this.hg.drawImage(
 				this.hih[characterobject.pth][characterobject.pt],
 				characterobject.x - view_x,
@@ -263,7 +232,7 @@ const drawM = function() {
 					bgc,
 					0
 				);
-		} else if (characterobject.pt == 1000) {
+		} else if (characterobject.pt === 1000) {
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 			this.gg.os_g.fillOval(
 				characterobject.x - view_x + 16 - characterobject.c2,
@@ -271,8 +240,8 @@ const drawM = function() {
 				characterobject.c2 * 2,
 				characterobject.c2 * 2
 			);
-		} else if (characterobject.pt == 1100) {
-			if (this.g_ac == 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
+		} else if (characterobject.pt === 1100) {
+			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillOval(
 				characterobject.x - view_x + 16 - characterobject.c2,
@@ -362,22 +331,22 @@ const drawGamescreenMy = function() {
 	// 主人公本体の描画
 	if (this.co_j.pt < 1000) {
 		this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-	} else if (this.co_j.pt == 1000) {
+	} else if (this.co_j.pt === 1000) {
 		// しっぽを伸ばしている
-		if (this.co_j.muki == 0) {
+		if (this.co_j.muki === 0) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, this.co_j.muki);
 			this.gg.drawPT(this.co_j.wx - 32, this.co_j.wy, 117, this.co_j.muki);
 		} else {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, 118, 1);
 			this.gg.drawPT(this.co_j.wx + 32, this.co_j.wy, 117, 1);
 		}
-	} else if (this.co_j.pt == 1100) {
+	} else if (this.co_j.pt === 1100) {
 		// 土管に入る
 		const j_dy = Math.max(0, Math.min(32, this.co_j.c1));
 		this.gg.drawPT(this.co_j.wx, this.co_j.wy + j_dy, 100, this.co_j.muki);
 		this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
 		this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
-	} else if (this.co_j.pt != 1110);
+	} else if (this.co_j.pt !== 1110);
 };
 
 /**
