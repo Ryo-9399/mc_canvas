@@ -272,21 +272,25 @@ const drawA = function() {
 					this.hg.drawImage(this.hi[34], co_wx, co_wy, this.ap);
 					break;
 
-				case 750:
+				case 750: {
+					// ジャンプ台 左向き
+					const pt = characterobject.c3 > 0 ? 32 : 33;
 					this.hg.dispose();
 					this.hg.rotate(-Math.PI / 2, co_wx + 16, co_wy + 16);
-					if (characterobject.c3 > 0) this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
-					else this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
+					this.hg.drawImage(this.hi[pt], co_wx, co_wy, this.ap);
 					this.hg.dispose();
 					break;
+				}
 
-				case 751:
+				case 751: {
+					// ジャンプ台 右向き
+					const pt = characterobject.c3 > 0 ? 32 : 33;
 					this.hg.dispose();
 					this.hg.rotate(Math.PI / 2, co_wx + 16, co_wy + 16);
-					if (characterobject.c3 > 0) this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
-					else this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
+					this.hg.drawImage(this.hi[pt], co_wx, co_wy, this.ap);
 					this.hg.dispose();
 					break;
+				}
 
 				case 800: {
 					// 一言メッセージの人
@@ -295,13 +299,15 @@ const drawA = function() {
 					break;
 				}
 
-				case 860:
-					var byte0 = 39;
-					if (characterobject.c === 87) byte0 = 37;
-					else if (characterobject.c === 88) byte0 = 38;
-					if (characterobject.x >= this.co_j.x) this.hg.drawImage(this.hi[byte0], co_wx, co_wy, this.ap);
-					else this.hg.drawImage(this.hih[1][byte0], co_wx, co_wy, this.ap);
+				case 860: {
+					// アイテムをくれる人・お店
+					let pt = 39;
+					if (characterobject.c === 87) pt = 37;
+					else if (characterobject.c === 88) pt = 38;
+					const muki = characterobject.x >= this.co_j.x ? 0 : 1;
+					this.hg.drawImage(this.hih[muki][pt], co_wx, co_wy, this.ap);
 					break;
+				}
 
 				case 1100: {
 					// ファイヤーバー
