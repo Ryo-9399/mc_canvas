@@ -84,7 +84,7 @@ KeyboardMenu.prototype.active = function(paramInt1, paramInt2, paramInt3, paramI
 	this.c[paramInt1] = 100;
 	this.x[paramInt1] = paramInt2;
 	this.y[paramInt1] = paramInt3;
-	if (paramInt4 !== undefined) this.width[paramInt1] = ParamInt4;
+	if (paramInt4 !== undefined) this.width[paramInt1] = paramInt4;
 	else this.width[paramInt1] = 180;
 	this.c_fc = -1;
 	this.gk.up_c = 0;
