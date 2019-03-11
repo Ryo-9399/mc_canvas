@@ -273,23 +273,19 @@ const drawA = function() {
 					break;
 
 				case 750:
-					var graphics212 = this.gg.os_img.getGraphics();
-					var i21 = co_wx + 16;
-					var j27 = co_wy + 16;
-					graphics212.rotate(4.7123889803846898, i21, j27);
-					if (characterobject.c3 > 0) graphics212.drawImage(this.hi[32], co_wx, co_wy, this.ap);
-					else graphics212.drawImage(this.hi[33], co_wx, co_wy, this.ap);
-					graphics212.dispose();
+					this.hg.dispose();
+					this.hg.rotate(-Math.PI / 2, co_wx + 16, co_wy + 16);
+					if (characterobject.c3 > 0) this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
+					else this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
+					this.hg.dispose();
 					break;
 
 				case 751:
-					var graphics213 = this.gg.os_img.getGraphics();
-					var j21 = co_wx + 16;
-					var k27 = co_wy + 16;
-					graphics213.rotate(1.5707963267948966, j21, k27);
-					if (characterobject.c3 > 0) graphics213.drawImage(this.hi[32], co_wx, co_wy, this.ap);
-					else graphics213.drawImage(this.hi[33], co_wx, co_wy, this.ap);
-					graphics213.dispose();
+					this.hg.dispose();
+					this.hg.rotate(Math.PI / 2, co_wx + 16, co_wy + 16);
+					if (characterobject.c3 > 0) this.hg.drawImage(this.hi[32], co_wx, co_wy, this.ap);
+					else this.hg.drawImage(this.hi[33], co_wx, co_wy, this.ap);
+					this.hg.dispose();
 					break;
 
 				case 800: {
@@ -341,18 +337,14 @@ const drawA = function() {
 				}
 
 				case 1200:
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 180) * 3.1415926535897931) / 180) * 160;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 180) * 3.1415926535897931) / 180) * 160;
-					this.vo_pa_x[1] = co_wx + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 160;
-					this.vo_pa_y[1] = co_wy + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 160;
-					this.vo_pa_x[2] =
-						this.vo_pa_x[1] + Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[2] =
-						this.vo_pa_y[1] + Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[3] =
-						this.vo_pa_x[0] + Math.cos(((characterobject.vy + 270) * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[3] =
-						this.vo_pa_y[0] + Math.sin(((characterobject.vy + 270) * 3.1415926535897931) / 180) * 12;
+					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 180) * Math.PI) / 180) * 160;
+					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 180) * Math.PI) / 180) * 160;
+					this.vo_pa_x[1] = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 160;
+					this.vo_pa_y[1] = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 160;
+					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 12;
+					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 12;
+					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos(((characterobject.vy + 270) * Math.PI) / 180) * 12;
+					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin(((characterobject.vy + 270) * Math.PI) / 180) * 12;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					this.vo_pa_x[0] = co_wx;
@@ -366,18 +358,18 @@ const drawA = function() {
 					break;
 
 				case 1300:
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					var k21 = co_wx + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 80;
-					var l27 = co_wy + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 80;
+					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 20) * Math.PI) / 180) * 192;
+					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 20) * Math.PI) / 180) * 192;
+					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 20) * Math.PI) / 180) * 192;
+					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 20) * Math.PI) / 180) * 192;
+					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					var k21 = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 80;
+					var l27 = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 80;
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
 					this.gg.os_g.drawLine(this.vo_pa_x[4], this.vo_pa_y[4], k21, l27);
 					this.gg.os_g.drawLine(this.vo_pa_x[0], this.vo_pa_y[0], k21, l27);
@@ -389,36 +381,36 @@ const drawA = function() {
 				case 1400:
 					this.vo_pa_x[0] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 192 +
-						Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 192 +
+						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 12;
 					this.vo_pa_y[0] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 192 +
-						Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 192 +
+						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 12;
 					this.vo_pa_x[1] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 60 +
-						Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 60 +
+						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 12;
 					this.vo_pa_y[1] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 60 +
-						Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 60 +
+						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 12;
 					this.vo_pa_x[2] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 60 +
-						Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 60 +
+						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 12;
 					this.vo_pa_y[2] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 60 +
-						Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 60 +
+						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 12;
 					this.vo_pa_x[3] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 192 +
-						Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 192 +
+						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 12;
 					this.vo_pa_y[3] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 192 +
-						Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 192 +
+						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 12;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
@@ -485,24 +477,24 @@ const drawA = function() {
 					break;
 
 				case 1900:
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 6) * 3.1415926535897931) / 180) * 182;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 6) * 3.1415926535897931) / 180) * 182;
-					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 6) * 3.1415926535897931) / 180) * 182;
-					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 6) * 3.1415926535897931) / 180) * 182;
+					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 6) * Math.PI) / 180) * 182;
+					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 6) * Math.PI) / 180) * 182;
+					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 6) * Math.PI) / 180) * 182;
+					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 6) * Math.PI) / 180) * 182;
 					this.vo_pa_x[2] = co_wx;
 					this.vo_pa_y[2] = co_wy;
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 3);
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192;
-					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
+					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 20) * Math.PI) / 180) * 192;
+					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 20) * Math.PI) / 180) * 192;
+					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 20) * Math.PI) / 180) * 192;
+					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 20) * Math.PI) / 180) * 192;
+					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
@@ -510,36 +502,36 @@ const drawA = function() {
 				case 2000:
 					this.vo_pa_x[0] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[0] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.vo_pa_x[1] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[1] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_x[2] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 182 +
-						Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 182 +
+						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[2] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 182 +
-						Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 182 +
+						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_x[3] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 182 +
-						Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 182 +
+						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[3] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 182 +
-						Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 182 +
+						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
@@ -563,34 +555,30 @@ const drawA = function() {
 				case 2200:
 					this.gg.os_g.setColor(this.gamecolor_mizunohadou);
 					this.gg.os_g.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
-					this.vo_pa_x[0] =
-						co_wx + 16 + Math.cos(((characterobject.c4 + 90) * 3.1415926535897931) / 180) * 20;
-					this.vo_pa_y[0] =
-						co_wy + 16 + Math.sin(((characterobject.c4 + 90) * 3.1415926535897931) / 180) * 20;
-					this.vo_pa_x[1] =
-						co_wx + 16 + Math.cos(((characterobject.c4 - 90) * 3.1415926535897931) / 180) * 20;
-					this.vo_pa_y[1] =
-						co_wy + 16 + Math.sin(((characterobject.c4 - 90) * 3.1415926535897931) / 180) * 20;
+					this.vo_pa_x[0] = co_wx + 16 + Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
+					this.vo_pa_y[0] = co_wy + 16 + Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
+					this.vo_pa_x[1] = co_wx + 16 + Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
+					this.vo_pa_y[1] = co_wy + 16 + Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
 					this.vo_pa_x[2] =
 						co_wx +
 						16 +
-						Math.cos((characterobject.c4 * 3.1415926535897931) / 180) * 68 +
-						Math.cos(((characterobject.c4 - 90) * 3.1415926535897931) / 180) * 20;
+						Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
+						Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
 					this.vo_pa_y[2] =
 						co_wy +
 						16 +
-						Math.sin((characterobject.c4 * 3.1415926535897931) / 180) * 68 +
-						Math.sin(((characterobject.c4 - 90) * 3.1415926535897931) / 180) * 20;
+						Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
+						Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
 					this.vo_pa_x[3] =
 						co_wx +
 						16 +
-						Math.cos((characterobject.c4 * 3.1415926535897931) / 180) * 68 +
-						Math.cos(((characterobject.c4 + 90) * 3.1415926535897931) / 180) * 20;
+						Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
+						Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
 					this.vo_pa_y[3] =
 						co_wy +
 						16 +
-						Math.sin((characterobject.c4 * 3.1415926535897931) / 180) * 68 +
-						Math.sin(((characterobject.c4 + 90) * 3.1415926535897931) / 180) * 20;
+						Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
+						Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					if (characterobject.c3 === 0 || characterobject.c3 === 1) {
@@ -637,94 +625,94 @@ const drawA = function() {
 					if (this.control_parts_visible === 2 && characterobject.c === 1900) {
 						this.gg.os_g.setColor(Color.black);
 						this.gg.os_g.fillRect(co_wx, co_wy, 32, 32);
-						var s = "" + "S " + String(characterobject.c3);
+						const str = `S ${characterobject.c3}`;
 						this.gg.os_g.setColor(Color.white);
 						this.gg.os_g.setFont(new Font("Dialog", 1, 12));
-						this.gg.os_g.drawString(s, co_wx + 2, co_wy + this.moji_size + 4);
+						this.gg.os_g.drawString(str, co_wx + 2, co_wy + this.moji_size + 4);
 					}
 					break;
 
 				case 2400:
 					if (characterobject.c3 === 0) {
-						var graphics214 = this.gg.os_img.getGraphics();
-						graphics214.translate(co_wx + 32, co_wy + 64);
-						graphics214.scale(characterobject.vy / 100, characterobject.vy / 100);
+						this.hg.dispose();
+						this.hg.translate(co_wx + 32, co_wy + 64);
+						this.hg.scale(characterobject.vy / 100, characterobject.vy / 100);
 						if (this.g_c3 <= 3) {
-							graphics214.drawImage(this.hi[76], -32, -64, this.ap);
-							graphics214.drawImage(this.hi[77], 0, -64, this.ap);
-							graphics214.drawImage(this.hi[86], -32, -32, this.ap);
-							graphics214.drawImage(this.hi[87], 0, -32, this.ap);
+							this.hg.drawImage(this.hi[76], -32, -64, this.ap);
+							this.hg.drawImage(this.hi[77], 0, -64, this.ap);
+							this.hg.drawImage(this.hi[86], -32, -32, this.ap);
+							this.hg.drawImage(this.hi[87], 0, -32, this.ap);
 						} else {
-							graphics214.drawImage(this.hi[78], -32, -64, this.ap);
-							graphics214.drawImage(this.hi[79], 0, -64, this.ap);
-							graphics214.drawImage(this.hi[88], -32, -32, this.ap);
-							graphics214.drawImage(this.hi[89], 0, -32, this.ap);
+							this.hg.drawImage(this.hi[78], -32, -64, this.ap);
+							this.hg.drawImage(this.hi[79], 0, -64, this.ap);
+							this.hg.drawImage(this.hi[88], -32, -32, this.ap);
+							this.hg.drawImage(this.hi[89], 0, -32, this.ap);
 						}
-						graphics214.dispose();
+						this.hg.dispose();
 						break;
 					}
 					if (characterobject.c3 === 1) {
-						var graphics215 = this.gg.os_img.getGraphics();
-						graphics215.translate(co_wx + 32, co_wy);
-						graphics215.scale(characterobject.vy / 100, characterobject.vy / 100);
+						this.hg.dispose();
+						this.hg.translate(co_wx + 32, co_wy);
+						this.hg.scale(characterobject.vy / 100, characterobject.vy / 100);
 						if (this.g_c3 <= 3) {
-							graphics215.drawImage(this.hi[76], -32, 0, this.ap);
-							graphics215.drawImage(this.hi[77], 0, 0, this.ap);
-							graphics215.drawImage(this.hi[86], -32, 32, this.ap);
-							graphics215.drawImage(this.hi[87], 0, 32, this.ap);
+							this.hg.drawImage(this.hi[76], -32, 0, this.ap);
+							this.hg.drawImage(this.hi[77], 0, 0, this.ap);
+							this.hg.drawImage(this.hi[86], -32, 32, this.ap);
+							this.hg.drawImage(this.hi[87], 0, 32, this.ap);
 						} else {
-							graphics215.drawImage(this.hi[78], -32, 0, this.ap);
-							graphics215.drawImage(this.hi[79], 0, 0, this.ap);
-							graphics215.drawImage(this.hi[88], -32, 32, this.ap);
-							graphics215.drawImage(this.hi[89], 0, 32, this.ap);
+							this.hg.drawImage(this.hi[78], -32, 0, this.ap);
+							this.hg.drawImage(this.hi[79], 0, 0, this.ap);
+							this.hg.drawImage(this.hi[88], -32, 32, this.ap);
+							this.hg.drawImage(this.hi[89], 0, 32, this.ap);
 						}
-						graphics215.dispose();
+						this.hg.dispose();
 						break;
 					}
 					if (characterobject.c3 !== 2) break;
-					var graphics216 = this.gg.os_img.getGraphics();
-					graphics216.translate(co_wx + 32, co_wy + 32);
-					graphics216.scale(characterobject.vy / 100, characterobject.vy / 100);
+					this.hg.dispose();
+					this.hg.translate(co_wx + 32, co_wy + 32);
+					this.hg.scale(characterobject.vy / 100, characterobject.vy / 100);
 					if (this.g_c3 <= 3) {
-						graphics216.drawImage(this.hi[76], -32, -32, this.ap);
-						graphics216.drawImage(this.hi[77], 0, -32, this.ap);
-						graphics216.drawImage(this.hi[86], -32, 0, this.ap);
-						graphics216.drawImage(this.hi[87], 0, 0, this.ap);
+						this.hg.drawImage(this.hi[76], -32, -32, this.ap);
+						this.hg.drawImage(this.hi[77], 0, -32, this.ap);
+						this.hg.drawImage(this.hi[86], -32, 0, this.ap);
+						this.hg.drawImage(this.hi[87], 0, 0, this.ap);
 					} else {
-						graphics216.drawImage(this.hi[78], -32, -32, this.ap);
-						graphics216.drawImage(this.hi[79], 0, -32, this.ap);
-						graphics216.drawImage(this.hi[88], -32, 0, this.ap);
-						graphics216.drawImage(this.hi[89], 0, 0, this.ap);
+						this.hg.drawImage(this.hi[78], -32, -32, this.ap);
+						this.hg.drawImage(this.hi[79], 0, -32, this.ap);
+						this.hg.drawImage(this.hi[88], -32, 0, this.ap);
+						this.hg.drawImage(this.hi[89], 0, 0, this.ap);
 					}
-					graphics216.dispose();
+					this.hg.dispose();
 					break;
 
 				case 2500:
-					var graphics217 = this.gg.os_img.getGraphics();
-					graphics217.translate(co_wx, co_wy);
-					graphics217.scale(1.5, 1.5);
-					graphics217.rotate((characterobject.vy * 3.1415926535897931) / 180, 0.0, 0.0);
-					graphics217.drawImage(this.hi[183], -48, -32, this.ap);
-					graphics217.drawImage(this.hi[184], -16, -32, this.ap);
-					graphics217.drawImage(this.hi[185], 16, -32, this.ap);
-					graphics217.drawImage(this.hi[193], -48, 0, this.ap);
-					graphics217.drawImage(this.hi[194], -16, 0, this.ap);
-					graphics217.drawImage(this.hi[195], 16, 0, this.ap);
-					graphics217.dispose();
+					this.hg.dispose();
+					this.hg.translate(co_wx, co_wy);
+					this.hg.scale(1.5, 1.5);
+					this.hg.rotate((characterobject.vy * Math.PI) / 180, 0.0, 0.0);
+					this.hg.drawImage(this.hi[183], -48, -32, this.ap);
+					this.hg.drawImage(this.hi[184], -16, -32, this.ap);
+					this.hg.drawImage(this.hi[185], 16, -32, this.ap);
+					this.hg.drawImage(this.hi[193], -48, 0, this.ap);
+					this.hg.drawImage(this.hi[194], -16, 0, this.ap);
+					this.hg.drawImage(this.hi[195], 16, 0, this.ap);
+					this.hg.dispose();
 					break;
 
 				case 2600:
-					var graphics218 = this.gg.os_img.getGraphics();
-					graphics218.translate(co_wx, co_wy);
-					graphics218.scale(2.5, 2.5);
-					graphics218.rotate((characterobject.vy * 3.1415926535897931) / 180, 0.0, 0.0);
-					graphics218.drawImage(this.hi[183], -48, -32, this.ap);
-					graphics218.drawImage(this.hi[184], -16, -32, this.ap);
-					graphics218.drawImage(this.hi[185], 16, -32, this.ap);
-					graphics218.drawImage(this.hi[193], -48, 0, this.ap);
-					graphics218.drawImage(this.hi[194], -16, 0, this.ap);
-					graphics218.drawImage(this.hi[195], 16, 0, this.ap);
-					graphics218.dispose();
+					this.hg.dispose();
+					this.hg.translate(co_wx, co_wy);
+					this.hg.scale(2.5, 2.5);
+					this.hg.rotate((characterobject.vy * Math.PI) / 180, 0.0, 0.0);
+					this.hg.drawImage(this.hi[183], -48, -32, this.ap);
+					this.hg.drawImage(this.hi[184], -16, -32, this.ap);
+					this.hg.drawImage(this.hi[185], 16, -32, this.ap);
+					this.hg.drawImage(this.hi[193], -48, 0, this.ap);
+					this.hg.drawImage(this.hi[194], -16, 0, this.ap);
+					this.hg.drawImage(this.hi[195], 16, 0, this.ap);
+					this.hg.dispose();
 					break;
 
 				case 2800:
@@ -739,14 +727,14 @@ const drawA = function() {
 				case 2900:
 					var k6 = 0;
 					for (var i4 = 0; i4 >= -50; i4 -= 10) {
-						ai[k6] = co_wx + Math.cos(((characterobject.c3 + i4) * 3.1415926535897931) / 180) * 160;
-						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + i4) * 3.1415926535897931) / 180) * 160;
+						ai[k6] = co_wx + Math.cos(((characterobject.c3 + i4) * Math.PI) / 180) * 160;
+						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + i4) * Math.PI) / 180) * 160;
 						k6++;
 					}
 
 					for (var j4 = -50; j4 <= 0; j4 += 10) {
-						ai[k6] = co_wx + Math.cos(((characterobject.c3 + j4) * 3.1415926535897931) / 180) * 112;
-						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + j4) * 3.1415926535897931) / 180) * 112;
+						ai[k6] = co_wx + Math.cos(((characterobject.c3 + j4) * Math.PI) / 180) * 112;
+						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + j4) * Math.PI) / 180) * 112;
 						k6++;
 					}
 
@@ -755,14 +743,14 @@ const drawA = function() {
 					if (this.g_c2 < 2) break;
 					k6 = 0;
 					for (var k4 = -5; k4 >= -45; k4 -= 8) {
-						ai[k6] = co_wx + Math.cos(((characterobject.c3 + k4) * 3.1415926535897931) / 180) * 148;
-						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + k4) * 3.1415926535897931) / 180) * 148;
+						ai[k6] = co_wx + Math.cos(((characterobject.c3 + k4) * Math.PI) / 180) * 148;
+						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + k4) * Math.PI) / 180) * 148;
 						k6++;
 					}
 
 					for (var l4 = -45; l4 <= -5; l4 += 8) {
-						ai[k6] = co_wx + Math.cos(((characterobject.c3 + l4) * 3.1415926535897931) / 180) * 124;
-						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + l4) * 3.1415926535897931) / 180) * 124;
+						ai[k6] = co_wx + Math.cos(((characterobject.c3 + l4) * Math.PI) / 180) * 124;
+						ai1[k6] = co_wy + Math.sin(((characterobject.c3 + l4) * Math.PI) / 180) * 124;
 						k6++;
 					}
 
@@ -773,14 +761,14 @@ const drawA = function() {
 				case 2950:
 					var l6 = 0;
 					for (var i5 = 0; i5 >= -120; i5 -= 10) {
-						ai[l6] = co_wx + Math.cos(((characterobject.c3 + i5) * 3.1415926535897931) / 180) * 160;
-						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + i5) * 3.1415926535897931) / 180) * 160;
+						ai[l6] = co_wx + Math.cos(((characterobject.c3 + i5) * Math.PI) / 180) * 160;
+						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + i5) * Math.PI) / 180) * 160;
 						l6++;
 					}
 
 					for (var j5 = -120; j5 <= 0; j5 += 10) {
-						ai[l6] = co_wx + Math.cos(((characterobject.c3 + j5) * 3.1415926535897931) / 180) * 112;
-						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + j5) * 3.1415926535897931) / 180) * 112;
+						ai[l6] = co_wx + Math.cos(((characterobject.c3 + j5) * Math.PI) / 180) * 112;
+						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + j5) * Math.PI) / 180) * 112;
 						l6++;
 					}
 
@@ -789,14 +777,14 @@ const drawA = function() {
 					if (this.g_c2 < 2) break;
 					l6 = 0;
 					for (var k5 = -5; k5 >= -115; k5 -= 10) {
-						ai[l6] = co_wx + Math.cos(((characterobject.c3 + k5) * 3.1415926535897931) / 180) * 148;
-						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + k5) * 3.1415926535897931) / 180) * 148;
+						ai[l6] = co_wx + Math.cos(((characterobject.c3 + k5) * Math.PI) / 180) * 148;
+						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + k5) * Math.PI) / 180) * 148;
 						l6++;
 					}
 
 					for (var l5 = -115; l5 <= -5; l5 += 10) {
-						ai[l6] = co_wx + Math.cos(((characterobject.c3 + l5) * 3.1415926535897931) / 180) * 124;
-						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + l5) * 3.1415926535897931) / 180) * 124;
+						ai[l6] = co_wx + Math.cos(((characterobject.c3 + l5) * Math.PI) / 180) * 124;
+						ai1[l6] = co_wy + Math.sin(((characterobject.c3 + l5) * Math.PI) / 180) * 124;
 						l6++;
 					}
 
@@ -815,68 +803,64 @@ const drawA = function() {
 				case 3100:
 					this.vo_pa_x[0] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[0] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.vo_pa_x[1] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[1] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12 +
-						Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 12 +
+						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_x[2] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 226 +
-						Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 226 +
+						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[2] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 226 +
-						Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 226 +
+						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 5;
 					this.vo_pa_x[3] =
 						co_wx +
-						Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 226 +
-						Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.cos((characterobject.vy * Math.PI) / 180) * 226 +
+						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.vo_pa_y[3] =
 						co_wy +
-						Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 226 +
-						Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 5;
+						Math.sin((characterobject.vy * Math.PI) / 180) * 226 +
+						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 5;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
 
 				case 3200:
-					var graphics219 = this.gg.os_img.getGraphics();
-					var l21 = co_wx + 16;
-					var i28 = co_wy + 16;
-					graphics219.rotate(1.5707963267948966, l21, i28);
-					graphics219.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics219.translate(32, 0.0);
-					graphics219.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics219.translate(32, 0.0);
-					graphics219.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics219.translate(32, 0.0);
-					graphics219.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics219.dispose();
+					this.hg.dispose();
+					this.hg.rotate(Math.PI / 2, co_wx + 16, co_wy + 16);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.translate(32, 0.0);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.translate(32, 0.0);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.translate(32, 0.0);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.dispose();
 					break;
 
 				case 3250:
-					var graphics220 = this.gg.os_img.getGraphics();
-					var i22 = co_wx + 16;
-					var j28 = co_wy + 16;
-					graphics220.rotate(4.7123889803846898, i22, j28);
-					graphics220.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics220.translate(-32, 0.0);
-					graphics220.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics220.translate(-32, 0.0);
-					graphics220.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics220.translate(-32, 0.0);
-					graphics220.drawImage(this.hi[6], co_wx, co_wy, this.ap);
-					graphics220.dispose();
+					this.hg.dispose();
+					this.hg.rotate(-Math.PI / 2, co_wx + 16, co_wy + 16);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.translate(-32, 0.0);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.translate(-32, 0.0);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.translate(-32, 0.0);
+					this.hg.drawImage(this.hi[6], co_wx, co_wy, this.ap);
+					this.hg.dispose();
 					break;
 
 				case 3400:
@@ -954,24 +938,24 @@ const drawA = function() {
 					break;
 
 				case 4000:
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 5) * 3.1415926535897931) / 180) * 216;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 5) * 3.1415926535897931) / 180) * 216;
-					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 5) * 3.1415926535897931) / 180) * 216;
-					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 5) * 3.1415926535897931) / 180) * 216;
+					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 5) * Math.PI) / 180) * 216;
+					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 5) * Math.PI) / 180) * 216;
+					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 5) * Math.PI) / 180) * 216;
+					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 5) * Math.PI) / 180) * 216;
 					this.vo_pa_x[2] = co_wx;
 					this.vo_pa_y[2] = co_wy;
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 3);
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 17) * 3.1415926535897931) / 180) * 224;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 17) * 3.1415926535897931) / 180) * 224;
-					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 17) * 3.1415926535897931) / 180) * 224;
-					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 17) * 3.1415926535897931) / 180) * 224;
-					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12;
-					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12;
+					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 17) * Math.PI) / 180) * 224;
+					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 17) * Math.PI) / 180) * 224;
+					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 17) * Math.PI) / 180) * 224;
+					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 17) * Math.PI) / 180) * 224;
+					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
+					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
@@ -1394,23 +1378,37 @@ export const drawGamescreenMy = function() {
 			drawDokan.apply(this, [dokan_id, dokan_type, dokan_wx, dokan_wy]);
 		} else if (this.co_j.pt !== 1110) {
 			if (this.co_j.pt === 1200) {
-				var graphics228 = this.gg.os_img.getGraphics();
-				var k14 = this.co_j.wx + 16;
-				var i17 = this.co_j.wy + 16;
+				this.hg.dispose();
 				if (this.co_a[this.j_rope_id].c === 3200)
-					graphics228.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, k14, i17);
-				else graphics228.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, k14, i17);
-				graphics228.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
-				graphics228.dispose();
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				else
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				this.hg.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
+				this.hg.dispose();
 			} else if (this.co_j.pt === 1201) {
-				var graphics229 = this.gg.os_img.getGraphics();
-				var l14 = this.co_j.wx + 16;
-				var j17 = this.co_j.wy + 16;
+				this.hg.dispose();
 				if (this.co_a[this.j_rope_id].c === 3200)
-					graphics229.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, l14, j17);
-				else graphics229.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, l14, j17);
-				graphics229.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
-				graphics229.dispose();
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				else
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				this.hg.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
+				this.hg.dispose();
 			} else if (this.co_j.pt === 1300) {
 				if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 				else this.gg.os_g.setColor(this.gamecolor_grenade2);
