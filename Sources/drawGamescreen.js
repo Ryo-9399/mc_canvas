@@ -228,148 +228,13 @@ const drawA = function() {
 					drawWide(78, 2, 2, co_wx, co_wy);
 					break;
 
-				case 300:
-					// リンク土管1
-					if (characterobject.c3 === 100) {
-						var graphics2 = this.gg.os_img.getGraphics();
-						var i18 = co_wx + 32;
-						var j24 = co_wy + 16;
-						graphics2.rotate(3.1415926535897931, i18, j24);
-						graphics2.drawImage(this.hi[60], co_wx, co_wy, this.ap);
-						graphics2.drawImage(this.hi[61], co_wx + 32, co_wy, this.ap);
-						graphics2.dispose();
-						break;
-					}
-					if (characterobject.c3 === 200) {
-						var graphics21 = this.gg.os_img.getGraphics();
-						var j18 = co_wx + 32;
-						var k24 = co_wy + 32;
-						graphics21.rotate(4.7123889803846898, j18, k24);
-						graphics21.drawImage(this.hi[60], co_wx, co_wy, this.ap);
-						graphics21.drawImage(this.hi[61], co_wx + 32, co_wy, this.ap);
-						graphics21.dispose();
-						break;
-					}
-					if (characterobject.c3 === 300) {
-						var graphics22 = this.gg.os_img.getGraphics();
-						var k18 = co_wx + 16;
-						var l24 = co_wy + 16;
-						graphics22.rotate(1.5707963267948966, k18, l24);
-						graphics22.drawImage(this.hi[60], co_wx, co_wy, this.ap);
-						graphics22.drawImage(this.hi[61], co_wx + 32, co_wy, this.ap);
-						graphics22.dispose();
-					} else {
-						this.hg.drawImage(this.hi[60], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[61], co_wx + 32, co_wy, this.ap);
-					}
-					break;
-
-				case 310:
-					// リンク土管2
-					if (characterobject.c3 === 101) {
-						var graphics23 = this.gg.os_img.getGraphics();
-						var l18 = co_wx + 32;
-						var i25 = co_wy + 16;
-						graphics23.rotate(3.1415926535897931, l18, i25);
-						graphics23.drawImage(this.hi[62], co_wx, co_wy, this.ap);
-						graphics23.drawImage(this.hi[63], co_wx + 32, co_wy, this.ap);
-						graphics23.dispose();
-						break;
-					}
-					if (characterobject.c3 === 201) {
-						var graphics24 = this.gg.os_img.getGraphics();
-						var i19 = co_wx + 32;
-						var j25 = co_wy + 32;
-						graphics24.rotate(4.7123889803846898, i19, j25);
-						graphics24.drawImage(this.hi[62], co_wx, co_wy, this.ap);
-						graphics24.drawImage(this.hi[63], co_wx + 32, co_wy, this.ap);
-						graphics24.dispose();
-						break;
-					}
-					if (characterobject.c3 === 301) {
-						var graphics25 = this.gg.os_img.getGraphics();
-						var j19 = co_wx + 16;
-						var k25 = co_wy + 16;
-						graphics25.rotate(1.5707963267948966, j19, k25);
-						graphics25.drawImage(this.hi[62], co_wx, co_wy, this.ap);
-						graphics25.drawImage(this.hi[63], co_wx + 32, co_wy, this.ap);
-						graphics25.dispose();
-					} else {
-						this.hg.drawImage(this.hi[62], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[63], co_wx + 32, co_wy, this.ap);
-					}
-					break;
-
-				case 320:
-					// リンク土管3
-					if (characterobject.c3 === 102) {
-						var graphics26 = this.gg.os_img.getGraphics();
-						var k19 = co_wx + 32;
-						var l25 = co_wy + 16;
-						graphics26.rotate(3.1415926535897931, k19, l25);
-						graphics26.drawImage(this.hi[64], co_wx, co_wy, this.ap);
-						graphics26.drawImage(this.hi[65], co_wx + 32, co_wy, this.ap);
-						graphics26.dispose();
-						break;
-					}
-					if (characterobject.c3 === 202) {
-						var graphics27 = this.gg.os_img.getGraphics();
-						var l19 = co_wx + 32;
-						var i26 = co_wy + 32;
-						graphics27.rotate(4.7123889803846898, l19, i26);
-						graphics27.drawImage(this.hi[64], co_wx, co_wy, this.ap);
-						graphics27.drawImage(this.hi[65], co_wx + 32, co_wy, this.ap);
-						graphics27.dispose();
-						break;
-					}
-					if (characterobject.c3 === 302) {
-						var graphics28 = this.gg.os_img.getGraphics();
-						var i20 = co_wx + 16;
-						var j26 = co_wy + 16;
-						graphics28.rotate(1.5707963267948966, i20, j26);
-						graphics28.drawImage(this.hi[64], co_wx, co_wy, this.ap);
-						graphics28.drawImage(this.hi[65], co_wx + 32, co_wy, this.ap);
-						graphics28.dispose();
-					} else {
-						this.hg.drawImage(this.hi[64], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[65], co_wx + 32, co_wy, this.ap);
-					}
-					break;
-
-				case 330:
-					// リンク土管4
-					if (characterobject.c3 === 103) {
-						var graphics29 = this.gg.os_img.getGraphics();
-						var j20 = co_wx + 32;
-						var k26 = co_wy + 16;
-						graphics29.rotate(3.1415926535897931, j20, k26);
-						graphics29.drawImage(this.hi[66], co_wx, co_wy, this.ap);
-						graphics29.drawImage(this.hi[67], co_wx + 32, co_wy, this.ap);
-						graphics29.dispose();
-						break;
-					}
-					if (characterobject.c3 === 203) {
-						var graphics210 = this.gg.os_img.getGraphics();
-						var k20 = co_wx + 32;
-						var l26 = co_wy + 32;
-						graphics210.rotate(4.7123889803846898, k20, l26);
-						graphics210.drawImage(this.hi[66], co_wx, co_wy, this.ap);
-						graphics210.drawImage(this.hi[67], co_wx + 32, co_wy, this.ap);
-						graphics210.dispose();
-						break;
-					}
-					if (characterobject.c3 === 303) {
-						var graphics211 = this.gg.os_img.getGraphics();
-						var l20 = co_wx + 16;
-						var i27 = co_wy + 16;
-						graphics211.rotate(1.5707963267948966, l20, i27);
-						graphics211.drawImage(this.hi[66], co_wx, co_wy, this.ap);
-						graphics211.drawImage(this.hi[67], co_wx + 32, co_wy, this.ap);
-						graphics211.dispose();
-					} else {
-						this.hg.drawImage(this.hi[66], co_wx, co_wy, this.ap);
-						this.hg.drawImage(this.hi[67], co_wx + 32, co_wy, this.ap);
-					}
+				case 300: // リンク土管1
+				case 310: // リンク土管2
+				case 320: // リンク土管3
+				case 330: // リンク土管4
+					const dokan_id = characterobject.c3 % 100;
+					const dokan_type = Math.floor(characterobject.c3 / 100);
+					drawDokan.apply(this, [dokan_id, dokan_type, co_wx, co_wy]);
 					break;
 
 				case 400:
@@ -1144,6 +1009,34 @@ const drawA = function() {
 };
 
 /**
+ * 土管を描画します
+ * @param dokan_id 土管の種類 0がリンク土管1, 1がリンク土管2, ...
+ * @param dokan_type 0:通常 1:上向き 2:左向き 3:右向き
+ * @param co_wx 土管の左上の点の画面上のX座標
+ * @param co_wy 土管の左上の点の画面上のY座標
+ */
+const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
+	const dokan_pt = 60 + dokan_id * 2;
+	// 土管の回転角度と回転の中心を算出する
+	let rad = 0;
+	if (dokan_type === 1) rad = Math.PI;
+	else if (dokan_type === 2) rad = -Math.PI / 2;
+	else if (dokan_type === 3) rad = Math.PI / 2;
+	let dokan_center_wx = co_wx + 32;
+	let dokan_center_wy = co_wy + 16;
+	if (dokan_type === 2 || dokan_type === 3) {
+		dokan_center_wx = co_wx + 16;
+		dokan_center_wy = co_wy + 32;
+	}
+	// 土管を回転させて描画
+	this.hg.dispose();
+	this.hg.rotate(rad, dokan_center_wx, dokan_center_wy);
+	this.hg.drawImage(this.hi[dokan_pt], dokan_center_wx - 32, dokan_center_wy - 16, this.ap);
+	this.hg.drawImage(this.hi[dokan_pt + 1], dokan_center_wx, dokan_center_wy - 16, this.ap);
+	this.hg.dispose();
+};
+
+/**
  * 敵の攻撃・アイテムを描画します
  */
 const drawM = function() {
@@ -1479,34 +1372,26 @@ export const drawGamescreenMy = function() {
 			// 土管に入る
 			// 土管の種類 0がリンク土管1, 1がリンク土管2, ...
 			const dokan_id = this.co_j.c2 % 100;
-			const dokan_pt = 60 + dokan_id * 2;
 			// 0:通常 1:上向き 2:左向き 3:右向き
 			const dokan_type = Math.floor(this.co_j.c2 / 100);
 			// 主人公を少しづつ土管に入れる
 			let j_dx = 0;
 			let j_dy = 0;
 			// 主人公の位置を[0,32]の範囲に収める
-			const diff = Math.max(0, Math.min(32, this.co_j.c1));
-			if (dokan_type === 1) j_dy = -diff;
-			else if (dokan_type === 2) j_dx = diff;
-			else if (dokan_type === 3) j_dx = -diff;
-			else j_dy = diff;
+			const j_diff = Math.max(0, Math.min(32, this.co_j.c1));
+			if (dokan_type === 1) j_dy = -j_diff;
+			else if (dokan_type === 2) j_dx = j_diff;
+			else if (dokan_type === 3) j_dx = -j_diff;
+			else j_dy = j_diff;
 			// 位置をずらして主人公を描画
 			this.gg.drawPT(this.co_j.wx + j_dx, this.co_j.wy + j_dy, 100, this.co_j.muki);
-			// 土管の回転角度と回転の中心を算出する
-			let rad = 0;
-			if (dokan_type === 1) rad = Math.PI;
-			else if (dokan_type === 2) rad = -Math.PI / 2;
-			else if (dokan_type === 3) rad = Math.PI / 2;
-			// 土管の中心は向きに応じて主人公の中心座標から1ブロックずれる
-			const dokan_center_wx = this.co_j.wx + 16 + 32 * Math.cos(rad + Math.PI / 2);
-			const dokan_center_wy = this.co_j.wy + 16 + 32 * Math.sin(rad + Math.PI / 2);
+			// 土管の左上の点の座標を算出
+			const dokan_diff = [[-16, 32], [-16, -32], [32, -16], [-32, -16]];
+			const [d_dx, d_dy] = dokan_diff[dokan_type];
+			const dokan_wx = this.co_j.wx + d_dx;
+			const dokan_wy = this.co_j.wy + d_dy;
 			// 土管を回転させて描画
-			this.hg.dispose();
-			this.hg.rotate(rad, dokan_center_wx, dokan_center_wy);
-			this.hg.drawImage(this.hi[dokan_pt], dokan_center_wx - 32, dokan_center_wy - 16, this.ap);
-			this.hg.drawImage(this.hi[dokan_pt + 1], dokan_center_wx, dokan_center_wy - 16, this.ap);
-			this.hg.dispose();
+			drawDokan.apply(this, [dokan_id, dokan_type, dokan_wx, dokan_wy]);
 		} else if (this.co_j.pt !== 1110) {
 			if (this.co_j.pt === 1200) {
 				var graphics228 = this.gg.os_img.getGraphics();
