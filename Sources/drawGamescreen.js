@@ -342,15 +342,17 @@ const drawA = function() {
 					break;
 				}
 
-				case 1200:
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 180) * Math.PI) / 180) * 160;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 180) * Math.PI) / 180) * 160;
-					this.vo_pa_x[1] = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 160;
-					this.vo_pa_y[1] = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 160;
-					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 12;
-					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 12;
-					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos(((characterobject.vy + 270) * Math.PI) / 180) * 12;
-					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin(((characterobject.vy + 270) * Math.PI) / 180) * 12;
+				case 1200: {
+					// シーソー
+					const rad = (characterobject.vy * Math.PI) / 180;
+					this.vo_pa_x[0] = co_wx + Math.cos(rad + Math.PI) * 160;
+					this.vo_pa_y[0] = co_wy + Math.sin(rad + Math.PI) * 160;
+					this.vo_pa_x[1] = co_wx + Math.cos(rad) * 160;
+					this.vo_pa_y[1] = co_wy + Math.sin(rad) * 160;
+					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos(rad - Math.PI / 2) * 12;
+					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin(rad - Math.PI / 2) * 12;
+					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos(rad - Math.PI / 2) * 12;
+					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin(rad - Math.PI / 2) * 12;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					this.vo_pa_x[0] = co_wx;
@@ -362,77 +364,60 @@ const drawA = function() {
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 3);
 					break;
+				}
 
-				case 1300:
-					this.vo_pa_x[0] = co_wx + Math.cos(((characterobject.vy + 20) * Math.PI) / 180) * 192;
-					this.vo_pa_y[0] = co_wy + Math.sin(((characterobject.vy + 20) * Math.PI) / 180) * 192;
-					this.vo_pa_x[1] = co_wx + Math.cos(((characterobject.vy - 20) * Math.PI) / 180) * 192;
-					this.vo_pa_y[1] = co_wy + Math.sin(((characterobject.vy - 20) * Math.PI) / 180) * 192;
-					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
-					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
-					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
-					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
-					this.vo_pa_x[4] = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 12;
-					this.vo_pa_y[4] = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 12;
-					var k21 = co_wx + Math.cos((characterobject.vy * Math.PI) / 180) * 80;
-					var l27 = co_wy + Math.sin((characterobject.vy * Math.PI) / 180) * 80;
+				case 1300: {
+					// ブランコ
+					const rad = (characterobject.vy * Math.PI) / 180;
+					this.vo_pa_x[0] = co_wx + Math.cos(rad + Math.PI / 9) * 192;
+					this.vo_pa_y[0] = co_wy + Math.sin(rad + Math.PI / 9) * 192;
+					this.vo_pa_x[1] = co_wx + Math.cos(rad - Math.PI / 9) * 192;
+					this.vo_pa_y[1] = co_wy + Math.sin(rad - Math.PI / 9) * 192;
+					this.vo_pa_x[2] = this.vo_pa_x[1] + Math.cos(rad) * 12;
+					this.vo_pa_y[2] = this.vo_pa_y[1] + Math.sin(rad) * 12;
+					this.vo_pa_x[3] = this.vo_pa_x[0] + Math.cos(rad) * 12;
+					this.vo_pa_y[3] = this.vo_pa_y[0] + Math.sin(rad) * 12;
+					this.vo_pa_x[4] = co_wx + Math.cos(rad) * 12;
+					this.vo_pa_y[4] = co_wy + Math.sin(rad) * 12;
+					const dx = Math.cos(rad) * 80;
+					const dy = Math.sin(rad) * 80;
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
-					this.gg.os_g.drawLine(this.vo_pa_x[4], this.vo_pa_y[4], k21, l27);
-					this.gg.os_g.drawLine(this.vo_pa_x[0], this.vo_pa_y[0], k21, l27);
-					this.gg.os_g.drawLine(this.vo_pa_x[1], this.vo_pa_y[1], k21, l27);
+					this.gg.os_g.drawLine(this.vo_pa_x[4], this.vo_pa_y[4], co_wx + dx, co_wy + dy);
+					this.gg.os_g.drawLine(this.vo_pa_x[0], this.vo_pa_y[0], co_wx + dx, co_wy + dy);
+					this.gg.os_g.drawLine(this.vo_pa_x[1], this.vo_pa_y[1], co_wx + dx, co_wy + dy);
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
+				}
 
-				case 1400:
-					this.vo_pa_x[0] =
-						co_wx +
-						Math.cos((characterobject.vy * Math.PI) / 180) * 192 +
-						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 12;
-					this.vo_pa_y[0] =
-						co_wy +
-						Math.sin((characterobject.vy * Math.PI) / 180) * 192 +
-						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 12;
-					this.vo_pa_x[1] =
-						co_wx +
-						Math.cos((characterobject.vy * Math.PI) / 180) * 60 +
-						Math.cos(((characterobject.vy + 90) * Math.PI) / 180) * 12;
-					this.vo_pa_y[1] =
-						co_wy +
-						Math.sin((characterobject.vy * Math.PI) / 180) * 60 +
-						Math.sin(((characterobject.vy + 90) * Math.PI) / 180) * 12;
-					this.vo_pa_x[2] =
-						co_wx +
-						Math.cos((characterobject.vy * Math.PI) / 180) * 60 +
-						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 12;
-					this.vo_pa_y[2] =
-						co_wy +
-						Math.sin((characterobject.vy * Math.PI) / 180) * 60 +
-						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 12;
-					this.vo_pa_x[3] =
-						co_wx +
-						Math.cos((characterobject.vy * Math.PI) / 180) * 192 +
-						Math.cos(((characterobject.vy - 90) * Math.PI) / 180) * 12;
-					this.vo_pa_y[3] =
-						co_wy +
-						Math.sin((characterobject.vy * Math.PI) / 180) * 192 +
-						Math.sin(((characterobject.vy - 90) * Math.PI) / 180) * 12;
+				case 1400: {
+					// スウィングバー
+					const rad = (characterobject.vy * Math.PI) / 180;
+					this.vo_pa_x[0] = co_wx + Math.cos(rad) * 192 + Math.cos(rad + Math.PI / 2) * 12;
+					this.vo_pa_y[0] = co_wy + Math.sin(rad) * 192 + Math.sin(rad + Math.PI / 2) * 12;
+					this.vo_pa_x[1] = co_wx + Math.cos(rad) * 60 + Math.cos(rad + Math.PI / 2) * 12;
+					this.vo_pa_y[1] = co_wy + Math.sin(rad) * 60 + Math.sin(rad + Math.PI / 2) * 12;
+					this.vo_pa_x[2] = co_wx + Math.cos(rad) * 60 + Math.cos(rad - Math.PI / 2) * 12;
+					this.vo_pa_y[2] = co_wy + Math.sin(rad) * 60 + Math.sin(rad - Math.PI / 2) * 12;
+					this.vo_pa_x[3] = co_wx + Math.cos(rad) * 192 + Math.cos(rad - Math.PI / 2) * 12;
+					this.vo_pa_y[3] = co_wy + Math.sin(rad) * 192 + Math.sin(rad - Math.PI / 2) * 12;
 					this.gg.os_g.setColor(this.gamecolor_firebar2);
 					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					break;
+				}
 
 				case 1500:
+					// TODO: ファイヤーウォール
 					if (characterobject.c4 <= 0) break;
 					this.gg.os_g.setColor(this.gamecolor_firebar1);
+					// 0:通常 1:下向き 2:左向き 3:右向き
 					if (characterobject.c3 === 1 || characterobject.c3 === 11) {
 						this.gg.os_g.fillRect(co_wx + 8, co_wy, 48, characterobject.c4);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
 							this.gg.os_g.fillRect(co_wx + 16, co_wy, 32, characterobject.c4 - 8);
 						}
-						break;
-					}
-					if (characterobject.c3 === 2 || characterobject.c3 === 12) {
+					} else if (characterobject.c3 === 2 || characterobject.c3 === 12) {
 						this.gg.os_g.fillRect(co_wx - characterobject.c4, co_wy + 8, characterobject.c4, 48);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
@@ -443,20 +428,23 @@ const drawA = function() {
 								32
 							);
 						}
-						break;
-					}
-					if (characterobject.c3 === 3 || characterobject.c3 === 13) {
+					} else if (characterobject.c3 === 3 || characterobject.c3 === 13) {
 						this.gg.os_g.fillRect(co_wx, co_wy + 8, characterobject.c4, 48);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
 							this.gg.os_g.fillRect(co_wx, co_wy + 16, characterobject.c4 - 8, 32);
 						}
-						break;
-					}
-					this.gg.os_g.fillRect(co_wx + 8, co_wy - characterobject.c4, 48, characterobject.c4);
-					if (this.g_c2 >= 2 && characterobject.c4 > 8) {
-						this.gg.os_g.setColor(this.gamecolor_firebar2);
-						this.gg.os_g.fillRect(co_wx + 16, co_wy - characterobject.c4 + 8, 32, characterobject.c4 - 8);
+					} else {
+						this.gg.os_g.fillRect(co_wx + 8, co_wy - characterobject.c4, 48, characterobject.c4);
+						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
+							this.gg.os_g.setColor(this.gamecolor_firebar2);
+							this.gg.os_g.fillRect(
+								co_wx + 16,
+								co_wy - characterobject.c4 + 8,
+								32,
+								characterobject.c4 - 8
+							);
+						}
 					}
 					break;
 
@@ -1001,7 +989,7 @@ const drawA = function() {
 /**
  * 土管を描画します
  * @param dokan_id 土管の種類 0がリンク土管1, 1がリンク土管2, ...
- * @param dokan_type 0:通常 1:上向き 2:左向き 3:右向き
+ * @param dokan_type 0:通常 1:下向き 2:左向き 3:右向き
  * @param co_wx 土管の左上の点の画面上のX座標
  * @param co_wy 土管の左上の点の画面上のY座標
  */
@@ -1362,7 +1350,7 @@ export const drawGamescreenMy = function() {
 			// 土管に入る
 			// 土管の種類 0がリンク土管1, 1がリンク土管2, ...
 			const dokan_id = this.co_j.c2 % 100;
-			// 0:通常 1:上向き 2:左向き 3:右向き
+			// 0:通常 1:下向き 2:左向き 3:右向き
 			const dokan_type = Math.floor(this.co_j.c2 / 100);
 			// 主人公を少しづつ土管に入れる
 			let j_dx = 0;
