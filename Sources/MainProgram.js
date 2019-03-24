@@ -972,7 +972,7 @@ MainProgram.prototype.setBossHP = function(hp) {
  */
 MainProgram.prototype.getBossDirection = function() {
 	if (this.ml_mode < 100 || this.ml_mode >= 200) return 0;
-	this.co_b.getBossDirectionFromPattern();
+	return this.co_b.getBossDirectionFromPattern();
 };
 
 /**
