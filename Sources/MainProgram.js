@@ -980,7 +980,7 @@ MainProgram.prototype.setBossHP = function(hp) {
  */
 MainProgram.prototype.getBossDirection = function() {
 	if (this.ml_mode < 100 || this.ml_mode >= 200) return 0;
-	this.co_b.getBossDirectionFromPattern();
+	return this.co_b.getBossDirectionFromPattern();
 };
 
 /**
@@ -2388,7 +2388,7 @@ MainProgram.prototype.drawScore2 = function() {
 	let str = "";
 	if (this.score_v) {
 		// 得点を表示する
-		let str = `${this.moji_score} ${this.score}  ${this.moji_highscore} ${this.highscore}`;
+		str = `${this.moji_score} ${this.score}  ${this.moji_highscore} ${this.highscore}`;
 	}
 	if (this.j_left_shoki > 0 || this.j_left > 0) {
 		// 残機を表示

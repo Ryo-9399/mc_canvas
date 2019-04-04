@@ -642,7 +642,7 @@ class Boss extends CharacterObject {
 	hitWithGrenade(mp, characterobject) {
 		// グレネードでないなら処理しない
 		if (characterobject.c !== 200) return;
-		if (this.co_b.c < 100) return;
+		if (this.c < 100) return;
 		characterobject.c = 50;
 		characterobject.c1 = 1;
 		characterobject.c2 = 20;
