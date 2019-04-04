@@ -221,7 +221,7 @@ MainProgram.prototype.drawScore = function() {
 
 /**
  * 画面上部にスコア・残機のみを描画します
- * TODO: 要調査:地図画面でのスコア表示に使われる？
+ * 地図画面でのスコア表示に使われる
  */
 MainProgram.prototype.drawScore2 = function() {
 	this.gg.os_g.setColor(this.gamecolor_score);
