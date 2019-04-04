@@ -1023,56 +1023,27 @@ const drawM = function() {
 	for (let i = 0; i <= 79; i++) {
 		if (this.co_m[i].c < 50) continue;
 		const characterobject = this.co_m[i];
+		const co_wx = characterobject.x - view_x;
+		const co_wy = characterobject.y - view_y;
 		if (characterobject.c === 50) {
-			this.hg.drawImage(
-				this.hih[characterobject.pth][characterobject.pt],
-				characterobject.x - view_x,
-				characterobject.y - view_y,
-				this.ap
-			);
-			if (this.gg.layer_mode === 2) {
-				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-				if (bgc >= 20 && bgc !== 29)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-				if (bgc >= 20 && bgc !== 29)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-			} else {
-				let bgc = this.maps.getBGCode(characterobject.x, characterobject.y);
-				if (bgc >= 20)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
-				bgc = this.maps.getBGCode(characterobject.x + 31, characterobject.y);
-				if (bgc >= 20)
-					this.gg.drawPT(
-						rightShiftIgnoreSign(characterobject.x + 31, 5) * 32 - view_x,
-						rightShiftIgnoreSign(characterobject.y, 5) * 32 - view_y,
-						bgc,
-						0
-					);
+			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
+			for (let ii = 0; ii < 2; ii++) {
+				const cx = characterobject.x + ii * 31;
+				const cy = characterobject.y;
+				const bgc = this.maps.getBGCode(cx, cy);
+				if (bgc < 20) continue;
+				if (this.gg.layer_mode === 2 && bgc === 29) continue;
+				this.gg.drawPT(
+					rightShiftIgnoreSign(cx, 5) * 32 - view_x,
+					rightShiftIgnoreSign(cy, 5) * 32 - view_y,
+					bgc,
+					0
+				);
 			}
 		} else if (characterobject.pt === 1000) {
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
-			this.gg.os_g.fillOval(
-				characterobject.x - view_x + 16 - characterobject.c2,
-				characterobject.y - view_y + 16 - characterobject.c2,
-				characterobject.c2 * 2,
-				characterobject.c2 * 2
-			);
+			const radius = characterobject.c2;
+			this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1010) {
 			this.gg.os_g.setColor(
 				new Color(
@@ -1082,56 +1053,35 @@ const drawM = function() {
 					176
 				)
 			);
-			this.gg.os_g.fillOval(
-				characterobject.x - view_x + 16 - characterobject.c2,
-				characterobject.y - view_y + 16 - characterobject.c2,
-				characterobject.c2 * 2,
-				characterobject.c2 * 2
-			);
+			const radius = characterobject.c2;
+			this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1100) {
 			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.fillOval(
-				characterobject.x - view_x + 16 - characterobject.c2,
-				characterobject.y - view_y + 16 - characterobject.c2,
-				characterobject.c2 * 2,
-				characterobject.c2 * 2
-			);
+			const radius = characterobject.c2;
+			this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1200) {
 			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.drawOval(
-				characterobject.x - view_x + 16 - characterobject.vy,
-				characterobject.y - view_y + 16 - characterobject.vy,
-				characterobject.vy * 2,
-				characterobject.vy * 2
-			);
+			const radius = characterobject.vy;
+			this.gg.os_g.drawOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1210) {
 			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.fillRect(
-				characterobject.x - view_x,
-				characterobject.y - view_y + 11,
-				characterobject.vx - characterobject.x + 1,
-				10
-			);
+			this.gg.os_g.fillRect(co_wx, co_wy + 11, characterobject.vx - characterobject.x + 1, 10);
 		} else if (characterobject.pt === 1215) {
 			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
 			this.gg.os_g.fillRect(
 				characterobject.vx - view_x,
-				characterobject.y - view_y + 11,
+				co_wy + 11,
 				characterobject.x - characterobject.vx + 1,
 				10
 			);
 		} else if (characterobject.pt === 1220) {
 			this.gg.os_g.setColor(this.gamecolor_grenade1);
-			this.gg.os_g.drawOval(
-				characterobject.x - view_x + 16 - characterobject.vy,
-				characterobject.y - view_y + 16 - characterobject.vy,
-				characterobject.vy * 2,
-				characterobject.vy * 2
-			);
+			const radius = characterobject.vy;
+			this.gg.os_g.drawOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1230) {
 			this.gg.os_g.setColor(
 				new Color(
@@ -1141,12 +1091,7 @@ const drawM = function() {
 					192
 				)
 			);
-			this.gg.os_g.fillRect(
-				characterobject.x - view_x,
-				characterobject.y - view_y + 9,
-				characterobject.vx - characterobject.x + 1,
-				14
-			);
+			this.gg.os_g.fillRect(co_wx, co_wy + 9, characterobject.vx - characterobject.x + 1, 14);
 		} else if (characterobject.pt === 1235) {
 			this.gg.os_g.setColor(
 				new Color(
@@ -1158,24 +1103,14 @@ const drawM = function() {
 			);
 			this.gg.os_g.fillRect(
 				characterobject.vx - view_x,
-				characterobject.y - view_y + 9,
+				co_wy + 9,
 				characterobject.x - characterobject.vx + 1,
 				14
 			);
 		} else if (characterobject.pt === 1300) {
-			this.hg.drawImage(
-				this.gg.spt_option_img[0],
-				characterobject.x - view_x,
-				characterobject.y - view_y,
-				this.ap
-			);
+			this.hg.drawImage(this.gg.spt_option_img[0], co_wx, co_wy, this.ap);
 		} else {
-			this.hg.drawImage(
-				this.hih[characterobject.pth][characterobject.pt],
-				characterobject.x - view_x,
-				characterobject.y - view_y,
-				this.ap
-			);
+			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
 		}
 	}
 };
@@ -1186,6 +1121,8 @@ const drawM = function() {
 export const drawGamescreenMy = function() {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
+	// NOTE: drawGamescreenでも同じ代入をしているので、drawGamescreenから呼ばれた場合同じ処理が二回行われる
+	// this.co_j.xもview_xも変化しないので、特に問題はない
 	this.co_j.wx = this.co_j.x - view_x;
 	this.co_j.wy = this.co_j.y - view_y;
 	if (this.j_jet_c >= 96) {
