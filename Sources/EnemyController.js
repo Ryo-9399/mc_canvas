@@ -1,4 +1,4 @@
-import { rightShiftIgnoreSign } from "./GlobalFunctions";
+import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
 
 /*
  * フハハハハ！！　エネミーコントローラー！
