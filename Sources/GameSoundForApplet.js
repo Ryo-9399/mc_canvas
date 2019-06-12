@@ -423,6 +423,13 @@ GameSoundWebAudio.prototype._loadAudioBufferInto = function(url, target, index, 
 	}
 };
 
+GameSoundWebAudio.prototype.setSound = function(paramInt, paramString) {
+	if (paramInt < 0 || paramInt >= this.s_data.length) {
+		return;
+	}
+	this._loadAudioBufferInto(paramString, this.s_data, paramInt);
+};
+
 GameSoundWebAudio.prototype.play = function(paramInt) {
 	if (!this.use_f || this.mute_f || this.s_data[paramInt] == null || this.context.state !== "running") {
 		return;
