@@ -8,14 +8,9 @@ class MapSystem {
 		this.mp = mainprogram;
 		this.map_bg = createNDimensionArray(this.width, this.height);
 		this.map_string = new Array(this.height);
-		this.bg_space = "";
 		this.hi = this.gg.spt_img[0];
 		this.g2 = this.gg.os2_g;
 		this.ap = this.gg.ap;
-
-		for (var i = 0; i <= this.width; i++) {
-			this.bg_space += ".";
-		}
 		this.init();
 	}
 
@@ -27,32 +22,27 @@ class MapSystem {
 		this.wy = 0;
 		this.os2_wx = 0;
 		this.os2_wy = 0;
-		for (var j = 0; j < this.height; j++) {
-			for (var i = 0; i < this.width; i++) {
-				this.map_bg[i][j] = 0;
+		for (let y = 0; y < this.height; y++) {
+			for (let x = 0; x < this.width; x++) {
+				this.map_bg[x][y] = 0;
 			}
 		}
-		for (j = 0; j < this.height; j++) {
-			this.map_string[j] = this.bg_space;
+		const bg_space = ".".repeat(this.width + 1);
+		for (let y = 0; y < this.height; y++) {
+			this.map_string[y] = bg_space;
 		}
 	}
 
 	/**
 	 * TODO: 要調査
 	 */
-	setBank(paramInt) {
-		var byte0;
-		if (paramInt == 1) {
-			byte0 = 40;
-		} else if (paramInt == 2) {
-			byte0 = 50;
-		} else if (paramInt == 4) {
-			byte0 = 60;
-		} else {
-			byte0 = 30;
-		}
-		for (var i = 0; i <= 9; i++) {
-			this.gg.spt_img[0][10 + i] = this.gg.spt_img[0][byte0 + i];
+	setBank(mode) {
+		let dest = 30;
+		if (mode === 1) dest = 40;
+		else if (mode === 2) dest = 50;
+		else if (mode === 4) dest = 60;
+		for (let i = 0; i <= 9; i++) {
+			this.gg.spt_img[0][10 + i] = this.gg.spt_img[0][dest + i];
 		}
 	}
 
@@ -64,20 +54,19 @@ class MapSystem {
 	drawMap(view_x, view_y) {
 		this.wx = view_x;
 		this.wy = view_y;
-		var k = this.wx % 32;
-		var m = this.wy % 32;
+		const xmod = this.wx % 32;
+		const ymod = this.wy % 32;
 		this.os2_wx = this.wx >> 5;
 		this.os2_wy = this.wy >> 5;
 		this.gg.fill2();
-		for (var j = 0; j <= 10; j++) {
-			for (var i = 0; i <= 16; i++) {
-				var n = this.map_bg[this.os2_wx + i][this.os2_wy + j];
-				if (n > 0) {
-					this.gg.drawPT2(32 + i * 32, 32 + j * 32, this.map_bg[this.os2_wx + i][this.os2_wy + j]);
+		for (let ny = 0; ny <= 10; ny++) {
+			for (let nx = 0; nx <= 16; nx++) {
+				if (this.map_bg[this.os2_wx + nx][this.os2_wy + ny] > 0) {
+					this.gg.drawPT2(32 + nx * 32, 32 + ny * 32, this.map_bg[this.os2_wx + nx][this.os2_wy + ny]);
 				}
 			}
 		}
-		this.gg.os_g.drawImage(this.gg.os2_img, -32 - k, -32 - m, this.gg.ap);
+		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.gg.ap);
 	}
 
 	/**
@@ -85,18 +74,24 @@ class MapSystem {
 	 * @param {number} g_ac2
 	 */
 	drawMapScroll(g_ac2) {
-		var xmod = this.wx % 32;
-		var ymod = this.wy % 32;
-		var nx = this.wx >> 5;
-		var ny = this.wy >> 5;
-		if (nx > this.os2_wx + 1 || nx < this.os2_wx - 1 || ny > this.os2_wy + 1 || ny < this.os2_wy - 1) {
+		const xmod = this.wx % 32;
+		const ymod = this.wy % 32;
+		// 画面左上のブロック座標
+		const view_nx = this.wx >> 5;
+		const view_ny = this.wy >> 5;
+		if (
+			view_nx > this.os2_wx + 1 ||
+			view_nx < this.os2_wx - 1 ||
+			view_ny > this.os2_wy + 1 ||
+			view_ny < this.os2_wy - 1
+		) {
 			this.drawMap(this.wx, this.wy);
-		} else if (ny > this.os2_wy) {
-			if (nx > this.os2_wx) {
+		} else if (view_ny > this.os2_wy) {
+			if (view_nx > this.os2_wx) {
 				this.g2.copyArea(64, 64, 544, 352, -32, -32);
-				this.os2_wx = nx;
-				this.os2_wy = ny;
-				for (var i = 0; i <= 16; i++) {
+				this.os2_wx = view_nx;
+				this.os2_wy = view_ny;
+				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
 						this.g2.drawImage(
 							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
@@ -106,7 +101,7 @@ class MapSystem {
 						);
 					}
 				}
-				for (var i = 0; i <= 9; i++) {
+				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
 						this.g2.drawImage(
 							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
@@ -116,11 +111,11 @@ class MapSystem {
 						);
 					}
 				}
-			} else if (nx < this.os2_wx) {
+			} else if (view_nx < this.os2_wx) {
 				this.g2.copyArea(0, 64, 544, 352, 32, -32);
-				this.os2_wx = nx;
-				this.os2_wy = ny;
-				for (var i = 0; i <= 16; i++) {
+				this.os2_wx = view_nx;
+				this.os2_wy = view_ny;
+				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
 						this.g2.drawImage(
 							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
@@ -130,15 +125,15 @@ class MapSystem {
 						);
 					}
 				}
-				for (var i = 0; i <= 9; i++) {
+				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
 						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
 					}
 				}
 			} else {
 				this.g2.copyArea(32, 64, 544, 352, 0, -32);
-				this.os2_wy = ny;
-				for (var i = 0; i <= 16; i++) {
+				this.os2_wy = view_ny;
+				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
 						this.g2.drawImage(
 							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
@@ -149,17 +144,17 @@ class MapSystem {
 					}
 				}
 			}
-		} else if (ny < this.os2_wy) {
-			if (nx > this.os2_wx) {
+		} else if (view_ny < this.os2_wy) {
+			if (view_nx > this.os2_wx) {
 				this.g2.copyArea(64, 0, 544, 352, -32, 32);
-				this.os2_wx = nx;
-				this.os2_wy = ny;
-				for (var i = 0; i <= 16; i++) {
+				this.os2_wx = view_nx;
+				this.os2_wy = view_ny;
+				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
 						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
 					}
 				}
-				for (var i = 1; i <= 10; i++) {
+				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
 						this.g2.drawImage(
 							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
@@ -169,33 +164,33 @@ class MapSystem {
 						);
 					}
 				}
-			} else if (nx < this.os2_wx) {
+			} else if (view_nx < this.os2_wx) {
 				this.g2.copyArea(0, 0, 544, 352, 32, 32);
-				this.os2_wx = nx;
-				this.os2_wy = ny;
-				for (var i = 0; i <= 16; i++) {
+				this.os2_wx = view_nx;
+				this.os2_wy = view_ny;
+				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
 						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
 					}
 				}
-				for (var i = 1; i <= 10; i++) {
+				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
 						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
 					}
 				}
 			} else {
 				this.g2.copyArea(32, 0, 544, 352, 0, 32);
-				this.os2_wy = ny;
-				for (var i = 0; i <= 16; i++) {
+				this.os2_wy = view_ny;
+				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
 						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
 					}
 				}
 			}
-		} else if (nx > this.os2_wx) {
+		} else if (view_nx > this.os2_wx) {
 			this.g2.copyArea(64, 32, 544, 352, -32, 0);
-			this.os2_wx = nx;
-			for (var i = 0; i <= 10; i++) {
+			this.os2_wx = view_nx;
+			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
 					this.g2.drawImage(
 						this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
@@ -205,19 +200,19 @@ class MapSystem {
 					);
 				}
 			}
-		} else if (nx < this.os2_wx) {
+		} else if (view_nx < this.os2_wx) {
 			this.g2.copyArea(0, 32, 544, 352, 32, 0);
-			this.os2_wx = nx;
-			for (var i = 0; i <= 10; i++) {
+			this.os2_wx = view_nx;
+			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
 					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
 				}
 			}
 		}
 
-		var localImage = this.hi[90 + g_ac2];
-		for (var i = 0; i <= 10; i++) {
-			for (var j = 0; j <= 16; j++) {
+		const localImage = this.hi[90 + g_ac2];
+		for (let i = 0; i <= 10; i++) {
+			for (let j = 0; j <= 16; j++) {
 				switch (this.map_bg[this.os2_wx + j][this.os2_wy + i]) {
 					case 5:
 						if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
