@@ -20,8 +20,6 @@ class MapSystem {
 		this.os2_wx = 0;
 		this.os2_wy = 0;
 		this.hi = this.gg.spt_img[0];
-		this.g2 = this.gg.os2_g;
-		this.ap = this.gg.ap;
 		this.gazou_x = 0;
 		this.gazou_y = 0;
 		this.second_gazou_x = 0;
@@ -425,94 +423,114 @@ class MapSystem {
 			this.drawMap(this.wx, this.wy);
 		} else if (view_ny > this.os2_wy) {
 			if (view_nx > this.os2_wx) {
-				this.g2.copyArea(64, 64, 544, 352, -32, -32);
+				this.gg.os2_g.copyArea(64, 64, 544, 352, -32, -32);
 				this.os2_wx = view_nx;
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
+						this.gg.os2_g.drawImage(
+							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
+							32 + i * 32,
+							352
+						);
 					}
 				}
 				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
+						this.gg.os2_g.drawImage(
+							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
+							544,
+							32 + i * 32
+						);
 					}
 				}
 			} else if (view_nx < this.os2_wx) {
-				this.g2.copyArea(0, 64, 544, 352, 32, -32);
+				this.gg.os2_g.copyArea(0, 64, 544, 352, 32, -32);
 				this.os2_wx = view_nx;
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
+						this.gg.os2_g.drawImage(
+							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
+							32 + i * 32,
+							352
+						);
 					}
 				}
 				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
+						this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 					}
 				}
 			} else {
-				this.g2.copyArea(32, 64, 544, 352, 0, -32);
+				this.gg.os2_g.copyArea(32, 64, 544, 352, 0, -32);
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
+						this.gg.os2_g.drawImage(
+							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
+							32 + i * 32,
+							352
+						);
 					}
 				}
 			}
 		} else if (view_ny < this.os2_wy) {
 			if (view_nx > this.os2_wx) {
-				this.g2.copyArea(64, 0, 544, 352, -32, 32);
+				this.gg.os2_g.copyArea(64, 0, 544, 352, -32, 32);
 				this.os2_wx = view_nx;
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
+						this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
+						this.gg.os2_g.drawImage(
+							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
+							544,
+							32 + i * 32
+						);
 					}
 				}
 			} else if (view_nx < this.os2_wx) {
-				this.g2.copyArea(0, 0, 544, 352, 32, 32);
+				this.gg.os2_g.copyArea(0, 0, 544, 352, 32, 32);
 				this.os2_wx = view_nx;
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
+						this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
+						this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 					}
 				}
 			} else {
-				this.g2.copyArea(32, 0, 544, 352, 0, 32);
+				this.gg.os2_g.copyArea(32, 0, 544, 352, 0, 32);
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
+						this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 			}
 		} else if (view_nx > this.os2_wx) {
-			this.g2.copyArea(64, 32, 544, 352, -32, 0);
+			this.gg.os2_g.copyArea(64, 32, 544, 352, -32, 0);
 			this.os2_wx = view_nx;
 			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
+					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 				}
 			}
 		} else if (view_nx < this.os2_wx) {
-			this.g2.copyArea(0, 32, 544, 352, 32, 0);
+			this.gg.os2_g.copyArea(0, 32, 544, 352, 32, 0);
 			this.os2_wx = view_nx;
 			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
+					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 				}
 			}
 		}
@@ -580,7 +598,7 @@ class MapSystem {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32, this.gg.ap);
 						} else {
-							this.g2.setColor(this.gg.backcolor);
+							this.gg.os2_g.setColor(this.gg.backcolor);
 							this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
 							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32, this.gg.ap);
 						}
