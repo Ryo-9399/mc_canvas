@@ -19,6 +19,9 @@ class MapSystem {
 		this.init();
 	}
 
+	/**
+	 * マップデータを初期化する
+	 */
 	init() {
 		this.wx = 0;
 		this.wy = 0;
@@ -34,6 +37,9 @@ class MapSystem {
 		}
 	}
 
+	/**
+	 * TODO: 要調査
+	 */
 	setBank(paramInt) {
 		var byte0;
 		if (paramInt == 1) {
@@ -50,9 +56,14 @@ class MapSystem {
 		}
 	}
 
-	drawMap(paramInt1, paramInt2) {
-		this.wx = paramInt1;
-		this.wy = paramInt2;
+	/**
+	 * 画面上にマップを描画する
+	 * @param {number} view_x 画面に描画される範囲の左上のX座標
+	 * @param {number} view_y 画面に描画される範囲の左上のY座標
+	 */
+	drawMap(view_x, view_y) {
+		this.wx = view_x;
+		this.wy = view_y;
 		var k = this.wx % 32;
 		var m = this.wy % 32;
 		this.os2_wx = this.wx >> 5;
@@ -69,7 +80,11 @@ class MapSystem {
 		this.gg.os_g.drawImage(this.gg.os2_img, -32 - k, -32 - m, this.gg.ap);
 	}
 
-	drawMapScroll(paramInt) {
+	/**
+	 * TODO: 要調査
+	 * @param {number} g_ac2
+	 */
+	drawMapScroll(g_ac2) {
 		var xmod = this.wx % 32;
 		var ymod = this.wy % 32;
 		var nx = this.wx >> 5;
@@ -200,7 +215,7 @@ class MapSystem {
 			}
 		}
 
-		var localImage = this.hi[90 + paramInt];
+		var localImage = this.hi[90 + g_ac2];
 		for (var i = 0; i <= 10; i++) {
 			for (var j = 0; j <= 16; j++) {
 				switch (this.map_bg[this.os2_wx + j][this.os2_wy + i]) {
@@ -217,14 +232,14 @@ class MapSystem {
 						}
 						break;
 					case 7:
-						if (paramInt == 0 || paramInt == 2) {
+						if (g_ac2 == 0 || g_ac2 == 2) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 96);
 						} else {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 97);
 						}
 						break;
 					case 8:
-						if (paramInt == 0) {
+						if (g_ac2 == 0) {
 							if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
 								this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 								if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
@@ -266,19 +281,27 @@ class MapSystem {
 		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.ap);
 	}
 
-	getBGCode(paramInt1, paramInt2) {
-		return this.map_bg[paramInt1 >> 5][paramInt2 >> 5];
+	/**
+	 * 指定した座標のマップコードを取得する
+	 * @param x {number} X座標(ピクセル座標)
+	 * @param y {number} Y座標(ピクセル座標)
+	 * @returns {number}
+	 * @see {@link MainProgram#setChipValue}
+	 */
+	getBGCode(x, y) {
+		return this.map_bg[x >> 5][y >> 5];
 	}
 
-	putBGCode(paramInt1, paramInt2, paramInt3) {
-		this.map_bg[paramInt1][paramInt2] = paramInt3;
-		if (
-			this.os2_wx <= paramInt1 &&
-			this.os2_wx + 16 >= paramInt1 &&
-			this.os2_wy <= paramInt2 &&
-			this.os2_wy + 10 >= paramInt2
-		) {
-			this.gg.drawBG2((paramInt1 - this.os2_wx) * 32 + 32, (paramInt2 - this.os2_wy) * 32 + 32, paramInt3);
+	/**
+	 * 指定したブロック座標のマップコードを書き換え、画面内である場合はその地点を再描画する
+	 * @param nx {number} X座標(ブロック座標)
+	 * @param ny {number} Y座標(ブロック座標)
+	 * @param {number} code マップコード
+	 */
+	putBGCode(nx, ny, code) {
+		this.map_bg[nx][ny] = code;
+		if (this.os2_wx <= nx && this.os2_wx + 16 >= nx && this.os2_wy <= ny && this.os2_wy + 10 >= ny) {
+			this.gg.drawBG2((nx - this.os2_wx) * 32 + 32, (ny - this.os2_wy) * 32 + 32, code);
 		}
 	}
 }
