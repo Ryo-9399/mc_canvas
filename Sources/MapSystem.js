@@ -122,12 +122,12 @@ class MapSystem {
 			) {
 				if (this.mp.second_gazou_scroll == 2) {
 					n = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32, this.ap);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32);
 				} else if (this.mp.second_gazou_scroll == 3) {
 					n = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32, this.ap);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32);
 				} else if (this.mp.second_gazou_scroll == 4) {
 					this.second_gazou_x += this.mp.second_gazou_scroll_speed_x;
 					this.second_gazou_y += this.mp.second_gazou_scroll_speed_y;
@@ -146,71 +146,62 @@ class MapSystem {
 					this.gg.os2_g.drawImage(
 						this.mp.second_gazou_img,
 						xmod + 32 + this.second_gazou_x,
-						ymod + 32 + this.second_gazou_y,
-						this.ap
+						ymod + 32 + this.second_gazou_y
 					);
 					this.gg.os2_g.drawImage(
 						this.mp.second_gazou_img,
 						xmod + 32 + this.second_gazou_x + 512,
-						ymod + 32 + this.second_gazou_y,
-						this.ap
+						ymod + 32 + this.second_gazou_y
 					);
 					this.gg.os2_g.drawImage(
 						this.mp.second_gazou_img,
 						xmod + 32 + this.second_gazou_x,
-						ymod + 32 + this.second_gazou_y + 320,
-						this.ap
+						ymod + 32 + this.second_gazou_y + 320
 					);
 					this.gg.os2_g.drawImage(
 						this.mp.second_gazou_img,
 						xmod + 32 + this.second_gazou_x + 512,
-						ymod + 32 + this.second_gazou_y + 320,
-						this.ap
+						ymod + 32 + this.second_gazou_y + 320
 					);
 				} else if (this.mp.second_gazou_scroll == 5) {
 					n = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32, this.ap);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32);
 				} else if (this.mp.second_gazou_scroll == 6) {
 					n = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
 					i1 = -(this.wy - 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1, this.ap);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1, this.ap);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1);
 				} else if (this.mp.second_gazou_scroll == 7) {
 					n = -((this.wx - 32) % 512);
 					i1 = -((this.wy - 320) % 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1, this.ap);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1, this.ap);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1 + 320, this.ap);
-					this.gg.os2_g.drawImage(
-						this.mp.second_gazou_img,
-						xmod + 32 + n + 512,
-						ymod + 32 + i1 + 320,
-						this.ap
-					);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1 + 320);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1 + 320);
 				} else if (this.mp.second_gazou_scroll == 8) {
 					n = this.mp.second_gazou_scroll_x + 32 - this.wx;
 					i1 = this.mp.second_gazou_scroll_y + 320 - this.wy;
 					if (n < 512 && i1 < 320) {
-						this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1, this.ap);
+						this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1);
 					}
 				} else {
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32, ymod + 32);
 				}
 			}
 			if (localImage != null) {
 				if (gazou_scroll == 2) {
 					n = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n + 512, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + n + 512, ymod + 32);
 				} else if (gazou_scroll == 3) {
 					this.gazou_x -= 2;
 					if (this.gazou_x <= -512) {
 						this.gazou_x += 512;
 					}
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32);
 				} else if (gazou_scroll == 4) {
 					this.gazou_x += this.mp.gazou_scroll_speed_x;
 					this.gazou_y += this.mp.gazou_scroll_speed_y;
@@ -226,71 +217,56 @@ class MapSystem {
 					if (this.gazou_y > 0) {
 						this.gazou_y -= 320;
 					}
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y, this.ap);
-					this.gg.os2_g.drawImage(
-						localImage,
-						xmod + 32 + this.gazou_x + 512,
-						ymod + 32 + this.gazou_y,
-						this.ap
-					);
-					this.gg.os2_g.drawImage(
-						localImage,
-						xmod + 32 + this.gazou_x,
-						ymod + 32 + this.gazou_y + 320,
-						this.ap
-					);
-					this.gg.os2_g.drawImage(
-						localImage,
-						xmod + 32 + this.gazou_x + 512,
-						ymod + 32 + this.gazou_y + 320,
-						this.ap
-					);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32 + this.gazou_y);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y + 320);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32 + this.gazou_y + 320);
 				} else if (gazou_scroll == 5) {
 					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32 + n + 320, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32 + n + 320);
 				} else if (gazou_scroll == 6) {
 					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
 					i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n + 320, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n + 320, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n + 320);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n + 320);
 				} else if (gazou_scroll == 7) {
 					n = -((this.wy - 320) % 320);
 					i1 = -((this.wx - 32) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n + 320, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n + 320, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n + 320);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n + 320);
 				} else if (gazou_scroll == 8) {
 					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
 					i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n);
 				} else if (gazou_scroll == 9) {
 					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
 					i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 1024);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 1024, ymod + 32 + n, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 1024, ymod + 32 + n);
 				} else if (gazou_scroll == 10) {
 					n = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32, this.ap);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n + 512, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32);
+					this.gg.os2_g.drawImage(localImage, xmod + 32 + n + 512, ymod + 32);
 				} else if (gazou_scroll == 11) {
 					n = this.mp.gazou_scroll_x + 32 - this.wx;
 					i1 = this.mp.gazou_scroll_y + 320 - this.wy;
 					if (n < 512 && i1 < 320) {
-						this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32 + i1, this.ap);
+						this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32 + i1);
 					}
 				} else {
-					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32, this.ap);
+					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32);
 				}
 			}
 		}
@@ -454,22 +430,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
-							32 + i * 32,
-							352,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
 					}
 				}
 				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
-							544,
-							32 + i * 32,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 					}
 				}
 			} else if (view_nx < this.os2_wx) {
@@ -478,17 +444,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
-							32 + i * 32,
-							352,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
 					}
 				}
 				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 					}
 				}
 			} else {
@@ -496,12 +457,7 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
-							32 + i * 32,
-							352,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
 					}
 				}
 			}
@@ -512,17 +468,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
-							544,
-							32 + i * 32,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 					}
 				}
 			} else if (view_nx < this.os2_wx) {
@@ -531,12 +482,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 					}
 				}
 			} else {
@@ -544,7 +495,7 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 			}
@@ -553,12 +504,7 @@ class MapSystem {
 			this.os2_wx = view_nx;
 			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-					this.g2.drawImage(
-						this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
-						544,
-						32 + i * 32,
-						this.ap
-					);
+					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 				}
 			}
 		} else if (view_nx < this.os2_wx) {
@@ -566,7 +512,7 @@ class MapSystem {
 			this.os2_wx = view_nx;
 			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
+					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 				}
 			}
 		}
@@ -685,7 +631,7 @@ class MapSystem {
 				}
 			}
 		}
-		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.ap);
+		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 	}
 
 	/**

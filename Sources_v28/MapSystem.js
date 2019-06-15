@@ -66,7 +66,7 @@ class MapSystem {
 				}
 			}
 		}
-		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.gg.ap);
+		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 	}
 
 	/**
@@ -93,22 +93,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
-							32 + i * 32,
-							352,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
 					}
 				}
 				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
-							544,
-							32 + i * 32,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 					}
 				}
 			} else if (view_nx < this.os2_wx) {
@@ -117,17 +107,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
-							32 + i * 32,
-							352,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
 					}
 				}
 				for (let i = 0; i <= 9; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 					}
 				}
 			} else {
@@ -135,12 +120,7 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]],
-							32 + i * 32,
-							352,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
 					}
 				}
 			}
@@ -151,17 +131,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-						this.g2.drawImage(
-							this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
-							544,
-							32 + i * 32,
-							this.ap
-						);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 					}
 				}
 			} else if (view_nx < this.os2_wx) {
@@ -170,12 +145,12 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 				for (let i = 1; i <= 10; i++) {
 					if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 					}
 				}
 			} else {
@@ -183,7 +158,7 @@ class MapSystem {
 				this.os2_wy = view_ny;
 				for (let i = 0; i <= 16; i++) {
 					if (this.map_bg[this.os2_wx + i][this.os2_wy] > 0) {
-						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32, this.ap);
+						this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
 					}
 				}
 			}
@@ -192,12 +167,7 @@ class MapSystem {
 			this.os2_wx = view_nx;
 			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] > 0) {
-					this.g2.drawImage(
-						this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]],
-						544,
-						32 + i * 32,
-						this.ap
-					);
+					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
 				}
 			}
 		} else if (view_nx < this.os2_wx) {
@@ -205,7 +175,7 @@ class MapSystem {
 			this.os2_wx = view_nx;
 			for (let i = 0; i <= 10; i++) {
 				if (this.map_bg[this.os2_wx][this.os2_wy + i] > 0) {
-					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32, this.ap);
+					this.g2.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
 				}
 			}
 		}
@@ -263,17 +233,17 @@ class MapSystem {
 					case 9:
 						if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
-							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32, this.gg.ap);
+							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32);
 						} else {
 							this.g2.setColor(this.gg.backcolor);
 							this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
-							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32, this.gg.ap);
+							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32);
 						}
 						break;
 				}
 			}
 		}
-		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.ap);
+		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 	}
 
 	/**
