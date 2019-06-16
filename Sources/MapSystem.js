@@ -455,113 +455,118 @@ class MapSystem {
 			}
 		}
 
-		const localImage = this.hi[90 + g_ac2];
+		// マップ上の特別なブロックの見た目を調整する
 		for (let i = 0; i <= 10; i++) {
 			for (let j = 0; j <= 16; j++) {
-				switch (this.map_bg[this.os2_wx + j][this.os2_wy + i]) {
+				const nx = this.os2_wx + j;
+				const ny = this.os2_wy + i;
+				switch (this.map_bg[nx][ny]) {
 					case 5:
-						if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
+						// 上向きのトゲ
+						// 上が水なら奥に水を描画
+						if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 5);
 						}
 						break;
 					case 6:
-						if (this.map_bg[this.os2_wx + j][this.os2_wy + i + 1] == 4) {
+						// 下向きのトゲ
+						// 下が水なら奥に水を描画
+						if (this.map_bg[nx][ny + 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 6);
 						}
 						break;
-					case 7:
-						if (g_ac2 == 0 || g_ac2 == 2) {
-							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 96);
-						} else {
-							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 97);
-						}
+					case 7: {
+						// ろうそく
+						const pt = 96 + (g_ac2 % 2);
+						this.gg.drawBG2(32 + j * 32, 32 + i * 32, pt);
 						break;
-					case 8:
-						if (g_ac2 == 0) {
-							if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
-								this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
-								if ((this.mp.clear_type != 2 && this.mp.clear_type != 3) || this.mp.coin_kazu <= 0) {
-									if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
-										this.gg.drawPT2(32 + j * 32, 32 + i * 32, 99);
-									} else {
-										this.gg.drawPT2(32 + j * 32, 32 + i * 32, 95);
-									}
-								}
-							} else if ((this.mp.clear_type != 2 && this.mp.clear_type != 3) || this.mp.coin_kazu <= 0) {
-								if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
-									this.gg.drawBG2(32 + j * 32, 32 + i * 32, 99);
-								} else {
-									this.gg.drawBG2(32 + j * 32, 32 + i * 32, 95);
-								}
-							}
-						} else if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
+					}
+					case 8: {
+						// 人面星
+						const is_millennium = this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max;
+						const is_apparent =
+							(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
+
+						let pt = 94;
+						if (is_millennium) pt = 98; // ミレニアム人面星
+						if (g_ac2 === 0) pt += 1; // 瞬く
+
+						// 左が水なら奥に水を描画
+						if (this.map_bg[nx - 1][ny] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
-							if ((this.mp.clear_type != 2 && this.mp.clear_type != 3) || this.mp.coin_kazu <= 0) {
-								if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
-									this.gg.drawPT2(32 + j * 32, 32 + i * 32, 98);
-								} else {
-									this.gg.drawPT2(32 + j * 32, 32 + i * 32, 94);
-								}
-							}
-						} else if ((this.mp.clear_type != 2 && this.mp.clear_type != 3) || this.mp.coin_kazu <= 0) {
-							if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
-								this.gg.drawBG2(32 + j * 32, 32 + i * 32, 98);
-							} else {
-								this.gg.drawBG2(32 + j * 32, 32 + i * 32, 94);
-							}
-						}
-						break;
-					case 9:
-						if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
-							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
-							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32);
+							// まだコインを取り終えていない場合は人面星を描画しない
+							if (!is_apparent) break;
+							this.gg.drawPT2(32 + j * 32, 32 + i * 32, pt);
 						} else {
-							this.gg.os2_g.setColor(this.gg.backcolor);
-							this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
-							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32);
+							// まだコインを取り終えていない場合は人面星を描画しない
+							if (!is_apparent) break;
+							this.gg.drawBG2(32 + j * 32, 32 + i * 32, pt);
 						}
 						break;
+					}
+					case 9: {
+						// コイン
+						// 左が水なら奥に水を描画
+						if (this.map_bg[nx - 1][ny] === 4) {
+							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
+							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 90 + g_ac2);
+						} else {
+							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 90 + g_ac2);
+						}
+						break;
+					}
 					case 10:
-						if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
+						// ハシゴ
+						// 左が水なら奥に水を描画
+						if (this.map_bg[nx - 1][ny] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 10);
 						}
 						break;
 					case 15:
-						if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
+						// 下から通れるブロック
+						// 上が水なら奥に水を描画
+						if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 15);
 						}
 						break;
 					case 18:
-						if (this.mp.map_data_option[this.os2_wx + j][this.os2_wy + i] == 1) {
-							if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
+						// 上り坂
+						if (this.mp.map_data_option[nx][ny]) {
+							// 下キーで降りられる上り坂
+							if (this.map_bg[nx][ny - 1] === 4) {
+								// 上が水なら奥に水を描画
 								this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							} else {
+								// 水を描画しない場合は背景色で塗りつぶす
 								this.gg.os2_g.setColor(this.gg.backcolor);
-
 								this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
 							}
 							this.gg.os2_g.setColor(Color.white);
 							this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32 + 31, 32 + j * 32 + 31, 32 + i * 32);
-						} else if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
+						} else if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 18);
 						}
 						break;
 					case 19:
-						if (this.mp.map_data_option[this.os2_wx + j][this.os2_wy + i] == 1) {
-							if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
+						// 下り坂
+						if (this.mp.map_data_option[nx][ny]) {
+							// 下キーで降りられる下り坂
+							if (this.map_bg[nx][ny - 1] === 4) {
+								// 上が水なら奥に水を描画
 								this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							} else {
+								// 水を描画しない場合は背景色で塗りつぶす
 								this.gg.os2_g.setColor(this.gg.backcolor);
 								this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
 							}
 							this.gg.os2_g.setColor(Color.white);
 							this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31);
-						} else if (this.map_bg[this.os2_wx + j][this.os2_wy + i - 1] == 4) {
+						} else if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 19);
 						}
