@@ -412,69 +412,15 @@ class MapSystem {
 		const xmod = this.wx % 32;
 		const ymod = this.wy % 32;
 		// 画面左上のブロック座標
-		const view_nx = rightShiftIgnoreSign(this.wx, 5);
-		const view_ny = rightShiftIgnoreSign(this.wy, 5);
+		const view_nx = this.wx >> 5;
+		const view_ny = this.wy >> 5;
 		const diff_view_nx = view_nx - this.os2_wx;
 		const diff_view_ny = view_ny - this.os2_wy;
 		if (Math.abs(diff_view_nx) > 1 || Math.abs(diff_view_ny) > 1) {
 			this.drawMap(this.wx, this.wy);
-		} else if (diff_view_ny > 0) {
-			this.gg.os2_g.copyArea(
-				32 + diff_view_nx * 32,
-				32 + diff_view_ny * 32,
-				544,
-				352,
-				-diff_view_nx * 32,
-				-diff_view_ny * 32
-			);
-			if (diff_view_nx !== 0) this.os2_wx = view_nx;
-			if (diff_view_ny !== 0) this.os2_wy = view_ny;
-			for (let i = 0; i <= 16; i++) {
-				if (this.map_bg[this.os2_wx + i][this.os2_wy + 10] <= 0) continue;
-				this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy + 10]], 32 + i * 32, 352);
-			}
-			if (diff_view_nx > 0) {
-				// (1,1)
-				for (let i = 0; i <= 9; i++) {
-					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] <= 0) continue;
-					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
-				}
-			} else if (diff_view_nx < 0) {
-				// (-1,1)
-				for (let i = 0; i <= 9; i++) {
-					if (this.map_bg[this.os2_wx][this.os2_wy + i] <= 0) continue;
-					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
-				}
-			}
-		} else if (diff_view_ny < 0) {
-			this.gg.os2_g.copyArea(
-				32 + diff_view_nx * 32,
-				32 + diff_view_ny * 32,
-				544,
-				352,
-				-diff_view_nx * 32,
-				-diff_view_ny * 32
-			);
-			if (diff_view_nx !== 0) this.os2_wx = view_nx;
-			if (diff_view_ny !== 0) this.os2_wy = view_ny;
-			for (let i = 0; i <= 16; i++) {
-				if (this.map_bg[this.os2_wx + i][this.os2_wy] <= 0) continue;
-				this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + i][this.os2_wy]], 32 + i * 32, 32);
-			}
-			if (diff_view_nx > 0) {
-				// (1,-1)
-				for (let i = 1; i <= 10; i++) {
-					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] <= 0) continue;
-					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
-				}
-			} else if (diff_view_nx < 0) {
-				// (-1,-1)
-				for (let i = 1; i <= 10; i++) {
-					if (this.map_bg[this.os2_wx][this.os2_wy + i] <= 0) continue;
-					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
-				}
-			}
+		} else if (diff_view_nx === 0 && diff_view_ny === 0) {
 		} else {
+			// スクロールする方向とは反対方向に裏画面をずらす
 			this.gg.os2_g.copyArea(
 				32 + diff_view_nx * 32,
 				32 + diff_view_ny * 32,
@@ -485,18 +431,53 @@ class MapSystem {
 			);
 			if (diff_view_nx !== 0) this.os2_wx = view_nx;
 			if (diff_view_ny !== 0) this.os2_wy = view_ny;
-			if (diff_view_nx > 0) {
-				// (1,0)
-				for (let i = 0; i <= 10; i++) {
-					if (this.map_bg[this.os2_wx + 16][this.os2_wy + i] <= 0) continue;
-					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx + 16][this.os2_wy + i]], 544, 32 + i * 32);
+			const draw_queue = [];
+			if (diff_view_ny > 0) {
+				for (let i = 0; i <= 16; i++) {
+					draw_queue.push([this.map_bg[this.os2_wx + i][this.os2_wy + 10], 1 + i, 11]);
 				}
-			} else if (diff_view_nx < 0) {
-				// (-1,0)
-				for (let i = 0; i <= 10; i++) {
-					if (this.map_bg[this.os2_wx][this.os2_wy + i] <= 0) continue;
-					this.gg.os2_g.drawImage(this.hi[this.map_bg[this.os2_wx][this.os2_wy + i]], 32, 32 + i * 32);
+				if (diff_view_nx > 0) {
+					// (1,1)
+					for (let i = 0; i <= 9; i++) {
+						draw_queue.push([this.map_bg[this.os2_wx + 16][this.os2_wy + i], 17, 1 + i]);
+					}
+				} else if (diff_view_nx < 0) {
+					// (-1,1)
+					for (let i = 0; i <= 9; i++) {
+						draw_queue.push([this.map_bg[this.os2_wx][this.os2_wy + i], 1, 1 + i]);
+					}
 				}
+			} else if (diff_view_ny < 0) {
+				for (let i = 0; i <= 16; i++) {
+					draw_queue.push([this.map_bg[this.os2_wx + i][this.os2_wy], 1 + i, 1]);
+				}
+				if (diff_view_nx > 0) {
+					// (1,-1)
+					for (let i = 1; i <= 10; i++) {
+						draw_queue.push([this.map_bg[this.os2_wx + 16][this.os2_wy + i], 17, 1 + i]);
+					}
+				} else if (diff_view_nx < 0) {
+					// (-1,-1)
+					for (let i = 1; i <= 10; i++) {
+						draw_queue.push([this.map_bg[this.os2_wx][this.os2_wy + i], 1, 1 + i]);
+					}
+				}
+			} else {
+				if (diff_view_nx > 0) {
+					// (1,0)
+					for (let i = 0; i <= 10; i++) {
+						draw_queue.push([this.map_bg[this.os2_wx + 16][this.os2_wy + i], 17, 1 + i]);
+					}
+				} else if (diff_view_nx < 0) {
+					// (-1,0)
+					for (let i = 0; i <= 10; i++) {
+						draw_queue.push([this.map_bg[this.os2_wx][this.os2_wy + i], 1, 1 + i]);
+					}
+				}
+			}
+			for (const [bg_code, nx, ny] of draw_queue) {
+				if (bg_code <= 0) continue;
+				this.gg.os2_g.drawImage(this.hi[bg_code], nx * 32, ny * 32);
 			}
 		}
 
