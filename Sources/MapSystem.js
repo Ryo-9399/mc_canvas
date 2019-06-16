@@ -56,7 +56,7 @@ class MapSystem {
 		if (mode === 1) dest = 40;
 		else if (mode === 2) dest = 50;
 		else if (mode === 4) dest = 60;
-		this.gg.spt_img[0][8] = this.gg.spt_img[0][0];
+		this.gg.spt_img[0][8] = this.gg.spt_img[0][0]; // 人面星のベース画像を消去 drawMapLayer()の内部処理に影響
 		this.gg.spt_img[0][31] = this.gg.spt_img[0][0];
 		for (let i = 0; i <= 7; i++) {
 			this.gg.spt_img[0][10 + i] = this.gg.spt_img[0][dest + i];
@@ -264,125 +264,86 @@ class MapSystem {
 				for (let i = 0; i <= 16; i++) {
 					const layer_code = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
 					if (layer_code > 0 && layer_code < 255) {
-						this.gg.drawMapchip2(
-							32 + i * 32,
-							32 + j * 32,
-							this.map_bg_layer[this.os2_wx + i][this.os2_wy + j]
-						);
+						this.gg.drawMapchip2(32 + i * 32, 32 + j * 32, layer_code);
 					}
 				}
 			}
 		}
 		if (mode !== 3) {
+			const is_water_visible = this.mp.water_visible === 2 && this.gg.layer_mode !== 2;
 			// マップ上の特別なブロックの見た目を調整する
-			for (let j = 0; j <= 10; j++) {
-				for (let i = 0; i <= 16; i++) {
-					let pt = this.map_bg[this.os2_wx + i][this.os2_wy + j];
-					if (this.gg.layer_mode == 2) {
-						if (this.mp.clear_type == 3) {
-							if (pt != 4 || this.mp.water_visible != 2) {
-								if (pt == 29 || pt == 4) {
-									pt = 0;
-								}
-							}
-						} else if (pt != 4 || this.mp.water_visible != 2) {
-							if (pt == 29 || pt == 15 || pt == 10 || pt == 4 || pt == 18 || pt == 19) {
-								pt = 0;
-							}
-						}
-					} else if (this.mp.clear_type == 3) {
-						if (pt == 29 || pt == 4) {
-							pt = 0;
-						}
+			// TODO: clear_typeが3の場合の水の描画処理にバグがあるためあとで直す
+			for (let i = 0; i <= 10; i++) {
+				for (let j = 0; j <= 16; j++) {
+					const nx = this.os2_wx + j;
+					const ny = this.os2_wy + i;
+					let pt = this.map_bg[nx][ny];
+					// レイヤーを表示する場合
+					// はしご、坂道、下から通れる床、緑色のブロック、水を表示しない
+					// ただしクリア条件が脱出ハシゴの場合、ハシゴ、坂道、下から通れる床を表示する
+					// 水を常に表示する設定の場合は水を表示する
+					if (this.gg.layer_mode === 2) {
+						if (pt === 4 && this.mp.water_visible !== 2) pt = 0;
+						else if (pt === 29) pt = 0;
+						else if (this.mp.clear_type !== 3 && (pt === 15 || pt === 10 || pt === 18 || pt === 19)) pt = 0;
+					} else if (this.mp.clear_type === 3 && (pt === 29 || pt === 4)) {
+						pt = 0;
 					}
-					if (pt == 7) {
-						if (g_ac2 == 0 || g_ac2 == 2) {
-							pt = 96;
-						} else {
-							pt = 97;
-						}
-					} else if (pt == 9) {
-						pt = 90 + g_ac2;
-						if (this.gg.layer_mode != 2) {
-							if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
-								this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
+
+					switch (pt) {
+						case 7:
+							// ろうそく
+							pt = 96 + (g_ac2 % 2);
+							break;
+						case 9:
+							// コイン
+							pt = 90 + g_ac2;
+							if (is_water_visible && this.map_bg[nx - 1][ny] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 							}
-						} else if (
-							this.mp.water_visible == 2 &&
-							this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4
-						) {
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-						}
-					} else if (pt == 8) {
-						if ((this.mp.clear_type != 2 && this.mp.clear_type != 3) || this.mp.coin_kazu <= 0) {
-							if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
-								if (g_ac2 >= 2) {
-									pt = 98;
-								} else {
-									pt = 99;
-								}
-								if (this.gg.layer_mode != 2) {
-									if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
-										this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-									}
-								} else if (
-									this.mp.water_visible == 2 &&
-									this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4
-								) {
-									this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-								}
-							} else {
-								if (g_ac2 >= 2) {
-									pt = 95;
-								} else {
-									pt = 94;
-								}
-								if (this.gg.layer_mode != 2) {
-									if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
-										this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-									}
-								} else if (
-									this.mp.water_visible == 2 &&
-									this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4
-								) {
-									this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
+							break;
+						case 8:
+							// 人面星
+							const is_millennium = this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max;
+							const is_apparent =
+								(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
+							if (is_apparent) {
+								pt = 94;
+								if (is_millennium) pt = 98;
+								if (g_ac2 >= 2) pt += 1;
+								if (is_water_visible && this.map_bg[nx - 1][ny] === 4) {
+									this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 								}
 							}
-						}
-					} else if (pt == 10) {
-						if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
-
-							pt = 0;
-						}
-					} else if (pt == 18) {
-						if (this.mp.map_data_option[this.os2_wx + i][this.os2_wy + j] == 1) {
-							pt = 0;
-
-							this.gg.os2_g.setColor(Color.white);
-							this.gg.os2_g.drawLine(32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31, 32 + j * 32);
-						} else if (this.map_bg[this.os2_wx + i][this.os2_wy + j - 1] == 4) {
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
-
-							pt = 0;
-						}
-					} else if (pt == 19) {
-						if (this.mp.map_data_option[this.os2_wx + i][this.os2_wy + j] == 1) {
-							pt = 0;
-
-							this.gg.os2_g.setColor(Color.white);
-							this.gg.os2_g.drawLine(32 + i * 32, 32 + j * 32, 32 + i * 32 + 31, 32 + j * 32 + 31);
-						} else if (this.map_bg[this.os2_wx + i][this.os2_wy + j - 1] == 4) {
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
-
-							pt = 0;
-						}
+							break;
+						case 10:
+							// ハシゴ
+							if (this.map_bg[nx - 1][ny] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
+						case 18:
+							// 上り坂
+							if (this.mp.map_data_option[nx][ny]) {
+								pt = 0;
+								this.gg.os2_g.setColor(Color.white);
+								this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32 + 31, 32 + j * 32 + 31, 32 + i * 32);
+							} else if (this.map_bg[nx][ny - 1] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
+						case 19:
+							// 下り坂
+							if (this.mp.map_data_option[nx][ny]) {
+								this.gg.os2_g.setColor(Color.white);
+								this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31);
+							} else if (this.map_bg[nx][ny - 1] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
 					}
 					if (pt > 0) {
-						this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
+						this.gg.drawPT2(32 + j * 32, 32 + i * 32, pt);
 					}
 				}
 			}
