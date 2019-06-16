@@ -101,58 +101,59 @@ export const drawGamescreen = function() {
 	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
 
 	if (this.second_gazou_visible && this.second_gazou_priority === 2 && this.second_gazou_img !== null) {
+		const draw = (x, y) => {
+			this.hg.drawImage(this.second_gazou_img, x, y);
+		};
 		if (this.second_gazou_scroll === 2) {
 			// 左右スクロール  速度１／４
 			const scroll_x = -(rightShiftIgnoreSign(view_x - 32, 2) % 512);
-			this.hg.drawImage(this.second_gazou_img, scroll_x, 0, this.ap);
-			this.hg.drawImage(this.second_gazou_img, scroll_x + 512, 0, this.ap);
+			draw(scroll_x, 0);
+			draw(scroll_x + 512, 0);
 		} else if (this.second_gazou_scroll === 3) {
 			// 左右スクロール  速度１／２
 			const scroll_x = -(rightShiftIgnoreSign(view_x - 32, 1) % 512);
-			this.hg.drawImage(this.second_gazou_img, scroll_x, 0, this.ap);
-			this.hg.drawImage(this.second_gazou_img, scroll_x + 512, 0, this.ap);
+			draw(scroll_x, 0);
+			draw(scroll_x + 512, 0);
 		} else if (this.second_gazou_scroll === 4) {
+			// 指定速度で強制スクロール
 			this.maps.second_gazou_x += this.second_gazou_scroll_speed_x;
 			this.maps.second_gazou_y += this.second_gazou_scroll_speed_y;
 			if (this.maps.second_gazou_x < -512) this.maps.second_gazou_x += 512;
 			if (this.maps.second_gazou_x > 0) this.maps.second_gazou_x -= 512;
 			if (this.maps.second_gazou_y < -320) this.maps.second_gazou_y += 320;
 			if (this.maps.second_gazou_y > 0) this.maps.second_gazou_y -= 320;
-			this.hg.drawImage(this.second_gazou_img, this.maps.second_gazou_x, this.maps.second_gazou_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, this.maps.second_gazou_x + 512, this.maps.second_gazou_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, this.maps.second_gazou_x, this.maps.second_gazou_y + 320, this.ap);
-			this.hg.drawImage(
-				this.second_gazou_img,
-				this.maps.second_gazou_x + 512,
-				this.maps.second_gazou_y + 320,
-				this.ap
-			);
+			draw(this.maps.second_gazou_x, this.maps.second_gazou_y);
+			draw(this.maps.second_gazou_x + 512, this.maps.second_gazou_y);
+			draw(this.maps.second_gazou_x, this.maps.second_gazou_y + 320);
+			draw(this.maps.second_gazou_x + 512, this.maps.second_gazou_y + 320);
 		} else if (this.second_gazou_scroll === 5) {
 			// 左右スクロール  速度３／２
-			const k9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
-			this.hg.drawImage(this.second_gazou_img, k9, 0, this.ap);
-			this.hg.drawImage(this.second_gazou_img, k9 + 512, 0, this.ap);
+			const scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
+			draw(scroll_x, 0);
+			draw(scroll_x + 512, 0);
 		} else if (this.second_gazou_scroll === 6) {
 			// 画像サイズ  ５１２×９６０
 			const scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
 			const scroll_y = -(view_y - 320);
-			this.hg.drawImage(this.second_gazou_img, scroll_x, scroll_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, scroll_x + 512, scroll_y, this.ap);
+			draw(scroll_x, scroll_y);
+			draw(scroll_x + 512, scroll_y);
 		} else if (this.second_gazou_scroll === 7) {
 			// マップと同じ速度で全方向
 			const scroll_x = -((view_x - 32) % 512);
 			const scroll_y = -((view_y - 320) % 320);
-			this.hg.drawImage(this.second_gazou_img, scroll_x, scroll_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, scroll_x + 512, scroll_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, scroll_x, scroll_y + 320, this.ap);
-			this.hg.drawImage(this.second_gazou_img, scroll_x + 512, scroll_y + 320, this.ap);
+			draw(scroll_x, scroll_y);
+			draw(scroll_x + 512, scroll_y);
+			draw(scroll_x, scroll_y + 320);
+			draw(scroll_x + 512, scroll_y + 320);
 		} else if (this.second_gazou_scroll === 8) {
 			// マップの指定座標に設置  画像サイズは任意
-			const wx = this.second_gazou_scroll_x + 32 - view_x;
-			const wy = this.second_gazou_scroll_y + 320 - view_y;
-			if (wx < 512 && wy < 320) this.hg.drawImage(this.second_gazou_img, wx, wy, this.ap);
+			const scroll_x = this.second_gazou_scroll_x + 32 - view_x;
+			const scroll_y = this.second_gazou_scroll_y + 320 - view_y;
+			if (scroll_x < 512 && scroll_y < 320) {
+				draw(scroll_x, scroll_y);
+			}
 		} else {
-			this.hg.drawImage(this.second_gazou_img, 0, 0, this.ap);
+			draw(0, 0);
 		}
 	}
 	// ゲージを表示

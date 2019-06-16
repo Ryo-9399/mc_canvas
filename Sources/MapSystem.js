@@ -95,7 +95,6 @@ class MapSystem {
 	 * @param {number} mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
 	 */
 	drawMapLayer(view_x, view_y, g_ac2, gazou_scroll, mode) {
-		const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
@@ -109,178 +108,146 @@ class MapSystem {
 			// 背景画像を描画する
 			this.gg.fill2();
 
+			// セカンド画像の描画
 			if (
 				this.mp.second_gazou_visible &&
 				this.mp.second_gazou_priority === 1 &&
 				this.mp.second_gazou_img != null
 			) {
-				let scroll_x;
-				let scroll_y;
+				const draw = (x, y) => {
+					// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, x + xmod + 32, y + ymod + 32);
+				};
 				if (this.mp.second_gazou_scroll === 2) {
 					// 左右スクロール  速度１／４
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32);
+					const scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
+					draw(scroll_x, 0);
+					draw(scroll_x + 512, 0);
 				} else if (this.mp.second_gazou_scroll === 3) {
 					// 左右スクロール  速度１／２
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32);
+					const scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					draw(scroll_x, 0);
+					draw(scroll_x + 512, 0);
 				} else if (this.mp.second_gazou_scroll === 4) {
 					// 指定速度で強制スクロール
 					this.second_gazou_x += this.mp.second_gazou_scroll_speed_x;
 					this.second_gazou_y += this.mp.second_gazou_scroll_speed_y;
-					if (this.second_gazou_x < -512) {
-						this.second_gazou_x += 512;
-					}
-					if (this.second_gazou_x > 0) {
-						this.second_gazou_x -= 512;
-					}
-					if (this.second_gazou_y < -320) {
-						this.second_gazou_y += 320;
-					}
-					if (this.second_gazou_y > 0) {
-						this.second_gazou_y -= 320;
-					}
-					this.gg.os2_g.drawImage(
-						this.mp.second_gazou_img,
-						xmod + 32 + this.second_gazou_x,
-						ymod + 32 + this.second_gazou_y
-					);
-					this.gg.os2_g.drawImage(
-						this.mp.second_gazou_img,
-						xmod + 32 + this.second_gazou_x + 512,
-						ymod + 32 + this.second_gazou_y
-					);
-					this.gg.os2_g.drawImage(
-						this.mp.second_gazou_img,
-						xmod + 32 + this.second_gazou_x,
-						ymod + 32 + this.second_gazou_y + 320
-					);
-					this.gg.os2_g.drawImage(
-						this.mp.second_gazou_img,
-						xmod + 32 + this.second_gazou_x + 512,
-						ymod + 32 + this.second_gazou_y + 320
-					);
+					if (this.second_gazou_x < -512) this.second_gazou_x += 512;
+					if (this.second_gazou_x > 0) this.second_gazou_x -= 512;
+					if (this.second_gazou_y < -320) this.second_gazou_y += 320;
+					if (this.second_gazou_y > 0) this.second_gazou_y -= 320;
+					draw(this.second_gazou_x, this.second_gazou_y);
+					draw(this.second_gazou_x + 512, this.second_gazou_y);
+					draw(this.second_gazou_x, this.second_gazou_y + 320);
+					draw(this.second_gazou_x + 512, this.second_gazou_y + 320);
 				} else if (this.mp.second_gazou_scroll === 5) {
 					// 左右スクロール  速度３／２
-					scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32);
+					const scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
+					draw(scroll_x, 0);
+					draw(scroll_x + 512, 0);
 				} else if (this.mp.second_gazou_scroll === 6) {
 					// 画像サイズ  ５１２×９６０
-					scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
-					scroll_y = -(this.wy - 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32 + scroll_y);
+					const scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
+					const scroll_y = -(this.wy - 320);
+					draw(scroll_x, scroll_y);
+					draw(scroll_x + 512, scroll_y);
 				} else if (this.mp.second_gazou_scroll === 7) {
 					// マップと同じ速度で全方向
-					scroll_x = -((this.wx - 32) % 512);
-					scroll_y = -((this.wy - 320) % 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32 + scroll_y);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y + 320);
-					this.gg.os2_g.drawImage(
-						this.mp.second_gazou_img,
-						xmod + 32 + scroll_x + 512,
-						ymod + 32 + scroll_y + 320
-					);
+					const scroll_x = -((this.wx - 32) % 512);
+					const scroll_y = -((this.wy - 320) % 320);
+					draw(scroll_x, scroll_y);
+					draw(scroll_x + 512, scroll_y);
+					draw(scroll_x, scroll_y + 320);
+					draw(scroll_x + 512, scroll_y + 320);
 				} else if (this.mp.second_gazou_scroll === 8) {
 					// マップの指定座標に設置  画像サイズは任意
-					scroll_x = this.mp.second_gazou_scroll_x + 32 - this.wx;
-					scroll_y = this.mp.second_gazou_scroll_y + 320 - this.wy;
+					const scroll_x = this.mp.second_gazou_scroll_x + 32 - this.wx;
+					const scroll_y = this.mp.second_gazou_scroll_y + 320 - this.wy;
 					if (scroll_x < 512 && scroll_y < 320) {
-						this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y);
+						draw(scroll_x, scroll_y);
 					}
 				} else {
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32, ymod + 32);
+					draw(0, 0);
 				}
 			}
 
+			// 背景画像の描画
+			const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
 			if (background_image != null) {
-				let tmp_x;
-				let tmp_y;
-				if (gazou_scroll == 2) {
-					tmp_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x, ymod + 32);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x + 512, ymod + 32);
-				} else if (gazou_scroll == 3) {
+				const draw = (x, y) => {
+					// 裏画面に背景画像を描画する際、スクロールに応じて描画位置をずらす
+					this.gg.os2_g.drawImage(background_image, x + xmod + 32, y + ymod + 32);
+				};
+				if (gazou_scroll === 2) {
+					// 左右スクロール（速度はマップの１／４）
+					const scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
+					draw(scroll_x, 0);
+					draw(scroll_x + 512, 0);
+				} else if (gazou_scroll === 3) {
+					// 右へ強制スクロール
 					this.gazou_x -= 2;
-					if (this.gazou_x <= -512) {
-						this.gazou_x += 512;
-					}
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x, ymod + 32);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x + 512, ymod + 32);
-				} else if (gazou_scroll == 4) {
+					if (this.gazou_x <= -512) this.gazou_x += 512;
+					draw(this.gazou_x, 0);
+					draw(this.gazou_x + 512, 0);
+				} else if (gazou_scroll === 4) {
+					// 指定速度で強制スクロール
 					this.gazou_x += this.mp.gazou_scroll_speed_x;
 					this.gazou_y += this.mp.gazou_scroll_speed_y;
-					if (this.gazou_x < -512) {
-						this.gazou_x += 512;
-					}
-					if (this.gazou_x > 0) {
-						this.gazou_x -= 512;
-					}
-					if (this.gazou_y < -320) {
-						this.gazou_y += 320;
-					}
-					if (this.gazou_y > 0) {
-						this.gazou_y -= 320;
-					}
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x + 512, ymod + 32 + this.gazou_y);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y + 320);
-					this.gg.os2_g.drawImage(
-						background_image,
-						xmod + 32 + this.gazou_x + 512,
-						ymod + 32 + this.gazou_y + 320
-					);
-				} else if (gazou_scroll == 5) {
-					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32, ymod + 32 + tmp_x + 320);
-				} else if (gazou_scroll == 6) {
-					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
-					tmp_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x + 320);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x + 320);
-				} else if (gazou_scroll == 7) {
-					tmp_x = -((this.wy - 320) % 320);
-					tmp_y = -((this.wx - 32) % 512);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x + 320);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x + 320);
-				} else if (gazou_scroll == 8) {
-					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
-					tmp_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x);
-				} else if (gazou_scroll == 9) {
-					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
-					tmp_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 1024);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 1024, ymod + 32 + tmp_x);
-				} else if (gazou_scroll == 10) {
-					tmp_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
-
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x, ymod + 32);
-					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x + 512, ymod + 32);
-				} else if (gazou_scroll == 11) {
-					tmp_x = this.mp.gazou_scroll_x + 32 - this.wx;
-					tmp_y = this.mp.gazou_scroll_y + 320 - this.wy;
-					if (tmp_x < 512 && tmp_y < 320) {
-						this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x, ymod + 32 + tmp_y);
+					if (this.gazou_x < -512) this.gazou_x += 512;
+					if (this.gazou_x > 0) this.gazou_x -= 512;
+					if (this.gazou_y < -320) this.gazou_y += 320;
+					if (this.gazou_y > 0) this.gazou_y -= 320;
+					draw(this.gazou_x, this.gazou_y);
+					draw(this.gazou_x + 512, this.gazou_y);
+					draw(this.gazou_x, this.gazou_y + 320);
+					draw(this.gazou_x + 512, this.gazou_y + 320);
+				} else if (gazou_scroll === 5) {
+					// 上下スクロール
+					const scroll_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
+					draw(0, scroll_x);
+					draw(0, scroll_x + 320);
+				} else if (gazou_scroll === 6) {
+					// 全方向スクロール（速度はマップの１／２）
+					const scroll_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
+					const scroll_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					draw(scroll_y, scroll_x);
+					draw(scroll_y + 512, scroll_x);
+					draw(scroll_y, scroll_x + 320);
+					draw(scroll_y + 512, scroll_x + 320);
+				} else if (gazou_scroll === 7) {
+					// 全方向スクロール（速度はマップと同じ）
+					const scroll_x = -((this.wy - 320) % 320);
+					const scroll_y = -((this.wx - 32) % 512);
+					draw(scroll_y, scroll_x);
+					draw(scroll_y + 512, scroll_x);
+					draw(scroll_y, scroll_x + 320);
+					draw(scroll_y + 512, scroll_x + 320);
+				} else if (gazou_scroll === 8) {
+					// 画像サイズ    ５１２×６４０専用
+					const scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					const scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
+					draw(scroll_x, scroll_y);
+					draw(scroll_x + 512, scroll_y);
+				} else if (gazou_scroll === 9) {
+					// 画像サイズ  １０２４×６４０専用
+					const scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 1024);
+					const scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
+					draw(scroll_x, scroll_y);
+					draw(scroll_x + 1024, scroll_y);
+				} else if (gazou_scroll === 10) {
+					// 左右スクロール（速度はマップの１／２）
+					const scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					draw(scroll_x, 0);
+					draw(scroll_x + 512, 0);
+				} else if (gazou_scroll === 11) {
+					// マップの指定座標に設置  画像サイズは任意
+					const scroll_x = this.mp.gazou_scroll_x + 32 - this.wx;
+					const scroll_y = this.mp.gazou_scroll_y + 320 - this.wy;
+					if (scroll_x < 512 && scroll_y < 320) {
+						draw(scroll_x, scroll_y);
 					}
 				} else {
-					this.gg.os2_g.drawImage(background_image, xmod + 32, ymod + 32);
+					draw(0, 0);
 				}
 			}
 		}
