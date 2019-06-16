@@ -83,7 +83,7 @@ class MapSystem {
 				}
 			}
 		}
-		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.gg.ap);
+		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 	}
 
 	/**
@@ -109,7 +109,7 @@ class MapSystem {
 		this.os2_wy = rightShiftIgnoreSign(this.wy, 5);
 		var n;
 		if (mode == 3 || mode == 4) {
-			this.gg.os2_g.drawImage(this.gg.os_img, 32 + xmod, 32 + ymod, this.gg.ap);
+			this.gg.os2_g.drawImage(this.gg.os_img, 32 + xmod, 32 + ymod);
 		} else {
 			this.gg.fill2();
 			let i1;
@@ -269,7 +269,7 @@ class MapSystem {
 			}
 		}
 		if (mode == 2) {
-			this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.gg.ap);
+			this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 			return;
 		}
 		var j;
@@ -401,7 +401,7 @@ class MapSystem {
 				}
 			}
 		}
-		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod, this.gg.ap);
+		this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 	}
 
 	/**
@@ -516,11 +516,11 @@ class MapSystem {
 					case 9:
 						if (this.map_bg[this.os2_wx + j - 1][this.os2_wy + i] == 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
-							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32, this.gg.ap);
+							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32);
 						} else {
 							this.gg.os2_g.setColor(this.gg.backcolor);
 							this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
-							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32, this.gg.ap);
+							this.gg.os2_g.drawImage(localImage, 32 + j * 32, 32 + i * 32);
 						}
 						break;
 					case 10:
