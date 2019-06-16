@@ -528,8 +528,8 @@ Graphics.prototype.setClip = function(pattern) {
  * @param y {number} 切り出すY座標
  * @param width {number} 切り出す横幅
  * @param height {number} 切り出す高さ
- * @param dx {number} コピー先のX座標
- * @param dy {number} コピー先のY座標
+ * @param dx {number} X方向の移動距離
+ * @param dy {number} Y方向の移動距離
  * @returns {boolean}
  */
 Graphics.prototype.copyArea = function(x, y, width, height, dx, dy) {
