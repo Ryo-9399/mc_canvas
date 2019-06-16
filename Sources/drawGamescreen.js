@@ -104,16 +104,20 @@ export const drawGamescreen = function() {
 		const draw = (x, y) => {
 			this.hg.drawImage(this.second_gazou_img, x, y);
 		};
+		// [x方向の繰り返し回数, y方向の繰り返し回数]
+		let repeat_times = [1, 1];
+		let scroll_x = 0;
+		let scroll_y = 0;
+		let image_width = 512;
+		let image_height = 320;
 		if (this.second_gazou_scroll === 2) {
 			// 左右スクロール  速度１／４
-			const scroll_x = -(rightShiftIgnoreSign(view_x - 32, 2) % 512);
-			draw(scroll_x, 0);
-			draw(scroll_x + 512, 0);
+			scroll_x = -(rightShiftIgnoreSign(view_x - 32, 2) % image_width);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 3) {
 			// 左右スクロール  速度１／２
-			const scroll_x = -(rightShiftIgnoreSign(view_x - 32, 1) % 512);
-			draw(scroll_x, 0);
-			draw(scroll_x + 512, 0);
+			scroll_x = -(rightShiftIgnoreSign(view_x - 32, 1) % image_width);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 4) {
 			// 指定速度で強制スクロール
 			this.maps.second_gazou_x += this.second_gazou_scroll_speed_x;
@@ -122,38 +126,36 @@ export const drawGamescreen = function() {
 			if (this.maps.second_gazou_x > 0) this.maps.second_gazou_x -= 512;
 			if (this.maps.second_gazou_y < -320) this.maps.second_gazou_y += 320;
 			if (this.maps.second_gazou_y > 0) this.maps.second_gazou_y -= 320;
-			draw(this.maps.second_gazou_x, this.maps.second_gazou_y);
-			draw(this.maps.second_gazou_x + 512, this.maps.second_gazou_y);
-			draw(this.maps.second_gazou_x, this.maps.second_gazou_y + 320);
-			draw(this.maps.second_gazou_x + 512, this.maps.second_gazou_y + 320);
+			scroll_x = this.second_gazou_x;
+			scroll_y = this.second_gazou_y;
+			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 5) {
 			// 左右スクロール  速度３／２
-			const scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
-			draw(scroll_x, 0);
-			draw(scroll_x + 512, 0);
+			scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % image_width);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 6) {
 			// 画像サイズ  ５１２×９６０
-			const scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
-			const scroll_y = -(view_y - 320);
-			draw(scroll_x, scroll_y);
-			draw(scroll_x + 512, scroll_y);
+			image_height = 960;
+			scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % image_width);
+			scroll_y = -(view_y - 320);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 7) {
 			// マップと同じ速度で全方向
-			const scroll_x = -((view_x - 32) % 512);
-			const scroll_y = -((view_y - 320) % 320);
-			draw(scroll_x, scroll_y);
-			draw(scroll_x + 512, scroll_y);
-			draw(scroll_x, scroll_y + 320);
-			draw(scroll_x + 512, scroll_y + 320);
+			scroll_x = -((view_x - 32) % image_width);
+			scroll_y = -((view_y - 320) % image_height);
+			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 8) {
 			// マップの指定座標に設置  画像サイズは任意
-			const scroll_x = this.second_gazou_scroll_x + 32 - view_x;
-			const scroll_y = this.second_gazou_scroll_y + 320 - view_y;
-			if (scroll_x < 512 && scroll_y < 320) {
-				draw(scroll_x, scroll_y);
+			scroll_x = this.second_gazou_scroll_x + 32 - view_x;
+			scroll_y = this.second_gazou_scroll_y + 320 - view_y;
+			if (scroll_x >= 512 || scroll_y >= 320) {
+				repeat_times = [0, 0];
 			}
-		} else {
-			draw(0, 0);
+		}
+		for (let i = 0; i < repeat_times[0]; i++) {
+			for (let j = 0; j < repeat_times[1]; j++) {
+				draw(scroll_x + i * image_width, scroll_y + j * image_height);
+			}
 		}
 	}
 	// ゲージを表示
