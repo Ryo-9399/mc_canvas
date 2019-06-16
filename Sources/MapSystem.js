@@ -90,43 +90,44 @@ class MapSystem {
 	 * マップや背景レイヤー、背景画像を描画する
 	 * @param {number} view_x 画面に描画される範囲の左上のX座標
 	 * @param {number} view_y 画面に描画される範囲の左上のY座標
-	 * @param {number} g_ac2 TODO: 要調査
+	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
 	 * @param {number} gazou_scroll 背景画像のスクロール設定
-	 * @param {number} mode 何を描画するかを指定する TODO:要調査
+	 * @param {number} mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
 	 */
 	drawMapLayer(view_x, view_y, g_ac2, gazou_scroll, mode) {
-		var localImage;
-		if (this.mp.setbacki_f) {
-			localImage = this.mp.setbacki_img;
-		} else {
-			localImage = this.gg.li[3 + this.mp.stage_haikei];
-		}
+		const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
 		const ymod = this.wy % 32;
 		this.os2_wx = rightShiftIgnoreSign(this.wx, 5);
 		this.os2_wy = rightShiftIgnoreSign(this.wy, 5);
-		var n;
-		if (mode == 3 || mode == 4) {
+		if (mode === 3 || mode === 4) {
+			// 背景画像を描画しない
 			this.gg.os2_g.drawImage(this.gg.os_img, 32 + xmod, 32 + ymod);
 		} else {
+			// 背景画像を描画する
 			this.gg.fill2();
-			let i1;
+
 			if (
 				this.mp.second_gazou_visible &&
-				this.mp.second_gazou_priority == 1 &&
+				this.mp.second_gazou_priority === 1 &&
 				this.mp.second_gazou_img != null
 			) {
-				if (this.mp.second_gazou_scroll == 2) {
-					n = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32);
-				} else if (this.mp.second_gazou_scroll == 3) {
-					n = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32);
-				} else if (this.mp.second_gazou_scroll == 4) {
+				let scroll_x;
+				let scroll_y;
+				if (this.mp.second_gazou_scroll === 2) {
+					// 左右スクロール  速度１／４
+					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32);
+				} else if (this.mp.second_gazou_scroll === 3) {
+					// 左右スクロール  速度１／２
+					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32);
+				} else if (this.mp.second_gazou_scroll === 4) {
+					// 指定速度で強制スクロール
 					this.second_gazou_x += this.mp.second_gazou_scroll_speed_x;
 					this.second_gazou_y += this.mp.second_gazou_scroll_speed_y;
 					if (this.second_gazou_x < -512) {
@@ -161,45 +162,56 @@ class MapSystem {
 						xmod + 32 + this.second_gazou_x + 512,
 						ymod + 32 + this.second_gazou_y + 320
 					);
-				} else if (this.mp.second_gazou_scroll == 5) {
-					n = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32);
-				} else if (this.mp.second_gazou_scroll == 6) {
-					n = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
-					i1 = -(this.wy - 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1);
-				} else if (this.mp.second_gazou_scroll == 7) {
-					n = -((this.wx - 32) % 512);
-					i1 = -((this.wy - 320) % 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1 + 320);
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n + 512, ymod + 32 + i1 + 320);
-				} else if (this.mp.second_gazou_scroll == 8) {
-					n = this.mp.second_gazou_scroll_x + 32 - this.wx;
-					i1 = this.mp.second_gazou_scroll_y + 320 - this.wy;
-					if (n < 512 && i1 < 320) {
-						this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + n, ymod + 32 + i1);
+				} else if (this.mp.second_gazou_scroll === 5) {
+					// 左右スクロール  速度３／２
+					scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32);
+				} else if (this.mp.second_gazou_scroll === 6) {
+					// 画像サイズ  ５１２×９６０
+					scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % 512);
+					scroll_y = -(this.wy - 320);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32 + scroll_y);
+				} else if (this.mp.second_gazou_scroll === 7) {
+					// マップと同じ速度で全方向
+					scroll_x = -((this.wx - 32) % 512);
+					scroll_y = -((this.wy - 320) % 320);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x + 512, ymod + 32 + scroll_y);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y + 320);
+					this.gg.os2_g.drawImage(
+						this.mp.second_gazou_img,
+						xmod + 32 + scroll_x + 512,
+						ymod + 32 + scroll_y + 320
+					);
+				} else if (this.mp.second_gazou_scroll === 8) {
+					// マップの指定座標に設置  画像サイズは任意
+					scroll_x = this.mp.second_gazou_scroll_x + 32 - this.wx;
+					scroll_y = this.mp.second_gazou_scroll_y + 320 - this.wy;
+					if (scroll_x < 512 && scroll_y < 320) {
+						this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32 + scroll_x, ymod + 32 + scroll_y);
 					}
 				} else {
 					this.gg.os2_g.drawImage(this.mp.second_gazou_img, xmod + 32, ymod + 32);
 				}
 			}
-			if (localImage != null) {
-				if (gazou_scroll == 2) {
-					n = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n + 512, ymod + 32);
+			if (background_image != null) {
+				let tmp_x;
+				let tmp_y;
+				if (gazou_scroll == 2) {
+					tmp_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % 512);
+
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x, ymod + 32);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x + 512, ymod + 32);
 				} else if (gazou_scroll == 3) {
 					this.gazou_x -= 2;
 					if (this.gazou_x <= -512) {
 						this.gazou_x += 512;
 					}
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x, ymod + 32);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x + 512, ymod + 32);
 				} else if (gazou_scroll == 4) {
 					this.gazou_x += this.mp.gazou_scroll_speed_x;
 					this.gazou_y += this.mp.gazou_scroll_speed_y;
@@ -215,70 +227,74 @@ class MapSystem {
 					if (this.gazou_y > 0) {
 						this.gazou_y -= 320;
 					}
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32 + this.gazou_y);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y + 320);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + this.gazou_x + 512, ymod + 32 + this.gazou_y + 320);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x + 512, ymod + 32 + this.gazou_y);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + this.gazou_x, ymod + 32 + this.gazou_y + 320);
+					this.gg.os2_g.drawImage(
+						background_image,
+						xmod + 32 + this.gazou_x + 512,
+						ymod + 32 + this.gazou_y + 320
+					);
 				} else if (gazou_scroll == 5) {
-					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
+					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32 + n + 320);
+					this.gg.os2_g.drawImage(background_image, xmod + 32, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32, ymod + 32 + tmp_x + 320);
 				} else if (gazou_scroll == 6) {
-					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
-					i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 320);
+					tmp_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n + 320);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n + 320);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x + 320);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x + 320);
 				} else if (gazou_scroll == 7) {
-					n = -((this.wy - 320) % 320);
-					i1 = -((this.wx - 32) % 512);
+					tmp_x = -((this.wy - 320) % 320);
+					tmp_y = -((this.wx - 32) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n + 320);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n + 320);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x + 320);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x + 320);
 				} else if (gazou_scroll == 8) {
-					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
-					i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
+					tmp_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 512, ymod + 32 + n);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 512, ymod + 32 + tmp_x);
 				} else if (gazou_scroll == 9) {
-					n = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
-					i1 = -(rightShiftIgnoreSign(this.wx - 32, 1) % 1024);
+					tmp_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % 640);
+					tmp_y = -(rightShiftIgnoreSign(this.wx - 32, 1) % 1024);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1, ymod + 32 + n);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + i1 + 1024, ymod + 32 + n);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y, ymod + 32 + tmp_x);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_y + 1024, ymod + 32 + tmp_x);
 				} else if (gazou_scroll == 10) {
-					n = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
+					tmp_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % 512);
 
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32);
-					this.gg.os2_g.drawImage(localImage, xmod + 32 + n + 512, ymod + 32);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x, ymod + 32);
+					this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x + 512, ymod + 32);
 				} else if (gazou_scroll == 11) {
-					n = this.mp.gazou_scroll_x + 32 - this.wx;
-					i1 = this.mp.gazou_scroll_y + 320 - this.wy;
-					if (n < 512 && i1 < 320) {
-						this.gg.os2_g.drawImage(localImage, xmod + 32 + n, ymod + 32 + i1);
+					tmp_x = this.mp.gazou_scroll_x + 32 - this.wx;
+					tmp_y = this.mp.gazou_scroll_y + 320 - this.wy;
+					if (tmp_x < 512 && tmp_y < 320) {
+						this.gg.os2_g.drawImage(background_image, xmod + 32 + tmp_x, ymod + 32 + tmp_y);
 					}
 				} else {
-					this.gg.os2_g.drawImage(localImage, xmod + 32, ymod + 32);
+					this.gg.os2_g.drawImage(background_image, xmod + 32, ymod + 32);
 				}
 			}
 		}
-		if (mode == 2) {
+		if (mode === 2) {
+			// 背景のみを描画する
 			this.gg.os_g.drawImage(this.gg.os2_img, -32 - xmod, -32 - ymod);
 			return;
 		}
-		var j;
-		var i;
-		if (mode != 4 && this.gg.layer_mode == 2) {
-			for (j = 0; j <= 10; j++) {
-				for (i = 0; i <= 16; i++) {
-					n = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
-					if (n > 0 && n < 255) {
+		if (mode !== 4 && this.gg.layer_mode === 2) {
+			// 背景レイヤーを描画する
+			for (let j = 0; j <= 10; j++) {
+				for (let i = 0; i <= 16; i++) {
+					const layer_code = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
+					if (layer_code > 0 && layer_code < 255) {
 						this.gg.drawMapchip2(
 							32 + i * 32,
 							32 + j * 32,
@@ -288,35 +304,36 @@ class MapSystem {
 				}
 			}
 		}
-		if (mode != 3) {
-			for (j = 0; j <= 10; j++) {
-				for (i = 0; i <= 16; i++) {
-					n = this.map_bg[this.os2_wx + i][this.os2_wy + j];
+		if (mode !== 3) {
+			// マップ上の特別なブロックの見た目を調整する
+			for (let j = 0; j <= 10; j++) {
+				for (let i = 0; i <= 16; i++) {
+					let pt = this.map_bg[this.os2_wx + i][this.os2_wy + j];
 					if (this.gg.layer_mode == 2) {
 						if (this.mp.clear_type == 3) {
-							if (n != 4 || this.mp.water_visible != 2) {
-								if (n == 29 || n == 4) {
-									n = 0;
+							if (pt != 4 || this.mp.water_visible != 2) {
+								if (pt == 29 || pt == 4) {
+									pt = 0;
 								}
 							}
-						} else if (n != 4 || this.mp.water_visible != 2) {
-							if (n == 29 || n == 15 || n == 10 || n == 4 || n == 18 || n == 19) {
-								n = 0;
+						} else if (pt != 4 || this.mp.water_visible != 2) {
+							if (pt == 29 || pt == 15 || pt == 10 || pt == 4 || pt == 18 || pt == 19) {
+								pt = 0;
 							}
 						}
 					} else if (this.mp.clear_type == 3) {
-						if (n == 29 || n == 4) {
-							n = 0;
+						if (pt == 29 || pt == 4) {
+							pt = 0;
 						}
 					}
-					if (n == 7) {
+					if (pt == 7) {
 						if (g_ac2 == 0 || g_ac2 == 2) {
-							n = 96;
+							pt = 96;
 						} else {
-							n = 97;
+							pt = 97;
 						}
-					} else if (n == 9) {
-						n = 90 + g_ac2;
+					} else if (pt == 9) {
+						pt = 90 + g_ac2;
 						if (this.gg.layer_mode != 2) {
 							if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
 								this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
@@ -327,13 +344,13 @@ class MapSystem {
 						) {
 							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
 						}
-					} else if (n == 8) {
+					} else if (pt == 8) {
 						if ((this.mp.clear_type != 2 && this.mp.clear_type != 3) || this.mp.coin_kazu <= 0) {
 							if (this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max) {
 								if (g_ac2 >= 2) {
-									n = 98;
+									pt = 98;
 								} else {
-									n = 99;
+									pt = 99;
 								}
 								if (this.gg.layer_mode != 2) {
 									if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
@@ -347,9 +364,9 @@ class MapSystem {
 								}
 							} else {
 								if (g_ac2 >= 2) {
-									n = 95;
+									pt = 95;
 								} else {
-									n = 94;
+									pt = 94;
 								}
 								if (this.gg.layer_mode != 2) {
 									if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
@@ -363,40 +380,40 @@ class MapSystem {
 								}
 							}
 						}
-					} else if (n == 10) {
+					} else if (pt == 10) {
 						if (this.map_bg[this.os2_wx + i - 1][this.os2_wy + j] == 4) {
 							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, n);
+							this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
 
-							n = 0;
+							pt = 0;
 						}
-					} else if (n == 18) {
+					} else if (pt == 18) {
 						if (this.mp.map_data_option[this.os2_wx + i][this.os2_wy + j] == 1) {
-							n = 0;
+							pt = 0;
 
 							this.gg.os2_g.setColor(Color.white);
 							this.gg.os2_g.drawLine(32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31, 32 + j * 32);
 						} else if (this.map_bg[this.os2_wx + i][this.os2_wy + j - 1] == 4) {
 							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, n);
+							this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
 
-							n = 0;
+							pt = 0;
 						}
-					} else if (n == 19) {
+					} else if (pt == 19) {
 						if (this.mp.map_data_option[this.os2_wx + i][this.os2_wy + j] == 1) {
-							n = 0;
+							pt = 0;
 
 							this.gg.os2_g.setColor(Color.white);
 							this.gg.os2_g.drawLine(32 + i * 32, 32 + j * 32, 32 + i * 32 + 31, 32 + j * 32 + 31);
 						} else if (this.map_bg[this.os2_wx + i][this.os2_wy + j - 1] == 4) {
 							this.gg.drawPT2(32 + i * 32, 32 + j * 32, 4);
-							this.gg.drawPT2(32 + i * 32, 32 + j * 32, n);
+							this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
 
-							n = 0;
+							pt = 0;
 						}
 					}
-					if (n > 0) {
-						this.gg.drawPT2(32 + i * 32, 32 + j * 32, n);
+					if (pt > 0) {
+						this.gg.drawPT2(32 + i * 32, 32 + j * 32, pt);
 					}
 				}
 			}
@@ -406,7 +423,7 @@ class MapSystem {
 
 	/**
 	 * TODO: 要調査
-	 * @param {number} g_ac2
+	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
 	 */
 	drawMapScroll(g_ac2) {
 		const xmod = this.wx % 32;
