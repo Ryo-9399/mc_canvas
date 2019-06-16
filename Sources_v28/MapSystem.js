@@ -95,47 +95,21 @@ class MapSystem {
 			if (diff_view_nx !== 0) this.os2_wx = view_nx;
 			if (diff_view_ny !== 0) this.os2_wy = view_ny;
 			const draw_queue = [];
-			if (diff_view_ny > 0) {
+			if (diff_view_ny !== 0) {
+				// 上方向にスクロールする場合は一番上、下方向にスクロールする場合は一番下の列のブロックを裏画面に追加で描画する
+				const ny_offset = diff_view_ny < 0 ? 0 : 10;
 				for (let i = 0; i <= 16; i++) {
-					draw_queue.push([this.map_bg[this.os2_wx + i][this.os2_wy + 10], 1 + i, 11]);
+					draw_queue.push([this.map_bg[this.os2_wx + i][this.os2_wy + ny_offset], 1 + i, 1 + ny_offset]);
 				}
-				if (diff_view_nx > 0) {
-					// (1,1)
-					for (let i = 0; i <= 9; i++) {
-						draw_queue.push([this.map_bg[this.os2_wx + 16][this.os2_wy + i], 17, 1 + i]);
-					}
-				} else if (diff_view_nx < 0) {
-					// (-1,1)
-					for (let i = 0; i <= 9; i++) {
-						draw_queue.push([this.map_bg[this.os2_wx][this.os2_wy + i], 1, 1 + i]);
-					}
-				}
-			} else if (diff_view_ny < 0) {
-				for (let i = 0; i <= 16; i++) {
-					draw_queue.push([this.map_bg[this.os2_wx + i][this.os2_wy], 1 + i, 1]);
-				}
-				if (diff_view_nx > 0) {
-					// (1,-1)
-					for (let i = 1; i <= 10; i++) {
-						draw_queue.push([this.map_bg[this.os2_wx + 16][this.os2_wy + i], 17, 1 + i]);
-					}
-				} else if (diff_view_nx < 0) {
-					// (-1,-1)
-					for (let i = 1; i <= 10; i++) {
-						draw_queue.push([this.map_bg[this.os2_wx][this.os2_wy + i], 1, 1 + i]);
-					}
-				}
-			} else {
-				if (diff_view_nx > 0) {
-					// (1,0)
-					for (let i = 0; i <= 10; i++) {
-						draw_queue.push([this.map_bg[this.os2_wx + 16][this.os2_wy + i], 17, 1 + i]);
-					}
-				} else if (diff_view_nx < 0) {
-					// (-1,0)
-					for (let i = 0; i <= 10; i++) {
-						draw_queue.push([this.map_bg[this.os2_wx][this.os2_wy + i], 1, 1 + i]);
-					}
+			}
+			if (diff_view_nx !== 0) {
+				// 右方向にスクロールする場合は一番右、左方向にスクロールする場合は一番左の列のブロックを裏画面に追加で描画する
+				const nx_offset = diff_view_nx < 0 ? 0 : 16;
+				for (let i = 0; i <= 10; i++) {
+					// 上下方向にも同時にスクロールしている場合、端のブロックを二重で描画してしまうのを避ける
+					if (i === 0 && diff_view_ny < 0) continue;
+					if (i === 10 && diff_view_ny > 0) continue;
+					draw_queue.push([this.map_bg[this.os2_wx + nx_offset][this.os2_wy + i], 1 + nx_offset, 1 + i]);
 				}
 			}
 			for (const [bg_code, nx, ny] of draw_queue) {
