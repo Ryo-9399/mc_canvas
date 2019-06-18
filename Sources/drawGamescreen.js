@@ -99,53 +99,63 @@ export const drawGamescreen = function() {
 	if (this.showi_c > 0) this.showi_c--;
 	// セカンド画像 主人公の手前
 	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
+
 	if (this.second_gazou_visible && this.second_gazou_priority === 2 && this.second_gazou_img !== null) {
+		const draw = (x, y) => {
+			this.hg.drawImage(this.second_gazou_img, x, y);
+		};
+		// [x方向の繰り返し回数, y方向の繰り返し回数]
+		let repeat_times = [1, 1];
+		let scroll_x = 0;
+		let scroll_y = 0;
+		let image_width = 512;
+		let image_height = 320;
 		if (this.second_gazou_scroll === 2) {
-			var i9 = -(rightShiftIgnoreSign(view_x - 32, 2) % 512);
-			this.hg.drawImage(this.second_gazou_img, i9, 0, this.ap);
-			this.hg.drawImage(this.second_gazou_img, i9 + 512, 0, this.ap);
+			// 左右スクロール  速度１／４
+			scroll_x = -(rightShiftIgnoreSign(view_x - 32, 2) % image_width);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 3) {
-			var j9 = -(rightShiftIgnoreSign(view_x - 32, 1) % 512);
-			this.hg.drawImage(this.second_gazou_img, j9, 0, this.ap);
-			this.hg.drawImage(this.second_gazou_img, j9 + 512, 0, this.ap);
+			// 左右スクロール  速度１／２
+			scroll_x = -(rightShiftIgnoreSign(view_x - 32, 1) % image_width);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 4) {
+			// 指定速度で強制スクロール
 			this.maps.second_gazou_x += this.second_gazou_scroll_speed_x;
 			this.maps.second_gazou_y += this.second_gazou_scroll_speed_y;
 			if (this.maps.second_gazou_x < -512) this.maps.second_gazou_x += 512;
 			if (this.maps.second_gazou_x > 0) this.maps.second_gazou_x -= 512;
 			if (this.maps.second_gazou_y < -320) this.maps.second_gazou_y += 320;
 			if (this.maps.second_gazou_y > 0) this.maps.second_gazou_y -= 320;
-			this.hg.drawImage(this.second_gazou_img, this.maps.second_gazou_x, this.maps.second_gazou_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, this.maps.second_gazou_x + 512, this.maps.second_gazou_y, this.ap);
-			this.hg.drawImage(this.second_gazou_img, this.maps.second_gazou_x, this.maps.second_gazou_y + 320, this.ap);
-			this.hg.drawImage(
-				this.second_gazou_img,
-				this.maps.second_gazou_x + 512,
-				this.maps.second_gazou_y + 320,
-				this.ap
-			);
+			scroll_x = this.second_gazou_x;
+			scroll_y = this.second_gazou_y;
+			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 5) {
-			var k9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
-			this.hg.drawImage(this.second_gazou_img, k9, 0, this.ap);
-			this.hg.drawImage(this.second_gazou_img, k9 + 512, 0, this.ap);
+			// 左右スクロール  速度３／２
+			scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % image_width);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 6) {
-			var l9 = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % 512);
-			var l11 = -(view_y - 320);
-			this.hg.drawImage(this.second_gazou_img, l9, l11, this.ap);
-			this.hg.drawImage(this.second_gazou_img, l9 + 512, l11, this.ap);
+			// 画像サイズ  ５１２×９６０
+			image_height = 960;
+			scroll_x = -(rightShiftIgnoreSign((view_x - 32) * 3, 1) % image_width);
+			scroll_y = -(view_y - 320);
+			repeat_times[0] = 2;
 		} else if (this.second_gazou_scroll === 7) {
-			var i10 = -((view_x - 32) % 512);
-			var i12 = -((view_y - 320) % 320);
-			this.hg.drawImage(this.second_gazou_img, i10, i12, this.ap);
-			this.hg.drawImage(this.second_gazou_img, i10 + 512, i12, this.ap);
-			this.hg.drawImage(this.second_gazou_img, i10, i12 + 320, this.ap);
-			this.hg.drawImage(this.second_gazou_img, i10 + 512, i12 + 320, this.ap);
+			// マップと同じ速度で全方向
+			scroll_x = -((view_x - 32) % image_width);
+			scroll_y = -((view_y - 320) % image_height);
+			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 8) {
-			var j10 = this.second_gazou_scroll_x + 32 - view_x;
-			var j12 = this.second_gazou_scroll_y + 320 - view_y;
-			if (j10 < 512 && j12 < 320) this.hg.drawImage(this.second_gazou_img, j10, j12, this.ap);
-		} else {
-			this.hg.drawImage(this.second_gazou_img, 0, 0, this.ap);
+			// マップの指定座標に設置  画像サイズは任意
+			scroll_x = this.second_gazou_scroll_x + 32 - view_x;
+			scroll_y = this.second_gazou_scroll_y + 320 - view_y;
+			if (scroll_x >= 512 || scroll_y >= 320) {
+				repeat_times = [0, 0];
+			}
+		}
+		for (let i = 0; i < repeat_times[0]; i++) {
+			for (let j = 0; j < repeat_times[1]; j++) {
+				draw(scroll_x + i * image_width, scroll_y + j * image_height);
+			}
 		}
 	}
 	// ゲージを表示
