@@ -6,14 +6,28 @@ const composer = require("gulp-uglify/composer");
 const minify = composer(uglifyes, console);
 const webpack = require("webpack");
 const webpackStream = require("webpack-stream");
+const typescript = require("gulp-typescript");
 
 const webpackConfig = require("./webpack.config");
 
-gulp.task("fx", function() {
-	webpackConfig.entry = "./Sources/index.js";
-	webpackConfig.output.filename = "CanvasMasao.js";
-	return webpackStream(webpackConfig, webpack).pipe(gulp.dest("./Outputs/"));
-});
+gulp.task(
+	"fx",
+	gulp.series(
+		function() {
+			const tsconfig = require("./tsconfig.json");
+			tsconfig.compilerOptions.rootDir = "./Sources/";
+			return gulp
+				.src("./Sources/**/*.ts")
+				.pipe(typescript(tsconfig.compilerOptions))
+				.pipe(gulp.dest("./dist/fx/"));
+		},
+		function() {
+			webpackConfig.entry = "./dist/fx/index.js";
+			webpackConfig.output.filename = "CanvasMasao.js";
+			return webpackStream(webpackConfig, webpack).pipe(gulp.dest("./Outputs/"));
+		}
+	)
+);
 
 gulp.task("kani2", function() {
 	return gulp

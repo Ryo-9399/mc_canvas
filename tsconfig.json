@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "rootDir": "./Sources/",
+        "outDir": "./dist/",
+        "target": "es6",
+        "downlevelIteration": true
+    }
+}
