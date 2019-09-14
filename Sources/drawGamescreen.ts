@@ -58,12 +58,7 @@ export const drawGamescreen = function() {
 	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
-				this.hg.drawImage(
-					this.hih[1][105 + this.g_ac],
-					this.co_mu[i].x - view_x,
-					this.co_mu[i].y - view_y,
-					this.ap
-				);
+				this.hg.drawImage(this.hih[1][105 + this.g_ac], this.co_mu[i].x - view_x, this.co_mu[i].y - view_y, this.ap);
 	}
 	if (this.system_draw_mode < 3) {
 		drawGameScreenJSS.drawGamescreenEnemy.apply(this);
@@ -431,12 +426,7 @@ const drawA = function() {
 						this.gg.os_g.fillRect(co_wx - characterobject.c4, co_wy + 8, characterobject.c4, 48);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							this.gg.os_g.fillRect(
-								co_wx - characterobject.c4 + 8,
-								co_wy + 16,
-								characterobject.c4 - 8,
-								32
-							);
+							this.gg.os_g.fillRect(co_wx - characterobject.c4 + 8, co_wy + 16, characterobject.c4 - 8, 32);
 						}
 					} else if (characterobject.c3 === 3 || characterobject.c3 === 13) {
 						this.gg.os_g.fillRect(co_wx, co_wy + 8, characterobject.c4, 48);
@@ -448,12 +438,7 @@ const drawA = function() {
 						this.gg.os_g.fillRect(co_wx + 8, co_wy - characterobject.c4, 48, characterobject.c4);
 						if (this.g_c2 >= 2 && characterobject.c4 > 8) {
 							this.gg.os_g.setColor(this.gamecolor_firebar2);
-							this.gg.os_g.fillRect(
-								co_wx + 16,
-								co_wy - characterobject.c4 + 8,
-								32,
-								characterobject.c4 - 8
-							);
+							this.gg.os_g.fillRect(co_wx + 16, co_wy - characterobject.c4 + 8, 32, characterobject.c4 - 8);
 						}
 					}
 					break;
@@ -1043,12 +1028,7 @@ const drawM = function() {
 				const bgc = this.maps.getBGCode(cx, cy);
 				if (bgc < 20) continue;
 				if (this.gg.layer_mode === 2 && bgc === 29) continue;
-				this.gg.drawPT(
-					rightShiftIgnoreSign(cx, 5) * 32 - view_x,
-					rightShiftIgnoreSign(cy, 5) * 32 - view_y,
-					bgc,
-					0
-				);
+				this.gg.drawPT(rightShiftIgnoreSign(cx, 5) * 32 - view_x, rightShiftIgnoreSign(cy, 5) * 32 - view_y, bgc, 0);
 			}
 		} else if (characterobject.pt === 1000) {
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
@@ -1082,12 +1062,7 @@ const drawM = function() {
 		} else if (characterobject.pt === 1215) {
 			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
 			else this.gg.os_g.setColor(this.gamecolor_grenade2);
-			this.gg.os_g.fillRect(
-				characterobject.vx - view_x,
-				co_wy + 11,
-				characterobject.x - characterobject.vx + 1,
-				10
-			);
+			this.gg.os_g.fillRect(characterobject.vx - view_x, co_wy + 11, characterobject.x - characterobject.vx + 1, 10);
 		} else if (characterobject.pt === 1220) {
 			this.gg.os_g.setColor(this.gamecolor_grenade1);
 			const radius = characterobject.vy;
@@ -1111,12 +1086,7 @@ const drawM = function() {
 					192
 				)
 			);
-			this.gg.os_g.fillRect(
-				characterobject.vx - view_x,
-				co_wy + 9,
-				characterobject.x - characterobject.vx + 1,
-				14
-			);
+			this.gg.os_g.fillRect(characterobject.vx - view_x, co_wy + 9, characterobject.x - characterobject.vx + 1, 14);
 		} else if (characterobject.pt === 1300) {
 			this.hg.drawImage(this.gg.spt_option_img[0], co_wx, co_wy, this.ap);
 		} else {
@@ -1321,33 +1291,17 @@ export const drawGamescreenMy = function() {
 			if (this.co_j.pt === 1200) {
 				this.hg.dispose();
 				if (this.co_a[this.j_rope_id].c === 3200)
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				else
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				this.hg.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
 				this.hg.dispose();
 			} else if (this.co_j.pt === 1201) {
 				this.hg.dispose();
 				if (this.co_a[this.j_rope_id].c === 3200)
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				else
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				this.hg.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
 				this.hg.dispose();
 			} else if (this.co_j.pt === 1300) {

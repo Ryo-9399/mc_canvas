@@ -109,11 +109,7 @@ class MapSystem {
 			this.gg.fill2();
 
 			// セカンド画像の描画
-			if (
-				this.mp.second_gazou_visible &&
-				this.mp.second_gazou_priority === 1 &&
-				this.mp.second_gazou_img != null
-			) {
+			if (this.mp.second_gazou_visible && this.mp.second_gazou_priority === 1 && this.mp.second_gazou_img != null) {
 				const draw = (x, y) => {
 					// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
 					this.gg.os2_g.drawImage(this.mp.second_gazou_img, x + xmod + 32, y + ymod + 32);
@@ -305,8 +301,7 @@ class MapSystem {
 						case 8:
 							// 人面星
 							const is_millennium = this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max;
-							const is_apparent =
-								(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
+							const is_apparent = (this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
 							if (is_apparent) {
 								pt = 94;
 								if (is_millennium) pt = 98;
@@ -433,8 +428,7 @@ class MapSystem {
 					case 8: {
 						// 人面星
 						const is_millennium = this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max;
-						const is_apparent =
-							(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
+						const is_apparent = (this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
 
 						let pt = 94;
 						if (is_millennium) pt = 98; // ミレニアム人面星

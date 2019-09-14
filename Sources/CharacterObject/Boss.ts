@@ -268,10 +268,7 @@ class Boss extends CharacterObject {
 						if (this.x <= mp.sl_wx + 512 - 128) {
 							this.x = mp.sl_wx + 512 - 128;
 							this.showBossHPGauge(mp);
-							if (
-								(mp.boss3_type >= 2 && mp.boss3_type <= 4) ||
-								(mp.boss3_type >= 6 && mp.boss3_type <= 8)
-							) {
+							if ((mp.boss3_type >= 2 && mp.boss3_type <= 4) || (mp.boss3_type >= 6 && mp.boss3_type <= 8)) {
 								this.c = BOSS3_TACKLE_ATTACK_LEFT;
 								this.vy = -24;
 							} else {
@@ -367,12 +364,7 @@ class Boss extends CharacterObject {
 		// 主人公とボスの当たり判定
 		const j = mp.co_j;
 		const hit_flag =
-			j.c >= 100 &&
-			j.c < 200 &&
-			this.c >= 100 &&
-			Math.abs(this.x - j.x) < 42 &&
-			j.y > this.y - 20 &&
-			j.y < this.y + 40;
+			j.c >= 100 && j.c < 200 && this.c >= 100 && Math.abs(this.x - j.x) < 42 && j.y > this.y - 20 && j.y < this.y + 40;
 
 		if (hit_flag) {
 			// 主人公とボスが接触している
@@ -731,8 +723,7 @@ class Boss extends CharacterObject {
 				this.c1 === 140
 			) {
 				const dx = direction === 1 ? 0 : 512 - 32;
-				if (this.c1 <= 45)
-					mp.mSet2(mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
+				if (this.c1 <= 45) mp.mSet2(mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
 				mp.mSet2(mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
 			} else if (
 				this.c1 === 15 ||

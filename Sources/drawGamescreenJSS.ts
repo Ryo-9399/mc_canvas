@@ -25,12 +25,7 @@ export const drawGamescreenUgokuyuka = function() {
 	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
-				this.hg.drawImage(
-					this.hih[1][105 + this.g_ac],
-					this.co_mu[i].x - view_x,
-					this.co_mu[i].y - view_y,
-					this.ap
-				);
+				this.hg.drawImage(this.hih[1][105 + this.g_ac], this.co_mu[i].x - view_x, this.co_mu[i].y - view_y, this.ap);
 	}
 	// ボスの描画
 	drawBossLegacy.apply(this);
@@ -256,12 +251,7 @@ export const drawM = function() {
 				const bgc = this.maps.getBGCode(cx, cy);
 				if (bgc < 20) continue;
 				if (this.gg.layer_mode === 2 && bgc === 29) continue;
-				this.gg.drawPT(
-					rightShiftIgnoreSign(cx, 5) * 32 - view_x,
-					rightShiftIgnoreSign(cy, 5) * 32 - view_y,
-					bgc,
-					0
-				);
+				this.gg.drawPT(rightShiftIgnoreSign(cx, 5) * 32 - view_x, rightShiftIgnoreSign(cy, 5) * 32 - view_y, bgc, 0);
 			}
 		} else if (characterobject.pt === 1000) {
 			this.gg.os_g.setColor(this.gamecolor_mizunohadou);

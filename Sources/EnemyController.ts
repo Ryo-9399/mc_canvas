@@ -438,11 +438,7 @@ EnemyController.TurtleFall = {
 					var i1 = 0;
 					do {
 						if (i1 > 11) break;
-						if (
-							mp.ana_c[i1] > 0 &&
-							mp.ana_y[i1] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[i1] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[i1] > 0 && mp.ana_y[i1] * 32 == i21 + 32 && Math.abs(mp.ana_x[i1] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[i1] * 32;
 							break;
@@ -479,11 +475,7 @@ EnemyController.TurtleFall = {
 					var j1 = 0;
 					do {
 						if (j1 > 11) break;
-						if (
-							mp.ana_c[j1] > 0 &&
-							mp.ana_y[j1] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[j1] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j1] > 0 && mp.ana_y[j1] * 32 == i21 + 32 && Math.abs(mp.ana_x[j1] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j1] * 32;
 							break;
@@ -495,10 +487,7 @@ EnemyController.TurtleFall = {
 						return true;
 					}
 				}
-				if (
-					characterobject.vx < 0 &&
-					(mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15)
-				) {
+				if (characterobject.vx < 0 && (mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15)) {
 					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.vx = 0;
 				}
@@ -819,11 +808,7 @@ EnemyController.Chikorin = {
 					var j2 = 0;
 					do {
 						if (j2 > 11) break;
-						if (
-							mp.ana_c[j2] > 0 &&
-							mp.ana_y[j2] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[j2] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j2] > 0 && mp.ana_y[j2] * 32 == i21 + 32 && Math.abs(mp.ana_x[j2] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j2] * 32;
 							break;
@@ -914,11 +899,7 @@ EnemyController.ChikorinThrower = {
 					var k2 = 0;
 					do {
 						if (k2 > 11) break;
-						if (
-							mp.ana_c[k2] > 0 &&
-							mp.ana_y[k2] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[k2] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[k2] > 0 && mp.ana_y[k2] * 32 == i21 + 32 && Math.abs(mp.ana_x[k2] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[k2] * 32;
 							break;
@@ -931,12 +912,7 @@ EnemyController.ChikorinThrower = {
 					}
 				}
 				if (characterobject.c1 <= 0) {
-					if (
-						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
-						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32
-					) {
+					if (l20 >= mp.maps.wx && l20 <= mp.maps.wx + 512 - 32 && i21 >= mp.maps.wy && i21 <= mp.maps.wy + 320 - 32) {
 						// 射程に入ったら行動開始
 						characterobject.c1 = 100;
 						mp.gs.rsAddSound(17);
@@ -979,11 +955,7 @@ EnemyController.ChikorinMidareuchi = {
 					var l2 = 0;
 					do {
 						if (l2 > 11) break;
-						if (
-							mp.ana_c[l2] > 0 &&
-							mp.ana_y[l2] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[l2] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[l2] > 0 && mp.ana_y[l2] * 32 == i21 + 32 && Math.abs(mp.ana_x[l2] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[l2] * 32;
 							break;
@@ -1089,11 +1061,7 @@ EnemyController.ChikorinSolarBeam = {
 					var i3 = 0;
 					do {
 						if (i3 > 11) break;
-						if (
-							mp.ana_c[i3] > 0 &&
-							mp.ana_y[i3] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[i3] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[i3] > 0 && mp.ana_y[i3] * 32 == i21 + 32 && Math.abs(mp.ana_x[i3] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[i3] * 32;
 							break;
@@ -1132,11 +1100,7 @@ EnemyController.ChikorinSolarBeam = {
 					var j3 = 0;
 					do {
 						if (j3 > 11) break;
-						if (
-							mp.ana_c[j3] > 0 &&
-							mp.ana_y[j3] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[j3] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j3] > 0 && mp.ana_y[j3] * 32 == i21 + 32 && Math.abs(mp.ana_x[j3] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j3] * 32;
 							break;
@@ -1196,11 +1160,7 @@ EnemyController.Hinorarashi = {
 					var k3 = 0;
 					do {
 						if (k3 > 11) break;
-						if (
-							mp.ana_c[k3] > 0 &&
-							mp.ana_y[k3] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[k3] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[k3] > 0 && mp.ana_y[k3] * 32 == i21 + 32 && Math.abs(mp.ana_x[k3] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[k3] * 32;
 							break;
@@ -1232,8 +1192,7 @@ EnemyController.Hinorarashi = {
 						i21 = rightShiftIgnoreSign(i21 + 32, 5) * 32 - 32;
 					}
 					if (
-						(mp.maps.getBGCode(l20 + 15, i21 + 31) === 18 ||
-							mp.maps.getBGCode(l20 + 15, i21 + 31) === 19) &&
+						(mp.maps.getBGCode(l20 + 15, i21 + 31) === 18 || mp.maps.getBGCode(l20 + 15, i21 + 31) === 19) &&
 						mp.getSakamichiY(l20 + 15, i21 + 31) < i21
 					) {
 						// 坂に着地
@@ -1314,8 +1273,7 @@ EnemyController.Hinorarashi = {
 					// 足場が無いときに折り返す処理
 					if (j45 === 18) {
 						if (
-							rightShiftIgnoreSign(l20 + 15, 5) <
-								rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5) &&
+							rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5) &&
 							mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9
 						) {
 							l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32 - 15;
@@ -1323,8 +1281,7 @@ EnemyController.Hinorarashi = {
 						}
 					} else if (j45 === 19) {
 						if (
-							rightShiftIgnoreSign(l20 + 15, 5) <
-								rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5) &&
+							rightShiftIgnoreSign(l20 + 15, 5) < rightShiftIgnoreSign(l20 + 15 + properties.walk_speed, 5) &&
 							mp.maps.getBGCode(l20 + 15, i21 + 32) <= 9 &&
 							mp.maps.getBGCode(l20 + 15, i21 + 31) <= 9
 						) {
@@ -1414,11 +1371,7 @@ EnemyController.Hinorarashi = {
 					var i4 = 0;
 					do {
 						if (i4 > 11) break;
-						if (
-							mp.ana_c[i4] > 0 &&
-							mp.ana_y[i4] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[i4] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[i4] > 0 && mp.ana_y[i4] * 32 == i21 + 32 && Math.abs(mp.ana_x[i4] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[i4] * 32;
 							break;
@@ -1516,11 +1469,7 @@ EnemyController.HinorarashiFall = {
 					var j4 = 0;
 					do {
 						if (j4 > 11) break;
-						if (
-							mp.ana_c[j4] > 0 &&
-							mp.ana_y[j4] * 32 === i21 + 32 &&
-							Math.abs(mp.ana_x[j4] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j4] > 0 && mp.ana_y[j4] * 32 === i21 + 32 && Math.abs(mp.ana_x[j4] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j4] * 32;
 							break;
@@ -1585,11 +1534,7 @@ EnemyController.HinorarashiFall = {
 					var k4 = 0;
 					do {
 						if (k4 > 11) break;
-						if (
-							mp.ana_c[k4] > 0 &&
-							mp.ana_y[k4] * 32 === i21 + 32 &&
-							Math.abs(mp.ana_x[k4] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[k4] > 0 && mp.ana_y[k4] * 32 === i21 + 32 && Math.abs(mp.ana_x[k4] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[k4] * 32;
 							break;
@@ -1649,11 +1594,7 @@ EnemyController.HinorarashiFall = {
 					var l4 = 0;
 					do {
 						if (l4 > 11) break;
-						if (
-							mp.ana_c[l4] > 0 &&
-							mp.ana_y[l4] * 32 === i21 + 32 &&
-							Math.abs(mp.ana_x[l4] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[l4] > 0 && mp.ana_y[l4] * 32 === i21 + 32 && Math.abs(mp.ana_x[l4] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[l4] * 32;
 							break;
@@ -1690,11 +1631,7 @@ EnemyController.HinorarashiFall = {
 					var i5 = 0;
 					do {
 						if (i5 > 11) break;
-						if (
-							mp.ana_c[i5] > 0 &&
-							mp.ana_y[i5] * 32 === i21 + 32 &&
-							Math.abs(mp.ana_x[i5] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[i5] > 0 && mp.ana_y[i5] * 32 === i21 + 32 && Math.abs(mp.ana_x[i5] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[i5] * 32;
 							break;
@@ -1731,11 +1668,7 @@ EnemyController.HinorarashiFall = {
 					var j5 = 0;
 					do {
 						if (j5 > 11) break;
-						if (
-							mp.ana_c[j5] > 0 &&
-							mp.ana_y[j5] * 32 === i21 + 32 &&
-							Math.abs(mp.ana_x[j5] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j5] > 0 && mp.ana_y[j5] * 32 === i21 + 32 && Math.abs(mp.ana_x[j5] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j5] * 32;
 							break;
@@ -1747,10 +1680,7 @@ EnemyController.HinorarashiFall = {
 						return true;
 					}
 				}
-				if (
-					characterobject.vx < 0 &&
-					(mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15)
-				) {
+				if (characterobject.vx < 0 && (mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15)) {
 					// 左の壁にぶつかる
 					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.vx = 0;
@@ -2175,11 +2105,7 @@ EnemyController.Mariri = {
 						var l5 = 0;
 						do {
 							if (l5 > 11) break;
-							if (
-								mp.ana_c[l5] > 0 &&
-								mp.ana_y[l5] * 32 == i21 + 32 &&
-								Math.abs(mp.ana_x[l5] * 32 - l20) < 32
-							) {
+							if (mp.ana_c[l5] > 0 && mp.ana_y[l5] * 32 == i21 + 32 && Math.abs(mp.ana_x[l5] * 32 - l20) < 32) {
 								characterobject.c = 1300;
 								l20 = mp.ana_x[l5] * 32;
 								break;
@@ -2365,11 +2291,7 @@ EnemyController.Mariri = {
 						var k6 = 0;
 						do {
 							if (k6 > 11) break;
-							if (
-								mp.ana_c[k6] > 0 &&
-								mp.ana_y[k6] * 32 == i21 + 32 &&
-								Math.abs(mp.ana_x[k6] * 32 - l20) < 32
-							) {
+							if (mp.ana_c[k6] > 0 && mp.ana_y[k6] * 32 == i21 + 32 && Math.abs(mp.ana_x[k6] * 32 - l20) < 32) {
 								characterobject.c = 1300;
 								l20 = mp.ana_x[k6] * 32;
 								break;
@@ -2518,10 +2440,7 @@ EnemyController.Mariri = {
 				characterobject.y = i21;
 				return true;
 			} else if (characterobject.c === 650) {
-				if (
-					characterobject.vx < 0 &&
-					(mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15)
-				) {
+				if (characterobject.vx < 0 && (mp.maps.getBGCode(l20, i21) >= 15 || mp.maps.getBGCode(l20, i21 + 31) >= 15)) {
 					// 壁にあたって停止
 					l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 					characterobject.vx = 0;
@@ -2741,11 +2660,7 @@ EnemyController.Yachamo = {
 					var j7 = 0;
 					do {
 						if (j7 > 11) break;
-						if (
-							mp.ana_c[j7] > 0 &&
-							mp.ana_y[j7] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[j7] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j7] > 0 && mp.ana_y[j7] * 32 == i21 + 32 && Math.abs(mp.ana_x[j7] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j7] * 32;
 							break;
@@ -2777,55 +2692,19 @@ EnemyController.Yachamo = {
 								if (Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
 									if (l20 + 8 >= mp.co_j.x) {
 										var d14 = 3.1400001049041748;
-										mp.mSet2(
-											l20,
-											i21,
-											731,
-											Math.floor(Math.cos(d14) * 9),
-											Math.floor(Math.sin(d14) * 9)
-										);
+										mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
 										d14 = 3.6633334159851074;
-										mp.mSet2(
-											l20,
-											i21,
-											731,
-											Math.floor(Math.cos(d14) * 9),
-											Math.floor(Math.sin(d14) * 9)
-										);
+										mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
 										d14 = 4.1866669654846191;
-										mp.mSet2(
-											l20,
-											i21,
-											731,
-											Math.floor(Math.cos(d14) * 9),
-											Math.floor(Math.sin(d14) * 9)
-										);
+										mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
 										mp.gs.rsAddSound(11);
 									} else {
 										var d15 = 0.0;
-										mp.mSet2(
-											l20,
-											i21,
-											731,
-											Math.floor(Math.cos(d15) * 9),
-											Math.floor(Math.sin(d15) * 9)
-										);
+										mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
 										d15 = 5.7566671371459961;
-										mp.mSet2(
-											l20,
-											i21,
-											731,
-											Math.floor(Math.cos(d15) * 9),
-											Math.floor(Math.sin(d15) * 9)
-										);
+										mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
 										d15 = 5.2333335876464844;
-										mp.mSet2(
-											l20,
-											i21,
-											731,
-											Math.floor(Math.cos(d15) * 9),
-											Math.floor(Math.sin(d15) * 9)
-										);
+										mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
 										mp.gs.rsAddSound(11);
 									}
 							} else if (characterobject.c3 === 4) {
@@ -2905,11 +2784,7 @@ EnemyController.YachamoFast = {
 					var k7 = 0;
 					do {
 						if (k7 > 11) break;
-						if (
-							mp.ana_c[k7] > 0 &&
-							mp.ana_y[k7] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[k7] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[k7] > 0 && mp.ana_y[k7] * 32 == i21 + 32 && Math.abs(mp.ana_x[k7] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[k7] * 32;
 							break;
@@ -2995,11 +2870,7 @@ EnemyController.YachamoHyperBeam = {
 					var l7 = 0;
 					do {
 						if (l7 > 11) break;
-						if (
-							mp.ana_c[l7] > 0 &&
-							mp.ana_y[l7] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[l7] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[l7] > 0 && mp.ana_y[l7] * 32 == i21 + 32 && Math.abs(mp.ana_x[l7] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[l7] * 32;
 							break;
@@ -3039,11 +2910,7 @@ EnemyController.YachamoHyperBeam = {
 					var i8 = 0;
 					do {
 						if (i8 > 11) break;
-						if (
-							mp.ana_c[i8] > 0 &&
-							mp.ana_y[i8] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[i8] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[i8] > 0 && mp.ana_y[i8] * 32 == i21 + 32 && Math.abs(mp.ana_x[i8] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[i8] * 32;
 							break;
@@ -3108,11 +2975,7 @@ EnemyController.Mizutaro = {
 					var j8 = 0;
 					do {
 						if (j8 > 11) break;
-						if (
-							mp.ana_c[j8] > 0 &&
-							mp.ana_y[j8] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[j8] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[j8] > 0 && mp.ana_y[j8] * 32 == i21 + 32 && Math.abs(mp.ana_x[j8] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[j8] * 32;
 							break;
@@ -3196,11 +3059,7 @@ EnemyController.Mizutaro = {
 					var l8 = 0;
 					do {
 						if (l8 > 11) break;
-						if (
-							mp.ana_c[l8] > 0 &&
-							mp.ana_y[l8] * 32 == i21 + 32 &&
-							Math.abs(mp.ana_x[l8] * 32 - l20) < 32
-						) {
+						if (mp.ana_c[l8] > 0 && mp.ana_y[l8] * 32 == i21 + 32 && Math.abs(mp.ana_x[l8] * 32 - l20) < 32) {
 							characterobject.c = 1300;
 							l20 = mp.ana_x[l8] * 32;
 							break;
@@ -3712,12 +3571,10 @@ EnemyController.TaikingTerritory = {
 						characterobject.c1 = 100;
 						if (l20 > mp.co_j.x) {
 							if (mp.maps.getBGCode(l20 - 1, i21 + 15) >= 18) characterobject.c1 = 0;
-						} else if (l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
-							characterobject.c1 = 0;
+						} else if (l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18) characterobject.c1 = 0;
 						if (i21 > mp.co_j.y) {
 							if (mp.maps.getBGCode(l20 + 15, i21 - 1) >= 18) characterobject.c1 = 0;
-						} else if (i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
-							characterobject.c1 = 0;
+						} else if (i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18) characterobject.c1 = 0;
 					}
 				} else if (characterobject.c1 === 100) {
 					// 主人公を追跡中
@@ -3789,10 +3646,8 @@ EnemyController.TaikingLeft = {
 			if (characterobject.c === 1070) {
 				characterobject.c1 -= properties.speed;
 				if (characterobject.c1 < 0) characterobject.c1 += 360;
-				var l20 =
-					characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-				var i21 =
-					characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
 				characterobject.pt = 166;
 				if (characterobject.c1 < 180) characterobject.pth = 1;
 				else characterobject.pth = 0;
@@ -3827,10 +3682,8 @@ EnemyController.TaikingRight = {
 			if (characterobject.c === 1080) {
 				characterobject.c1 += properties.speed;
 				if (characterobject.c1 >= 360) characterobject.c1 -= 360;
-				var l20 =
-					characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-				var i21 =
-					characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
 				characterobject.pt = 166;
 				if (characterobject.c1 < 180) characterobject.pth = 0;
 				else characterobject.pth = 1;
@@ -4039,12 +3892,10 @@ EnemyController.KuragessoTerritory = {
 						characterobject.c1 = 100;
 						if (l20 > mp.co_j.x) {
 							if (mp.maps.getBGCode(l20 - 1, i21 + 15) >= 18) characterobject.c1 = 0;
-						} else if (l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18)
-							characterobject.c1 = 0;
+						} else if (l20 < mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) >= 18) characterobject.c1 = 0;
 						if (i21 > mp.co_j.y) {
 							if (mp.maps.getBGCode(l20 + 15, i21 - 1) >= 18) characterobject.c1 = 0;
-						} else if (i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18)
-							characterobject.c1 = 0;
+						} else if (i21 < mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) >= 18) characterobject.c1 = 0;
 					}
 				} else if (characterobject.c1 === 100) {
 					if (l20 > mp.co_j.x) {
@@ -4115,10 +3966,8 @@ EnemyController.KuragessoLeft = {
 			if (characterobject.c === 1170) {
 				characterobject.c1 -= properties.speed;
 				if (characterobject.c1 < 0) characterobject.c1 += 360;
-				var l20 =
-					characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-				var i21 =
-					characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
 				characterobject.pt = 167;
 				if (characterobject.c1 < 180) characterobject.pth = 1;
 				else characterobject.pth = 0;
@@ -4153,10 +4002,8 @@ EnemyController.KuragessoRight = {
 			if (characterobject.c === 1180) {
 				characterobject.c1 += properties.speed;
 				if (characterobject.c1 >= 360) characterobject.c1 -= 360;
-				var l20 =
-					characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-				var i21 =
-					characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
+				var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
 				characterobject.pt = 167;
 				if (characterobject.c1 < 180) characterobject.pth = 0;
 				else characterobject.pth = 1;
@@ -4249,9 +4096,7 @@ EnemyController.TurtleChaser = {
 						)
 							continue;
 						if (mp.co_t[j17].c === 1210) {
-							var k33 = Math.abs(
-								rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5)
-							);
+							var k33 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
 							if (k33 <= 1 || k33 >= 5) {
 								if (l20 > mp.co_j.x) characterobject.c = 1200;
 								else characterobject.c = 1210;
@@ -4262,12 +4107,8 @@ EnemyController.TurtleChaser = {
 							if (k33 < rightShiftIgnoreSign(mp.co_j.y + 15, 5)) {
 								var k9 = 1;
 								do {
-									if (k9 > 31 || i30 + k9 >= mp.mapWidth || mp.maps.map_bg[i30 + k9][k33] >= 19)
-										break;
-									if (
-										mp.maps.map_bg[i30 + k9][k33 + 1] <= 10 ||
-										mp.maps.map_bg[i30 + k9][k33 + 1] === 15
-									) {
+									if (k9 > 31 || i30 + k9 >= mp.mapWidth || mp.maps.map_bg[i30 + k9][k33] >= 19) break;
+									if (mp.maps.map_bg[i30 + k9][k33 + 1] <= 10 || mp.maps.map_bg[i30 + k9][k33 + 1] === 15) {
 										characterobject.c = 1210;
 										break;
 									}
@@ -4276,8 +4117,7 @@ EnemyController.TurtleChaser = {
 							} else if (k33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5)) {
 								var l9 = 1;
 								do {
-									if (l9 > 31 || i30 + l9 >= mp.mapWidth || mp.maps.map_bg[i30 + l9][k33] >= 19)
-										break;
+									if (l9 > 31 || i30 + l9 >= mp.mapWidth || mp.maps.map_bg[i30 + l9][k33] >= 19) break;
 									if (mp.maps.map_bg[i30 + l9][k33] === 10) {
 										characterobject.c = 1210;
 										break;
@@ -4297,10 +4137,7 @@ EnemyController.TurtleChaser = {
 										mp.maps.map_bg[i30 - i10][k33] === 18
 									)
 										break;
-									if (
-										mp.maps.map_bg[i30 - i10][k33 + 1] <= 10 ||
-										mp.maps.map_bg[i30 - i10][k33 + 1] === 15
-									) {
+									if (mp.maps.map_bg[i30 - i10][k33 + 1] <= 10 || mp.maps.map_bg[i30 - i10][k33 + 1] === 15) {
 										characterobject.c = 1200;
 										break;
 									}
@@ -4325,10 +4162,7 @@ EnemyController.TurtleChaser = {
 							}
 							if (j17 < i && rightShiftIgnoreSign(characterobject.x, 5) * 32 !== characterobject.x)
 								characterobject.c = 1210;
-							if (
-								characterobject.c === 1200 &&
-								rightShiftIgnoreSign(characterobject.x, 5) * 32 !== characterobject.x
-							)
+							if (characterobject.c === 1200 && rightShiftIgnoreSign(characterobject.x, 5) * 32 !== characterobject.x)
 								if (
 									k33 > rightShiftIgnoreSign(mp.co_j.y + 15, 5) &&
 									mp.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) === 10
@@ -4428,18 +4262,12 @@ EnemyController.TurtleChaser = {
 							) {
 								var flag2 = false;
 								for (var i11 = 0; i11 <= 11; i11++) {
-									if (
-										mp.ana_c[i11] <= 0 ||
-										mp.ana_x[i11] * 32 !== l20 ||
-										i21 + 32 !== mp.ana_y[i11] * 32
-									)
-										continue;
+									if (mp.ana_c[i11] <= 0 || mp.ana_x[i11] * 32 !== l20 || i21 + 32 !== mp.ana_y[i11] * 32) continue;
 									var k17 = 0;
 									do {
 										if (k17 > mp.t_kazu) break;
 										if (
-											((mp.co_t[k17].c >= 1200 && mp.co_t[k17].c < 1300) ||
-												mp.co_t[k17].c === 60) &&
+											((mp.co_t[k17].c >= 1200 && mp.co_t[k17].c < 1300) || mp.co_t[k17].c === 60) &&
 											k17 !== i &&
 											l20 === mp.co_t[k17].x &&
 											i21 <= mp.co_t[k17].y &&
@@ -4553,9 +4381,7 @@ EnemyController.TurtleChaser = {
 						)
 							continue;
 						if (mp.co_t[j18].c === 1200) {
-							var i34 = Math.abs(
-								rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5)
-							);
+							var i34 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
 							if (i34 <= 1 || i34 >= 5) {
 								if (l20 > mp.co_j.x) characterobject.c = 1200;
 								else characterobject.c = 1210;
@@ -4566,12 +4392,8 @@ EnemyController.TurtleChaser = {
 							if (i34 < rightShiftIgnoreSign(mp.co_j.y + 15, 5)) {
 								var j11 = 1;
 								do {
-									if (j11 > 31 || k30 + j11 >= mp.mapWidth || mp.maps.map_bg[k30 + j11][i34] >= 19)
-										break;
-									if (
-										mp.maps.map_bg[k30 + j11][i34 + 1] <= 10 ||
-										mp.maps.map_bg[k30 + j11][i34 + 1] === 15
-									) {
+									if (j11 > 31 || k30 + j11 >= mp.mapWidth || mp.maps.map_bg[k30 + j11][i34] >= 19) break;
+									if (mp.maps.map_bg[k30 + j11][i34 + 1] <= 10 || mp.maps.map_bg[k30 + j11][i34 + 1] === 15) {
 										characterobject.c = 1210;
 										break;
 									}
@@ -4580,8 +4402,7 @@ EnemyController.TurtleChaser = {
 							} else if (i34 > rightShiftIgnoreSign(mp.co_j.y + 15, 5)) {
 								var k11 = 1;
 								do {
-									if (k11 > 31 || k30 + k11 >= mp.mapWidth || mp.maps.map_bg[k30 + k11][i34] >= 19)
-										break;
+									if (k11 > 31 || k30 + k11 >= mp.mapWidth || mp.maps.map_bg[k30 + k11][i34] >= 19) break;
 									if (mp.maps.map_bg[k30 + k11][i34] === 10) {
 										characterobject.c = 1210;
 										break;
@@ -4601,10 +4422,7 @@ EnemyController.TurtleChaser = {
 										mp.maps.map_bg[k30 - l11][i34] === 18
 									)
 										break;
-									if (
-										mp.maps.map_bg[k30 - l11][i34 + 1] <= 10 ||
-										mp.maps.map_bg[k30 - l11][i34 + 1] === 15
-									) {
+									if (mp.maps.map_bg[k30 - l11][i34 + 1] <= 10 || mp.maps.map_bg[k30 - l11][i34 + 1] === 15) {
 										characterobject.c = 1200;
 										break;
 									}
@@ -4658,18 +4476,12 @@ EnemyController.TurtleChaser = {
 							) {
 								var flag4 = false;
 								for (var j12 = 0; j12 <= 11; j12++) {
-									if (
-										mp.ana_c[j12] <= 0 ||
-										mp.ana_x[j12] * 32 !== l20 ||
-										i21 + 32 !== mp.ana_y[j12] * 32
-									)
-										continue;
+									if (mp.ana_c[j12] <= 0 || mp.ana_x[j12] * 32 !== l20 || i21 + 32 !== mp.ana_y[j12] * 32) continue;
 									var k18 = 0;
 									do {
 										if (k18 > mp.t_kazu) break;
 										if (
-											((mp.co_t[k18].c >= 1200 && mp.co_t[k18].c < 1300) ||
-												mp.co_t[k18].c === 60) &&
+											((mp.co_t[k18].c >= 1200 && mp.co_t[k18].c < 1300) || mp.co_t[k18].c === 60) &&
 											k18 !== i &&
 											l20 === mp.co_t[k18].x &&
 											i21 <= mp.co_t[k18].y &&
@@ -4707,10 +4519,7 @@ EnemyController.TurtleChaser = {
 								}
 							} else if (mp.maps.map_bg[l30][j34] === 10 && j34 > rightShiftIgnoreSign(mp.co_j.y + 15, 5))
 								characterobject.c = 1230;
-							else if (
-								mp.maps.map_bg[l30 + 1][j34] >= 19 &&
-								(Math.abs(i21 - mp.co_j.y) >= 32 || l20 >= mp.co_j.x)
-							) {
+							else if (mp.maps.map_bg[l30 + 1][j34] >= 19 && (Math.abs(i21 - mp.co_j.y) >= 32 || l20 >= mp.co_j.x)) {
 								characterobject.c = 1200;
 								var j43 = mp.maps.getBGCode(l20 - 1, i21 + 15);
 								if (j43 >= 20 || j43 === 18) characterobject.c = 1210;
@@ -4734,8 +4543,7 @@ EnemyController.TurtleChaser = {
 				if (
 					i21 - 20 >= mp.co_j.y &&
 					mp.maps.getBGCode(l20 + 15, i21 + 31) === 10 &&
-					(mp.maps.getBGCode(l20 + 15, i21 + 31 - 32) <= 10 ||
-						mp.maps.getBGCode(l20 + 15, i21 + 31 - 32) === 15)
+					(mp.maps.getBGCode(l20 + 15, i21 + 31 - 32) <= 10 || mp.maps.getBGCode(l20 + 15, i21 + 31 - 32) === 15)
 				) {
 					// 下方向の主人公を追いかける？
 					characterobject.c = 1230;
@@ -4805,10 +4613,7 @@ EnemyController.TurtleChaser = {
 							var k12 = 1;
 							do {
 								if (k12 > 31 || i31 + k12 >= mp.mapWidth || mp.maps.map_bg[i31 + k12][k34] >= 19) break;
-								if (
-									mp.maps.map_bg[i31 + k12][k34 + 1] <= 10 ||
-									mp.maps.map_bg[i31 + k12][k34 + 1] === 15
-								) {
+								if (mp.maps.map_bg[i31 + k12][k34 + 1] <= 10 || mp.maps.map_bg[i31 + k12][k34 + 1] === 15) {
 									characterobject.c = 1210;
 									break;
 								}
@@ -4837,10 +4642,7 @@ EnemyController.TurtleChaser = {
 									mp.maps.map_bg[i31 - i13][k34] === 18
 								)
 									break label1;
-								if (
-									mp.maps.map_bg[i31 - i13][k34 + 1] <= 10 ||
-									mp.maps.map_bg[i31 - i13][k34 + 1] == 15
-								) {
+								if (mp.maps.map_bg[i31 - i13][k34 + 1] <= 10 || mp.maps.map_bg[i31 - i13][k34 + 1] == 15) {
 									characterobject.c = 1200;
 									break label1;
 								}
@@ -4955,10 +4757,7 @@ EnemyController.TurtleChaser = {
 							var k13 = 1;
 							do {
 								if (k13 > 31 || j31 + k13 >= mp.mapWidth || mp.maps.map_bg[j31 + k13][i35] >= 19) break;
-								if (
-									mp.maps.map_bg[j31 + k13][i35 + 1] <= 10 ||
-									mp.maps.map_bg[j31 + k13][i35 + 1] === 15
-								) {
+								if (mp.maps.map_bg[j31 + k13][i35 + 1] <= 10 || mp.maps.map_bg[j31 + k13][i35 + 1] === 15) {
 									characterobject.c = 1210;
 									characterobject.muki = 1;
 									break;
@@ -4989,10 +4788,7 @@ EnemyController.TurtleChaser = {
 									mp.maps.map_bg[j31 - i14][i35] === 18
 								)
 									break;
-								if (
-									mp.maps.map_bg[j31 - i14][i35 + 1] <= 10 ||
-									mp.maps.map_bg[j31 - i14][i35 + 1] === 15
-								) {
+								if (mp.maps.map_bg[j31 - i14][i35 + 1] <= 10 || mp.maps.map_bg[j31 - i14][i35 + 1] === 15) {
 									characterobject.c = 1200;
 									characterobject.muki = 0;
 									break;
@@ -5044,10 +4840,7 @@ EnemyController.TurtleChaser = {
 							var k14 = 1;
 							do {
 								if (k14 > 31 || k31 + k14 >= mp.mapWidth || mp.maps.map_bg[k31 + k14][j35] >= 19) break;
-								if (
-									mp.maps.map_bg[k31 + k14][j35 + 1] <= 10 ||
-									mp.maps.map_bg[k31 + k14][j35 + 1] === 15
-								) {
+								if (mp.maps.map_bg[k31 + k14][j35 + 1] <= 10 || mp.maps.map_bg[k31 + k14][j35 + 1] === 15) {
 									characterobject.c = 1210;
 									characterobject.muki = 1;
 									break;
@@ -5078,10 +4871,7 @@ EnemyController.TurtleChaser = {
 									mp.maps.map_bg[k31 - i15][j35] === 18
 								)
 									break;
-								if (
-									mp.maps.map_bg[k31 - i15][j35 + 1] <= 10 ||
-									mp.maps.map_bg[k31 - i15][j35 + 1] === 15
-								) {
+								if (mp.maps.map_bg[k31 - i15][j35 + 1] <= 10 || mp.maps.map_bg[k31 - i15][j35 + 1] === 15) {
 									characterobject.c = 1200;
 									characterobject.muki = 0;
 									break;
@@ -5109,8 +4899,7 @@ EnemyController.TurtleChaser = {
 					} else if (i44 <= 9) {
 						var flag7 = false;
 						for (var k15 = 0; k15 <= 11; k15++) {
-							if (mp.ana_c[k15] <= 0 || mp.ana_x[k15] * 32 !== l20 || i21 + 32 !== mp.ana_y[k15] * 32)
-								continue;
+							if (mp.ana_c[k15] <= 0 || mp.ana_x[k15] * 32 !== l20 || i21 + 32 !== mp.ana_y[k15] * 32) continue;
 							var l19 = 0;
 							do {
 								if (l19 > mp.t_kazu) break;
@@ -5130,9 +4919,7 @@ EnemyController.TurtleChaser = {
 						}
 
 						if (flag7) {
-							var k35 = Math.abs(
-								rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5)
-							);
+							var k35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
 							if (k35 <= 1 || k35 >= 5) {
 								if (l20 > mp.co_j.x) characterobject.c = 1200;
 								else characterobject.c = 1210;
@@ -5243,13 +5030,8 @@ EnemyController.TurtleChaser = {
 					} else {
 						if (mp.maps.getBGCode(l20, i21) >= 18) i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
 						if (rightShiftIgnoreSign(i21, 5) * 32 === i21)
-							if (
-								mp.maps.getBGCode(l20 + 15, i21 + 15) !== 10 ||
-								mp.maps.getBGCode(l20 + 15, i21 - 1) >= 20
-							) {
-								var l35 = Math.abs(
-									rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5)
-								);
+							if (mp.maps.getBGCode(l20 + 15, i21 + 15) !== 10 || mp.maps.getBGCode(l20 + 15, i21 - 1) >= 20) {
+								var l35 = Math.abs(rightShiftIgnoreSign(i21 + 15, 5) - rightShiftIgnoreSign(mp.co_j.y + 15, 5));
 								if (l35 <= 1 || l35 >= 5) {
 									if (l20 > mp.co_j.x) characterobject.c = 1200;
 									else characterobject.c = 1210;
@@ -5260,16 +5042,8 @@ EnemyController.TurtleChaser = {
 								if (l35 < rightShiftIgnoreSign(mp.co_j.y + 15, 5)) {
 									var i16 = 1;
 									do {
-										if (
-											i16 > 31 ||
-											l31 + i16 >= mp.mapWidth ||
-											mp.maps.map_bg[l31 + i16][l35] >= 19
-										)
-											break;
-										if (
-											mp.maps.map_bg[l31 + i16][l35 + 1] <= 10 ||
-											mp.maps.map_bg[l31 + i16][l35 + 1] === 15
-										) {
+										if (i16 > 31 || l31 + i16 >= mp.mapWidth || mp.maps.map_bg[l31 + i16][l35] >= 19) break;
+										if (mp.maps.map_bg[l31 + i16][l35 + 1] <= 10 || mp.maps.map_bg[l31 + i16][l35 + 1] === 15) {
 											characterobject.c = 1210;
 											break;
 										}
@@ -5278,12 +5052,7 @@ EnemyController.TurtleChaser = {
 								} else if (l35 > rightShiftIgnoreSign(mp.co_j.y + 15, 5)) {
 									var j16 = 1;
 									do {
-										if (
-											j16 > 31 ||
-											l31 + j16 >= mp.mapWidth ||
-											mp.maps.map_bg[l31 + j16][l35] >= 19
-										)
-											break;
+										if (j16 > 31 || l31 + j16 >= mp.mapWidth || mp.maps.map_bg[l31 + j16][l35] >= 19) break;
 										if (mp.maps.map_bg[l31 + j16][l35] === 10) {
 											characterobject.c = 1210;
 											break;
@@ -5303,10 +5072,7 @@ EnemyController.TurtleChaser = {
 											mp.maps.map_bg[l31 - k16][l35] === 18
 										)
 											break;
-										if (
-											mp.maps.map_bg[l31 - k16][l35 + 1] <= 10 ||
-											mp.maps.map_bg[l31 - k16][l35 + 1] === 15
-										) {
+										if (mp.maps.map_bg[l31 - k16][l35 + 1] <= 10 || mp.maps.map_bg[l31 - k16][l35 + 1] === 15) {
 											characterobject.c = 1200;
 											break;
 										}
@@ -5433,26 +5199,20 @@ EnemyController.PikachieChaser = {
 				if (mp.maps.getBGCode(l20, i21 + 15) >= 20) l20 = rightShiftIgnoreSign(l20, 5) * 32 + 32;
 				if (l20 % 32 === 0)
 					if (characterobject.c2 === 0) {
-						if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-							characterobject.c = 1400;
-						else if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-							characterobject.c = 1420;
-						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-							characterobject.c = 1430;
+						if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
+						else if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
+						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
 						else if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
 						else characterobject.c = 1430;
 					} else if (characterobject.c2 === 1) {
-						if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-							characterobject.c = 1420;
-						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-							characterobject.c = 1430;
+						if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
+						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
 						else characterobject.c = 1410;
 					} else if (characterobject.c2 === 2)
 						if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20 && mp.ranInt(2) === 0) characterobject.c = 1420;
-						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20 && mp.ranInt(2) === 0)
-							characterobject.c = 1430;
+						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20 && mp.ranInt(2) === 0) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
 						else characterobject.c = 1410;
 				characterobject.pt = 143 + mp.g_ac;
@@ -5471,26 +5231,20 @@ EnemyController.PikachieChaser = {
 				if (mp.maps.getBGCode(l20 + 31, i21 + 15) >= 20) l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 				if (l20 % 32 === 0)
 					if (characterobject.c2 === 0) {
-						if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-							characterobject.c = 1410;
-						else if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-							characterobject.c = 1420;
-						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-							characterobject.c = 1430;
+						if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
+						else if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
+						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
 						else characterobject.c = 1430;
 					} else if (characterobject.c2 === 1) {
-						if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-							characterobject.c = 1420;
-						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-							characterobject.c = 1430;
+						if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
+						else if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else characterobject.c = 1400;
 					} else if (characterobject.c2 === 2)
 						if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20 && mp.ranInt(2) === 0) characterobject.c = 1420;
-						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20 && mp.ranInt(2) === 0)
-							characterobject.c = 1430;
+						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20 && mp.ranInt(2) === 0) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else characterobject.c = 1400;
 				characterobject.pt = 143 + mp.g_ac;
@@ -5508,26 +5262,20 @@ EnemyController.PikachieChaser = {
 				if (mp.maps.getBGCode(l20 + 15, i21) >= 20) i21 = rightShiftIgnoreSign(i21, 5) * 32 + 32;
 				if (i21 % 32 === 0)
 					if (characterobject.c2 === 0) {
-						if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-							characterobject.c = 1400;
-						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-							characterobject.c = 1410;
+						if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
+						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
 						else characterobject.c = 1430;
 					} else if (characterobject.c2 === 1) {
-						if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20)
-							characterobject.c = 1420;
-						else if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-							characterobject.c = 1400;
-						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-							characterobject.c = 1410;
+						if (i21 - 32 >= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
+						else if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
+						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
 						else if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
 						else characterobject.c = 1410;
 					} else if (characterobject.c2 === 2)
 						if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20 && mp.ranInt(2) === 0) characterobject.c = 1400;
-						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20 && mp.ranInt(2) === 0)
-							characterobject.c = 1410;
+						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20 && mp.ranInt(2) === 0) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 - 1) < 20) characterobject.c = 1420;
 						else characterobject.c = 1430;
 				characterobject.pt = 143 + mp.g_ac;
@@ -5545,26 +5293,20 @@ EnemyController.PikachieChaser = {
 				if (mp.maps.getBGCode(l20 + 15, i21 + 31) >= 20) i21 = rightShiftIgnoreSign(i21 + 31, 5) * 32 - 32;
 				if (i21 % 32 === 0)
 					if (characterobject.c2 === 0) {
-						if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-							characterobject.c = 1400;
-						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-							characterobject.c = 1410;
+						if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
+						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else characterobject.c = 1420;
 					} else if (characterobject.c2 === 1) {
-						if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20)
-							characterobject.c = 1430;
-						else if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20)
-							characterobject.c = 1400;
-						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20)
-							characterobject.c = 1410;
+						if (i21 + 32 <= mp.co_j.y && mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
+						else if (l20 - 32 >= mp.co_j.x && mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
+						else if (l20 + 32 <= mp.co_j.x && mp.maps.getBGCode(l20 + 32, i21 + 15) < 20) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20) characterobject.c = 1400;
 						else characterobject.c = 1410;
 					} else if (characterobject.c2 === 2)
 						if (mp.maps.getBGCode(l20 - 1, i21 + 15) < 20 && mp.ranInt(2) === 0) characterobject.c = 1400;
-						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20 && mp.ranInt(2) === 0)
-							characterobject.c = 1410;
+						else if (mp.maps.getBGCode(l20 + 32, i21 + 15) < 20 && mp.ranInt(2) === 0) characterobject.c = 1410;
 						else if (mp.maps.getBGCode(l20 + 15, i21 + 32) < 20) characterobject.c = 1430;
 						else characterobject.c = 1420;
 				characterobject.pt = 143 + mp.g_ac;
