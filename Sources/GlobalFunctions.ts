@@ -1,5 +1,19 @@
 import { MasaoConstruction } from "./MasaoConstruction";
 
+declare function requestIdleCallback(
+	callback: (deadline: IdleDeadline) => void,
+	options?: {
+		timeout: number;
+	}
+);
+
+declare interface IdleDeadline {
+	readonly didTimeout: boolean;
+	timeRemaining(): DOMHighResTimeStamp;
+}
+
+declare function setImmediate(func: () => void, ...param: any[]);
+
 /**
  * 新しい正男のインスタンスを生成します。
  * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
@@ -242,7 +256,7 @@ Game.replaceAll = function(options) {
 		for (var i = 0; i < objects.length; i++) {
 			objectArray.push(objects[i]);
 		}
-		for (var i = 0; i < objectArray; i++) {
+		for (var i = 0; i < objectArray.length; i++) {
 			var object = objectArray[i];
 			var param = object.getElementsByName("code")[0];
 			// name属性に"code"を持つparam要素が
@@ -705,7 +719,7 @@ function Dimension(width, height) {
 }
 
 // 多次元配列作成
-function createNDimensionArray() {
+function createNDimensionArray(...lengths: number[]) {
 	if (arguments.length == 0) return null;
 	var a = new Array(arguments.length);
 	for (var i = 0; i < arguments.length; i++) a[i] = arguments[i];

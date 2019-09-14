@@ -2,6 +2,34 @@ import { Dimension, createNDimensionArray, waitFor } from "./GlobalFunctions";
 import { Color, ImageBuff } from "./ImageBuff";
 
 class GameGraphicsForApplet {
+	tdb: any;
+	ap: any;
+	spt_kazu_x: number;
+	spt_kazu_y: number;
+	spt_kazu: number;
+	spt_h_kijyun: number;
+	mode: number;
+	oya: any;
+	di: any;
+	backcolor: any;
+	li: any[];
+	mt: any[];
+	os_img: any;
+	os_g: any;
+	os_g_bk: any;
+	os2_img: any;
+	os2_g: any;
+	os32_img: any;
+	os32_g: any;
+	pg: any;
+	spt_img: any[];
+	hi: any;
+	spt_option_img: any[];
+	layer_mode: number;
+	amapchip_img: any;
+	smapchip_img: any[];
+	apt_img: any;
+
 	constructor(dagdatabase, applet) {
 		this.tdb = dagdatabase;
 		this.ap = applet;

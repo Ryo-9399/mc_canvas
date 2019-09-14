@@ -1,5 +1,5 @@
 import * as CanvasMasao from "./CanvasMasao";
 
-window.CanvasMasao = CanvasMasao;
-window.JSMasao = CanvasMasao.Game;
-window.JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;
+globalThis.CanvasMasao = CanvasMasao;
+globalThis.JSMasao = CanvasMasao.Game;
+globalThis.JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;

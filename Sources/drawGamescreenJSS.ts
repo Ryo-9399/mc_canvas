@@ -384,7 +384,8 @@ export const drawGamescreenMy = function() {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy + j_dy, 100, this.co_j.muki);
 			this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
 			this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
-		} else if (this.co_j.pt !== 1110);
+		} else if (this.co_j.pt !== 1110) {
+		}
 	}
 };
 

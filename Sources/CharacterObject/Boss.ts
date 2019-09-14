@@ -912,7 +912,7 @@ class Boss extends CharacterObject {
 	 * @returns {boolean}
 	 */
 	isFumuable(mp) {
-		if (mp.j_tokugi === 10 || (this.j_tokugi >= 12 && this.j_tokugi <= 15)) return false;
+		if (mp.j_tokugi === 10 || (mp.j_tokugi >= 12 && mp.j_tokugi <= 15)) return false;
 		if (mp.boss_destroy_type === 2) return false;
 		return !(
 			this.pt === PATTERN_BOSS3_BARRIER_LEFT ||

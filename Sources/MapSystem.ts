@@ -2,6 +2,28 @@ import { createNDimensionArray, rightShiftIgnoreSign } from "./GlobalFunctions";
 import { Color } from "./ImageBuff";
 
 class MapSystem {
+	width: any;
+	height: any;
+	gg: any;
+	mp: any;
+	map_bg: any[];
+	map_bg_layer: any[];
+	map_string: any[];
+	map_string_layer: any[];
+	wx: number;
+	wy: number;
+	wx_mini: any;
+	wy_mini: any;
+	wx_max: any;
+	wy_max: any;
+	os2_wx: number;
+	os2_wy: number;
+	hi: any;
+	gazou_x: number;
+	gazou_y: number;
+	second_gazou_x: number;
+	second_gazou_y: number;
+
 	constructor(width, height, gamegraphics, mainprogram) {
 		this.width = width;
 		this.height = height;

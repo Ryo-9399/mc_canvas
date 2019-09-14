@@ -2,40 +2,46 @@
  * マウス入力を管理する
  * @constructor
  */
-function GameMouse() {
-	this.button_f = false;
-	this.click_x = 0;
-	this.click_y = 0;
+class GameMouse {
+	button_f: boolean;
+	click_x: number;
+	click_y: number;
+
+	constructor() {
+		this.button_f = false;
+		this.click_x = 0;
+		this.click_y = 0;
+	}
 
 	/**
 	 * 初期化
 	 */
-	this.init = function() {
+	init() {
 		this.button_f = false;
 		this.click_x = 0;
 		this.click_y = 0;
-	};
+	}
+
+	/**
+	 * クリックされたときの処理
+	 * @param paramMouseEvent {MouseEvent}
+	 */
+	mousePressed(paramMouseEvent) {
+		var target = paramMouseEvent.target;
+		var rect = target.getBoundingClientRect();
+		this.button_f = true;
+		this.click_x = ((paramMouseEvent.clientX - rect.left) / rect.width) * target.width;
+		this.click_y = ((paramMouseEvent.clientY - rect.top) / rect.height) * target.height;
+	}
+
+	/**
+	 * マウスボタンが離されたときの処理
+	 * @param paramMouseEvent {MouseEvent}
+	 */
+	mouseReleased(paramMouseEvent) {
+		this.button_f = false;
+	}
 }
-
-/**
- * クリックされたときの処理
- * @param paramMouseEvent {MouseEvent}
- */
-GameMouse.prototype.mousePressed = function(paramMouseEvent) {
-	var target = paramMouseEvent.target;
-	var rect = target.getBoundingClientRect();
-	this.button_f = true;
-	this.click_x = ((paramMouseEvent.clientX - rect.left) / rect.width) * target.width;
-	this.click_y = ((paramMouseEvent.clientY - rect.top) / rect.height) * target.height;
-};
-
-/**
- * マウスボタンが離されたときの処理
- * @param paramMouseEvent {MouseEvent}
- */
-GameMouse.prototype.mouseReleased = function(paramMouseEvent) {
-	this.button_f = false;
-};
 
 /**
  * GameMouse.mousePressedの別名
