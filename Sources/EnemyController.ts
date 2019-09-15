@@ -1,4 +1,12 @@
 import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { CharacterObject } from "./CharacterObject";
+import { MainProgram } from "./MainProgram";
+
+interface EnemyControllerFactory<T> {
+	properties: T;
+	initFactory(enemyCode: number, properties: T): (co: CharacterObject, mp: MainProgram) => void;
+	controllerFactory(properties: T): (co: CharacterObject, mp: MainProgram, i: number) => void;
+}
 
 /*
  * フハハハハ！！　エネミーコントローラー！
@@ -9,7 +17,9 @@ namespace EnemyController {
 	/**
 	 * 亀
 	 */
-	export const Turtle = {
+	export const Turtle: EnemyControllerFactory<{
+		walk_speed: number;
+	}> = {
 		properties: {
 			// 歩くスピード
 			walk_speed: 3
@@ -262,7 +272,10 @@ namespace EnemyController {
 	/**
 	 * 落ちる亀
 	 */
-	export const TurtleFall = {
+	export const TurtleFall: EnemyControllerFactory<{
+		walk_speed: number;
+		fall_speed: number;
+	}> = {
 		properties: {
 			// 歩くスピード
 			walk_speed: 3,
@@ -527,7 +540,11 @@ namespace EnemyController {
 	/**
 	 * ピカチー
 	 */
-	export const Pikachie = {
+	export const Pikachie: EnemyControllerFactory<{
+		jump_vy: number;
+		search_range: number;
+		interval: number;
+	}> = {
 		// 変更可能なパラメータ
 		properties: {
 			// ジャンプの初速
@@ -777,7 +794,12 @@ namespace EnemyController {
 	/**
 	 * チコリン（はっぱカッター）
 	 */
-	export const Chikorin = {
+	export const Chikorin: EnemyControllerFactory<{
+		period: number;
+		attack_timing: {
+			[key: number]: number | undefined;
+		};
+	}> = {
 		properties: {
 			// 行動1周の時間
 			period: 86,
@@ -859,7 +881,9 @@ namespace EnemyController {
 	/**
 	 * チコリン（ヒノララシ/マリリを投げる）
 	 */
-	export const ChikorinThrower = {
+	export const ChikorinThrower: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 投げる間隔
 			interval: 40
@@ -946,7 +970,7 @@ namespace EnemyController {
 	/**
 	 * チコリン（はっぱカッター 乱れ射ち）
 	 */
-	export const ChikorinMidareuchi = {
+	export const ChikorinMidareuchi: EnemyControllerFactory<{}> = {
 		properties: {},
 		initFactory: function(enemyCode, properties) {
 			return function(co) {};
@@ -1049,7 +1073,9 @@ namespace EnemyController {
 	/**
 	 * チコリン（ソーラービーム）
 	 */
-	export const ChikorinSolarBeam = {
+	export const ChikorinSolarBeam: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// ビームを撃ってから次に撃つまでの間隔
 			interval: 120
@@ -1148,7 +1174,9 @@ namespace EnemyController {
 	/**
 	 * ヒノララシ
 	 */
-	export const Hinorarashi = {
+	export const Hinorarashi: EnemyControllerFactory<{
+		walk_speed: number;
+	}> = {
 		properties: {
 			// 歩くスピード
 			walk_speed: 4
@@ -1450,7 +1478,9 @@ namespace EnemyController {
 	 * ヒノララシ（落ちる）
 	 * ボス等に投げられたときに使用
 	 */
-	export const HinorarashiFall = {
+	export const HinorarashiFall: EnemyControllerFactory<{
+		walk_speed: number;
+	}> = {
 		properties: {
 			// 歩くスピード
 			walk_speed: 4
@@ -1730,7 +1760,10 @@ namespace EnemyController {
 	/**
 	 * ポッピー（上下移動）
 	 */
-	export const PoppieUpDown = {
+	export const PoppieUpDown: EnemyControllerFactory<{
+		speed: number;
+		accel: number;
+	}> = {
 		properties: {
 			// 普段の飛行速度
 			speed: 4,
@@ -1779,7 +1812,9 @@ namespace EnemyController {
 	/**
 	 * ポッピー（左右移動）
 	 */
-	export const PoppieLeftRight = {
+	export const PoppieLeftRight: EnemyControllerFactory<{
+		speed: number;
+	}> = {
 		properties: {
 			// 左右移動の速度
 			speed: 3
@@ -1830,7 +1865,9 @@ namespace EnemyController {
 	/**
 	 * ポッピー（火の粉）
 	 */
-	export const PoppieFire = {
+	export const PoppieFire: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 発射の間隔
 			interval: 40
@@ -1884,7 +1921,7 @@ namespace EnemyController {
 	/**
 	 * ポッピー（火の粉 3連射）
 	 */
-	export const PoppieFire3 = {
+	export const PoppieFire3: EnemyControllerFactory<{}> = {
 		properties: {},
 		initFactory: function(enemyCode, properties) {
 			return function(characterobject) {
@@ -1961,7 +1998,9 @@ namespace EnemyController {
 	/**
 	 * ポッピー（バブル光線3発）
 	 */
-	export const PoppieBubble3 = {
+	export const PoppieBubble3: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 発射の間隔
 			interval: 40
@@ -2023,7 +2062,9 @@ namespace EnemyController {
 	/**
 	 * ポッピー（ハリケンブラスト）
 	 */
-	export const PoppieHurricaneBlast = {
+	export const PoppieHurricaneBlast: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 発射の間隔
 			interval: 80
@@ -2074,7 +2115,10 @@ namespace EnemyController {
 	/**
 	 * マリリ
 	 */
-	export const Mariri = {
+	export const Mariri: EnemyControllerFactory<{
+		jump_vy: number | null;
+		speed: number;
+	}> = {
 		properties: {
 			// ジャンプの初速
 			// null = 初期値
@@ -2492,7 +2536,11 @@ namespace EnemyController {
 	/**
 	 * マリリ（左右移動）
 	 */
-	export const MaririLeftRight = {
+	export const MaririLeftRight: EnemyControllerFactory<{
+		speed: number;
+		distance: number;
+		interval: number;
+	}> = {
 		properties: {
 			// 移動のスピード
 			speed: 8,
@@ -2559,7 +2607,10 @@ namespace EnemyController {
 	/**
 	 * マリリ（体当たり）
 	 */
-	export const MaririTackle = {
+	export const MaririTackle: EnemyControllerFactory<{
+		attack_speed: number;
+		return_speed: number;
+	}> = {
 		properties: {
 			// 体当たりのスピード
 			attack_speed: 10,
@@ -2573,13 +2624,13 @@ namespace EnemyController {
 			};
 		},
 		controllerFactory: function(properties) {
-			// TODO
-			// 待機フレームの半分
-			var wait_half = properties.interval >> 1;
-			// 右待機中フレーム
-			var right_wait = properties.interval;
-			// 左待機中フレーム
-			var left_wait = properties.interval * 2 + 10;
+			//// TODO
+			//// 待機フレームの半分
+			//var wait_half = properties.interval >> 1;
+			//// 右待機中フレーム
+			//var right_wait = properties.interval;
+			//// 左待機中フレーム
+			//var left_wait = properties.interval * 2 + 10;
 			return function(characterobject, mp) {
 				if (characterobject.c === 670) {
 					var l20 = characterobject.x;
@@ -2645,7 +2696,9 @@ namespace EnemyController {
 	/**
 	 * ヤチャモ
 	 */
-	export const Yachamo = {
+	export const Yachamo: EnemyControllerFactory<{
+		interval: number | null;
+	}> = {
 		properties: {
 			// 攻撃の間隔
 			// null = 初期値
@@ -2769,7 +2822,9 @@ namespace EnemyController {
 	/**
 	 * ヤチャモ（速射）
 	 */
-	export const YachamoFast = {
+	export const YachamoFast: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 攻撃の間隔
 			interval: 35
@@ -2858,7 +2913,9 @@ namespace EnemyController {
 	/**
 	 * ヤチャモ（破壊光線）
 	 */
-	export const YachamoHyperBeam = {
+	export const YachamoHyperBeam: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 攻撃の間隔
 			interval: 80
@@ -2960,7 +3017,9 @@ namespace EnemyController {
 	/**
 	 * ミズタロウ
 	 */
-	export const Mizutaro = {
+	export const Mizutaro: EnemyControllerFactory<{
+		walk_speed: number;
+	}> = {
 		properties: {
 			// 歩く速度
 			walk_speed: 3
@@ -3172,7 +3231,10 @@ namespace EnemyController {
 	/**
 	 * エアームズ（壁に当たると止まる）
 	 */
-	export const AirmsStop = {
+	export const AirmsStop: EnemyControllerFactory<{
+		speed: number;
+		interval: number;
+	}> = {
 		properties: {
 			// 飛行速度
 			speed: 4,
@@ -3221,7 +3283,9 @@ namespace EnemyController {
 	/**
 	 * エアームズ（その場で投下）
 	 */
-	export const AirmsStay = {
+	export const AirmsStay: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 攻撃の間隔
 			interval: 30
@@ -3277,7 +3341,9 @@ namespace EnemyController {
 	/**
 	 * エアームズ（左右に動いて爆弾投下）
 	 */
-	export const AirmsLeftRight = {
+	export const AirmsLeftRight: EnemyControllerFactory<{
+		speed: number;
+	}> = {
 		properties: {
 			// 飛行速度
 			speed: 4
@@ -3358,7 +3424,10 @@ namespace EnemyController {
 	/**
 	 * エアームズ（壁に当たると向きを変える）
 	 */
-	export const AirmsReturn = {
+	export const AirmsReturn: EnemyControllerFactory<{
+		speed: number;
+		interval: number;
+	}> = {
 		properties: {
 			// 飛行速度
 			speed: 4,
@@ -3421,7 +3490,9 @@ namespace EnemyController {
 	/**
 	 * タイキング（左右移動　水中専用）
 	 */
-	export const Taiking = {
+	export const Taiking: EnemyControllerFactory<{
+		speed: number;
+	}> = {
 		properties: {
 			// 移動速度
 			speed: 3
@@ -3468,7 +3539,10 @@ namespace EnemyController {
 	/**
 	 * タイキング（はねる）
 	 */
-	export const TaikingJump = {
+	export const TaikingJump: EnemyControllerFactory<{
+		jump_vy: number;
+		interval: number;
+	}> = {
 		properties: {
 			// ジャンプの初速
 			jump_vy: -26,
@@ -3547,7 +3621,10 @@ namespace EnemyController {
 	/**
 	 * タイキング（縄張りをまもる）
 	 */
-	export const TaikingTerritory = {
+	export const TaikingTerritory: EnemyControllerFactory<{
+		speed_x: number;
+		speed_y: number;
+	}> = {
 		properties: {
 			// 横方向移動速度
 			speed_x: 3,
@@ -3637,7 +3714,10 @@ namespace EnemyController {
 	/**
 	 * タイキング（左回り）
 	 */
-	export const TaikingLeft = {
+	export const TaikingLeft: EnemyControllerFactory<{
+		speed: number;
+		radius: number;
+	}> = {
 		properties: {
 			// 角速度（degree）
 			speed: 5,
@@ -3673,7 +3753,10 @@ namespace EnemyController {
 	 * タイキング（右回り）
 	 * TODO: これ左回りとほとんどコード同じでは？
 	 */
-	export const TaikingRight = {
+	export const TaikingRight: EnemyControllerFactory<{
+		speed: number;
+		radius: number;
+	}> = {
 		properties: {
 			// 角速度（degree）
 			speed: 5,
@@ -3708,7 +3791,9 @@ namespace EnemyController {
 	/**
 	 * クラゲッソ（バブル光線 水中専用）
 	 */
-	export const Kuragesso = {
+	export const Kuragesso: EnemyControllerFactory<{
+		interval: number;
+	}> = {
 		properties: {
 			// 攻撃の間隔
 			interval: 77
@@ -3750,7 +3835,9 @@ namespace EnemyController {
 	/**
 	 * クラゲッソ（近づくと落ちる）
 	 */
-	export const KuragessoFall = {
+	export const KuragessoFall: EnemyControllerFactory<{
+		init_vy: number;
+	}> = {
 		properties: {
 			// 落下の初速
 			init_vy: 2
@@ -3827,7 +3914,10 @@ namespace EnemyController {
 	 * クラゲッソ（縄張りをまもる）
 	 * TODO これタイキングと同じでは？
 	 */
-	export const KuragessoTerritory = {
+	export const KuragessoTerritory: EnemyControllerFactory<{
+		speed_x: number;
+		speed_y: number;
+	}> = {
 		properties: {
 			// 横方向移動速度
 			speed_x: 3,
@@ -3915,7 +4005,10 @@ namespace EnemyController {
 	 * クラゲッソ（左回り）
 	 * TODO これタイキングと同じでは？
 	 */
-	export const KuragessoLeft = {
+	export const KuragessoLeft: EnemyControllerFactory<{
+		speed: number;
+		radius: number;
+	}> = {
 		properties: {
 			// 角速度（degree）
 			speed: 5,
@@ -3951,7 +4044,10 @@ namespace EnemyController {
 	 * クラゲッソ（右回り）
 	 * TODO これタイキングと同じでは？
 	 */
-	export const KuragessoRight = {
+	export const KuragessoRight: EnemyControllerFactory<{
+		speed: number;
+		radius: number;
+	}> = {
 		properties: {
 			// 角速度（degree）
 			speed: 5,
@@ -3986,7 +4082,9 @@ namespace EnemyController {
 	/**
 	 * 追跡亀
 	 */
-	export const TurtleChaser = {
+	export const TurtleChaser: EnemyControllerFactory<{
+		walk_speed: number;
+	}> = {
 		properties: {
 			// 歩行速度
 			walk_speed: 4
@@ -5138,7 +5236,9 @@ namespace EnemyController {
 	/**
 	 * 重力無視の追跡ピカチー等
 	 */
-	export const PikachieChaser = {
+	export const PikachieChaser: EnemyControllerFactory<{
+		speed: number;
+	}> = {
 		properties: {
 			// 移動速度
 			speed: 4
