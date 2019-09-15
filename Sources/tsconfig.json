@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "rootDir": "./Sources/",
-        "outDir": "./dist/",
+        "rootDir": "./",
+        "outDir": "../dist/fx/",
         "target": "es6",
         "downlevelIteration": true
     }

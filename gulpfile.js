@@ -13,15 +13,14 @@ const webpackConfig = require("./webpack.config");
 gulp.task(
 	"fx",
 	gulp.series(
-		function() {
-			const tsconfig = require("./tsconfig.json");
-			tsconfig.compilerOptions.rootDir = "./Sources/";
+		function compile() {
+			const tsconfig = require("./Sources/tsconfig.json");
 			return gulp
 				.src("./Sources/**/*.ts")
 				.pipe(typescript(tsconfig.compilerOptions))
 				.pipe(gulp.dest("./dist/fx/"));
 		},
-		function() {
+		function bundle() {
 			webpackConfig.entry = "./dist/fx/index.js";
 			webpackConfig.output.filename = "CanvasMasao.js";
 			return webpackStream(webpackConfig, webpack).pipe(gulp.dest("./Outputs/"));
