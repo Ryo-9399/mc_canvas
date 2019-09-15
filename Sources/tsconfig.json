@@ -3,6 +3,7 @@
         "rootDir": "./",
         "outDir": "../dist/fx/",
         "target": "es6",
-        "downlevelIteration": true
+        "downlevelIteration": true,
+        "noImplicitAny": true
     }
 }
