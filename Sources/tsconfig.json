@@ -4,6 +4,6 @@
         "outDir": "../dist/fx/",
         "target": "es6",
         "downlevelIteration": true,
-        "noImplicitAny": true
+        "strict": true
     }
 }
