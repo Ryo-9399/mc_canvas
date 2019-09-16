@@ -753,4 +753,4 @@ class Font {
 	static ITALIC = 2;
 }
 
-export { ImageBuff, Color, Font };
+export { ImageBuff, Graphics, Color, Font };
