@@ -1,5 +1,5 @@
 import * as CanvasMasao from "./CanvasMasao";
 
-globalThis.CanvasMasao = CanvasMasao;
-globalThis.JSMasao = CanvasMasao.Game;
-globalThis.JSMasao.MasaoConstruction = CanvasMasao.MasaoConstruction;
+Object.defineProperty(globalThis, "CanvasMasao", { value: CanvasMasao });
+Object.defineProperty(globalThis, "JSMasao", { value: CanvasMasao.Game });
+Object.defineProperty(CanvasMasao.Game, "MasaoConstruction", { value: CanvasMasao.MasaoConstruction });
