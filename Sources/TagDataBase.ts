@@ -1,7 +1,10 @@
+import { Params, Option } from "./MasaoOption";
+import { MasaoConstruction } from "./MasaoConstruction";
+
 class TagDataBase {
 	tag_kazu: number;
-	params: {};
-	options: {};
+	params: Params;
+	options: Option;
 
 	constructor() {
 		this.tag_kazu = 0;
@@ -390,7 +393,7 @@ class TagDataBase {
 		this.tag_kazu = Object.keys(this.params).length;
 	}
 
-	getValue(paramString) {
+	getValue(paramString: string) {
 		var s = this.params[paramString];
 		if ("undefined" !== typeof s) {
 			return s;
@@ -399,7 +402,7 @@ class TagDataBase {
 		return null;
 	}
 
-	getValueInt(paramString) {
+	getValueInt(paramString: string) {
 		var s = this.params[paramString];
 		if ("undefined" !== typeof s) {
 			var j;
@@ -411,12 +414,12 @@ class TagDataBase {
 		return -1;
 	}
 
-	setValue(paramString1, paramString2) {
+	setValue(paramString1: string, paramString2: string) {
 		this.params[paramString1] = paramString2;
 		return true;
 	}
 
-	setValueFromHTML(paramApplet) {
+	setValueFromHTML(paramApplet: MasaoConstruction) {
 		for (var name in this.params) {
 			var str = paramApplet.getParameter(name);
 			if (str != null) {
@@ -521,7 +524,7 @@ class TagDataBase {
 		this.params["map2-29"] = "..e..e.e...e...e.......aaaaaaaaaaaaaaaaaaa..aaaaaaaaaaaaaaaa";
 	}
 
-	setValueFromHTMLText(paramString) {
+	setValueFromHTMLText(paramString: string) {
 		var str1 = "";
 		var arrayOfString1 = new Array(1000);
 		var arrayOfString2 = new Array(1000);
