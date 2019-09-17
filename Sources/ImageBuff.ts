@@ -170,6 +170,7 @@ class Graphics {
 	 * @param dy {number} 描画先Y座標
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
+	drawImage(img: ImageBuff, dx: number, dy: number, ap?: unknown): boolean;
 	/**
 	 * 画像を描画する
 	 * @method
@@ -183,6 +184,7 @@ class Graphics {
 	 * @param dh {number} 描画される縦方向の高さ
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
+	drawImage(img: ImageBuff, dx: number, dy: number, dw: number, dh: number, ap?: unknown): boolean;
 	/**
 	 * 画像を描画する
 	 * @method
@@ -196,11 +198,59 @@ class Graphics {
 	 * @param sh {number} 切り出してくる縦方向の高さ
 	 * @param dx {number} 描画先X座標
 	 * @param dy {number} 描画先Y座標
-	 * @param [dw] {number} 描画される横方向の幅
-	 * @param [dh] {number} 描画される縦方向の高さ
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawImage(img, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
+	drawImage(
+		img: ImageBuff,
+		sx: number,
+		sy: number,
+		sw: number,
+		sh: number,
+		dx: number,
+		dy: number,
+		ap?: unknown
+	): boolean;
+	/**
+	 * 画像を描画する
+	 * @method
+	 * @memberOf Graphics.prototype
+	 * @name drawImage
+	 * @variation 4
+	 * @param img {ImageBuff} ImageBuffオブジェクト
+	 * @param sx {number} imgから切り出すX座標
+	 * @param sy {number} imgから切り出すY座標
+	 * @param sw {number} 切り出してくる横方向の幅
+	 * @param sh {number} 切り出してくる縦方向の高さ
+	 * @param dx {number} 描画先X座標
+	 * @param dy {number} 描画先Y座標
+	 * @param dw {number} 描画される横方向の幅
+	 * @param dh {number} 描画される縦方向の高さ
+	 * @returns {boolean} 描画に成功したかどうか
+	 */
+	drawImage(
+		img: ImageBuff,
+		sx: number,
+		sy: number,
+		sw: number,
+		sh: number,
+		dx: number,
+		dy: number,
+		dw: number,
+		dh: number,
+		ap?: unknown
+	): boolean;
+	drawImage(
+		img: ImageBuff,
+		a1: number,
+		a2: number,
+		a3?: number,
+		a4?: number,
+		a5?: number,
+		a6?: number,
+		a7?: number,
+		a8?: number,
+		a9?: unknown
+	) {
 		if (img._dat == null) return false;
 		if (this._ctx == null) return false;
 		try {

@@ -713,12 +713,18 @@ AudioClip.prototype.stop = function() {
 };
 
 // java.awt.Dimension
-function Dimension(width, height) {
-	this.width = width;
-	this.height = height;
+class Dimension {
+	width: number;
+	height: number;
+	constructor(width: number, height: number) {
+		this.width = width;
+		this.height = height;
+	}
 }
 
 // 多次元配列作成
+function createNDimensionArray(): null;
+function createNDimensionArray(len1: number, ...lengths: number[]): any[];
 function createNDimensionArray(...lengths: number[]) {
 	if (arguments.length == 0) return null;
 	var a = new Array(arguments.length);
