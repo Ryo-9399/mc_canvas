@@ -2,7 +2,7 @@ import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
 import { CharacterObject } from "./CharacterObject";
 import { MainProgram } from "./MainProgram";
 
-interface EnemyControllerFactory<T> {
+export interface EnemyControllerFactory<T> {
 	properties: T;
 	initFactory(enemyCode: number, properties: T): (co: CharacterObject, mp: MainProgram) => void;
 	controllerFactory(properties: T): (co: CharacterObject, mp: MainProgram, i: number) => void;

@@ -1,3 +1,6 @@
+import { ImageBuff } from "./ImageBuff";
+import { EnemyControllerFactory } from "./EnemyController";
+
 /**
  * 神クラス
  * @constructor
@@ -17,7 +20,7 @@ class CharacterObject {
 	c5: number;
 	pt: number;
 	pth: number;
-	img: any;
+	img: ImageBuff | null;
 	zs_x: number;
 	zs_y: number;
 	ac: number;
@@ -28,7 +31,7 @@ class CharacterObject {
 	score: number;
 	ss: number;
 	gf: boolean;
-	controller: any;
+	controller: ReturnType<EnemyControllerFactory<unknown>["controllerFactory"]> | undefined;
 
 	constructor() {
 		this.c = 0;
@@ -98,7 +101,7 @@ class CharacterObject {
 	/**
 	 * 未使用
 	 */
-	setPattern(paramString) {}
+	setPattern(paramString: string) {}
 }
 
 export { CharacterObject };
