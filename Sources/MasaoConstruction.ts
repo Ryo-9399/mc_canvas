@@ -2126,7 +2126,7 @@ class MasaoConstruction {
 	 * @param {boolean} bgmflag ファイルがBGM用か
 	 * @returns {string}
 	 */
-	getAudioURL(url, bgmflag) {
+	getAudioURL(url: string | null, bgmflag?: boolean) {
 		var i1, i2;
 		url = url + "";
 
@@ -2168,7 +2168,7 @@ class MasaoConstruction {
 		return url;
 	}
 
-	getAudioClip(url, flag) {
+	getAudioClip(url: string | null, flag?: boolean) {
 		return new AudioClip(this.getAudioURL(url, flag));
 	}
 

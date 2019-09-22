@@ -1,19 +1,23 @@
+import { MasaoConstruction } from "./MasaoConstruction";
+import { TagDataBase } from "./TagDataBase";
+import { AudioClip } from "./GlobalFunctions";
+
 declare const webkitAudioContext: typeof AudioContext;
 
 class GameSoundForApplet {
-	ap: any;
-	tdb: any;
-	s_data: any[];
+	ap: MasaoConstruction;
+	tdb: TagDataBase;
+	s_data: (AudioClip | null)[];
 	use_f: boolean;
 	mute_f: boolean;
 	rs_b: number;
 	bgm_switch: boolean;
 	bgm_loop: boolean;
-	bgm: any[];
-	bgm_filename: any[];
+	bgm: AudioClip[];
+	bgm_filename: (string | null)[];
 	bgm_genzai: number;
 
-	constructor(paramTagDataBase, paramApplet) {
+	constructor(paramTagDataBase: TagDataBase, paramApplet: MasaoConstruction) {
 		this.ap = paramApplet;
 		this.tdb = paramTagDataBase;
 		this.s_data = new Array(32);
@@ -29,15 +33,15 @@ class GameSoundForApplet {
 		for (var j = 0; j < this.s_data.length; j++) {
 			this.s_data[j] = null;
 		}
-		if (parseInt(this.tdb.getValue("se_switch")) === 2) {
+		if (parseInt(this.tdb.getValue("se_switch") || "null") === 2) {
 			this.use_f = false;
 		}
-		if (parseInt(this.tdb.getValue("fx_bgm_switch")) === 1) {
+		if (parseInt(this.tdb.getValue("fx_bgm_switch") || "null") === 1) {
 			this.bgm_switch = true;
 		} else {
 			this.bgm_switch = false;
 		}
-		if (parseInt(this.tdb.getValue("fx_bgm_loop")) === 1) {
+		if (parseInt(this.tdb.getValue("fx_bgm_loop") || "null") === 1) {
 			this.bgm_loop = true;
 		} else {
 			this.bgm_loop = false;
@@ -52,7 +56,7 @@ class GameSoundForApplet {
 	 * _loadに必要なものをinitする
 	 * @protected
 	 */
-	_init() {}
+	protected _init() {}
 
 	/**
 	 * se_filename フラグに応じてファイル名の配列を返す
@@ -61,7 +65,7 @@ class GameSoundForApplet {
 	 */
 	_getSEFilenames() {
 		var tdb = this.tdb;
-		var se_filename = parseInt(tdb.getValue("se_filename"));
+		var se_filename = parseInt(tdb.getValue("se_filename") || "null");
 		var k;
 		if (se_filename === 1) {
 			return [
@@ -166,7 +170,7 @@ class GameSoundForApplet {
 		}
 	}
 
-	setSound(paramInt, paramString) {
+	setSound(paramInt: number, paramString: string) {
 		if (paramInt < 0 || paramInt >= this.s_data.length) {
 			return;
 		}
@@ -175,27 +179,30 @@ class GameSoundForApplet {
 
 	resetSound() {}
 
-	play(paramInt) {
+	play(paramInt: number) {
 		if (!this.use_f || this.mute_f || this.s_data[paramInt] == null) {
 			return;
 		}
-		this.s_data[paramInt].play();
+		const s = this.s_data[paramInt];
+		if (s) s.play();
 	}
 
-	stop(paramInt) {
+	stop(paramInt: number) {
 		if (!this.use_f || this.s_data[paramInt] == null) {
 			return;
 		}
-		this.s_data[paramInt].stop();
+		const s = this.s_data[paramInt];
+		if (s) s.stop();
 	}
 
-	stopAll(paramInt) {
+	stopAll(paramInt: number) {
 		if (!this.use_f) {
 			return;
 		}
 		for (var i = 0; i < this.s_data.length; i++) {
-			if (this.s_data[i] != null) {
-				this.s_data[i].stop();
+			const s = this.s_data[i];
+			if (s != null) {
+				s.stop();
 			}
 		}
 	}
@@ -215,7 +222,7 @@ class GameSoundForApplet {
 		this.rs_b = -1;
 	}
 
-	rsAddSound(paramInt) {
+	rsAddSound(paramInt: number) {
 		this.rs_b = paramInt;
 	}
 
@@ -223,14 +230,16 @@ class GameSoundForApplet {
 		if (!this.use_f || this.mute_f || this.rs_b == -1 || this.s_data[this.rs_b] == null) {
 			return;
 		}
-		this.s_data[this.rs_b].stop();
-
-		this.s_data[this.rs_b].play();
+		const s = this.s_data[this.rs_b];
+		if (s) {
+			s.stop();
+			s.play();
+		}
 
 		this.rs_b = -1;
 	}
 
-	playBGM(paramInt, loopflg) {
+	playBGM(paramInt: number, loopflg: boolean) {
 		if (this.mute_f) {
 			return;
 		}
@@ -268,7 +277,7 @@ class GameSoundForApplet {
 		this.bgm_genzai = -1;
 	}
 
-	playUserBGMFile(paramString, loopflg) {
+	playUserBGMFile(paramString: string, loopflg: boolean) {
 		this.stopBGM();
 
 		this.bgm[19] = this.ap.getAudioClip(paramString, true);
@@ -284,7 +293,7 @@ class GameSoundForApplet {
 		return false;
 	}
 
-	playUserBGMFileLoop(paramString) {
+	playUserBGMFileLoop(paramString: string) {
 		this.stopBGM();
 
 		this.bgm[19] = this.ap.getAudioClip(paramString, true);
@@ -315,7 +324,7 @@ class GameSoundForApplet {
 	 *
 	 * @static
 	 */
-	static factory(tdb) {
+	static factory(tdb: TagDataBase) {
 		if (
 			("undefined" !== typeof AudioContext || "undefined" !== typeof webkitAudioContext) &&
 			/^https?:$/i.test(location.protocol) &&
@@ -332,18 +341,23 @@ class GameSoundForApplet {
  * WebAudioを用いたゲーム音声
  */
 class GameSoundWebAudio extends GameSoundForApplet {
-	noOverlapFlag: any;
-	context: AudioContext;
-	dest: any;
-	sourceNodes: {};
-	bgmSourceNodes: {};
-	audioCache: {};
+	noOverlapFlag: boolean | undefined;
+	context!: AudioContext;
+	dest!: AudioNode;
+	sourceNodes!: { [key: number]: AudioNode | undefined };
+	bgmSourceNodes!: { [key: number]: AudioNode | undefined };
+	audioCache!: { [key: string]: ((result: AudioBuffer) => void)[] | AudioBuffer | undefined };
+	s_data_wa: (AudioBuffer | null)[];
+	bgm_wa: (AudioBuffer | null)[];
 
-	constructor(paramTagDataBase, paramApplet) {
+	constructor(paramTagDataBase: TagDataBase, paramApplet: MasaoConstruction) {
 		super(paramTagDataBase, paramApplet);
 		GameSoundForApplet.call(this, paramTagDataBase, paramApplet);
 
 		this.noOverlapFlag = paramTagDataBase.options["bc-no-overlap-sound"];
+
+		this.s_data_wa = [];
+		this.bgm_wa = [];
 	}
 
 	_init() {
@@ -366,7 +380,7 @@ class GameSoundWebAudio extends GameSoundForApplet {
 		if (this.use_f) {
 			var se_filenames = this._getSEFilenames();
 			for (i = 0; i < se_filenames.length; i++) {
-				this._loadAudioBufferInto(ap.getAudioURL(se_filenames[i], false), this.s_data, i);
+				this._loadAudioBufferInto(ap.getAudioURL(se_filenames[i], false), this.s_data_wa, i);
 			}
 		}
 		if (this.bgm_switch) {
@@ -374,7 +388,7 @@ class GameSoundWebAudio extends GameSoundForApplet {
 			for (i = 0; i < bgm_filenames.length; i++) {
 				var url = ap.getAudioURL(bgm_filenames[i], true);
 				this.bgm_filename[i] = url;
-				this._loadAudioBufferInto(url, this.bgm, i);
+				this._loadAudioBufferInto(url, this.bgm_wa, i);
 			}
 		}
 	}
@@ -382,13 +396,19 @@ class GameSoundWebAudio extends GameSoundForApplet {
 	 * 音声ファイルをXHRで読み込みcontextAudioClipに変換
 	 * @protected
 	 */
-	_loadAudioBufferInto(url, target, index, callback?) {
+	_loadAudioBufferInto(
+		url: string,
+		target: (AudioBuffer | null)[],
+		index: number,
+		callback?: (result: AudioBuffer | null) => void
+	) {
 		const { audioCache, context } = this;
 		// まずcacheをまさぐる
-		if (audioCache[url] != null) {
-			if (audioCache[url] instanceof Array) {
+		const cache = audioCache[url];
+		if (cache != null) {
+			if (cache instanceof Array) {
 				// 現在読み込み中なのでコールバック一覧に追加
-				audioCache[url].push(function(result) {
+				cache.push(function(result) {
 					target[index] = result;
 					if ("function" === typeof callback) {
 						callback(result);
@@ -397,23 +417,23 @@ class GameSoundWebAudio extends GameSoundForApplet {
 			} else {
 				// 読み込み終わっているのでコールバックをすぐに呼ぶ
 				setTimeout(function() {
-					target[index] = audioCache[url];
+					target[index] = cache;
 					if ("function" === typeof callback) {
-						callback(audioCache[url]);
+						callback(cache);
 					}
 				}, 0);
 			}
 			return;
 		}
 		// まだ読み込みが開始されていない
-		audioCache[url] = [];
+		const newCache: ((result: AudioBuffer) => void)[] = (audioCache[url] = []);
 
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", url);
 
 		xhr.responseType = "arraybuffer";
 		xhr.onload = () => {
-			var buf = xhr.response;
+			var buf = xhr.response as ArrayBuffer | null;
 			if (buf == null || xhr.status === 0 || xhr.status >= 400) {
 				return;
 			}
@@ -424,7 +444,7 @@ class GameSoundWebAudio extends GameSoundForApplet {
 						callback(result);
 					}
 					// cache
-					audioCache[url].forEach(function(func) {
+					newCache.forEach(function(func) {
 						func(result);
 					});
 					audioCache[url] = result;
@@ -451,22 +471,22 @@ class GameSoundWebAudio extends GameSoundForApplet {
 		 * iOS Safari does not support the new Promise-based API,
 		 * so it uses callback-based API.
 		 */
-		function decodeAudioData(context, buf) {
-			return new Promise((resolve, reject) => {
+		function decodeAudioData(context: AudioContext, buf: ArrayBuffer) {
+			return new Promise<AudioBuffer>((resolve, reject) => {
 				context.decodeAudioData(buf, resolve, reject);
 			});
 		}
 	}
 
-	setSound(paramInt, paramString) {
-		if (paramInt < 0 || paramInt >= this.s_data.length) {
+	setSound(paramInt: number, paramString: string) {
+		if (paramInt < 0 || paramInt >= this.s_data_wa.length) {
 			return;
 		}
-		this._loadAudioBufferInto(paramString, this.s_data, paramInt);
+		this._loadAudioBufferInto(paramString, this.s_data_wa, paramInt);
 	}
 
-	play(paramInt) {
-		if (!this.use_f || this.mute_f || this.s_data[paramInt] == null || this.context.state !== "running") {
+	play(paramInt: number) {
+		if (!this.use_f || this.mute_f || this.s_data_wa[paramInt] == null || this.context.state !== "running") {
 			return;
 		}
 		if (this.noOverlapFlag === true) {
@@ -481,12 +501,12 @@ class GameSoundWebAudio extends GameSoundForApplet {
 			}
 		}
 		var source = this.context.createBufferSource();
-		source.buffer = this.s_data[paramInt];
+		source.buffer = this.s_data_wa[paramInt];
 		source.connect(this.dest);
 		this.sourceNodes[paramInt] = source;
 		source.start(0);
 	}
-	stop(paramInt) {
+	stop(paramInt: number) {
 		if (!this.use_f) {
 			return;
 		}
@@ -497,18 +517,19 @@ class GameSoundWebAudio extends GameSoundForApplet {
 		source.disconnect();
 		this.sourceNodes[paramInt] = void 0;
 	}
-	stopAll(paramInt) {
+	stopAll(paramInt: number) {
 		if (!this.use_f) {
 			return;
 		}
-		for (var i = 0; i < this.s_data.length; i++) {
+		for (var i = 0; i < this.s_data_wa.length; i++) {
 			this.stop(i);
 		}
 	}
-	rsAddSound(paramInt) {
-		this.play(paramInt);
+	rsPlay() {
+		this.play(this.rs_b);
+		this.rs_b = -1;
 	}
-	playBGM(paramInt, loopflg) {
+	playBGM(paramInt: number, loopflg: boolean) {
 		if (this.mute_f || this.context.state !== "running") {
 			return;
 		}
@@ -523,20 +544,21 @@ class GameSoundWebAudio extends GameSoundForApplet {
 			}
 		}
 		if (this.bgm_genzai >= 0) {
-			if (this.bgmSourceNodes[this.bgm_genzai] != null) {
-				this.bgmSourceNodes[this.bgm_genzai].disconnect();
+			const bgmSourceNode = this.bgmSourceNodes[this.bgm_genzai];
+			if (bgmSourceNode != null) {
+				bgmSourceNode.disconnect();
 			}
 		}
-		if (this.bgm[paramInt] == null) {
+		if (this.bgm_wa[paramInt] == null) {
 			return;
 		}
 		var source = this.context.createBufferSource();
-		source.buffer = this.bgm[paramInt];
+		source.buffer = this.bgm_wa[paramInt];
 		source.connect(this.dest);
 		if (loopflg || this.bgm_loop) {
 			source.loop = true;
 			source.loopStart = 0;
-			source.loopEnd = source.buffer.duration;
+			source.loopEnd = source.buffer!.duration;
 		}
 		source.start(0);
 
@@ -551,9 +573,9 @@ class GameSoundWebAudio extends GameSoundForApplet {
 		this.bgmSourceNodes[this.bgm_genzai] = void 0;
 		this.bgm_genzai = -1;
 	}
-	playUserBGMFile(paramString, loopflg) {
+	playUserBGMFile(paramString: string, loopflg: boolean) {
 		var url = this.ap.getAudioURL(paramString, true);
-		this._loadAudioBufferInto(url, this.bgm, 19, function(buf) {
+		this._loadAudioBufferInto(url, this.bgm_wa, 19, buf => {
 			this.stopBGM();
 			if (buf != null) {
 				this.bgm_filename[19] = url;
@@ -564,7 +586,7 @@ class GameSoundWebAudio extends GameSoundForApplet {
 
 		return false;
 	}
-	playUserBGMFileLoop(paramString) {
+	playUserBGMFileLoop(paramString: string) {
 		return this.playUserBGMFile(paramString, true);
 	}
 	userInteract() {

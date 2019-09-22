@@ -649,68 +649,65 @@ function waitFor(param) {
 }
 
 // java.applet.AudioClipもどき（未実装）
-function AudioClip(url) {
-	this._dat = new Audio();
-	//alert(this._dat.src);
-	this._dat.preload = "auto";
-	this._dat.src = url;
-	/*this._loaded = false;
-	this._error = false;
-	var _this = this;
-	this._dat.oncanplaythrough = function()
-	{
-		AudioClip__oncanplaythrough(_this);
+class AudioClip {
+	_dat: HTMLAudioElement;
+	constructor(url: string) {
+		this._dat = new Audio();
+		//alert(this._dat.src);
+		this._dat.preload = "auto";
+		this._dat.src = url;
+		/*this._loaded = false;
+		this._error = false;
+		var _this = this;
+		this._dat.oncanplaythrough = function()
+		{
+			AudioClip__oncanplaythrough(_this);
+		}
+		this._dat.onerror = function()
+		{
+			AudioClip__onerror(_this);
+		}
+		__box.appendChild(this._dat);*/
 	}
-	this._dat.onerror = function()
-	{
-		AudioClip__onerror(_this);
+	_oncanplaythrough() {
+		//this._loaded = true;
 	}
-	__box.appendChild(this._dat);*/
-}
-AudioClip.prototype._oncanplaythrough = function() {
-	//this._loaded = true;
-};
-function AudioClip__oncanplaythrough(obj) {
-	//obj._oncanplaythrough();
-}
-AudioClip.prototype._onerror = function() {
-	//this._error = true;
-	//this._dat.src = "";
-};
-function AudioClip__onerror(obj) {
-	//obj._onerror();
-}
+	_onerror() {
+		//this._error = true;
+		//this._dat.src = "";
+	}
 
-AudioClip.prototype.play = function() {
-	try {
-		this._dat.loop = false;
-		this._dat.currentTime = 0;
-		this._dat.play();
-	} catch (e) {
-		return false;
+	play() {
+		try {
+			this._dat.loop = false;
+			this._dat.currentTime = 0;
+			this._dat.play();
+		} catch (e) {
+			return false;
+		}
+		return true;
 	}
-	return true;
-};
 
-AudioClip.prototype.loop = function() {
-	try {
-		this._dat.loop = true;
-		this._dat.currentTime = 0;
-		this._dat.play();
-	} catch (e) {
-		return false;
+	loop() {
+		try {
+			this._dat.loop = true;
+			this._dat.currentTime = 0;
+			this._dat.play();
+		} catch (e) {
+			return false;
+		}
+		return true;
 	}
-	return true;
-};
 
-AudioClip.prototype.stop = function() {
-	try {
-		this._dat.pause();
-	} catch (e) {
-		return false;
+	stop() {
+		try {
+			this._dat.pause();
+		} catch (e) {
+			return false;
+		}
+		return true;
 	}
-	return true;
-};
+}
 
 // java.awt.Dimension
 class Dimension {
