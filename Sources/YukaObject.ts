@@ -1,4 +1,4 @@
-import { Color } from "./ImageBuff";
+import { Color, ImageBuff } from "./ImageBuff";
 
 class YukaObject {
 	con: number;
@@ -10,12 +10,12 @@ class YukaObject {
 	height: number;
 	view_x: number;
 	view_y: number;
-	x_buff: any;
-	y_buff: any;
-	x2_buff: any;
-	y2_buff: any;
+	x_buff: number;
+	y_buff: number;
+	x2_buff: number;
+	y2_buff: number;
 	buff_f: boolean;
-	img: any;
+	img: ImageBuff | null;
 	color: Color;
 	pt: number;
 	pth: number;
@@ -68,7 +68,7 @@ class YukaObject {
 		this.type = 1;
 	}
 
-	setImage(paramImage) {
+	setImage(paramImage: ImageBuff) {
 		this.img = paramImage;
 		return true;
 	}
