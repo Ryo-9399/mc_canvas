@@ -1,11 +1,12 @@
 import { Color, Font } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
+import { MainProgram } from "./MainProgram";
 
 /**
  * 仕掛けを描画します
  */
-export const drawGamescreenUgokuyuka = function() {
+export const drawGamescreenUgokuyuka = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	if (this.ana_kazu > 0) {
@@ -36,7 +37,7 @@ export const drawGamescreenUgokuyuka = function() {
  * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
  */
-export const drawGamescreenEnemy = function() {
+export const drawGamescreenEnemy = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.t_kazu; i++) {
@@ -50,7 +51,7 @@ export const drawGamescreenEnemy = function() {
 	}
 };
 
-export const drawAna = function() {
+export const drawAna = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 11; i++) {
@@ -75,7 +76,7 @@ export const drawAna = function() {
 /**
  * 仕掛けを描画します
  */
-export const drawA = function() {
+export const drawA = function(this: MainProgram) {
 	/**
 	 * 複数枚のパターン画像を並べて描画します
 	 * @param code 左上のパターンコード
@@ -84,7 +85,7 @@ export const drawA = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -99,7 +100,7 @@ export const drawA = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -235,7 +236,7 @@ export const drawA = function() {
 /**
  * 敵の攻撃・アイテムを描画します
  */
-export const drawM = function() {
+export const drawM = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 79; i++) {
@@ -273,7 +274,7 @@ export const drawM = function() {
  * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
  */
-export const drawGamescreenMy = function() {
+export const drawGamescreenMy = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	this.co_j.wx = this.co_j.x - view_x;
@@ -392,7 +393,7 @@ export const drawGamescreenMy = function() {
 /**
  * 主人公の攻撃を描画します
  */
-export const drawMyAttack = function() {
+export const drawMyAttack = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 8; i++) {
@@ -426,7 +427,7 @@ export const drawMyAttack = function() {
 /**
  * ボスを描画
  */
-export const drawBoss = function() {
+export const drawBoss = function(this: MainProgram) {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
 	/**
@@ -452,7 +453,7 @@ export const drawBoss = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -467,7 +468,7 @@ export const drawBoss = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -608,7 +609,7 @@ export const drawBoss = function() {
  * NOTE: Math.floorの有無を除くとv28のdrawBossとまったく同じ処理
  * TODO: この関数ごと消したい
  */
-const drawBossLegacy = function() {
+const drawBossLegacy = function(this: MainProgram) {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
 	/**
@@ -630,7 +631,7 @@ const drawBossLegacy = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -645,7 +646,7 @@ const drawBossLegacy = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -758,7 +759,7 @@ const drawBossLegacy = function() {
  * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
  */
-export const drawGamescreenWindow = function() {
+export const drawGamescreenWindow = function(this: MainProgram) {
 	// MasaoJSS#showRectで設定された矩形を表示
 	if (this.showr_c > 0) {
 		this.hg.setColor(this.js_pen_color);
@@ -788,7 +789,7 @@ export const drawGamescreenWindow = function() {
 /**
  * HPゲージを描画
  */
-export const drawHPGauge = function() {
+export const drawHPGauge = function(this: MainProgram) {
 	// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
 	const x = this.j_hp_v ? 40 : 64;
 	const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
@@ -806,7 +807,7 @@ export const drawHPGauge = function() {
 /**
  * スポット処理
  */
-export const drawSpot = function() {
+export const drawSpot = function(this: MainProgram) {
 	// TODO: co_j.wx, co_j.wyが更新されている前提の処理になっている
 	if (this.spot_c === 100) {
 		// TODO: そもそも変数名rで直径を表すな
@@ -847,7 +848,7 @@ export const drawSpot = function() {
 /**
  * 一言メッセージを描画
  */
-export const drawHitokotoMessage = function() {
+export const drawHitokotoMessage = function(this: MainProgram) {
 	const box_x = 208;
 	const box_y = 56;
 	const box_width = 224;
