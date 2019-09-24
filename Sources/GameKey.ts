@@ -22,7 +22,7 @@ class GameKey {
 	tr1_c = 0;
 	codekey_f = new Array(256);
 	left_right_lock = false;
-	key_char: any;
+	key_char = 0;
 
 	/**
 	 * 初期化
@@ -57,7 +57,7 @@ class GameKey {
 	 * キー入力を受けた時の処理
 	 * @param paramKeyEvent {KeyboardEvent} 入力されたキーに関するイベント
 	 */
-	keyPressed(paramKeyEvent) {
+	keyPressed(paramKeyEvent: KeyboardEvent) {
 		this.key_code = paramKeyEvent.keyCode;
 		this.key_char = paramKeyEvent.keyCode;
 		if (this.key_code >= 0 && this.key_code <= 255) {
@@ -142,7 +142,7 @@ class GameKey {
 	 * キーが離されたときの処理
 	 * @param paramKeyEvent {KeyboardEvent} キーに関するイベント
 	 */
-	keyReleased(paramKeyEvent) {
+	keyReleased(paramKeyEvent: KeyboardEvent) {
 		var i = paramKeyEvent.keyCode;
 		if (i >= 0 && i <= 255) {
 			this.codekey_f[i] = false;
@@ -239,7 +239,7 @@ class GameKey {
  * @param e {KeyboardEvent}
  * @constructor
  */
-function GameKey_keyPressed(obj, e) {
+function GameKey_keyPressed(obj: GameKey, e: KeyboardEvent) {
 	obj.keyPressed(e);
 }
 
@@ -250,7 +250,7 @@ function GameKey_keyPressed(obj, e) {
  * @param e {KeyboardEvent}
  * @constructor
  */
-function GameKey_keyReleased(obj, e) {
+function GameKey_keyReleased(obj: GameKey, e: KeyboardEvent) {
 	obj.keyReleased(e);
 }
 
