@@ -8,26 +8,30 @@
  * @param h {number} 画像の高さ
  * @constructor
  */
-class ImageBuff {
-	_dat: any;
-	_width: any;
-	_height: any;
+class ImageBuff implements ImageBuff {
+	_dat: HTMLCanvasElement | HTMLImageElement | null;
+	_width: number;
+	_height: number;
 	_loaded: boolean;
 	_error: boolean;
-	_g: any;
-	_g_bk: any;
+	_g: Graphics | null;
+	_g_bk: GraphicsBk | null;
 
-	constructor(w?, h?) {
-		if (arguments.length == 2) {
+	constructor();
+	constructor(w: number, h: number);
+	constructor(w?: number, h?: number) {
+		if (w !== undefined && h !== undefined) {
 			this._dat = document.createElement("canvas");
 			this._dat.width = w;
 			this._dat.height = h;
 			this._width = w;
 			this._height = h;
 			var ctx = this._dat.getContext("2d");
-			ctx.lineWidth = 1.6;
-			ctx.lineCap = "round";
-			ctx.save();
+			if (ctx) {
+				ctx.lineWidth = 1.6;
+				ctx.lineCap = "round";
+				ctx.save();
+			}
 		} else {
 			this._dat = null;
 			this._width = -1;
@@ -43,7 +47,7 @@ class ImageBuff {
 	 * 画像を読み込む
 	 * @param url {string} 読み込む画像のパス(相対パス、URLともに可)
 	 */
-	load(url) {
+	load(url: string) {
 		this._loaded = false;
 		this._error = false;
 		this._width = -1;
@@ -59,9 +63,6 @@ class ImageBuff {
 		this._dat.onabort = function() {
 			ImageBuff_onerror(_this);
 		};
-		this._dat.ontimeout = function() {
-			ImageBuff_onerror(_this);
-		};
 		this._dat.src = url;
 		if (this._dat.complete) {
 			this.onload();
@@ -73,8 +74,10 @@ class ImageBuff {
 	 */
 	onload() {
 		this._loaded = true;
-		this._width = this._dat.naturalWidth;
-		this._height = this._dat.naturalHeight;
+		if (this._dat instanceof Image) {
+			this._width = this._dat.naturalWidth;
+			this._height = this._dat.naturalHeight;
+		}
 	}
 
 	/**
@@ -115,10 +118,10 @@ class ImageBuff {
 	}
 }
 
-function ImageBuff_onload(obj) {
+function ImageBuff_onload(obj: ImageBuff) {
 	obj.onload();
 }
-function ImageBuff_onerror(obj) {
+function ImageBuff_onerror(obj: ImageBuff) {
 	obj.onerror();
 }
 
@@ -128,12 +131,14 @@ function ImageBuff_onerror(obj) {
  * @constructor
  */
 class Graphics {
-	_ctx: any;
-	_color: any;
-	_font: any;
+	_ctx: CanvasRenderingContext2D | null = null;
+	_color: Color;
+	_font: Font;
 
-	constructor(img) {
-		this._ctx = img._dat.getContext("2d");
+	constructor(img: ImageBuff) {
+		if (img._dat && !("src" in img._dat)) {
+			this._ctx = img._dat.getContext("2d");
+		}
 		if (this._ctx) {
 			this._ctx.restore();
 			this._ctx.save();
@@ -150,7 +155,7 @@ class Graphics {
 	 * @param y2 {number} 終点のY座標
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawLine(x1, y1, x2, y2) {
+	drawLine(x1: number, y1: number, x2: number, y2: number) {
 		if (this._ctx == null) return false;
 		this._ctx.beginPath();
 		this._ctx.moveTo(x1, y1);
@@ -198,31 +203,6 @@ class Graphics {
 	 * @param sh {number} 切り出してくる縦方向の高さ
 	 * @param dx {number} 描画先X座標
 	 * @param dy {number} 描画先Y座標
-	 * @returns {boolean} 描画に成功したかどうか
-	 */
-	drawImage(
-		img: ImageBuff,
-		sx: number,
-		sy: number,
-		sw: number,
-		sh: number,
-		dx: number,
-		dy: number,
-		ap?: unknown
-	): boolean;
-	/**
-	 * 画像を描画する
-	 * @method
-	 * @memberOf Graphics.prototype
-	 * @name drawImage
-	 * @variation 4
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param sx {number} imgから切り出すX座標
-	 * @param sy {number} imgから切り出すY座標
-	 * @param sw {number} 切り出してくる横方向の幅
-	 * @param sh {number} 切り出してくる縦方向の高さ
-	 * @param dx {number} 描画先X座標
-	 * @param dy {number} 描画先Y座標
 	 * @param dw {number} 描画される横方向の幅
 	 * @param dh {number} 描画される縦方向の高さ
 	 * @returns {boolean} 描画に成功したかどうか
@@ -254,13 +234,13 @@ class Graphics {
 		if (img._dat == null) return false;
 		if (this._ctx == null) return false;
 		try {
-			if (arguments.length <= 4) {
+			if (a3 === undefined || a4 === undefined) {
 				this._ctx.drawImage(img._dat, a1, a2);
 				return true;
-			} else if (arguments.length <= 6) {
+			} else if (a5 === undefined || a6 === undefined || a7 === undefined || a8 === undefined) {
 				this._ctx.drawImage(img._dat, a1, a2, a3, a4);
 				return true;
-			} else if (arguments.length <= 10) {
+			} else {
 				this._ctx.drawImage(img._dat, a1, a2, a3, a4, a5, a6, a7, a8);
 				return true;
 			}
@@ -276,7 +256,7 @@ class Graphics {
 	 * @param h {number} 高さ
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawRect(x, y, w, h) {
+	drawRect(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
 		this._ctx.strokeRect(x, y, w, h);
 		return true;
@@ -290,7 +270,7 @@ class Graphics {
 	 * @param h {number} 高さ
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	fillRect(x, y, w, h) {
+	fillRect(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
 		this._ctx.fillRect(x, y, w, h);
 		return true;
@@ -303,7 +283,7 @@ class Graphics {
 	 * @param pn {number} 多角形の頂点数
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawPolygon(xa, ya, pn) {
+	drawPolygon(xa: number[], ya: number[], pn: number) {
 		if (this._ctx == null) return false;
 		this._ctx.beginPath();
 		this._ctx.moveTo(xa[0], ya[0]);
@@ -322,7 +302,7 @@ class Graphics {
 	 * @param pn {number} 多角形の頂点数
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	fillPolygon(xa, ya, pn) {
+	fillPolygon(xa: number[], ya: number[], pn: number) {
 		if (this._ctx == null) return false;
 		this._ctx.beginPath();
 		this._ctx.moveTo(xa[0], ya[0]);
@@ -342,7 +322,7 @@ class Graphics {
 	 * @param h {number} 高さ
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawOval(x, y, w, h) {
+	drawOval(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
 		this.drawArc(x, y, w, h, 0, Math.PI * 2);
 		return true;
@@ -356,7 +336,7 @@ class Graphics {
 	 * @param h {number} 高さ
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	fillOval(x, y, w, h) {
+	fillOval(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
 		this.fillArc(x, y, w, h, 0, Math.PI * 2);
 		return true;
@@ -372,7 +352,7 @@ class Graphics {
 	 * @param theta {number} 始点から終点までのラジアン角
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawArc(x, y, w, h, angle, theta) {
+	drawArc(x: number, y: number, w: number, h: number, angle: number, theta: number) {
 		if (this._ctx == null) return false;
 		var sc = h / w;
 		this._ctx.save();
@@ -394,7 +374,7 @@ class Graphics {
 	 * @param theta {number} 始点から終点までのラジアン角
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	fillArc(x, y, w, h, angle, theta) {
+	fillArc(x: number, y: number, w: number, h: number, angle: number, theta: number) {
 		if (this._ctx == null) return false;
 		var sc = h / w;
 		this._ctx.save();
@@ -413,7 +393,7 @@ class Graphics {
 	 * @param a {number} 0から255までのアルファ値
 	 * @returns {boolean} 設定に成功したかどうか
 	 */
-	setGlobalAlpha(a) {
+	setGlobalAlpha(a: number) {
 		if (this._ctx == null) return false;
 		if (a < 0) a = 0;
 		if (a > 255) a = 255;
@@ -426,7 +406,7 @@ class Graphics {
 	 * @param color {Color} 描画色
 	 * @returns {boolean} 設定に成功したかどうか
 	 */
-	setColor(color) {
+	setColor(color: Color) {
 		if (this._ctx == null) return false;
 		this._color = new Color(color.r, color.g, color.b, color.a);
 		var val = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a / 255 + ")";
@@ -440,7 +420,7 @@ class Graphics {
 	 * @param font {Font} 設定するFontオブジェクト
 	 * @returns {boolean} 設定に成功したかどうか
 	 */
-	setFont(font) {
+	setFont(font: Font) {
 		if (this._ctx == null) return false;
 		var str = "";
 		if (font._style & Font.ITALIC) str += "italic ";
@@ -464,7 +444,7 @@ class Graphics {
 	 * @param y {number} Y座標
 	 * @returns {boolean} 描画に成功したかどうか
 	 */
-	drawString(str, x, y) {
+	drawString(str: string, x: number, y: number) {
 		if (this._ctx == null) return false;
 		this._ctx.fillText(str, x, y);
 		return true;
@@ -476,7 +456,7 @@ class Graphics {
 	 * @param y {number} Y方向の移動距離
 	 * @returns {boolean} 成功したかどうか
 	 */
-	translate(x, y) {
+	translate(x: number, y: number) {
 		if (this._ctx == null) return false;
 		this._ctx.translate(x, y);
 		return true;
@@ -489,7 +469,7 @@ class Graphics {
 	 * @param [y] {number} 回転の中心となるY座標
 	 * @returns {boolean} 成功したかどうか
 	 */
-	rotate(angle, x, y) {
+	rotate(angle: number, x: number, y: number) {
 		if (this._ctx == null) return false;
 		if (arguments.length == 1) {
 			this._ctx.rotate(angle);
@@ -507,7 +487,7 @@ class Graphics {
 	 * @param y {number} Y方向の拡大倍率
 	 * @returns {boolean} 成功したかどうか
 	 */
-	scale(x, y) {
+	scale(x: number, y: number) {
 		if (this._ctx == null) return false;
 		this._ctx.scale(x, y);
 		return true;
@@ -526,6 +506,7 @@ class Graphics {
 	 * @param h {number} 高さ
 	 * @returns {boolean}
 	 */
+	setClip(pattern: "ellipse", x: number, y: number, w: number, h: number): boolean;
 	/**
 	 * クリッピング領域を設定する
 	 * @method
@@ -539,6 +520,7 @@ class Graphics {
 	 * @param h {number} 高さ
 	 * @returns {boolean}
 	 */
+	setClip(pattern: "rect", x: number, y: number, w: number, h: number): boolean;
 	/**
 	 * クリッピング領域を設定する
 	 * @method
@@ -551,34 +533,28 @@ class Graphics {
 	 * @param pn {number} 多角形の頂点数
 	 * @returns {boolean}
 	 */
-	setClip(pattern) {
+	setClip(pattern: "polygon", xa: number[], ya: number[], pn: number): boolean;
+	setClip(pattern: string, a1: number | number[], a2: number | number[], a3: number, a4?: number) {
 		if (this._ctx == null) return false;
 		if (pattern == "ellipse") {
-			var sc = arguments[4] / arguments[3];
+			var sc = a4! / a3;
 			this._ctx.beginPath();
 			this._ctx.save();
 			this._ctx.scale(1, sc);
-			this._ctx.arc(
-				arguments[1] + arguments[3] / 2,
-				(arguments[2] + arguments[4] / 2) / sc,
-				arguments[3] / 2,
-				0,
-				Math.PI * 2,
-				false
-			);
+			this._ctx.arc((a1 as number) + a3 / 2, ((a2 as number) + a4! / 2) / sc, a3 / 2, 0, Math.PI * 2, false);
 			this._ctx.restore();
 			this._ctx.clip();
 			return true;
 		} else if (pattern == "rect") {
 			this._ctx.beginPath();
-			this._ctx.rect(arguments[1], arguments[2], arguments[3], arguments[4]);
+			this._ctx.rect(a1 as number, a2 as number, a3, a4!);
 			this._ctx.clip();
 			return true;
 		} else if (pattern == "polygon") {
 			this._ctx.beginPath();
-			this._ctx.moveTo(arguments[1][0], arguments[2][0]);
-			for (var i = 1; i < arguments[3]; i++) {
-				this._ctx.lineTo(arguments[1][i], arguments[2][i]);
+			this._ctx.moveTo((a1 as number[])[0], (a2 as number[])[0]);
+			for (var i = 1; i < a3; i++) {
+				this._ctx.lineTo((a1 as number[])[i], (a2 as number[])[i]);
 			}
 			this._ctx.closePath();
 			this._ctx.clip();
@@ -597,7 +573,7 @@ class Graphics {
 	 * @param dy {number} Y方向の移動距離
 	 * @returns {boolean}
 	 */
-	copyArea(x, y, width, height, dx, dy) {
+	copyArea(x: number, y: number, width: number, height: number, dx: number, dy: number) {
 		if (this._ctx == null) return false;
 		this._ctx.drawImage(this._ctx.canvas, x, y, width, height, x + dx, y + dy, width, height);
 		return true;
@@ -607,8 +583,10 @@ class Graphics {
 	 * 描画等で加えた変更を破棄して元の画像に戻す
 	 */
 	dispose() {
-		this._ctx.restore();
-		this._ctx.save();
+		if (this._ctx) {
+			this._ctx.restore();
+			this._ctx.save();
+		}
 	}
 }
 
@@ -618,20 +596,87 @@ class Graphics {
  * @constructor
  */
 class GraphicsBk extends Graphics {
-	constructor(img) {
+	constructor(img: ImageBuff) {
 		super(img);
 	}
 
 	/**
 	 * 画像を描画する
+	 * @method
+	 * @memberOf Graphics.prototype
+	 * @name drawImage
+	 * @variation 1
+	 * @param img {ImageBuff} ImageBuffオブジェクト
+	 * @param dx {number} 描画先X座標
+	 * @param dy {number} 描画先Y座標
+	 * @returns {boolean} 描画に成功したかどうか
+	 */
+	drawImage(img: ImageBuff, dx: number, dy: number, ap?: unknown): boolean;
+	/**
+	 * 画像を描画する
+	 * @method
+	 * @memberOf Graphics.prototype
+	 * @name drawImage
+	 * @variation 2
+	 * @param img {ImageBuff} ImageBuffオブジェクト
+	 * @param dx {number} 描画先X座標
+	 * @param dy {number} 描画先Y座標
+	 * @param dw {number} 描画される横方向の幅
+	 * @param dh {number} 描画される縦方向の高さ
+	 * @returns {boolean} 描画に成功したかどうか
+	 */
+	drawImage(img: ImageBuff, dx: number, dy: number, dw: number, dh: number, ap?: unknown): boolean;
+	/**
+	 * 画像を描画する
+	 * @method
+	 * @memberOf Graphics.prototype
+	 * @name drawImage
+	 * @variation 3
+	 * @param img {ImageBuff} ImageBuffオブジェクト
+	 * @param dx1 {number} 描画先矩形の1番目の隅のX座標
+	 * @param dy1 {number} 描画先矩形の1番目の隅のY座標
+	 * @param dx2 {number} 描画先矩形の2番目の隅のX座標
+	 * @param dy2 {number} 描画先矩形の2番目の隅のY座標
+	 * @param sx1 {number} ソース画像矩形の1番目の隅のX座標
+	 * @param sy1 {number} ソース画像矩形の1番目の隅のY座標
+	 * @param sx2 {number} ソース画像矩形の2番目の隅のX座標
+	 * @param sy2 {number} ソース画像矩形の2番目の隅のY座標
+	 * @returns {boolean} 描画に成功したかどうか
+	 */
+	drawImage(
+		img: ImageBuff,
+		dx1: number,
+		dy1: number,
+		dx2: number,
+		dy2: number,
+		sx1: number,
+		sy1: number,
+		sx2: number,
+		sy2: number,
+		ap?: unknown
+	): boolean;
+	/**
+	 * 画像を描画する
 	 * GraphicsクラスのdrawImage()との違いは、引数を9個与えた際に幅・高さの指定の代わりに終点のX座標とY座標を指定すること
 	 */
-	drawImage(img, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
-		var argsnum = arguments.length;
-		if (argsnum <= 4) {
+	drawImage(
+		img: ImageBuff,
+		a1: number,
+		a2: number,
+		a3?: number,
+		a4?: number,
+		a5?: number,
+		a6?: number,
+		a7?: number,
+		a8?: number,
+		a9?: unknown
+	) {
+		if (img._dat == null) return false;
+		if (this._ctx == null) return false;
+		if (a3 === undefined || a4 === undefined) {
 			this._ctx.drawImage(img._dat, a1, a2);
 			return true;
-		} else if (5 <= argsnum && argsnum <= 6) {
+		} else if (a5 === undefined || a6 === undefined || a7 === undefined || a8 === undefined) {
 			// 引数5-6個の場合, (a1, a2): 描画先座標
 			// (a3, a4): 拡大/縮小後の大きさ
 			// 大きさが負の場合は反転する必要あり
@@ -703,7 +748,7 @@ class Color {
 	b: number;
 	a: number;
 
-	constructor(r, g, b, a?) {
+	constructor(r: number, g: number, b: number, a?: number) {
 		if (r > 255) this.r = 255;
 		else if (r < 0) this.r = 0;
 		else this.r = r;
@@ -713,7 +758,7 @@ class Color {
 		if (b > 255) this.b = 255;
 		else if (b < 0) this.b = 0;
 		else this.b = b;
-		if (arguments.length == 4) {
+		if (a !== undefined) {
 			if (a > 255) this.a = 255;
 			else if (a < 0) this.a = 0;
 			else this.a = a;
@@ -782,11 +827,11 @@ class Color {
  * @constructor
  */
 class Font {
-	_name: any;
-	_style: any;
-	_size: any;
+	_name: string;
+	_style: number;
+	_size: number;
 
-	constructor(name, style, size) {
+	constructor(name: string, style: number, size: number) {
 		this._name = name;
 		this._style = style;
 		this._size = size;
