@@ -2,11 +2,12 @@ import { Color, Font } from "./ImageBuff";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 
 import * as drawGameScreenJSS from "./drawGamescreenJSS";
+import { MainProgram } from "./MainProgram";
 
 /**
  * ゲーム画面を描画します
  */
-export const drawGamescreen = function() {
+export const drawGamescreen = function(this: MainProgram) {
 	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1)
 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
 	else if (this.setmapc_f) {
@@ -96,7 +97,7 @@ export const drawGamescreen = function() {
 	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
 
 	if (this.second_gazou_visible && this.second_gazou_priority === 2 && this.second_gazou_img !== null) {
-		const draw = (x, y) => {
+		const draw = (x: number, y: number) => {
 			this.hg.drawImage(this.second_gazou_img, x, y);
 		};
 		// [x方向の繰り返し回数, y方向の繰り返し回数]
@@ -121,8 +122,8 @@ export const drawGamescreen = function() {
 			if (this.maps.second_gazou_x > 0) this.maps.second_gazou_x -= 512;
 			if (this.maps.second_gazou_y < -320) this.maps.second_gazou_y += 320;
 			if (this.maps.second_gazou_y > 0) this.maps.second_gazou_y -= 320;
-			scroll_x = this.second_gazou_x;
-			scroll_y = this.second_gazou_y;
+			scroll_x = (this as any).second_gazou_x; // TODO: 型付け
+			scroll_y = (this as any).second_gazou_y; // TODO: 型付け
 			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 5) {
 			// 左右スクロール  速度３／２
@@ -171,7 +172,7 @@ export const drawGamescreen = function() {
 /**
  * 仕掛けを描画します
  */
-const drawA = function() {
+const drawA = function(this: MainProgram) {
 	const ai = new Array(26);
 	const ai1 = new Array(26);
 	/**
@@ -182,7 +183,7 @@ const drawA = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -197,7 +198,7 @@ const drawA = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -988,7 +989,7 @@ const drawA = function() {
  * @param co_wx 土管の左上の点の画面上のX座標
  * @param co_wy 土管の左上の点の画面上のY座標
  */
-const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
+const drawDokan = function(this: MainProgram, dokan_id: number, dokan_type: number, co_wx: number, co_wy: number) {
 	const dokan_pt = 60 + dokan_id * 2;
 	// 土管の回転角度と回転の中心を算出する
 	let rad = 0;
@@ -1012,7 +1013,7 @@ const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
 /**
  * 敵の攻撃・アイテムを描画します
  */
-const drawM = function() {
+const drawM = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 79; i++) {
@@ -1098,7 +1099,7 @@ const drawM = function() {
 /**
  * 主人公を描画します
  */
-export const drawGamescreenMy = function() {
+export const drawGamescreenMy = function(this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	// NOTE: drawGamescreenでも同じ代入をしているので、drawGamescreenから呼ばれた場合同じ処理が二回行われる
