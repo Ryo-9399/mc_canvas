@@ -51,18 +51,20 @@ class ChipImage {
 					continue;
 				}*/
 				localG = this.chip_img[j + l * this.chip_x_count][0].getGraphics();
-				localG.drawImage(
-					this.ai_img,
-					k1,
-					l1,
-					this.chip_width,
-					this.chip_height,
-					0,
-					0,
-					this.chip_width,
-					this.chip_height,
-					null
-				);
+				if (localG) {
+					localG.drawImage(
+						this.ai_img,
+						k1,
+						l1,
+						this.chip_width,
+						this.chip_height,
+						0,
+						0,
+						this.chip_width,
+						this.chip_height,
+						null
+					);
+				}
 			}
 		}
 	}
@@ -81,17 +83,23 @@ class ChipImage {
 				if (this.chip_img[k2][0] == null) continue;
 
 				localG = this.chip_img[k2][1].getGraphics();
-				localG.scale(-1, 1);
-				localG.drawImage(this.chip_img[k2][0], -w, 0, w, h, null);
-				localG.dispose();
+				if (localG) {
+					localG.scale(-1, 1);
+					localG.drawImage(this.chip_img[k2][0], -w, 0, w, h, null);
+					localG.dispose();
+				}
 				localG = this.chip_img[k2][2].getGraphics();
-				localG.scale(1, -1);
-				localG.drawImage(this.chip_img[k2][0], 0, -h, w, h, null);
-				localG.dispose();
+				if (localG) {
+					localG.scale(1, -1);
+					localG.drawImage(this.chip_img[k2][0], 0, -h, w, h, null);
+					localG.dispose();
+				}
 				localG = this.chip_img[k2][3].getGraphics();
-				localG.scale(-1, -1);
-				localG.drawImage(this.chip_img[k2][0], -w, -h, w, h, null);
-				localG.dispose();
+				if (localG) {
+					localG.scale(-1, -1);
+					localG.drawImage(this.chip_img[k2][0], -w, -h, w, h, null);
+					localG.dispose();
+				}
 			}
 		}
 
