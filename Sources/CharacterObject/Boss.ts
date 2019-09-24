@@ -1,4 +1,5 @@
 import { CharacterObject } from "../CharacterObject";
+import { MainProgram } from "../MainProgram";
 
 // ボスの状態
 export const DYING = 40;
@@ -53,7 +54,7 @@ export const PATTERN_BOSS3_ROTATE_RIGHT = 1256;
  * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
  * @param {number} degree
  */
-const normalizeDegree = degree => ((degree % 360) + 360) % 360;
+const normalizeDegree = (degree: number) => ((degree % 360) + 360) % 360;
 
 /**
  * 長さが同じ配列をまとめる
@@ -61,10 +62,12 @@ const normalizeDegree = degree => ((degree % 360) + 360) % 360;
  * @param {Array} a
  * @param {Array} b
  */
-const zip = (a, b) => {
+const zip = <T>(a: T[], b: T[]): [T, T][] => {
 	if (a.length !== b.length) throw new Error("The given arrays do not have the same length.");
 	return a.map((v, i) => [v, b[i]]);
 };
+
+type Direction = 0 | 1;
 
 class Boss extends CharacterObject {
 	/*
@@ -78,7 +81,7 @@ class Boss extends CharacterObject {
 	 * フレームごとの処理を行う
 	 * @param {MainProgram} mp
 	 */
-	update(mp) {
+	update(mp: MainProgram) {
 		if (this.x >= mp.maps.wx + 1024) return;
 		mp.boss_attack_mode = false;
 		this.move(mp);
@@ -89,7 +92,7 @@ class Boss extends CharacterObject {
 	 * ボスの行動処理
 	 * @param {MainProgram} mp
 	 */
-	move(mp) {
+	move(mp: MainProgram) {
 		// ボスが居座るX座標
 		const x_standby_left = mp.sl_wx + 96;
 		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
@@ -360,7 +363,7 @@ class Boss extends CharacterObject {
 	 * 当たり判定処理
 	 * @param {MainProgram} mp
 	 */
-	checkCollision(mp) {
+	checkCollision(mp: MainProgram) {
 		// 主人公とボスの当たり判定
 		const j = mp.co_j;
 		const hit_flag =
@@ -418,7 +421,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
-	boss1Attack(mp, direction) {
+	boss1Attack(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 
@@ -504,7 +507,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
-	boss2Attack(mp, direction) {
+	boss2Attack(mp: MainProgram, direction: Direction) {
 		mp.boss_attack_mode = true;
 		this.c1++;
 		if (mp.boss2_type === 2) {
@@ -519,7 +522,7 @@ class Boss extends CharacterObject {
 			if (this.c1 > 445) this.c1 = 0;
 		} else if (mp.boss2_type === 3) {
 			// うずしお
-			const whirlpool = d => {
+			const whirlpool = (d: number) => {
 				for (let i = 0; i < 360; i += 90) {
 					const attack = direction === 1 ? 980 : 970;
 					mp.mSet2(this.x, this.y, attack, i + d, 0);
@@ -564,7 +567,7 @@ class Boss extends CharacterObject {
 			if (this.c1 >= 200) this.c1 = 0;
 		} else if (mp.boss2_type === 5) {
 			// ハリケンブラスト
-			const hurricaneBlast = d => {
+			const hurricaneBlast = (d: number) => {
 				for (let i = 0; i < 360; i += 60) {
 					mp.mSet2(this.x, this.y, 901, i + d, 0);
 					mp.mSet2(this.x, this.y, 911, 300 - (i + d), 0);
@@ -608,7 +611,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} degree ずらす角度(度数法)
 	 */
-	boss2BubbleBeam(mp, degree) {
+	boss2BubbleBeam(mp: MainProgram, degree: number) {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
@@ -624,7 +627,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
-	boss2Attack6(mp, direction) {
+	boss2Attack6(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 		this.c1--;
@@ -703,7 +706,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
-	boss3Attack(mp, direction) {
+	boss3Attack(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 
@@ -767,7 +770,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き
 	 */
-	boss3TackleAttack(mp, direction) {
+	boss3TackleAttack(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
 		const mirror = direction === 1 ? -1 : 1;
 
@@ -789,7 +792,7 @@ class Boss extends CharacterObject {
 		 * @param fix_position {boolean} 境界外に出た場合にX座標を境界に合わせるかどうか
 		 * @param next_c1 {number} 境界外に出た際に移行するc1の値
 		 */
-		const checkBorder = (speed, left, right, fix_position, next_c1) => {
+		const checkBorder = (speed: number, left: number, right: number, fix_position: boolean, next_c1: number) => {
 			if (speed <= 0 && this.x <= left) {
 				if (fix_position) this.x = left;
 				this.c1 = next_c1;
@@ -857,7 +860,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} return_state ダメージから回復後に復帰するボスの状態
 	 */
-	updateDamage(mp, return_state) {
+	updateDamage(mp: MainProgram, return_state: number) {
 		this.c1++;
 		if (this.c4 <= 0) {
 			// 死亡
@@ -883,7 +886,7 @@ class Boss extends CharacterObject {
 	 * グレネードで吹き飛んでいる状態の処理
 	 * @param {MainProgram} mp
 	 */
-	dyingByGrenade(mp) {
+	dyingByGrenade(mp: MainProgram) {
 		// 落下していく
 		this.vy += 4;
 		if (this.vy > 28) this.vy = 28;
@@ -911,7 +914,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @returns {boolean}
 	 */
-	isFumuable(mp) {
+	isFumuable(mp: MainProgram) {
 		if (mp.j_tokugi === 10 || (mp.j_tokugi >= 12 && mp.j_tokugi <= 15)) return false;
 		if (mp.boss_destroy_type === 2) return false;
 		return !(
@@ -926,7 +929,7 @@ class Boss extends CharacterObject {
 	 * ボスが主人公に踏まれてダメージを受けたときの処理をします
 	 * @param {MainProgram} mp
 	 */
-	fumu(mp) {
+	fumu(mp: MainProgram) {
 		this.c4--;
 		this.c1 = 0;
 		// HP1のときは右向き
@@ -953,7 +956,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {CharacterObject} characterobject グレネード
 	 */
-	hitWithGrenade(mp, characterobject) {
+	hitWithGrenade(mp: MainProgram, characterobject: CharacterObject) {
 		// グレネードでないなら処理しない
 		if (characterobject.c !== 200) return;
 		if (this.c < 100) return;
@@ -974,7 +977,7 @@ class Boss extends CharacterObject {
 	 * ファイヤーボールとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 */
-	hitWithFireball(mp) {
+	hitWithFireball(mp: MainProgram) {
 		// ボスがバリアを張っている場合はダメージを与えられない
 		if (this.pt === PATTERN_BOSS3_BARRIER_LEFT || this.pt === PATTERN_BOSS3_BARRIER_RIGHT) return;
 		// HPを1減らす
@@ -985,7 +988,7 @@ class Boss extends CharacterObject {
 	 * しっぽとボスが接触した場合の処理を行います
 	 * @param {MainProgram} mp
 	 */
-	hitWithTail(mp) {
+	hitWithTail(mp: MainProgram) {
 		// しっぽでボスにダメージを与えられない場合は処理しない
 		if (mp.boss_destroy_type !== 2) return;
 		if (this.pt === PATTERN_BOSS3_BARRIER_LEFT || this.pt === PATTERN_BOSS3_BARRIER_RIGHT) return;
@@ -1002,7 +1005,7 @@ class Boss extends CharacterObject {
 	 * (ファイヤーボール・しっぽの攻撃で倒された場合の処理)
 	 * @param {MainProgram} mp
 	 */
-	killNormalAttack(mp) {
+	killNormalAttack(mp: MainProgram) {
 		// ファイヤーボール・しっぽの攻撃で倒される場合、ボスは常に左向き
 		this.c4 = 0;
 		this.c1 = 0;
@@ -1030,7 +1033,7 @@ class Boss extends CharacterObject {
 	 * @param {MainProgram} mp
 	 * @param {number} direction ボスの向き 0:左向き 1:右向き ※向いている方向とは反対側に飛んでいく
 	 */
-	killGrenade(mp, direction) {
+	killGrenade(mp: MainProgram, direction: Direction) {
 		this.vy = -24;
 		this.c1 = 0;
 		this.muki = direction;
@@ -1059,7 +1062,7 @@ class Boss extends CharacterObject {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossHP}
 	 */
-	setHP(mp, hp) {
+	setHP(mp: MainProgram, hp: number) {
 		if (this.c < 100) return false;
 
 		if (mp.boss_destroy_type === 2) {
@@ -1111,7 +1114,7 @@ class Boss extends CharacterObject {
 	 * ただしボスのHPはmp.boss_hpとmp.boss_hp_maxの値が参照されます
 	 * @param {MainProgram} mp
 	 */
-	showBossHPGauge(mp) {
+	showBossHPGauge(mp: MainProgram) {
 		const boss_number = this.getBossNumber();
 		let param_name = "boss_name";
 		if (boss_number === 2) param_name = "boss2_name";
