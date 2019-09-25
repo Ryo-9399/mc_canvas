@@ -3,7 +3,7 @@ import { Color, ImageBuff, Graphics } from "./ImageBuff";
 import { TagDataBase } from "./TagDataBase";
 import { MasaoConstruction } from "./MasaoConstruction";
 
-type InversionKind = 0 | 1;
+export type InversionKind = 0 | 1;
 
 class GameGraphicsForApplet {
 	tdb: TagDataBase;
@@ -76,17 +76,17 @@ class GameGraphicsForApplet {
 		 * ゲーム画面のグラフィック
 		 * @type {Graphics}
 		 */
-		this.os_g = this.os_img.getGraphics();
-		this.os_g_bk = this.os_img.getGraphicsBk();
+		this.os_g = this.os_img.getGraphics()!;
+		this.os_g_bk = this.os_img.getGraphicsBk()!;
 		this.os2_img = this.ap.createImage(this.di.width + 96, this.di.height + 96);
 		/**
 		 * 裏画面のグラフィック
 		 * 裏画面は描画予定のマップ上のブロックや地図画面を保持する
 		 * @type {Graphics}
 		 */
-		this.os2_g = this.os2_img.getGraphics();
+		this.os2_g = this.os2_img.getGraphics()!;
 		this.os32_img = this.ap.createImage(32, 32);
-		this.os32_g = this.os32_img.getGraphics();
+		this.os32_g = this.os32_img.getGraphics()!;
 		this.pg = undefined;
 		this.spt_img = createNDimensionArray(2, this.spt_kazu);
 		this.hi = undefined;
@@ -129,12 +129,16 @@ class GameGraphicsForApplet {
 				j = n * 10 + m;
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
-				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				if (localG) {
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
 				if (n >= this.spt_h_kijyun) {
 					this.spt_img[1][j] = new ImageBuff(32, 32);
 					localG = this.spt_img[1][j].getGraphics();
-					localG.scale(-1, 1);
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					if (localG) {
+						localG.scale(-1, 1);
+						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					}
 				} else {
 					this.spt_img[1][j] = this.spt_img[0][j];
 				}
@@ -169,8 +173,10 @@ class GameGraphicsForApplet {
 
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
-				localG.setGlobalAlpha(i5);
-				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				if (localG) {
+					localG.setGlobalAlpha(i5);
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
 			}
 		}
 		// ■■■32x32にカットする処理(mapchip)
@@ -183,7 +189,9 @@ class GameGraphicsForApplet {
 
 					this.smapchip_img[j] = new ImageBuff(32, 32);
 					localG = this.smapchip_img[j].getGraphics();
-					localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					if (localG && this.amapchip_img) {
+						localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					}
 				}
 			}
 		}
@@ -206,12 +214,16 @@ class GameGraphicsForApplet {
 				j = n * 10 + m;
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
-				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				if (localG) {
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
 				if (n >= this.spt_h_kijyun) {
 					this.spt_img[1][j] = new ImageBuff(32, 32);
 					localG = this.spt_img[1][j].getGraphics();
-					localG.scale(-1, 1);
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					if (localG) {
+						localG.scale(-1, 1);
+						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					}
 				} else {
 					this.spt_img[1][j] = this.spt_img[0][j];
 				}
@@ -242,7 +254,9 @@ class GameGraphicsForApplet {
 
 					this.smapchip_img[j] = new ImageBuff(32, 32);
 					localG = this.smapchip_img[j].getGraphics();
-					localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					if (localG) {
+						localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					}
 				}
 			}
 		}
