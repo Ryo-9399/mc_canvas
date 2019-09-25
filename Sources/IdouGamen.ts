@@ -1,39 +1,49 @@
 import { CharacterObject } from "./CharacterObject";
 import { createNDimensionArray } from "./GlobalFunctions";
 import { Color } from "./ImageBuff";
+import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
+import { GameKey } from "./GameKey";
+import { KeyboardMenu } from "./KeyboardMenu";
+import { MainProgram } from "./MainProgram";
+import { TagDataBase } from "./TagDataBase";
 
 class IdouGamen {
-	gg: any;
-	gk: any;
-	km: any;
-	mp: any;
-	tdb: any;
+	gg: GameGraphicsForApplet;
+	gk: GameKey;
+	km: KeyboardMenu;
+	mp: MainProgram;
+	tdb: TagDataBase;
 	co_j: CharacterObject;
-	map_string: any[];
-	map_bg: any[];
-	stage_c: any[];
-	stage_x: any[];
-	stage_y: any[];
-	stage_cf: any[];
-	stage_kcID: any;
-	door_koID: any;
-	dokan_khID: any;
-	door_score_open: any;
-	ie_c: any[];
-	ie_x: any[];
-	ie_y: any[];
+	map_string: string[];
+	map_bg: number[][];
+	stage_c: number[];
+	stage_x: number[];
+	stage_y: number[];
+	stage_cf: boolean[];
+	stage_kcID: number;
+	door_koID: number;
+	dokan_khID: number;
+	door_score_open: number;
+	ie_c: number[];
+	ie_x: number[];
+	ie_y: number[];
 	zure_x: number;
 	zure_y: number;
 	mp_mode: number;
-	shop_kattaitem: any;
-	cc_hankei: any;
-	cc_kakudo: any;
-	cc_p1_x: any[];
-	cc_p1_y: any[];
-	cc_p2_x: any[];
-	cc_p2_y: any[];
+	shop_kattaitem: number;
+	cc_hankei: number;
+	cc_kakudo: number;
+	cc_p1_x: number[];
+	cc_p1_y: number[];
+	cc_p2_x: number[];
+	cc_p2_y: number[];
 
-	constructor(gamegraphics, gamekey, keyboardmenu, mainprogram) {
+	constructor(
+		gamegraphics: GameGraphicsForApplet,
+		gamekey: GameKey,
+		keyboardmenu: KeyboardMenu,
+		mainprogram: MainProgram
+	) {
 		this.gg = gamegraphics;
 		this.gk = gamekey;
 		this.km = keyboardmenu;
@@ -46,19 +56,19 @@ class IdouGamen {
 		this.stage_x = new Array(10);
 		this.stage_y = new Array(10);
 		this.stage_cf = new Array(10);
-		this.stage_kcID = undefined;
-		this.door_koID = undefined;
-		this.dokan_khID = undefined;
-		this.door_score_open = undefined;
+		this.stage_kcID = 0;
+		this.door_koID = 0;
+		this.dokan_khID = 0;
+		this.door_score_open = 0;
 		this.ie_c = new Array(16);
 		this.ie_x = new Array(16);
 		this.ie_y = new Array(16);
 		this.zure_x = 16;
 		this.zure_y = 24;
 		this.mp_mode = 0;
-		this.shop_kattaitem = undefined;
-		this.cc_hankei = undefined;
-		this.cc_kakudo = undefined;
+		this.shop_kattaitem = 0;
+		this.cc_hankei = 0;
+		this.cc_kakudo = 0;
 		this.cc_p1_x = new Array(17);
 		this.cc_p1_y = new Array(17);
 		this.cc_p2_x = new Array(17);
@@ -108,7 +118,7 @@ class IdouGamen {
 		for (var i = 0; i <= 8; i++) {
 			var str = this.tdb.getValue("chizu-" + i);
 			str += "...............";
-			this.map_string[i] = str;
+			this.map_string[i] = str!;
 		}
 		for (var i = 0; i <= 8; i++) {
 			for (var j = 0; j <= 14; j++) {
@@ -257,7 +267,7 @@ class IdouGamen {
 		this.stage_c[this.stage_kcID - 1] = 50;
 		var i = 0;
 		for (var j = 0; j <= 2; j++) {
-			if (this.stage_cf[j] == 1) {
+			if (this.stage_cf[j] == true) {
 				i++;
 			}
 		}
@@ -325,7 +335,7 @@ class IdouGamen {
 		this.gg.os_g.drawImage(this.gg.os2_img, 0, 0, this.gg.ap);
 	}
 
-	getBGZ(paramInt1, paramInt2) {
+	getBGZ(paramInt1: number, paramInt2: number) {
 		if (paramInt1 < 0 || paramInt1 > 479 || paramInt2 < 0 || paramInt2 > 287) {
 			return 0;
 		}
@@ -394,7 +404,7 @@ class IdouGamen {
 					this.km.off(3);
 					this.km.list_kazu = 0;
 					this.km.init1(6);
-					this.km.setMessage(6, this.tdb.getValue("shop_serifu1"));
+					this.km.setMessage(6, this.tdb.getValue("shop_serifu1") || "null");
 					for (var i = 0; i <= 8; i++) {
 						if (this.mp.shop_item_teika[i] > 0) {
 							this.km.addItem2(6, this.mp.shop_item_name[i], this.mp.shop_item_teika[i]);
@@ -423,8 +433,8 @@ class IdouGamen {
 					this.km.list_s = this.km.list_IDlist[this.km.selectedIndex[6]];
 					this.km.init1(7);
 					this.km.setMessage(7, this.mp.shop_item_name[this.km.list_s] + this.tdb.getValue("shop_serifu2"));
-					this.km.addItem(7, this.tdb.getValue("shop_serifu3"));
-					this.km.addItem(7, this.tdb.getValue("shop_serifu4"));
+					this.km.addItem(7, this.tdb.getValue("shop_serifu3") || "null");
+					this.km.addItem(7, this.tdb.getValue("shop_serifu4") || "null");
 					this.km.activeSerifutuki(7, 48, 150, 236, this.mp.shop_name);
 					this.km.mode = 420;
 				}
@@ -446,7 +456,7 @@ class IdouGamen {
 							this.km.mode = 430;
 						} else {
 							this.km.init1(3);
-							this.km.addItem(3, this.tdb.getValue("shop_serifu6"));
+							this.km.addItem(3, this.tdb.getValue("shop_serifu6") || "null");
 							this.km.activeIchigyou(3, 48, 240, 236);
 							this.km.mode = 430;
 						}
@@ -473,10 +483,10 @@ class IdouGamen {
 				} else if (this.km.kettei_c == 1) {
 					this.km.off(3);
 					this.km.init1(2);
-					this.km.setMessage(2, this.tdb.getValue("setumei_menu1"));
-					this.km.addItem(2, this.tdb.getValue("setumei_menu2"));
-					this.km.addItem(2, this.tdb.getValue("setumei_menu3"));
-					this.km.addItem(2, this.tdb.getValue("setumei_menu4"));
+					this.km.setMessage(2, this.tdb.getValue("setumei_menu1") || "null");
+					this.km.addItem(2, this.tdb.getValue("setumei_menu2") || "null");
+					this.km.addItem(2, this.tdb.getValue("setumei_menu3") || "null");
+					this.km.addItem(2, this.tdb.getValue("setumei_menu4") || "null");
 					this.km.activeSerifutuki(2, 120, 150, 224, this.mp.setumei_name);
 					this.km.mode = 510;
 				}
@@ -815,7 +825,7 @@ class IdouGamen {
 		this.co_j.y = cy;
 	}
 
-	circleCLS(paramInt) {
+	circleCLS(paramInt: number) {
 		for (var i = 0; i <= 12; i++) {
 			var d1 = Math.sin(i * 0.2617992);
 			this.cc_p1_y[i] = 160 + Math.floor(d1 * paramInt);
@@ -829,7 +839,7 @@ class IdouGamen {
 		this.gg.os_g.fillPolygon(this.cc_p2_x, this.cc_p2_y, 17);
 	}
 
-	squareCLS(paramInt1, paramInt2) {
+	squareCLS(paramInt1: number, paramInt2: number) {
 		var d = 0.0174532925199433;
 		this.cc_p1_x[0] = Math.floor(Math.cos((this.cc_kakudo + 0) * d) * paramInt1) + 256;
 		this.cc_p1_y[0] = Math.floor(Math.sin((this.cc_kakudo + 0) * d) * paramInt1) + 160;
