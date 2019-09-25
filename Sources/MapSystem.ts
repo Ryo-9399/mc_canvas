@@ -1,30 +1,32 @@
 import { createNDimensionArray, rightShiftIgnoreSign } from "./GlobalFunctions";
-import { Color } from "./ImageBuff";
+import { Color, ImageBuff } from "./ImageBuff";
+import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
+import { MainProgram } from "./MainProgram";
 
 class MapSystem {
-	width: any;
-	height: any;
-	gg: any;
-	mp: any;
-	map_bg: any[];
-	map_bg_layer: any[];
-	map_string: any[];
-	map_string_layer: any[];
+	width: number;
+	height: number;
+	gg: GameGraphicsForApplet;
+	mp: MainProgram;
+	map_bg: number[][];
+	map_bg_layer: number[][];
+	map_string: string[];
+	map_string_layer: string[];
 	wx: number;
 	wy: number;
-	wx_mini: any;
-	wy_mini: any;
-	wx_max: any;
-	wy_max: any;
+	wx_mini: number;
+	wy_mini: number;
+	wx_max: number;
+	wy_max: number;
 	os2_wx: number;
 	os2_wy: number;
-	hi: any;
+	hi: ImageBuff[];
 	gazou_x: number;
 	gazou_y: number;
 	second_gazou_x: number;
 	second_gazou_y: number;
 
-	constructor(width, height, gamegraphics, mainprogram) {
+	constructor(width: number, height: number, gamegraphics: GameGraphicsForApplet, mainprogram: MainProgram) {
 		this.width = width;
 		this.height = height;
 		this.gg = gamegraphics;
@@ -35,10 +37,10 @@ class MapSystem {
 		this.map_string_layer = new Array(this.height);
 		this.wx = 0;
 		this.wy = 0;
-		this.wx_mini = undefined;
-		this.wy_mini = undefined;
-		this.wx_max = undefined;
-		this.wy_max = undefined;
+		this.wx_mini = 0;
+		this.wy_mini = 0;
+		this.wx_max = 0;
+		this.wy_max = 0;
 		this.os2_wx = 0;
 		this.os2_wy = 0;
 		this.hi = this.gg.spt_img[0];
@@ -73,7 +75,7 @@ class MapSystem {
 	/**
 	 * TODO: 要調査
 	 */
-	setBank(mode) {
+	setBank(mode: number) {
 		let dest = 30;
 		if (mode === 1) dest = 40;
 		else if (mode === 2) dest = 50;
@@ -90,7 +92,7 @@ class MapSystem {
 	 * @param {number} view_x 画面に描画される範囲の左上のX座標
 	 * @param {number} view_y 画面に描画される範囲の左上のY座標
 	 */
-	drawMap(view_x, view_y) {
+	drawMap(view_x: number, view_y: number) {
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
@@ -116,7 +118,7 @@ class MapSystem {
 	 * @param {number} gazou_scroll 背景画像のスクロール設定
 	 * @param {number} mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
 	 */
-	drawMapLayer(view_x, view_y, g_ac2, gazou_scroll, mode) {
+	drawMapLayer(view_x: number, view_y: number, g_ac2: number, gazou_scroll: number, mode: number) {
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
@@ -132,7 +134,7 @@ class MapSystem {
 
 			// セカンド画像の描画
 			if (this.mp.second_gazou_visible && this.mp.second_gazou_priority === 1 && this.mp.second_gazou_img != null) {
-				const draw = (x, y) => {
+				const draw = (x: number, y: number) => {
 					// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
 					this.gg.os2_g.drawImage(this.mp.second_gazou_img, x + xmod + 32, y + ymod + 32);
 				};
@@ -194,7 +196,7 @@ class MapSystem {
 			// 背景画像の描画
 			const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
 			if (background_image != null) {
-				const draw = (x, y) => {
+				const draw = (x: number, y: number) => {
 					// 裏画面に背景画像を描画する際、スクロールに応じて描画位置をずらす
 					this.gg.os2_g.drawImage(background_image, x + xmod + 32, y + ymod + 32);
 				};
@@ -372,7 +374,7 @@ class MapSystem {
 	 * TODO: 要調査
 	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
 	 */
-	drawMapScroll(g_ac2) {
+	drawMapScroll(g_ac2: number) {
 		const xmod = this.wx % 32;
 		const ymod = this.wy % 32;
 		// 画面左上のブロック座標
@@ -547,7 +549,7 @@ class MapSystem {
 	 * @returns {number}
 	 * @see {@link MainProgram#setChipValue}
 	 */
-	getBGCode(x, y) {
+	getBGCode(x: number, y: number) {
 		return this.map_bg[rightShiftIgnoreSign(x, 5)][rightShiftIgnoreSign(y, 5)];
 	}
 
@@ -557,7 +559,7 @@ class MapSystem {
 	 * @param ny {number} Y座標(ブロック座標)
 	 * @param {number} code マップコード
 	 */
-	putBGCode(nx, ny, code) {
+	putBGCode(nx: number, ny: number, code: number) {
 		this.map_bg[nx][ny] = code;
 		if (this.os2_wx <= nx && this.os2_wx + 16 >= nx && this.os2_wy <= ny && this.os2_wy + 10 >= ny) {
 			this.gg.drawBG2((nx - this.os2_wx) * 32 + 32, (ny - this.os2_wy) * 32 + 32, code);
