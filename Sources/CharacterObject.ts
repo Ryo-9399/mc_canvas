@@ -1,5 +1,6 @@
 import { ImageBuff } from "./ImageBuff";
 import { EnemyControllerFactory } from "./EnemyController";
+import { InversionKind } from "./GameGraphicsForApplet";
 
 /**
  * 神クラス
@@ -26,7 +27,7 @@ class CharacterObject {
 	ac: number;
 	level: number;
 	jimen_f: boolean;
-	muki: number;
+	muki: InversionKind;
 	direction: number;
 	score: number;
 	ss: number;

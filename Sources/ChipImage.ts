@@ -1,7 +1,8 @@
 import { createNDimensionArray } from "./GlobalFunctions";
 import { ImageBuff } from "./ImageBuff";
+import { InversionKind } from "./GameGraphicsForApplet";
 
-type InversionKind = 0 | 1 | 2 | 3;
+type ChipInversionKind = InversionKind | 2 | 3;
 
 /**
  * 1枚の画像から複数のチップ画像を生成するクラス
@@ -19,7 +20,7 @@ class ChipImage {
 	chip_y_count: number;
 	ai_width: number;
 	ai_height: number;
-	chip_img: ImageBuff[][];
+	chip_img: Record<ChipInversionKind, ImageBuff>[];
 	ai_img: ImageBuff;
 
 	constructor(i: number, j: number, k: number, l: number, bufferedimage: ImageBuff) {
@@ -110,7 +111,7 @@ class ChipImage {
 	 * 新しいチップ画像を作る ために内部の配列を初期化する
 	 * @param n {number} 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
 	 */
-	createImageBuffer(n: InversionKind) {
+	createImageBuffer(n: ChipInversionKind) {
 		var k, i;
 		for (k = 0; k < this.chip_y_count; k++) {
 			for (i = 0; i < this.chip_x_count; i++) {
@@ -128,7 +129,7 @@ class ChipImage {
 	 * @param j {number} 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
 	 * @returns {ImageBuff | *} チップ画像 範囲指定がおかしければnullが、初期化用のメソッドがまだ呼ばれていないなど内部状態のどこかがおかしければundefinedとかよくわからないものが返る
 	 */
-	getChipImage(i: number, j: InversionKind) {
+	getChipImage(i: number, j: ChipInversionKind) {
 		if (!j) j = 0;
 		if (i >= this.chip_img.length || i < 0 || j > 3 || j < 0) return null;
 		else return this.chip_img[i][j];
