@@ -1,34 +1,37 @@
 import { createNDimensionArray, rightShiftIgnoreSign } from "./GlobalFunctions";
-import { Color, Font } from "./ImageBuff";
+import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
+import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
+import { GameKey } from "./GameKey";
+import { MasaoConstruction } from "./MasaoConstruction";
 
 class KeyboardMenu {
-	gg: any;
-	gk: any;
-	name_crys: any;
-	hi: any;
-	hih: any;
-	hg: any;
-	ap: any;
-	c: any[];
-	x: any[];
-	y: any[];
-	width: any[];
-	selectedIndex: any[];
-	item_kazu: any[];
-	message: any[];
-	item: any[];
-	item_int: any[];
-	item_color: any[];
-	list_IDlist: any[];
-	list_kazu: any;
-	list_s: any;
+	gg: GameGraphicsForApplet;
+	gk: GameKey;
+	name_crys: string;
+	hi: ImageBuff[];
+	hih: ImageBuff[][];
+	hg: Graphics;
+	ap: MasaoConstruction;
+	c: number[];
+	x: number[];
+	y: number[];
+	width: number[];
+	selectedIndex: number[];
+	item_kazu: number[];
+	message: string[];
+	item: string[][];
+	item_int: number[][];
+	item_color: Color[];
+	list_IDlist: number[];
+	list_kazu: number;
+	list_s: number;
 	aw: number;
 	mode: number;
 	kettei_c: number;
 	cancel_c: number;
-	c_fc: any;
+	c_fc: number;
 
-	constructor(paramGameGraphics, paramGameKey, paramString) {
+	constructor(paramGameGraphics: GameGraphicsForApplet, paramGameKey: GameKey, paramString: string) {
 		this.gg = paramGameGraphics;
 		this.gk = paramGameKey;
 		this.name_crys = paramString;
@@ -47,13 +50,13 @@ class KeyboardMenu {
 		this.item_int = createNDimensionArray(16, 16);
 		this.item_color = new Array(16);
 		this.list_IDlist = new Array(16);
-		this.list_kazu = undefined;
-		this.list_s = undefined;
+		this.list_kazu = 0;
+		this.list_s = 0;
 		this.aw = -1;
 		this.mode = 0;
 		this.kettei_c = 0;
 		this.cancel_c = 0;
-		this.c_fc = undefined;
+		this.c_fc = 0;
 
 		this.initAll();
 	}
@@ -75,7 +78,7 @@ class KeyboardMenu {
 		this.list_s = 0;
 	}
 
-	init1(paramInt) {
+	init1(paramInt: number) {
 		this.c[paramInt] = 0;
 		this.x[paramInt] = 0;
 		this.y[paramInt] = 0;
@@ -91,27 +94,27 @@ class KeyboardMenu {
 		}
 	}
 
-	setMessage(paramInt, paramString) {
+	setMessage(paramInt: number, paramString: string) {
 		this.message[paramInt] = paramString;
 	}
 
-	addItem(paramInt, paramString) {
+	addItem(paramInt: number, paramString: string) {
 		this.item[paramInt][this.item_kazu[paramInt]] = paramString;
 		this.item_kazu[paramInt] += 1;
 	}
 
-	addIntitem(paramInt1, paramInt2) {
+	addIntitem(paramInt1: number, paramInt2: number) {
 		this.item_int[paramInt1][this.item_kazu[paramInt1]] = paramInt2;
 		this.item_kazu[paramInt1] += 1;
 	}
 
-	addItem2(paramInt1, paramString, paramInt2) {
+	addItem2(paramInt1: number, paramString: string, paramInt2: number) {
 		this.item[paramInt1][this.item_kazu[paramInt1]] = paramString;
 		this.item_int[paramInt1][this.item_kazu[paramInt1]] = paramInt2;
 		this.item_kazu[paramInt1] += 1;
 	}
 
-	active(paramInt1, paramInt2, paramInt3, paramInt4) {
+	active(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4?: number) {
 		this.c[paramInt1] = 100;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -125,7 +128,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeSerifutuki(paramInt1, paramInt2, paramInt3, paramInt4, paramString) {
+	activeSerifutuki(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number, paramString: string) {
 		this.c[paramInt1] = 700;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -140,7 +143,7 @@ class KeyboardMenu {
 		this.item[paramInt1][15] = paramString;
 	}
 
-	activeKaimono(paramInt1, paramInt2, paramInt3, paramInt4) {
+	activeKaimono(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
 		this.c[paramInt1] = 900;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -153,7 +156,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeIchigyou(paramInt1, paramInt2, paramInt3, paramInt4) {
+	activeIchigyou(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
 		this.c[paramInt1] = 300;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -166,7 +169,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeNigyou(paramInt1, paramInt2, paramInt3, paramInt4, paramColor) {
+	activeNigyou(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number, paramColor: Color) {
 		this.c[paramInt1] = 310;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -180,7 +183,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeYongyou(paramInt1, paramInt2, paramInt3, paramInt4) {
+	activeYongyou(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
 		this.c[paramInt1] = 320;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -193,7 +196,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeYongyou2(paramInt1, paramInt2, paramInt3, paramInt4) {
+	activeYongyou2(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
 		this.c[paramInt1] = 321;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -206,7 +209,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeSerifu(paramInt1, paramInt2, paramInt3, paramInt4, paramColor) {
+	activeSerifu(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number, paramColor: Color) {
 		this.c[paramInt1] = 330;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -220,7 +223,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeYasumu(paramInt1, paramInt2, paramInt3) {
+	activeYasumu(paramInt1: number, paramInt2: number, paramInt3: number) {
 		this.c[paramInt1] = 1000;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -233,7 +236,7 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	onKao(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5) {
+	onKao(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number, paramInt5: number) {
 		this.c[paramInt1] = 600;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -241,14 +244,14 @@ class KeyboardMenu {
 		this.item_int[paramInt1][0] = paramInt5;
 	}
 
-	onMituketa(paramInt1, paramInt2, paramInt3) {
+	onMituketa(paramInt1: number, paramInt2: number, paramInt3: number) {
 		this.c[paramInt1] = 610;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
 		this.width[paramInt1] = 200;
 	}
 
-	onOkozukai(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5) {
+	onOkozukai(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number, paramInt5: number) {
 		this.c[paramInt1] = 800;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -256,7 +259,7 @@ class KeyboardMenu {
 		this.item_int[paramInt1][0] = paramInt5;
 	}
 
-	activeIchigyouTime(paramInt1, paramInt2, paramInt3, paramInt4) {
+	activeIchigyouTime(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
 		this.c[paramInt1] = 350;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -265,7 +268,7 @@ class KeyboardMenu {
 		this.item_int[paramInt1][0] = 100;
 	}
 
-	activeNigyouTime(paramInt1, paramInt2, paramInt3, paramInt4, paramColor) {
+	activeNigyouTime(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number, paramColor: Color) {
 		this.c[paramInt1] = 360;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -275,7 +278,16 @@ class KeyboardMenu {
 		this.item_int[paramInt1][0] = 100;
 	}
 
-	activeJibun(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7, paramInt8) {
+	activeJibun(
+		paramInt1: number,
+		paramInt2: number,
+		paramInt3: number,
+		paramInt4: number,
+		paramInt5: number,
+		paramInt6: number,
+		paramInt7: number,
+		paramInt8: number
+	) {
 		this.c[paramInt1] = 400;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -293,7 +305,14 @@ class KeyboardMenu {
 		this.cancel_c = 2;
 	}
 
-	activeToujou(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramString) {
+	activeToujou(
+		paramInt1: number,
+		paramInt2: number,
+		paramInt3: number,
+		paramInt4: number,
+		paramInt5: number,
+		paramString: string
+	) {
 		this.c[paramInt1] = 420;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -326,11 +345,11 @@ class KeyboardMenu {
 		this.kettei_c = 2;
 	}
 
-	off(paramInt) {
+	off(paramInt: number) {
 		this.c[paramInt] = 0;
 	}
 
-	offActivewindow(paramInt1, paramInt2) {
+	offActivewindow(paramInt1: number, paramInt2: number) {
 		this.c[paramInt1] = 0;
 		this.c_fc = -1;
 		this.gk.up_c = 0;
@@ -761,7 +780,7 @@ class KeyboardMenu {
 		this.hg.setFont(beforeFont);
 	}
 
-	drawWindowbox(paramInt1, paramInt2, paramInt3, paramInt4) {
+	drawWindowbox(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
 		this.hg.setColor(Color.white);
 		this.hg.fillRect(paramInt1, paramInt2, paramInt3, paramInt4);
 		this.hg.setColor(Color.black);
