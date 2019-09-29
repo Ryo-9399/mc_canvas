@@ -277,7 +277,7 @@ class GameSoundForApplet {
 		this.bgm_genzai = -1;
 	}
 
-	playUserBGMFile(paramString: string, loopflg: boolean) {
+	playUserBGMFile(paramString: string, loopflg?: boolean) {
 		this.stopBGM();
 
 		this.bgm[19] = this.ap.getAudioClip(paramString, true);

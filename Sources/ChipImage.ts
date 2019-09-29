@@ -39,7 +39,7 @@ class ChipImage {
 	 * 新しいチップ画像を内部的に生成する
 	 * createImageBufferを呼び出したあとに呼ぶ
 	 */
-	makeChipImage(bufferedimage: ImageBuff) {
+	makeChipImage(bufferedimage?: ImageBuff) {
 		var localG;
 
 		for (var l = 0; l < this.chip_y_count; l++) {

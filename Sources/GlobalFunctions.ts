@@ -27,9 +27,7 @@ type Resource =
 	  }
 	| {
 			type: "eventListener";
-			target: EventTarget;
-			name: string;
-			value: () => void;
+			release: () => void;
 	  };
 
 /**
@@ -392,7 +390,7 @@ class Game {
 			if (res.type === "setInterval") {
 				clearInterval(res.value);
 			} else if (res.type === "eventListener") {
-				res.target.removeEventListener(res.name, res.value);
+				res.release();
 			} else if (res.type === "Loop") {
 				res.value.stop();
 			}

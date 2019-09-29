@@ -3,28 +3,68 @@ import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
 import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
 import { GameSoundForApplet } from "./GameSoundForApplet";
 import { AudioClip, Game, rightShiftIgnoreSign, waitFor } from "./GlobalFunctions";
-import { Color, Font, ImageBuff } from "./ImageBuff";
+import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
 import { MainProgram } from "./MainProgram";
 import { MasaoJSS } from "./MasaoJSS";
 import { TagDataBase } from "./TagDataBase";
+import { Params, Option } from "./MasaoOption";
+import { ChipImage } from "./ChipImage";
+
+interface MasaoMessageBase {
+	target: unknown;
+	parameters: unknown;
+	next: MasaoMessage<keyof MasaoMessageMap> | null;
+}
+
+interface MasaoMessage_load extends MasaoMessageBase {
+	target: ImageBuff;
+}
+
+interface MasaoMessage_makeChipImage extends MasaoMessageBase {
+	target: ImageBuff;
+	parameters: {
+		chipimage: ChipImage;
+	};
+}
+
+interface MasaoMessage_makeReverseChipImage extends MasaoMessage_makeChipImage {}
+
+interface MasaoMessage_loadAdvanceMapJson extends MasaoMessageBase {
+	target: {
+		complete: boolean;
+	};
+}
+
+interface MasaoMessageMap {
+	load: MasaoMessage_load;
+	makeChipImage: MasaoMessage_makeChipImage;
+	makeReverseChipImage: MasaoMessage_makeReverseChipImage;
+	loadAdvanceMapJson: MasaoMessage_loadAdvanceMapJson;
+}
+
+type MasaoMessage<T extends string = keyof MasaoMessageMap> = T extends keyof MasaoMessageMap
+	? {
+			type: T;
+	  } & { [P in keyof MasaoMessageMap[T]]: MasaoMessageMap[T][P] }
+	: never;
 
 class MasaoConstruction {
 	restart_f: boolean;
-	th: any;
+	th: number | null;
 	th_interval: number;
 	th_jm: number;
 	process_time: number;
 	variable_sleep_time: boolean;
 	sleep_time_visible: boolean;
-	main_time_kiroku: any[];
+	main_time_kiroku: number[];
 	main_time_kiroku_p: number;
 	main_time_kiroku_f: boolean;
-	tdb: any;
-	gg: any;
-	gm: any;
-	gk: any;
-	gs: any;
-	mp: any;
+	tdb: TagDataBase;
+	gg: GameGraphicsForApplet;
+	gm: GameMouse;
+	gk: GameKey;
+	gs: GameSoundForApplet;
+	mp: MainProgram;
 	mph_title_lock_f: boolean;
 	mph_start_game_f: boolean;
 	mph_highscore: number;
@@ -34,16 +74,16 @@ class MasaoConstruction {
 	audio_bgm_no_wave: boolean;
 	audio_bgm_no_mp3: boolean;
 	audio_bgm_no_ogg: boolean;
-	params: any;
-	__canvas: any;
+	params: Params;
+	__canvas: HTMLCanvasElement;
 	__appimg: ImageBuff;
-	__game: any;
-	options: any;
-	firstMessage: any;
-	lastMessage: any;
-	masaoJSSAppletEmulator: any;
+	__game: Game;
+	options: Option;
+	firstMessage: MasaoMessage | null;
+	lastMessage: MasaoMessage | null;
+	masaoJSSAppletEmulator: MasaoJSS | null;
 
-	constructor(params, __canvas, __game, options) {
+	constructor(params: Params, __canvas: HTMLCanvasElement, __game: Game, options: Option) {
 		this.restart_f = false;
 		this.th = null;
 		this.th_interval = 70;
@@ -54,12 +94,12 @@ class MasaoConstruction {
 		this.main_time_kiroku = new Array(10);
 		this.main_time_kiroku_p = 0;
 		this.main_time_kiroku_f = false;
-		this.tdb = undefined;
-		this.gg = null;
-		this.gm = null;
-		this.gk = null;
-		this.gs = null;
-		this.mp = null;
+		this.tdb = undefined!; // init_j() 内で初期化
+		this.gg = null!; // init_j() 内で初期化
+		this.gm = null!; // init_j() 内で初期化
+		this.gk = null!; // init_j() 内で初期化
+		this.gs = null!; // init_j() 内で初期化
+		this.mp = null!; // init_j() 内で初期化
 		this.mph_title_lock_f = false;
 		this.mph_start_game_f = false;
 		this.mph_highscore = 0;
@@ -90,9 +130,11 @@ class MasaoConstruction {
 	// GlobalFunctionsより移動
 	// __appimg書き換え関数
 	__repaint() {
-		this.update(this.__appimg.getGraphics());
+		this.update(this.__appimg.getGraphics()!);
 		var ctx = this.__canvas.getContext("2d");
-		ctx.drawImage(this.__appimg._dat, 0, 0);
+		if (ctx && this.__appimg._dat) {
+			ctx.drawImage(this.__appimg._dat, 0, 0);
+		}
 	}
 
 	init() {}
@@ -125,7 +167,7 @@ class MasaoConstruction {
 		}
 	}
 
-	paint(paramGraphics) {
+	paint(paramGraphics: Graphics) {
 		if (this.th_jm <= 0) {
 			if (!this.mp.draw_lock_f) {
 				paramGraphics.drawImage(this.gg.os_img, 0, 0, this);
@@ -138,12 +180,12 @@ class MasaoConstruction {
 
 			var str = this.getParameter("now_loading");
 			if (str != null) {
-				paramGraphics.drawString(this.getParameter("now_loading"), 32, 160);
+				paramGraphics.drawString(this.getParameter("now_loading") || "null", 32, 160);
 			}
 		}
 	}
 
-	update(paramGraphics) {
+	update(paramGraphics: Graphics) {
 		this.paint(paramGraphics);
 	}
 
@@ -156,10 +198,10 @@ class MasaoConstruction {
 			var oldFirstMessage = this.firstMessage;
 			this.firstMessage = null;
 			this.lastMessage = null;
-			for (var cur = oldFirstMessage; cur; cur = cur.next) {
+			for (var cur: MasaoMessage | null = oldFirstMessage; cur; cur = cur.next) {
 				// ファイルロード待ちのメッセージ
 				if (cur.type == "load") {
-					if (cur.target._dat.complete) {
+					if (!cur.target._dat || (cur.target._dat instanceof Image && cur.target._dat.complete)) {
 						continue;
 					} else {
 						this.pushMessage(cur.type, cur.target, cur.parameters);
@@ -167,7 +209,7 @@ class MasaoConstruction {
 				}
 				// makeChipImageメソッド呼び出し待ち
 				else if (cur.type == "makeChipImage") {
-					if (cur.target._dat.complete) {
+					if (!cur.target._dat || (cur.target._dat instanceof Image && cur.target._dat.complete)) {
 						cur.parameters.chipimage.makeChipImage();
 					} else {
 						this.pushMessage(cur.type, cur.target, cur.parameters);
@@ -175,7 +217,7 @@ class MasaoConstruction {
 				}
 				// makeReverseChipImagrメソッド呼び出し待ち
 				else if (cur.type == "makeReverseChipImage") {
-					if (cur.target._dat.complete) {
+					if (!cur.target._dat || (cur.target._dat instanceof Image && cur.target._dat.complete)) {
 						cur.parameters.chipimage.makeReverseChipImage();
 					} else {
 						this.pushMessage(cur.type, cur.target, cur.parameters);
@@ -210,8 +252,8 @@ class MasaoConstruction {
 			if (this.gg.apt_img._loaded) f1 = 1;
 			else if (this.gg.apt_img._error) f1 = 2;
 			if (this.gg.layer_mode == 2) {
-				if (this.gg.amapchip_img._loaded) f2 = 1;
-				else if (this.gg.amapchip_img._error) f2 = 2;
+				if (this.gg.amapchip_img!._loaded) f2 = 1;
+				else if (this.gg.amapchip_img!._error) f2 = 2;
 			} else f2 = 1;
 			this.__repaint();
 			if (f1 != 0 && f2 != 0) this.th_jm -= 1;
@@ -299,10 +341,10 @@ class MasaoConstruction {
 							mode,
 							this.mp.maps.wx,
 							this.mp.maps.wy,
-							this.masaoJSSAppletEmulator
+							this.masaoJSSAppletEmulator!
 						);
 					} else {
-						this.options.userJSCallback(this.gg.os_g_bk, mode, -9999, -9999, this.masaoJSSAppletEmulator);
+						this.options.userJSCallback(this.gg.os_g_bk, mode, -9999, -9999, this.masaoJSSAppletEmulator!);
 					}
 				} catch (e) {
 					console.error(e);
@@ -320,9 +362,10 @@ class MasaoConstruction {
 			this.tdb.options = this.options;
 		}
 		var m = 0;
+		var str;
 		for (var p = 0; p < 3; p++) {
 			for (var q = 0; q < 30; q++) {
-				var str = "map" + p + "-" + q;
+				str = "map" + p + "-" + q;
 				if (this.tdb.getValue(str) != null && this.tdb.getValue(str) != "." && this.tdb.getValue(str) != "") {
 					m = 1;
 					break;
@@ -371,79 +414,72 @@ class MasaoConstruction {
 		this.gg.setBackcolor(Color.black);
 
 		str = this.tdb.getValue("filename_title");
-		this.gg.addListImage(0, str);
+		this.gg.addListImage(0, str || "");
 
 		str = this.tdb.getValue("filename_ending");
-		this.gg.addListImage(1, str);
+		this.gg.addListImage(1, str || "");
 
 		str = this.tdb.getValue("filename_gameover");
-		this.gg.addListImage(2, str);
+		this.gg.addListImage(2, str || "");
 		if (this.gg.layer_mode == 2 || this.tdb.getValueInt("mcs_haikei_visible") == 1) {
 			str = this.tdb.getValue("filename_haikei");
-			this.gg.addListImage(4, str);
+			this.gg.addListImage(4, str || "");
 		}
 		str = this.tdb.getValue("stage_select");
 		var i;
-		i = parseInt(str);
+		i = parseInt(str || "");
 		if (isNaN(i)) i = -1;
 		if (i == 2) {
 			str = this.tdb.getValue("filename_chizu");
-			this.gg.addListImage(3, str);
+			this.gg.addListImage(3, str || "");
 		}
 		str = this.tdb.getValue("stage_max");
 		var k;
-		k = parseInt(str);
+		k = parseInt(str || "");
 		if (isNaN(k)) k = 1;
 		if ((this.gg.layer_mode == 2 || this.tdb.getValueInt("mcs_haikei_visible") == 1) && (i == 2 || k >= 2)) {
 			str = this.tdb.getValue("filename_haikei2");
-			this.gg.addListImage2(5, str);
+			this.gg.addListImage2(5, str || "");
 			str = this.tdb.getValue("filename_haikei3");
-			this.gg.addListImage2(6, str);
+			this.gg.addListImage2(6, str || "");
 			str = this.tdb.getValue("filename_haikei4");
-			this.gg.addListImage2(7, str);
+			this.gg.addListImage2(7, str || "");
 		}
 		this.gg.loadListImage();
 
 		this.gm = new GameMouse();
 		var _gm = this.gm;
-		this.__canvas.addEventListener(
-			"mousedown",
-			function(e) {
-				e.stopImmediatePropagation();
-				// このオブジェクトにフォーカスを当てる
-				Game.focus.focus(this);
-				// ユーザーインタラクションを通知
-				this.gs.userInteract();
-				// マウスイベントを発生
-				GameMouse_mousePressed(_gm, e);
-			}.bind(this)
-		);
+		this.__canvas.addEventListener("mousedown", e => {
+			e.stopImmediatePropagation();
+			// このオブジェクトにフォーカスを当てる
+			Game.focus.focus(this);
+			// ユーザーインタラクションを通知
+			this.gs.userInteract();
+			// マウスイベントを発生
+			GameMouse_mousePressed(_gm, e);
+		});
 		this.__canvas.addEventListener("mouseup", function(e) {
 			GameMouse_mouseReleased(_gm, e);
 		});
 
 		this.gk = new GameKey();
 		var _gk = this.gk;
-		var _handler = function(e) {
+		var _handler = (e: KeyboardEvent) => {
 			if (Game.focus.hasFocus(this)) GameKey_keyPressed(_gk, e);
-		}.bind(this);
+		};
 		document.addEventListener("keydown", _handler);
 		this.__game.__resourceList.push({
 			type: "eventListener",
-			target: document,
-			name: "keydown",
-			value: _handler
+			release: () => document.removeEventListener("keydown", _handler)
 		});
 
-		_handler = function(e) {
+		_handler = (e: KeyboardEvent) => {
 			if (Game.focus.hasFocus(this)) GameKey_keyReleased(_gk, e);
-		}.bind(this);
+		};
 		document.addEventListener("keyup", _handler);
 		this.__game.__resourceList.push({
 			type: "eventListener",
-			target: document,
-			name: "keyup",
-			value: _handler
+			release: () => document.removeEventListener("keyup", _handler)
 		});
 
 		if (this.tdb.getValueInt("audio_se_switch_wave") == 2) this.audio_se_no_wave = true;
@@ -475,7 +511,7 @@ class MasaoConstruction {
 
 	userInit() {}
 
-	userSub(paramGraphics, paramImage) {}
+	userSub(paramGraphics: Graphics, paramImage: ImageBuff) {}
 
 	getHighscore() {
 		var i = 0;
@@ -621,7 +657,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setMyPosition(paramString1, paramString2) {
+	setMyPosition(paramString1: string, paramString2: string) {
 		var i = 0;
 		var j = 0;
 		if (this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
@@ -642,7 +678,13 @@ class MasaoConstruction {
 		return false;
 	}
 
-	showMessage(paramString1, paramString2, paramString3, paramString4, paramString5) {
+	showMessage(
+		paramString1: string,
+		paramString2: string,
+		paramString3: string,
+		paramString4: string,
+		paramString5: string
+	) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.showmSet(paramString1, paramString2, paramString3, paramString4, paramString5);
@@ -651,7 +693,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	showImage(paramString1, paramString2, paramString3, paramString4) {
+	showImage(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.showiSet(paramString1, paramString2, paramString3, paramString4);
@@ -660,7 +702,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setEnemy(paramString1, paramString2, paramString3) {
+	setEnemy(paramString1: string, paramString2: string, paramString3: string) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.sete(paramString1, paramString2, paramString3);
@@ -669,7 +711,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setMapchip(paramString1, paramString2, paramString3) {
+	setMapchip(paramString1: string, paramString2: string, paramString3: string) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.setmapc(paramString1, paramString2, paramString3);
@@ -678,14 +720,14 @@ class MasaoConstruction {
 		return false;
 	}
 
-	getMapchip(paramString1, paramString2) {
+	getMapchip(paramString1: string, paramString2: string) {
 		if (this.mp != null) {
 			return this.mp.getmapc(paramString1, paramString2);
 		}
 		return -1;
 	}
 
-	setMapchip2(paramString1, paramString2, paramString3) {
+	setMapchip2(paramString1: string, paramString2: string, paramString3: string) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.setmapc2(paramString1, paramString2, paramString3);
@@ -694,14 +736,14 @@ class MasaoConstruction {
 		return false;
 	}
 
-	getMapchip2(paramString1, paramString2) {
+	getMapchip2(paramString1: string, paramString2: string) {
 		if (this.mp != null) {
 			return this.mp.getmapc2(paramString1, paramString2);
 		}
 		return -1;
 	}
 
-	setBackImage(paramString) {
+	setBackImage(paramString: string) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.setbacki(paramString);
@@ -841,7 +883,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	equipBarrier(paramString) {
+	equipBarrier(paramString: string) {
 		var i = 0;
 		if (this.gk != null && this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -858,7 +900,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setJetFuel(paramString) {
+	setJetFuel(paramString: string) {
 		var i = 0;
 		if (this.gk != null && this.mp != null && this.mp.ml_mode == 100 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -872,7 +914,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	equipJet(paramString) {
+	equipJet(paramString: string) {
 		var bool = this.setJetFuel(paramString);
 
 		return bool;
@@ -892,28 +934,28 @@ class MasaoConstruction {
 		return true;
 	}
 
-	getValue(paramString) {
+	getValue(paramString: string) {
 		if (this.th_jm <= 0) {
 			return this.tdb.getValue(paramString);
 		}
 		return null;
 	}
 
-	getParamValue(paramString) {
+	getParamValue(paramString: string) {
 		if (this.th_jm <= 0) {
 			return this.tdb.getValue(paramString);
 		}
 		return null;
 	}
 
-	setValue(paramString1, paramString2) {
+	setValue(paramString1: string, paramString2: string) {
 		if (this.th_jm <= 0) {
 			return this.tdb.setValue(paramString1, paramString2);
 		}
 		return false;
 	}
 
-	setParamValue(paramString1, paramString2) {
+	setParamValue(paramString1: string, paramString2: string) {
 		if (this.th_jm <= 0) {
 			return this.tdb.setValue(paramString1, paramString2);
 		}
@@ -936,7 +978,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setMyXReal(paramString) {
+	setMyXReal(paramString: string) {
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(paramString);
@@ -950,7 +992,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setMyYReal(paramString) {
+	setMyYReal(paramString: string) {
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(paramString);
@@ -1025,7 +1067,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setMyMiss(paramString) {
+	setMyMiss(paramString: string) {
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(paramString);
@@ -1040,7 +1082,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setMyPress(paramString) {
+	setMyPress(paramString: string) {
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			var i;
 			i = parseInt(paramString);
@@ -1052,7 +1094,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	playSound(paramString) {
+	playSound(paramString: string) {
 		if (this.gs == null) {
 			return false;
 		}
@@ -1070,7 +1112,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setScrollLock(paramString) {
+	setScrollLock(paramString: string) {
 		var bool = false;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			bool = this.mp.setScrollLock(paramString);
@@ -1078,7 +1120,7 @@ class MasaoConstruction {
 		return bool;
 	}
 
-	attackFire(paramString1, paramString2, paramString3, paramString4) {
+	attackFire(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			i = this.mp.attackFire(paramString1, paramString2, paramString3, paramString4);
@@ -1086,7 +1128,7 @@ class MasaoConstruction {
 		return i;
 	}
 
-	addScore(paramString) {
+	addScore(paramString: string) {
 		if (this.mp == null) {
 			return false;
 		}
@@ -1100,7 +1142,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setPenColor(paramString1, paramString2, paramString3, paramString4?) {
+	setPenColor(paramString1: string, paramString2: string, paramString3: string, paramString4?: string) {
 		if (paramString4 === undefined) paramString4 = "255";
 
 		if (this.mp != null) {
@@ -1110,7 +1152,13 @@ class MasaoConstruction {
 		return true;
 	}
 
-	showRect(paramString1, paramString2, paramString3, paramString4, paramString5) {
+	showRect(
+		paramString1: string,
+		paramString2: string,
+		paramString3: string,
+		paramString4: string,
+		paramString5: string
+	) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.showrSet(paramString1, paramString2, paramString3, paramString4, paramString5);
@@ -1119,7 +1167,13 @@ class MasaoConstruction {
 		return false;
 	}
 
-	showOval(paramString1, paramString2, paramString3, paramString4, paramString5) {
+	showOval(
+		paramString1: string,
+		paramString2: string,
+		paramString3: string,
+		paramString4: string,
+		paramString5: string
+	) {
 		var bool = false;
 		if (this.mp != null) {
 			bool = this.mp.showoSet(paramString1, paramString2, paramString3, paramString4, paramString5);
@@ -1137,7 +1191,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	showGauge(paramString1, paramString2) {
+	showGauge(paramString1: string, paramString2: string) {
 		if (this.mp != null) {
 			var bool = this.mp.showGauge(paramString1, paramString2);
 			return bool;
@@ -1153,7 +1207,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setJSMes(paramString) {
+	setJSMes(paramString: string) {
 		if (this.mp != null) {
 			this.mp.setJSMes(paramString);
 			return true;
@@ -1177,7 +1231,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	equipGrenade(paramString) {
+	equipGrenade(paramString: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -1192,35 +1246,35 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setSystemImage(paramString1, paramString2) {
+	setSystemImage(paramString1: string, paramString2: string) {
 		if (this.mp != null) {
 			return this.mp.setSystemImage(paramString1, paramString2);
 		}
 		return false;
 	}
 
-	setModeWait(paramString1, paramString2) {
+	setModeWait(paramString1: string, paramString2: string) {
 		if (this.mp != null) {
 			return this.mp.setModeWait(paramString1, paramString2);
 		}
 		return false;
 	}
 
-	showMyHP(paramString) {
+	showMyHP(paramString: string) {
 		if (this.mp != null) {
 			return this.mp.showMyHP(paramString);
 		}
 		return false;
 	}
 
-	setMyMaxHP(paramString) {
+	setMyMaxHP(paramString: string) {
 		if (this.mp != null) {
 			return this.mp.setMyMaxHP(paramString);
 		}
 		return false;
 	}
 
-	setMyHP(paramString) {
+	setMyHP(paramString: string) {
 		if (this.mp != null) {
 			return this.mp.setMyHP(paramString);
 		}
@@ -1234,14 +1288,14 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	setMyHPDamage(paramString) {
+	setMyHPDamage(paramString: string) {
 		if (this.mp != null) {
 			return this.mp.setMyHPDamage(paramString);
 		}
 		return false;
 	}
 
-	setMyWait(paramString1, paramString2, paramString3) {
+	setMyWait(paramString1: string, paramString2: string, paramString3: string) {
 		if (this.mp != null) {
 			return this.mp.setMyWait(paramString1, paramString2, paramString3);
 		}
@@ -1255,7 +1309,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	equipFire(paramString?) {
+	equipFire(paramString?: string) {
 		if (paramString === undefined) paramString = "1";
 
 		var i = -1;
@@ -1279,7 +1333,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setFireRange(paramString) {
+	setFireRange(paramString: string) {
 		var i = 9999;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1294,7 +1348,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	equipTail(paramString) {
+	equipTail(paramString: string) {
 		var i = -1;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			i = parseInt(paramString);
@@ -1316,7 +1370,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	attackTail(paramString1, paramString2, paramString3, paramString4) {
+	attackTail(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			i = this.mp.attackTail(paramString1, paramString2, paramString3, paramString4);
@@ -1324,7 +1378,7 @@ class MasaoConstruction {
 		return i;
 	}
 
-	destroyEnemy(paramString1, paramString2, paramString3, paramString4) {
+	destroyEnemy(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		var i = -1;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			i = this.mp.destroyEnemy(paramString1, paramString2, paramString3, paramString4);
@@ -1366,7 +1420,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setHTMLText(paramString) {
+	setHTMLText(paramString: string) {
 		if (this.mp != null) {
 			this.tdb.initParameter();
 
@@ -1379,49 +1433,67 @@ class MasaoConstruction {
 		return false;
 	}
 
-	newYuka(paramString1, paramString2, paramString3, paramString4, paramString5) {
+	newYuka(
+		paramString1: string,
+		paramString2: string,
+		paramString3: string,
+		paramString4: string,
+		paramString5: string
+	) {
 		if (this.mp != null) {
 			return this.mp.newYuka(paramString1, paramString2, paramString3, paramString4, paramString5);
 		}
 		return -1;
 	}
 
-	setYukaPosition(paramString1, paramString2, paramString3, paramString4?, paramString5?) {
+	setYukaPosition(
+		paramString1: string,
+		paramString2: string,
+		paramString3: string,
+		paramString4?: string,
+		paramString5?: string
+	) {
 		if (this.mp != null) {
 			return this.mp.setYukaPosition(paramString1, paramString2, paramString3, paramString4, paramString5);
 		}
 		return false;
 	}
 
-	setYukaType(paramString1, paramString2) {
+	setYukaType(paramString1: string, paramString2: string) {
 		if (this.mp != null) {
 			return this.mp.setYukaType(paramString1, paramString2);
 		}
 		return false;
 	}
 
-	disposeYuka(paramString) {
+	disposeYuka(paramString: string) {
 		if (this.mp != null) {
 			return this.mp.disposeYuka(paramString);
 		}
 		return false;
 	}
 
-	setYukaColor(paramString1, paramString2, paramString3, paramString4, paramString5) {
+	setYukaColor(
+		paramString1: string,
+		paramString2: string,
+		paramString3: string,
+		paramString4: string,
+		paramString5: string
+	) {
 		if (this.mp != null) {
 			return this.mp.setYukaColor(paramString1, paramString2, paramString3, paramString4, paramString5);
 		}
 		return false;
 	}
 
-	isRideYuka(paramString) {
+	isRideYuka(paramString: string) {
 		if (this.mp != null) {
 			return this.mp.isRideYuka(paramString);
 		}
 		return -1;
 	}
 
-	setMyVX(paramString) {
+	setMyVX(paramString: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -1436,7 +1508,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setMyVY(paramString) {
+	setMyVY(paramString: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -1458,21 +1530,21 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setYukaPattern(paramString1, paramString2, paramString3) {
+	setYukaPattern(paramString1: string, paramString2: string, paramString3: string) {
 		if (this.mp != null) {
 			return this.mp.setYukaPattern(paramString1, paramString2, paramString3);
 		}
 		return false;
 	}
 
-	setYukaImage(paramString, paramImage) {
+	setYukaImage(paramString: string, paramImage: ImageBuff) {
 		if (this.mp != null) {
 			return this.mp.setYukaImage(paramString, paramImage);
 		}
 		return false;
 	}
 
-	setMySpeed(paramString) {
+	setMySpeed(paramString: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -1490,7 +1562,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setScrollArea(paramString1, paramString2, paramString3, paramString4) {
+	setScrollArea(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		if (this.mp != null) {
 			return this.mp.setScrollArea(paramString1, paramString2, paramString3, paramString4);
 		}
@@ -1539,7 +1611,7 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	newImageOnLoad(paramString) {
+	newImageOnLoad(paramString: string) {
 		var localImage = null;
 
 		localImage = this.getImage(paramString);
@@ -1549,7 +1621,7 @@ class MasaoConstruction {
 		return localImage;
 	}
 
-	setSystemDrawMode(paramString) {
+	setSystemDrawMode(paramString: string) {
 		var i = -1;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1600,7 +1672,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setMyObjectImage(paramImage, paramString1, paramString2) {
+	setMyObjectImage(paramImage: ImageBuff, paramString1: string, paramString2: string) {
 		var i = 0;
 		var j = 0;
 		if (this.mp != null) {
@@ -1619,7 +1691,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	getEnemyObjectCondition(paramString) {
+	getEnemyObjectCondition(paramString: string) {
 		var i = -1;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1632,7 +1704,7 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	getEnemyObjectPattern(paramString) {
+	getEnemyObjectPattern(paramString: string) {
 		var i = -1;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1645,7 +1717,7 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	getEnemyObjectDirection(paramString) {
+	getEnemyObjectDirection(paramString: string) {
 		var i = -1;
 		var j = 0;
 		var k = 0;
@@ -1669,7 +1741,7 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	setEnemyObjectImage(paramString1, paramImage, paramString2, paramString3) {
+	setEnemyObjectImage(paramString1: string, paramImage: ImageBuff, paramString2: string, paramString3: string) {
 		var i = -1;
 		var j = 0;
 		var k = 0;
@@ -1697,14 +1769,14 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	setScrollAreaReal(paramString1, paramString2, paramString3, paramString4) {
+	setScrollAreaReal(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		if (this.mp != null) {
 			return this.mp.setScrollAreaReal(paramString1, paramString2, paramString3, paramString4);
 		}
 		return false;
 	}
 
-	isPressCodeKey(paramString) {
+	isPressCodeKey(paramString: string) {
 		var i = 0;
 		if (this.gk != null) {
 			i = parseInt(paramString);
@@ -1720,14 +1792,14 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	playBGM(paramString) {
+	playBGM(paramString: string) {
 		if (this.gs != null) {
 			return this.gs.playUserBGMFile(paramString);
 		}
 		return false;
 	}
 
-	playBGMLoop(paramString) {
+	playBGMLoop(paramString: string) {
 		if (this.gs != null) {
 			return this.gs.playUserBGMFileLoop(paramString);
 		}
@@ -1750,7 +1822,7 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	setBossHP(paramString) {
+	setBossHP(paramString: string) {
 		var i = 1;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1777,7 +1849,7 @@ class MasaoConstruction {
 		return 0;
 	}
 
-	setBossXReal(paramString) {
+	setBossXReal(paramString: string) {
 		var i = 32;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1790,7 +1862,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setBossYReal(paramString) {
+	setBossYReal(paramString: string) {
 		var i = 320;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1803,7 +1875,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setBossObjectImage(paramImage, paramString1, paramString2) {
+	setBossObjectImage(paramImage: ImageBuff, paramString1: string, paramString2: string) {
 		var i = 0;
 		var j = 0;
 		if (this.mp != null) {
@@ -1822,7 +1894,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setSystemPattern(paramString1, paramString2) {
+	setSystemPattern(paramString1: string, paramString2: string) {
 		var i = 1;
 		var j = 1;
 		if (this.mp != null) {
@@ -1845,7 +1917,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setSystemPatternImage(paramString1, paramString2, paramImage) {
+	setSystemPatternImage(paramString1: string, paramString2: string, paramImage: ImageBuff) {
 		var i = 1;
 		var j = 0;
 		if (this.mp != null) {
@@ -1867,7 +1939,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	getCoinCount(paramString1, paramString2, paramString3, paramString4) {
+	getCoinCount(paramString1: string, paramString2: string, paramString3: string, paramString4: string) {
 		if (arguments.length === 0) {
 			if (this.mp != null) {
 				return this.mp.getCoinCount(0, 0, this.mp.mapWidth - 1, this.mp.mapHeight - 1);
@@ -1893,7 +1965,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	addMyTokugi(paramString) {
+	addMyTokugi(paramString: string) {
 		var i = -1;
 		var bool = false;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
@@ -1907,7 +1979,7 @@ class MasaoConstruction {
 		return bool;
 	}
 
-	removeMyTokugi(paramString) {
+	removeMyTokugi(paramString: string) {
 		var i = -1;
 		var bool = false;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
@@ -1921,7 +1993,7 @@ class MasaoConstruction {
 		return bool;
 	}
 
-	setScore(paramString) {
+	setScore(paramString: string) {
 		var i = 0;
 		if (this.mp != null) {
 			i = parseInt(paramString);
@@ -1954,7 +2026,7 @@ class MasaoConstruction {
 		return -1;
 	}
 
-	setTimeLimit(paramString) {
+	setTimeLimit(paramString: string) {
 		var i = 0;
 		if (this.mp != null && this.mp.time_max > 0) {
 			i = parseInt(paramString);
@@ -1969,7 +2041,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setAthletic(paramString1, paramString2, paramString3) {
+	setAthletic(paramString1: string, paramString2: string, paramString3: string) {
 		var i = -1;
 		var j = 0;
 		var k = 0;
@@ -2021,7 +2093,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setSecondImage(paramString) {
+	setSecondImage(paramString: string) {
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			var localImage = this.gg.loadImage(paramString);
 			this.mp.second_gazou_img = localImage;
@@ -2031,7 +2103,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setGrenadeCount(paramString) {
+	setGrenadeCount(paramString: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200 && this.mp.co_j.c >= 100 && this.mp.co_j.c < 200) {
 			i = parseInt(paramString);
@@ -2046,7 +2118,7 @@ class MasaoConstruction {
 		return false;
 	}
 
-	setMyLeft(paramString) {
+	setMyLeft(paramString: string) {
 		var i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			i = parseInt(paramString);
@@ -2083,7 +2155,7 @@ class MasaoConstruction {
 		return i;
 	}
 
-	setEnemyPress(paramString) {
+	setEnemyPress(paramString: string) {
 		var i = 1;
 		if (this.getMode() >= 100 && this.getMode() < 200) {
 			i = parseInt(paramString);
@@ -2101,18 +2173,18 @@ class MasaoConstruction {
 		return false;
 	}
 
-	getImage(url) {
+	getImage(url: string) {
 		var img = new ImageBuff();
 		img.load(url);
 		return img;
 	}
 
-	createImage(w, h) {
+	createImage(w: number, h: number) {
 		var img = new ImageBuff(w, h);
 		return img;
 	}
 
-	getParameter(name) {
+	getParameter(name: string) {
 		var s = (name + "").toLowerCase();
 		var p = this.params[s];
 		if (typeof p === "undefined") return null;
@@ -2173,13 +2245,12 @@ class MasaoConstruction {
 	}
 
 	// メッセージを受け取ってキューの最後に追加する
-	pushMessage(type, target, parameters) {
-		var newMessage = {} as {
-			type: string;
-			target: EventTarget;
-			parameters: object;
-			next: any;
-		};
+	pushMessage<T extends keyof MasaoMessageMap>(
+		type: T,
+		target: MasaoMessageMap[T]["target"],
+		parameters: MasaoMessageMap[T]["parameters"]
+	) {
+		var newMessage = {} as MasaoMessage;
 		newMessage.type = type;
 		newMessage.target = target;
 		newMessage.parameters = parameters;
@@ -2193,11 +2264,11 @@ class MasaoConstruction {
 		this.lastMessage = newMessage;
 	}
 
-	loadAdvanceMapJson(url) {
+	loadAdvanceMapJson(url: string) {
 		var xhr = new XMLHttpRequest();
 		var stateObj = { complete: false };
 		xhr.open("GET", url, true);
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4) {
 				try {
 					this.options["advanced-map"] = JSON.parse(xhr.responseText);
@@ -2207,7 +2278,7 @@ class MasaoConstruction {
 				stateObj.complete = true;
 				xhr.onreadystatechange = null;
 			}
-		}.bind(this);
+		};
 
 		this.pushMessage("loadAdvanceMapJson", stateObj, null);
 
