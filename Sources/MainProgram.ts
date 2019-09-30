@@ -718,7 +718,7 @@ class MainProgram {
 	 * @param highscoreeventhandler {Function} ハイスコア更新時に呼び出されるコールバック関数 第一引数にハイスコアの得点が渡される
 	 * @returns {boolean} 常にtrue
 	 */
-	addHighscoreEvent(highscoreeventhandler) {
+	addHighscoreEvent(highscoreeventhandler: this["heh"]) {
 		this.heh = highscoreeventhandler;
 		return true;
 	}
@@ -747,7 +747,7 @@ class MainProgram {
 	 * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
 	 * @see {@link MasaoJSS#addMyTokugi}
 	 */
-	addMyTokugi(i) {
+	addMyTokugi(i: number) {
 		var flag = false;
 		switch (i) {
 			case 1:
@@ -920,7 +920,7 @@ class MainProgram {
 	 * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
 	 * @see {@link MasaoJSS#removeMyTokugi}
 	 */
-	removeMyTokugi(i) {
+	removeMyTokugi(i: number) {
 		var flag = false;
 		switch (i) {
 			case 1:
@@ -1168,7 +1168,7 @@ class MainProgram {
 	 * @param {string} line3 メッセージ（3行目）
 	 * @see {@link MasaoJSS#showMessage}
 	 */
-	showmSet(s, s1, s2, s3, s4) {
+	showmSet(s: string, s1: string | null, s2: string | null, s3: string | null, s4: string | null) {
 		if (this.ml_mode != 100) return false;
 		this.showm_c = parseInt(s);
 		if (isNaN(this.showm_c)) this.showm_c = 0;
@@ -1206,7 +1206,7 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功するとtrueを返す
 	 * @see {@link MasaoJSS#showImage}
 	 */
-	showiSet(s, s1, s2, s3) {
+	showiSet(s: string, s1: string, s2: string, s3: string) {
 		if (this.ml_mode != 100) return false;
 		this.showi_c = parseInt(s);
 		this.showi_x = parseInt(s1);
@@ -1226,7 +1226,7 @@ class MainProgram {
 	 * @returns {boolean}
 	 * @see {@link MasaoJSS#setBackImage}
 	 */
-	setbacki(s) {
+	setbacki(s: string) {
 		if (this.ml_mode != 100) return false;
 		if (this.gg.layer_mode != 2 && this.mcs_haikei_visible != 1) {
 			return false;
@@ -1247,7 +1247,7 @@ class MainProgram {
 	 * @returns {boolean} 主人公を停止状態にできたかどうか
 	 * @see {@link MasaoJSS#setMyWait}
 	 */
-	setMyWait(s, s1, s2) {
+	setMyWait(s: string, s1: string, s2: string) {
 		var i = -1;
 		var j = 100;
 		var k = 1;
@@ -1291,7 +1291,7 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossHP}
 	 */
-	setBossHP(hp) {
+	setBossHP(hp: number) {
 		if (this.ml_mode < 100 || this.ml_mode >= 200) return false;
 		return this.co_b.setHP(this, hp);
 	}
@@ -1326,7 +1326,7 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossXReal}
 	 */
-	setBossXReal(i) {
+	setBossXReal(i: number) {
 		if (this.ml_mode < 100 || this.ml_mode >= 200) return false;
 		if (this.co_b.c < 100) {
 			return false;
@@ -1342,7 +1342,7 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossYReal}
 	 */
-	setBossYReal(i) {
+	setBossYReal(i: number) {
 		if (this.ml_mode < 100 || this.ml_mode >= 200) return false;
 		if (this.co_b.c < 100) {
 			return false;
@@ -1381,7 +1381,7 @@ class MainProgram {
 	 * @param {string} filename ファイル名
 	 * @see {@link MasaoJSS#setSystemImage}
 	 */
-	setSystemImage(s, s1) {
+	setSystemImage(s: string, s1: string) {
 		var i;
 
 		i = parseInt(s);
@@ -1409,7 +1409,7 @@ class MainProgram {
 	 * @param {number} y2 範囲右下の座標
 	 * @see {@link MasaoJSS#setScrollArea}
 	 */
-	setScrollArea(s, s1, s2, s3) {
+	setScrollArea(s: string, s1: string, s2: string, s3: string) {
 		var i = 0;
 		var j = 0;
 		var k = this.mapWidth - 16;
@@ -1453,7 +1453,7 @@ class MainProgram {
 	 * @param {number} y2 範囲右下の座標
 	 * @see {@link MasaoJSS#setScrollAreaReal}
 	 */
-	setScrollAreaReal(s, s1, s2, s3) {
+	setScrollAreaReal(s: string, s1: string, s2: string, s3: string) {
 		var i = 0;
 		var j = 0;
 		var k = this.mapWidth - 16;
@@ -1496,7 +1496,7 @@ class MainProgram {
 	 * @param {number} time 時間（フレーム）
 	 * @see {@link MasaoJSS#setModeWait}
 	 */
-	setModeWait(s, s1) {
+	setModeWait(s: string, s1: string) {
 		var i = 0;
 		var j = 100;
 
@@ -1523,7 +1523,7 @@ class MainProgram {
 	 * @see {@link MainProgram#showrSet}
 	 * @see {@link MainProgram#showoSet}
 	 */
-	setPenColor(s, s1, s2, s3) {
+	setPenColor(s: string, s1: string, s2: string, s3: string) {
 		var i = 255;
 		var j = 255;
 		var k = 255;
@@ -1553,7 +1553,7 @@ class MainProgram {
 	 * @param {number} height 矩形の高さ
 	 * @see {@link MasaoJSS#showRect}
 	 */
-	showrSet(s, s1, s2, s3, s4) {
+	showrSet(s: string, s1: string, s2: string, s3: string, s4: string) {
 		if (this.ml_mode != 100) return false;
 
 		this.showr_c = parseInt(s);
@@ -1583,7 +1583,7 @@ class MainProgram {
 	 * @param {number} height 楕円の高さ
 	 * @see {@link MasaoJSS#showOval}
 	 */
-	showoSet(s, s1, s2, s3, s4) {
+	showoSet(s: string, s1: string, s2: string, s3: string, s4: string) {
 		if (this.ml_mode != 100) return false;
 
 		this.showo_c = parseInt(s);
@@ -1622,7 +1622,7 @@ class MainProgram {
 	 * @param {string} name ゲージに表示される文字列
 	 * @see {@link MasaoJSS#showGauge}
 	 */
-	showGauge(s, s1) {
+	showGauge(s: string | number, s1: string) {
 		var i = 0;
 		if (this.ml_mode != 100) return false;
 
@@ -1656,7 +1656,7 @@ class MainProgram {
 	 * @returns {boolean}
 	 * @see {@link MasaoJSS#setJSMes}
 	 */
-	setJSMes(s) {
+	setJSMes(s: string) {
 		this.js_mes = parseInt(s);
 		if (isNaN(this.js_mes)) this.js_mes = 0;
 		return true;
@@ -1671,7 +1671,7 @@ class MainProgram {
 	 * @param {number} y Y座標
 	 * @see {@link MasaoJSS#setEnemy}
 	 */
-	sete(s, s1, s2) {
+	sete(s: string, s1: string, s2: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2218,7 +2218,7 @@ class MainProgram {
 	 * @param {number} x X座標
 	 * @see {@link MasaoJSS#setScrollLock}
 	 */
-	setScrollLock(s) {
+	setScrollLock(s: string) {
 		var i = 32;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
@@ -2244,7 +2244,7 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link MasaoJSS#attackFire}
 	 */
-	attackFire(s, s1, s2, s3) {
+	attackFire(s: string, s1: string, s2: string, s3: string) {
 		var i = 0;
 		var j = 0;
 		var k = 32;
@@ -2291,7 +2291,7 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link MasaoJSS#attackTail}
 	 */
-	attackTail(s, s1, s2, s3) {
+	attackTail(s: string, s1: string, s2: string, s3: string) {
 		var i = 0;
 		var j = 0;
 		var k = 32;
@@ -2334,7 +2334,7 @@ class MainProgram {
 	 * @returns {number} 倒した敵の数 エラー時は-1
 	 * @see {@link MasaoJSS#destroyEnemy}
 	 */
-	destroyEnemy(s, s1, s2, s3) {
+	destroyEnemy(s: string, s1: string, s2: string, s3: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2405,7 +2405,7 @@ class MainProgram {
 	 * @returns {boolean} 変更に成功したかどうか
 	 * @see {@link MasaoJSS#setMapchip}
 	 */
-	setmapc(s, s1, s2) {
+	setmapc(s: string, s1: string, s2: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2435,7 +2435,7 @@ class MainProgram {
 	 * @returns {number} マップチップ番号 失敗した場合は-1
 	 * @see {@link MasaoJSS#getMapchip}
 	 */
-	getmapc(s, s1) {
+	getmapc(s: string, s1: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2464,7 +2464,7 @@ class MainProgram {
 	 * @returns {boolean} 変更に成功したかどうか
 	 * @see {@link MasaoJSS#setMapchip2}
 	 */
-	setmapc2(s, s1, s2) {
+	setmapc2(s: string, s1: string, s2: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2494,7 +2494,7 @@ class MainProgram {
 	 * @returns {number} マップチップ番号 失敗した場合は-1
 	 * @see {@link MasaoJSS#getMapchip2}
 	 */
-	getmapc2(s, s1) {
+	getmapc2(s: string, s1: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2522,7 +2522,7 @@ class MainProgram {
 	 * @returns {boolean} 常にtrue
 	 * @see {@link MasaoJSS#showMyHP}
 	 */
-	showMyHP(s) {
+	showMyHP(s: string) {
 		this.j_hp_v = true;
 		this.j_hp_moji = s;
 		if (this.j_hp_moji == null) this.j_hp_moji = "";
@@ -2536,7 +2536,7 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setMyMaxHP}
 	 */
-	setMyMaxHP(s) {
+	setMyMaxHP(s: string) {
 		var i = -1;
 
 		i = parseInt(s);
@@ -2559,7 +2559,7 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setMyHP}
 	 */
-	setMyHP(s) {
+	setMyHP(s: string) {
 		if (
 			(this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) &&
 			this.co_j.c >= 100 &&
@@ -2603,7 +2603,7 @@ class MainProgram {
 	 * @returns {boolean} ダメージを与えることに成功したかどうか
 	 * @see {@link MasaoJSS#setMyHPDamage}
 	 */
-	setMyHPDamage(s) {
+	setMyHPDamage(s: string) {
 		if (this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200) {
 			var j;
 			j = parseInt(s);
@@ -2644,7 +2644,7 @@ class MainProgram {
 	 * @param i {number}
 	 * @returns {number} 0以上i未満のランダムな整数値
 	 */
-	ranInt(i) {
+	ranInt(i: number) {
 		//xor-shift 乱数(a=9, b=11, c=19)
 		var ran_seed = this.ran_seed;
 		ran_seed = (ran_seed ^ (ran_seed << 9)) >>> 0;
@@ -2725,7 +2725,7 @@ class MainProgram {
 	 *
 	 * @see {@link MasaoJSS#addScore}
 	 */
-	addScore(score) {
+	addScore(score: number) {
 		this.score += score;
 		if (this.score_1up_1 > 0 && this.score >= this.score_1up_1) {
 			this.j_left++;
@@ -2764,7 +2764,7 @@ class MainProgram {
 	 * @param y2 終点のY座標
 	 * @returns {number}
 	 */
-	getCoinCount(i, j, k, l) {
+	getCoinCount(i: number, j: number, k: number, l: number) {
 		if (this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) {
 			var j1 = i + 1;
 			var k1 = j + 10;
@@ -2819,7 +2819,7 @@ class MainProgram {
 	 * @param {number} person_id セリフを言う人の番号
 	 * @param {number} max_row 1からmax_row行目までを表示する
 	 */
-	addSerifu(index, person_id, max_row) {
+	addSerifu(index: number, person_id: string | number, max_row: number) {
 		for (let i = 1; i <= max_row; i++) {
 			const message = this.tdb.getValue("serifu" + person_id + "-" + i);
 			// NOTE: issue #34
@@ -2830,7 +2830,7 @@ class MainProgram {
 	/**
 	 * TODO: 加筆求む
 	 */
-	addSerifu2(i, s, j, k?) {
+	addSerifu2(i: number, s: string, j: number, k?: number) {
 		var l, k1, k2;
 		if (arguments.length == 3) {
 			k1 = 1;
@@ -5037,7 +5037,7 @@ class MainProgram {
 	 * @param i ステージ番号 i-100がステージ番号(1スタート)となる
 	 */
 	mapsMakeStageData(
-		i // 新形式マップの処理
+		i: number // 新形式マップの処理
 	) {
 		var i3;
 		var as;
@@ -5349,7 +5349,7 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap}
 	 */
-	setAthleticOnMap(i, j, k) {
+	setAthleticOnMap(i: number, j: number, k: number) {
 		var word0 = -1;
 		if (this.maps.map_bg[j - 1][k] == 4) word0 = 4;
 		if (i == 2) this.aSet(j * 32, k * 32, 500, j * 32);
@@ -10892,7 +10892,7 @@ class MainProgram {
 	 * @param {number} [type=1] 死因
 	 * @see {@link MasaoJSS#setMyMiss}
 	 */
-	jShinu(i) {
+	jShinu(i: number) {
 		this.co_j.c1 = 0;
 		this.co_j.c2 = 0;
 		this.j_zan_f = false;
@@ -10932,7 +10932,7 @@ class MainProgram {
 	 * @see {@link MasaoJSS#setMyPress}
 	 * @returns {boolean} 成功したかどうか
 	 */
-	jFumu(i) {
+	jFumu(i: number) {
 		if (this.co_j.c < 100 || this.co_j.c >= 200) return false;
 		this.gs.rsAddSound(8);
 		this.co_j.y = this.co_j.y - 10;
@@ -10952,7 +10952,7 @@ class MainProgram {
 	 * @param y {number} マップY座標(ピクセル単位)
 	 * @returns {number} 坂道の床面のY座標(ピクセル単位) 坂道ブロックがない場合、(なぜか)y-31が返る
 	 */
-	getSakamichiY(i, j) {
+	getSakamichiY(i: number, j: number) {
 		var k = 0;
 		var l = i - rightShiftIgnoreSign(i, 5) * 32;
 		var word0 = this.maps.map_bg[rightShiftIgnoreSign(i, 5)][rightShiftIgnoreSign(j, 5)];
@@ -10974,7 +10974,7 @@ class MainProgram {
 	 * @param y {number}
 	 * @param type {number}
 	 */
-	jZutuki(i, j, k) {
+	jZutuki(i: number, j: number, k: number) {
 		for (var l = 0; l <= this.t_kazu; l++) {
 			if (this.co_t[l].c < 100) continue;
 			var characterobject = this.co_t[l];
@@ -11025,7 +11025,7 @@ class MainProgram {
 	 * @param y {number} Y座標(ピクセル座標)
 	 * @returns {boolean} 指定した座標が水かどうか
 	 */
-	checkWater(i, j) {
+	checkWater(i: number, j: number) {
 		var k = this.maps.getBGCode(i, j);
 		if (k == 4) return true;
 		if (k == 8 || k == 9) {
@@ -11041,7 +11041,7 @@ class MainProgram {
 	 * @param teki_type {(string|number)} 敵の種類
 	 * @param l {number} その敵が出現するスクロール位置
 	 */
-	tSet(x, y, teki_type, l) {
+	tSet(x: number, y: number, teki_type: string | number, l: number) {
 		// 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
 		const t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
 
@@ -11097,7 +11097,7 @@ class MainProgram {
 	 * @param k {number} 敵コード
 	 * @param l {number} 初速（X軸方向）
 	 */
-	tSetBoss(i, j, k, l) {
+	tSetBoss(i: number, j: number, k: number, l: number) {
 		var t_limit, i1;
 		// 敵の個数に関する後方互換性オプション
 		if (this.tdb.options["bc-enemy-number"]) {
@@ -11141,7 +11141,7 @@ class MainProgram {
 	 * @returns {PartsDefinition} 定義オブジェクト
 	 * @private
 	 */
-	getEnemyDefinition(code) {
+	getEnemyDefinition(code: number) {
 		var customParts = this.customParts;
 		// カスタムパーツを探す
 		if (customParts && customParts[code]) {
@@ -11576,7 +11576,7 @@ class MainProgram {
 	 * @param y {number} y座標(ピクセル座標)
 	 * @returns {number} 穴のid 穴が指定した座標に存在しない場合は-1
 	 */
-	anaCheckNormal(i, j) {
+	anaCheckNormal(i: number, j: number) {
 		var l = -1;
 		var k = 0;
 		do {
@@ -11603,7 +11603,7 @@ class MainProgram {
 	 * @returns {*}
 	 * @see {@link getSakamichiY}
 	 */
-	sakamichiY(i, j) {
+	sakamichiY(i: number, j: number) {
 		var k = rightShiftIgnoreSign(i + 15, 5);
 		var l = rightShiftIgnoreSign(j + 31, 5);
 		var word0 = this.maps.map_bg[k][l];
@@ -11651,7 +11651,7 @@ class MainProgram {
 	 * @param y {number} y座標(ピクセル座標)
 	 * @param type {number} 種類
 	 */
-	mSet(i, j, k) {
+	mSet(i: number, j: number, k: number) {
 		var l = 0;
 		do {
 			if (l > 79) break;
@@ -11923,7 +11923,7 @@ class MainProgram {
 	 * @param vx {number} X速度(ピクセル単位)
 	 * @param vy {number} Y速度(ピクセル単位)
 	 */
-	mSet2(i, j, k, l, i1) {
+	mSet2(i: number, j: number, k: number, l: number, i1: number) {
 		var j1 = 0;
 		do {
 			if (j1 > 79) break;
@@ -13192,7 +13192,7 @@ class MainProgram {
 	 * @param y {number} y座標(ピクセル座標)
 	 * @param type {number} 種類
 	 */
-	jmSet(i, j, k) {
+	jmSet(i: number, j: number, k: number) {
 		var l = 0;
 		do {
 			if (l > 1) break;
@@ -13379,7 +13379,7 @@ class MainProgram {
 	 * @param type {number} 種類
 	 * @param i {number} 攻撃を配置するco_jmのインデックス(同インデックスを指定すると前に発生させた攻撃が消滅するまで次を出せない
 	 */
-	jmSet2(i, j, k, l) {
+	jmSet2(i: number, j: number, k: number, l: number) {
 		var i1 = l;
 		if (this.co_jm[i1].c > 0) return;
 		var characterobject = this.co_jm[i1];
@@ -14443,7 +14443,7 @@ class MainProgram {
 	 * @param x {number} X座標(マップ座標)
 	 * @param y {number} Y座標(マップ座標)
 	 */
-	anaSet(i, j) {
+	anaSet(i: number, j: number) {
 		var k = 0;
 		do {
 			if (k > 11) break;
@@ -14464,7 +14464,7 @@ class MainProgram {
 	 * @param x {number} X座標(マップ座標)
 	 * @param y {number} Y座標(マップ座標)
 	 */
-	anaSet2(i, j) {
+	anaSet2(i: number, j: number) {
 		var k = 0;
 		do {
 			if (k > 11) break;
@@ -14529,7 +14529,7 @@ class MainProgram {
 	 * @param argValue {number} 仕掛けに使用する引数
 	 * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet}
 	 */
-	aSet(i, j, k, l) {
+	aSet(i: number, j: number, k: number, l: number) {
 		var i1 = 0;
 		do {
 			if (i1 > this.a_kazu) {
@@ -22094,7 +22094,7 @@ class MainProgram {
 	 * @param i {number} 更新する仕掛けのco_a内のインデックス
 	 * @see {@link MainProgram#aMove}
 	 */
-	aMoveOption(i) {
+	aMoveOption(i: number) {
 		var characterobject = this.co_a[i];
 		var j = characterobject.x;
 		var k = characterobject.y;
@@ -23663,7 +23663,7 @@ class MainProgram {
 	 * @param y2 {number} 終点Y座標 (プロック座標)
 	 * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
 	 */
-	onASwitch(i, j, k, l, i1?) {
+	onASwitch(i: number, j: number, k: number, l: number, i1?: number) {
 		if (arguments.length == 4) i1 = 1;
 		for (var j1 = 0; j1 <= this.a_kazu; j1++) {
 			var k2 = this.co_a[j1].c;
@@ -23714,7 +23714,7 @@ class MainProgram {
 	 * @param y2 {number} 終点Y座標 (プロック座標)
 	 * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
 	 */
-	offASwitch(i, j, k, l, i1?) {
+	offASwitch(i: number, j: number, k: number, l: number, i1?: number) {
 		if (arguments.length == 4) i1 = 1;
 		for (var j1 = 0; j1 <= this.a_kazu; j1++) {
 			var k2 = this.co_a[j1].c;
@@ -23771,7 +23771,7 @@ class MainProgram {
 	 * @param code {number} 設置するブロックのコード
 	 * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
 	 */
-	hSet(blockX, blockY, code) {
+	hSet(blockX: number, blockY: number, code: number) {
 		for (let i = 0; i <= 79; i++) {
 			// まだ使われていないものを探して追加する
 			if (this.co_h[i].c > 0) continue;
@@ -23789,7 +23789,7 @@ class MainProgram {
 	 * @param y {number} Y座標(ブロック単位)
 	 * @param c 無効化対象のブロックのコード これとCaracterObject.cの値が一致していれば無効化される
 	 */
-	hDelete(i, j, k) {
+	hDelete(i: number, j: number, k: number) {
 		for (var l = 0; l <= 79; l++)
 			if (this.co_h[l].c == k && this.co_h[l].x == i && this.co_h[l].y == j) {
 				this.co_h[l].c = 0;
@@ -23802,7 +23802,7 @@ class MainProgram {
 	 * @param x {number} X座標(ブロック単位)
 	 * @param y {number} Y座標(ブロック単位)
 	 */
-	hAttack(i, j) {
+	hAttack(i: number, j: number) {
 		var k = 0;
 		do {
 			if (k > 79) break;
@@ -24163,7 +24163,7 @@ class MainProgram {
 	 * @returns {number} 床ID 失敗した場合は-1
 	 * @see {@link MasaoJSS#newYuka}
 	 */
-	newYuka(s, s1, s2, s3, s4) {
+	newYuka(s: string, s1: string, s2: string, s3: string, s4: string) {
 		var j = 32;
 		var k = 320;
 		var l = 96;
@@ -24305,7 +24305,7 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaPosition}
 	 */
-	setYukaPosition(s, s1, s2, s3?, s4?) {
+	setYukaPosition(s: string, s1: string, s2: string, s3?: string, s4?: string) {
 		if (arguments.length == 3) {
 			var i = 0;
 			var j = 32;
@@ -24367,7 +24367,7 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaType}
 	 */
-	setYukaType(s, s1) {
+	setYukaType(s: string, s1: string) {
 		var i = 0;
 		var j = 1;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
@@ -24393,7 +24393,7 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#disposeYuka}
 	 */
-	disposeYuka(s) {
+	disposeYuka(s: string) {
 		var i = 0;
 		var byte0 = 1;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
@@ -24422,9 +24422,9 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaColor}
 	 */
-	setYukaColor(id, r, g, b, alpha);
-	setYukaColor(index, color);
-	setYukaColor(index, color) {
+	setYukaColor(id: string, r: string, g: string, b: string, alpha: string): boolean;
+	setYukaColor(index: number, color: Color): boolean;
+	setYukaColor(index: string | number, color: string | Color): boolean {
 		if (arguments.length == 5) {
 			var i = 0;
 			var j = 255;
@@ -24470,7 +24470,7 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaPattern}
 	 */
-	setYukaPattern(s, s1, s2) {
+	setYukaPattern(s: string, s1: string, s2: string) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -24503,7 +24503,7 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaImage}
 	 */
-	setYukaImage(s, a2) {
+	setYukaImage(s: string, a2: string | ImageBuff | null) {
 		var i = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
@@ -24530,7 +24530,7 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link MasaoJSS#isRideYuka}
 	 */
-	isRideYuka(s) {
+	isRideYuka(s: string) {
 		var i = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return -1;
 		if (this.co_j.c < 100 || this.co_j.c >= 200) return -1;
@@ -25464,7 +25464,7 @@ class MainProgram {
 	 * 主人公と床オブジェクトとの当たり判定処理
 	 * @param direction {number} 判定を行う向き 0,1,2,3のいずれか
 	 */
-	atariYuka(i) {
+	atariYuka(i: number) {
 		if (this.yuka_id_max < 0) return;
 		if (i == 0) {
 			for (var j = 0; j <= this.yuka_id_max; j++) {
@@ -25782,7 +25782,7 @@ class MainProgram {
 		return flag;
 	}
 
-	getSLOY(i, j, k, l) {
+	getSLOY(i: number, j: number, k: number, l: number) {
 		if (i >= k) return -1;
 		var i1 = this.co_j.x + 15;
 		if (i1 < i || i1 > k) return -1;
@@ -25799,7 +25799,7 @@ class MainProgram {
 		}
 	}
 
-	getSCOYCeiling(i, j, k, l) {
+	getSCOYCeiling(i: number, j: number, k: number, l: number) {
 		var i1 = this.co_j.x + 15;
 		var k1 = rounddown((k * 90) / 100);
 		if (i1 < i - k1 || i1 > i + k1) {
@@ -25810,13 +25810,13 @@ class MainProgram {
 		}
 	}
 
-	getSCOAlign(i, j, k, l) {
+	getSCOAlign(i: number, j: number, k: number, l: number) {
 		var j1 = rounddown((k * 90) / 100);
 		var i1 = Math.floor(Math.sqrt(k * k - j1 * j1));
 		return i1;
 	}
 
-	getSCOY(i, j, k, l, i1?) {
+	getSCOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
 		var l1 = rounddown((k * 90) / 100);
 		if (arguments.length == 4) j1 = this.co_j.x + 15;
@@ -25829,7 +25829,7 @@ class MainProgram {
 		}
 	}
 
-	getSHCOY(i, j, k, l, i1?) {
+	getSHCOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
 		if (arguments.length == 4) j1 = this.co_j.x + 15;
 		else j1 = i1;
@@ -25841,7 +25841,7 @@ class MainProgram {
 		}
 	}
 
-	getSWUpOY(i, j, k, l, i1?) {
+	getSWUpOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
 		if (arguments.length == 4) j1 = this.co_j.x + 15;
 		else j1 = i1;
@@ -25859,7 +25859,7 @@ class MainProgram {
 		return k2;
 	}
 
-	getSWDownOY(i, j, k, l, i1?) {
+	getSWDownOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
 		if (arguments.length == 4) j1 = this.co_j.x + 15;
 		else j1 = i1;
@@ -25884,7 +25884,7 @@ class MainProgram {
 	 * @param id パーツコード
 	 * @returns {number} `maps.map_bg`に格納されるべき値
 	 */
-	setChipValue(x, y, id) {
+	setChipValue(x: number, y: number, id: number) {
 		var word1 = -1;
 		switch (id) {
 			case 46:
@@ -26661,6 +26661,11 @@ class MainProgram {
 		var result = {} as { [K in (typeof props)[number]]: MainProgram[K] } & {
 			map_data_option: ReturnType<typeof compressSparseBooleanArray2>;
 			co_j: ReturnType<typeof serializeCharacterObject>;
+			co_t: ReturnType<typeof compressCharacterObjectArray>;
+			co_m: ReturnType<typeof compressCharacterObjectArray>;
+			co_a: ReturnType<typeof compressCharacterObjectArray>;
+			co_jm: ReturnType<typeof compressCharacterObjectArray>;
+			co_mu: ReturnType<typeof compressCharacterObjectArray>;
 			yo: ReturnType<typeof serializeYukaObject>[];
 		};
 		props.forEach(function(key) {
@@ -26670,15 +26675,16 @@ class MainProgram {
 		result.map_data_option = compressSparseBooleanArray2(this.map_data_option);
 		result.co_j = serializeCharacterObject(this.co_j);
 		// CharacterObjectの配列も小さくする
-		["co_t", "co_m", "co_a", "co_jm", "co_mu"].forEach(function(key) {
-			result[key] = compressCharacterObjectArray(this[key]);
+		var coProps = ["co_t", "co_m", "co_a", "co_jm", "co_mu"] as const;
+		coProps.forEach(function(key) {
+			(result as any)[key] = compressCharacterObjectArray(this[key]);
 		}, this);
 		// YukaObjectの配列も小さくする
 		result.yo = this.yo.map(serializeYukaObject);
 		return result;
 
 		// boolean値2次元配列をtrueのインデックスの列に変換
-		function compressSparseBooleanArray2(arr) {
+		function compressSparseBooleanArray2(arr: boolean[][]) {
 			var width = arr.length;
 			var height = (arr[0] && arr[0].length) || 0;
 			var result_arr = [];
@@ -26700,8 +26706,8 @@ class MainProgram {
 		}
 
 		// CharacterObjectの配列を変換
-		function compressCharacterObjectArray(arr) {
-			return arr.map(function(obj) {
+		function compressCharacterObjectArray<K extends (typeof coProps)[number]>(arr: MainProgram[K]) {
+			return arr.map(function(obj: CharacterObject) {
 				if (obj.c <= 0) {
 					// Cが0なのは使われていないオブジェクト
 					return 0;
@@ -26712,13 +26718,13 @@ class MainProgram {
 		}
 
 		// CharacterObjectをシリアライズ
-		function serializeCharacterObject(obj) {
+		function serializeCharacterObject(obj: CharacterObject) {
 			// スナップショットにコンストラクタ名が現れるのを防ぐためにJSON文字列化する
 			return JSON.stringify(obj);
 		}
 
 		// YukaObjectをシリアライズ
-		function serializeYukaObject(obj) {
+		function serializeYukaObject(obj: any) {
 			return JSON.stringify(obj);
 		}
 	}
