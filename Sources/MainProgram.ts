@@ -26724,7 +26724,7 @@ class MainProgram {
 		}
 
 		// YukaObjectをシリアライズ
-		function serializeYukaObject(obj: any) {
+		function serializeYukaObject(obj: YukaObject) {
 			return JSON.stringify(obj);
 		}
 	}
