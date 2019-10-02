@@ -27,7 +27,7 @@ type NativePartsKey = keyof typeof EnemyController.available;
 type Parts = {
 	properties: EnemyControllerFactory<unknown>["properties"];
 	native: EnemyControllerFactory<unknown>;
-	nativeCode: string | number;
+	nativeCode: number;
 };
 
 /**
@@ -11041,7 +11041,7 @@ class MainProgram {
 	 * @param teki_type {(string|number)} 敵の種類
 	 * @param l {number} その敵が出現するスクロール位置
 	 */
-	tSet(x: number, y: number, teki_type: string | number, l: number) {
+	tSet(x: number, y: number, teki_type: number, l: number) {
 		// 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
 		const t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
 
@@ -11141,19 +11141,19 @@ class MainProgram {
 	 * @returns {PartsDefinition} 定義オブジェクト
 	 * @private
 	 */
-	getEnemyDefinition(code: number) {
+	getEnemyDefinition(code: string | number): Parts | null {
 		var customParts = this.customParts;
 		// カスタムパーツを探す
 		if (customParts && customParts[code]) {
 			return customParts[code];
 		}
 		// ネイティブな敵を探す
-		if (EnemyController.available[code]) {
-			var obj = EnemyController.available[code];
+		if (code in EnemyController.available) {
+			var obj = EnemyController.available[code as keyof typeof EnemyController.available];
 			return {
 				properties: obj.properties,
 				native: obj,
-				nativeCode: code + 5000
+				nativeCode: (code as number) + 5000
 			};
 		}
 		return null;
@@ -11281,7 +11281,7 @@ class MainProgram {
 							}
 							var l36 = this.maps.getBGCode(l20 + 15, i21 + 32 + 15);
 							if (l36 <= 10 || l36 == 15) {
-								characterobject.muki = this.ranInt(2);
+								characterobject.muki = this.ranInt(2) as InversionKind;
 								characterobject.c1 = 2;
 								break;
 							}
