@@ -4170,7 +4170,7 @@ class MainProgram {
 					else if (this.ig.dokan_khID == 4) s1 = this.tdb.getValue("url4");
 					else s1 = this.tdb.getValue("url1");
 
-					location.href = s1 || "";
+					location.href = s1;
 				} else if (this.ml_mode_c > 80) this.ml_mode = 50;
 				if (this.gk.key_code == 84) {
 					this.gk.key_code = 0;
@@ -4452,13 +4452,13 @@ class MainProgram {
 		if (i1 < 0) i1 = 0;
 		else if (i1 > 255) i1 = 255;
 		this.gamecolor_mizunohadou = new Color(k, l, i1);
-		this.moji_score = this.tdb.getValue("moji_score")!;
-		this.moji_highscore = this.tdb.getValue("moji_highscore")!;
-		this.moji_time = this.tdb.getValue("moji_time")!;
+		this.moji_score = this.tdb.getValue("moji_score");
+		this.moji_highscore = this.tdb.getValue("moji_highscore");
+		this.moji_time = this.tdb.getValue("moji_time");
 		this.moji_time = "" + "  " + this.moji_time + " ";
-		this.moji_jet = this.tdb.getValue("moji_jet")!;
-		this.moji_grenade = this.tdb.getValue("moji_grenade")!;
-		this.moji_left = this.tdb.getValue("moji_left")!;
+		this.moji_jet = this.tdb.getValue("moji_jet");
+		this.moji_grenade = this.tdb.getValue("moji_grenade");
+		this.moji_left = this.tdb.getValue("moji_left");
 		this.moji_left = "" + "  " + this.moji_left + " ";
 		this.moji_size = this.tdb.getValueInt("moji_size");
 		if (this.moji_size < 10) this.moji_size = 10;
@@ -4597,21 +4597,21 @@ class MainProgram {
 		this.dokan_mode = this.tdb.getValueInt("dokan_mode");
 		if (this.dokan_mode < 1 || this.dokan_mode > 2) this.dokan_mode = 1;
 		if (this.gg.mode == 1) this.dokan_mode = 2;
-		this.mes1_name = this.tdb.getValue("mes1_name")!;
-		this.mes2_name = this.tdb.getValue("mes2_name")!;
-		this.shop_name = this.tdb.getValue("shop_name")!;
-		this.setumei_name = this.tdb.getValue("setumei_name")!;
+		this.mes1_name = this.tdb.getValue("mes1_name");
+		this.mes2_name = this.tdb.getValue("mes2_name");
+		this.shop_name = this.tdb.getValue("shop_name");
+		this.setumei_name = this.tdb.getValue("setumei_name");
 		this.door_score = this.tdb.getValueInt("door_score");
 		if (this.door_score < 10) this.door_score = 10;
-		this.shop_item_name[0] = this.tdb.getValue("shop_item_name1")!;
-		this.shop_item_name[1] = this.tdb.getValue("shop_item_name2")!;
-		this.shop_item_name[2] = this.tdb.getValue("shop_item_name3")!;
-		this.shop_item_name[3] = this.tdb.getValue("shop_item_name4")!;
-		this.shop_item_name[4] = this.tdb.getValue("shop_item_name5")!;
-		this.shop_item_name[5] = this.tdb.getValue("shop_item_name6")!;
-		this.shop_item_name[6] = this.tdb.getValue("shop_item_name7")!;
-		this.shop_item_name[7] = this.tdb.getValue("shop_item_name8")!;
-		this.shop_item_name[8] = this.tdb.getValue("shop_item_name9")!;
+		this.shop_item_name[0] = this.tdb.getValue("shop_item_name1");
+		this.shop_item_name[1] = this.tdb.getValue("shop_item_name2");
+		this.shop_item_name[2] = this.tdb.getValue("shop_item_name3");
+		this.shop_item_name[3] = this.tdb.getValue("shop_item_name4");
+		this.shop_item_name[4] = this.tdb.getValue("shop_item_name5");
+		this.shop_item_name[5] = this.tdb.getValue("shop_item_name6");
+		this.shop_item_name[6] = this.tdb.getValue("shop_item_name7");
+		this.shop_item_name[7] = this.tdb.getValue("shop_item_name8");
+		this.shop_item_name[8] = this.tdb.getValue("shop_item_name9");
 		for (var j1 = 0; j1 <= 8; j1++) {
 			var j = j1 + 1;
 			j = this.tdb.getValueInt("" + "shop_item_teika" + j);
@@ -4632,11 +4632,11 @@ class MainProgram {
 			this.tdb.getValueInt("second_gazou_visible") == 2
 		) {
 			this.second_gazou_visible = true;
-			this.second_gazou_stage_img[0] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei")!);
+			this.second_gazou_stage_img[0] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei"));
 			if (this.stage_select == 2 || this.stage_max >= 2) {
-				this.second_gazou_stage_img[1] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei2")!);
-				this.second_gazou_stage_img[2] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei3")!);
-				this.second_gazou_stage_img[3] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei4")!);
+				this.second_gazou_stage_img[1] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei2"));
+				this.second_gazou_stage_img[2] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei3"));
+				this.second_gazou_stage_img[3] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei4"));
 			}
 		}
 		this.second_gazou_scroll = this.tdb.getValueInt("second_gazou_scroll");

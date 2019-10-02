@@ -414,36 +414,36 @@ class MasaoConstruction {
 		this.gg.setBackcolor(Color.black);
 
 		str = this.tdb.getValue("filename_title");
-		this.gg.addListImage(0, str || "");
+		this.gg.addListImage(0, str);
 
 		str = this.tdb.getValue("filename_ending");
-		this.gg.addListImage(1, str || "");
+		this.gg.addListImage(1, str);
 
 		str = this.tdb.getValue("filename_gameover");
-		this.gg.addListImage(2, str || "");
+		this.gg.addListImage(2, str);
 		if (this.gg.layer_mode == 2 || this.tdb.getValueInt("mcs_haikei_visible") == 1) {
 			str = this.tdb.getValue("filename_haikei");
-			this.gg.addListImage(4, str || "");
+			this.gg.addListImage(4, str);
 		}
 		str = this.tdb.getValue("stage_select");
 		var i;
-		i = parseInt(str || "");
+		i = parseInt(str);
 		if (isNaN(i)) i = -1;
 		if (i == 2) {
 			str = this.tdb.getValue("filename_chizu");
-			this.gg.addListImage(3, str || "");
+			this.gg.addListImage(3, str);
 		}
 		str = this.tdb.getValue("stage_max");
 		var k;
-		k = parseInt(str || "");
+		k = parseInt(str);
 		if (isNaN(k)) k = 1;
 		if ((this.gg.layer_mode == 2 || this.tdb.getValueInt("mcs_haikei_visible") == 1) && (i == 2 || k >= 2)) {
 			str = this.tdb.getValue("filename_haikei2");
-			this.gg.addListImage2(5, str || "");
+			this.gg.addListImage2(5, str);
 			str = this.tdb.getValue("filename_haikei3");
-			this.gg.addListImage2(6, str || "");
+			this.gg.addListImage2(6, str);
 			str = this.tdb.getValue("filename_haikei4");
-			this.gg.addListImage2(7, str || "");
+			this.gg.addListImage2(7, str);
 		}
 		this.gg.loadListImage();
 

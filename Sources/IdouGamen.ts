@@ -404,7 +404,7 @@ class IdouGamen {
 					this.km.off(3);
 					this.km.list_kazu = 0;
 					this.km.init1(6);
-					this.km.setMessage(6, this.tdb.getValue("shop_serifu1") || "null");
+					this.km.setMessage(6, this.tdb.getValue("shop_serifu1"));
 					for (var i = 0; i <= 8; i++) {
 						if (this.mp.shop_item_teika[i] > 0) {
 							this.km.addItem2(6, this.mp.shop_item_name[i], this.mp.shop_item_teika[i]);
@@ -433,8 +433,8 @@ class IdouGamen {
 					this.km.list_s = this.km.list_IDlist[this.km.selectedIndex[6]];
 					this.km.init1(7);
 					this.km.setMessage(7, this.mp.shop_item_name[this.km.list_s] + this.tdb.getValue("shop_serifu2"));
-					this.km.addItem(7, this.tdb.getValue("shop_serifu3") || "null");
-					this.km.addItem(7, this.tdb.getValue("shop_serifu4") || "null");
+					this.km.addItem(7, this.tdb.getValue("shop_serifu3"));
+					this.km.addItem(7, this.tdb.getValue("shop_serifu4"));
 					this.km.activeSerifutuki(7, 48, 150, 236, this.mp.shop_name);
 					this.km.mode = 420;
 				}
@@ -456,7 +456,7 @@ class IdouGamen {
 							this.km.mode = 430;
 						} else {
 							this.km.init1(3);
-							this.km.addItem(3, this.tdb.getValue("shop_serifu6") || "null");
+							this.km.addItem(3, this.tdb.getValue("shop_serifu6"));
 							this.km.activeIchigyou(3, 48, 240, 236);
 							this.km.mode = 430;
 						}
@@ -483,10 +483,10 @@ class IdouGamen {
 				} else if (this.km.kettei_c == 1) {
 					this.km.off(3);
 					this.km.init1(2);
-					this.km.setMessage(2, this.tdb.getValue("setumei_menu1") || "null");
-					this.km.addItem(2, this.tdb.getValue("setumei_menu2") || "null");
-					this.km.addItem(2, this.tdb.getValue("setumei_menu3") || "null");
-					this.km.addItem(2, this.tdb.getValue("setumei_menu4") || "null");
+					this.km.setMessage(2, this.tdb.getValue("setumei_menu1"));
+					this.km.addItem(2, this.tdb.getValue("setumei_menu2"));
+					this.km.addItem(2, this.tdb.getValue("setumei_menu3"));
+					this.km.addItem(2, this.tdb.getValue("setumei_menu4"));
 					this.km.activeSerifutuki(2, 120, 150, 224, this.mp.setumei_name);
 					this.km.mode = 510;
 				}

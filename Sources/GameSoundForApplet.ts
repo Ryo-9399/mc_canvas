@@ -33,15 +33,15 @@ class GameSoundForApplet {
 		for (var j = 0; j < this.s_data.length; j++) {
 			this.s_data[j] = null;
 		}
-		if (parseInt(this.tdb.getValue("se_switch") || "null") === 2) {
+		if (parseInt(this.tdb.getValue("se_switch")) === 2) {
 			this.use_f = false;
 		}
-		if (parseInt(this.tdb.getValue("fx_bgm_switch") || "null") === 1) {
+		if (parseInt(this.tdb.getValue("fx_bgm_switch")) === 1) {
 			this.bgm_switch = true;
 		} else {
 			this.bgm_switch = false;
 		}
-		if (parseInt(this.tdb.getValue("fx_bgm_loop") || "null") === 1) {
+		if (parseInt(this.tdb.getValue("fx_bgm_loop")) === 1) {
 			this.bgm_loop = true;
 		} else {
 			this.bgm_loop = false;
@@ -65,7 +65,7 @@ class GameSoundForApplet {
 	 */
 	_getSEFilenames() {
 		var tdb = this.tdb;
-		var se_filename = parseInt(tdb.getValue("se_filename") || "null");
+		var se_filename = parseInt(tdb.getValue("se_filename"));
 		var k;
 		if (se_filename === 1) {
 			return [

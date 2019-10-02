@@ -97,7 +97,7 @@ class GameGraphicsForApplet {
 
 		var str = this.tdb.getValue("layer_mode");
 		var i4;
-		i4 = parseInt(str || "1");
+		i4 = parseInt(str);
 		if (isNaN(i4)) i4 = -1;
 		if (i4 == 2) {
 			this.layer_mode = 2;
