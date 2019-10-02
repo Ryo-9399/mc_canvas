@@ -24306,7 +24306,7 @@ class MainProgram {
 	 * @see {@link MasaoJSS#setYukaPosition}
 	 */
 	setYukaPosition(s: string, s1: string, s2: string, s3?: string, s4?: string) {
-		if (arguments.length == 3) {
+		if (s3 === undefined || s4 === undefined) {
 			var i = 0;
 			var j = 32;
 			var k = 320;
@@ -24424,7 +24424,7 @@ class MainProgram {
 	 */
 	setYukaColor(id: string, r: string, g: string, b: string, alpha: string): boolean;
 	setYukaColor(index: number, color: Color): boolean;
-	setYukaColor(index: string | number, color: string | Color): boolean {
+	setYukaColor(a1: string | number, a2: string | Color, a3?: string, a4?: string, a5?: string): boolean {
 		if (arguments.length == 5) {
 			var i = 0;
 			var j = 255;
@@ -24433,11 +24433,11 @@ class MainProgram {
 			var i1 = 255;
 			if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-			i = parseInt(arguments[0]);
-			j = parseInt(arguments[1]);
-			k = parseInt(arguments[2]);
-			l = parseInt(arguments[3]);
-			i1 = parseInt(arguments[4]);
+			i = parseInt(a1 as string);
+			j = parseInt(a2 as string);
+			k = parseInt(a3 as string);
+			l = parseInt(a4 as string);
+			i1 = parseInt(a5 as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l) || isNaN(i1)) i = -1;
 			if (i < 0) return false;
 			if (i > this.yuka_id_max) return false;
@@ -24449,12 +24449,12 @@ class MainProgram {
 			}
 		} else {
 			if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 96) return false;
-			if (index < 0) return false;
-			if (index > this.yuka_id_max) return false;
-			if ((this.yo[index].con < 200 || this.yo[index].con >= 500) && this.yo[index].con != 110) {
+			if (a1 < 0) return false;
+			if (a1 > this.yuka_id_max) return false;
+			if ((this.yo[a1 as number].con < 200 || this.yo[a1 as number].con >= 500) && this.yo[a1 as number].con != 110) {
 				return false;
 			} else {
-				this.yo[index].color = color;
+				this.yo[a1 as number].color = a2 as Color;
 				return true;
 			}
 		}
@@ -24489,7 +24489,7 @@ class MainProgram {
 		} else {
 			this.yo[i].con = 120;
 			this.yo[i].pt = j;
-			this.yo[i].pth = k;
+			this.yo[i].pth = k as InversionKind;
 			return true;
 		}
 	}
@@ -24515,7 +24515,7 @@ class MainProgram {
 			return false;
 		} else {
 			this.yo[i].con = 100;
-			if (Object.prototype.toString.call(a2) == "[object String]") this.yo[i].img = this.gg.loadImage(a2);
+			if (typeof a2 == "string") this.yo[i].img = this.gg.loadImage(a2);
 			else this.yo[i].img = a2;
 			return true;
 		}
@@ -25819,7 +25819,7 @@ class MainProgram {
 	getSCOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
 		var l1 = rounddown((k * 90) / 100);
-		if (arguments.length == 4) j1 = this.co_j.x + 15;
+		if (i1 === undefined) j1 = this.co_j.x + 15;
 		else j1 = i1;
 		if (j1 < i - l1 || j1 > i + l1) {
 			return -1;
@@ -25831,7 +25831,7 @@ class MainProgram {
 
 	getSHCOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
-		if (arguments.length == 4) j1 = this.co_j.x + 15;
+		if (i1 === undefined) j1 = this.co_j.x + 15;
 		else j1 = i1;
 		if (j1 < i || j1 > i + 239) {
 			return -1;
@@ -25843,7 +25843,7 @@ class MainProgram {
 
 	getSWUpOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
-		if (arguments.length == 4) j1 = this.co_j.x + 15;
+		if (i1 === undefined) j1 = this.co_j.x + 15;
 		else j1 = i1;
 		if (j1 < i || j1 > i + 255) return -1;
 		var k2;
@@ -25861,7 +25861,7 @@ class MainProgram {
 
 	getSWDownOY(i: number, j: number, k: number, l: number, i1?: number) {
 		var j1;
-		if (arguments.length == 4) j1 = this.co_j.x + 15;
+		if (i1 === undefined) j1 = this.co_j.x + 15;
 		else j1 = i1;
 		if (j1 < i || j1 > i + 255) return -1;
 		var k2;
@@ -26668,17 +26668,17 @@ class MainProgram {
 			co_mu: ReturnType<typeof compressCharacterObjectArray>;
 			yo: ReturnType<typeof serializeYukaObject>[];
 		};
-		props.forEach(function(key) {
+		props.forEach(key => {
 			(result as any)[key] = this[key];
-		}, this);
+		});
 		// map_data_optionは巨大なので圧縮する
 		result.map_data_option = compressSparseBooleanArray2(this.map_data_option);
 		result.co_j = serializeCharacterObject(this.co_j);
 		// CharacterObjectの配列も小さくする
 		var coProps = ["co_t", "co_m", "co_a", "co_jm", "co_mu"] as const;
-		coProps.forEach(function(key) {
+		coProps.forEach(key => {
 			(result as any)[key] = compressCharacterObjectArray(this[key]);
-		}, this);
+		});
 		// YukaObjectの配列も小さくする
 		result.yo = this.yo.map(serializeYukaObject);
 		return result;

@@ -1,4 +1,5 @@
 import { Color, ImageBuff } from "./ImageBuff";
+import { InversionKind } from "./GameGraphicsForApplet";
 
 class YukaObject {
 	con: number;
@@ -18,7 +19,7 @@ class YukaObject {
 	img: ImageBuff | null;
 	color: Color;
 	pt: number;
-	pth: number;
+	pth: InversionKind;
 	draw_f: boolean;
 	type: number;
 
