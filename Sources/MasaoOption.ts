@@ -2,8 +2,11 @@ import { Graphics } from "./ImageBuff";
 import { MasaoJSS } from "./MasaoJSS";
 import { MasaoConstruction } from "./MasaoConstruction";
 import { Game } from "./GlobalFunctions";
+import { KnownParameterKey } from "./MasaoParameters";
 
-export type Params = { [key: string]: string | undefined };
+export type Params = { [K in KnownParameterKey]: string } & {
+	[key: string]: string | undefined;
+};
 
 export interface Option {
 	width?: number;
