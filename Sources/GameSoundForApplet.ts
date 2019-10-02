@@ -239,7 +239,7 @@ class GameSoundForApplet {
 		this.rs_b = -1;
 	}
 
-	playBGM(paramInt: number, loopflg: boolean) {
+	playBGM(paramInt: number, loopflg?: boolean) {
 		if (this.mute_f) {
 			return;
 		}
