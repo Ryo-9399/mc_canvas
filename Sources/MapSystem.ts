@@ -136,7 +136,7 @@ class MapSystem {
 			if (this.mp.second_gazou_visible && this.mp.second_gazou_priority === 1 && this.mp.second_gazou_img != null) {
 				const draw = (x: number, y: number) => {
 					// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, x + xmod + 32, y + ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img!, x + xmod + 32, y + ymod + 32);
 				};
 				// [x方向の繰り返し回数, y方向の繰り返し回数]
 				let repeat_times = [1, 1];
