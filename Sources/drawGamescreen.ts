@@ -85,9 +85,11 @@ export const drawGamescreen = function(this: MainProgram) {
 	}
 	// MasaoJSS#showImageで設定された画像を表示
 	if (this.showi_c > 0) {
-		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
-		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		if (this.showi_img) {
+			// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
+			if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+			else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		}
 	}
 	// TODO: 描画関数でカウンタ更新やめろ
 	if (this.showr_c > 0) this.showr_c--;
@@ -98,7 +100,7 @@ export const drawGamescreen = function(this: MainProgram) {
 
 	if (this.second_gazou_visible && this.second_gazou_priority === 2 && this.second_gazou_img !== null) {
 		const draw = (x: number, y: number) => {
-			this.hg.drawImage(this.second_gazou_img, x, y);
+			this.hg.drawImage(this.second_gazou_img!, x, y);
 		};
 		// [x方向の繰り返し回数, y方向の繰り返し回数]
 		let repeat_times = [1, 1];
@@ -1161,13 +1163,9 @@ export const drawGamescreenMy = function(this: MainProgram) {
 			const zan_wx = this.j_zan_x[index] - view_x;
 			const zan_wy = this.j_zan_y[index] - view_y;
 			const muki = this.j_zan_pth[index];
-			if (this.j_zan_img[index] !== null)
-				this.hg.drawImage(
-					this.j_zan_img[index],
-					zan_wx + this.j_zan_zs_x[index],
-					zan_wy + this.j_zan_zs_y[index],
-					this.ap
-				);
+			const img = this.j_zan_img[index];
+			if (img !== null)
+				this.hg.drawImage(img, zan_wx + this.j_zan_zs_x[index], zan_wy + this.j_zan_zs_y[index], this.ap);
 			else this.hg.drawImage(this.hih[muki][this.j_zan_pt[index]], zan_wx, zan_wy, this.ap);
 		}
 
