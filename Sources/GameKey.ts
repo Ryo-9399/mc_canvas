@@ -57,7 +57,7 @@ class GameKey {
 	 * キー入力を受けた時の処理
 	 * @param paramKeyEvent {KeyboardEvent} 入力されたキーに関するイベント
 	 */
-	keyPressed(paramKeyEvent: KeyboardEvent) {
+	keyPressed(paramKeyEvent: Pick<KeyboardEvent, "keyCode" | "preventDefault">) {
 		this.key_code = paramKeyEvent.keyCode;
 		this.key_char = paramKeyEvent.keyCode;
 		if (this.key_code >= 0 && this.key_code <= 255) {
@@ -142,7 +142,7 @@ class GameKey {
 	 * キーが離されたときの処理
 	 * @param paramKeyEvent {KeyboardEvent} キーに関するイベント
 	 */
-	keyReleased(paramKeyEvent: KeyboardEvent) {
+	keyReleased(paramKeyEvent: Pick<KeyboardEvent, "keyCode" | "preventDefault">) {
 		var i = paramKeyEvent.keyCode;
 		if (i >= 0 && i <= 255) {
 			this.codekey_f[i] = false;

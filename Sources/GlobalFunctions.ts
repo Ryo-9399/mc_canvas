@@ -421,9 +421,9 @@ class Game {
 				if (this.__mc.gg) {
 					ctx.save();
 					ctx.scale(0.5, 0.5);
-					ctx.drawImage(this.__mc.gg.os_img._dat, 0, 0);
+					ctx.drawImage(this.__mc.gg.os_img._dat!, 0, 0);
 					//ctx.drawImage(this.__mc.gg.os2_img._dat,0,832);
-					ctx.drawImage(this.__mc.gg.os2_img._dat, 576, 0);
+					ctx.drawImage(this.__mc.gg.os2_img._dat!, 576, 0);
 					//for(i=0; i<25; i++) for(j=0; j<10; j++) ctx.drawImage(this.__mc.gg.spt_img[0][i*10+j]._dat, j*48, i*48);
 					//for(i=0; i<25; i++) for(j=0; j<10; j++) ctx.drawImage(this.__mc.gg.spt_img[0][i*10+j]._dat, j*48+640, i*48);
 					//for(i=0; i<16; i++) for(j=0; j<16; j++) ctx.drawImage(this.__mc.gg.smapchip_img[i*16+j]._dat, j*48+832, i*48+832);
@@ -445,7 +445,7 @@ class Game {
 			if (this.__mc.mp) {
 				var mp = this.__mc.mp;
 				var str = "<div style='text-align:left'>";
-				var prop;
+				var prop: keyof typeof mp;
 				var type;
 				for (prop in mp) {
 					type = Object.prototype.toString.call(mp[prop]);
