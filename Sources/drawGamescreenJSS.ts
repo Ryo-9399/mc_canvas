@@ -45,8 +45,8 @@ export const drawGamescreenEnemy = function(this: MainProgram) {
 		const co_wx = this.co_t[i].x - view_x;
 		const co_wy = this.co_t[i].y - view_y;
 		if (co_wx < -64 || co_wy > 576) continue;
-		if (this.co_t[i].img !== null)
-			this.hg.drawImage(this.co_t[i].img, co_wx + this.co_t[i].zs_x, co_wy + this.co_t[i].zs_y, this.ap);
+		const img = this.co_t[i].img;
+		if (img !== null) this.hg.drawImage(img, co_wx + this.co_t[i].zs_x, co_wy + this.co_t[i].zs_y, this.ap);
 		else this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], co_wx, co_wy, this.ap);
 	}
 };
@@ -334,13 +334,9 @@ export const drawGamescreenMy = function(this: MainProgram) {
 			const zan_wx = this.j_zan_x[index] - view_x;
 			const zan_wy = this.j_zan_y[index] - view_y;
 			const muki = this.j_zan_pth[index];
-			if (this.j_zan_img[index] !== null)
-				this.hg.drawImage(
-					this.j_zan_img[index],
-					zan_wx + this.j_zan_zs_x[index],
-					zan_wy + this.j_zan_zs_y[index],
-					this.ap
-				);
+			const img = this.j_zan_img[index];
+			if (img !== null)
+				this.hg.drawImage(img, zan_wx + this.j_zan_zs_x[index], zan_wy + this.j_zan_zs_y[index], this.ap);
 			else this.hg.drawImage(this.hih[muki][this.j_zan_pt[index]], zan_wx, zan_wy, this.ap);
 		}
 
@@ -772,9 +768,11 @@ export const drawGamescreenWindow = function(this: MainProgram) {
 	}
 	// MasaoJSS#showImageで設定された画像を表示
 	if (this.showi_c > 0) {
-		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
-		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		if (this.showi_img) {
+			// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
+			if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+			else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		}
 	}
 	// ゲージを表示
 	if (this.gauge_v) {
@@ -856,7 +854,7 @@ export const drawHitokotoMessage = function(this: MainProgram) {
 	const messages = [];
 	for (let i = 1; i <= 3; i++) {
 		const param_name = `hitokoto${this.hitokoto_num}-${i}`;
-		const message = this.hitokoto_num === 5 ? this.showm_data[i] : this.tdb.getValue(param_name);
+		const message = this.hitokoto_num === 5 ? this.showm_data[i]! : this.tdb.getValue(param_name)!;
 		// 0と設定されている行は表示しない
 		if (parseInt(message) === 0) continue;
 		messages.push(message);
@@ -871,7 +869,7 @@ export const drawHitokotoMessage = function(this: MainProgram) {
 	// 名前を描画
 	this.hg.setColor(Color.cyan);
 	const param_name = `hitokoto${this.hitokoto_num}_name`;
-	const name = this.hitokoto_num === 5 ? this.showm_data[0] : this.tdb.getValue(param_name);
+	const name = this.hitokoto_num === 5 ? this.showm_data[0]! : this.tdb.getValue(param_name)!;
 	this.hg.drawString(name, box_x + 6, box_y + 6 + 12);
 
 	// メッセージ本文を描画
