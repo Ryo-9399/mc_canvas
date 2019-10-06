@@ -4153,7 +4153,7 @@ namespace EnemyController {
 						var flag1 = false;
 						for (var j17 = 0; j17 <= mp.t_kazu; j17++) {
 							if (
-								((mp.co_t[j17].c < 1200 || mp.co_t[j17].c >= 1300) && mp.co_t[j17].c != !60) ||
+								((mp.co_t[j17].c < 1200 || mp.co_t[j17].c >= 1300) && mp.co_t[j17].c != 60) ||
 								j17 === i ||
 								Math.abs(mp.co_t[j17].x - l20) >= 32 ||
 								Math.abs(mp.co_t[j17].y - i21) >= 32
