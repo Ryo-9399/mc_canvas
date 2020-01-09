@@ -1,6 +1,7 @@
 import { ChipImage } from "./ChipImage";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
-import { Color, Font, ImageBuff } from "./ImageBuff";
+import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
+import { MasaoConstruction } from "./MasaoConstruction";
 
 /**
  * ユーザーJavaScriptから正男を操作するAPIを提供するオブジェクトです。
@@ -11,10 +12,10 @@ import { Color, Font, ImageBuff } from "./ImageBuff";
  * @param caseInsensitive {boolean} メソッド名の大文字・小文字の違いを無視する
  */
 class MasaoJSS {
-	my_offscreen_img: any;
-	oci: any[];
-	ci: any;
-	masaoEvent: (g: any, image: any) => void;
+	my_offscreen_img: ImageBuff | null;
+	oci: (ChipImage | null)[];
+	ci: null;
+	masaoEvent: (g: Graphics, image: ImageBuff) => void;
 	getHighscore: () => number;
 	getScore: () => number;
 	getMode: () => number;
@@ -26,15 +27,15 @@ class MasaoJSS {
 	getMyY: () => number;
 	getViewX: () => number;
 	getViewY: () => number;
-	setMyPosition: (s: any, s1: any) => boolean;
-	showMessage: (s: any, s1: any, s2: any, s3: any, s4: any) => any;
-	showImage: (s: any, s1: any, s2: any, s3: any) => any;
-	setEnemy: (s: any, s1: any, s2: any) => any;
-	setMapchip: (s: any, s1: any, s2: any) => any;
-	getMapchip: (s: any, s1: any) => any;
-	setMapchip2: (s: any, s1: any, s2: any) => any;
-	getMapchip2: (s: any, s1: any) => any;
-	setBackImage: (s: any) => any;
+	setMyPosition: (s: string | number, s1: string | number) => boolean;
+	showMessage: (s: string | number, s1: string, s2: string, s3: string, s4: string) => boolean;
+	showImage: (s: string | number, s1: string | number, s2: string | number, s3: string) => boolean;
+	setEnemy: (s: string | number, s1: string | number, s2: string | number) => boolean;
+	setMapchip: (s: string | number, s1: string | number, s2: string | number) => boolean;
+	getMapchip: (s: string | number, s1: string | number) => number;
+	setMapchip2: (s: string | number, s1: string | number, s2: string | number) => boolean;
+	getMapchip2: (s: string | number, s1: string | number) => number;
+	setBackImage: (s: string) => boolean;
 	pressLeft: () => boolean;
 	pressLeft2: () => boolean;
 	releaseLeft: () => boolean;
@@ -48,73 +49,97 @@ class MasaoJSS {
 	pressTrigger1: () => boolean;
 	releaseTrigger1: () => boolean;
 	releaseAll: () => boolean;
-	getKeyCode: () => any;
+	getKeyCode: () => number;
 	resetKeyCode: () => boolean;
-	equipFire: (s: any) => boolean;
-	equipBarrier: (s: any) => boolean;
-	setJetFuel: (s: any) => boolean;
-	equipJet: (s: any) => any;
-	restart: () => any;
-	getValue: (s: any) => any;
-	getParamValue: (s: any) => any;
-	setValue: (s: any, s1: any) => any;
-	setParamValue: (s: any, s1: any) => any;
-	getMyXReal: () => any;
-	getMyYReal: () => any;
-	setMyXReal: (s: any) => boolean;
-	setMyYReal: (s: any) => boolean;
-	getMyVX: () => any;
-	getMyVY: () => any;
-	getViewXReal: () => any;
-	getViewYReal: () => any;
+	equipFire: (s?: string | number) => boolean;
+	equipBarrier: (s: string | number) => boolean;
+	setJetFuel: (s: string | number) => boolean;
+	equipJet: (s: string | number) => boolean;
+	restart: () => boolean;
+	getValue: (s: string) => string | null;
+	getParamValue: (s: string) => string | null;
+	setValue: (s: string, s1: string) => boolean;
+	setParamValue: (s: string, s1: string) => boolean;
+	getMyXReal: () => number;
+	getMyYReal: () => number;
+	setMyXReal: (s: string | number) => boolean;
+	setMyYReal: (s: string | number) => boolean;
+	getMyVX: () => number;
+	getMyVY: () => number;
+	getViewXReal: () => number;
+	getViewYReal: () => number;
 	getEnemyTotal: () => number;
-	getBossXReal: () => any;
-	getBossYReal: () => any;
-	setMyMiss: (s: any) => boolean;
-	setMyPress: (s: any) => boolean;
-	playSound: (s: any) => boolean;
-	setSound: (s: any, s1: any) => boolean;
-	setScrollLock: (s: any) => boolean;
-	attackFire: (s: any, s1: any, s2: any, s3: any) => number;
-	addScore: (s: any) => boolean;
-	setPenColor: (s: any, s1: any, s2: any, s3: any) => any;
-	showRect: (s: any, s1: any, s2: any, s3: any, s4: any) => any;
-	showOval: (s: any, s1: any, s2: any, s3: any, s4: any) => any;
-	getJSMes: () => any;
-	showGauge: (s: any, s1: any) => any;
-	hideGauge: () => any;
-	setJSMes: (s: any) => boolean;
+	getBossXReal: () => number;
+	getBossYReal: () => number;
+	setMyMiss: (s: string | number) => boolean;
+	setMyPress: (s: string | number) => boolean;
+	playSound: (s: string | number) => boolean;
+	setSound: (s: string | number, s1: string) => boolean;
+	setScrollLock: (s: string | number) => boolean;
+	attackFire: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => number;
+	addScore: (s: string | number) => boolean;
+	setPenColor: (s: string | number, s1: string | number, s2: string | number, s3?: string | number) => boolean;
+	showRect: (
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number,
+		s4: string | number
+	) => boolean;
+	showOval: (
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number,
+		s4: string | number
+	) => boolean;
+	getJSMes: () => number;
+	showGauge: (s: string | number, s1: string) => boolean;
+	hideGauge: () => boolean;
+	setJSMes: (s: string | number) => boolean;
 	setTitleLock: () => boolean;
 	startGame: () => boolean;
-	equipGrenade: (s: any) => boolean;
-	setSystemImage: (s: any, s1: any) => any;
-	setModeWait: (s: any, s1: any) => any;
-	showMyHP: (s: any) => any;
-	setMyMaxHP: (s: any) => any;
-	setMyHP: (s: any) => any;
-	getMyHP: () => any;
-	setMyHPDamage: (s: any) => any;
-	setMyWait: (s: any, s1: any, s2: any) => any;
-	setStageClear: () => any;
-	setFireRange: (s: any) => boolean;
-	equipTail: (s: any) => boolean;
-	attackTail: (s: any, s1: any, s2: any, s3: any) => number;
-	destroyEnemy: (s: any, s1: any, s2: any, s3: any) => number;
+	equipGrenade: (s: string | number) => boolean;
+	setSystemImage: (s: string | number, s1: string) => boolean;
+	setModeWait: (s: string | number, s1: string | number) => boolean;
+	showMyHP: (s: string | null) => boolean;
+	setMyMaxHP: (s: string | number) => boolean;
+	setMyHP: (s: string | number) => boolean;
+	getMyHP: () => number;
+	setMyHPDamage: (s: string | number) => boolean;
+	setMyWait: (s: string | number, s1: string | number, s2: string | number) => boolean;
+	setStageClear: () => boolean;
+	setFireRange: (s: string | number) => boolean;
+	equipTail: (s: string | number) => boolean;
+	attackTail: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => number;
+	destroyEnemy: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => number;
 	isPressZKey: () => 0 | 1;
 	isPressXKey: () => 0 | 1;
 	isPressSpaceKey: () => 0 | 1;
-	getMyDirection: () => any;
-	setMyDirection: (s: any) => boolean;
-	setHTMLText: (s: any) => boolean;
-	newYuka: (s: any, s1: any, s2: any, s3: any, s4: any) => any;
-	setYukaPosition: (s: any, s1: any, s2: any, s3: any, s4: any) => any;
-	setYukaType: (s: any, s1: any) => any;
-	disposeYuka: (s: any) => any;
-	setYukaColor: (s: any, s1: any, s2: any, s3: any, s4: any) => any;
-	isRideYuka: (s: any) => any;
-	setMyVX: (s: any) => boolean;
-	setMyVY: (s: any) => boolean;
-	isRideGround: () => any;
+	getMyDirection: () => number;
+	setMyDirection: (s: string | number) => boolean;
+	setHTMLText: (s: string) => boolean;
+	newYuka: (s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string) => number;
+	setYukaPosition: (
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number,
+		s4: string | number
+	) => boolean;
+	setYukaType: (s: string | number, s1: string | number) => boolean;
+	disposeYuka: (s: string | number) => boolean;
+	setYukaColor: (
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number,
+		s4: string | number
+	) => boolean;
+	isRideYuka: (s: string | number) => 0 | 1 | -1;
+	setMyVX: (s: string | number) => boolean;
+	setMyVY: (s: string | number) => boolean;
+	isRideGround: () => 0 | 1 | -1;
 	setYukaPattern: (s: any, s1: any, s2: any) => any;
 	setYukaImage: (s: any, image: any) => any;
 	setMySpeed: (s: any) => boolean;
@@ -189,7 +214,7 @@ class MasaoJSS {
 	getRandom: (max: any) => any;
 	getPartsDefinition: (code: any) => any;
 
-	constructor(mc, caseInsensitive) {
+	constructor(mc: MasaoConstruction, caseInsensitive: boolean) {
 		this.my_offscreen_img = null;
 		this.oci = new Array(256);
 		this.ci = null;
@@ -399,8 +424,8 @@ class MasaoJSS {
 			if (mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				var j;
-				i = parseInt(s);
-				j = parseInt(s1);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
 				if (isNaN(i) || isNaN(j)) {
 					i = -1;
 					j = -1;
@@ -741,7 +766,7 @@ class MasaoJSS {
 			if (typeof s == "undefined") s = "1";
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -766,7 +791,7 @@ class MasaoJSS {
 		this.equipBarrier = function(s) {
 			if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) i = 0;
 				if (i <= 0) {
 					return false;
@@ -788,7 +813,7 @@ class MasaoJSS {
 		this.setJetFuel = function(s) {
 			if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = 0;
 				}
@@ -903,7 +928,7 @@ class MasaoJSS {
 		this.setMyXReal = function(s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -9999;
 				}
@@ -924,7 +949,7 @@ class MasaoJSS {
 		this.setMyYReal = function(s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -9999;
 				}
@@ -1051,7 +1076,7 @@ class MasaoJSS {
 		this.setMyMiss = function(s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = 1;
 				}
@@ -1115,7 +1140,7 @@ class MasaoJSS {
 		this.setSound = function(s, s1) {
 			if (!mc.gs) return false;
 			var i;
-			i = parseInt(s);
+			i = parseInt(s as string);
 			if (isNaN(i)) {
 				i = -1;
 			}
