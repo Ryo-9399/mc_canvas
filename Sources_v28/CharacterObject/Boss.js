@@ -553,9 +553,18 @@ class Boss extends CharacterObject {
 			}
 		} else if (this.c1 === 40) {
 			// 元の位置に戻る
-			const speed = -2 * mirror;
-			this.x += speed;
-			checkBorder(speed, x_standby_left, x_standby_right, true, -20);
+			this.x -= 2 * mirror;
+			if (direction !== 1) {
+				if (this.x <= x_standby_right) {
+					this.x = x_standby_right;
+					this.c1 = -20;
+				}
+			} else {
+				if (this.x >= x_standby_left) {
+					this.x = x_standby_left;
+					this.c1 = -20;
+				}
+			}
 		}
 	}
 
