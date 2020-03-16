@@ -563,8 +563,8 @@ class Boss extends CharacterObject {
 				// 反転しても角度が同じ場合は一発しか出さない
 				if (degree_normalized !== degree_inversed) rads.push((degree_inversed * 3.14) / 180);
 				for (const rad of rads) {
-					const cos = Math.floor(Math.cos(rad) * 12);
-					const sin = Math.floor(Math.sin(rad) * 10);
+					const cos = Math.round(Math.cos(rad) * 12);
+					const sin = Math.round(Math.sin(rad) * 10);
 					mp.mSet2(this.x, this.y, 710, cos, sin);
 				}
 				break;
@@ -620,8 +620,8 @@ class Boss extends CharacterObject {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
-			const cos = Math.floor(Math.cos(d) * 8);
-			const sin = -Math.floor(Math.sin(d) * 8);
+			const cos = Math.round(Math.cos(d) * 8);
+			const sin = -Math.round(Math.sin(d) * 8);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 			mp.gs.rsAddSound(18);
 		}
@@ -674,8 +674,8 @@ class Boss extends CharacterObject {
 			}
 		}
 		if (rad !== null) {
-			const cos = Math.floor(Math.cos(rad) * 12);
-			const sin = Math.floor(Math.sin(rad) * 8);
+			const cos = Math.round(Math.cos(rad) * 12);
+			const sin = Math.round(Math.sin(rad) * 8);
 			mp.mSet2(this.x, this.y, 711, cos, sin);
 		}
 

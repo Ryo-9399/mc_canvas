@@ -452,8 +452,8 @@ class Boss extends CharacterObject {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
-			const cos = Math.floor(Math.cos(d) * 8);
-			const sin = -Math.floor(Math.sin(d) * 8);
+			const cos = Math.round(Math.cos(d) * 8);
+			const sin = -Math.round(Math.sin(d) * 8);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 		}
 	}
