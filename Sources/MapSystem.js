@@ -335,6 +335,7 @@ class MapSystem {
 						case 19:
 							// 下り坂
 							if (this.mp.map_data_option[nx][ny]) {
+								pt = 0;
 								this.gg.os2_g.setColor(Color.white);
 								this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31);
 							} else if (this.map_bg[nx][ny - 1] === 4) {
