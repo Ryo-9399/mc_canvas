@@ -7544,7 +7544,10 @@ MainProgram.prototype.jM100 = function() {
 							l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][
 								rightShiftIgnoreSign(this.co_j.y - 1, 5)
 							];
-							if (l29 <= 9) {
+							const isThrough = this.maps.mp.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][
+								rightShiftIgnoreSign(this.co_j.y - 1, 5)
+							];
+							if (l29 <= 9 || l29 === 15 || (l29 === 18 && isThrough) || (l29 === 19 && isThrough)) {
 								for (var k6 = 0; k6 <= 5; k6++) {
 									this.j_zan_x[k6] = j5;
 									this.j_zan_y[k6] = k5;
