@@ -76,9 +76,9 @@ Object {
       0,
     ],
     "co_m": Array [
-      "{\"c\":700,\"x\":273,\"y\":993,\"vx\":-7,\"vy\":-7,\"wx\":0,\"wy\":0,\"c1\":0,\"c2\":1,\"c3\":0,\"c4\":0,\"c5\":0,\"pt\":168,\"pth\":0,\"img\":null,\"zs_x\":0,\"zs_y\":0,\"ac\":0,\"level\":0,\"jimen_f\":false,\"muki\":0,\"direction\":0,\"score\":0,\"ss\":0,\"gf\":false}",
+      "{\"c\":700,\"x\":298,\"y\":1018,\"vx\":-6,\"vy\":-6,\"wx\":0,\"wy\":0,\"c1\":0,\"c2\":1,\"c3\":0,\"c4\":0,\"c5\":0,\"pt\":168,\"pth\":0,\"img\":null,\"zs_x\":0,\"zs_y\":0,\"ac\":0,\"level\":0,\"jimen_f\":false,\"muki\":0,\"direction\":0,\"score\":0,\"ss\":0,\"gf\":false}",
       0,
-      0,
+      "{\"c\":700,\"x\":48,\"y\":1048,\"vx\":-10,\"vy\":-3,\"wx\":0,\"wy\":0,\"c1\":0,\"c2\":1,\"c3\":0,\"c4\":0,\"c5\":0,\"pt\":168,\"pth\":0,\"img\":null,\"zs_x\":0,\"zs_y\":0,\"ac\":0,\"level\":0,\"jimen_f\":false,\"muki\":0,\"direction\":0,\"score\":0,\"ss\":0,\"gf\":false}",
       0,
       0,
       0,
@@ -307,7 +307,7 @@ Object {
     "ks_wx": undefined,
     "ks_wy": undefined,
     "left_dcc": 0,
-    "m_kazu": 1,
+    "m_kazu": 2,
     "map_data_option": Object {
       "arr": Array [],
       "height": 100,
