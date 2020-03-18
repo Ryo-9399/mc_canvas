@@ -858,7 +858,7 @@ class Boss extends CharacterObject {
 			// 元の位置に戻る
 			const speed = -2 * mirror;
 			this.x += speed;
-			checkBorder(speed, x_standby_left, x_standby_right, true, -20);
+			checkBorder(speed, x_standby_right, x_standby_left, true, -20);
 		}
 	}
 
