@@ -327,7 +327,8 @@ class MapSystem {
 							if (this.mp.map_data_option[nx][ny]) {
 								pt = 0;
 								this.gg.os2_g.setColor(Color.white);
-								this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32 + 31, 32 + j * 32 + 31, 32 + i * 32);
+								for (let k = 0; k < 32; k++)
+									this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + 31 - k, 1, 1);
 							} else if (this.map_bg[nx][ny - 1] === 4) {
 								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 							}
@@ -337,7 +338,8 @@ class MapSystem {
 							if (this.mp.map_data_option[nx][ny]) {
 								pt = 0;
 								this.gg.os2_g.setColor(Color.white);
-								this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31);
+								for (let k = 0; k < 32; k++)
+									this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + k, 1, 1);
 							} else if (this.map_bg[nx][ny - 1] === 4) {
 								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 							}
@@ -494,7 +496,8 @@ class MapSystem {
 								this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
 							}
 							this.gg.os2_g.setColor(Color.white);
-							this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32 + 31, 32 + j * 32 + 31, 32 + i * 32);
+							for (let k = 0; k < 32; k++)
+								this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + 31 - k, 1, 1);
 						} else if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 18);
@@ -513,7 +516,7 @@ class MapSystem {
 								this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
 							}
 							this.gg.os2_g.setColor(Color.white);
-							this.gg.os2_g.drawLine(32 + j * 32, 32 + i * 32, 32 + j * 32 + 31, 32 + i * 32 + 31);
+							for (let k = 0; k < 32; k++) this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + k, 1, 1);
 						} else if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 19);
