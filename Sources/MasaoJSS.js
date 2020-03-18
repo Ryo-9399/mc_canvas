@@ -2606,11 +2606,21 @@ function MasaoJSS(mc, caseInsensitive) {
 		}
 	};
 
+	/**
+	 * マップに残っている指定範囲のコインの数を返します。
+	 * 引数が指定されなかった場合はマップ上のすべてのコインの数を返します。
+	 *
+	 * @param {number} x 左上X座標
+	 * @param {number} y 左上Y座標
+	 * @param {number} y 右下X座標
+	 * @param {number} y 右下Y座標
+	 * @returns {number} コインの数
+	 */
 	this.getCoinCount = function(s, s1, s2, s3) {
 		var j = 0;
 		var k = 0;
 		var l = 0;
-		if (arguments.length == 0) {
+		if (arguments.length === 0) {
 			s = "0";
 			s1 = "0";
 			s2 = mc.mp.mapWidth - 1;
@@ -2630,16 +2640,6 @@ function MasaoJSS(mc, caseInsensitive) {
 		} else {
 			return -1;
 		}
-	};
-
-	/**
-	 * マップに残っているコインの数を返します。
-	 *
-	 * @returns {number} コインの数
-	 */
-	this.getCoinCount = function() {
-		if (mc.mp) return mc.mp.getCoinCount(0, 0, mc.mp.mapWidth - 1, mc.mp.mapHeight - 1);
-		else return -1;
 	};
 
 	/**
