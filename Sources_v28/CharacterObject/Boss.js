@@ -1,4 +1,5 @@
 import { CharacterObject } from "../CharacterObject";
+import { rounddown } from "../GlobalFunctions";
 
 // ボスの状態
 export const DYING = 40;
@@ -452,10 +453,21 @@ class Boss extends CharacterObject {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
-			const cos = Math.floor(Math.cos(d) * 8);
-			const sin = -Math.floor(Math.sin(d) * 8);
+			const cos = this.boss2BubbleBeamConvert(mp, Math.cos(d) * 8);
+			const sin = -this.boss2BubbleBeamConvert(mp, Math.sin(d) * 8);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 		}
+	}
+
+	/**
+	 * boss2のバブル光線の速さの整数変換処理
+	 * @param {MainProgram} mp
+	 * @param {number} v 変換前のバブル光線の速さ
+	 * @returns {number} 変換後のバブル光線の速さ
+	 */
+	boss2BubbleBeamConvert(mp, v) {
+		//bc-boss2-bubble-beam がtrueの場合Java版に falseの場合はCanvasオリジナル
+		return !!mp.tdb.options["bc-boss2-bubble-beam"] ? rounddown(v) : Math.floor(v);
 	}
 
 	/**
