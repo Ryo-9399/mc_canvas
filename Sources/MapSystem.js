@@ -270,37 +270,55 @@ class MapSystem {
 			}
 		}
 		if (mode !== 3) {
-			const is_water_visible = this.mp.water_visible === 2 && this.gg.layer_mode !== 2;
+			//水の表示条件　レイヤー表示無し（背景画像は表示）　または　レイヤー表示ありかつ水を常に表示の時
+			const is_water_visible =
+				this.gg.layer_mode !== 2 || (this.mp.water_visible === 2 && this.gg.layer_mode === 2);
 			// マップ上の特別なブロックの見た目を調整する
-			// TODO: clear_typeが3の場合の水の描画処理にバグがあるためあとで直す
 			for (let i = 0; i <= 10; i++) {
 				for (let j = 0; j <= 16; j++) {
 					const nx = this.os2_wx + j;
 					const ny = this.os2_wy + i;
 					let pt = this.map_bg[nx][ny];
+					const option = this.mp.map_data_option[nx][ny];
 					// レイヤーを表示する場合
 					// はしご、坂道、下から通れる床、緑色のブロック、水を表示しない
 					// ただしクリア条件が脱出ハシゴの場合、ハシゴ、坂道、下から通れる床を表示する
 					// 水を常に表示する設定の場合は水を表示する
-					if (this.gg.layer_mode === 2) {
-						if (pt === 4 && this.mp.water_visible !== 2) pt = 0;
-						else if (pt === 29) pt = 0;
-						else if (this.mp.clear_type !== 3 && (pt === 15 || pt === 10 || pt === 18 || pt === 19)) pt = 0;
-					} else if (this.mp.clear_type === 3 && (pt === 29 || pt === 4)) {
-						pt = 0;
+					if (this.mp.clear_type === 3) {
+						//脱出ハシゴがクリア条件の場合
+						if (this.gg.layer_mode === 2) {
+							//レイヤーを表示する場合
+							if (this.mp.water_visible === 2)
+								if ((pt === 4 && this.mp.water_visible !== 2) || pt === 29) pt = 0; //水を常に表示するにしていない場合、水を非表示、緑色のブロックを非表示、他は表示
+						}
+					} else if (this.gg.layer_mode === 2) {
+						//クリア条件がその他でレイヤーを表示する場合
+						if (
+							(pt === 4 && this.mp.water_visible !== 2) ||
+							(pt === 15 || pt === 18 || pt === 19 || pt === 29) ||
+							(pt === 10 && !option)
+						)
+							pt = 0; //水を常に表示するにしていない場合、水を非表示、ハシゴも表示設定がない場合非表示、他は非表示
 					}
-
+					//隣接マップに水を表示
 					switch (pt) {
+						case 5:
+							// 上向きのトゲ
+							// 上が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx][ny - 1] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
+						case 6:
+							// 下向きのトゲ
+							// 下が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx][ny + 1] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
 						case 7:
 							// ろうそく
 							pt = 96 + (g_ac2 % 2);
-							break;
-						case 9:
-							// コイン
-							pt = 90 + g_ac2;
-							if (is_water_visible && this.map_bg[nx - 1][ny] === 4) {
-								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
-							}
 							break;
 						case 8:
 							// 人面星
@@ -309,43 +327,68 @@ class MapSystem {
 								(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
 							if (is_apparent) {
 								pt = 94;
-								if (is_millennium) pt = 98;
-								if (g_ac2 >= 2) pt += 1;
+								if (is_millennium) pt = 98; // ミレニアム人面星
+								if (g_ac2 >= 2) pt += 1; // 瞬く
+								// 左が水なら奥に水を描画
 								if (is_water_visible && this.map_bg[nx - 1][ny] === 4) {
 									this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 								}
 							}
 							break;
+						case 9:
+							// コイン
+							pt = 90 + g_ac2;
+							// 左が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx - 1][ny] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
 						case 10:
 							// ハシゴ
-							if (this.map_bg[nx - 1][ny] === 4) {
+							// 左が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx - 1][ny] === 4) {
+								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
+							}
+							break;
+						case 15:
+							// 下から通れるブロック
+							// 上が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx][ny - 1] === 4) {
 								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 							}
 							break;
 						case 18:
 							// 上り坂
-							if (this.mp.map_data_option[nx][ny]) {
-								pt = 0;
-								this.gg.os2_g.setColor(Color.white);
-								for (let k = 0; k < 32; k++)
-									this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + 31 - k, 1, 1);
-							} else if (this.map_bg[nx][ny - 1] === 4) {
+							// 上が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx][ny - 1] === 4) {
 								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 							}
 							break;
 						case 19:
 							// 下り坂
-							if (this.mp.map_data_option[nx][ny]) {
-								pt = 0;
-								this.gg.os2_g.setColor(Color.white);
-								for (let k = 0; k < 32; k++)
-									this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + k, 1, 1);
-							} else if (this.map_bg[nx][ny - 1] === 4) {
+							// 上が水なら奥に水を描画
+							if (is_water_visible && this.map_bg[nx][ny - 1] === 4) {
 								this.gg.drawPT2(32 + j * 32, 32 + i * 32, 4);
 							}
 							break;
 					}
+					// マップを表示
 					if (pt > 0) {
+						// 下キーで降りられる坂を表示
+						if ((pt === 18 || pt === 19) && option) {
+							this.gg.os2_g.setColor(Color.white);
+							for (let k = 0; k < 32; k++) {
+								if (pt === 18) {
+									// 下キーで降りられる上り坂を表示
+									this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + 31 - k, 1, 1);
+								} else {
+									// 下キーで降りられる下り坂を表示
+									this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + k, 1, 1);
+								}
+							}
+							pt = 0;
+						}
+						// それ以外を表示
 						this.gg.drawPT2(32 + j * 32, 32 + i * 32, pt);
 					}
 				}
@@ -410,6 +453,7 @@ class MapSystem {
 			for (let j = 0; j <= 16; j++) {
 				const nx = this.os2_wx + j;
 				const ny = this.os2_wy + i;
+				const option = this.mp.map_data_option[nx][ny];
 				switch (this.map_bg[nx][ny]) {
 					case 5:
 						// 上向きのトゲ
@@ -485,7 +529,7 @@ class MapSystem {
 						break;
 					case 18:
 						// 上り坂
-						if (this.mp.map_data_option[nx][ny]) {
+						if (option) {
 							// 下キーで降りられる上り坂
 							if (this.map_bg[nx][ny - 1] === 4) {
 								// 上が水なら奥に水を描画
@@ -505,7 +549,7 @@ class MapSystem {
 						break;
 					case 19:
 						// 下り坂
-						if (this.mp.map_data_option[nx][ny]) {
+						if (option) {
 							// 下キーで降りられる下り坂
 							if (this.map_bg[nx][ny - 1] === 4) {
 								// 上が水なら奥に水を描画
