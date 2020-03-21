@@ -2102,6 +2102,7 @@ MainProgram.prototype.setmapc = function(s, s1, s2) {
 		i++;
 		j += 10;
 		this.maps.map_bg[i][j] = k;
+		if (k === 18 || k === 19) this.map_data_option[i][j] = false; //坂の時　map_data_optionをリセット（通れる坂が配置されている可能性があるため）
 		this.setmapc_f = true;
 		return true;
 	}
