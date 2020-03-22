@@ -146,6 +146,9 @@ MasaoConstruction.prototype.init_j = function() {
 	});
 
 	this.mp = new MainProgram(this.gg, this.gm, this.gk);
+	(this.mp.tdb = {}).options = this.options; //FXと同じ名前でオプションを読み込むため
+
+	// ハイスコアイベント用のリスナ登録
 	this.mp.addHighscoreEvent(this.options.highscoreCallback);
 
 	this.userInit();

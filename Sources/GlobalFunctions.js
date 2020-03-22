@@ -18,6 +18,7 @@ import { MasaoConstruction } from "./MasaoConstruction";
  * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
  * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
  * @param {boolean} [options."bc-case-insensitive"] 拡張JSのメソッドの大文字小文字を区別しない
+ * @param {boolean} [options."bc-boss2-bubble-beam"] カイオールのバブル光線の角度を変更する
  * @param {boolean} [options."custom-loop"] メインループを行うためのLoopクラスです。（テスト用）
  */
 function Game(params, id, options) {
@@ -216,6 +217,8 @@ function Game(params, id, options) {
 
 /**
  * ページ読み込み後、ページ内の全ての正男appletをcanvas正男に置換します。
+ *
+ * @param {Object} [options] オプション
  */
 Game.replaceAll = function(options) {
 	if (document.readyState == "complete") {
@@ -288,6 +291,9 @@ Game.replaceByDom = function(paramScope, options) {
 	var id = paramScope.id || makeRandomString();
 	newDiv.id = id;
 	paramScope.parentNode.replaceChild(newDiv, paramScope);
+	//変換時にカイオールのバブル光線をJava版にする
+	options = options || {};
+	if (options["bc-boss2-bubble-beam"] !== false) options["bc-boss2-bubble-beam"] = true;
 	new Game(params, id, options);
 };
 
