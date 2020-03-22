@@ -183,7 +183,7 @@ TagDataBase.prototype.initParameter = function() {
 		filename_chizu: "chizu.gif",
 		game_speed: "70",
 		se_switch: "2",
-		se_filename: "1",
+		se_filename: "2",
 		filename_se_start: "item.au",
 		filename_se_gameover: "gameover.au",
 		filename_se_clear: "clear.au",
