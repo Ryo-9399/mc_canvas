@@ -48,7 +48,7 @@ GameSoundForApplet.prototype._getSEFilenames = function() {
 	var tdb = this.tdb;
 	var se_filename = parseInt(tdb.getValue("se_filename"));
 	var k;
-	if (se_filename === 1) {
+	if (se_filename === 2) {
 		return [
 			"item.au",
 			"gameover.au",
