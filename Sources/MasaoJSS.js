@@ -933,6 +933,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 *
 	 * @param {number} type 効果音番号
 	 * @param {string} filename ファイル名
+	 * @since canvas正男
 	 */
 	this.setSound = function(s, s1) {
 		if (!mc.gs) return false;
@@ -1800,6 +1801,7 @@ function MasaoJSS(mc, caseInsensitive) {
 			}
 			if (i == 3) {
 				mc.mp.drawGamescreenWindow();
+				//mc.mp.drawItem();
 				mc.mp.drawScore();
 				return true;
 			}
@@ -3285,6 +3287,45 @@ function MasaoJSS(mc, caseInsensitive) {
 		} else {
 			return Math.floor(Math.random() * max);
 		}
+	};
+
+	/**
+	 * ジェットの残量を取得します。
+	 *
+	 * @returns {number} ジェットの残量
+	 * @since canvas正男
+	 */
+	this.getJetFuel = function() {
+		let i = 0;
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
+			i = mc.mp.j_jet_fuel;
+			if (i < 0) i = 0;
+		}
+		return i;
+	};
+
+	/**
+	 * 所持している鍵の数を取得します。
+	 *
+	 * * 1: KEY1
+	 * * 2: KEY2
+	 *
+	 * @param {number} type 鍵の種類
+	 *
+	 * @returns {number} 鍵の数
+	 * @since canvas正男
+	 */
+	this.getKeyCount = function(s) {
+		let i = 0;
+		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
+			let n = parseInt(s);
+			if (isNaN(n)) i = 0;
+			if (n === 1 || n === 2) {
+				i = mc.mp.dkey_count[n - 1];
+				if (i < 0) i = 0;
+			}
+		}
+		return i;
 	};
 
 	/**
