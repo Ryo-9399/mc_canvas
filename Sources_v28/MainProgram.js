@@ -4608,18 +4608,18 @@ MainProgram.prototype.aMove = function() {
 							this.a_hf = true;
 							characterobject.pt = 1100;
 							var d = 0.017453292519943295;
-							var l11 = k + Math.floor(Math.cos(characterobject.c3 * d) * 25);
-							var j12 = l + Math.floor(Math.sin(characterobject.c3 * d) * 25);
+							var l11 = k + rounddown(Math.cos(characterobject.c3 * d) * 25, true, this);
+							var j12 = l + rounddown(Math.sin(characterobject.c3 * d) * 25, true, this);
 							this.vo_x[i][0] = l11;
 							this.vo_y[i][0] = j12;
-							var l12 = k + Math.floor(Math.cos(characterobject.c3 * d) * 140);
-							var i13 = l + Math.floor(Math.sin(characterobject.c3 * d) * 140);
+							var l12 = k + rounddown(Math.cos(characterobject.c3 * d) * 140, true, this);
+							var i13 = l + rounddown(Math.sin(characterobject.c3 * d) * 140, true, this);
 							this.vo_x[i][1] = l12;
 							this.vo_y[i][1] = i13;
-							this.vo_x[i][2] = k + Math.floor(Math.cos(characterobject.c3 * d) * 31);
-							this.vo_y[i][2] = l + Math.floor(Math.sin(characterobject.c3 * d) * 31);
-							this.vo_x[i][3] = k + Math.floor(Math.cos(characterobject.c3 * d) * 134);
-							this.vo_y[i][3] = l + Math.floor(Math.sin(characterobject.c3 * d) * 134);
+							this.vo_x[i][2] = k + rounddown(Math.cos(characterobject.c3 * d) * 31, true, this);
+							this.vo_y[i][2] = l + rounddown(Math.sin(characterobject.c3 * d) * 31, true, this);
+							this.vo_x[i][3] = k + rounddown(Math.cos(characterobject.c3 * d) * 134, true, this);
+							this.vo_y[i][3] = l + rounddown(Math.sin(characterobject.c3 * d) * 134, true, this);
 							if (this.co_j.c >= 100 && this.co_j.c < 200 && this.j_v_c <= 0)
 								if (Math.abs(l11 - l12) >= Math.abs(j12 - i13)) {
 									if (this.co_j.x + 15 > l11 && this.co_j.x + 15 < l12) {
@@ -4830,8 +4830,8 @@ MainProgram.prototype.aMove = function() {
 							if (characterobject.c3 < 0) characterobject.c3 += 360;
 						}
 						var d1 = (characterobject.c3 * 3.14) / 180;
-						var i12 = characterobject.vx + Math.floor(Math.cos(d1) * 126) + 16 - 40;
-						var k12 = characterobject.vy + Math.floor(Math.sin(d1) * -126) + 16 - 7;
+						var i12 = characterobject.vx + rounddown(Math.cos(d1) * 126, true, this) + 16 - 40;
+						var k12 = characterobject.vy + rounddown(Math.sin(d1) * -126, true, this) + 16 - 7;
 						var j13 = i12 - k;
 						var k13 = k12 - l;
 						l += k13;
