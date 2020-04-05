@@ -426,163 +426,159 @@ MainProgram.prototype.addMyTokugi = function(i) {
 	var flag = false;
 	switch (i) {
 		case 1:
+		case 30: // ヘルメット
 			this.j_helm_f = true;
 			flag = true;
 			break;
 
-		case 2:
+		case 2: // ドリル
 			this.j_drell_f = true;
 			flag = true;
 			break;
 
-		case 3:
+		case 3: // 落ちるのが遅い
 			this.jst_slow_down = 1;
 			flag = true;
 			break;
 
-		case 4:
+		case 4: // 下キーを押すと急降下
 			this.jst_key_down = 1;
 			flag = true;
 			break;
 
-		case 5:
+		case 5: // 全速体当たりで敵を倒せる
 			this.jst_fast_run_attack = 1;
 			flag = true;
 			break;
 
-		case 6:
+		case 6: // 空中の左右加速度が高い
 			this.jst_fly_left_right = 1;
 			flag = true;
 			break;
 
-		case 7:
+		case 7: // 速く走れる
 			this.jst_fast_run = 1;
 			flag = true;
 			break;
 
-		case 8:
+		case 8: // 走れない
 			this.jst_fast_run = 2;
 			flag = true;
 			break;
 
-		case 9:
+		case 9: // 空中でもう１回ジャンプできる
 			this.jst_double_jump = 1;
 			flag = true;
 			break;
 
-		case 10:
+		case 10: // 	壁キック
 			this.jst_kabe_kick = 1;
 			flag = true;
 			break;
 
-		case 11:
+		case 11: // 壁ジャンプ
 			this.jst_kabe_kick = 2;
 			flag = true;
 			break;
 
-		case 12:
+		case 12: // ジャンプ時にファイヤーボールが出ない
 			this.jst_fire_xkey_only = 1;
 			flag = true;
 			break;
 
-		case 13:
+		case 13: // ジャンプの高さを固定 小
 			this.jst_jump_level_fix = 1;
 			flag = true;
 			break;
 
-		case 14:
+		case 14: // ジャンプの高さを固定 小中
 			this.jst_jump_level_fix = 2;
 			flag = true;
 			break;
 
-		case 15:
+		case 15: // ジャンプの高さを固定 中
 			this.jst_jump_level_fix = 3;
 			flag = true;
 			break;
 
-		case 16:
+		case 16: // ジャンプの高さを固定 大
 			this.jst_jump_level_fix = 4;
 			flag = true;
 			break;
 
-		case 17:
+		case 17: // しっぽ 敵を倒せる
 			this.j_tail_type = 1;
 			this.j_tail_f = true;
 			flag = true;
 			break;
 
-		case 18:
+		case 18: // しっぽ ブロック１を壊せる
 			this.j_tail_type = 2;
 			this.j_tail_f = true;
 			flag = true;
 			break;
 
-		case 19:
+		case 19: // しっぽ 敵を倒せてブロック１を壊せる
 			this.j_tail_type = 3;
 			this.j_tail_f = true;
 			flag = true;
 			break;
 
-		case 20:
+		case 20: // ファイヤーボール 跳ねる
 			this.j_fire_type = 1;
 			this.j_fire_f = true;
 			flag = true;
 			break;
 
-		case 21:
+		case 21: // ファイヤーボール 水平に飛ぶ
 			this.j_fire_type = 2;
 			this.j_fire_range = 9999;
 			this.j_fire_f = true;
 			flag = true;
 			break;
 
-		case 22:
+		case 22: // ファイヤーボール ダブル
 			this.j_fire_type = 4;
 			this.j_fire_range = 10;
 			this.j_fire_f = true;
 			flag = true;
 			break;
 
-		case 23:
+		case 23: // ファイヤーボール 水平に飛ぶ 短射程
 			this.j_fire_type = 3;
 			this.j_fire_range = 10;
 			this.j_fire_f = true;
 			flag = true;
 			break;
 
-		case 24:
+		case 24: // ファイヤーボール ホーミングアミュレット
 			this.j_fire_type = 5;
 			this.j_fire_f = true;
 			flag = true;
 			break;
 
-		case 25:
+		case 25: // 昇龍拳
 			this.jst_syouryuuken = 1;
 			flag = true;
 			break;
 
-		case 26:
+		case 26: // サイコクラッシャーアタック
 			this.jst_pc_attack = 1;
 			flag = true;
 			break;
 
-		case 27:
+		case 27: // ロケット頭突き
 			this.jst_pc_attack = 2;
 			flag = true;
 			break;
 
-		case 28:
+		case 28: // スカイアッパー
 			this.jst_syouryuuken = 2;
 			flag = true;
 			break;
 
-		case 29:
+		case 29: // 流星キック
 			this.jst_key_down = 2;
-			flag = true;
-			break;
-
-		case 30:
-			this.j_helm_f = true;
 			flag = true;
 			break;
 	}
@@ -599,6 +595,7 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 	var flag = false;
 	switch (i) {
 		case 1:
+		case 30:
 			this.j_helm_f = false;
 			flag = true;
 			break;
@@ -629,10 +626,6 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 			break;
 
 		case 7:
-			this.jst_fast_run = 0;
-			flag = true;
-			break;
-
 		case 8:
 			this.jst_fast_run = 0;
 			flag = true;
@@ -644,10 +637,6 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 			break;
 
 		case 10:
-			this.jst_kabe_kick = 0;
-			flag = true;
-			break;
-
 		case 11:
 			this.jst_kabe_kick = 0;
 			flag = true;
@@ -659,20 +648,8 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 			break;
 
 		case 13:
-			this.jst_jump_level_fix = 0;
-			flag = true;
-			break;
-
 		case 14:
-			this.jst_jump_level_fix = 0;
-			flag = true;
-			break;
-
 		case 15:
-			this.jst_jump_level_fix = 0;
-			flag = true;
-			break;
-
 		case 16:
 			this.jst_jump_level_fix = 0;
 			flag = true;
@@ -730,32 +707,19 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 			break;
 
 		case 25:
-			this.jst_syouryuuken = 0;
-			flag = true;
-			break;
-
-		case 26:
-			this.jst_pc_attack = 0;
-			flag = true;
-			break;
-
-		case 27:
-			this.jst_pc_attack = 0;
-			flag = true;
-			break;
-
 		case 28:
 			this.jst_syouryuuken = 0;
 			flag = true;
 			break;
 
-		case 29:
-			this.jst_key_down = 0;
+		case 26:
+		case 27:
+			this.jst_pc_attack = 0;
 			flag = true;
 			break;
 
-		case 30:
-			this.j_helm_f = false;
+		case 29:
+			this.jst_key_down = 0;
 			flag = true;
 			break;
 	}
@@ -1496,7 +1460,7 @@ MainProgram.prototype.sete = function(s, s1, s2) {
 			flag = true;
 			break;
 
-		case 25: // 	エアームズ爆弾直下降
+		case 25: // エアームズ爆弾直下降
 			this.mSet(i, j + 19, 606);
 			flag = true;
 			break;
@@ -1535,7 +1499,7 @@ MainProgram.prototype.sete = function(s, s1, s2) {
 			flag = true;
 			break;
 
-		case 32: // 	カイオール版バブル光線（１発目）
+		case 32: // カイオール版バブル光線（１発目）
 			for (var l = 0; l <= 7; l++) {
 				var d = (l * 45 * 3.14) / 180;
 				var l1 = rounddown(Math.cos(d) * 8, true, this);
@@ -1749,7 +1713,7 @@ MainProgram.prototype.sete = function(s, s1, s2) {
 			flag = true;
 			break;
 
-		case 64: // 	右にみずでっぽう 水平発射
+		case 64: // 右にみずでっぽう 水平発射
 			this.mSet2(i - 16, j, 732, 10, 0);
 			this.gs.rsAddSound(15);
 			flag = true;
@@ -11516,7 +11480,7 @@ MainProgram.prototype.mSet = function(i, j, k) {
 			characterobject.c1 = 0;
 			this.m_kazu++;
 			switch (k) {
-				case 90:
+				case 90: // 水の波動
 					characterobject.c2 = 4;
 					characterobject.vx = 0;
 					characterobject.vy = 0;
@@ -11535,7 +11499,7 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.vy = 0;
 					break;
 
-				case 100:
+				case 100: // 電撃
 					var k1 = this.co_j.x - i;
 					var i2 = this.co_j.y - j;
 					var i1 = Math.floor(Math.sqrt(k1 * k1 + i2 * i2));
@@ -11582,7 +11546,7 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					}
 					break;
 
-				case 200:
+				case 200: // 葉っぱカッターが左に１枚
 					characterobject.c2 = 0;
 					characterobject.vx = -4 - this.ranInt(6);
 					characterobject.vy = -22;
@@ -11599,7 +11563,7 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.y += characterobject.vy;
 					break;
 
-				case 205:
+				case 205: // 葉っぱカッターが右に１枚
 					characterobject.c = 200;
 					characterobject.c2 = 0;
 					characterobject.vx = 4 + this.ranInt(6);
@@ -11617,23 +11581,23 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.y += characterobject.vy;
 					break;
 
-				case 300:
+				case 300: // 火の粉左
 					characterobject.vx = -12;
 					characterobject.x += characterobject.vx;
 					break;
 
-				case 305:
+				case 305: // 火の粉右
 					characterobject.c = 300;
 					characterobject.vx = 12;
 					characterobject.x += characterobject.vx;
 					break;
 
-				case 400:
+				case 400: // 水鉄砲左
 					characterobject.vx = -80;
 					characterobject.vy = -225;
 					break;
 
-				case 405:
+				case 405: // 水鉄砲右
 					characterobject.c = 400;
 					characterobject.vx = 80;
 					characterobject.vy = -225;
@@ -11644,18 +11608,18 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.vy = -22;
 					break;
 
-				case 600:
+				case 600: // エアームズ爆弾左
 					characterobject.vx = -40;
 					characterobject.vy = 0;
 					break;
 
-				case 605:
+				case 605: // エアームズ爆弾右
 					characterobject.c = 600;
 					characterobject.vx = 40;
 					characterobject.vy = 0;
 					break;
 
-				case 606:
+				case 606: // エアームズ爆弾直下降
 					characterobject.c = 600;
 					characterobject.vx = 0;
 					characterobject.vy = 0;
