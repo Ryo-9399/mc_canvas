@@ -3718,7 +3718,7 @@ MainProgram.prototype.mainLoop = function() {
 			}
 			break;
 
-		case 95:
+		case 95: // 地図画面時 ショップで購入したアイテムを反映
 			this.stage = this.ig.checkStage();
 			this.init3();
 			switch (this.ig.shop_kattaitem) {
@@ -3779,7 +3779,7 @@ MainProgram.prototype.mainLoop = function() {
 			}
 			break;
 
-		case 110:
+		case 110: // ポーズ中
 			if (this.ml_mode_c < 8) this.ml_mode_c++;
 			if (this.ml_mode_c == 1) {
 				this.gg.os_g.setColor(new Color(0, 0, 0, 160));
@@ -3801,7 +3801,7 @@ MainProgram.prototype.mainLoop = function() {
 			}
 			break;
 
-		case 200:
+		case 200: // 地図画面
 			this.ig.drawMap();
 			this.ig.mainProgram();
 			this.time = 0;
