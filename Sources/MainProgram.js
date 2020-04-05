@@ -4205,8 +4205,6 @@ MainProgram.prototype.init1 = function() {
 	if (this.grenade_type < 1 || this.grenade_type > 9) this.grenade_type = 1;
 	this.boss_destroy_type = this.tdb.getValueInt("boss_destroy_type");
 	if (this.boss_destroy_type != 2) this.boss_destroy_type = 1;
-	this.boss_hp_max = this.tdb.getValueInt("boss_hp_max");
-	if (this.boss_hp_max < 1) this.boss_hp_max = 1;
 	this.j_tail_ap_boss = this.tdb.getValueInt("j_tail_ap_boss");
 	if (this.j_tail_ap_boss < 0) this.j_tail_ap_boss = 4;
 	this.suberuyuka_hkf = this.tdb.getValueInt("suberuyuka_hkf");
@@ -4461,6 +4459,9 @@ MainProgram.prototype.init3 = function() {
 	this.j_muteki_c = 0;
 	this.j_4_muki = 1;
 	this.j_speed = 80;
+	// ボスの最大HPを初期化
+	this.boss_hp_max = this.tdb.getValueInt("boss_hp_max");
+	if (this.boss_hp_max < 1) this.boss_hp_max = 1;
 	this.boss_hp = this.boss_hp_max;
 	this.tpika_p = 0;
 	this.hitokoto_c = -1;
@@ -12980,7 +12981,8 @@ MainProgram.prototype.mMove = function() {
 				else if (characterobject.c2 == 10) {
 					if (this.co_mu[0].c == 0) {
 						this.co_mu[0].c = 100;
-						if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300) this.boss_hp += 10;
+						if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300)
+							this.boss_hp = this.boss_hp_max += 10;
 						for (var i7 = 0; i7 <= 7; i7++) {
 							var l5 = this.mu_ato_p - i7;
 							if (l5 < 0) l5 += 32;
@@ -12994,7 +12996,8 @@ MainProgram.prototype.mMove = function() {
 						this.co_mu[0].y = this.mu_ato_y[i6];
 					} else if (this.co_mu[1].c == 0) {
 						this.co_mu[1].c = 100;
-						if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300) this.boss_hp += 10;
+						if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300)
+							this.boss_hp = this.boss_hp_max += 10;
 						for (var j7 = 8; j7 <= 14; j7++) {
 							var j6 = this.mu_ato_p - j7;
 							if (j6 < 0) j6 += 32;
