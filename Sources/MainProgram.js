@@ -1012,7 +1012,11 @@ MainProgram.prototype.setStageClear = function() {
  * * 0: タイトル画像
  * * 1: エンディング画像
  * * 2: ゲームクリア画像
- * * 3: ？ TODO: 要調査
+ * * 3: 地図画面
+ * * 4: ステージ１の背景画像
+ * * 5: ステージ２の背景画像
+ * * 6: ステージ３の背景画像
+ * * 7: ステージ４の背景画像
  * * 8: パターン画像
  * * 9: 背景マップチップ画像
  *
@@ -1030,7 +1034,7 @@ MainProgram.prototype.setSystemImage = function(s, s1) {
 	else if (i == 9) {
 		this.gg.setMapchipImage(s1);
 	} else {
-		if (this.gg.layer_mode != 2 && i > 3) return false;
+		if (this.gg.layer_mode != 2 && this.mcs_haikei_visible != 1 && i > 3) return false;
 		this.gg.li[i] = this.gg.loadImage(s1);
 		if (i == 3 && this.ml_mode == 200) this.ig.drawOs2();
 	}
