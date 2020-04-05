@@ -2339,6 +2339,55 @@ MainProgram.prototype.drawScore = function() {
 };
 
 /**
+ * 画面下部のグレネードの数・ジェットの残量・鍵を描画します
+ */
+MainProgram.prototype.drawItem = function() {
+	// グレネードの数・ジェットの残量の描画座標
+	const display_x = 40;
+	let display_y = 287;
+
+	//鍵を表示
+	if (this.dkey_count[0] + this.dkey_count[1] >= 1) {
+		// 鍵の描画座標
+		let key_x = 8;
+		const key_y = 280;
+
+		/**
+		 * @param n {number} 鍵の種類
+		 */
+		const drawKey = n => {
+			if (this.dkey_count[n - 1] > 0) {
+				[...Array(this.dkey_count[n - 1])].map(() => {
+					this.hg.setColor(this.dkey_back_color);
+					this.hg.fillRect(key_x - 2, key_y - 2, 36, 36);
+					this.hg.drawImage(this.gg.spt_option_img[n + 2], key_x, key_y, this.ap);
+					key_x += 36;
+					display_y = 255;
+				});
+			}
+		};
+
+		drawKey(1); // KEY1
+		drawKey(2); // KEY2
+	}
+
+	if (this.j_jet_fuel > 0 || this.j_gr_kazu > 0) {
+		let str = "";
+		this.gg.os_g.setColor(this.gamecolor_score);
+		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+
+		if (this.j_jet_fuel > 0) str += `${this.moji_jet} ${this.j_jet_fuel}`; //ジェットの燃料を表示
+		if (this.j_gr_kazu > 0) {
+			if (this.j_jet_fuel > 0) str += "  ";
+			//グレネードを表示
+			str += this.moji_grenade;
+			if (this.j_gr_kazu !== 1) str += ` ${this.j_gr_kazu}`;
+		}
+		this.hg.drawString(str, display_x, display_y + this.moji_size);
+	}
+};
+
+/**
  * 画面上部にスコア・残機のみを描画します
  * 地図画面でのスコア表示に使われる
  */
@@ -3487,39 +3536,7 @@ MainProgram.prototype.mL100 = function() {
 	this.dso_cf = false;
 	if (this.system_draw_mode != 4) this.drawScore();
 	this.gs.rsPlay();
-	var c = 0x118;
-	var c1 = 0x11f;
-	if (this.dkey_count[0] + this.dkey_count[1] >= 1) {
-		var j9 = 8;
-		if (this.dkey_count[0] > 0) {
-			for (var k2 = 1; k2 <= this.dkey_count[0]; k2++) {
-				this.hg.setColor(this.dkey_back_color);
-				this.hg.fillRect(j9 - 2, c - 2, 36, 36);
-				this.hg.drawImage(this.gg.spt_option_img[3], j9, c, this.ap);
-				j9 += 36;
-				c1 = 255;
-			}
-		}
-		if (this.dkey_count[1] > 0) {
-			for (var l2 = 1; l2 <= this.dkey_count[1]; l2++) {
-				this.hg.setColor(this.dkey_back_color);
-				this.hg.fillRect(j9 - 2, c - 2, 36, 36);
-				this.hg.drawImage(this.gg.spt_option_img[4], j9, c, this.ap);
-				j9 += 36;
-				c1 = 255;
-			}
-		}
-	}
-	this.gg.os_g.setColor(this.gamecolor_score);
-	if (this.j_jet_fuel > 0) {
-		var s = "" + this.moji_jet + " " + this.j_jet_fuel;
-		if (this.j_gr_kazu > 0)
-			if (this.j_gr_kazu == 1) s = "" + s + "  " + this.moji_grenade;
-			else s = "" + s + "  " + this.moji_grenade + " " + this.j_gr_kazu;
-		this.hg.drawString(s, 40, c1 + this.moji_size);
-	} else if (this.j_gr_kazu > 0)
-		if (this.j_gr_kazu == 1) this.hg.drawString(this.moji_grenade, 40, c1 + this.moji_size);
-		else this.hg.drawString("" + this.moji_grenade + " " + this.j_gr_kazu, 40, c1 + this.moji_size);
+	if (this.system_draw_mode != 4) this.drawItem();
 	if (this.gk.key_code == 84) {
 		this.gk.key_code = 0;
 		this.ml_mode = 50;
@@ -3763,40 +3780,8 @@ MainProgram.prototype.mainLoop = function() {
 			if (this.ml_mode_c == 1) {
 				this.gg.os_g.setColor(new Color(0, 0, 0, 160));
 				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				this.drawItem();
 				this.drawScore();
-				var c = 0x118;
-				var c1 = 0x11f;
-				if (this.dkey_count[0] + this.dkey_count[1] >= 1) {
-					var j9 = 8;
-					if (this.dkey_count[0] > 0) {
-						for (var k2 = 1; k2 <= this.dkey_count[0]; k2++) {
-							this.hg.setColor(this.dkey_back_color);
-							this.hg.fillRect(j9 - 2, c - 2, 36, 36);
-							this.hg.drawImage(this.gg.spt_option_img[3], j9, c, this.ap);
-							j9 += 36;
-							c1 = 255;
-						}
-					}
-					if (this.dkey_count[1] > 0) {
-						for (var l2 = 1; l2 <= this.dkey_count[1]; l2++) {
-							this.hg.setColor(this.dkey_back_color);
-							this.hg.fillRect(j9 - 2, c - 2, 36, 36);
-							this.hg.drawImage(this.gg.spt_option_img[4], j9, c, this.ap);
-							j9 += 36;
-							c1 = 255;
-						}
-					}
-				}
-				this.gg.os_g.setColor(this.gamecolor_score);
-				if (this.j_jet_fuel > 0) {
-					var s = "" + this.moji_jet + " " + this.j_jet_fuel;
-					if (this.j_gr_kazu > 0)
-						if (this.j_gr_kazu == 1) s = "" + s + "  " + this.moji_grenade;
-						else s = "" + s + "  " + this.moji_grenade + " " + this.j_gr_kazu;
-					this.hg.drawString(s, 40, c1 + this.moji_size);
-				} else if (this.j_gr_kazu > 0)
-					if (this.j_gr_kazu == 1) this.hg.drawString(this.moji_grenade, 40, c1 + this.moji_size);
-					else this.hg.drawString("" + this.moji_grenade + " " + this.j_gr_kazu, 40, c1 + this.moji_size);
 				this.gg.os_g.setColor(Color.white);
 				this.gg.os_g.setFont(new Font("Dialog", 1, 32));
 				this.gg.os_g.drawString("PAUSE", 200, 144);
