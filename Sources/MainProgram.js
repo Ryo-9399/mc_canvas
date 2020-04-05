@@ -2102,7 +2102,7 @@ MainProgram.prototype.setmapc = function(s, s1, s2) {
 		i++;
 		j += 10;
 		this.maps.map_bg[i][j] = k;
-		if (k === 18 || k === 19) this.map_data_option[i][j] = false; //坂の時　map_data_optionをリセット（通れる坂が配置されている可能性があるため）
+		if (this.map_data_option[i][j]) this.map_data_option[i][j] = false; //map_data_optionをリセット
 		this.setmapc_f = true;
 		return true;
 	}
@@ -22829,8 +22829,10 @@ MainProgram.prototype.aMoveOption = function(i) {
 					k16 + k22 <= this.mapHeight + 9 &&
 					(this.maps.map_bg[k10][k16 + k22] == 0 || this.maps.map_bg[k10][k16 + k22] == 4);
 					k22++
-				)
+				) {
 					this.maps.putBGCode(k10, k16 + k22, 10);
+					this.map_data_option[k10][k16 + k22] = true;
+				}
 
 				characterobject.c3 = 100;
 			}
@@ -22842,8 +22844,10 @@ MainProgram.prototype.aMoveOption = function(i) {
 					var l22 = 0;
 					l22 <= 9 && l16 + l22 <= this.mapHeight + 9 && this.maps.map_bg[l10][l16 + l22] == 10;
 					l22++
-				)
+				) {
 					this.maps.putBGCode(l10, l16 + l22, 0);
+					this.map_data_option[l10][l16 + l22] = false;
+				}
 
 				characterobject.c3 = 200;
 				break;
@@ -22857,8 +22861,10 @@ MainProgram.prototype.aMoveOption = function(i) {
 				i17 + i23 <= this.mapHeight + 9 &&
 				(this.maps.map_bg[i11][i17 + i23] == 0 || this.maps.map_bg[i11][i17 + i23] == 4);
 				i23++
-			)
+			) {
 				this.maps.putBGCode(i11, i17 + i23, 10);
+				this.map_data_option[i11][i17 + i23] = true;
+			}
 
 			characterobject.c3 = 100;
 			break;
@@ -22877,8 +22883,10 @@ MainProgram.prototype.aMoveOption = function(i) {
 					j17 + j23 <= this.mapHeight + 9 &&
 					(this.maps.map_bg[j11][j17 + j23] == 0 || this.maps.map_bg[j11][j17 + j23] == 4);
 					j23++
-				)
+				) {
 					this.maps.putBGCode(j11, j17 + j23, 10);
+					this.map_data_option[j11][j17 + j23] = true;
+				}
 
 				characterobject.c3 = 200;
 				break;
@@ -22890,8 +22898,10 @@ MainProgram.prototype.aMoveOption = function(i) {
 				var k23 = 0;
 				k23 <= 9 && k17 + k23 <= this.mapHeight + 9 && this.maps.map_bg[k11][k17 + k23] == 10;
 				k23++
-			)
+			) {
 				this.maps.putBGCode(k11, k17 + k23, 0);
+				this.map_data_option[k11][k17 + k23] = false;
+			}
 
 			characterobject.c3 = 100;
 			break;
@@ -24239,7 +24249,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 						var i5 = j + l2;
 						if (i5 < 10 || (this.maps.map_bg[i][i5] != 0 && this.maps.map_bg[i][i5] != 4)) break;
 						this.maps.putBGCode(i, i5, 10);
-						if (this.gg.layer_mode == 2 && this.clear_type != 3) this.maps.map_bg_layer[i][i5] = 5;
+						if (this.gg.layer_mode == 2 && this.clear_type != 3) this.map_data_option[i][i5] = true;
 					}
 
 					this.gs.rsAddSound(13);
