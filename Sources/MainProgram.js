@@ -4845,12 +4845,7 @@ MainProgram.prototype.mapsMakeStageData = function(
 			for (var i1 = 0; i1 < this.maps.width; i1++) {
 				var word0 = 0;
 				if (mapchipLayer) {
-					try {
-						word0 = mapchipLayer.map[j3 - 10][i1 - 1];
-						if (!word0) {
-							word0 = 0;
-						}
-					} catch (ex) {}
+					word0 = mapchipLayer.map[j3 - 10] ? mapchipLayer.map[j3 - 10][i1 - 1] : 0;
 				} else {
 					var c = as1[j3].charAt(i1 * 2);
 					if (c == ".") continue;
