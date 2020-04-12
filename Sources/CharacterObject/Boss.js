@@ -478,8 +478,8 @@ class Boss extends CharacterObject {
 					// 左向きの場合は角度に180度足す
 					const dd = direction !== 1 ? 180 : 0;
 					const rad = (normalizeDegree(degree * mirror + dd) * 3.14) / 180;
-					const x = Math.floor(Math.cos(rad) * 12);
-					const y = Math.floor(Math.sin(rad) * 10);
+					const x = rounddown(Math.cos(rad) * 12, true, mp);
+					const y = rounddown(Math.sin(rad) * 10, true, mp);
 					mp.mSet2(this.x, this.y + 16, 740, x, y);
 					break;
 				}
@@ -564,8 +564,8 @@ class Boss extends CharacterObject {
 				// 反転しても角度が同じ場合は一発しか出さない
 				if (degree_normalized !== degree_inversed) rads.push((degree_inversed * 3.14) / 180);
 				for (const rad of rads) {
-					const cos = this.boss2BubbleBeamConvert(mp, Math.cos(rad) * 12);
-					const sin = this.boss2BubbleBeamConvert(mp, Math.sin(rad) * 10);
+					const cos = rounddown(Math.cos(rad) * 12, true, mp);
+					const sin = rounddown(Math.sin(rad) * 10, true, mp);
 					mp.mSet2(this.x, this.y, 710, cos, sin);
 				}
 				break;
@@ -621,8 +621,8 @@ class Boss extends CharacterObject {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
-			const cos = this.boss2BubbleBeamConvert(mp, Math.cos(d) * 8);
-			const sin = -this.boss2BubbleBeamConvert(mp, Math.sin(d) * 8);
+			const cos = rounddown(Math.cos(d) * 8, true, mp);
+			const sin = -rounddown(Math.sin(d) * 8, true, mp);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 			mp.gs.rsAddSound(18);
 		}
@@ -675,8 +675,8 @@ class Boss extends CharacterObject {
 			}
 		}
 		if (rad !== null) {
-			const cos = this.boss2BubbleBeamConvert(mp, Math.cos(rad) * 12);
-			const sin = this.boss2BubbleBeamConvert(mp, Math.sin(rad) * 8);
+			const cos = rounddown(Math.cos(rad) * 12, true, mp);
+			const sin = rounddown(Math.sin(rad) * 8, true, mp);
 			mp.mSet2(this.x, this.y, 711, cos, sin);
 		}
 
@@ -705,17 +705,6 @@ class Boss extends CharacterObject {
 				this.c1 = 300;
 			}
 		}
-	}
-
-	/**
-	 * boss2のバブル光線の速さの整数変換処理
-	 * @param {MainProgram} mp
-	 * @param {number} v 変換前のバブル光線の速さ
-	 * @returns {number} 変換後のバブル光線の速さ
-	 */
-	boss2BubbleBeamConvert(mp, v) {
-		//bc-boss2-bubble-beam がtrueの場合Java版に falseの場合はCanvasオリジナル
-		return !!mp.tdb.options["bc-boss2-bubble-beam"] ? rounddown(v) : Math.floor(v);
 	}
 
 	/**
