@@ -1184,6 +1184,11 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * * 0: タイトル画像
 	 * * 1: エンディング画像
 	 * * 2: ゲームクリア画像
+	 * * 3: 地図画面
+	 * * 4: ステージ１の背景画像
+	 * * 5: ステージ２の背景画像
+	 * * 6: ステージ３の背景画像
+	 * * 7: ステージ４の背景画像
 	 * * 8: パターン画像
 	 * * 9: 背景マップチップ画像
 	 *
@@ -1801,7 +1806,6 @@ function MasaoJSS(mc, caseInsensitive) {
 			}
 			if (i == 3) {
 				mc.mp.drawGamescreenWindow();
-				//mc.mp.drawItem();
 				mc.mp.drawScore();
 				return true;
 			}
@@ -2566,7 +2570,7 @@ function MasaoJSS(mc, caseInsensitive) {
 			if (i <= 0) {
 				return false;
 			} else {
-				mc.gg.os_g.setFont(new Font("Dialog", 0, i));
+				mc.gg.os_g.setFont(new Font(Font.DIALOG, 0, i));
 				return true;
 			}
 		} else {

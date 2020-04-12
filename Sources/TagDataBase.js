@@ -322,7 +322,9 @@ TagDataBase.prototype.initParameter = function() {
 		audio_se_switch_ogg: "1",
 		audio_bgm_switch_wave: "2",
 		audio_bgm_switch_mp3: "1",
-		audio_bgm_switch_ogg: "1"
+		audio_bgm_switch_ogg: "1",
+		font_score: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
+		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace"
 	};
 
 	var str2 = "";

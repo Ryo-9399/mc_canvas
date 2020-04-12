@@ -366,18 +366,23 @@ Graphics.prototype.setColor = function(color) {
  */
 Graphics.prototype.setFont = function(font) {
 	if (this._ctx == null) return false;
-	var str = "";
+
+	let str = "";
+
 	if (font._style & Font.ITALIC) str += "italic ";
 	if (font._style & Font.BOLD) str += "bold ";
-	str += font._size + "px ";
-	if (font._name == Font.SERIF) str += "serif";
-	else if (font._name == Font.SANS_SERIF) str += "sans-serif";
-	else if (font._name == Font.MONOSPACED) str += "monospace";
-	else if (font._name == Font.DIALOG)
-		str += "'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
-	else str += '"' + font._name + '"';
+
+	str += `${font._size}px `;
+
+	if (font._name === Font.SERIF) str += Font.SERIF_str;
+	else if (font._name === Font.SANS_SERIF) str += Font.SANS_SERIF_str;
+	else if (font._name === Font.MONOSPACED) str += Font.MONOSPACED_str;
+	else if (font._name === Font.DIALOG) str += Font.DIALOG_str;
+	else str += `"${font._name}"`;
+
 	this._ctx.font = str;
 	this._font = font;
+
 	return true;
 };
 
@@ -635,5 +640,10 @@ Font.SERIF = "Serif";
 Font.PLAIN = 0;
 Font.BOLD = 1;
 Font.ITALIC = 2;
+
+Font.SERIF_str = "'Times New Roman','ＭＳ 明朝',serif";
+Font.SANS_SERIF_str = "Arial,'ＭＳ ゴシック',sans-serif";
+Font.MONOSPACED_str = "'Courier New',monospace";
+Font.DIALOG_str = "'Helvetica','Arial','ＭＳ ゴシック','HG ゴシックB Sun','HG ゴシックB',monospace";
 
 export { ImageBuff, Color, Font };
