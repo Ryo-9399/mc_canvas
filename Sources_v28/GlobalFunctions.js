@@ -18,7 +18,7 @@ import { MasaoConstruction } from "./MasaoConstruction";
  * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
  * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
  * @param {boolean} [options."bc-case-insensitive"] 拡張JSのメソッドの大文字小文字を区別しない
- * @param {boolean} [options."bc-boss2-bubble-beam"] カイオールのバブル光線の角度を変更する
+ * @param {boolean} [options."bc-use-rounddown"] 小数切り捨て処理をJava版の挙動にする
  * @param {boolean} [options."custom-loop"] メインループを行うためのLoopクラスです。（テスト用）
  */
 function Game(params, id, options) {
@@ -281,9 +281,9 @@ Game.replaceByDom = function(paramScope, options) {
 	var id = paramScope.id || makeRandomString();
 	newDiv.id = id;
 	paramScope.parentNode.replaceChild(newDiv, paramScope);
-	//変換時にカイオールのバブル光線をJava版にする
+	//変換時に小数切り捨て処理をJava版にする
 	options = options || {};
-	if (options["bc-boss2-bubble-beam"] !== false) options["bc-boss2-bubble-beam"] = true;
+	if (options["bc-use-rounddown"] !== false) options["bc-use-rounddown"] = true;
 	new Game(params, id, options);
 };
 
@@ -715,9 +715,14 @@ function createNDimensionArray() {
 	return r;
 }
 
-// 小数切り捨て
-function rounddown(val) {
-	if (val >= 0) return Math.floor(val);
+/**
+ * 小数切り捨て
+ * @param {number} val 切り捨てを行いたい小数
+ * @param {boolean} option option が true かつ bc-use-rounddown がfalseの時Canvasオリジナルに
+ * @returns {number} 小数切り捨て後の値
+ */
+function rounddown(val, option = false, mp) {
+	if (val >= 0 || (option && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
 	else return -Math.floor(-val);
 }
 

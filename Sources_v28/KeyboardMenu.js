@@ -367,7 +367,7 @@ KeyboardMenu.prototype.move = function() {
 };
 
 KeyboardMenu.prototype.drawMenus = function() {
-	this.hg.setFont(new Font("Dialog", 0, 12));
+	this.hg.setFont(new Font(Font.DIALOG, 0, 12));
 	for (var i = 0; i <= 15; i++) {
 		var c = this.c[i];
 		if (c == 0) continue;
