@@ -195,8 +195,8 @@ MainProgram.prototype.ranInt = function(i) {
  * 画面上部のスコア・残り時間・HP・残機を描画します
  */
 MainProgram.prototype.drawScore = function() {
-	this.gg.os_g.setColor(this.gamecolor_score);
-	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+	this.hg.setColor(this.gamecolor_score);
+	this.hg.setFont(new Font(Font.DIALOG, 1, this.moji_size));
 
 	// 描画座標
 	const display_x = 40;
@@ -216,7 +216,7 @@ MainProgram.prototype.drawScore = function() {
 		const time_sec = Math.floor(this.time / 1000);
 		str += `${this.moji_time}${time_sec}`;
 	}
-	this.gg.os_g.drawString(str, display_x, display_y);
+	this.hg.drawString(str, display_x, display_y);
 };
 
 /**
@@ -224,8 +224,8 @@ MainProgram.prototype.drawScore = function() {
  * 地図画面でのスコア表示に使われる
  */
 MainProgram.prototype.drawScore2 = function() {
-	this.gg.os_g.setColor(this.gamecolor_score);
-	this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+	this.hg.setColor(this.gamecolor_score);
+	this.hg.setFont(new Font(Font.DIALOG, 1, this.moji_size));
 
 	// 描画座標
 	const display_x = 40;
@@ -240,7 +240,7 @@ MainProgram.prototype.drawScore2 = function() {
 		// 残機を表示
 		str += `${this.moji_left}${this.j_left}`;
 	}
-	this.gg.os_g.drawString(str, display_x, display_y);
+	this.hg.drawString(str, display_x, display_y);
 };
 
 /**
@@ -394,13 +394,32 @@ MainProgram.prototype.mL100 = function() {
 };
 
 MainProgram.prototype.mainLoop = function() {
+	const drawBlack = () => {
+		// 地図画面からステージ開始時に画面を真っ暗にする
+		this.hg.setColor(Color.black);
+		this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+	};
+
+	const drawTitle = () => {
+		// タイトル画面を表示。スコアやハイスコアが存在する時、スコアも表示する
+		this.gg.drawListImage(0, 0, 0); // タイトル画像を表示
+		if (this.score > 0 || this.highscore > 0) this.drawScore();
+	};
+
+	const returningTitle = () => {
+		// Tキーを押すとタイトルに戻る
+		if (this.gk.key_code == 84) {
+			this.gk.key_code = 0;
+			this.ml_mode = 50;
+		}
+	};
+
 	switch (this.ml_mode) {
 		default:
 			break;
 
-		case 50:
-			this.gg.drawListImage(0, 0, 0);
-			if (this.score > 0 || this.highscore > 0) this.drawScore();
+		case 50: // タイトル画面
+			drawTitle();
 			if (!this.gm.button_f && !this.gk.tr1_f) {
 				this.ml_mode = 60;
 				this.g_c1 = 0;
@@ -421,32 +440,29 @@ MainProgram.prototype.mainLoop = function() {
 			if (this.stage_select == 2) {
 				this.init2();
 				this.ig.worldInit();
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.ml_mode = 200;
 				break;
 			}
 			this.init2();
 			this.init3();
-			this.gg.drawListImage(0, 0, 0);
-			if (this.score > 0 || this.highscore > 0) this.drawScore();
+			drawTitle();
 			if (this.j_left <= 0) this.ml_mode = 100;
 			else this.ml_mode = 90;
 			break;
 
-		case 80:
+		case 80: // ステージ開始
 			this.init2();
 			this.init3();
-			this.gg.drawListImage(0, 0, 0);
-			if (this.score > 0 || this.highscore > 0) this.drawScore();
+			drawTitle();
 			if (this.j_left <= 0) this.ml_mode = 100;
 			else this.ml_mode = 90;
 			break;
 
 		case 90:
 			this.init3();
-			this.gg.os_g.setColor(this.gamecolor_kaishi);
-			this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+			this.hg.setColor(this.gamecolor_kaishi);
+			this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
 			if (this.stage >= this.stage_max) {
 				this.gg.drawPT(160, 144, 52, 0);
 				this.gg.drawPT(192, 144, 53, 0);
@@ -471,13 +487,10 @@ MainProgram.prototype.mainLoop = function() {
 		case 91:
 			this.ml_mode_c++;
 			if (this.ml_mode_c > 35) this.ml_mode = 100;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
-		case 95:
+		case 95: // 地図画面時 ショップで購入したアイテムを反映
 			this.stage = this.ig.checkStage();
 			this.init3();
 			switch (this.ig.shop_kattaitem) {
@@ -518,8 +531,7 @@ MainProgram.prototype.mainLoop = function() {
 					if (this.time_max > 0) this.time += 30000;
 					break;
 			}
-			this.gg.os_g.setColor(Color.black);
-			this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+			drawBlack();
 			this.drawScore();
 			this.ml_mode = 96;
 			this.ml_mode_c = 0;
@@ -528,13 +540,10 @@ MainProgram.prototype.mainLoop = function() {
 		case 96:
 			this.ml_mode_c++;
 			if (this.ml_mode_c > 8) this.ml_mode = 100;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
-		case 200:
+		case 200: // 地図画面
 			this.ig.drawMap();
 			this.ig.mainProgram();
 			this.time = 0;
@@ -542,15 +551,11 @@ MainProgram.prototype.mainLoop = function() {
 			if (this.ig.mp_mode == 110)
 				if (this.ig.dokan_khID >= 1) this.ml_mode = 230;
 				else this.ml_mode = 95;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
 		case 230:
-			this.gg.os_g.setColor(Color.black);
-			this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+			drawBlack();
 			this.drawScore2();
 			this.ml_mode = 231;
 			this.ml_mode_c = 0;
@@ -566,10 +571,7 @@ MainProgram.prototype.mainLoop = function() {
 				else s = this.gg.ap.getParameter("url1");
 				location.href = s;
 			} else if (this.ml_mode_c > 80) this.ml_mode = 50;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
 		case 250:
@@ -577,18 +579,14 @@ MainProgram.prototype.mainLoop = function() {
 			this.ig.worldInit2();
 			this.ml_mode = 251;
 			this.ml_mode_c = 0;
-			this.gg.os_g.setColor(Color.black);
-			this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+			drawBlack();
 			this.drawScore();
 			break;
 
 		case 251:
 			this.ml_mode_c++;
 			if (this.ml_mode_c > 8) this.ml_mode = 200;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
 		case 260:
@@ -596,21 +594,17 @@ MainProgram.prototype.mainLoop = function() {
 			this.ig.worldInit3();
 			this.ml_mode = 261;
 			this.ml_mode_c = 0;
-			this.gg.os_g.setColor(Color.black);
-			this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+			drawBlack();
 			this.drawScore();
 			break;
 
 		case 261:
 			this.ml_mode_c++;
 			if (this.ml_mode_c > 8) this.ml_mode = 200;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
-		case 300:
+		case 300: // ゲームオーバー
 			this.gg.setBackcolor(Color.black);
 			this.gg.fill();
 			this.gg.drawListImage(0, 0, 2);
@@ -623,13 +617,10 @@ MainProgram.prototype.mainLoop = function() {
 		case 310:
 			this.ml_mode_c++;
 			if (this.ml_mode_c > 45) this.ml_mode = 50;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
-		case 400:
+		case 400: // エンディング
 			this.gg.drawListImage(0, 0, 1);
 			if (this.time_max > 0) this.addScore(rounddown(this.time / 1000));
 			this.drawScore();
@@ -641,27 +632,22 @@ MainProgram.prototype.mainLoop = function() {
 		case 410:
 			this.ml_mode_c++;
 			if (this.ml_mode_c > 120) this.ml_mode = 50;
-			if (this.gk.key_code == 84) {
-				this.gk.key_code = 0;
-				this.ml_mode = 50;
-			}
+			returningTitle();
 			break;
 
 		case 500:
 			this.gg.setBackcolor(Color.black);
 			this.gg.fill();
-			this.gg.drawListImage(0, 0, 0);
-			if (this.score > 0 || this.highscore > 0) this.drawScore();
-			this.ml_mode = 50;
+			drawTitle();
 			this.ml_mode = 50;
 			break;
 
 		case 1000:
 			this.gg.setBackcolor(Color.black);
 			this.gg.fill();
-			this.hg.setFont(new Font("Dialog", 0, 46));
+			this.hg.setFont(new Font(Font.DIALOG, 0, 46));
 			this.hg.setColor(Color.white);
-			this.hg.setFont(new Font("Dialog", 0, 20));
+			this.hg.setFont(new Font(Font.DIALOG, 0, 20));
 			this.hg.drawString("Title        MASAO CONSTRUCTION", 50, 50);
 			this.hg.drawString("Version      2.8", 50, 80);
 			this.hg.drawString("Language     Java2  SDK 1.3.1", 50, 110);

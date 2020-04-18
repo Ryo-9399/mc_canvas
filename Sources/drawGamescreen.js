@@ -631,7 +631,7 @@ const drawA = function() {
 						this.gg.os_g.fillRect(co_wx, co_wy, 32, 32);
 						const str = `S ${characterobject.c3}`;
 						this.gg.os_g.setColor(Color.white);
-						this.gg.os_g.setFont(new Font("Dialog", 1, 12));
+						this.gg.os_g.setFont(new Font(Font.DIALOG, 1, 12));
 						this.gg.os_g.drawString(str, co_wx + 2, co_wy + this.moji_size + 4);
 					}
 					break;
