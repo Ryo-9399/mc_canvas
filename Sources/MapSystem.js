@@ -226,14 +226,20 @@ class MapSystem {
 					// 画像サイズ    ５１２×６４０専用
 					image_height = 640;
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+					scroll_y = -(
+						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) %
+						image_height
+					);
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 9) {
 					// 画像サイズ  １０２４×６４０専用
 					image_width = 1024;
 					image_height = 640;
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+					scroll_y = -(
+						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) %
+						image_height
+					);
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 10) {
 					// 左右スクロール（速度はマップの１／２）
