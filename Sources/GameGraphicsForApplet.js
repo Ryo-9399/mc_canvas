@@ -23,7 +23,17 @@ class GameGraphicsForApplet {
 		this.spt_h_kijyun = 3;
 		this.mode = 2;
 		this.oya = null;
-		this.di = new Dimension(512, 320);
+
+		if (this.tdb.getValueInt("mcs_screen_size") == 1) {
+			this.system_screen_size = 1;
+			this.system_screen_width = 640;
+			this.system_screen_height = 480;
+		} else {
+			this.system_screen_size = 2;
+			this.system_screen_width = 512;
+			this.system_screen_height = 320;
+		}
+		this.di = new Dimension(this.system_screen_width, this.system_screen_height);
 		/**
 		 * 背景色
 		 * @type {Color}

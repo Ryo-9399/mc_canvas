@@ -25,8 +25,6 @@ function Game(params, id, options) {
 	var randomID = makeRandomString();
 
 	options = options || {};
-	options.width = options.width || 512;
-	options.height = options.height || 320;
 	//Extends内のものをここに入れると反映される
 	options.extensions = options.extensions || [];
 
@@ -38,7 +36,7 @@ function Game(params, id, options) {
 		// idが無ければ現在の場所に作る
 		// ドキュメント書き込み文
 		this.__boxID = "__mcdiv" + randomID;
-		document.write("<div id='" + this.__boxID + "'></div>");
+		document.write(`<div id='${this.__boxID}'></div>`);
 	}
 
 	// キャンバスID
@@ -58,8 +56,8 @@ function Game(params, id, options) {
 	// メインCanvasオブジェクト
 	this.__canvas = document.createElement("canvas");
 	this.__canvas.id = this.__canvasID;
-	this.__canvas.width = options.width;
-	this.__canvas.height = options.height;
+	this.__canvas.width = options.width || 512;
+	this.__canvas.height = options.height || 320;
 	this.__canvas.textContent = "※お使いのブラウザはHTML5に対応していないため表示できません。";
 	this.__box.appendChild(this.__canvas);
 
@@ -213,6 +211,12 @@ function Game(params, id, options) {
 		type: "Loop",
 		value: __loop
 	});
+
+	// 画面サイズが変更されていたら更新
+	if (this.__mc.getParameter("mcs_screen_size") == 1) {
+		this.__canvas.width = options.width || 640;
+		this.__canvas.height = options.height || 480;
+	}
 }
 
 /**
@@ -406,17 +410,12 @@ Game.prototype.__loop = function() {
 					if (!(prop in this.__teo)) {
 						this.__teo[prop] = { val: mp[prop], t: 0 };
 					} else if (this.__teo[prop].t > 0) {
-						str +=
-							"<span style='background-color:rgba(255,255,255," +
-							this.__teo[prop].t / 6 +
-							")'>" +
-							prop +
-							": " +
-							mp[prop] +
-							"</span> ";
+						str += `<span style='background-color:rgba(255,255,255,${this.__teo[prop].t / 6})'>${prop}: ${
+							mp[prop]
+						}</span> `;
 						this.__teo[prop].t--;
 					} else {
-						str += prop + ": " + mp[prop] + " ";
+						str += `${prop}: ${mp[prop]} `;
 					}
 					if (this.__teo[prop].val != mp[prop]) {
 						this.__teo[prop].val = mp[prop];
