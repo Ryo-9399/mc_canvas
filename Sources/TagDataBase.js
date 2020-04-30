@@ -7,15 +7,20 @@ function TagDataBase() {
 
 TagDataBase.prototype.initParameter = function() {
 	this.params = {
-		"chizu-0": "...............",
-		"chizu-1": ".b33E33333c..C.",
-		"chizu-2": "....2.....2..2.",
-		"chizu-3": "....2.....2..2.",
-		"chizu-4": "....A33a331331.",
-		"chizu-5": ".i.....2.......",
-		"chizu-6": ".2.....2.......",
-		"chizu-7": ".B33D3313f3d...",
-		"chizu-8": "...............",
+		"chizu-0": "...................",
+		"chizu-1": ".b33E33333c..C.....",
+		"chizu-2": "....2.....2..2.....",
+		"chizu-3": "....2.....2..2.....",
+		"chizu-4": "....A33a331331.....",
+		"chizu-5": ".i.....2...........",
+		"chizu-6": ".2.....2...........",
+		"chizu-7": ".B33D3313f3d.......",
+		"chizu-8": "...................",
+		"chizu-9": "...................",
+		"chizu-10": "...................",
+		"chizu-11": "...................",
+		"chizu-12": "...................",
+		"chizu-13": "...................",
 		mes1_name: "ダケシ",
 		"serifu1-1": "人の命は、お金では買えないと言われています。",
 		"serifu1-2": "しかし、お店へ行けば、ＳＣＯＲＥで買えます。",
@@ -324,7 +329,8 @@ TagDataBase.prototype.initParameter = function() {
 		audio_bgm_switch_mp3: "1",
 		audio_bgm_switch_ogg: "1",
 		font_score: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
-		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace"
+		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
+		mcs_screen_size: "2"
 	};
 
 	var str2 = "";
@@ -337,49 +343,49 @@ TagDataBase.prototype.initParameter = function() {
 	var str1;
 	for (var k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "map" + k + "-" + j;
+			str1 = `map${k}-${j}`;
 			this.params[str1] = ".";
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "map" + k + "-" + j + "-s";
+			str1 = `map${k}-${j}-s`;
 			this.params[str1] = ".";
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "map" + k + "-" + j + "-t";
+			str1 = `map${k}-${j}-t`;
 			this.params[str1] = ".";
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "map" + k + "-" + j + "-f";
+			str1 = `map${k}-${j}-f`;
 			this.params[str1] = ".";
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "layer" + k + "-" + j;
+			str1 = `layer${k}-${j}`;
 			this.params[str1] = str3;
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "layer" + k + "-" + j + "-s";
+			str1 = `layer${k}-${j}-s`;
 			this.params[str1] = str3;
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "layer" + k + "-" + j + "-t";
+			str1 = `layer${k}-${j}-t`;
 			this.params[str1] = str3;
 		}
 	}
 	for (k = 0; k <= 2; k++) {
 		for (j = 0; j <= 29; j++) {
-			str1 = "layer" + k + "-" + j + "-f";
+			str1 = `layer${k}-${j}-f`;
 			this.params[str1] = str3;
 		}
 	}

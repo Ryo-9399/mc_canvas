@@ -364,7 +364,7 @@ Graphics.prototype.setGlobalAlpha = function(a) {
 Graphics.prototype.setColor = function(color) {
 	if (this._ctx == null) return false;
 	this._color = new Color(color.r, color.g, color.b, color.a);
-	var val = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a / 255 + ")";
+	const val = `rgba(${color.r},${color.g},${color.b},${color.a / 255})`;
 	this._ctx.strokeStyle = val;
 	this._ctx.fillStyle = val;
 	return true;

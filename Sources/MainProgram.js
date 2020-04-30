@@ -320,22 +320,22 @@ function MainProgram(gamegraphics, gamemouse, gamekey, gamesound, tagdatabase) {
 	this.gk = gamekey;
 	this.gs = gamesound;
 	this.tdb = tagdatabase;
-	this.spot_img = new ImageBuff(512, 320);
+	this.spot_img = new ImageBuff(this.gg.di.width, this.gg.di.height);
 	this.spot_g = this.spot_img.createGraphics();
 	this.maps = new MapSystem(this.mapWidth + 20, this.mapHeight + 70, this.gg, this);
-	this.km = new KeyboardMenu(this.gg, this.gk, "\u307E\u3055\u304A");
+	this.km = new KeyboardMenu(this.gg, this.gk, "\u307E\u3055\u304A"); // 主人公の名前「まさお」
 	this.co_j = new CharacterObject();
 
-	for (var j = 0; j <= 79; j++) this.co_m[j] = new CharacterObject();
+	for (let j = 0; j <= 79; j++) this.co_m[j] = new CharacterObject();
 
-	for (var l = 0; l <= 79; l++) this.co_h[l] = new CharacterObject();
+	for (let l = 0; l <= 79; l++) this.co_h[l] = new CharacterObject();
 
-	for (var i1 = 0; i1 <= 8; i1++) this.co_jm[i1] = new CharacterObject();
+	for (let i1 = 0; i1 <= 8; i1++) this.co_jm[i1] = new CharacterObject();
 
 	this.co_b = new Boss();
-	for (var j1 = 0; j1 <= 1; j1++) this.co_mu[j1] = new CharacterObject();
+	for (let j1 = 0; j1 <= 1; j1++) this.co_mu[j1] = new CharacterObject();
 
-	var l1 = this.tdb.getValueInt("stage_select");
+	const l1 = this.tdb.getValueInt("stage_select");
 	if (l1 == 2) {
 		this.stage_select = 2;
 		this.stage_max = 4;
@@ -403,7 +403,7 @@ MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler) {
  */
 MainProgram.prototype.sendHighscore = function() {
 	if (Object.prototype.toString.call(this.heh) == "[object Function]") {
-		var i = this.highscore;
+		let i = this.highscore;
 		if (i < this.score) i = this.score;
 		this.heh(i);
 	}
@@ -423,7 +423,7 @@ MainProgram.prototype.start = function() {
  * @see {@link MasaoJSS#addMyTokugi}
  */
 MainProgram.prototype.addMyTokugi = function(i) {
-	var flag = false;
+	let flag = false;
 	switch (i) {
 		case 1:
 		case 30: // ヘルメット
@@ -592,7 +592,7 @@ MainProgram.prototype.addMyTokugi = function(i) {
  * @see {@link MasaoJSS#removeMyTokugi}
  */
 MainProgram.prototype.removeMyTokugi = function(i) {
-	var flag = false;
+	let flag = false;
 	switch (i) {
 		case 1:
 		case 30:
@@ -887,9 +887,9 @@ MainProgram.prototype.setbacki = function(s) {
  * @see {@link MasaoJSS#setMyWait}
  */
 MainProgram.prototype.setMyWait = function(s, s1, s2) {
-	var i = -1;
-	var j = 100;
-	var k = 1;
+	let i = -1;
+	let j = 100;
+	let k = 1;
 	if (this.ml_mode != 100) return false;
 
 	i = parseInt(s);
@@ -1025,7 +1025,7 @@ MainProgram.prototype.setStageClear = function() {
  * @see {@link MasaoJSS#setSystemImage}
  */
 MainProgram.prototype.setSystemImage = function(s, s1) {
-	var i;
+	let i;
 
 	i = parseInt(s);
 	if (isNaN(i)) i = -1;
@@ -1053,10 +1053,10 @@ MainProgram.prototype.setSystemImage = function(s, s1) {
  * @see {@link MasaoJSS#setScrollArea}
  */
 MainProgram.prototype.setScrollArea = function(s, s1, s2, s3) {
-	var i = 0;
-	var j = 0;
-	var k = this.mapWidth - 16;
-	var l = this.mapHeight - 10;
+	let i = 0;
+	let j = 0;
+	let k = this.mapWidth - rounddown(this.gg.di.width / 32);
+	let l = this.mapHeight - rounddown(this.gg.di.height / 32);
 	if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
 	i = parseInt(s);
@@ -1064,17 +1064,17 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3) {
 	k = parseInt(s2);
 	l = parseInt(s3);
 	if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
-	if (i < 0 || i > this.mapWidth - 16) return false;
-	if (k < 0 || k > this.mapWidth - 16) return false;
-	if (j < 0 || j > this.mapHeight - 10) return false;
-	if (l < 0 || l > this.mapHeight - 10) return false;
+	if (i < 0 || i > this.mapWidth - rounddown(this.gg.di.width / 32)) return false;
+	if (k < 0 || k > this.mapWidth - rounddown(this.gg.di.width / 32)) return false;
+	if (j < 0 || j > this.mapHeight - rounddown(this.gg.di.height / 32)) return false;
+	if (l < 0 || l > this.mapHeight - rounddown(this.gg.di.height / 32)) return false;
 	if (i > k) {
-		var i1 = i;
+		const i1 = i;
 		i = k;
 		k = i1;
 	}
 	if (j > l) {
-		var j1 = j;
+		const j1 = j;
 		j = l;
 		l = j1;
 	}
@@ -1097,10 +1097,10 @@ MainProgram.prototype.setScrollArea = function(s, s1, s2, s3) {
  * @see {@link MasaoJSS#setScrollAreaReal}
  */
 MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3) {
-	var i = 0;
-	var j = 0;
-	var k = this.mapWidth - 16;
-	var l = this.mapHeight - 10;
+	let i = 0;
+	let j = 0;
+	let k = this.mapWidth - rounddown(this.gg.di.width / 32);
+	let l = this.mapHeight - rounddown(this.gg.di.height / 32);
 	if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
 	i = parseInt(s);
@@ -1113,12 +1113,12 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3) {
 	if (j < 320 || j > this.mapHeight * 32) return false;
 	if (l < 320 || l > this.mapHeight * 32) return false;
 	if (i > k) {
-		var i1 = i;
+		const i1 = i;
 		i = k;
 		k = i1;
 	}
 	if (j > l) {
-		var j1 = j;
+		const j1 = j;
 		j = l;
 		l = j1;
 	}
@@ -1140,8 +1140,8 @@ MainProgram.prototype.setScrollAreaReal = function(s, s1, s2, s3) {
  * @see {@link MasaoJSS#setModeWait}
  */
 MainProgram.prototype.setModeWait = function(s, s1) {
-	var i = 0;
-	var j = 100;
+	let i = 0;
+	let j = 100;
 
 	i = parseInt(s);
 	j = parseInt(s1);
@@ -1167,10 +1167,10 @@ MainProgram.prototype.setModeWait = function(s, s1) {
  * @see {@link MainProgram#showoSet}
  */
 MainProgram.prototype.setPenColor = function(s, s1, s2, s3) {
-	var i = 255;
-	var j = 255;
-	var k = 255;
-	var l = 255;
+	let i = 255;
+	let j = 255;
+	let k = 255;
+	let l = 255;
 
 	i = parseInt(s);
 	j = parseInt(s1);
@@ -1266,7 +1266,7 @@ MainProgram.prototype.getJSMes = function() {
  * @see {@link MasaoJSS#showGauge}
  */
 MainProgram.prototype.showGauge = function(s, s1) {
-	var i = 0;
+	let i = 0;
 	if (this.ml_mode != 100) return false;
 
 	i = parseInt(s);
@@ -1315,10 +1315,10 @@ MainProgram.prototype.setJSMes = function(s) {
  * @see {@link MasaoJSS#setEnemy}
  */
 MainProgram.prototype.sete = function(s, s1, s2) {
-	var i = 0;
-	var j = 0;
-	var k = 0;
-	var flag = false;
+	let i = 0;
+	let j = 0;
+	let k = 0;
+	let flag = false;
 	if (this.ml_mode != 100) return false;
 
 	i = parseInt(s);
@@ -1334,81 +1334,81 @@ MainProgram.prototype.sete = function(s, s1, s2) {
 			break;
 
 		case 1: // 亀 足元に空白があると落ちる
-			this.tSet(i, j, 100, i - 512 - 32);
+			this.tSet(i, j, 100, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 2: // 亀 足元に空白があると向きを変える
-			this.tSet(i, j, 110, i - 512 - 32);
+			this.tSet(i, j, 110, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 3: // 亀 ３匹連続
-			this.tSet(i, j, 110, i - 512 - 32);
-			this.tSet(i + 75, j, 110, i - 512 - 32);
-			this.tSet(i + 150, j, 110, i - 512 - 32);
+			this.tSet(i, j, 110, i - this.gg.di.width - 32);
+			this.tSet(i + 75, j, 110, i - this.gg.di.width - 32);
+			this.tSet(i + 150, j, 110, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 4: // ピカチー
-			this.tSet(i, j, 200, i - 512 - 32);
+			this.tSet(i, j, 200, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 5: // チコリン
-			this.tSet(i, j, 300, i - 512 - 32);
+			this.tSet(i, j, 300, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 6: // ヒノララシ
-			this.tSet(i, j, 400, i - 512 - 32);
+			this.tSet(i, j, 400, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 7: // ポッピー 上下移動
-			this.tSet(i, j, 500, i - 512 - 32);
+			this.tSet(i, j, 500, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 8: // ポッピー 直進
-			this.tSet(i, j, 510, i - 512 - 32);
+			this.tSet(i, j, 510, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 9: // ポッピー ３羽連続
-			this.tSet(i, j, 510, i - 512 - 32 - 32);
-			this.tSet(i + 80, j - 40, 510, i - 512 - 32 - 32);
-			this.tSet(i + 140, j + 38, 510, i - 512 - 32 - 32);
+			this.tSet(i, j, 510, i - this.gg.di.width - 32 - 32);
+			this.tSet(i + 80, j - 40, 510, i - this.gg.di.width - 32 - 32);
+			this.tSet(i + 140, j + 38, 510, i - this.gg.di.width - 32 - 32);
 			flag = true;
 			break;
 
 		case 10: // マリリ
-			this.tSet(i, j, 600, i - 512 - 32);
+			this.tSet(i, j, 600, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 11: // ヤチャモ
-			this.tSet(i, j, 700, i - 512 - 32);
+			this.tSet(i, j, 700, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 12: // ミズタロウ
-			this.tSet(i, j, 800, i - 512 - 32);
+			this.tSet(i, j, 800, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 13: // エアームズ
-			this.tSet(i, j, 900, i - 512 - 32);
+			this.tSet(i, j, 900, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 14: // 水なしタイキング
-			this.tSet(i, j - 16, 1000, i - 512 - 32 - 32);
+			this.tSet(i, j - 16, 1000, i - this.gg.di.width - 32 - 32);
 			flag = true;
 			break;
 
 		case 15: // 水なしクラゲッソ
-			this.tSet(i, j, 1100, i - 512 - 32);
+			this.tSet(i, j, 1100, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
@@ -1504,7 +1504,7 @@ MainProgram.prototype.sete = function(s, s1, s2) {
 			break;
 
 		case 32: // カイオール版バブル光線（１発目）
-			for (var l = 0; l <= 7; l++) {
+			for (let l = 0; l <= 7; l++) {
 				var d = (l * 45 * 3.14) / 180;
 				var l1 = rounddown(Math.cos(d) * 8, true, this);
 				var k2 = rounddown(Math.sin(d) * 8, true, this) * -1;
@@ -1588,82 +1588,82 @@ MainProgram.prototype.sete = function(s, s1, s2) {
 			break;
 
 		case 41: // チコリン（はっぱカッター 乱れ射ち）
-			this.tSet(i, j, 320, i - 512 - 32);
+			this.tSet(i, j, 320, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 42: // チコリン（左にソーラービーム）
-			this.tSet(i, j, 330, i - 512 - 32);
+			this.tSet(i, j, 330, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 43: // マリリ（左右移動）
-			this.tSet(i, j, 660, i - 512 - 32);
+			this.tSet(i, j, 660, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 44: // マリリ（体当たり）
-			this.tSet(i, j, 670, i - 512 - 32);
+			this.tSet(i, j, 670, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 45: // ヤチャモ（火の粉三連射）
-			this.tSet(i, j, 710, i - 512 - 32);
+			this.tSet(i, j, 710, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 46: // ヤチャモ（左に破壊光線）
-			this.tSet(i, j, 720, i - 512 - 32);
+			this.tSet(i, j, 720, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 47: // エアームズ（左右に動いて爆弾投下）
-			this.tSet(i, j, 930, i - 512 - 32);
+			this.tSet(i, j, 930, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 48: // エアームズ（その場て爆弾投下）
-			this.tSet(i, j, 920, i - 512 - 32);
+			this.tSet(i, j, 920, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 49: // タイキング（はねる）
-			this.tSet(i, j, 1050, i - 512 - 32);
+			this.tSet(i, j, 1050, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 50: // タイキング（縄張りを守る）
-			this.tSet(i, j, 1060, i - 512 - 32);
+			this.tSet(i, j, 1060, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 51: // タイキング（左回り）
-			this.tSet(i, j, 1070, i - 512 - 32);
+			this.tSet(i, j, 1070, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 52: // タイキング（右回り）
-			this.tSet(i, j, 1080, i - 512 - 32);
+			this.tSet(i, j, 1080, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 53: // クラゲッソ（近づくと落ちる）
-			this.tSet(i, j, 1150, i - 512 - 32);
+			this.tSet(i, j, 1150, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 54: // クラゲッソ（縄張りを守る）
-			this.tSet(i, j, 1160, i - 512 - 32);
+			this.tSet(i, j, 1160, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 55: // クラゲッソ（左回り）
-			this.tSet(i, j, 1170, i - 512 - 32);
+			this.tSet(i, j, 1170, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
 		case 56: // クラゲッソ（右回り）
-			this.tSet(i, j, 1180, i - 512 - 32);
+			this.tSet(i, j, 1180, i - this.gg.di.width - 32);
 			flag = true;
 			break;
 
@@ -1862,7 +1862,7 @@ MainProgram.prototype.sete = function(s, s1, s2) {
  * @see {@link MasaoJSS#setScrollLock}
  */
 MainProgram.prototype.setScrollLock = function(s) {
-	var i = 32;
+	let i = 32;
 	if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
 	i = parseInt(s);
@@ -1871,7 +1871,7 @@ MainProgram.prototype.setScrollLock = function(s) {
 	if (this.sl_step == 10 || this.sl_step == 11) this.sl_step = 11;
 	else this.sl_step = 1;
 	this.sl_wx = i;
-	this.sl_wy = this.mapHeight * 32;
+	this.sl_wy = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 	return true;
 };
 
@@ -1888,11 +1888,11 @@ MainProgram.prototype.setScrollLock = function(s) {
  * @see {@link MasaoJSS#attackFire}
  */
 MainProgram.prototype.attackFire = function(s, s1, s2, s3) {
-	var i = 0;
-	var j = 0;
-	var k = 32;
-	var l = 32;
-	var i1 = 0;
+	let i = 0;
+	let j = 0;
+	let k = 32;
+	let l = 32;
+	let i1 = 0;
 	if (this.ml_mode != 100) return -1;
 
 	i = parseInt(s);
@@ -1902,9 +1902,9 @@ MainProgram.prototype.attackFire = function(s, s1, s2, s3) {
 	if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 	if (i < 0) return -1;
 	if (this.jm_kazu > 0) {
-		for (var j1 = 0; j1 <= 8; j1++) {
+		for (let j1 = 0; j1 <= 8; j1++) {
 			if (this.co_jm[j1].c < 100) continue;
-			var characterobject = this.co_jm[j1];
+			const characterobject = this.co_jm[j1];
 			if (
 				characterobject.x < i ||
 				characterobject.x >= i + k ||
@@ -1940,11 +1940,11 @@ MainProgram.prototype.attackFire = function(s, s1, s2, s3) {
  * @see {@link MasaoJSS#attackTail}
  */
 MainProgram.prototype.attackTail = function(s, s1, s2, s3) {
-	var i = 0;
-	var j = 0;
-	var k = 32;
-	var l = 32;
-	var i1 = 0;
+	let i = 0;
+	let j = 0;
+	let k = 32;
+	let l = 32;
+	let i1 = 0;
 	if (this.ml_mode != 100) return -1;
 
 	i = parseInt(s);
@@ -1983,11 +1983,11 @@ MainProgram.prototype.attackTail = function(s, s1, s2, s3) {
  * @see {@link MasaoJSS#destroyEnemy}
  */
 MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3) {
-	var i = 0;
-	var j = 0;
-	var k = 0;
-	var l = 32;
-	var i1 = 0;
+	let i = 0;
+	let j = 0;
+	let k = 0;
+	let l = 32;
+	let i1 = 0;
 	if (this.ml_mode != 100) return -1;
 
 	i = parseInt(s);
@@ -1996,9 +1996,9 @@ MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3) {
 	l = parseInt(s3);
 	if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 	if (i < 0) return -1;
-	for (var j1 = 0; j1 <= this.t_kazu; j1++) {
+	for (let j1 = 0; j1 <= this.t_kazu; j1++) {
 		if (this.co_t[j1].c < 100) continue;
-		var characterobject = this.co_t[j1];
+		const characterobject = this.co_t[j1];
 		if (
 			i >= characterobject.x + 32 ||
 			i + k <= characterobject.x ||
@@ -2025,8 +2025,8 @@ MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3) {
 		} else if (characterobject.c == 1190) {
 			characterobject.c = 55;
 			characterobject.c1 = 0;
-			var k1 = rightShiftIgnoreSign(characterobject.x, 5);
-			var l1 = rightShiftIgnoreSign(characterobject.y, 5);
+			const k1 = rightShiftIgnoreSign(characterobject.x, 5);
+			const l1 = rightShiftIgnoreSign(characterobject.y, 5);
 			if (characterobject.c5 == 1) this.onASwitch(k1 - 5, l1 - 5, k1 + 5, l1 + 5);
 			else this.onASwitch(k1 - 10, l1 - 10, k1 + 10, l1 + 10);
 		} else {
@@ -2054,8 +2054,8 @@ MainProgram.prototype.destroyEnemy = function(s, s1, s2, s3) {
  * @see {@link MasaoJSS#setMapchip}
  */
 MainProgram.prototype.setmapc = function(s, s1, s2) {
-	var i = 0;
-	var j = 0;
+	let i = 0;
+	let j = 0;
 	var k = 0;
 	if (this.ml_mode != 100) return false;
 
@@ -2085,9 +2085,9 @@ MainProgram.prototype.setmapc = function(s, s1, s2) {
  * @see {@link MasaoJSS#getMapchip}
  */
 MainProgram.prototype.getmapc = function(s, s1) {
-	var i = 0;
-	var j = 0;
-	var k = 0;
+	let i = 0;
+	let j = 0;
+	let k = 0;
 	if (this.ml_mode != 100) return -1;
 
 	i = parseInt(s);
@@ -2099,7 +2099,7 @@ MainProgram.prototype.getmapc = function(s, s1) {
 	} else {
 		i++;
 		j += 10;
-		var word0 = this.maps.map_bg[i][j];
+		const word0 = this.maps.map_bg[i][j];
 		return word0;
 	}
 };
@@ -2114,9 +2114,9 @@ MainProgram.prototype.getmapc = function(s, s1) {
  * @see {@link MasaoJSS#setMapchip2}
  */
 MainProgram.prototype.setmapc2 = function(s, s1, s2) {
-	var i = 0;
-	var j = 0;
-	var k = 0;
+	let i = 0;
+	let j = 0;
+	let k = 0;
 	if (this.ml_mode != 100) return false;
 	if (this.gg.layer_mode != 2) return false;
 
@@ -2144,9 +2144,9 @@ MainProgram.prototype.setmapc2 = function(s, s1, s2) {
  * @see {@link MasaoJSS#getMapchip2}
  */
 MainProgram.prototype.getmapc2 = function(s, s1) {
-	var i = 0;
-	var j = 0;
-	var k = 0;
+	let i = 0;
+	let j = 0;
+	let k = 0;
 	if (this.ml_mode != 100) return -1;
 	if (this.gg.layer_mode != 2) return -1;
 
@@ -2159,7 +2159,7 @@ MainProgram.prototype.getmapc2 = function(s, s1) {
 	} else {
 		i++;
 		j += 10;
-		var word0 = this.maps.map_bg_layer[i][j];
+		const word0 = this.maps.map_bg_layer[i][j];
 		return word0;
 	}
 };
@@ -2186,7 +2186,7 @@ MainProgram.prototype.showMyHP = function(s) {
  * @see {@link MasaoJSS#setMyMaxHP}
  */
 MainProgram.prototype.setMyMaxHP = function(s) {
-	var i = -1;
+	let i = -1;
 
 	i = parseInt(s);
 	if (isNaN(i)) i = -1;
@@ -2214,7 +2214,7 @@ MainProgram.prototype.setMyHP = function(s) {
 		this.co_j.c >= 100 &&
 		this.co_j.c < 200
 	) {
-		var i;
+		let i;
 		i = parseInt(s);
 		if (isNaN(i)) i = -1;
 		if (i < 0) {
@@ -2235,7 +2235,7 @@ MainProgram.prototype.setMyHP = function(s) {
  * @see {@link MasaoJSS#getMyHP}
  */
 MainProgram.prototype.getMyHP = function() {
-	var i = 0;
+	let i = 0;
 	if (this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200) i = this.j_hp;
 	else i = 0;
 	return i;
@@ -2254,7 +2254,7 @@ MainProgram.prototype.getMyHP = function() {
  */
 MainProgram.prototype.setMyHPDamage = function(s) {
 	if (this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200) {
-		var j;
+		let j;
 		j = parseInt(s);
 		if (isNaN(j)) j = 0xfffe7961;
 		if (j == 0xfffe7961) return false;
@@ -2295,7 +2295,7 @@ MainProgram.prototype.ranInit = function() {
  */
 MainProgram.prototype.ranInt = function(i) {
 	//xor-shift 乱数(a=9, b=11, c=19)
-	var ran_seed = this.ran_seed;
+	let ran_seed = this.ran_seed;
 	ran_seed = (ran_seed ^ (ran_seed << 9)) >>> 0;
 	ran_seed = (ran_seed ^ (ran_seed >>> 11)) >>> 0;
 	this.ran_seed = ran_seed = (ran_seed ^ (ran_seed << 19)) >>> 0;
@@ -2355,13 +2355,13 @@ MainProgram.prototype.drawItem = function() {
 
 	// グレネードの数・ジェットの残量の描画座標
 	const display_x = 40;
-	let display_y = 287;
+	let display_y = this.gg.di.height - 33;
 
 	//鍵を表示
 	if (this.dkey_count[0] + this.dkey_count[1] >= 1) {
 		// 鍵の描画座標
 		let key_x = 8;
-		const key_y = 280;
+		const key_y = this.gg.di.height - 40;
 
 		/**
 		 * @param n {number} 鍵の種類
@@ -2373,7 +2373,7 @@ MainProgram.prototype.drawItem = function() {
 					this.hg.fillRect(key_x - 2, key_y - 2, 36, 36);
 					this.hg.drawImage(this.gg.spt_option_img[n + 2], key_x, key_y, this.ap);
 					key_x += 36;
-					display_y = 255;
+					display_y = this.gg.di.height - 65;
 				});
 			}
 		};
@@ -2456,12 +2456,12 @@ MainProgram.prototype.addScore = function(score) {
  * @returns {number} マップに本来存在するコインの総数
  */
 MainProgram.prototype.getCoinTotal = function() {
-	var c = this.mapWidth;
-	var k = 0;
-	if (this.scroll_area == 2 || this.scroll_area == 4) c = 16;
-	else if (this.scroll_area == 3 || this.scroll_area == 5) c = 32;
-	for (var j = 10; j <= this.mapHeight + 9; j++) {
-		for (var i = 1; i <= c; i++) if (this.maps.map_bg[i][j] == 9) k++;
+	let c = this.mapWidth;
+	let k = 0;
+	if (this.scroll_area == 2 || this.scroll_area == 4) c = rounddown(this.gg.di.width / 32);
+	else if (this.scroll_area == 3 || this.scroll_area == 5) c = rounddown((this.gg.di.width * 2) / 32);
+	for (let j = 10; j <= this.mapHeight + 9; j++) {
+		for (let i = 1; i <= c; i++) if (this.maps.map_bg[i][j] == 9) k++;
 	}
 
 	this.coin_kazu = k;
@@ -2479,10 +2479,10 @@ MainProgram.prototype.getCoinTotal = function() {
  */
 MainProgram.prototype.getCoinCount = function(i, j, k, l) {
 	if (this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) {
-		var j1 = i + 1;
-		var k1 = j + 10;
-		var l1 = k + 1;
-		var i2 = l + 10;
+		let j1 = i + 1;
+		let k1 = j + 10;
+		let l1 = k + 1;
+		let i2 = l + 10;
 		if (j1 < 1) j1 = 1;
 		if (j1 > this.mapWidth) j1 = this.mapWidth;
 		if (l1 < 1) l1 = 1;
@@ -2492,18 +2492,18 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l) {
 		if (i2 < 10) i2 = 10;
 		if (i2 > this.mapHeight + 9) i2 = this.mapHeight + 9;
 		if (j1 > l1) {
-			var j2 = j1;
+			const j2 = j1;
 			j1 = l1;
 			l1 = j2;
 		}
 		if (k1 > i2) {
-			var k2 = k1;
+			const k2 = k1;
 			k1 = i2;
 			i2 = k2;
 		}
-		var i1 = 0;
-		for (var i3 = k1; i3 <= i2; i3++) {
-			for (var l2 = j1; l2 <= l1; l2++) if (this.maps.map_bg[l2][i3] == 9) i1++;
+		let i1 = 0;
+		for (let i3 = k1; i3 <= i2; i3++) {
+			for (let l2 = j1; l2 <= l1; l2++) if (this.maps.map_bg[l2][i3] == 9) i1++;
 		}
 
 		return i1;
@@ -2516,35 +2516,39 @@ MainProgram.prototype.getCoinCount = function(i, j, k, l) {
  * ゲームクリア用はしごを表示させます
  */
 MainProgram.prototype.showHashigo = function() {
-	var c = this.mapWidth;
-	if (this.scroll_area == 2 || this.scroll_area == 4) c = 16;
-	else if (this.scroll_area == 3 || this.scroll_area == 5) c = 32;
-	for (var j = 10; j <= this.mapHeight + 9; j++) {
-		for (var i = 1; i <= c; i++) if (this.maps.map_bg[i][j] == 8) this.maps.map_bg[i][j] = 10;
+	let c = this.mapWidth;
+	if (this.scroll_area == 2 || this.scroll_area == 4) c = rounddown(this.gg.di.width / 32);
+	else if (this.scroll_area == 3 || this.scroll_area == 5) c = rounddown((this.gg.di.width * 2) / 32);
+	for (let j = 10; j <= this.mapHeight + 9; j++) {
+		for (let i = 1; i <= c; i++) if (this.maps.map_bg[i][j] == 8) this.maps.map_bg[i][j] = 10;
 	}
 
 	this.setmapc_f = true;
 };
 
 /**
- * TODO: 加筆求む
+ * 主に地図画面表示で使うセリフを追加する
  * @param {number} index 追加する場所(？) TODO: 要調査
  * @param {number} person_id セリフを言う人の番号
  * @param {number} max_row 1からmax_row行目までを表示する
  */
 MainProgram.prototype.addSerifu = function(index, person_id, max_row) {
 	for (let i = 1; i <= max_row; i++) {
-		const message = this.tdb.getValue("serifu" + person_id + "-" + i);
+		const message = this.tdb.getValue(`serifu${person_id}-${i}`);
 		// NOTE: issue #34
 		if (parseInt(message, 10) != 0) this.km.addItem(index, message);
 	}
 };
 
 /**
- * TODO: 加筆求む
+ * FX以降に追加されたセリフを追加する
+ * @param {number} index 追加する場所(？) TODO: 要調査
+ * @param {number} person_param セリフを言う人のパラメータの名前
+ * @param {number} start_row 表示開始する行
+ * @param {number} end_row 表示終了する行
  */
 MainProgram.prototype.addSerifu2 = function(i, s, j, k) {
-	var l, k1, k2;
+	let l, k1, k2;
 	if (arguments.length == 3) {
 		k1 = 1;
 		k2 = j;
@@ -2552,11 +2556,12 @@ MainProgram.prototype.addSerifu2 = function(i, s, j, k) {
 		k1 = j;
 		k2 = k;
 	}
-	for (var l = k1; l <= k2; l++) {
-		var s1 = this.tdb.getValue("" + s + l);
-		var i1;
+	for (l = k1; l <= k2; l++) {
+		const s1 = this.tdb.getValue(`${s}${l}`);
+		let i1;
 		i1 = parseInt(s1);
 		if (isNaN(i1)) i1 = -1;
+		// NOTE: issue #34
 		if (i1 != 0) this.km.addItem(i, s1);
 	}
 };
@@ -2565,24 +2570,102 @@ MainProgram.prototype.addSerifu2 = function(i, s, j, k) {
  * ゲーム中の毎フレームの中核処理を行います
  */
 MainProgram.prototype.mL100 = function() {
+	// 当たり判定のある仕掛けに挟まれた時 true を返す
+	const isAthletic = () => {
+		let flag = false;
+		for (let i = 0; i <= this.a_kazu; i++) {
+			if (!this.co_a[i].gf) continue;
+			const characterobject = this.co_a[i];
+			if (characterobject.c >= 100 && characterobject.c < 200) {
+				// 動く床
+				if (
+					this.co_j.x + 15 >= characterobject.x &&
+					this.co_j.x <= characterobject.x + 64 &&
+					this.co_j.y + 31 >= characterobject.y &&
+					this.co_j.y <= characterobject.y + 13
+				)
+					flag = true;
+				continue;
+			}
+			if (characterobject.c == 300) {
+				// 土管
+				if (
+					characterobject.c3 < 200 &&
+					this.co_j.x + 15 >= characterobject.x &&
+					this.co_j.x <= characterobject.x + 48 &&
+					this.co_j.y + 31 >= characterobject.y &&
+					this.co_j.y <= characterobject.y + 31
+				)
+					flag = true;
+				continue;
+			}
+			if (characterobject.c >= 400 && characterobject.c < 500) {
+				// ドッスンスン
+				if (
+					this.co_j.x + 15 >= characterobject.x &&
+					this.co_j.x <= characterobject.x + 80 &&
+					this.co_j.y + 31 >= characterobject.y &&
+					this.co_j.y <= characterobject.y + 63
+				)
+					flag = true;
+				continue;
+			}
+			if (characterobject.c == 500) {
+				// 乗ると落ちる床
+				if (
+					this.co_j.x + 15 >= characterobject.x &&
+					this.co_j.x <= characterobject.x + 80 &&
+					this.co_j.y + 31 >= characterobject.y &&
+					this.co_j.y <= characterobject.y + 13
+				)
+					flag = true;
+				continue;
+			}
+			if (characterobject.c == 600) {
+				// 乗れるカイオール
+				if (
+					this.co_j.x + 15 >= characterobject.x &&
+					this.co_j.x <= characterobject.x + 48 &&
+					this.co_j.y + 31 >= characterobject.y + 16 &&
+					this.co_j.y <= characterobject.y + 47
+				)
+					flag = true;
+				continue;
+			}
+			if (
+				characterobject.c == 700 &&
+				this.j_tokugi != 10 &&
+				this.j_tokugi != 12 &&
+				this.j_tokugi != 13 &&
+				this.co_j.x + 15 >= characterobject.x &&
+				this.co_j.x <= characterobject.x + 16 &&
+				this.co_j.y + 31 >= characterobject.y &&
+				this.co_j.y <= characterobject.y + 31
+			) {
+				// ジャンプ台
+				flag = true;
+			}
+		}
+		return flag;
+	};
+
 	this.showmMove();
+
+	// setMyWeitで硬直中
 	if (this.setmyw_w >= 0 && this.co_j.c >= 100 && this.co_j.c < 200) {
-		if (this.setmyw_w == 0) {
-			this.co_j.c = 100;
-			this.j_zan_f = false;
-			this.j_jet_c = 0;
-			this.j_jump_type = 0;
-		} else {
+		if (this.setmyw_w == 0) this.co_j.c = 100;
+		else {
 			this.co_j.c = 150;
 			this.co_j.c1 = this.setmyw_w;
 			this.co_j.vx = 0;
 			this.co_j.vy = 0;
-			this.j_zan_f = false;
-			this.j_jet_c = 0;
-			this.j_jump_type = 0;
 		}
+		this.j_zan_f = false;
+		this.j_jet_c = 0;
+		this.j_jump_type = 0;
 		this.setmyw_w = -1;
 	}
+
 	if (this.j_tokugi == 14) this.jm_kazu = 9999;
 	this.moveGameCounter();
 	this.km.move();
@@ -2599,11 +2682,13 @@ MainProgram.prototype.mL100 = function() {
 	if (this.ana_kazu > 0) this.anaMove();
 	if (this.sl_step > 0)
 		if (this.sl_step == 10 || this.sl_step == 11) {
+			// scroll_mode の強制スクロール または （ボス戦で）スクロールロック
 			this.ks_wx += this.sl_speed;
 			if (this.ks_wx > this.maps.wx_max) this.ks_wx = this.maps.wx_max;
 			this.maps.wx = this.ks_wx;
 			this.maps.wy = this.ks_wy;
 			if (this.j_tokugi == 14) {
+				// シューティングモードの時
 				this.co_j.x += this.sl_speed;
 				var i = this.sl_speed;
 				if (
@@ -2614,7 +2699,7 @@ MainProgram.prototype.mL100 = function() {
 					this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - 32;
 				}
 				this.co_j.wx = this.co_j.x - this.maps.wx;
-				for (var j1 = 0; j1 <= 31; j1++) this.mu_ato_x[j1] += i;
+				for (let j1 = 0; j1 <= 31; j1++) this.mu_ato_x[j1] += i;
 
 				i = this.mu_ato_p - 7;
 				if (i < 0) i += 32;
@@ -2627,6 +2712,8 @@ MainProgram.prototype.mL100 = function() {
 			}
 			if (this.co_j.c != 300 && this.co_j.c != 310)
 				if (this.j_tokugi == 14) {
+					// 土管に入っていない時
+					// シューティングモードの時
 					if (this.co_j.x < this.ks_wx) {
 						this.co_j.x = this.ks_wx;
 						if (this.co_j.vx < 0) this.co_j.vx = 0;
@@ -2637,8 +2724,8 @@ MainProgram.prototype.mL100 = function() {
 							this.co_j.c < 200
 						)
 							this.jShinu(1);
-					} else if (this.co_j.x > this.ks_wx + 512 - 32) {
-						this.co_j.x = this.ks_wx + 512 - 32;
+					} else if (this.co_j.x > this.ks_wx + this.gg.di.width - 32) {
+						this.co_j.x = this.ks_wx + this.gg.di.width - 32;
 						this.co_j.vx = 0;
 						if (this.co_j.vx > 0) this.co_j.vx = 0;
 						this.co_j.wx = this.co_j.x - this.maps.wx;
@@ -2648,12 +2735,13 @@ MainProgram.prototype.mL100 = function() {
 							this.co_j.y = this.maps.wy;
 							this.co_j.vy = 0;
 							this.co_j.wy = this.co_j.y - this.maps.wy;
-						} else if (this.co_j.y > this.maps.wy + 320 - 32) {
-							this.co_j.y = this.maps.wy + 320 - 32;
+						} else if (this.co_j.y > this.maps.wy + this.gg.di.height - 32) {
+							this.co_j.y = this.maps.wy + this.gg.di.height - 32;
 							this.co_j.vy = 0;
 							this.co_j.wy = this.co_j.y - this.maps.wy;
 						}
 				} else if (this.co_j.x < this.ks_wx - 16) {
+					// 画面の左端にいる
 					this.co_j.x = this.ks_wx - 16;
 					if (this.co_j.vx < 0) this.co_j.vx = 0;
 					var i3 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y);
@@ -2675,75 +2763,7 @@ MainProgram.prototype.mL100 = function() {
 						this.km.mode = 10;
 					}
 					if (this.a_hf) {
-						var flag2 = false;
-						for (var i8 = 0; i8 <= this.a_kazu; i8++) {
-							if (!this.co_a[i8].gf) continue;
-							var characterobject = this.co_a[i8];
-							if (characterobject.c >= 100 && characterobject.c < 200) {
-								if (
-									this.co_j.x + 15 >= characterobject.x &&
-									this.co_j.x <= characterobject.x + 64 &&
-									this.co_j.y + 31 >= characterobject.y &&
-									this.co_j.y <= characterobject.y + 13
-								)
-									flag2 = true;
-								continue;
-							}
-							if (characterobject.c == 300) {
-								if (
-									characterobject.c3 < 200 &&
-									this.co_j.x + 15 >= characterobject.x &&
-									this.co_j.x <= characterobject.x + 48 &&
-									this.co_j.y + 31 >= characterobject.y &&
-									this.co_j.y <= characterobject.y + 31
-								)
-									flag2 = true;
-								continue;
-							}
-							if (characterobject.c >= 400 && characterobject.c < 500) {
-								if (
-									this.co_j.x + 15 >= characterobject.x &&
-									this.co_j.x <= characterobject.x + 80 &&
-									this.co_j.y + 31 >= characterobject.y &&
-									this.co_j.y <= characterobject.y + 63
-								)
-									flag2 = true;
-								continue;
-							}
-							if (characterobject.c == 500) {
-								if (
-									this.co_j.x + 15 >= characterobject.x &&
-									this.co_j.x <= characterobject.x + 80 &&
-									this.co_j.y + 31 >= characterobject.y &&
-									this.co_j.y <= characterobject.y + 13
-								)
-									flag2 = true;
-								continue;
-							}
-							if (characterobject.c == 600) {
-								if (
-									this.co_j.x + 15 >= characterobject.x &&
-									this.co_j.x <= characterobject.x + 48 &&
-									this.co_j.y + 31 >= characterobject.y + 16 &&
-									this.co_j.y <= characterobject.y + 47
-								)
-									flag2 = true;
-								continue;
-							}
-							if (
-								characterobject.c == 700 &&
-								this.j_tokugi != 10 &&
-								this.j_tokugi != 12 &&
-								this.j_tokugi != 13 &&
-								this.co_j.x + 15 >= characterobject.x &&
-								this.co_j.x <= characterobject.x + 16 &&
-								this.co_j.y + 31 >= characterobject.y &&
-								this.co_j.y <= characterobject.y + 31
-							)
-								flag2 = true;
-						}
-
-						if (flag2 && this.co_j.c >= 100 && this.co_j.c < 200) {
+						if (isAthletic() && this.co_j.c >= 100 && this.co_j.c < 200) {
 							this.co_j.c = 210;
 							this.co_j.y = this.maps.wy - 64;
 							this.co_j.c1 = 0;
@@ -2774,8 +2794,9 @@ MainProgram.prototype.mL100 = function() {
 						this.km.initAll();
 						this.km.mode = 10;
 					}
-				} else if (this.co_j.x > this.ks_wx + 496) {
-					this.co_j.x = this.ks_wx + 496;
+				} else if (this.co_j.x > this.ks_wx + this.gg.di.width - 16) {
+					// 画面の右端にいる
+					this.co_j.x = this.ks_wx + this.gg.di.width - 16;
 					this.co_j.vx = 0;
 					if (this.co_j.vx > 0) this.co_j.vx = 0;
 				}
@@ -2802,8 +2823,8 @@ MainProgram.prototype.mL100 = function() {
 			if (this.co_j.x < this.sl_wx - 16) {
 				this.co_j.x = this.sl_wx - 16;
 				this.co_j.vx = 0;
-			} else if (this.co_j.x > this.sl_wx + 496) {
-				this.co_j.x = this.sl_wx + 496;
+			} else if (this.co_j.x > this.sl_wx + this.gg.di.width - 16) {
+				this.co_j.x = this.sl_wx + this.gg.di.width - 16;
 				this.co_j.vx = 0;
 			}
 			if (this.maps.wy >= this.sl_wy) {
@@ -2819,28 +2840,30 @@ MainProgram.prototype.mL100 = function() {
 						this.co_j.y = this.maps.wy;
 						this.co_j.vy = 0;
 						this.co_j.wy = this.co_j.y - this.maps.wy;
-					} else if (this.co_j.y > this.maps.wy + 320 - 32) {
-						this.co_j.y = this.maps.wy + 320 - 32;
+					} else if (this.co_j.y > this.maps.wy + this.gg.di.height - 32) {
+						this.co_j.y = this.maps.wy + this.gg.di.height - 32;
 						this.co_j.vy = 0;
 						this.co_j.wy = this.co_j.y - this.maps.wy;
 					}
 				if (this.co_j.x < this.sl_wx) {
 					this.co_j.x = this.sl_wx;
 					this.co_j.vx = 0;
-				} else if (this.co_j.x > this.sl_wx + 512 - 32) {
-					this.co_j.x = this.sl_wx + 512 - 32;
+				} else if (this.co_j.x > this.sl_wx + this.gg.di.width - 32) {
+					this.co_j.x = this.sl_wx + this.gg.di.width - 32;
 					this.co_j.vx = 0;
 				}
 			} else if (this.co_j.x < this.sl_wx - 16) {
 				this.co_j.x = this.sl_wx - 16;
 				this.co_j.vx = 0;
-			} else if (this.co_j.x > this.sl_wx + 496) {
-				this.co_j.x = this.sl_wx + 496;
+			} else if (this.co_j.x > this.sl_wx + this.gg.di.width - 16) {
+				this.co_j.x = this.sl_wx + this.gg.di.width - 16;
 				this.co_j.vx = 0;
 			}
 		}
 	if (this.nkscroll_con == 100 && (this.sl_step == 0 || this.sl_step == 1)) {
+		// 仕掛けの強制スクロール または （ボス戦で）スクロールロック
 		if (this.nkscroll_vx > 0) {
+			// スクロール方向　→
 			this.nkscroll_view_x += this.nkscroll_speed_x;
 			if (this.nkscroll_view_x >= this.maps.wx_max) {
 				this.nkscroll_view_x = this.maps.wx_max;
@@ -2855,16 +2878,18 @@ MainProgram.prototype.mL100 = function() {
 				)
 					this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 31, 5) * 32 - 32;
 				if (this.co_j.c >= 100 && this.co_j.c < 200) {
-					if (this.co_j.x > this.nkscroll_view_x + 512 - 32) this.co_j.x = this.nkscroll_view_x + 512 - 32;
+					if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 32)
+						this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 32;
 					if (this.co_j.x < this.nkscroll_view_x) this.co_j.x = this.nkscroll_view_x;
-					if (this.co_j.y > this.nkscroll_view_y + 320 - 32) this.co_j.y = this.nkscroll_view_y + 320 - 32;
+					if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+						this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
 					if (this.co_j.y < this.nkscroll_view_y) this.co_j.y = this.nkscroll_view_y;
 				}
 				var j3 = this.maps.getBGCode(this.co_j.x + 31, this.co_j.y);
 				var l5 = this.maps.getBGCode(this.co_j.x + 31, this.co_j.y + 31);
 				if ((j3 >= 18 || l5 >= 18) && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 				this.co_j.wx = this.co_j.x - this.maps.wx;
-				for (var k1 = 0; k1 <= 31; k1++) this.mu_ato_x[k1] += this.co_j.x - j;
+				for (let k1 = 0; k1 <= 31; k1++) this.mu_ato_x[k1] += this.co_j.x - j;
 
 				j = this.mu_ato_p - 7;
 				if (j < 0) j += 32;
@@ -2888,75 +2913,7 @@ MainProgram.prototype.mL100 = function() {
 					)
 						this.jShinu(5);
 					if (this.a_hf) {
-						var flag3 = false;
-						for (var j8 = 0; j8 <= this.a_kazu; j8++) {
-							if (!this.co_a[j8].gf) continue;
-							var characterobject1 = this.co_a[j8];
-							if (characterobject1.c >= 100 && characterobject1.c < 200) {
-								if (
-									this.co_j.x + 15 >= characterobject1.x &&
-									this.co_j.x <= characterobject1.x + 64 &&
-									this.co_j.y + 31 >= characterobject1.y &&
-									this.co_j.y <= characterobject1.y + 13
-								)
-									flag3 = true;
-								continue;
-							}
-							if (characterobject1.c == 300) {
-								if (
-									characterobject1.c3 < 200 &&
-									this.co_j.x + 15 >= characterobject1.x &&
-									this.co_j.x <= characterobject1.x + 48 &&
-									this.co_j.y + 31 >= characterobject1.y &&
-									this.co_j.y <= characterobject1.y + 31
-								)
-									flag3 = true;
-								continue;
-							}
-							if (characterobject1.c >= 400 && characterobject1.c < 500) {
-								if (
-									this.co_j.x + 15 >= characterobject1.x &&
-									this.co_j.x <= characterobject1.x + 80 &&
-									this.co_j.y + 31 >= characterobject1.y &&
-									this.co_j.y <= characterobject1.y + 63
-								)
-									flag3 = true;
-								continue;
-							}
-							if (characterobject1.c == 500) {
-								if (
-									this.co_j.x + 15 >= characterobject1.x &&
-									this.co_j.x <= characterobject1.x + 80 &&
-									this.co_j.y + 31 >= characterobject1.y &&
-									this.co_j.y <= characterobject1.y + 13
-								)
-									flag3 = true;
-								continue;
-							}
-							if (characterobject1.c == 600) {
-								if (
-									this.co_j.x + 15 >= characterobject1.x &&
-									this.co_j.x <= characterobject1.x + 48 &&
-									this.co_j.y + 31 >= characterobject1.y + 16 &&
-									this.co_j.y <= characterobject1.y + 47
-								)
-									flag3 = true;
-								continue;
-							}
-							if (
-								characterobject1.c == 700 &&
-								this.j_tokugi != 10 &&
-								this.j_tokugi != 12 &&
-								this.j_tokugi != 13 &&
-								this.co_j.x + 15 >= characterobject1.x &&
-								this.co_j.x <= characterobject1.x + 16 &&
-								this.co_j.y + 31 >= characterobject1.y &&
-								this.co_j.y <= characterobject1.y + 31
-							)
-								flag3 = true;
-						}
-
-						if (flag3 && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
+						if (isAthletic() && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 					}
 					if (
 						this.yuka_ride_id >= 0 &&
@@ -2967,11 +2924,12 @@ MainProgram.prototype.mL100 = function() {
 					)
 						this.jShinu(5);
 					if (this.isYukaCross()) this.jShinu(5);
-				} else if (this.co_j.x > this.nkscroll_view_x + 496) {
-					this.co_j.x = this.nkscroll_view_x + 496;
+				} else if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 16) {
+					this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 16;
 					if (this.co_j.vx > 0) this.co_j.vx = 0;
 				}
 		} else if (this.nkscroll_vx < 0) {
+			// スクロール方向　←
 			this.nkscroll_view_x -= this.nkscroll_speed_x;
 			if (this.nkscroll_view_x <= this.maps.wx_mini) {
 				this.nkscroll_view_x = this.maps.wx_mini;
@@ -2986,16 +2944,19 @@ MainProgram.prototype.mL100 = function() {
 				)
 					this.co_j.x = rightShiftIgnoreSign(this.co_j.x, 5) * 32 + 32;
 				if (this.co_j.c >= 100 && this.co_j.c < 200) {
-					if (this.co_j.x > this.nkscroll_view_x + 512 - 32) this.co_j.x = this.nkscroll_view_x + 512 - 32;
+					if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 32)
+						this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 32;
 					if (this.co_j.x < this.nkscroll_view_x) this.co_j.x = this.nkscroll_view_x;
-					if (this.co_j.y > this.nkscroll_view_y + 320 - 32) this.co_j.y = this.nkscroll_view_y + 320 - 32;
-					if (this.co_j.y > this.nkscroll_view_y + 320 - 32) this.co_j.y = this.nkscroll_view_y + 320 - 32;
+					if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+						this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
+					if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+						this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
 				}
 				var l3 = this.maps.getBGCode(this.co_j.x, this.co_j.y);
 				var j6 = this.maps.getBGCode(this.co_j.x, this.co_j.y + 31);
 				if ((l3 >= 18 || j6 >= 18) && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 				this.co_j.wx = this.co_j.x - this.maps.wx;
-				for (var l1 = 0; l1 <= 31; l1++) this.mu_ato_x[l1] += this.co_j.x - k;
+				for (let l1 = 0; l1 <= 31; l1++) this.mu_ato_x[l1] += this.co_j.x - k;
 
 				k = this.mu_ato_p - 7;
 				if (k < 0) k += 32;
@@ -3007,12 +2968,12 @@ MainProgram.prototype.mL100 = function() {
 				this.co_mu[1].y = this.mu_ato_y[k];
 			}
 			if (this.co_j.c != 300 && this.co_j.c != 310)
-				if (this.co_j.x > this.nkscroll_view_x + 496) {
-					this.co_j.x = this.nkscroll_view_x + 496;
+				if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 16) {
+					this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 16;
 					if (this.co_j.vx > 0) this.co_j.vx = 0;
 					if (this.co_j.c >= 100 && this.co_j.c < 200) {
-						if (this.co_j.y > this.nkscroll_view_y + 320 - 32)
-							this.co_j.y = this.nkscroll_view_y + 320 - 32;
+						if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+							this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
 						if (this.co_j.y < this.nkscroll_view_y) this.co_j.y = this.nkscroll_view_y;
 					}
 					var i4 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y);
@@ -3020,75 +2981,7 @@ MainProgram.prototype.mL100 = function() {
 					if ((i4 >= 19 || k6 >= 19 || this.j_hashigo_f) && this.co_j.c >= 100 && this.co_j.c < 200)
 						this.jShinu(5);
 					if (this.a_hf) {
-						var flag4 = false;
-						for (var k8 = 0; k8 <= this.a_kazu; k8++) {
-							if (!this.co_a[k8].gf) continue;
-							var characterobject2 = this.co_a[k8];
-							if (characterobject2.c >= 100 && characterobject2.c < 200) {
-								if (
-									this.co_j.x + 15 >= characterobject2.x &&
-									this.co_j.x <= characterobject2.x + 64 &&
-									this.co_j.y + 31 >= characterobject2.y &&
-									this.co_j.y <= characterobject2.y + 13
-								)
-									flag4 = true;
-								continue;
-							}
-							if (characterobject2.c == 300) {
-								if (
-									characterobject2.c3 < 200 &&
-									this.co_j.x + 15 >= characterobject2.x &&
-									this.co_j.x <= characterobject2.x + 48 &&
-									this.co_j.y + 31 >= characterobject2.y &&
-									this.co_j.y <= characterobject2.y + 31
-								)
-									flag4 = true;
-								continue;
-							}
-							if (characterobject2.c >= 400 && characterobject2.c < 500) {
-								if (
-									this.co_j.x + 15 >= characterobject2.x &&
-									this.co_j.x <= characterobject2.x + 80 &&
-									this.co_j.y + 31 >= characterobject2.y &&
-									this.co_j.y <= characterobject2.y + 63
-								)
-									flag4 = true;
-								continue;
-							}
-							if (characterobject2.c == 500) {
-								if (
-									this.co_j.x + 15 >= characterobject2.x &&
-									this.co_j.x <= characterobject2.x + 80 &&
-									this.co_j.y + 31 >= characterobject2.y &&
-									this.co_j.y <= characterobject2.y + 13
-								)
-									flag4 = true;
-								continue;
-							}
-							if (characterobject2.c == 600) {
-								if (
-									this.co_j.x + 15 >= characterobject2.x &&
-									this.co_j.x <= characterobject2.x + 48 &&
-									this.co_j.y + 31 >= characterobject2.y + 16 &&
-									this.co_j.y <= characterobject2.y + 47
-								)
-									flag4 = true;
-								continue;
-							}
-							if (
-								characterobject2.c == 700 &&
-								this.j_tokugi != 10 &&
-								this.j_tokugi != 12 &&
-								this.j_tokugi != 13 &&
-								this.co_j.x + 15 >= characterobject2.x &&
-								this.co_j.x <= characterobject2.x + 16 &&
-								this.co_j.y + 31 >= characterobject2.y &&
-								this.co_j.y <= characterobject2.y + 31
-							)
-								flag4 = true;
-						}
-
-						if (flag4 && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
+						if (isAthletic() && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 					}
 					if (
 						this.yuka_ride_id >= 0 &&
@@ -3103,14 +2996,17 @@ MainProgram.prototype.mL100 = function() {
 					this.co_j.x = this.nkscroll_view_x - 15;
 					if (this.co_j.vx < 0) this.co_j.vx = 0;
 				}
-		} else if (this.co_j.x > this.nkscroll_view_x + 496) {
-			this.co_j.x = this.nkscroll_view_x + 496;
+		} else if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 16) {
+			// 画面右端で止まる
+			this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 16;
 			if (this.co_j.vx > 0) this.co_j.vx = 0;
 		} else if (this.co_j.x < this.nkscroll_view_x - 15) {
+			// 画面左端で止まる
 			this.co_j.x = this.nkscroll_view_x - 15;
 			if (this.co_j.vx < 0) this.co_j.vx = 0;
 		}
 		if (this.nkscroll_vy > 0) {
+			// スクロール方向　↓
 			this.nkscroll_view_y += this.nkscroll_speed_x;
 			if (this.nkscroll_view_y >= this.maps.wy_max) {
 				this.nkscroll_view_y = this.maps.wy_max;
@@ -3125,13 +3021,15 @@ MainProgram.prototype.mL100 = function() {
 				)
 					this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 31, 5) * 32 - 32;
 				if (this.co_j.c >= 100 && this.co_j.c < 200) {
-					if (this.co_j.x > this.nkscroll_view_x + 512 - 32) this.co_j.x = this.nkscroll_view_x + 512 - 32;
+					if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 32)
+						this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 32;
 					if (this.co_j.x < this.nkscroll_view_x) this.co_j.x = this.nkscroll_view_x;
-					if (this.co_j.y > this.nkscroll_view_y + 320 - 32) this.co_j.y = this.nkscroll_view_y + 320 - 32;
+					if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+						this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
 					if (this.co_j.y < this.nkscroll_view_y) this.co_j.y = this.nkscroll_view_y;
 				}
 				this.co_j.wy = this.co_j.y - this.maps.wy;
-				for (var i2 = 0; i2 <= 31; i2++) this.mu_ato_y[i2] += this.co_j.y - l;
+				for (let i2 = 0; i2 <= 31; i2++) this.mu_ato_y[i2] += this.co_j.y - l;
 
 				l = this.mu_ato_p - 7;
 				if (l < 0) l += 32;
@@ -3149,75 +3047,7 @@ MainProgram.prototype.mL100 = function() {
 				var l6 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31);
 				if ((j4 >= 18 || l6 >= 18) && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 				if (this.a_hf) {
-					var flag5 = false;
-					for (var l8 = 0; l8 <= this.a_kazu; l8++) {
-						if (!this.co_a[l8].gf) continue;
-						var characterobject3 = this.co_a[l8];
-						if (characterobject3.c >= 100 && characterobject3.c < 200) {
-							if (
-								this.co_j.x + 15 >= characterobject3.x &&
-								this.co_j.x <= characterobject3.x + 64 &&
-								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 13
-							)
-								flag5 = true;
-							continue;
-						}
-						if (characterobject3.c == 300) {
-							if (
-								characterobject3.c3 < 200 &&
-								this.co_j.x + 15 >= characterobject3.x &&
-								this.co_j.x <= characterobject3.x + 48 &&
-								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 31
-							)
-								flag5 = true;
-							continue;
-						}
-						if (characterobject3.c >= 400 && characterobject3.c < 500) {
-							if (
-								this.co_j.x + 15 >= characterobject3.x &&
-								this.co_j.x <= characterobject3.x + 80 &&
-								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 63
-							)
-								flag5 = true;
-							continue;
-						}
-						if (characterobject3.c == 500) {
-							if (
-								this.co_j.x + 15 >= characterobject3.x &&
-								this.co_j.x <= characterobject3.x + 80 &&
-								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 13
-							)
-								flag5 = true;
-							continue;
-						}
-						if (characterobject3.c == 600) {
-							if (
-								this.co_j.x + 15 >= characterobject3.x &&
-								this.co_j.x <= characterobject3.x + 48 &&
-								this.co_j.y + 31 >= characterobject3.y + 16 &&
-								this.co_j.y <= characterobject3.y + 47
-							)
-								flag5 = true;
-							continue;
-						}
-						if (
-							characterobject3.c == 700 &&
-							this.j_tokugi != 10 &&
-							this.j_tokugi != 12 &&
-							this.j_tokugi != 13 &&
-							this.co_j.x + 15 >= characterobject3.x &&
-							this.co_j.x <= characterobject3.x + 16 &&
-							this.co_j.y + 31 >= characterobject3.y &&
-							this.co_j.y <= characterobject3.y + 31
-						)
-							flag5 = true;
-					}
-
-					if (flag5 && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
+					if (isAthletic() && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 				}
 				if (
 					this.yuka_ride_id >= 0 &&
@@ -3230,6 +3060,7 @@ MainProgram.prototype.mL100 = function() {
 				if (this.isYukaCross()) this.jShinu(5);
 			}
 		} else if (this.nkscroll_vy < 0) {
+			// スクロール方向　↑
 			this.nkscroll_view_y -= this.nkscroll_speed_x;
 			if (this.nkscroll_view_y <= this.maps.wy_mini) {
 				this.nkscroll_view_y = this.maps.wy_mini;
@@ -3244,13 +3075,15 @@ MainProgram.prototype.mL100 = function() {
 				)
 					this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32 + 32;
 				if (this.co_j.c >= 100 && this.co_j.c < 200) {
-					if (this.co_j.x > this.nkscroll_view_x + 512 - 32) this.co_j.x = this.nkscroll_view_x + 512 - 32;
+					if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 32)
+						this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 32;
 					if (this.co_j.x < this.nkscroll_view_x) this.co_j.x = this.nkscroll_view_x;
-					if (this.co_j.y > this.nkscroll_view_y + 320 - 32) this.co_j.y = this.nkscroll_view_y + 320 - 32;
+					if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+						this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
 					if (this.co_j.y < this.nkscroll_view_y) this.co_j.y = this.nkscroll_view_y;
 				}
 				this.co_j.wy = this.co_j.y - this.maps.wy;
-				for (var j2 = 0; j2 <= 31; j2++) this.mu_ato_y[j2] += this.co_j.y - i1;
+				for (let j2 = 0; j2 <= 31; j2++) this.mu_ato_y[j2] += this.co_j.y - i1;
 
 				i1 = this.mu_ato_p - 7;
 				if (i1 < 0) i1 += 32;
@@ -3281,76 +3114,48 @@ MainProgram.prototype.mL100 = function() {
 			this.co_j.c >= 100 &&
 			this.co_j.c < 200
 		) {
-			if (this.co_j.x > this.nkscroll_view_x + 512 - 32) this.co_j.x = this.nkscroll_view_x + 512 - 32;
+			if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 32)
+				this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 32;
 			if (this.co_j.x < this.nkscroll_view_x) this.co_j.x = this.nkscroll_view_x;
-			if (this.co_j.y > this.nkscroll_view_y + 320 - 32) this.co_j.y = this.nkscroll_view_y + 320 - 32;
+			if (this.co_j.y > this.nkscroll_view_y + this.gg.di.height - 32)
+				this.co_j.y = this.nkscroll_view_y + this.gg.di.height - 32;
 			if (this.co_j.y < this.nkscroll_view_y) this.co_j.y = this.nkscroll_view_y;
 		}
-		if (this.co_j.c >= 100 && this.co_j.c < 200 && this.co_j.y >= this.maps.wy + 320) this.jShinu(5);
+		if (this.co_j.c >= 100 && this.co_j.c < 200 && this.co_j.y >= this.maps.wy + this.gg.di.height) this.jShinu(5);
 	} else if (this.nkscroll_con == 200) {
-		var flag;
-		if (this.view_move_type == 2) {
-			flag = false;
-			if (this.nkscroll_my_view_x > 384) {
-				this.nkscroll_my_view_x -= 8;
-				if (this.nkscroll_my_view_x <= 384) {
-					this.nkscroll_my_view_x = 384;
-					flag = true;
-				}
-				this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
-				if (this.nkscroll_view_x >= this.maps.wx_max) {
-					this.nkscroll_view_x = this.maps.wx_max;
-					flag = true;
-				}
-			} else if (this.nkscroll_my_view_x < 256) {
-				this.nkscroll_my_view_x += 8;
-				if (this.nkscroll_my_view_x >= 256) {
-					this.nkscroll_my_view_x = 256;
-					flag = true;
-				}
-				this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
-				if (this.nkscroll_view_x <= this.maps.wx_mini) {
-					this.nkscroll_view_x = this.maps.wx_mini;
-					flag = true;
-				}
-			} else {
+		// 画面内で全方向スクロール
+		let flag = false;
+		if (this.nkscroll_my_view_x > this.maps.my_wx_max) {
+			this.nkscroll_my_view_x -= 8;
+			if (this.nkscroll_my_view_x <= this.maps.my_wx_max) {
+				this.nkscroll_my_view_x = this.maps.my_wx_max;
 				flag = true;
-				this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
+			}
+			this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
+			if (this.nkscroll_view_x >= this.maps.wx_max) {
+				this.nkscroll_view_x = this.maps.wx_max;
+				flag = true;
+			}
+		} else if (this.nkscroll_my_view_x < this.maps.my_wx_mini) {
+			this.nkscroll_my_view_x += 8;
+			if (this.nkscroll_my_view_x >= this.maps.my_wx_mini) {
+				this.nkscroll_my_view_x = this.maps.my_wx_mini;
+				flag = true;
+			}
+			this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
+			if (this.nkscroll_view_x <= this.maps.wx_mini) {
+				this.nkscroll_view_x = this.maps.wx_mini;
+				flag = true;
 			}
 		} else {
-			flag = false;
-			if (this.nkscroll_my_view_x > 224) {
-				this.nkscroll_my_view_x -= 8;
-				if (this.nkscroll_my_view_x <= 224) {
-					this.nkscroll_my_view_x = 224;
-					flag = true;
-				}
-				this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
-				if (this.nkscroll_view_x >= this.maps.wx_max) {
-					this.nkscroll_view_x = this.maps.wx_max;
-					flag = true;
-				}
-			} else if (this.nkscroll_my_view_x < 96) {
-				this.nkscroll_my_view_x += 8;
-				if (this.nkscroll_my_view_x >= 96) {
-					this.nkscroll_my_view_x = 96;
-					flag = true;
-				}
-				this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
-				if (this.nkscroll_view_x <= this.maps.wx_mini) {
-					this.nkscroll_view_x = this.maps.wx_mini;
-					flag = true;
-				}
-			} else {
-				flag = true;
-				this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
-			}
+			flag = true;
+			this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
 		}
-		var flag1 = false;
-		if (this.nkscroll_my_view_y > 176) {
+		let flag1 = false;
+		if (this.nkscroll_my_view_y > this.maps.my_wy_max) {
 			this.nkscroll_my_view_y -= 4;
-			if (this.nkscroll_my_view_y <= 176) {
-				this.nkscroll_my_view_y = 176;
+			if (this.nkscroll_my_view_y <= this.maps.my_wy_max) {
+				this.nkscroll_my_view_y = this.maps.my_wy_max;
 				flag1 = true;
 			}
 			this.nkscroll_view_y = this.co_j.y - this.nkscroll_my_view_y;
@@ -3358,10 +3163,10 @@ MainProgram.prototype.mL100 = function() {
 				this.nkscroll_view_y = this.maps.wy_max;
 				flag1 = true;
 			}
-		} else if (this.nkscroll_my_view_y < 78) {
+		} else if (this.nkscroll_my_view_y < this.maps.my_wy_mini) {
 			this.nkscroll_my_view_y += 4;
-			if (this.nkscroll_my_view_y >= 78) {
-				this.nkscroll_my_view_y = 78;
+			if (this.nkscroll_my_view_y >= this.maps.my_wy_mini) {
+				this.nkscroll_my_view_y = this.maps.my_wy_mini;
 				flag1 = true;
 			}
 			this.nkscroll_view_y = this.co_j.y - this.nkscroll_my_view_y;
@@ -3385,8 +3190,9 @@ MainProgram.prototype.mL100 = function() {
 		this.nkscroll_view_x = this.co_j.x - this.nkscroll_my_view_x;
 		this.nkscroll_view_y = this.co_j.y - this.nkscroll_my_view_y;
 	} else if (this.nkscroll_con == 300) {
-		if (this.co_j.x > this.nkscroll_view_x + 496) {
-			this.co_j.x = this.nkscroll_view_x + 496;
+		// 画面内で横固定縦自由スクロール
+		if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 16) {
+			this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 16;
 			if (this.co_j.vx > 0) this.co_j.vx = 0;
 		} else if (this.co_j.x < this.nkscroll_view_x - 15) {
 			this.co_j.x = this.nkscroll_view_x - 15;
@@ -3394,6 +3200,7 @@ MainProgram.prototype.mL100 = function() {
 		}
 		this.maps.wx = this.nkscroll_view_x;
 	} else if (this.nkscroll_con == 400) {
+		// 画面内で右強制縦自由スクロール
 		if (this.nkscroll_vx > 0) {
 			this.nkscroll_view_x += this.nkscroll_speed_x;
 			if (this.nkscroll_view_x >= this.maps.wx_max) {
@@ -3413,74 +3220,7 @@ MainProgram.prototype.mL100 = function() {
 					)
 						this.jShinu(5);
 					if (this.a_hf) {
-						var flag6 = false;
-						for (var i9 = 0; i9 <= this.a_kazu; i9++) {
-							if (!this.co_a[i9].gf) continue;
-							var characterobject4 = this.co_a[i9];
-							if (characterobject4.c >= 100 && characterobject4.c < 200) {
-								if (
-									this.co_j.x + 15 >= characterobject4.x &&
-									this.co_j.x <= characterobject4.x + 64 &&
-									this.co_j.y + 31 >= characterobject4.y &&
-									this.co_j.y <= characterobject4.y + 13
-								)
-									flag6 = true;
-								continue;
-							}
-							if (characterobject4.c == 300) {
-								if (
-									this.co_j.x + 15 >= characterobject4.x &&
-									this.co_j.x <= characterobject4.x + 48 &&
-									this.co_j.y + 31 >= characterobject4.y &&
-									this.co_j.y <= characterobject4.y + 31
-								)
-									flag6 = true;
-								continue;
-							}
-							if (characterobject4.c >= 400 && characterobject4.c < 500) {
-								if (
-									this.co_j.x + 15 >= characterobject4.x &&
-									this.co_j.x <= characterobject4.x + 80 &&
-									this.co_j.y + 31 >= characterobject4.y &&
-									this.co_j.y <= characterobject4.y + 63
-								)
-									flag6 = true;
-								continue;
-							}
-							if (characterobject4.c == 500) {
-								if (
-									this.co_j.x + 15 >= characterobject4.x &&
-									this.co_j.x <= characterobject4.x + 80 &&
-									this.co_j.y + 31 >= characterobject4.y &&
-									this.co_j.y <= characterobject4.y + 13
-								)
-									flag6 = true;
-								continue;
-							}
-							if (characterobject4.c == 600) {
-								if (
-									this.co_j.x + 15 >= characterobject4.x &&
-									this.co_j.x <= characterobject4.x + 48 &&
-									this.co_j.y + 31 >= characterobject4.y + 16 &&
-									this.co_j.y <= characterobject4.y + 47
-								)
-									flag6 = true;
-								continue;
-							}
-							if (
-								characterobject4.c == 700 &&
-								this.j_tokugi != 10 &&
-								this.j_tokugi != 12 &&
-								this.j_tokugi != 13 &&
-								this.co_j.x + 15 >= characterobject4.x &&
-								this.co_j.x <= characterobject4.x + 16 &&
-								this.co_j.y + 31 >= characterobject4.y &&
-								this.co_j.y <= characterobject4.y + 31
-							)
-								flag6 = true;
-						}
-
-						if (flag6 && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
+						if (isAthletic() && this.co_j.c >= 100 && this.co_j.c < 200) this.jShinu(5);
 					}
 					if (
 						this.yuka_ride_id >= 0 &&
@@ -3491,12 +3231,12 @@ MainProgram.prototype.mL100 = function() {
 					)
 						this.jShinu(5);
 					if (this.isYukaCross()) this.jShinu(5);
-				} else if (this.co_j.x > this.nkscroll_view_x + 496) {
-					this.co_j.x = this.nkscroll_view_x + 496;
+				} else if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 16) {
+					this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 16;
 					if (this.co_j.vx > 0) this.co_j.vx = 0;
 				}
-		} else if (this.co_j.x > this.nkscroll_view_x + 496) {
-			this.co_j.x = this.nkscroll_view_x + 496;
+		} else if (this.co_j.x > this.nkscroll_view_x + this.gg.di.width - 16) {
+			this.co_j.x = this.nkscroll_view_x + this.gg.di.width - 16;
 			if (this.co_j.vx > 0) this.co_j.vx = 0;
 		} else if (this.co_j.x < this.nkscroll_view_x - 15) {
 			this.co_j.x = this.nkscroll_view_x - 15;
@@ -3510,7 +3250,7 @@ MainProgram.prototype.mL100 = function() {
 			var l7 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31);
 			if (j5 >= 18 || l7 >= 18) this.jShinu(5);
 		}
-		if (this.co_j.c >= 100 && this.co_j.c < 200 && this.co_j.y >= this.maps.wy + 320) this.jShinu(5);
+		if (this.co_j.c >= 100 && this.co_j.c < 200 && this.co_j.y >= this.maps.wy + this.gg.di.height) this.jShinu(5);
 	}
 	if (this.jm_kazu > 0) this.jmMove();
 	this.tMove();
@@ -3557,23 +3297,27 @@ MainProgram.prototype.mL100 = function() {
 	this.gs.rsPlay();
 	if (this.system_draw_mode != 4) this.drawItem();
 	if (this.gk.key_code == 84) {
+		// タイトルに戻る
 		this.gk.key_code = 0;
 		this.ml_mode = 50;
 		this.gg.drawListImage(0, 0, 0);
 		if (this.score > 0 || this.highscore > 0) this.drawScore();
 	}
 	if (this.pause_switch == 2 && this.gk.key_code == 80) {
+		// ポーズする
 		this.gk.key_code = 0;
 		this.ml_mode = 110;
 		this.ml_mode_c = 0;
 	}
 	if (this.ml_mode != 100)
 		if (this.ml_mode == 300) {
+			// 地図画面
 			this.gg.setBackcolor(Color.black);
 			this.gg.fill();
 			this.gg.drawListImage(0, 0, 2);
 			this.drawScore();
 		} else if (this.ml_mode == 400) {
+			// エンディング
 			this.gg.drawListImage(0, 0, 1);
 			this.drawScore();
 		} else if (this.ml_mode == 250 || this.ml_mode == 260) {
@@ -3593,23 +3337,20 @@ MainProgram.prototype.mainLoop = function() {
 		// 複数ステージ時にステージ開始画面を描画
 		this.hg.setColor(this.gamecolor_kaishi);
 		this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+
+		let kx = rounddown(this.gg.di.width / 2) - 32 * 2;
+		const ky = rounddown(this.gg.di.height / 2) - 16;
+
 		if (this.stage >= this.stage_max) {
 			// ラストステージ
-			this.gg.drawPT(160, 144, 52, 0);
-			this.gg.drawPT(192, 144, 53, 0);
-			this.gg.drawPT(224, 144, 54, 0);
-			this.gg.drawPT(256, 144, 55, 0);
-			this.gg.drawPT(288, 144, 56, 0);
-			this.gg.drawPT(320, 144, 57, 0);
+			for (let i = 0; i < 6; i++) this.gg.drawPT(kx - 32 + 32 * i, ky, 52 + i, 0);
 		} else {
 			// ステージ1〜3
-			this.gg.drawPT(192, 144, 70, 0);
-			this.gg.drawPT(224, 144, 71, 0);
-			this.gg.drawPT(256, 144, 72, 0);
-			if (this.stage >= this.stage_max) this.gg.drawPT(288, 144, 75, 0);
-			if (this.stage == 3) this.gg.drawPT(288, 144, 75, 0);
-			else if (this.stage == 2) this.gg.drawPT(288, 144, 74, 0);
-			else this.gg.drawPT(288, 144, 73, 0);
+			for (let i = 0; i < 3; i++) this.gg.drawPT(kx + 32 * i, ky, 70 + i, 0);
+			if (this.stage >= this.stage_max) this.gg.drawPT(kx + 32 * 3, ky, 75, 0);
+			if (this.stage == 3) this.gg.drawPT(kx + 32 * 3, ky, 75, 0);
+			else if (this.stage == 2) this.gg.drawPT(kx + 32 * 3, ky, 74, 0);
+			else this.gg.drawPT(kx + 32 * 3, ky, 73, 0);
 		}
 		this.drawScore();
 	};
@@ -3642,6 +3383,11 @@ MainProgram.prototype.mainLoop = function() {
 		}
 	};
 
+	const playStageBGM = () => {
+		// 各ステージごとにBGMを流す
+		if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
+	};
+
 	switch (this.ml_mode) {
 		default:
 			break;
@@ -3664,7 +3410,7 @@ MainProgram.prototype.mainLoop = function() {
 				drawTitle();
 				if (this.j_left <= 0 && this.stage_max <= 1) this.ml_mode = 100;
 				else this.ml_mode = 90;
-				if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
+				playStageBGM();
 				break;
 			}
 			this.gs.playBGM(5);
@@ -3689,7 +3435,7 @@ MainProgram.prototype.mainLoop = function() {
 				else if (this.gk.key_char != 0x65) this.g_c1 = 0;
 			if (
 				(this.title_lock_f && !this.start_game_f) ||
-				((!this.gm.button_f || this.gm.click_x >= 512 || this.gm.click_y >= 320) &&
+				((!this.gm.button_f || this.gm.click_x >= this.gg.di.width || this.gm.click_y >= this.gg.di.height) &&
 					!this.gk.tr1_f &&
 					!this.gk.tr2_f &&
 					!this.start_game_f)
@@ -3711,7 +3457,7 @@ MainProgram.prototype.mainLoop = function() {
 			drawTitle();
 			if (this.j_left <= 0 && this.stage_max <= 1) this.ml_mode = 100;
 			else this.ml_mode = 90;
-			if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
+			playStageBGM();
 			break;
 
 		case 80: // ステージ開始
@@ -3721,7 +3467,7 @@ MainProgram.prototype.mainLoop = function() {
 			drawTitle();
 			if (this.j_left <= 0) this.ml_mode = 100;
 			else this.ml_mode = 90;
-			if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
+			playStageBGM();
 			break;
 
 		case 90:
@@ -3731,7 +3477,7 @@ MainProgram.prototype.mainLoop = function() {
 			drawStageStart();
 			this.ml_mode = 91;
 			this.ml_mode_c = 0;
-			if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
+			playStageBGM();
 			break;
 
 		case 91:
@@ -3786,7 +3532,7 @@ MainProgram.prototype.mainLoop = function() {
 			this.drawScore();
 			this.ml_mode = 96;
 			this.ml_mode_c = 0;
-			if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
+			playStageBGM();
 			break;
 
 		case 96:
@@ -3806,7 +3552,11 @@ MainProgram.prototype.mainLoop = function() {
 				this.drawScore();
 				this.hg.setColor(Color.white);
 				this.hg.setFont(new Font(Font.DIALOG, 1, 32));
-				this.hg.drawString("PAUSE", 200, 144);
+				this.hg.drawString(
+					"PAUSE",
+					rounddown(this.gg.di.width / 2) - 56,
+					rounddown(this.gg.di.height / 2) - 16
+				);
 			}
 			if (this.gk.key_code == 80 && this.ml_mode_c >= 8) {
 				this.gk.key_code = 0;
@@ -3840,7 +3590,7 @@ MainProgram.prototype.mainLoop = function() {
 			this.drawScore2();
 			this.ml_mode_c++;
 			if (this.ml_mode_c == 5) {
-				var s1;
+				let s1;
 				if (this.ig.dokan_khID == 2) s1 = this.tdb.getValue("url2");
 				else if (this.ig.dokan_khID == 3) s1 = this.tdb.getValue("url3");
 				else if (this.ig.dokan_khID == 4) s1 = this.tdb.getValue("url4");
@@ -3982,6 +3732,24 @@ MainProgram.prototype.mainLoop = function() {
  * TODO: {@link MainProgram#init2}, {@link MainProgram#init3}との違いは？
  */
 MainProgram.prototype.init1 = function() {
+	/**
+	 * 色パラメータを設定します。
+	 *
+	 * @param {number} r
+	 * @param {number} g
+	 * @param {number} b
+	 * @param {string} param
+	 */
+	const setColorParam = (r, g, b, param) => {
+		const color = [r, g, b];
+		color.forEach((e, i, a) => {
+			let n = this.tdb.getValueInt(e);
+			if (n < 0) n = 0;
+			else if (n > 255) n = 255;
+			a[i] = n;
+		});
+		this[param] = new Color(color[0], color[1], color[2]);
+	};
 	this.mode_wait_ending = 120;
 	this.mode_wait_gameover = 45;
 	this.mode_wait_stagestart = 35;
@@ -3994,124 +3762,28 @@ MainProgram.prototype.init1 = function() {
 	var k = this.tdb.getValueInt("score_v");
 	if (k == 2) this.score_v = false;
 	else this.score_v = true;
-	k = this.tdb.getValueInt("backcolor_red");
-	var l = this.tdb.getValueInt("backcolor_green");
-	var i1 = this.tdb.getValueInt("backcolor_blue");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_back = new Color(k, l, i1);
-	k = this.tdb.getValueInt("backcolor_red_s");
-	l = this.tdb.getValueInt("backcolor_green_s");
-	i1 = this.tdb.getValueInt("backcolor_blue_s");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_back_s = new Color(k, l, i1);
-	k = this.tdb.getValueInt("backcolor_red_t");
-	l = this.tdb.getValueInt("backcolor_green_t");
-	i1 = this.tdb.getValueInt("backcolor_blue_t");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_back_t = new Color(k, l, i1);
-	k = this.tdb.getValueInt("backcolor_red_f");
-	l = this.tdb.getValueInt("backcolor_green_f");
-	i1 = this.tdb.getValueInt("backcolor_blue_f");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_back_f = new Color(k, l, i1);
-	k = this.tdb.getValueInt("kaishi_red");
-	l = this.tdb.getValueInt("kaishi_green");
-	i1 = this.tdb.getValueInt("kaishi_blue");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_kaishi = new Color(k, l, i1);
-	k = this.tdb.getValueInt("scorecolor_red");
-	l = this.tdb.getValueInt("scorecolor_green");
-	i1 = this.tdb.getValueInt("scorecolor_blue");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_score = new Color(k, l, i1);
-	k = this.tdb.getValueInt("grenade_red1");
-	l = this.tdb.getValueInt("grenade_green1");
-	i1 = this.tdb.getValueInt("grenade_blue1");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_grenade1 = new Color(k, l, i1);
-	k = this.tdb.getValueInt("grenade_red2");
-	l = this.tdb.getValueInt("grenade_green2");
-	i1 = this.tdb.getValueInt("grenade_blue2");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_grenade2 = new Color(k, l, i1);
-	k = this.tdb.getValueInt("firebar_red1");
-	l = this.tdb.getValueInt("firebar_green1");
-	i1 = this.tdb.getValueInt("firebar_blue1");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_firebar1 = new Color(k, l, i1);
-	k = this.tdb.getValueInt("firebar_red2");
-	l = this.tdb.getValueInt("firebar_green2");
-	i1 = this.tdb.getValueInt("firebar_blue2");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_firebar2 = new Color(k, l, i1);
-	k = this.tdb.getValueInt("mizunohadou_red");
-	l = this.tdb.getValueInt("mizunohadou_green");
-	i1 = this.tdb.getValueInt("mizunohadou_blue");
-	if (k < 0) k = 0;
-	else if (k > 255) k = 255;
-	if (l < 0) l = 0;
-	else if (l > 255) l = 255;
-	if (i1 < 0) i1 = 0;
-	else if (i1 > 255) i1 = 255;
-	this.gamecolor_mizunohadou = new Color(k, l, i1);
-	this.moji_score = this.tdb.getValue("moji_score");
-	this.moji_highscore = this.tdb.getValue("moji_highscore");
-	this.moji_time = this.tdb.getValue("moji_time");
-	this.moji_time = "" + "  " + this.moji_time + " ";
-	this.moji_jet = this.tdb.getValue("moji_jet");
-	this.moji_grenade = this.tdb.getValue("moji_grenade");
-	this.moji_left = this.tdb.getValue("moji_left");
-	this.moji_left = "" + "  " + this.moji_left + " ";
+	["", "_s", "_t", "_f"].forEach(stage => {
+		setColorParam(
+			`backcolor_red${stage}`,
+			`backcolor_green${stage}`,
+			`backcolor_blue${stage}`,
+			`gamecolor_back${stage}`
+		);
+	});
+	["kaishi", "mizunohadou"].forEach(name => {
+		setColorParam(`${name}_red`, `${name}_green`, `${name}_blue`, `gamecolor_${name}`);
+	});
+	setColorParam("scorecolor_red", "scorecolor_green", "scorecolor_blue", "gamecolor_score");
+	["grenade", "firebar"].forEach(name => {
+		for (let i = 1; i <= 2; i++) {
+			setColorParam(`${name}_red${i}`, `${name}_green${i}`, `${name}_blue${i}`, `gamecolor_${name}${i}`);
+		}
+	});
+	["score", "highscore", "jet", "grenade"].forEach(name => {
+		this[`moji_${name}`] = this.tdb.getValue(`moji_${name}`);
+	});
+	this.moji_time = `  ${this.tdb.getValue("moji_time")} `;
+	this.moji_left = `  ${this.tdb.getValue("moji_left")} `;
 	this.moji_size = this.tdb.getValueInt("moji_size");
 	if (this.moji_size < 10) this.moji_size = 10;
 	else if (this.moji_size > 30) this.moji_size = 30;
@@ -4125,12 +3797,11 @@ MainProgram.prototype.init1 = function() {
 	this.stage_kaishi = this.tdb.getValueInt("stage_kaishi");
 	if (this.stage_kaishi < 1) this.stage_kaishi = 1;
 	if (this.stage_kaishi > this.stage_max) this.stage_kaishi = this.stage_max;
-	this.score_1up_1_para = this.tdb.getValueInt("score_1up_1");
-	if (this.score_1up_1_para < 0) this.score_1up_1_para = 0;
-	if (this.stage_max <= 1 && this.j_left_shoki <= 0) this.score_1up_1_para = 0;
-	this.score_1up_2_para = this.tdb.getValueInt("score_1up_2");
-	if (this.score_1up_2_para < 0) this.score_1up_2_para = 0;
-	if (this.stage_max <= 1 && this.j_left_shoki <= 0) this.score_1up_2_para = 0;
+	for (let j1 = 1; j1 <= 2; j1++) {
+		this[`score_1up_${j1}_para`] = this.tdb.getValueInt(`score_1up_${j1}`);
+		if (this[`score_1up_${j1}_para`] < 0) this[`score_1up_${j1}_para`] = 0;
+		if (this.stage_max <= 1 && this.j_left_shoki <= 0) this[`score_1up_${j1}_para`] = 0;
+	}
 	this.default_j_tail_type = this.tdb.getValueInt("j_tail_type");
 	if (this.default_j_tail_type < 1 || this.default_j_tail_type > 3) this.default_j_tail_type = 1;
 	this.j_tail_type = this.default_j_tail_type;
@@ -4155,18 +3826,12 @@ MainProgram.prototype.init1 = function() {
 	i = this.tdb.getValueInt("j_tokugi");
 	if (i >= 1 && i <= 19) this.j_tokugi = i;
 	else this.j_tokugi = 1;
-	i = this.tdb.getValueInt("j_add_tokugi");
-	if (i >= 1) this.j_add_tokugi = i;
-	else this.j_add_tokugi = 0;
-	i = this.tdb.getValueInt("j_add_tokugi2");
-	if (i >= 1) this.j_add_tokugi2 = i;
-	else this.j_add_tokugi2 = 0;
-	i = this.tdb.getValueInt("j_add_tokugi3");
-	if (i >= 1) this.j_add_tokugi3 = i;
-	else this.j_add_tokugi3 = 0;
-	i = this.tdb.getValueInt("j_add_tokugi4");
-	if (i >= 1) this.j_add_tokugi4 = i;
-	else this.j_add_tokugi4 = 0;
+	for (let j1 = 1; j1 <= 4; j1++) {
+		const n = j1 > 1 ? j1 : "";
+		const tokugi = this.tdb.getValueInt(`j_add_tokugi${n}`);
+		if (tokugi >= 1) this[`j_add_tokugi${n}`] = tokugi;
+		else this[`j_add_tokugi${n}`] = 0;
+	}
 	i = this.tdb.getValueInt("dengeki_mkf");
 	if (i >= 1 && i <= 5) this.dengeki_mkf = i;
 	else this.dengeki_mkf = 1;
@@ -4194,30 +3859,24 @@ MainProgram.prototype.init1 = function() {
 	i = this.tdb.getValueInt("kuragesso_attack");
 	if (i >= 1 && i <= 5) this.kuragesso_attack = i;
 	else this.kuragesso_attack = 1;
-	this.ugokuyuka1_type = this.tdb.getValueInt("ugokuyuka1_type");
-	if (this.ugokuyuka1_type < 1 || this.ugokuyuka1_type > 1249) this.ugokuyuka1_type = 1;
-	this.ugokuyuka2_type = this.tdb.getValueInt("ugokuyuka2_type");
-	if (this.ugokuyuka2_type < 1 || this.ugokuyuka2_type > 1249) this.ugokuyuka2_type = 1;
-	this.ugokuyuka3_type = this.tdb.getValueInt("ugokuyuka3_type");
-	if (this.ugokuyuka3_type < 1 || this.ugokuyuka3_type > 1249) this.ugokuyuka3_type = 1;
-	this.firebar1_type = this.tdb.getValueInt("firebar1_type");
-	if (this.firebar1_type < 1 || this.firebar1_type > 1249) this.firebar1_type = 1;
-	this.firebar2_type = this.tdb.getValueInt("firebar2_type");
-	if (this.firebar2_type < 1 || this.firebar2_type > 1249) this.firebar2_type = 1;
-	this.dossunsun_type = this.tdb.getValueInt("dossunsun_type");
-	if (this.dossunsun_type < 1 || this.dossunsun_type > 1249) this.dossunsun_type = 1;
-	this.coin1_type = this.tdb.getValueInt("coin1_type");
-	if (this.coin1_type < 1 || this.coin1_type > 1249) this.coin1_type = 1;
-	this.coin3_type = this.tdb.getValueInt("coin3_type");
-	if (this.coin3_type < 1 || this.coin3_type > 1249) this.coin3_type = 1;
-	this.dokan1_type = this.tdb.getValueInt("dokan1_type");
-	if (this.dokan1_type < 1 || this.dokan1_type > 1249) this.dokan1_type = 1;
-	this.dokan2_type = this.tdb.getValueInt("dokan2_type");
-	if (this.dokan2_type < 1 || this.dokan2_type > 1249) this.dokan2_type = 1;
-	this.dokan3_type = this.tdb.getValueInt("dokan3_type");
-	if (this.dokan3_type < 1 || this.dokan3_type > 1249) this.dokan3_type = 1;
-	this.dokan4_type = this.tdb.getValueInt("dokan4_type");
-	if (this.dokan4_type < 1 || this.dokan4_type > 1249) this.dokan4_type = 1;
+	[
+		"ugokuyuka1",
+		"ugokuyuka2",
+		"ugokuyuka3",
+		"firebar1",
+		"firebar2",
+		"dossunsun",
+		"coin1",
+		"coin3",
+		"dokan1",
+		"dokan2",
+		"dokan3",
+		"dokan4"
+	].forEach(param => {
+		const paramname = `${param}_type`;
+		this[paramname] = this.tdb.getValueInt(paramname);
+		if (this[paramname] < 1 || this[paramname] > 1249) this[paramname] = 1;
+	});
 	this.pause_switch = this.tdb.getValueInt("pause_switch");
 	if (this.pause_switch != 2) this.pause_switch = 1;
 	this.control_parts_visible = this.tdb.getValueInt("control_parts_visible");
@@ -4230,12 +3889,16 @@ MainProgram.prototype.init1 = function() {
 	if (this.boss3_type < 1 || this.boss3_type > 8) this.boss3_type = 1;
 	this.gazou_scroll = this.tdb.getValueInt("gazou_scroll");
 	if (this.gazou_scroll < 2 || this.gazou_scroll > 11) this.gazou_scroll = 1;
-	this.gazou_scroll_speed_x = this.tdb.getValueInt("gazou_scroll_speed_x");
-	if (this.gazou_scroll_speed_x < -32) this.gazou_scroll_speed_x = -32;
-	if (this.gazou_scroll_speed_x > 32) this.gazou_scroll_speed_x = 32;
-	this.gazou_scroll_speed_y = this.tdb.getValueInt("gazou_scroll_speed_y");
-	if (this.gazou_scroll_speed_y < -32) this.gazou_scroll_speed_y = -32;
-	if (this.gazou_scroll_speed_y > 32) this.gazou_scroll_speed_y = 32;
+	[
+		"gazou_scroll_speed_x",
+		"gazou_scroll_speed_y",
+		"second_gazou_scroll_speed_x",
+		"second_gazou_scroll_speed_y"
+	].forEach(param => {
+		this[param] = this.tdb.getValueInt(param);
+		if (this[param] < -32) this[param] = -32;
+		else if (this[param] > 32) this[param] = 32;
+	});
 	this.gazou_scroll_x = this.tdb.getValueInt("gazou_scroll_x");
 	if (this.gazou_scroll_x < 0) this.gazou_scroll_x = 0;
 	this.gazou_scroll_y = this.tdb.getValueInt("gazou_scroll_y");
@@ -4253,20 +3916,12 @@ MainProgram.prototype.init1 = function() {
 	this.setumei_name = this.tdb.getValue("setumei_name");
 	this.door_score = this.tdb.getValueInt("door_score");
 	if (this.door_score < 10) this.door_score = 10;
-	this.shop_item_name[0] = this.tdb.getValue("shop_item_name1");
-	this.shop_item_name[1] = this.tdb.getValue("shop_item_name2");
-	this.shop_item_name[2] = this.tdb.getValue("shop_item_name3");
-	this.shop_item_name[3] = this.tdb.getValue("shop_item_name4");
-	this.shop_item_name[4] = this.tdb.getValue("shop_item_name5");
-	this.shop_item_name[5] = this.tdb.getValue("shop_item_name6");
-	this.shop_item_name[6] = this.tdb.getValue("shop_item_name7");
-	this.shop_item_name[7] = this.tdb.getValue("shop_item_name8");
-	this.shop_item_name[8] = this.tdb.getValue("shop_item_name9");
-	for (var j1 = 0; j1 <= 8; j1++) {
-		var j = j1 + 1;
-		j = this.tdb.getValueInt("" + "shop_item_teika" + j);
-		if (j < 0) j = 0;
-		this.shop_item_teika[j1] = j;
+	for (let j1 = 0; j1 <= 8; j1++) {
+		this.shop_item_name[j1] = this.tdb.getValue(`shop_item_name${j1 + 1}`);
+
+		let teika = this.tdb.getValueInt(`shop_item_teika${j1 + 1}`);
+		if (teika < 0) teika = 0;
+		this.shop_item_teika[j1] = teika;
 	}
 
 	this.scroll_area = this.tdb.getValueInt("scroll_area");
@@ -4274,7 +3929,7 @@ MainProgram.prototype.init1 = function() {
 	this.clear_type = this.tdb.getValueInt("clear_type");
 	if (this.clear_type < 1 || this.clear_type > 3) this.clear_type = 1;
 	this.second_gazou_img = null;
-	for (var k1 = 0; k1 <= 3; k1++) this.second_gazou_stage_img[k1] = null;
+	for (let k1 = 0; k1 <= 3; k1++) this.second_gazou_stage_img[k1] = null;
 
 	this.second_gazou_visible = false;
 	if (
@@ -4283,20 +3938,14 @@ MainProgram.prototype.init1 = function() {
 	) {
 		this.second_gazou_visible = true;
 		this.second_gazou_stage_img[0] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei"));
-		if (this.stage_select == 2 || this.stage_max >= 2) {
-			this.second_gazou_stage_img[1] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei2"));
-			this.second_gazou_stage_img[2] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei3"));
-			this.second_gazou_stage_img[3] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei4"));
-		}
+		if (this.stage_select == 2 || this.stage_max >= 2)
+			for (let k1 = 1; k1 <= 3; k1++)
+				this.second_gazou_stage_img[k1] = this.gg.loadImage(
+					this.tdb.getValue(`filename_second_haikei${k1 + 1}`)
+				);
 	}
 	this.second_gazou_scroll = this.tdb.getValueInt("second_gazou_scroll");
 	if (this.second_gazou_scroll < 1 || this.second_gazou_scroll > 8) this.second_gazou_scroll = 1;
-	this.second_gazou_scroll_speed_x = this.tdb.getValueInt("second_gazou_scroll_speed_x");
-	if (this.second_gazou_scroll_speed_x < -32) this.second_gazou_scroll_speed_x = -32;
-	if (this.second_gazou_scroll_speed_x > 32) this.second_gazou_scroll_speed_x = 32;
-	this.second_gazou_scroll_speed_y = this.tdb.getValueInt("second_gazou_scroll_speed_y");
-	if (this.second_gazou_scroll_speed_y < -32) this.second_gazou_scroll_speed_y = -32;
-	if (this.second_gazou_scroll_speed_y > 32) this.second_gazou_scroll_speed_y = 32;
 	this.second_gazou_scroll_x = this.tdb.getValueInt("second_gazou_scroll_x");
 	this.second_gazou_scroll_y = this.tdb.getValueInt("second_gazou_scroll_y");
 	this.second_gazou_priority = this.tdb.getValueInt("second_gazou_priority");
@@ -4314,7 +3963,7 @@ MainProgram.prototype.init2 = function() {
 	this.j_left = this.j_left_shoki;
 	this.score_1up_1 = this.score_1up_1_para;
 	this.score_1up_2 = this.score_1up_2_para;
-	for (var i = 0; i <= 2; i++) this.stage_1up_f[i] = true;
+	for (let i = 0; i <= 2; i++) this.stage_1up_f[i] = true;
 
 	this.cpoint_con = 0;
 	this.cpoint_stage = 0;
@@ -4420,7 +4069,7 @@ MainProgram.prototype.init3 = function() {
 	if (this.j_enemy_press < 1 || this.j_enemy_press > 3) this.j_enemy_press = 1;
 	this.view_move_type = this.tdb.getValueInt("view_move_type");
 	if (this.view_move_type != 2) this.view_move_type = 1;
-	if (this.view_move_type == 2) this.co_j.muki = 0;
+	if (this.view_move_type == 2) this.co_j.muki = 0; // 右進行用の視界の時自分の向きを右向きにする
 	this.jst_slow_down = 0;
 	this.jst_key_down = 0;
 	this.jst_fast_run_attack = 0;
@@ -4438,68 +4087,68 @@ MainProgram.prototype.init3 = function() {
 	this.up_key_c = 0;
 	this.down_key_c = 0;
 	switch (this.j_tokugi) {
-		case 2:
+		case 2: // 落ちるのが遅い
 			this.jst_slow_down = 1;
 			break;
 
-		case 3:
+		case 3: // 空中で下ボタンを押すと急降下
 			this.jst_key_down = 1;
 			break;
 
-		case 4:
+		case 4: // 全速体当たりで敵を倒せる
 			this.jst_fast_run_attack = 1;
 			break;
 
-		case 5:
+		case 5: // 空中の左右加速度が高い
 			this.jst_fly_left_right = 1;
 			break;
 
-		case 6:
+		case 6: // 壁キック
 			this.jst_kabe_kick = 1;
 			break;
 
-		case 7:
+		case 7: // ファイヤーボールが水平に飛ぶ
 			this.j_fire_type = 2;
 			this.j_fire_range = 9999;
 			this.jst_fire_xkey_only = 1;
 			break;
 
-		case 8:
+		case 8: // 空中でもう１回ジャンプできる
 			this.jst_double_jump = 1;
 			break;
 
-		case 9:
+		case 9: // 速く走れる
 			this.jst_fast_run = 1;
 			break;
 
-		case 11:
+		case 11: // スーパージャンプで高く飛べる
 			this.jst_high_sjump = 1;
 			break;
 
-		case 13:
+		case 13: // ジャンプできない　走れない　Z,Xキーで穴掘り
 			this.jst_fast_run = 2;
 			break;
 
-		case 16:
+		case 16: // 壁ジャンプ
 			this.jst_kabe_kick = 2;
 			break;
 
-		case 18:
+		case 18: // ひたすら右へ歩く
 			this.jst_auto_right = 1;
 			this.gk.left_right_lock = true;
 			break;
 
-		case 19:
+		case 19: // ひたすら右へ走る
 			this.jst_auto_right = 2;
 			this.gk.left_right_lock = true;
 			break;
 	}
 	this.j_tail_type = this.default_j_tail_type;
-	if (this.j_add_tokugi >= 2) this.addMyTokugi(this.j_add_tokugi);
-	if (this.j_add_tokugi2 >= 2) this.addMyTokugi(this.j_add_tokugi2);
-	if (this.j_add_tokugi3 >= 2) this.addMyTokugi(this.j_add_tokugi3);
-	if (this.j_add_tokugi4 >= 2) this.addMyTokugi(this.j_add_tokugi4);
-	for (var i = 0; i <= 5; i++) {
+	for (let i = 1; i <= 4; i++) {
+		const n = i > 1 ? i : "";
+		if (this[`j_add_tokugi${n}`] >= 2) this.addMyTokugi(this[`j_add_tokugi${n}`]);
+	}
+	for (let i = 0; i <= 5; i++) {
 		this.j_zan_x[i] = 0;
 		this.j_zan_y[i] = 0;
 		this.j_zan_pt[i] = 0;
@@ -4519,9 +4168,9 @@ MainProgram.prototype.init3 = function() {
 	this.spot_r_mokuhyou = 160;
 	this.km.initAll();
 	this.km.mode = 100;
-	for (var j = 0; j <= 1; j++) this.co_mu[j].init();
+	for (let j = 0; j <= 1; j++) this.co_mu[j].init();
 
-	for (var k = 0; k <= 31; k++) {
+	for (let k = 0; k <= 31; k++) {
 		this.mu_ato_x[k] = this.co_j.x;
 		this.mu_ato_y[k] = this.co_j.y;
 	}
@@ -4541,7 +4190,7 @@ MainProgram.prototype.init3 = function() {
 	this.sl_wx = 0;
 	this.sl_wy = 0;
 	this.showm_c = 0;
-	for (var i1 = 0; i1 <= 3; i1++) this.showm_data[i1] = null;
+	for (let i1 = 0; i1 <= 3; i1++) this.showm_data[i1] = null;
 
 	this.showi_c = 0;
 	this.showi_x = 0;
@@ -4556,20 +4205,22 @@ MainProgram.prototype.init3 = function() {
 	this.setmyw_muki = 1;
 	this.attacktail_yf = true;
 	this.gauge_v = false;
-	var k5;
+	let k5;
 	if (this.stage == 2) k5 = this.tdb.getValueInt("scroll_mode_s");
 	else if (this.stage == 3) k5 = this.tdb.getValueInt("scroll_mode_t");
 	else if (this.stage == 4) k5 = this.tdb.getValueInt("scroll_mode_f");
 	else k5 = this.tdb.getValueInt("scroll_mode");
 	if (k5 == 2) {
+		// 強制スクロール
 		this.sl_step = 10;
 		this.ks_wx = 32;
-		this.ks_wy = this.mapHeight * 32;
+		this.ks_wy = (this.mapHeight - rounddown((this.gg.di.height - 320) / 32)) * 32;
 		this.sl_speed = 2;
 	} else if (k5 == 3) {
+		// 高速強制スクロール
 		this.sl_step = 10;
 		this.ks_wx = 32;
-		this.ks_wy = this.mapHeight * 32;
+		this.ks_wy = (this.mapHeight - rounddown((this.gg.di.height - 320) / 32)) * 32;
 		this.sl_speed = 4;
 	}
 	this.nkscroll_con = 0;
@@ -4590,25 +4241,25 @@ MainProgram.prototype.init3 = function() {
 	this.co_b.init();
 	this.boss_kijyun_y = 0;
 	this.boss_attack_mode = false;
-	for (var l1 = 0; l1 <= 79; l1++) this.co_m[l1].init();
+	for (let l1 = 0; l1 <= 79; l1++) this.co_m[l1].init();
 
 	this.m_kazu = 0;
-	for (var i2 = 0; i2 <= 8; i2++) this.co_jm[i2].init();
+	for (let i2 = 0; i2 <= 8; i2++) this.co_jm[i2].init();
 
 	this.jm_kazu = 0;
-	for (var j2 = 0; j2 <= 79; j2++) this.co_h[j2].init();
+	for (let j2 = 0; j2 <= 79; j2++) this.co_h[j2].init();
 
 	if (this.time_max > 0) this.time = this.time_max * 1000 + 1000 - 70;
 	else this.time = 0;
 	this.ana_kazu = 0;
-	for (var k2 = 0; k2 <= 11; k2++) this.ana_c[k2] = 0;
+	for (let k2 = 0; k2 <= 11; k2++) this.ana_c[k2] = 0;
 
 	this.mapsMakeStageData(100 + this.stage);
 	if (this.cpoint_con == 100)
 		if (this.stage == this.cpoint_stage) {
 			this.co_j.x = this.cpoint_x;
 			this.co_j.y = this.cpoint_y;
-			for (var l2 = 0; l2 <= this.a_kazu; l2++)
+			for (let l2 = 0; l2 <= this.a_kazu; l2++)
 				if (this.co_a[l2].c == 3400 && this.co_a[l2].x == this.cpoint_x && this.co_a[l2].y == this.cpoint_y)
 					this.co_a[l2].c = 0;
 
@@ -4622,54 +4273,45 @@ MainProgram.prototype.init3 = function() {
 	}
 	if (this.scroll_area == 2) {
 		this.maps.wx_max = 32;
-		this.maps.wy_mini = this.mapHeight * 32;
-		for (var i3 = 0; i3 <= this.maps.height - 1; i3++) this.maps.map_bg[17][i3] = 21;
-
-		if (this.j_tokugi == 15) {
-			for (var j3 = 1; j3 < this.maps.width; j3++) this.maps.map_bg[j3][29] = 21;
-		}
+		this.maps.wy_mini = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
+		for (let i3 = 0; i3 <= this.maps.height - 1; i3++)
+			this.maps.map_bg[rounddown(this.gg.di.width / 32) + 1][i3] = 21;
 	} else if (this.scroll_area == 3) {
-		this.maps.wx_max = 544;
-		this.maps.wy_mini = this.mapHeight * 32;
-		for (var k3 = 0; k3 <= this.maps.height - 1; k3++) this.maps.map_bg[33][k3] = 21;
-
-		if (this.j_tokugi == 15) {
-			for (var l3 = 1; l3 < this.maps.width; l3++) this.maps.map_bg[l3][29] = 21;
-		}
+		this.maps.wx_max = this.gg.di.width + 32;
+		this.maps.wy_mini = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
+		for (let k3 = 0; k3 <= this.maps.height - 1; k3++)
+			this.maps.map_bg[rounddown((this.gg.di.width * 2) / 32) + 1][k3] = 21;
 	} else if (this.scroll_area == 4) {
 		this.maps.wx_max = 32;
 		this.maps.wy_mini = (this.mapHeight - 10) * 32;
-		for (var i4 = 0; i4 <= this.maps.height - 1; i4++) this.maps.map_bg[17][i4] = 21;
-
-		if (this.j_tokugi == 15) {
-			for (var j4 = 1; j4 < this.maps.width; j4++) this.maps.map_bg[j4][19] = 21;
-		}
+		for (let i4 = 0; i4 <= this.maps.height - 1; i4++)
+			this.maps.map_bg[rounddown(this.gg.di.width / 32) + 1][i4] = 21;
 	} else if (this.scroll_area == 5) {
-		this.maps.wx_max = 544;
+		this.maps.wx_max = this.gg.di.width + 32;
 		this.maps.wy_mini = (this.mapHeight - 10) * 32;
-		for (var k4 = 0; k4 <= this.maps.height - 1; k4++) this.maps.map_bg[33][k4] = 21;
-
-		if (this.j_tokugi == 15) {
-			for (var l4 = 1; l4 < this.maps.width; l4++) this.maps.map_bg[l4][19] = 21;
-		}
+		for (let k4 = 0; k4 <= this.maps.height - 1; k4++)
+			this.maps.map_bg[rounddown((this.gg.di.width * 2) / 32) + 1][k4] = 21;
 	}
 	if (this.j_tokugi == 15) {
-		for (var i5 = 1; i5 < this.maps.width; i5++) this.maps.map_bg[i5][40] = 21;
+		if (this.scroll_area >= 2 && this.scroll_area <= 5)
+			for (let l4 = 1; l4 < this.maps.width; l4++) this.maps.map_bg[l4][19] = 21;
+		else for (let i5 = 1; i5 < this.maps.width; i5++) this.maps.map_bg[i5][40] = 21;
 	}
 	if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1)
 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
 	else this.maps.drawMap(this.maps.wx, this.maps.wy);
 	this.gs.rsInit();
 	if (this.clear_type == 2 || this.clear_type == 3) {
-		var l5 = this.coin_kazu;
+		const l5 = this.coin_kazu;
 		this.getCoinTotal();
 		if (l5 > 0 && this.coin_kazu == 0) {
 			this.gs.rsAddSound(7);
 			if (this.clear_type == 3) this.showHashigo();
 		}
 	}
-	label0: for (var j6 = 10; j6 <= this.mapHeight + 9; j6++) {
-		var i6 = 1;
+	label0: for (let j6 = 10; j6 <= this.mapHeight + 9; j6++) {
+		// 重力無視の追跡ピカチー等の復活地点を設定
+		let i6 = 1;
 		do {
 			if (i6 > this.mapWidth) continue label0;
 			if (this.maps.map_bg[i6][j6] == 28) {
@@ -4742,8 +4384,40 @@ MainProgram.prototype.mapsMakeStageData = function(
 	this.maps.wy = 32;
 	this.maps.wx_mini = 32;
 	this.maps.wy_mini = 320;
-	this.maps.wx_max = (this.mapWidth - 15) * 32;
-	this.maps.wy_max = this.mapHeight * 32;
+	this.maps.wx_max = (this.mapWidth - rounddown((this.gg.di.width - this.maps.wx_mini) / 32)) * 32;
+	this.maps.wy_max = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
+
+	if (this.gg.system_screen_size === 1) {
+		if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
+			this.maps.my_wx_mini = 212;
+			this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
+			this.maps.my_wy_mini = 148;
+		} else {
+			this.maps.my_wx_mini = 132;
+			this.maps.my_wx_max = 252;
+			if (this.view_move_type === 2) {
+				this.maps.my_wx_mini = this.maps.my_wx_max + 32;
+				this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
+			}
+			this.maps.my_wy_mini = 116;
+		}
+		this.maps.my_wy_max = 300;
+	} else if (this.gg.system_screen_size === 2) {
+		if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
+			this.maps.my_wx_mini = 176;
+			this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
+			this.maps.my_wy_mini = 112;
+		} else {
+			this.maps.my_wx_mini = 96;
+			this.maps.my_wx_max = 224;
+			if (this.view_move_type === 2) {
+				this.maps.my_wx_mini = this.maps.my_wx_max + 32;
+				this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
+			}
+			this.maps.my_wy_mini = 78;
+		}
+		this.maps.my_wy_max = 176;
+	}
 	c2 = this.mapWidth + 19;
 	this.gg.setBackcolor(Color.blue);
 
@@ -4753,61 +4427,61 @@ MainProgram.prototype.mapsMakeStageData = function(
 				break;
 
 			case 101:
-				for (var i2 = 0; i2 < this.mapHeight; i2++) {
-					var s = "" + "." + this.tdb.getValue("" + "map0-" + i2);
-					s = "" + s + this.tdb.getValue("" + "map1-" + i2);
-					s = "" + s + this.tdb.getValue("" + "map2-" + i2);
+				for (let i2 = 0; i2 < this.mapHeight; i2++) {
+					let s = `.${this.tdb.getValue(`map0-${i2}`)}`;
+					s += this.tdb.getValue(`map1-${i2}`);
+					s += this.tdb.getValue(`map2-${i2}`);
 					as[i2 + 10] = s;
 					if (this.gg.layer_mode == 2) {
-						var s1 = "" + "00" + this.tdb.getValue("" + "layer0-" + i2);
-						s1 = "" + s1 + this.tdb.getValue("" + "layer1-" + i2);
-						s1 = "" + s1 + this.tdb.getValue("" + "layer2-" + i2);
+						let s1 = `00${this.tdb.getValue(`layer0-${i2}`)}`;
+						s1 += this.tdb.getValue(`layer1-${i2}`);
+						s1 += this.tdb.getValue(`layer2-${i2}`);
 						as1[i2 + 10] = s1;
 					}
 				}
 				break;
 
 			case 102:
-				for (var j2 = 0; j2 < this.mapHeight; j2++) {
-					var s2 = "" + "." + this.tdb.getValue("" + "map0-" + j2 + "-s");
-					s2 = "" + s2 + this.tdb.getValue("" + "map1-" + j2 + "-s");
-					s2 = "" + s2 + this.tdb.getValue("" + "map2-" + j2 + "-s");
-					as[j2 + 10] = s2;
+				for (let i2 = 0; i2 < this.mapHeight; i2++) {
+					let s = `.${this.tdb.getValue(`map0-${i2}-s`)}`;
+					s += this.tdb.getValue(`map1-${i2}-s`);
+					s += this.tdb.getValue(`map2-${i2}-s`);
+					as[i2 + 10] = s;
 					if (this.gg.layer_mode == 2) {
-						var s3 = "" + "00" + this.tdb.getValue("" + "layer0-" + j2 + "-s");
-						s3 = "" + s3 + this.tdb.getValue("" + "layer1-" + j2 + "-s");
-						s3 = "" + s3 + this.tdb.getValue("" + "layer2-" + j2 + "-s");
-						as1[j2 + 10] = s3;
+						let s1 = `00${this.tdb.getValue(`layer0-${i2}-s`)}`;
+						s1 += this.tdb.getValue(`layer1-${i2}-s`);
+						s1 += this.tdb.getValue(`layer2-${i2}-s`);
+						as1[i2 + 10] = s1;
 					}
 				}
 				break;
 
 			case 103:
-				for (var k2 = 0; k2 < this.mapHeight; k2++) {
-					var s4 = "" + "." + this.tdb.getValue("" + "map0-" + k2 + "-t");
-					s4 = "" + s4 + this.tdb.getValue("" + "map1-" + k2 + "-t");
-					s4 = "" + s4 + this.tdb.getValue("" + "map2-" + k2 + "-t");
-					as[k2 + 10] = s4;
+				for (let i2 = 0; i2 < this.mapHeight; i2++) {
+					let s = `.${this.tdb.getValue(`map0-${i2}-t`)}`;
+					s += this.tdb.getValue(`map1-${i2}-t`);
+					s += this.tdb.getValue(`map2-${i2}-t`);
+					as[i2 + 10] = s;
 					if (this.gg.layer_mode == 2) {
-						var s5 = "" + "00" + this.tdb.getValue("" + "layer0-" + k2 + "-t");
-						s5 = "" + s5 + this.tdb.getValue("" + "layer1-" + k2 + "-t");
-						s5 = "" + s5 + this.tdb.getValue("" + "layer2-" + k2 + "-t");
-						as1[k2 + 10] = s5;
+						let s1 = `00${this.tdb.getValue(`layer0-${i2}-t`)}`;
+						s1 += this.tdb.getValue(`layer1-${i2}-t`);
+						s1 += this.tdb.getValue(`layer2-${i2}-t`);
+						as1[i2 + 10] = s1;
 					}
 				}
 				break;
 
 			case 104:
-				for (var l2 = 0; l2 < this.mapHeight; l2++) {
-					var s6 = "" + "." + this.tdb.getValue("" + "map0-" + l2 + "-f");
-					s6 = "" + s6 + this.tdb.getValue("" + "map1-" + l2 + "-f");
-					s6 = "" + s6 + this.tdb.getValue("" + "map2-" + l2 + "-f");
-					as[l2 + 10] = s6;
+				for (let i2 = 0; i2 < this.mapHeight; i2++) {
+					let s = `.${this.tdb.getValue(`map0-${i2}-f`)}`;
+					s += this.tdb.getValue(`map1-${i2}-f`);
+					s += this.tdb.getValue(`map2-${i2}-f`);
+					as[i2 + 10] = s;
 					if (this.gg.layer_mode == 2) {
-						var s7 = "" + "00" + this.tdb.getValue("" + "layer0-" + l2 + "-f");
-						s7 = "" + s7 + this.tdb.getValue("" + "layer1-" + l2 + "-f");
-						s7 = "" + s7 + this.tdb.getValue("" + "layer2-" + l2 + "-f");
-						as1[l2 + 10] = s7;
+						let s1 = `00${this.tdb.getValue(`layer0-${i2}-f`)}`;
+						s1 += this.tdb.getValue(`layer1-${i2}-f`);
+						s1 += this.tdb.getValue(`layer2-${i2}-f`);
+						as1[i2 + 10] = s1;
 					}
 				}
 				break;
@@ -4910,10 +4584,9 @@ MainProgram.prototype.mapsMakeStageData = function(
 		this.maps.map_bg[c2][l3] = 21;
 	}
 
-	this.ochiru_y = this.maps.wy_max + 320;
-	if (this.view_move_type == 2) this.maps.wx = this.co_j.x - 384;
-	else this.maps.wx = this.co_j.x - 96;
-	this.maps.wy = this.co_j.y - 176;
+	this.ochiru_y = this.maps.wy_max + this.gg.di.height;
+	this.maps.wx = this.co_j.x - (this.view_move_type === 2 ? this.maps.my_wx_max : this.maps.my_wx_mini);
+	this.maps.wy = this.co_j.y - this.maps.my_wy_max;
 	if (this.maps.wx < this.maps.wx_mini) this.maps.wx = this.maps.wx_mini;
 	else if (this.maps.wx > this.maps.wx_max) this.maps.wx = this.maps.wx_max;
 	if (this.maps.wy < this.maps.wy_mini) this.maps.wy = this.maps.wy_mini;
@@ -5010,7 +4683,7 @@ MainProgram.prototype.readCustomParts = function(customParts) {
  * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap}
  */
 MainProgram.prototype.setAthleticOnMap = function(i, j, k) {
-	var word0 = -1;
+	let word0 = -1;
 	if (this.maps.map_bg[j - 1][k] == 4) word0 = 4;
 	if (i == 2) this.aSet(j * 32, k * 32, 500, j * 32);
 	else if (i == 3) this.aSet(j * 32, k * 32, 510, j * 32);
@@ -5503,8 +5176,8 @@ MainProgram.prototype.setAthleticOnMap = function(i, j, k) {
 	else if (i == 255) this.aSet(j * 32, k * 32, 4910, j * 32);
 	else if (i == 256) this.aSet(j * 32, k * 32, 5200, j * 32);
 	else if (i == 257) this.aSet(j * 32, k * 32, 5210, j * 32);
-	else if (i == 258) this.tSet(j * 32, k * 32, 1190, j * 32 - 512 - 32 - 32);
-	else if (i == 259) this.tSet(j * 32, k * 32, 1191, j * 32 - 512 - 32 - 32);
+	else if (i == 258) this.tSet(j * 32, k * 32, 1190, j * 32 - this.gg.di.width - 32 - 32);
+	else if (i == 259) this.tSet(j * 32, k * 32, 1191, j * 32 - this.gg.di.width - 32 - 32);
 	else if (i == 260) {
 		this.aSet(j * 32, k * 32, 5100, j * 32);
 		word0 = 31;
@@ -5567,6 +5240,39 @@ MainProgram.prototype.drawGamescreenUgokuyuka = function() {
 };
 
 /**
+ * 水中にいるときの泡を表示します
+ *
+ * * 0: jM100で読み込むとき
+ * * 1: jM100stgで読み込むとき
+ * * 2: jMoveで読み込むとき
+ *
+ * @param {number} BGCode 自分の中心のマップコード
+ * @param {number} mode
+ */
+MainProgram.prototype.AwaMove = function(BGCode, mode) {
+	if (
+		BGCode == 4 ||
+		((BGCode == 8 || BGCode == 9) &&
+			this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][
+				rightShiftIgnoreSign(this.co_j.y + 15, 5)
+			] == 4) ||
+		(mode !== 2 &&
+			BGCode >= 15 &&
+			BGCode <= 19 &&
+			this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][
+				rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1
+			] == 4)
+	) {
+		this.j_mizu_f = true;
+		if (mode === 0) this.j_djump_kf = true; // 大ジャンプのフラグ削除
+		if (mode !== 1) this.j_jet_c = 0; // ジェットの減少を停止
+		this.j_mizu_awa_c++;
+		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
+		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
+	}
+};
+
+/**
  * 毎フレームの主人公の処理のうち、CharactorObject.cの値が100のときの処理を行います
  */
 MainProgram.prototype.jM100 = function() {
@@ -5576,38 +5282,7 @@ MainProgram.prototype.jM100 = function() {
 	var flag21 = false;
 	this.j_mizu_f = false;
 	var l29 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
-	if (l29 == 4) {
-		this.j_mizu_f = true;
-		this.j_djump_kf = true;
-		this.j_jet_c = 0;
-		this.j_mizu_awa_c++;
-		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-	} else if (l29 == 8 || l29 == 9) {
-		if (
-			this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][
-				rightShiftIgnoreSign(this.co_j.y + 15, 5)
-			] == 4
-		) {
-			this.j_mizu_f = true;
-			this.j_djump_kf = true;
-			this.j_jet_c = 0;
-			this.j_mizu_awa_c++;
-			if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-			else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-		}
-	} else if (
-		l29 >= 15 &&
-		l29 <= 19 &&
-		this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1] == 4
-	) {
-		this.j_mizu_f = true;
-		this.j_djump_kf = true;
-		this.j_jet_c = 0;
-		this.j_mizu_awa_c++;
-		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-	}
+	this.AwaMove(l29, 0);
 	if (this.jst_auto_right > 0)
 		if (this.jst_auto_right == 1) {
 			//特技 ひたすら右に歩く の状態
@@ -5883,6 +5558,7 @@ MainProgram.prototype.jM100 = function() {
 		}
 	}
 	if (this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) {
+		// ジャンプできない
 		if (this.ana_kazu > 0) {
 			var l5 = 0;
 			do {
@@ -5941,6 +5617,7 @@ MainProgram.prototype.jM100 = function() {
 			}
 	}
 	if (this.j_hashigo_f) {
+		// ハシゴにつかまっている
 		this.j_djump_kf = true;
 		if (this.gk.left_f) this.co_j.muki = 0;
 		else if (this.gk.right_f) this.co_j.muki = 1;
@@ -5987,10 +5664,12 @@ MainProgram.prototype.jM100 = function() {
 			this.j_hashigo_f = true;
 		}
 	} else if (this.co_j.jimen_f) {
+		// 地面に接している
 		this.j_djump_kf = true;
 		this.j_zan_f = false;
 		this.j_jet_c = 0;
 		if (this.gk.left_f && (this.j_cannon_c <= 0 || (this.j_cannon_type != 3 && this.j_cannon_type != 4))) {
+			// ←を押している
 			if (flag2) {
 				this.co_j.vx -= 4;
 				if (this.gk.left_c == 1 && this.co_j.vx > 30) this.gs.rsAddSound(5);
@@ -5999,6 +5678,7 @@ MainProgram.prototype.jM100 = function() {
 				if (this.gk.left_c == 1 && this.co_j.vx > 60) this.gs.rsAddSound(5);
 			}
 			if (this.j_hashiru_f) {
+				// 走っている
 				if (!this.j_mizu_f) {
 					if (this.jst_fast_run == 1) {
 						if (this.co_j.vx < -180) this.co_j.vx = -180;
@@ -6027,6 +5707,7 @@ MainProgram.prototype.jM100 = function() {
 			}
 			this.co_j.muki = 0;
 		} else if (this.gk.right_f && (this.j_cannon_c <= 0 || (this.j_cannon_type != 3 && this.j_cannon_type != 4))) {
+			// →を押している
 			if (flag2) {
 				this.co_j.vx += 4;
 				if (this.gk.right_c == 1 && this.co_j.vx < -30) this.gs.rsAddSound(5);
@@ -6035,6 +5716,7 @@ MainProgram.prototype.jM100 = function() {
 				if (this.gk.right_c == 1 && this.co_j.vx < -60) this.gs.rsAddSound(5);
 			}
 			if (this.j_hashiru_f) {
+				// 走っている
 				if (!this.j_mizu_f) {
 					if (this.jst_fast_run == 1) {
 						if (this.co_j.vx > 180) this.co_j.vx = 180;
@@ -6094,6 +5776,7 @@ MainProgram.prototype.jM100 = function() {
 			this.co_j.ac = 0;
 		}
 	} else {
+		// 空中にいる
 		if ((this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) && !this.j_mizu_f) {
 			if (this.co_j.vy < 0) {
 				if (this.co_j.vx < 0) this.co_j.vx = -30;
@@ -6174,6 +5857,7 @@ MainProgram.prototype.jM100 = function() {
 			}
 		}
 		if (this.j_mizu_f) {
+			// 水中にいる
 			if (this.j_mizu_ac > 1) this.co_j.pt = 84;
 			else this.co_j.pt = 83;
 		} else if (this.j_jump_type == 0) {
@@ -6199,6 +5883,7 @@ MainProgram.prototype.jM100 = function() {
 	}
 	if (this.j_cannon_c > 0)
 		if (this.j_cannon_type == 3) {
+			// サイコクラッシャーアタック
 			this.co_j.pt = 1400;
 			if (this.j_cannon_c <= 5) {
 				this.co_j.pt = 102;
@@ -6206,6 +5891,7 @@ MainProgram.prototype.jM100 = function() {
 				if (this.co_j.jimen_f) this.co_j.pt = 100;
 			}
 		} else if (this.j_cannon_type == 4) {
+			// ロケット頭突き
 			this.co_j.pt = 84;
 			if (this.j_cannon_c <= 5) {
 				this.co_j.pt = 102;
@@ -8559,6 +8245,7 @@ MainProgram.prototype.jM100 = function() {
 			}
 	}
 	if (this.j_tail_ac >= 1) {
+		// しっぽ
 		this.j_zan_f = false;
 		this.j_tail_ac++;
 		if (this.j_tail_ac <= 4) {
@@ -8786,7 +8473,7 @@ MainProgram.prototype.jM100 = function() {
 		}
 	l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5)];
 	switch (l29) {
-		case 9:
+		case 9: // コインゲット
 			if (
 				this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][
 					rightShiftIgnoreSign(this.co_j.y + 15, 5)
@@ -8817,7 +8504,7 @@ MainProgram.prototype.jM100 = function() {
 			}
 			break;
 
-		case 8:
+		case 8: // 人面星ゲット
 			if ((this.clear_type != 2 && this.clear_type != 3) || this.coin_kazu <= 0) {
 				if (
 					this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][
@@ -8844,12 +8531,8 @@ MainProgram.prototype.jM100 = function() {
 			}
 			break;
 
-		case 5:
-			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
-			this.jShinu(1);
-			break;
-
-		case 6:
+		case 5: // 上向きのトゲに当たる
+		case 6: // 下向きのトゲに当たる
 			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 			this.jShinu(1);
 			break;
@@ -8873,39 +8556,14 @@ MainProgram.prototype.jM100 = function() {
 
 /**
  * 毎フレームの主人公の処理のうち、CharactorObject.cの値が100のときの処理を行います
- * 主人公がシューティングモードの特技を持っている場合の処理です
+ * 主人公がシューティングモードまたは４方向移動の特技を持っている場合の処理です
  */
 MainProgram.prototype.jM100stg = function() {
 	var flag2 = false;
 	this.j_zan_cf = false;
 	this.j_mizu_f = false;
 	var i7 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
-	if (i7 == 4) {
-		this.j_mizu_f = true;
-		this.j_mizu_awa_c++;
-		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-	} else if (i7 == 8 || i7 == 9) {
-		if (
-			this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][
-				rightShiftIgnoreSign(this.co_j.y + 15, 5)
-			] == 4
-		) {
-			this.j_mizu_f = true;
-			this.j_mizu_awa_c++;
-			if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-			else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-		}
-	} else if (
-		i7 >= 15 &&
-		i7 <= 19 &&
-		this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][rightShiftIgnoreSign(this.co_j.y + 15, 5) - 1] == 4
-	) {
-		this.j_mizu_f = true;
-		this.j_mizu_awa_c++;
-		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-	}
+	this.AwaMove(i7, 1);
 	if (this.gk.tr1_f) {
 		if (this.tr1_c < 14) this.tr1_c++;
 		if (this.j_tokugi == 14 && this.tr1_c >= 14) this.tr1_c = 1;
@@ -9433,7 +9091,8 @@ MainProgram.prototype.jM100stg = function() {
 			this.co_j.vy = 0;
 			i2 = rightShiftIgnoreSign(this.co_j.y + 31, 5);
 		}
-		if (this.co_j.y > this.maps.wy_max + 320 - 32) this.co_j.y = this.maps.wy_max + 320 - 32;
+		if (this.co_j.y > this.maps.wy_max + this.gg.di.height - 32)
+			this.co_j.y = this.maps.wy_max + this.gg.di.height - 32;
 		if (!this.j_mizu_f) {
 			var i6 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
 			if (i6 == 4) {
@@ -9700,10 +9359,6 @@ MainProgram.prototype.jM100stg = function() {
 			break;
 
 		case 5:
-			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
-			this.jShinu(1);
-			break;
-
 		case 6:
 			this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
 			this.jShinu(1);
@@ -9725,17 +9380,10 @@ MainProgram.prototype.jM100stg = function() {
 	}
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
-	if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
-		if (this.co_j.wx < 176) this.maps.wx = this.co_j.x - 176;
-		else if (this.co_j.wx > 304) this.maps.wx = this.co_j.x - 304;
-		if (this.co_j.wy < 112) this.maps.wy = this.co_j.y - 112;
-		else if (this.co_j.wy > 176) this.maps.wy = this.co_j.y - 176;
-	} else {
-		if (this.co_j.wx < 96) this.maps.wx = this.co_j.x - 96;
-		else if (this.co_j.wx > 224) this.maps.wx = this.co_j.x - 224;
-		if (this.co_j.wy < 78) this.maps.wy = this.co_j.y - 78;
-		else if (this.co_j.wy > 176) this.maps.wy = this.co_j.y - 176;
-	}
+	if (this.co_j.wx < this.maps.my_wx_mini) this.maps.wx = this.co_j.x - this.maps.my_wx_mini;
+	else if (this.co_j.wx > this.maps.my_wx_max) this.maps.wx = this.co_j.x - this.maps.my_wx_max;
+	if (this.co_j.wy < this.maps.my_wy_mini) this.maps.wy = this.co_j.y - this.maps.my_wy_mini;
+	else if (this.co_j.wy > this.maps.my_wy_max) this.maps.wy = this.co_j.y - this.maps.my_wy_max;
 	if (this.maps.wx < this.maps.wx_mini) this.maps.wx = this.maps.wx_mini;
 	else if (this.maps.wx > this.maps.wx_max) this.maps.wx = this.maps.wx_max;
 	if (this.maps.wy < this.maps.wy_mini) this.maps.wy = this.maps.wy_mini;
@@ -9762,22 +9410,7 @@ MainProgram.prototype.jM100stg = function() {
 MainProgram.prototype.jMove = function() {
 	this.j_mizu_f = false;
 	var j7 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
-	if (j7 == 4) {
-		this.j_mizu_f = true;
-		this.j_jet_c = 0;
-		this.j_mizu_awa_c++;
-		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-	} else if (
-		(j7 == 8 || j7 == 9) &&
-		this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5) - 1][rightShiftIgnoreSign(this.co_j.y + 15, 5)] == 4
-	) {
-		this.j_mizu_f = true;
-		this.j_jet_c = 0;
-		this.j_mizu_awa_c++;
-		if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
-		else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-	}
+	this.AwaMove(j7, 2);
 	if (this.jst_auto_right > 0)
 		if (this.jst_auto_right == 1) {
 			this.gk.right_f = true;
@@ -10002,11 +9635,6 @@ MainProgram.prototype.jMove = function() {
 				break;
 
 			case 5:
-				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
-				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
-				this.jShinu(1);
-				break;
-
 			case 6:
 				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
@@ -10151,11 +9779,6 @@ MainProgram.prototype.jMove = function() {
 				break;
 
 			case 5:
-				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
-				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
-				this.jShinu(1);
-				break;
-
 			case 6:
 				this.co_j.x = rightShiftIgnoreSign(this.co_j.x + 15, 5) * 32;
 				this.co_j.y = rightShiftIgnoreSign(this.co_j.y + 15, 5) * 32;
@@ -10199,10 +9822,10 @@ MainProgram.prototype.jMove = function() {
 			this.co_j.pt = 112;
 			this.co_j.muki = 0;
 		}
-		if (this.co_j.wy >= 320) {
+		if (this.co_j.wy >= this.gg.di.height) {
 			this.co_j.c = 210;
 			this.co_j.c1 = 0;
-			this.co_j.y = this.maps.wy + 320 + 32;
+			this.co_j.y = this.maps.wy + this.gg.di.height + 32;
 			this.co_j.pt = 0;
 		}
 	} else if (this.co_j.c == 210) {
@@ -10219,17 +9842,10 @@ MainProgram.prototype.jMove = function() {
 				else this.ml_mode = 90;
 			}
 		}
-	} else if (this.co_j.c == 220) {
+	} else if (this.co_j.c == 220 || this.co_j.c == 230) {
+		if (this.co_j.c == 220) this.co_j.pt = 114;
 		// 上から潰れて死亡
-		this.co_j.pt = 114;
-		this.co_j.c1++;
-		if (this.co_j.c1 >= 25) {
-			this.co_j.c = 210;
-			this.co_j.c1 = 0;
-		}
-	} else if (this.co_j.c == 230) {
-		// 横から潰れて死亡
-		this.co_j.pt = 115;
+		else if (this.co_j.c == 230) this.co_j.pt = 115; // 横から潰れて死亡
 		this.co_j.c1++;
 		if (this.co_j.c1 >= 25) {
 			this.co_j.c = 210;
@@ -10262,10 +9878,10 @@ MainProgram.prototype.jMove = function() {
 			this.co_j.pt = 112;
 			this.co_j.muki = 0;
 		}
-		if (this.co_j.wy >= 320) {
+		if (this.co_j.wy >= this.gg.di.height) {
 			this.co_j.c = 210;
 			this.co_j.c1 = 0;
-			this.co_j.y = this.maps.wy + 320 + 32;
+			this.co_j.y = this.maps.wy + this.gg.di.height + 32;
 			this.co_j.pt = 0;
 		}
 	} else if (this.co_j.c == 250) {
@@ -10287,7 +9903,7 @@ MainProgram.prototype.jMove = function() {
 			this.co_j.muki = 0;
 			this.co_j.c = 210;
 			this.co_j.c1 = 0;
-			this.co_j.y = this.maps.wy + 320 + 32;
+			this.co_j.y = this.maps.wy + this.gg.di.height + 32;
 			this.co_j.pt = 0;
 		}
 		this.co_j.wx = this.co_j.x - this.maps.wx;
@@ -10311,6 +9927,7 @@ MainProgram.prototype.jMove = function() {
 		if (this.stage_cc <= 0) {
 			this.co_j.c1++;
 			if (this.dokan_mode == 2 || this.co_j.c2 >= 100) {
+				// ワープ土管
 				if (this.co_j.c1 >= 10) {
 					this.co_j.c = 320;
 					this.co_j.c1 = 42;
@@ -10404,13 +10021,8 @@ MainProgram.prototype.jMove = function() {
 					this.moveViewPosition();
 				}
 			} else if (this.co_j.c1 == 10) {
-				var s;
-				if (this.co_j.c2 == 1) s = this.tdb.getValue("url2");
-				else if (this.co_j.c2 == 2) s = this.tdb.getValue("url3");
-				else if (this.co_j.c2 == 3) s = this.tdb.getValue("url4");
-				else s = this.tdb.getValue("url1");
-
-				location.href = s;
+				// リンク土管
+				location.href = this.tdb.getValue(`url${this.co_j.c2 + 1}`);
 			} else if (this.co_j.c1 > 80) this.ml_mode = 50;
 		}
 	} else if (this.co_j.c == 320) {
@@ -10563,61 +10175,41 @@ MainProgram.prototype.jMove = function() {
 					this.co_a[this.j_rope_id].c3 == 2 ||
 					this.co_a[this.j_rope_id].c3 == 4
 				) {
-					if (this.view_move_type == 2) {
-						if (this.co_j.wx > 256) {
-							this.co_j.wx -= 6;
-							if (this.co_j.wx < 256) this.co_j.wx = 256;
-							this.maps.wx = this.co_j.x - this.co_j.wx;
-						} else if (this.co_j.wx < 256) {
-							this.co_j.wx += 6;
-							if (this.co_j.wx > 256) this.co_j.wx = 256;
-							this.maps.wx = this.co_j.x - this.co_j.wx;
-						}
-					} else if (this.co_j.wx > 96) {
+					if (this.co_j.wx > this.maps.my_wx_mini) {
 						this.co_j.wx -= 6;
-						if (this.co_j.wx < 96) this.co_j.wx = 96;
+						if (this.co_j.wx < this.maps.my_wx_mini) this.co_j.wx = this.maps.my_wx_mini;
 						this.maps.wx = this.co_j.x - this.co_j.wx;
-					} else if (this.co_j.wx < 96) {
+					} else if (this.co_j.wx < this.maps.my_wx_mini) {
 						this.co_j.wx += 6;
-						if (this.co_j.wx > 96) this.co_j.wx = 96;
+						if (this.co_j.wx > this.maps.my_wx_mini) this.co_j.wx = this.maps.my_wx_mini;
 						this.maps.wx = this.co_j.x - this.co_j.wx;
 					}
-				} else if (this.view_move_type == 2) {
-					if (this.co_j.wx > 384) {
-						this.co_j.wx -= 6;
-						if (this.co_j.wx < 384) this.co_j.wx = 384;
-						this.maps.wx = this.co_j.x - this.co_j.wx;
-					} else if (this.co_j.wx < 384) {
-						this.co_j.wx += 6;
-						if (this.co_j.wx > 384) this.co_j.wx = 384;
-						this.maps.wx = this.co_j.x - this.co_j.wx;
-					}
-				} else if (this.co_j.wx < 224) {
+				} else if (this.co_j.wx < this.maps.my_wx_max) {
 					this.co_j.wx += 6;
-					if (this.co_j.wx > 224) this.co_j.wx = 224;
+					if (this.co_j.wx > this.maps.my_wx_max) this.co_j.wx = this.maps.my_wx_max;
 					this.maps.wx = this.co_j.x - this.co_j.wx;
-				} else if (this.co_j.wx > 224) {
+				} else if (this.co_j.wx > this.maps.my_wx_max) {
 					this.co_j.wx -= 6;
-					if (this.co_j.wx < 224) this.co_j.wx = 224;
+					if (this.co_j.wx < this.maps.my_wx_max) this.co_j.wx = this.maps.my_wx_max;
 					this.maps.wx = this.co_j.x - this.co_j.wx;
 				}
 				if (this.co_a[this.j_rope_id].c3 == 2) {
-					if (this.co_j.wy > 78) {
+					if (this.co_j.wy > this.maps.my_wy_mini) {
 						this.co_j.wy -= 6;
-						if (this.co_j.wy < 78) this.co_j.wy = 78;
+						if (this.co_j.wy < this.maps.my_wy_mini) this.co_j.wy = this.maps.my_wy_mini;
 						this.maps.wy = this.co_j.y - this.co_j.wy;
-					} else if (this.co_j.wy < 78) {
+					} else if (this.co_j.wy < this.maps.my_wy_mini) {
 						this.co_j.wy += 6;
-						if (this.co_j.wy > 78) this.co_j.wy = 78;
+						if (this.co_j.wy > this.maps.my_wy_mini) this.co_j.wy = this.maps.my_wy_mini;
 						this.maps.wy = this.co_j.y - this.co_j.wy;
 					}
-				} else if (this.co_j.wy < 176) {
+				} else if (this.co_j.wy < this.maps.my_wy_max) {
 					this.co_j.wy += 6;
-					if (this.co_j.wy > 176) this.co_j.wy = 176;
+					if (this.co_j.wy > this.maps.my_wy_max) this.co_j.wy = this.maps.my_wy_max;
 					this.maps.wy = this.co_j.y - this.co_j.wy;
-				} else if (this.co_j.wy > 176) {
+				} else if (this.co_j.wy > this.maps.my_wy_max) {
 					this.co_j.wy -= 6;
-					if (this.co_j.wy < 176) this.co_j.wy = 176;
+					if (this.co_j.wy < this.maps.my_wy_max) this.co_j.wy = this.maps.my_wy_max;
 					this.maps.wy = this.co_j.y - this.co_j.wy;
 				}
 			}
@@ -10637,22 +10229,12 @@ MainProgram.prototype.jMove = function() {
 MainProgram.prototype.moveViewPosition = function() {
 	this.co_j.wx = this.co_j.x - this.maps.wx;
 	this.co_j.wy = this.co_j.y - this.maps.wy;
-	if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
-		if (this.co_j.wx < 176) this.maps.wx = this.co_j.x - 176;
-		else if (this.co_j.wx > 304) this.maps.wx = this.co_j.x - 304;
-		if (this.co_j.wy < 112) this.maps.wy = this.co_j.y - 112;
-		else if (this.co_j.wy > 176) this.maps.wy = this.co_j.y - 176;
-	} else if (this.view_move_type == 2) {
-		if (this.co_j.wx < 256) this.maps.wx = this.co_j.x - 256;
-		else if (this.co_j.wx > 384) this.maps.wx = this.co_j.x - 384;
-		if (this.co_j.wy < 78) this.maps.wy = this.co_j.y - 78;
-		else if (this.co_j.wy > 176) this.maps.wy = this.co_j.y - 176;
-	} else {
-		if (this.co_j.wx < 96) this.maps.wx = this.co_j.x - 96;
-		else if (this.co_j.wx > 224) this.maps.wx = this.co_j.x - 224;
-		if (this.co_j.wy < 78) this.maps.wy = this.co_j.y - 78;
-		else if (this.co_j.wy > 176) this.maps.wy = this.co_j.y - 176;
-	}
+
+	if (this.co_j.wx < this.maps.my_wx_mini) this.maps.wx = this.co_j.x - this.maps.my_wx_mini;
+	else if (this.co_j.wx > this.maps.my_wx_max) this.maps.wx = this.co_j.x - this.maps.my_wx_max;
+	if (this.co_j.wy < this.maps.my_wy_mini) this.maps.wy = this.co_j.y - this.maps.my_wy_mini;
+	else if (this.co_j.wy > this.maps.my_wy_max) this.maps.wy = this.co_j.y - this.maps.my_wy_max;
+
 	if (this.maps.wx < this.maps.wx_mini) this.maps.wx = this.maps.wx_mini;
 	else if (this.maps.wx > this.maps.wx_max) this.maps.wx = this.maps.wx_max;
 	if (this.maps.wy < this.maps.wy_mini) this.maps.wy = this.maps.wy_mini;
@@ -10666,6 +10248,7 @@ MainProgram.prototype.moveViewPosition = function() {
  * * 2: 飛び上がって回転しながら死亡
  * * 3: 縦に潰れて死亡
  * * 4: 横に潰れて死亡
+ * * 5: 強制スクロールで画面外に出て死亡
  * @param {number} [type=1] 死因
  * @see {@link MasaoJSS#setMyMiss}
  */
@@ -10948,7 +10531,8 @@ MainProgram.prototype.getEnemyDefinition = function(code) {
 MainProgram.prototype.tMove = function() {
 	var flag = false;
 	for (var i = 0; i <= this.t_kazu; i++) {
-		if (this.co_t[i].c == 0 || (this.co_t[i].x < this.maps.wx - 512 && this.co_t[i].c < 1200)) continue;
+		if (this.co_t[i].c == 0 || (this.co_t[i].x < this.maps.wx - this.gg.di.width && this.co_t[i].c < 1200))
+			continue;
 		var characterobject = this.co_t[i];
 		if (characterobject.controller != null) {
 			// この敵の挙動を制御する関数がある
@@ -11001,7 +10585,7 @@ MainProgram.prototype.tMove = function() {
 				characterobject.vy += 5;
 				if (characterobject.vy > 25) characterobject.vy = 25;
 				i21 += characterobject.vy;
-				if (i21 > this.maps.wy + 320) {
+				if (i21 > this.maps.wy + this.gg.di.height) {
 					characterobject.c = 0;
 					this.addScore(10);
 				}
@@ -11013,7 +10597,7 @@ MainProgram.prototype.tMove = function() {
 				characterobject.vy += 5;
 				if (characterobject.vy > 25) characterobject.vy = 25;
 				i21 += characterobject.vy;
-				if (i21 > this.maps.wy + 320) {
+				if (i21 > this.maps.wy + this.gg.di.height) {
 					characterobject.c = 60;
 					characterobject.c1 = 0;
 				}
@@ -11056,9 +10640,10 @@ MainProgram.prototype.tMove = function() {
 					var j = 0;
 					do {
 						if (j > 15) break;
-						if (this.scroll_area == 2 || this.scroll_area == 4) l20 = 32 + this.ranInt(16) * 32;
+						if (this.scroll_area == 2 || this.scroll_area == 4)
+							l20 = 32 + this.ranInt(rounddown(this.gg.di.width / 32)) * 32;
 						else if (this.scroll_area == 3 || this.scroll_area == 5) {
-							l20 = 32 + this.ranInt(32) * 32;
+							l20 = 32 + this.ranInt(rounddown((this.gg.di.width * 2) / 32)) * 32;
 						} else {
 							l20 = (rightShiftIgnoreSign(this.co_j.x, 5) + this.ranInt(17) - 8) * 32;
 							if (l20 < 32) l20 = 32;
@@ -11144,6 +10729,7 @@ MainProgram.prototype.tMove = function() {
 				break;
 
 			case 850:
+				// ミズタロウ（シューティング）
 				characterobject.pt = 160;
 				characterobject.pth = 0;
 				if (characterobject.c1 <= 0) {
@@ -11179,15 +10765,16 @@ MainProgram.prototype.tMove = function() {
 						this.gs.rsAddSound(18);
 					}
 				} else {
-					if ((l20 += 6) - this.maps.wx >= 512) characterobject.c = 0;
+					if ((l20 += 6) - this.maps.wx >= this.gg.di.width) characterobject.c = 0;
 					characterobject.pt = 161 + this.g_ac;
 					characterobject.pth = 1;
 				}
 				break;
 
 			case 1002:
+				// タイキング（シューティング）
 				if ((l20 -= 3) <= this.maps.wx - 32) characterobject.c = 0;
-				if (l20 >= this.maps.wx + 64 + 24 && l20 <= this.maps.wx + 512 - 64) {
+				if (l20 >= this.maps.wx + 64 + 24 && l20 <= this.maps.wx + this.gg.di.width - 64) {
 					characterobject.c1++;
 					if (characterobject.c1 > 30) characterobject.c1 = 0;
 					if (characterobject.c1 == 1) this.mSet(l20, i21, 150);
@@ -11197,7 +10784,8 @@ MainProgram.prototype.tMove = function() {
 				break;
 
 			case 1003:
-				if (l20 >= this.maps.wx + 64 + 24 && l20 <= this.maps.wx + 512 - 64) {
+				// タイキング（４方向移動）
+				if (l20 >= this.maps.wx + 64 + 24 && l20 <= this.maps.wx + this.gg.di.width - 64) {
 					characterobject.c1++;
 					if (characterobject.c1 > 30) characterobject.c1 = 0;
 					if (characterobject.c1 == 1) this.mSet(l20, i21, 150);
@@ -11207,8 +10795,9 @@ MainProgram.prototype.tMove = function() {
 				break;
 
 			case 1102:
+				// クラゲッソ（シューティング）
 				if (l20 <= this.maps.wx - 32) characterobject.c = 0;
-				if (l20 >= this.maps.wx + 112 && l20 <= this.maps.wx + 512 - 64) {
+				if (l20 >= this.maps.wx + 112 && l20 <= this.maps.wx + this.gg.di.width - 64) {
 					characterobject.c1++;
 					if (characterobject.c1 > 50) characterobject.c1 = 0;
 					if (
@@ -11223,8 +10812,9 @@ MainProgram.prototype.tMove = function() {
 				break;
 
 			case 1103:
+				// クラゲッソ（４方向移動）
 				if (l20 <= this.maps.wx - 32) characterobject.c = 0;
-				if (l20 >= this.maps.wx + 112 && l20 <= this.maps.wx + 512 - 64) {
+				if (l20 >= this.maps.wx + 112 && l20 <= this.maps.wx + this.gg.di.width - 64) {
 					characterobject.c1++;
 					if (characterobject.c1 > 50) characterobject.c1 = 0;
 					if (characterobject.c1 == 1) {
@@ -11246,6 +10836,7 @@ MainProgram.prototype.tMove = function() {
 				break;
 
 			case 1300:
+				// ロードランナーで穴に落下中
 				if ((i21 += 4) % 32 == 0) characterobject.c = 1310;
 				break;
 		}
@@ -11492,7 +11083,7 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					}
 					break;
 
-				case 150:
+				case 150: // ヒノララシ シューティング時の電撃攻撃
 					var l1 = this.co_j.x - i;
 					var j2 = this.co_j.y - j;
 					var j1 = Math.floor(Math.sqrt(l1 * l1 + j2 * j2));
@@ -11595,83 +11186,83 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.vy = 0;
 					break;
 
-				case 2000:
+				case 2000: // ？ブロックから出てくるコイン
 					characterobject.c3 = j;
 					characterobject.vy = -210;
 					break;
 
-				case 2010:
+				case 2010: // ？ブロックから出てくるコイン 2枚目
 					characterobject.c = 2000;
 					characterobject.c3 = j - 64;
 					characterobject.vy = -280;
 					break;
 
-				case 2020:
+				case 2020: // ？ブロックから出てくるコイン 3枚目
 					characterobject.c = 2000;
 					characterobject.c3 = j - 32;
 					characterobject.vy = -250;
 					break;
 
-				case 2100:
+				case 2100: // アイテム（ファイヤーボール）
 					characterobject.c2 = 0;
 					break;
 
-				case 2110:
+				case 2110: // アイテム（バリア）
 					characterobject.c = 2100;
 					characterobject.c2 = 1;
 					break;
 
-				case 2120:
+				case 2120: // アイテム（タイム）
 					characterobject.c = 2100;
 					characterobject.c2 = 2;
 					break;
 
-				case 2130:
+				case 2130: // アイテム（ジェット）
 					characterobject.c = 2100;
 					characterobject.c2 = 3;
 					break;
 
-				case 2140:
+				case 2140: // アイテム（ヘルメット）
 					characterobject.c = 2100;
 					characterobject.c2 = 4;
 					break;
 
-				case 2150:
+				case 2150: // アイテム（しっぽ）
 					characterobject.c = 2100;
 					characterobject.c2 = 5;
 					break;
 
-				case 2160:
+				case 2160: // アイテム（ドリル）
 					characterobject.c = 2100;
 					characterobject.c2 = 6;
 					break;
 
-				case 2170:
+				case 2170: // アイテム（グレネード）
 					characterobject.c = 2100;
 					characterobject.c2 = 7;
 					break;
 
-				case 2171:
+				case 2171: // アイテム（グレネード5発）
 					characterobject.c = 2100;
 					characterobject.c2 = 15;
 					break;
 
-				case 2172:
+				case 2172: // アイテム（コンティニュー）
 					characterobject.c = 2100;
 					characterobject.c2 = 16;
 					break;
 
-				case 2180:
+				case 2180: // アイテム（1UP）
 					characterobject.c = 2100;
 					characterobject.c2 = 8;
 					break;
 
-				case 2181:
+				case 2181: // シューティングモードのアイテム1（？ブロック（コイン））
 					characterobject.c = 2100;
 					characterobject.c2 = 9;
 					break;
 
-				case 2182:
+				case 2182: // シューティングモードのアイテム2（？ブロック（コイン3枚））
 					characterobject.c = 2100;
 					characterobject.c2 = 10;
 					break;
@@ -11681,17 +11272,17 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.c2 = 11;
 					break;
 
-				case 2186:
+				case 2186: // アイテム（水平に飛ぶファイヤーボール）
 					characterobject.c = 2100;
 					characterobject.c2 = 12;
 					break;
 
-				case 2187:
+				case 2187: // アイテム（跳ねるファイヤーボール）
 					characterobject.c = 2100;
 					characterobject.c2 = 13;
 					break;
 
-				case 2188:
+				case 2188: // アイテム（ダブルファイヤーボール）
 					characterobject.c = 2100;
 					characterobject.c2 = 14;
 					break;
@@ -11725,26 +11316,31 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 			this.m_kazu++;
 			switch (k) {
 				case 75:
+					// ソーラービーム 左へ発射
 					characterobject.c2 = l;
 					characterobject.vy = 96;
 					break;
 
 				case 77:
+					// 破壊光線 左へ発射
 					characterobject.c2 = l;
 					characterobject.vy = 96;
 					break;
 
 				case 85:
+					// ソーラービーム 右へ発射
 					characterobject.c2 = l;
 					characterobject.vy = 96;
 					break;
 
 				case 87:
+					// 破壊光線 右へ発射
 					characterobject.c2 = l;
 					characterobject.vy = 96;
 					break;
 
 				case 500:
+					// 噴火
 					characterobject.x += characterobject.vx;
 					break;
 
@@ -11753,15 +11349,18 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 700:
+					// クラゲッソ バブル光線
 					characterobject.c2 = 0;
 					break;
 
 				case 710:
+					// カイオール バブル光線
 					characterobject.c = 700;
 					characterobject.c2 = 1;
 					break;
 
 				case 711:
+					// カイオール バブル光線回転連射
 					characterobject.c = 700;
 					characterobject.c2 = 1;
 					characterobject.x = i + l * 3;
@@ -11774,26 +11373,31 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 730:
+					// バブル光線3発
 					characterobject.c = 700;
 					characterobject.c2 = 3;
 					break;
 
 				case 731:
+					// はっぱカッター3発
 					characterobject.c = 700;
 					characterobject.c2 = 4;
 					break;
 
 				case 732:
+					// 水平水鉄砲
 					characterobject.c = 700;
 					characterobject.c2 = 5;
 					break;
 
 				case 733:
+					// 電撃3発
 					characterobject.c = 700;
 					characterobject.c2 = 6;
 					break;
 
 				case 740:
+					// がんせきほう または りゅうせいぐん
 					characterobject.x = characterobject.x + characterobject.vx * 2;
 					characterobject.y = characterobject.y + characterobject.vy * 2;
 					break;
@@ -11805,11 +11409,13 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 810:
+					// プラズマ砲
 					characterobject.c = 800;
 					characterobject.vy = 9999;
 					break;
 
 				case 900:
+					// バブル光線
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.c1 = 0;
@@ -11817,6 +11423,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 901:
+					// ボスのハリケンブラスト1
 					characterobject.c = 900;
 					characterobject.vx = i;
 					characterobject.vy = j;
@@ -11833,6 +11440,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 911:
+					// ボスのハリケンブラスト2
 					characterobject.c = 910;
 					characterobject.vx = i;
 					characterobject.vy = j;
@@ -11842,6 +11450,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 950:
+					// ハリケンブラスト1
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.c1 = 0;
@@ -11849,6 +11458,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 960:
+					// ハリケンブラスト2
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.c1 = 0;
@@ -11856,6 +11466,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 970:
+					// 左にうずしお
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.c1 = 10;
@@ -11863,6 +11474,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 					break;
 
 				case 980:
+					// 右にうずしお
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.c1 = 10;
@@ -11907,15 +11519,16 @@ MainProgram.prototype.mMove = function() {
 					characterobject.c = 0;
 				if (word0 == 15 && this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 15, 5)][j4 - 1] != 4)
 					characterobject.c = 0;
-				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512)
+				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + this.gg.di.width)
 					characterobject.c = 0;
-				if (characterobject.y <= this.maps.wy - 32 || characterobject.y >= this.maps.wy + 320)
+				if (characterobject.y <= this.maps.wy - 32 || characterobject.y >= this.maps.wy + this.gg.di.height)
 					characterobject.c = 0;
 				characterobject.pt = 85;
 				characterobject.pth = 0;
 				break;
 
 			case 65: // 爆発
+			case 610:
 				characterobject.c1++;
 				if (characterobject.c1 <= 3) characterobject.pt = 172;
 				else if (characterobject.c1 <= 6) characterobject.pt = 173;
@@ -11985,7 +11598,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 75:
+			case 75: // ソーラービーム 左へ発射　第一段階
 				characterobject.pt = 1200;
 				characterobject.pth = 0;
 				characterobject.vy -= 6;
@@ -12000,7 +11613,7 @@ MainProgram.prototype.mMove = function() {
 				if (characterobject.c2 >= 0 && this.co_t[characterobject.c2].c < 100) characterobject.c = 0;
 				break;
 
-			case 76:
+			case 76: // ソーラービーム 左へ発射　第二段階
 				characterobject.x -= 18;
 				if (characterobject.x < this.maps.wx - 32) characterobject.x = this.maps.wx - 32;
 				if (
@@ -12034,7 +11647,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 77:
+			case 77: // 破壊光線 左へ発射
 				characterobject.pt = 1220;
 				characterobject.pth = 0;
 				characterobject.vy -= 6;
@@ -12091,13 +11704,13 @@ MainProgram.prototype.mMove = function() {
 				characterobject.vy += 4;
 				if (characterobject.vy > 30) characterobject.vy = 30;
 				characterobject.y += characterobject.vy;
-				if (characterobject.y >= this.maps.wy + 320) characterobject.c = 0;
+				if (characterobject.y >= this.maps.wy + this.gg.di.height) characterobject.c = 0;
 				characterobject.pt = 136;
 				if (characterobject.vx < 0) characterobject.pth = 0;
 				else characterobject.pth = 1;
 				break;
 
-			case 85:
+			case 85: // ソーラービーム 右へ発射　第一段階
 				characterobject.pt = 1200;
 				characterobject.pth = 0;
 				characterobject.vy -= 6;
@@ -12112,9 +11725,10 @@ MainProgram.prototype.mMove = function() {
 				if (characterobject.c2 >= 0 && this.co_t[characterobject.c2].c < 100) characterobject.c = 0;
 				break;
 
-			case 86:
+			case 86: // ソーラービーム 右へ発射　第二段階
 				characterobject.x += 18;
-				if (characterobject.x > this.maps.wx + 512 + 16) characterobject.x = this.maps.wx + 512 + 16;
+				if (characterobject.x > this.maps.wx + this.gg.di.width + 16)
+					characterobject.x = this.maps.wx + this.gg.di.width + 16;
 				if (
 					this.maps.map_bg[rightShiftIgnoreSign(characterobject.x, 5)][
 						rightShiftIgnoreSign(characterobject.y + 15, 5)
@@ -12146,7 +11760,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 87:
+			case 87: // 破壊光線 右へ発射
 				characterobject.pt = 1220;
 				characterobject.pth = 0;
 				characterobject.vy -= 6;
@@ -12163,7 +11777,8 @@ MainProgram.prototype.mMove = function() {
 
 			case 88:
 				characterobject.x += 18;
-				if (characterobject.x > this.maps.wx + 512 + 16) characterobject.x = this.maps.wx + 512 + 16;
+				if (characterobject.x > this.maps.wx + this.gg.di.width + 16)
+					characterobject.x = this.maps.wx + this.gg.di.width + 16;
 				if (
 					this.maps.map_bg[rightShiftIgnoreSign(characterobject.x, 5)][
 						rightShiftIgnoreSign(characterobject.y + 15, 5)
@@ -12195,7 +11810,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 90:
+			case 90: // 水の波動
 				if (characterobject.c2 < 48) {
 					characterobject.c2 += 4;
 					if (characterobject.c2 >= 48) {
@@ -12217,12 +11832,12 @@ MainProgram.prototype.mMove = function() {
 					characterobject.y += characterobject.vy;
 					if (
 						characterobject.x <= this.maps.wx - 32 - 32 ||
-						characterobject.x >= this.maps.wx + 512 + 128 + 32
+						characterobject.x >= this.maps.wx + this.gg.di.width + 128 + 32
 					)
 						characterobject.c = 0;
 					else if (
 						characterobject.y <= this.maps.wy - 32 - 200 - 32 ||
-						characterobject.y >= this.maps.wy + 320 + 32
+						characterobject.y >= this.maps.wy + this.gg.di.height + 32
 					)
 						characterobject.c = 0;
 				}
@@ -12237,7 +11852,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pt = 1000;
 				break;
 
-			case 95:
+			case 95: // 水の波動 直進
 				if (characterobject.c2 < 64) {
 					characterobject.c2 += 4;
 					if (characterobject.c2 >= 64) characterobject.c2 = 64;
@@ -12246,12 +11861,12 @@ MainProgram.prototype.mMove = function() {
 					characterobject.y += characterobject.vy;
 					if (
 						characterobject.x <= this.maps.wx - 32 - 64 ||
-						characterobject.x >= this.maps.wx + 512 + 128 + 64
+						characterobject.x >= this.maps.wx + this.gg.di.width + 128 + 64
 					)
 						characterobject.c = 0;
 					else if (
 						characterobject.y <= this.maps.wy - 32 - 200 - 64 ||
-						characterobject.y >= this.maps.wy + 320 + 64
+						characterobject.y >= this.maps.wy + this.gg.di.height + 64
 					)
 						characterobject.c = 0;
 				}
@@ -12277,9 +11892,15 @@ MainProgram.prototype.mMove = function() {
 					characterobject.c = 0;
 				if (this.dengeki_mkf != 2 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
 					characterobject.c = 0;
-				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 128)
+				if (
+					characterobject.x <= this.maps.wx - 32 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width + 128
+				)
 					characterobject.c = 0;
-				else if (characterobject.y <= this.maps.wy - 32 - 200 || characterobject.y >= this.maps.wy + 320)
+				else if (
+					characterobject.y <= this.maps.wy - 32 - 200 ||
+					characterobject.y >= this.maps.wy + this.gg.di.height
+				)
 					characterobject.c = 0;
 				if (this.g_c1 == 0) {
 					characterobject.pt = 120;
@@ -12290,7 +11911,7 @@ MainProgram.prototype.mMove = function() {
 				}
 				break;
 
-			case 150: //電撃 上記とブロックに接触した時の消滅判定が異なる
+			case 150: // ヒノララシ シューティング時の電撃攻撃
 				characterobject.x += characterobject.vx;
 				characterobject.y += characterobject.vy;
 				if (
@@ -12301,9 +11922,15 @@ MainProgram.prototype.mMove = function() {
 					characterobject.c = 0;
 				if (this.dengeki_mkf != 2 && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
 					characterobject.c = 0;
-				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 128)
+				if (
+					characterobject.x <= this.maps.wx - 32 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width + 128
+				)
 					characterobject.c = 0;
-				else if (characterobject.y <= this.maps.wy - 32 - 200 || characterobject.y >= this.maps.wy + 320)
+				else if (
+					characterobject.y <= this.maps.wy - 32 - 200 ||
+					characterobject.y >= this.maps.wy + this.gg.di.height
+				)
 					characterobject.c = 0;
 				if (this.g_c1 == 0) {
 					characterobject.pt = 120;
@@ -12321,7 +11948,7 @@ MainProgram.prototype.mMove = function() {
 				var j = characterobject.vy;
 				if (j < -18) j = -18;
 				characterobject.y += j;
-				if (characterobject.y >= this.maps.wy + 320) characterobject.c = 0;
+				if (characterobject.y >= this.maps.wy + this.gg.di.height) characterobject.c = 0;
 				if (characterobject.c2 == 1) {
 					var l3 = rightShiftIgnoreSign(characterobject.x + 15, 5);
 					if (
@@ -12358,7 +11985,10 @@ MainProgram.prototype.mMove = function() {
 					this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 23, 5)][k5] >= 20
 				)
 					characterobject.c = 0;
-				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 128)
+				if (
+					characterobject.x <= this.maps.wx - 32 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width + 128
+				)
 					characterobject.c = 0;
 				if (this.g_c1 == 0) characterobject.pt = 126;
 				else characterobject.pt = 127;
@@ -12366,12 +11996,12 @@ MainProgram.prototype.mMove = function() {
 				else characterobject.pth = 1;
 				break;
 
-			case 400: //みずでっぽう
+			case 400: // みずでっぽう
 				characterobject.x += rounddown(characterobject.vx / 10);
 				characterobject.vy += 25;
 				if (characterobject.vy > 180) characterobject.vy = 180;
 				characterobject.y += rounddown(characterobject.vy / 10);
-				if (characterobject.y >= this.maps.wy + 320) characterobject.c = 0;
+				if (characterobject.y >= this.maps.wy + this.gg.di.height) characterobject.c = 0;
 				var i4 = rightShiftIgnoreSign(characterobject.x + 15, 5);
 				if (this.maps.map_bg[i4][rightShiftIgnoreSign(characterobject.y + 15, 5)] >= 20) characterobject.c = 0;
 				if (this.g_c1 == 0) characterobject.pt = 128;
@@ -12390,7 +12020,7 @@ MainProgram.prototype.mMove = function() {
 				var k = characterobject.vy;
 				if (k < -16) k = -16;
 				characterobject.y += k;
-				if (characterobject.y >= this.maps.wy + 320) characterobject.c = 0;
+				if (characterobject.y >= this.maps.wy + this.gg.di.height) characterobject.c = 0;
 				characterobject.pt = 139;
 				characterobject.pth = 0;
 				break;
@@ -12427,9 +12057,15 @@ MainProgram.prototype.mMove = function() {
 					characterobject.y = rightShiftIgnoreSign(characterobject.y + 15, 5) * 32 - 16;
 					this.gs.rsAddSound(19);
 				}
-				if (characterobject.x <= this.maps.wx - 32 - 64 || characterobject.x >= this.maps.wx + 512 + 64)
+				if (
+					characterobject.x <= this.maps.wx - 32 - 64 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width + 64
+				)
 					characterobject.c = 0;
-				else if (characterobject.y <= this.maps.wy - 32 - 200 || characterobject.y >= this.maps.wy + 320)
+				else if (
+					characterobject.y <= this.maps.wy - 32 - 200 ||
+					characterobject.y >= this.maps.wy + this.gg.di.height
+				)
 					characterobject.c = 0;
 				if (characterobject.vx > 28) {
 					characterobject.pt = 171;
@@ -12443,25 +12079,15 @@ MainProgram.prototype.mMove = function() {
 				}
 				break;
 
-			case 610: // 爆発 case 65 と全く同じ
-				characterobject.c1++;
-				if (characterobject.c1 <= 3) characterobject.pt = 172;
-				else if (characterobject.c1 <= 6) characterobject.pt = 173;
-				else if (characterobject.c1 <= 9) {
-					characterobject.pt = 174;
-				} else {
-					characterobject.c = 0;
-					characterobject.pt = 198;
-				}
-				characterobject.pth = 0;
-				break;
-
-			case 700:
+			case 700: // クラゲッソ バブル光線
 				characterobject.x += characterobject.vx;
 				characterobject.y += characterobject.vy;
-				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 32)
+				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + this.gg.di.width + 32)
 					characterobject.c = 0;
-				else if (characterobject.y <= this.maps.wy - 64 || characterobject.y >= this.maps.wy + 320 + 64)
+				else if (
+					characterobject.y <= this.maps.wy - 64 ||
+					characterobject.y >= this.maps.wy + this.gg.di.height + 64
+				)
 					characterobject.c = 0;
 				var i1 = this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15);
 				if (characterobject.c2 == 0 && i1 >= 20) characterobject.c = 0;
@@ -12513,9 +12139,12 @@ MainProgram.prototype.mMove = function() {
 			case 740: // りゅうせいぐん
 				characterobject.x += characterobject.vx;
 				characterobject.y += characterobject.vy;
-				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 32)
+				if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + this.gg.di.width + 32)
 					characterobject.c = 0;
-				else if (characterobject.y <= this.maps.wy - 64 || characterobject.y >= this.maps.wy + 320 + 64)
+				else if (
+					characterobject.y <= this.maps.wy - 64 ||
+					characterobject.y >= this.maps.wy + this.gg.di.height + 64
+				)
 					characterobject.c = 0;
 				characterobject.pt = 139;
 				characterobject.pth = 0;
@@ -12524,7 +12153,10 @@ MainProgram.prototype.mMove = function() {
 			case 800: // グレネード
 				if (characterobject.vy == 9999) {
 					characterobject.x += characterobject.vx;
-					if (characterobject.x <= this.maps.wx - 16 || characterobject.x >= this.maps.wx + 512 - 16)
+					if (
+						characterobject.x <= this.maps.wx - 16 ||
+						characterobject.x >= this.maps.wx + this.gg.di.width - 16
+					)
 						characterobject.c = 0;
 					if (
 						this.maps.getBGCode(characterobject.x, characterobject.y + 15) >= 20 ||
@@ -12542,7 +12174,7 @@ MainProgram.prototype.mMove = function() {
 					characterobject.vy += 4;
 					if (characterobject.vy > 28) characterobject.vy = 28;
 					characterobject.y += characterobject.vy;
-					if (characterobject.y >= this.maps.wy + 320) characterobject.c = 0;
+					if (characterobject.y >= this.maps.wy + this.gg.di.height) characterobject.c = 0;
 					if (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 31) >= 20) {
 						characterobject.c = 70;
 						characterobject.y = rightShiftIgnoreSign(characterobject.y + 31, 5) * 32 - 16;
@@ -12607,7 +12239,7 @@ MainProgram.prototype.mMove = function() {
 				}
 				break;
 
-			case 950:
+			case 950: // ハリケンブラスト1
 				characterobject.c1 += 4;
 				if (characterobject.c1 < 128) characterobject.c2 += 3;
 				else if (characterobject.c1 < 192) characterobject.c2 += 3;
@@ -12628,7 +12260,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 960:
+			case 960: // ハリケンブラスト2
 				characterobject.c1 += 4;
 				if (characterobject.c1 < 128) characterobject.c2 -= 3;
 				else if (characterobject.c1 < 192) characterobject.c2 -= 3;
@@ -12688,7 +12320,7 @@ MainProgram.prototype.mMove = function() {
 					characterobject.c1 = 80;
 					characterobject.vx += 6;
 				}
-				if (characterobject.vx > this.maps.wx + 512 + 100) characterobject.c = 0;
+				if (characterobject.vx > this.maps.wx + this.gg.di.width + 100) characterobject.c = 0;
 				characterobject.x =
 					characterobject.vx +
 					rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
@@ -12711,7 +12343,7 @@ MainProgram.prototype.mMove = function() {
 					(this.scroll_area < 2 || this.scroll_area > 5) &&
 					this.j_tokugi != 14 &&
 					this.j_tokugi != 15 &&
-					(characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512)
+					(characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + this.gg.di.width)
 				)
 					characterobject.c = 0;
 				characterobject.pt = 90 + this.g_ac2;
@@ -12724,7 +12356,7 @@ MainProgram.prototype.mMove = function() {
 					this.j_tokugi != 14 &&
 					this.j_tokugi != 15 &&
 					characterobject.c2 != 11 &&
-					(characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512)
+					(characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + this.gg.di.width)
 				)
 					characterobject.c = 0;
 				characterobject.pt = 42 + characterobject.c2;
@@ -12740,11 +12372,13 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 2200: // 人面星
+			case 2200: // ボス撃破後の人面星
 				if (characterobject.x < this.maps.wx) characterobject.x = this.maps.wx;
-				else if (characterobject.x > this.maps.wx + 512 - 32) characterobject.x = this.maps.wx + 512 - 32;
+				else if (characterobject.x > this.maps.wx + this.gg.di.width - 32)
+					characterobject.x = this.maps.wx + this.gg.di.width - 32;
 				if (characterobject.y < this.maps.wy + 64) characterobject.y = this.maps.wy + 64;
-				else if (characterobject.y > this.maps.wy + 224) characterobject.y = this.maps.wy + 224;
+				else if (characterobject.y > this.maps.wy + this.gg.di.height - 96)
+					characterobject.y = this.maps.wy + this.gg.di.height - 96;
 				if (this.stage_max >= 2 && this.stage >= this.stage_max) {
 					// 複数ステージ制ではラストステージでミレニアム人面星に
 					if (this.g_ac2 == 0) characterobject.pt = 99;
@@ -13027,7 +12661,8 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 			characterobject.c2 = 0;
 			this.jm_kazu++;
 			switch (k) {
-				case 60:
+				case 60: // エネルギー砲 左に発射
+				case 65: // エネルギー砲 右に発射
 					characterobject.x = i + 16;
 					characterobject.y = j;
 					characterobject.vx = i + 16;
@@ -13036,16 +12671,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 65:
-					characterobject.x = i + 16;
-					characterobject.y = j;
-					characterobject.vx = i + 16;
-					characterobject.c4 = 8;
-					this.j_gr_kazu--;
-					this.gs.rsAddSound(23);
-					break;
-
-				case 100:
+				case 100: // ファイヤーボール 左に発射
 					characterobject.vx = rounddown(this.co_j.vx / 10) - 10;
 					characterobject.vy = -28;
 					if (Math.abs(characterobject.vx) < 2) characterobject.vx = -2;
@@ -13081,7 +12707,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 105:
+				case 105: // ファイヤーボール 右に発射
 					characterobject.vx = rounddown(this.co_j.vx / 10) + 10;
 					characterobject.vy = -28;
 					if (Math.abs(characterobject.vx) < 2) characterobject.vx = 2;
@@ -13117,7 +12743,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 110:
+				case 110: // ファイヤーボール ホーミングアミュレット 左に発射
 					characterobject.x = i;
 					characterobject.y = j;
 					characterobject.vx = -10;
@@ -13125,7 +12751,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 115:
+				case 115: // ファイヤーボール ホーミングアミュレット 右に発射
 					characterobject.c = 110;
 					characterobject.x = i;
 					characterobject.y = j;
@@ -13134,11 +12760,12 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 200:
+				case 200: // グレネード 左に発射
 					characterobject.vx = rounddown(this.co_j.vx / 10) - 10;
 					characterobject.vy = -35;
 					if (Math.abs(characterobject.vx) < 2) characterobject.vx = -2;
 					if (this.grenade_type == 5 || this.grenade_type == 6) {
+						// エネルギー砲
 						characterobject.y = j;
 						characterobject.vx = -20;
 						characterobject.vy = 0;
@@ -13147,7 +12774,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 205:
+				case 205: // グレネード 右に発射
 					characterobject.c = 200;
 					if (this.j_tokugi == 14) {
 						characterobject.vx = 10;
@@ -13158,6 +12785,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 						if (Math.abs(characterobject.vx) < 2) characterobject.vx = 2;
 					}
 					if (this.grenade_type == 5 || this.grenade_type == 6) {
+						// エネルギー砲
 						characterobject.y = j;
 						characterobject.vx = 20;
 						characterobject.vy = 0;
@@ -13166,7 +12794,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 1206:
+				case 1206: // ブロック１破壊砲 右に発射
 					characterobject.c = 200;
 					characterobject.c4 = 2;
 					characterobject.x = i + 16 - 10;
@@ -13177,7 +12805,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					this.gs.rsAddSound(23);
 					break;
 
-				case 1207:
+				case 1207: // ブロック１破壊砲 左に発射
 					characterobject.c = 200;
 					characterobject.c4 = 2;
 					characterobject.x = i + 16 + 10;
@@ -13216,7 +12844,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l) {
 		default:
 			break;
 
-		case 50:
+		case 50: // 夢想封印
 			characterobject.x = i;
 			characterobject.y = j;
 			characterobject.c = 50;
@@ -13342,7 +12970,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l) {
 			this.gs.rsAddSound(23);
 			break;
 
-		case 206:
+		case 206: // 右にブロック１破壊砲発射
 			characterobject.c = 200;
 			characterobject.c4 = 2;
 			characterobject.x = i + 16;
@@ -13352,7 +12980,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l) {
 			this.gs.rsAddSound(23);
 			break;
 
-		case 207:
+		case 207: // 左にブロック１破壊砲発射
 			characterobject.c = 200;
 			characterobject.c4 = 2;
 			characterobject.x = i - 16;
@@ -13362,7 +12990,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l) {
 			this.gs.rsAddSound(23);
 			break;
 
-		case 208:
+		case 208: // 上にブロック１破壊砲発射
 			characterobject.c = 200;
 			characterobject.c4 = 2;
 			characterobject.y = j - 16;
@@ -13371,7 +12999,7 @@ MainProgram.prototype.jmSet2 = function(i, j, k, l) {
 			this.gs.rsAddSound(23);
 			break;
 
-		case 209:
+		case 209: // 下にブロック１破壊砲発射
 			characterobject.c = 200;
 			characterobject.c4 = 2;
 			characterobject.y = j + 24;
@@ -13525,7 +13153,7 @@ MainProgram.prototype.jmMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 60:
+			case 60: // エネルギー砲 左に発射
 				characterobject.y = this.co_j.y;
 				characterobject.x -= 28;
 				if (characterobject.x <= this.maps.wx - 32) characterobject.x = this.maps.wx - 32;
@@ -13590,10 +13218,11 @@ MainProgram.prototype.jmMove = function() {
 				characterobject.pt = 1200;
 				break;
 
-			case 65:
+			case 65: // エネルギー砲 右に発射
 				characterobject.y = this.co_j.y;
 				characterobject.x += 28;
-				if (characterobject.x >= this.maps.wx + 512 + 32) characterobject.x = this.maps.wx + 512 + 32;
+				if (characterobject.x >= this.maps.wx + this.gg.di.width + 32)
+					characterobject.x = this.maps.wx + this.gg.di.width + 32;
 				if (characterobject.c4 > 0) {
 					characterobject.c4--;
 					characterobject.vx = this.co_j.x + 16;
@@ -13655,7 +13284,7 @@ MainProgram.prototype.jmMove = function() {
 				characterobject.pt = 1205;
 				break;
 
-			case 100:
+			case 100: // ファイヤーボール 跳ねる 左に発射
 				var l10 = characterobject.x;
 				characterobject.x += characterobject.vx;
 				if (
@@ -13752,16 +13381,16 @@ MainProgram.prototype.jmMove = function() {
 					characterobject.c = 0;
 				if (
 					characterobject.x <= this.maps.wx - 24 ||
-					characterobject.x >= this.maps.wx + 512 - 8 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width - 8 ||
 					characterobject.y <= this.maps.wy - 128 ||
-					characterobject.y >= this.maps.wy + 384
+					characterobject.y >= this.maps.wy + this.gg.di.height + 64
 				)
 					characterobject.c = 0;
 				characterobject.pt = 130 + this.g_c2;
 				characterobject.pth = 0;
 				break;
 
-			case 101:
+			case 101: // ファイヤーボール 左に水平に飛ぶ
 				characterobject.x += characterobject.vx;
 				characterobject.y += characterobject.vy;
 				if (
@@ -13825,16 +13454,16 @@ MainProgram.prototype.jmMove = function() {
 					characterobject.c = 0;
 				if (
 					characterobject.x <= this.maps.wx - 24 ||
-					characterobject.x >= this.maps.wx + 512 - 8 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width - 8 ||
 					characterobject.y <= this.maps.wy - 24 ||
-					characterobject.y >= this.maps.wy + 320 - 8
+					characterobject.y >= this.maps.wy + this.gg.di.height - 8
 				)
 					characterobject.c = 0;
 				characterobject.pt = 130 + this.g_c2;
 				characterobject.pth = 0;
 				break;
 
-			case 105:
+			case 105: // ファイヤーボール 跳ねる 右に発射
 				var j11 = characterobject.x;
 				characterobject.x += characterobject.vx;
 				if (
@@ -13931,16 +13560,16 @@ MainProgram.prototype.jmMove = function() {
 					characterobject.c = 0;
 				if (
 					characterobject.x <= this.maps.wx - 24 ||
-					characterobject.x >= this.maps.wx + 512 - 8 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width - 8 ||
 					characterobject.y <= this.maps.wy - 128 ||
-					characterobject.y >= this.maps.wy + 384
+					characterobject.y >= this.maps.wy + this.gg.di.height + 64
 				)
 					characterobject.c = 0;
 				characterobject.pt = 130 + this.g_c2;
 				characterobject.pth = 1;
 				break;
 
-			case 106:
+			case 106: // ファイヤーボール 右に水平に飛ぶ
 				characterobject.x += characterobject.vx;
 				characterobject.y += characterobject.vy;
 				if (this.maps.getBGCode(characterobject.x + 23, characterobject.y + 15) >= 19) characterobject.c = 0;
@@ -14000,9 +13629,9 @@ MainProgram.prototype.jmMove = function() {
 					characterobject.c = 0;
 				if (
 					characterobject.x <= this.maps.wx - 24 ||
-					characterobject.x >= this.maps.wx + 512 - 8 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width - 8 ||
 					characterobject.y <= this.maps.wy - 24 ||
-					characterobject.y >= this.maps.wy + 320 - 8
+					characterobject.y >= this.maps.wy + this.gg.di.height - 8
 				)
 					characterobject.c = 0;
 				characterobject.pt = 130 + this.g_c2;
@@ -14010,16 +13639,16 @@ MainProgram.prototype.jmMove = function() {
 				if (i == 7 || i == 8) characterobject.pt = 128 + this.g_c1;
 				break;
 
-			case 110:
+			case 110: // ファイヤーボール ホーミングアミュレット
 				var j15 = -1;
 				var l11 = 9999;
 				for (var j2 = 0; j2 <= this.t_kazu; j2++) {
 					if (
 						this.co_t[j2].c < 100 ||
 						this.co_t[j2].x < this.maps.wx - 15 ||
-						this.co_t[j2].x > this.maps.wx + 512 + 15 ||
+						this.co_t[j2].x > this.maps.wx + this.gg.di.width + 15 ||
 						this.co_t[j2].y < this.maps.wy - 15 ||
-						this.co_t[j2].y > this.maps.wy + 320 + 15
+						this.co_t[j2].y > this.maps.wy + this.gg.di.height + 15
 					)
 						continue;
 					var k7 =
@@ -14072,9 +13701,9 @@ MainProgram.prototype.jmMove = function() {
 					characterobject.c = 0;
 				if (
 					characterobject.x <= this.maps.wx - 24 ||
-					characterobject.x >= this.maps.wx + 512 - 8 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width - 8 ||
 					characterobject.y <= this.maps.wy - 24 ||
-					characterobject.y >= this.maps.wy + 320 - 8
+					characterobject.y >= this.maps.wy + this.gg.di.height - 8
 				)
 					characterobject.c = 0;
 				characterobject.pt = 130 + this.g_c2;
@@ -14082,7 +13711,7 @@ MainProgram.prototype.jmMove = function() {
 				if (i == 7 || i == 8) characterobject.pt = 128 + this.g_c1;
 				break;
 
-			case 200:
+			case 200: // グレネード
 				characterobject.x += characterobject.vx;
 				if (characterobject.c4 == 2) characterobject.y += characterobject.vy;
 				else if ((this.grenade_type != 5 && this.grenade_type != 6) || this.j_tokugi == 15) {
@@ -14197,16 +13826,16 @@ MainProgram.prototype.jmMove = function() {
 				if (characterobject.c4 == 2) {
 					if (
 						characterobject.x <= this.maps.wx - 64 ||
-						characterobject.x >= this.maps.wx + 512 + 32 ||
+						characterobject.x >= this.maps.wx + this.gg.di.width + 32 ||
 						characterobject.y <= this.maps.wy - 64 ||
-						characterobject.y >= this.maps.wy + 320 + 32
+						characterobject.y >= this.maps.wy + this.gg.di.height + 32
 					)
 						characterobject.c = 0;
 				} else if (
 					characterobject.x <= this.maps.wx - 64 ||
-					characterobject.x >= this.maps.wx + 512 + 64 ||
+					characterobject.x >= this.maps.wx + this.gg.di.width + 64 ||
 					characterobject.y <= this.maps.wy - 128 ||
-					characterobject.y >= this.maps.wy + 384
+					characterobject.y >= this.maps.wy + this.gg.di.height + 64
 				)
 					characterobject.c = 0;
 				characterobject.pt = 137 + this.g_c1;
@@ -14374,208 +14003,208 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 		if (this.co_a[i1].c <= 0) {
 			var characterobject = this.co_a[i1];
 			characterobject.c = k;
-			characterobject.c1 = l - 512 - 32;
+			characterobject.c1 = l - this.gg.di.width - 32;
 			characterobject.c2 = l + 128;
 			characterobject.x = i;
 			characterobject.y = j;
 			switch (k) {
-				case 60:
+				case 60: // 水草
 					characterobject.pt = 200;
 					break;
 
-				case 70:
+				case 70: // ファイヤーバー（左回り）
 					characterobject.vx = -3;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 71:
+				case 71: // ファイヤーバー（右回り）
 					characterobject.c = 70;
 					characterobject.vx = 3;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 72:
+				case 72: // ファイヤーバー２本またはファイヤーバー３本 左回り １本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 73:
+				case 73: // ファイヤーバー２本 ２本目　またはファイヤーバー３本 右回り　１本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 74:
+				case 74: // ファイヤーバー３本 左回り ２本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 120;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 75:
+				case 75: // ファイヤーバー３本 右回り ２本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 120;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 76:
+				case 76: // ファイヤーバー３本 左回り ３本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 240;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 77:
+				case 77: // ファイヤーバー３本 右回り ３本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 240;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 78:
+				case 78: // スウィングファイヤーバー 左
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 160;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					characterobject.c4 = 2;
 					break;
 
-				case 79:
+				case 79: // スウィングファイヤーバー 右
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 380;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					characterobject.c4 = 3;
 					break;
 
-				case 80:
+				case 80: // 一言メッセージ1
 					characterobject.pt = 800;
 					characterobject.c3 = 1;
 					break;
 
-				case 81:
+				case 81: // 一言メッセージ2
 					characterobject.c = 80;
 					characterobject.pt = 800;
 					characterobject.c3 = 2;
 					break;
 
-				case 82:
+				case 82: // 一言メッセージ3
 					characterobject.c = 80;
 					characterobject.pt = 800;
 					characterobject.c3 = 3;
 					break;
 
-				case 83:
+				case 83: // 一言メッセージ4
 					characterobject.c = 80;
 					characterobject.pt = 800;
 					characterobject.c3 = 4;
 					break;
 
-				case 85:
+				case 85: // 隠しブロック
 					characterobject.c = 85;
 					characterobject.pt = 850;
 					break;
 
-				case 86:
+				case 86: // お店
 					characterobject.c = 86;
 					characterobject.pt = 860;
 					break;
 
-				case 87:
+				case 87: // ヘルメットかドリルをくれる人
 					characterobject.c = 87;
 					characterobject.pt = 860;
 					break;
 
-				case 88:
+				case 88: // グレネードかジェットをくれる人
 					characterobject.c = 88;
 					characterobject.pt = 860;
 					break;
 
-				case 89:
+				case 89: // ファイヤーボールセレクトの人
 					characterobject.c = 89;
 					characterobject.pt = 860;
 					break;
 
-				case 90:
+				case 90: // シーソー
 					characterobject.x = i + 16;
 					characterobject.y = j;
 					characterobject.pt = 1200;
 					characterobject.vy = 0;
 					characterobject.c = 90;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 91:
+				case 91: // シーソー 左が下
 					characterobject.x = i + 16;
 					characterobject.y = j;
 					characterobject.pt = 1200;
 					characterobject.vy = -56;
 					characterobject.c = 90;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 92:
+				case 92: // シーソー 右が下
 					characterobject.x = i + 16;
 					characterobject.y = j;
 					characterobject.pt = 1200;
 					characterobject.vy = 56;
 					characterobject.c = 90;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 93:
+				case 93: // ブランコ　ブランコ ２個連続 １個目
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 1300;
 					characterobject.vy = 90;
 					characterobject.vx = 30;
 					characterobject.c = 93;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256 + 384;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 94:
+				case 94: // ブランコ ２個連続 ２個目
 					characterobject.x = i + 16 + 384;
 					characterobject.y = j + 16;
 					characterobject.pt = 1300;
 					characterobject.vy = 90;
 					characterobject.vx = -30;
 					characterobject.c = 93;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256 + 384;
 					characterobject.c3 = 0;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 95:
+				case 95: // スウィングバー 左
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 1400;
@@ -14583,13 +14212,13 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.vy = 180;
 					characterobject.vx = -26;
 					characterobject.c = 95;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 96:
+				case 96: // スウィングバー 右
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 1400;
@@ -14597,13 +14226,13 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.vy = 360;
 					characterobject.vx = 26;
 					characterobject.c = 95;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 100:
+				case 100: // 動く床（上下移動）
 					characterobject.vy = 5;
 					characterobject.x = i + 8;
 					characterobject.y = j - 212;
@@ -14624,7 +14253,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = 6400;
 					break;
 
-				case 110:
+				case 110: // 動く床（左右移動）
 					characterobject.vx = -3;
 					characterobject.x = i + 208;
 					characterobject.c3 = i;
@@ -14652,7 +14281,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					}
 					break;
 
-				case 115:
+				case 115: // 動く床（左右移動×2）左側
 					characterobject.c = 110;
 					characterobject.vx = -3;
 					characterobject.x = i + 208;
@@ -14666,7 +14295,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					}
 					break;
 
-				case 116:
+				case 116: // 動く床（左右移動×2）右側
 					characterobject.c = 110;
 					characterobject.vx = 3;
 					characterobject.x = i + 320;
@@ -14680,19 +14309,19 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					}
 					break;
 
-				case 120:
+				case 120: // 動く床 左回り
 					characterobject.vx = i + 160;
 					characterobject.vy = j;
 					characterobject.x = i + 8;
 					characterobject.y = j;
 					characterobject.c3 = 0;
 					characterobject.muki = 1;
-					characterobject.c1 = characterobject.vx - 512 - 32 - 130;
+					characterobject.c1 = characterobject.vx - this.gg.di.width - 32 - 130;
 					characterobject.c2 = characterobject.vx + 128 + 130;
 					characterobject.pt = 100;
 					break;
 
-				case 121:
+				case 121: // 動く床 右回り
 					characterobject.c = 120;
 					characterobject.vx = i + 160;
 					characterobject.vy = j;
@@ -14700,12 +14329,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.y = j;
 					characterobject.c3 = 0;
 					characterobject.muki = 0;
-					characterobject.c1 = characterobject.vx - 512 - 32 - 130;
+					characterobject.c1 = characterobject.vx - this.gg.di.width - 32 - 130;
 					characterobject.c2 = characterobject.vx + 128 + 130;
 					characterobject.pt = 100;
 					break;
 
-				case 150:
+				case 150: // スイッチ式動く床 ＯＮで上
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.x = characterobject.vx + 8;
@@ -14717,7 +14346,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 151:
+				case 151: // スイッチ式動く床 ＯＮで下
 					characterobject.c = 150;
 					characterobject.vx = i;
 					characterobject.vy = j;
@@ -14730,7 +14359,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 152:
+				case 152: // スイッチ式長く動く床 ＯＮで上
 					characterobject.c = 150;
 					characterobject.vx = i;
 					characterobject.vy = j;
@@ -14743,7 +14372,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 160:
+				case 160: // スイッチ式動く床 ＯＮで右
 					characterobject.vx = i;
 					characterobject.vy = j;
 					characterobject.x = characterobject.vx + 8;
@@ -14755,7 +14384,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 161:
+				case 161: // スイッチ式動く床 ＯＮで左
 					characterobject.c = 160;
 					characterobject.vx = i;
 					characterobject.vy = j;
@@ -14768,7 +14397,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 162:
+				case 162: // スイッチ式長く動く床 ＯＮで右
 					characterobject.c = 160;
 					characterobject.vx = i;
 					characterobject.vy = j;
@@ -14781,34 +14410,34 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 300:
+				case 300: // リンク土管1
 					characterobject.pt = 300;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					break;
 
-				case 310:
+				case 310: // リンク土管2
 					characterobject.c = 300;
 					characterobject.pt = 310;
 					characterobject.c3 = 1;
 					characterobject.c4 = 0;
 					break;
 
-				case 320:
+				case 320: // リンク土管3
 					characterobject.c = 300;
 					characterobject.pt = 320;
 					characterobject.c3 = 2;
 					characterobject.c4 = 0;
 					break;
 
-				case 330:
+				case 330: // リンク土管4
 					characterobject.c = 300;
 					characterobject.pt = 330;
 					characterobject.c3 = 3;
 					characterobject.c4 = 0;
 					break;
 
-				case 350:
+				case 350: // 下向きワープ土管１
 					characterobject.c = 300;
 					characterobject.pt = 300;
 					characterobject.c3 = 100;
@@ -14816,7 +14445,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 0;
 					break;
 
-				case 351:
+				case 351: // 下向きワープ土管２
 					characterobject.c = 300;
 					characterobject.pt = 310;
 					characterobject.c3 = 101;
@@ -14824,7 +14453,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 0;
 					break;
 
-				case 352:
+				case 352: // 下向きワープ土管３
 					characterobject.c = 300;
 					characterobject.pt = 320;
 					characterobject.c3 = 102;
@@ -14832,7 +14461,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 0;
 					break;
 
-				case 353:
+				case 353: // 下向きワープ土管４
 					characterobject.c = 300;
 					characterobject.pt = 330;
 					characterobject.c3 = 103;
@@ -14840,7 +14469,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 0;
 					break;
 
-				case 360:
+				case 360: // 下向き土管１ 上向き１につながる
 					characterobject.c = 300;
 					characterobject.pt = 300;
 					characterobject.c3 = 100;
@@ -14848,7 +14477,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 1;
 					break;
 
-				case 361:
+				case 361: // 下向き土管２ 上向き２につながる
 					characterobject.c = 300;
 					characterobject.pt = 310;
 					characterobject.c3 = 101;
@@ -14856,7 +14485,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 1;
 					break;
 
-				case 362:
+				case 362: // 下向き土管３ 上向き３につながる
 					characterobject.c = 300;
 					characterobject.pt = 320;
 					characterobject.c3 = 102;
@@ -14864,7 +14493,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 1;
 					break;
 
-				case 363:
+				case 363: // 下向き土管４ 上向き４につながる
 					characterobject.c = 300;
 					characterobject.pt = 330;
 					characterobject.c3 = 103;
@@ -14872,96 +14501,96 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c5 = 1;
 					break;
 
-				case 370:
+				case 370: // 左向き土管１ 左右１につながる
 					characterobject.c = 300;
 					characterobject.pt = 300;
 					characterobject.c3 = 200;
 					characterobject.c4 = 0;
 					break;
 
-				case 371:
+				case 371: // 左向き土管２ 左右２につながる
 					characterobject.c = 300;
 					characterobject.pt = 310;
 					characterobject.c3 = 201;
 					characterobject.c4 = 0;
 					break;
 
-				case 372:
+				case 372: // 左向き土管３ 左右３につながる
 					characterobject.c = 300;
 					characterobject.pt = 320;
 					characterobject.c3 = 202;
 					characterobject.c4 = 0;
 					break;
 
-				case 373:
+				case 373: // 左向き土管４ 左右４につながる
 					characterobject.c = 300;
 					characterobject.pt = 330;
 					characterobject.c3 = 203;
 					characterobject.c4 = 0;
 					break;
 
-				case 380:
+				case 380: // 右向き土管１ 左右１につながる
 					characterobject.c = 300;
 					characterobject.pt = 300;
 					characterobject.c3 = 300;
 					characterobject.c4 = 0;
 					break;
 
-				case 381:
+				case 381: // 右向き土管２ 左右２につながる
 					characterobject.c = 300;
 					characterobject.pt = 310;
 					characterobject.c3 = 301;
 					characterobject.c4 = 0;
 					break;
 
-				case 382:
+				case 382: // 右向き土管３ 左右３につながる
 					characterobject.c = 300;
 					characterobject.pt = 320;
 					characterobject.c3 = 302;
 					characterobject.c4 = 0;
 					break;
 
-				case 383:
+				case 383: // 右向き土管４ 左右４につながる
 					characterobject.c = 300;
 					characterobject.pt = 330;
 					characterobject.c3 = 303;
 					characterobject.c4 = 0;
 					break;
 
-				case 400:
+				case 400: // ドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.vy = j;
 					break;
 
-				case 410:
+				case 410: // 上ドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					characterobject.vy = j;
 					break;
 
-				case 420:
+				case 420: // 左ドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
 					characterobject.vx = i;
 					characterobject.c = 410;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128;
 					break;
 
-				case 430:
+				case 430: // 右ドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 3;
 					characterobject.vx = i;
 					characterobject.c = 410;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 128 + 256;
 					break;
 
-				case 440:
+				case 440: // 跳ねるドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 4;
@@ -14970,14 +14599,14 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 450:
+				case 450: // 上がらないドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 5;
 					characterobject.c = 410;
 					break;
 
-				case 460:
+				case 460: // エレベータードッスンスン 上
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 6;
@@ -14985,7 +14614,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 470:
+				case 470: // エレベータードッスンスン 下
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 7;
@@ -14993,7 +14622,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 480:
+				case 480: // 上下ドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 8;
@@ -15001,17 +14630,17 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 481:
+				case 481: // 左右ドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 9;
 					characterobject.vx = i;
 					characterobject.c = 410;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256;
 					break;
 
-				case 482:
+				case 482: // ロングレンジドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 10;
@@ -15019,7 +14648,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 485:
+				case 485: // 壁まで上下移動するドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 11;
@@ -15029,7 +14658,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 486:
+				case 486: // 壁まで左右移動するドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 12;
@@ -15039,7 +14668,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 487:
+				case 487: // 乗ると左右移動するドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 13;
@@ -15049,7 +14678,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 488:
+				case 488: // 動かないドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 14;
@@ -15057,7 +14686,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 489:
+				case 489: // 落ちるだけのドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 15;
@@ -15065,7 +14694,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 490:
+				case 490: // 左右へ押せるドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 16;
@@ -15076,7 +14705,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 491:
+				case 491: // 上へ押せるドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 17;
@@ -15084,7 +14713,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 492:
+				case 492: // その場で跳ねるドッスンスン
 					characterobject.pt = 400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 18;
@@ -15093,7 +14722,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c = 410;
 					break;
 
-				case 500:
+				case 500: // 乗ると落ちる
 					characterobject.vy = 0;
 					characterobject.x = i;
 					characterobject.y = j;
@@ -15102,7 +14731,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.pt = 500;
 					break;
 
-				case 510:
+				case 510: // ずっと乗っていると落ちる
 					characterobject.c = 500;
 					characterobject.vy = 0;
 					characterobject.x = i;
@@ -15112,7 +14741,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.pt = 500;
 					break;
 
-				case 600:
+				case 600: // 乗れるカイオール
 					characterobject.pt = 600;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
@@ -15120,7 +14749,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.vy = j;
 					break;
 
-				case 610:
+				case 610: // 乗れるカイオール 方向キーで移動
 					characterobject.pt = 600;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
@@ -15128,113 +14757,113 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.vy = j;
 					break;
 
-				case 700:
+				case 700: // ジャンプ台
 					characterobject.pt = 700;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					break;
 
-				case 701:
+				case 701: // 高性能ジャンプ台
 					characterobject.c = 700;
 					characterobject.pt = 700;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					break;
 
-				case 750:
+				case 750: // 左へ飛ばすバネ
 					characterobject.c = 700;
 					characterobject.pt = 750;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
 					break;
 
-				case 751:
+				case 751: // 右へ飛ばすバネ
 					characterobject.c = 700;
 					characterobject.pt = 751;
 					characterobject.c3 = 0;
 					characterobject.c4 = 3;
 					break;
 
-				case 1000:
+				case 1000: // ファイヤーウォール 上へ伸びる
 					characterobject.vx = 18;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1001:
+				case 1001: // ファイヤーウォール 下へ伸びる
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 1;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1002:
+				case 1002: // ファイヤーウォール 左へ伸びる
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 2;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1003:
+				case 1003: // ファイヤーウォール 右へ伸びる
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 3;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1005:
+				case 1005: // ファイヤーウォール 上へ速射
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 10;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1006:
+				case 1006: // ファイヤーウォール 下へ速射
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 11;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1007:
+				case 1007: // ファイヤーウォール 左へ速射
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 12;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1008:
+				case 1008: // ファイヤーウォール 右へ速射
 					characterobject.c = 1000;
 					characterobject.vx = 18;
 					characterobject.c3 = 13;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1010:
+				case 1010: // ファイヤーウォール 壁まで上下
 					characterobject.vx = 0;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1020:
+				case 1020: // ファイヤーウォール 壁まで左右
 					characterobject.vx = 0;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
@@ -15242,110 +14871,110 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1100:
+				case 1100: // 火山
 					characterobject.vx = 0;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1150:
+				case 1150: // 逆火山
 					characterobject.vx = 0;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1200:
+				case 1200: // 動くＴ字型　動くＴ字型 ２個連続 １個目
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 1900;
 					characterobject.vy = 270;
 					characterobject.vx = -30;
 					characterobject.c = 1200;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256 + 416;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 1201:
+				case 1201: // 動くＴ字型 ２個連続 ２個目
 					characterobject.x = i + 16 + 416;
 					characterobject.y = j + 16;
 					characterobject.pt = 1900;
 					characterobject.vy = 270;
 					characterobject.vx = 30;
 					characterobject.c = 1200;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256 + 416;
 					characterobject.c3 = 0;
 					characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 1300:
+				case 1300: // ロープ　ロープ ２本連続 １本目
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 2000;
 					characterobject.vy = 90;
 					characterobject.vx = 30;
 					characterobject.c = 1300;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256 + 416;
 					break;
 
-				case 1301:
+				case 1301: // ロープ ２本連続 ２本目
 					characterobject.x = i + 16 + 320;
 					characterobject.y = j + 16;
 					characterobject.pt = 2000;
 					characterobject.vy = 90;
 					characterobject.vx = -30;
 					characterobject.c = 1300;
-					characterobject.c1 = l - 512 - 32 - 256;
+					characterobject.c1 = l - this.gg.di.width - 32 - 256;
 					characterobject.c2 = l + 128 + 256 + 416;
 					break;
 
-				case 1400:
+				case 1400: // 得点で開く扉
 					characterobject.pt = 2100;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					break;
 
-				case 1401:
+				case 1401: // コインを全部取ると開く扉
 					characterobject.c = 1400;
 					characterobject.pt = 2110;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
 					break;
 
-				case 1402:
+				case 1402: // 周囲１０パーツ以内のコインを全部取ると開く扉
 					characterobject.c = 1400;
 					characterobject.pt = 2120;
 					characterobject.c3 = 0;
 					characterobject.c4 = 3;
 					break;
 
-				case 1403:
+				case 1403: // 左１５パーツ以内の雑魚敵を全部倒すと開く扉
 					characterobject.c = 1400;
 					characterobject.pt = 2130;
 					characterobject.c3 = 0;
 					characterobject.c4 = 4;
 					break;
 
-				case 1500:
+				case 1500: // 人間大砲 右向き
 					characterobject.pt = 2200;
 					characterobject.y = j - 12;
 					characterobject.c3 = 0;
 					characterobject.c4 = 330;
 					characterobject.vx = 0;
 					characterobject.vy = j;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1501:
+				case 1501: // 人間大砲 左向き
 					characterobject.c = 1500;
 					characterobject.pt = 2200;
 					characterobject.y = j - 12;
@@ -15353,100 +14982,100 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c4 = 225;
 					characterobject.vx = 0;
 					characterobject.vy = j;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1502:
+				case 1502: // 人間大砲 天井
 					characterobject.c = 1500;
 					characterobject.pt = 2200;
 					characterobject.c3 = 2;
 					characterobject.c4 = 30;
 					characterobject.vx = 0;
 					characterobject.vy = j;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1503:
+				case 1503: // 人間大砲 右の壁
 					characterobject.c = 1500;
 					characterobject.pt = 2200;
 					characterobject.c3 = 3;
 					characterobject.c4 = 270;
 					characterobject.vx = 0;
 					characterobject.vy = j;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1504:
+				case 1504: // 人間大砲 左の壁
 					characterobject.c = 1500;
 					characterobject.pt = 2200;
 					characterobject.c3 = 4;
 					characterobject.c4 = 300;
 					characterobject.vx = 0;
 					characterobject.vy = j;
-					characterobject.c1 = i - 512 - 224;
+					characterobject.c1 = i - this.gg.di.width - 224;
 					characterobject.c2 = i + 224;
 					break;
 
-				case 1600:
+				case 1600: // スポット処理 小
 					characterobject.pt = 2300;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					break;
 
-				case 1601:
+				case 1601: // スポット処理 中
 					characterobject.c = 1600;
 					characterobject.pt = 2300;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					break;
 
-				case 1602:
+				case 1602: // スポット処理 大
 					characterobject.c = 1600;
 					characterobject.pt = 2300;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
 					break;
 
-				case 1603:
+				case 1603: // スポット処理 終了
 					characterobject.c = 1600;
 					characterobject.pt = 2300;
 					characterobject.c3 = 0;
 					characterobject.c4 = 3;
 					break;
 
-				case 1700:
+				case 1700: // 人食いワカメ 上へ拡大縮小
 					characterobject.pt = 2400;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					characterobject.vy = 100;
-					characterobject.c1 = i - 512 - 192;
+					characterobject.c1 = i - this.gg.di.width - 192;
 					characterobject.c2 = i + 192;
 					break;
 
-				case 1701:
+				case 1701: // 人食いワカメ 下へ拡大縮小
 					characterobject.c = 1700;
 					characterobject.pt = 2400;
 					characterobject.c3 = 1;
 					characterobject.c4 = 0;
 					characterobject.vy = 100;
-					characterobject.c1 = i - 512 - 192;
+					characterobject.c1 = i - this.gg.di.width - 192;
 					characterobject.c2 = i + 192;
 					break;
 
-				case 1702:
+				case 1702: // 人食いワカメ 中央から拡大縮小
 					characterobject.c = 1700;
 					characterobject.pt = 2400;
 					characterobject.c3 = 2;
 					characterobject.c4 = 0;
 					characterobject.vy = 100;
-					characterobject.c1 = i - 512 - 192;
+					characterobject.c1 = i - this.gg.di.width - 192;
 					characterobject.c2 = i + 192;
 					break;
 
-				case 1800:
+				case 1800: // 回転するドッスンスン 左回り
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 2500;
@@ -15464,7 +15093,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.pth), "0", "0", "0", "0");
 					break;
 
-				case 1801:
+				case 1801: // 回転するドッスンスン 右回り
 					characterobject.c = 1800;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -15483,7 +15112,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.pth), "0", "0", "0", "0");
 					break;
 
-				case 1850:
+				case 1850: // 回転する巨大ドッスンスン 左回り
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 2600;
@@ -15501,7 +15130,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.pth), "0", "0", "0", "0");
 					break;
 
-				case 1851:
+				case 1851: // 回転する巨大ドッスンスン 右回り
 					characterobject.c = 1850;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -15520,7 +15149,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.pth), "0", "0", "0", "0");
 					break;
 
-				case 1900:
+				case 1900: // 画面内で右強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 0;
@@ -15529,7 +15158,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1901:
+				case 1901: // 画面内で左強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 1;
@@ -15538,7 +15167,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1902:
+				case 1902: // 画面内で上強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 2;
@@ -15547,7 +15176,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1903:
+				case 1903: // 画面内で下強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 3;
@@ -15556,7 +15185,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1904:
+				case 1904: // 画面内で右上強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 4;
@@ -15565,7 +15194,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1905:
+				case 1905: // 画面内で右下強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 5;
@@ -15574,7 +15203,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1906:
+				case 1906: // 画面内で左上強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 6;
@@ -15583,7 +15212,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1907:
+				case 1907: // 画面内で左下強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 7;
@@ -15592,7 +15221,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1908:
+				case 1908: // スクロールスピードアップ
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 8;
@@ -15601,7 +15230,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1909:
+				case 1909: // スクロールスピードダウン
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 9;
@@ -15610,7 +15239,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1910:
+				case 1910: // 画面内で全方向スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 10;
@@ -15619,7 +15248,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1911:
+				case 1911: // 画面内でスクロール停止
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 11;
@@ -15628,34 +15257,34 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1912:
+				case 1912: // 自分が重なると右強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 12;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1913:
+				case 1913: // 自分が重なると上強制スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 13;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1914:
+				case 1914: // 自分が重なると全方向スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 14;
 					characterobject.c4 = 0;
-					characterobject.c1 = i - 512 - 150;
+					characterobject.c1 = i - this.gg.di.width - 150;
 					characterobject.c2 = i + 150;
 					break;
 
-				case 1915:
+				case 1915: // 画面内で横固定縦自由スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 15;
@@ -15664,7 +15293,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1916:
+				case 1916: // 画面内で右強制縦自由スクロール
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 16;
@@ -15673,7 +15302,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1917:
+				case 1917: // 画面内で左進行用の視界
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 17;
@@ -15682,7 +15311,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 1918:
+				case 1918: // 画面内で右進行用の視界
 					characterobject.c = 1900;
 					characterobject.pt = 2300;
 					characterobject.c3 = 18;
@@ -15691,12 +15320,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2000:
+				case 2000: // 曲線による上り坂
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15708,12 +15337,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2001:
+				case 2001: // 曲線による下り坂
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15725,12 +15354,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2002:
+				case 2002: // 曲線による上り坂 線のみ
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15742,12 +15371,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2003:
+				case 2003: // 曲線による下り坂 線のみ
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15759,12 +15388,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2010:
+				case 2010: // 乗れる円
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15776,12 +15405,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2011:
+				case 2011: // 乗れる円 大
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j + 16;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15793,12 +15422,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2020:
+				case 2020: // 乗れる半円
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15810,12 +15439,12 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2021:
+				case 2021: // 乗れる半円 線のみ
 					characterobject.c = 2000;
 					characterobject.pt = 2700;
 					characterobject.x = i;
 					characterobject.y = j;
-					characterobject.c1 = l - 512 - 32;
+					characterobject.c1 = l - this.gg.di.width - 32;
 					characterobject.c2 = l + 256;
 					characterobject.c4 = this.newYuka(
 						String(characterobject.x),
@@ -15827,94 +15456,94 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2100:
+				case 2100: // 人口太陽 中心
 					characterobject.c = 2100;
 					characterobject.pt = 2800;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2110:
+				case 2110: // 人口太陽 棒５本 左回り 棒１本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2111:
+				case 2111: // 人口太陽 棒５本 左回り 棒２本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 72;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2112:
+				case 2112: // 人口太陽 棒５本 左回り 棒３本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 144;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2113:
+				case 2113: // 人口太陽 棒５本 左回り 棒４本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 216;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2114:
+				case 2114: // 人口太陽 棒５本 左回り 棒５本目
 					characterobject.c = 70;
 					characterobject.vx = -2;
 					characterobject.c3 = 288;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2120:
+				case 2120: // 人口太陽 棒５本 右回り 棒１本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2121:
+				case 2121: // 人口太陽 棒５本 右回り 棒２本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 72;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2122:
+				case 2122: // 人口太陽 棒５本 右回り 棒３本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 144;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2123:
+				case 2123: // 人口太陽 棒５本 右回り 棒４本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 216;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2124:
+				case 2124: // 人口太陽 棒５本 右回り 棒５本目
 					characterobject.c = 70;
 					characterobject.vx = 2;
 					characterobject.c3 = 288;
-					characterobject.c1 = i - 512 - 190;
+					characterobject.c1 = i - this.gg.di.width - 190;
 					characterobject.c2 = i + 190;
 					break;
 
-				case 2200:
+				case 2200: // ファイヤーリング 左回り パーツ１
 					characterobject.c = 2200;
 					characterobject.vx = -2;
 					characterobject.c3 = 0;
@@ -15922,7 +15551,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2201:
+				case 2201: // ファイヤーリング 左回り パーツ２
 					characterobject.c = 2200;
 					characterobject.vx = -2;
 					characterobject.c3 = 120;
@@ -15930,7 +15559,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2202:
+				case 2202: // ファイヤーリング 左回り パーツ３
 					characterobject.c = 2200;
 					characterobject.vx = -2;
 					characterobject.c3 = 240;
@@ -15938,7 +15567,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2210:
+				case 2210: // ファイヤーリング 右回り パーツ１
 					characterobject.c = 2200;
 					characterobject.vx = 2;
 					characterobject.c3 = 0;
@@ -15946,7 +15575,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2211:
+				case 2211: // ファイヤーリング 右回り パーツ２
 					characterobject.c = 2200;
 					characterobject.vx = 2;
 					characterobject.c3 = 120;
@@ -15954,7 +15583,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2212:
+				case 2212: // ファイヤーリング 右回り パーツ３
 					characterobject.c = 2200;
 					characterobject.vx = 2;
 					characterobject.c3 = 240;
@@ -15962,7 +15591,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2250:
+				case 2250: // ファイヤーリング２本 左回り １本目
 					characterobject.c = 2250;
 					characterobject.vx = -2;
 					characterobject.c3 = 0;
@@ -15970,7 +15599,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2251:
+				case 2251: // ファイヤーリング２本 左回り ２本目
 					characterobject.c = 2250;
 					characterobject.vx = -2;
 					characterobject.c3 = 180;
@@ -15978,7 +15607,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2252:
+				case 2252: // ファイヤーリング２本 高速左回り １本目
 					characterobject.c = 2250;
 					characterobject.vx = -4;
 					characterobject.c3 = 0;
@@ -15986,7 +15615,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2253:
+				case 2253: // ファイヤーリング２本 高速左回り ２本目
 					characterobject.c = 2250;
 					characterobject.vx = -4;
 					characterobject.c3 = 180;
@@ -15994,7 +15623,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2260:
+				case 2260: // ファイヤーリング２本 右回り １本目
 					characterobject.c = 2250;
 					characterobject.vx = 2;
 					characterobject.c3 = 0;
@@ -16002,7 +15631,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2261:
+				case 2261: // ファイヤーリング２本 右回り ２本目
 					characterobject.c = 2250;
 					characterobject.vx = 2;
 					characterobject.c3 = 180;
@@ -16010,7 +15639,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2262:
+				case 2262: // ファイヤーリング２本 高速右回り １本目
 					characterobject.c = 2250;
 					characterobject.vx = 4;
 					characterobject.c3 = 0;
@@ -16018,7 +15647,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2263:
+				case 2263: // ファイヤーリング２本 高速右回り ２本目
 					characterobject.c = 2250;
 					characterobject.vx = 4;
 					characterobject.c3 = 180;
@@ -16026,7 +15655,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2300:
+				case 2300: // 上下移動する半円 下から
 					characterobject.c = 2300;
 					characterobject.pt = 3000;
 					characterobject.x = i;
@@ -16045,7 +15674,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2301:
+				case 2301: // 上下移動する半円 上から
 					characterobject.c = 2300;
 					characterobject.pt = 3000;
 					characterobject.x = i;
@@ -16064,7 +15693,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2400:
+				case 2400: // 乗ると上がる半円
 					characterobject.c = 2400;
 					characterobject.pt = 3000;
 					characterobject.x = i;
@@ -16084,7 +15713,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2500:
+				case 2500: // 乗ると下がる半円
 					characterobject.c = 2500;
 					characterobject.pt = 3000;
 					characterobject.x = i;
@@ -16104,7 +15733,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2510:
+				case 2510: // 柱付きの半円
 					characterobject.c = 2500;
 					characterobject.pt = 3000;
 					characterobject.x = i;
@@ -16124,7 +15753,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 2600:
+				case 2600: // 乗ると下がる円
 					characterobject.c = 2600;
 					characterobject.pt = 2700;
 					characterobject.x = i;
@@ -16152,7 +15781,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					);
 					break;
 
-				case 2610:
+				case 2610: // 乗ると下がる円 降りると上がる
 					characterobject.c = 2610;
 					characterobject.pt = 2700;
 					characterobject.x = i;
@@ -16180,7 +15809,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					);
 					break;
 
-				case 2700:
+				case 2700: // 上下移動する円 上から
 					characterobject.c = 2700;
 					characterobject.pt = 2700;
 					characterobject.x = i;
@@ -16208,7 +15837,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					);
 					break;
 
-				case 2701:
+				case 2701: // 上下移動する円 下から
 					characterobject.c = 2700;
 					characterobject.pt = 2700;
 					characterobject.x = i;
@@ -16236,7 +15865,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					);
 					break;
 
-				case 2800:
+				case 2800: // 長いロープ
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 3100;
@@ -16248,7 +15877,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2801:
+				case 2801: // 長いロープ 右から
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 3100;
@@ -16260,7 +15889,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2802:
+				case 2802: // 長いロープ つかまると動く
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 3100;
@@ -16272,7 +15901,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2803:
+				case 2803: // 長いロープ つかまると左から動く
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.pt = 3100;
@@ -16284,22 +15913,22 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 2900:
+				case 2900: // 左向きのトゲ４つ
 					characterobject.pt = 3200;
 					break;
 
-				case 2950:
+				case 2950: // 右向きのトゲ４つ
 					characterobject.pt = 3250;
 					break;
 
-				case 3000:
+				case 3000: // 左右へ押せるドッスンスンのゴール
 					characterobject.pt = 3300;
 					characterobject.c3 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3010:
+				case 3010: // 左右へ押せるドッスンスンのゴール ロック機能付き
 					characterobject.c = 3000;
 					characterobject.pt = 3300;
 					characterobject.c3 = 1;
@@ -16307,67 +15936,67 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3100:
+				case 3100: // 右へ一方通行
 					characterobject.pt = 3500;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3101:
+				case 3101: // 右へ一方通行 表示なし
 					characterobject.c = 3100;
 					characterobject.pt = 3500;
 					characterobject.c3 = 1;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3110:
+				case 3110: // 左へ一方通行
 					characterobject.pt = 3510;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3111:
+				case 3111: // 左へ一方通行 表示なし
 					characterobject.c = 3110;
 					characterobject.pt = 3510;
 					characterobject.c3 = 1;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3120:
+				case 3120: // 上へ一方通行
 					characterobject.pt = 3520;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3121:
+				case 3121: // 上へ一方通行 表示なし
 					characterobject.c = 3120;
 					characterobject.pt = 3520;
 					characterobject.c3 = 1;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3130:
+				case 3130: // 下へ一方通行
 					characterobject.pt = 3530;
 					characterobject.c3 = 0;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3131:
+				case 3131: // 下へ一方通行 表示なし
 					characterobject.c = 3130;
 					characterobject.pt = 3530;
 					characterobject.c3 = 1;
-					characterobject.c1 = i - 512 - 160;
+					characterobject.c1 = i - this.gg.di.width - 160;
 					characterobject.c2 = i + 160;
 					break;
 
-				case 3200:
+				case 3200: // ゆれる棒
 					characterobject.c = 3200;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16380,7 +16009,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3201:
+				case 3201: // ゆれる棒 左から
 					characterobject.c = 3200;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16393,7 +16022,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3202:
+				case 3202: // ゆれる棒 広角
 					characterobject.c = 3200;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16406,7 +16035,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3203:
+				case 3203: // ゆれる棒 広角 左から
 					characterobject.c = 3200;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16419,7 +16048,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3300:
+				case 3300: // 跳ねる円
 					characterobject.c = 3300;
 					characterobject.pt = 2700;
 					characterobject.x = i + 16;
@@ -16439,7 +16068,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 3301:
+				case 3301: // 跳ねる円 大
 					characterobject.c = 3300;
 					characterobject.pt = 2700;
 					characterobject.x = i + 16;
@@ -16459,135 +16088,135 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(characterobject.c4, this.gamecolor_firebar2);
 					break;
 
-				case 3400:
+				case 3400: // コンティニュー 残り人数のみ
 					characterobject.pt = 3600;
 					break;
 
-				case 3500:
+				case 3500: // スイッチ 重なるとＯＮ／ＯＦＦ 周囲１０ブロック以内に影響
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					characterobject.pt = 3700;
 					break;
 
-				case 3501:
+				case 3501: // スイッチ 重なるとＯＮ／ＯＦＦ 周囲５ブロック以内に影響
 					characterobject.c = 3500;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					characterobject.pt = 3700;
 					break;
 
-				case 3502:
+				case 3502: // 連動スイッチ 重なるとＯＮ／ＯＦＦ マップ全体に影響 同スイッチへ連動
 					characterobject.c = 3500;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
 					characterobject.pt = 3700;
 					break;
 
-				case 3600:
+				case 3600: // スイッチ ↑キーでＯＮ／ＯＦＦ 周囲１０ブロック以内に影響
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					characterobject.pt = 3700;
 					break;
 
-				case 3601:
+				case 3601: // スイッチ ↑キーでＯＮ／ＯＦＦ 周囲５ブロック以内に影響
 					characterobject.c = 3600;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					characterobject.pt = 3700;
 					break;
 
-				case 3602:
+				case 3602: // 連動スイッチ ↑キーでＯＮ／ＯＦＦ マップ全体に影響 同スイッチへ連動
 					characterobject.c = 3600;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
 					characterobject.pt = 3700;
 					break;
 
-				case 3700:
+				case 3700: // スイッチ式の扉 ＯＮで開く
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3710:
+				case 3710: // スイッチ式の扉 ＯＮで閉まる
 					characterobject.c3 = 100;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3800:
+				case 3800: // スイッチ式トゲ ＯＮでブロック４
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3810:
+				case 3810: // スイッチ式トゲ ＯＦＦでブロック４
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3900:
+				case 3900: // スイッチ式トゲ ＯＮで消える
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 3910:
+				case 3910: // スイッチ式トゲ ＯＮで出現
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4000:
+				case 4000: // スイッチ式ハシゴ ＯＮで消える
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4010:
+				case 4010: // スイッチ式ハシゴ ＯＮで出現
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4100:
+				case 4100: // スイッチ式電撃バリア縦 ＯＮで消える
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4110:
+				case 4110: // スイッチ式電撃バリア縦 ＯＮで出現
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4200:
+				case 4200: // スイッチ式電撃バリア横 ＯＮで消える
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4210:
+				case 4210: // スイッチ式電撃バリア横 ＯＮで出現
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4300:
+				case 4300: // スイッチ式ファイヤーバー 上から左
 					characterobject.vx = -3;
 					characterobject.c3 = 270;
 					characterobject.c4 = 0;
@@ -16597,7 +16226,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4301:
+				case 4301: // スイッチ式ファイヤーバー 上から右
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 270;
@@ -16608,7 +16237,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4302:
+				case 4302: // スイッチ式ファイヤーバー 左から上
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 180;
@@ -16619,7 +16248,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4303:
+				case 4303: // スイッチ式ファイヤーバー 右から上
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 360;
@@ -16630,7 +16259,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4304:
+				case 4304: // スイッチ式ファイヤーバー 左から下
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 180;
@@ -16641,7 +16270,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4305:
+				case 4305: // スイッチ式ファイヤーバー 右から下
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 0;
@@ -16652,7 +16281,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4306:
+				case 4306: // スイッチ式ファイヤーバー 下から左
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 90;
@@ -16663,7 +16292,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4307:
+				case 4307: // スイッチ式ファイヤーバー 下から右
 					characterobject.c = 4300;
 					characterobject.vx = -3;
 					characterobject.c3 = 90;
@@ -16674,7 +16303,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4310:
+				case 4310: // スイッチ式ファイヤーバー 右から左回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 360;
@@ -16685,7 +16314,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4311:
+				case 4311: // スイッチ式ファイヤーバー 左から右回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 180;
@@ -16696,7 +16325,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4312:
+				case 4312: // スイッチ式ファイヤーバー 右から右回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 0;
@@ -16707,7 +16336,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4313:
+				case 4313: // スイッチ式ファイヤーバー 左から左回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 180;
@@ -16718,7 +16347,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4314:
+				case 4314: // スイッチ式ファイヤーバー 上から左回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 270;
@@ -16729,7 +16358,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4315:
+				case 4315: // スイッチ式ファイヤーバー 上から右回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 270;
@@ -16740,7 +16369,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4316:
+				case 4316: // スイッチ式ファイヤーバー 下から右回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 90;
@@ -16751,7 +16380,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4317:
+				case 4317: // スイッチ式ファイヤーバー 下から左回り
 					characterobject.c = 4300;
 					characterobject.vx = -2;
 					characterobject.c3 = 90;
@@ -16762,21 +16391,21 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4400:
+				case 4400: // スイッチ式ブロック ＯＮで消える
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4410:
+				case 4410: // スイッチ式ブロック ＯＮで出現
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4500:
+				case 4500: // スイッチ式動くＴ字型 ＯＮで左
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
 					characterobject.c3 = 0;
@@ -16790,7 +16419,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4501:
+				case 4501: // スイッチ式動くＴ字型 ＯＮで右
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16805,7 +16434,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4502:
+				case 4502: // スイッチ式速く動くＴ字型 ＯＮで左
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16820,7 +16449,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4503:
+				case 4503: // スイッチ式速く動くＴ字型 ＯＮで右
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16835,7 +16464,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4510:
+				case 4510: // スイッチ式動くＴ字型 ＯＮで左から上
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16850,7 +16479,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4511:
+				case 4511: // スイッチ式動くＴ字型 ＯＮで上から左
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16865,7 +16494,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4512:
+				case 4512: // スイッチ式動くＴ字型 ＯＮで右から上
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16880,7 +16509,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4513:
+				case 4513: // スイッチ式動くＴ字型 ＯＮで上から右
 					characterobject.c = 4500;
 					characterobject.x = i + 16;
 					characterobject.y = j + 16;
@@ -16895,15 +16524,15 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 					break;
 
-				case 4600:
+				case 4600: // ＫＥＹ１
 					characterobject.pt = 4100;
 					break;
 
-				case 4610:
+				case 4610: // ＫＥＹ２
 					characterobject.pt = 4110;
 					break;
 
-				case 4700:
+				case 4700: // ＫＥＹ１で開く扉
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					characterobject.pt = 0;
@@ -16911,7 +16540,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4701:
+				case 4701: // ＫＥＹ２で開く扉
 					characterobject.c = 4700;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
@@ -16920,7 +16549,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4702:
+				case 4702: // ＫＥＹ１が３つで開く扉
 					characterobject.c = 4700;
 					characterobject.c3 = 0;
 					characterobject.c4 = 2;
@@ -16929,7 +16558,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4703:
+				case 4703: // ＫＥＹ２が３つで開く扉
 					characterobject.c = 4700;
 					characterobject.c3 = 0;
 					characterobject.c4 = 3;
@@ -16938,7 +16567,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4800:
+				case 4800: // ＫＥＹ１ 落ちる
 					characterobject.pt = 4100;
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
@@ -16946,7 +16575,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4801:
+				case 4801: // ＫＥＹ２ 落ちる
 					characterobject.c = 4800;
 					characterobject.pt = 4110;
 					characterobject.c3 = 0;
@@ -16955,51 +16584,51 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 4900:
+				case 4900: // ＫＥＹ１が３つでＯＮの動作の人 周囲１０ブロック以内に影響
 					characterobject.c = 4900;
 					characterobject.pt = 4200;
 					break;
 
-				case 4910:
+				case 4910: // ＫＥＹ２が３つでＯＮの動作の人 周囲１０ブロック以内に影響
 					characterobject.c = 4910;
 					characterobject.pt = 4210;
 					break;
 
-				case 5000:
+				case 5000: // 乗ると壊れるブロック
 					characterobject.c3 = 0;
 					characterobject.pt = 0;
-					characterobject.c1 = l - 512 - 32 - 512;
-					characterobject.c2 = l + 128 + 512;
+					characterobject.c1 = l - this.gg.di.width - 32 - this.gg.di.width;
+					characterobject.c2 = l + 128 + this.gg.di.width;
 					break;
 
-				case 5100:
+				case 5100: // しっぽで破壊 ＯＮの動作 周囲１０ブロック以内に影響
 					characterobject.c3 = 0;
 					characterobject.c4 = 0;
 					characterobject.pt = 4300;
 					break;
 
-				case 5101:
+				case 5101: // しっぽで破壊 ＯＮの動作 周囲５ブロック以内に影響
 					characterobject.c = 5100;
 					characterobject.c3 = 0;
 					characterobject.c4 = 1;
 					characterobject.pt = 4300;
 					break;
 
-				case 5200:
+				case 5200: // スイッチ式ブロック縦 ＯＮで消える
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 5210:
+				case 5210: // スイッチ式ブロック縦 ＯＮで出現
 					characterobject.c3 = 0;
 					characterobject.c5 = 0;
 					characterobject.c1 = 0;
 					characterobject.c2 = (this.mapWidth + 1) * 32;
 					break;
 
-				case 5300:
+				case 5300: // 得点でグレネードを売る人
 					characterobject.pt = 4220;
 					break;
 			}
@@ -17034,12 +16663,12 @@ MainProgram.prototype.aMove = function() {
 			default:
 				break;
 
-			case 60:
+			case 60: // 水草
 				if (
 					k3 > this.maps.wx - 80 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17050,7 +16679,7 @@ MainProgram.prototype.aMove = function() {
 				}
 				break;
 
-			case 70:
+			case 70: // ファイヤーバー 1本
 				if (characterobject.c4 == 2) {
 					characterobject.c3 += characterobject.vx;
 					if (characterobject.c3 <= 110) {
@@ -17076,9 +16705,9 @@ MainProgram.prototype.aMove = function() {
 				}
 				if (
 					k3 > this.maps.wx - 150 &&
-					k3 < this.maps.wx + 512 + 150 &&
+					k3 < this.maps.wx + this.gg.di.width + 150 &&
 					l3 > this.maps.wy - 150 &&
-					l3 < this.maps.wy + 320 + 150
+					l3 < this.maps.wy + this.gg.di.height + 150
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17152,9 +16781,9 @@ MainProgram.prototype.aMove = function() {
 			case 80: // 一言メッセージ
 				if (
 					k3 > this.maps.wx - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17167,12 +16796,12 @@ MainProgram.prototype.aMove = function() {
 				}
 				break;
 
-			case 85:
+			case 85: // 隠しブロック
 				if (
 					k3 > this.maps.wx - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17184,9 +16813,9 @@ MainProgram.prototype.aMove = function() {
 			case 86: // お店
 				if (
 					k3 > this.maps.wx - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17202,7 +16831,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.init1(3);
 							this.km.setMessage(3, this.shop_name);
 							this.addSerifu(3, 5, 3);
-							this.km.activeSerifu(3, 168, 40, 224, Color.cyan);
+							this.km.activeSerifu(
+								3,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+								224,
+								Color.cyan
+							);
 							this.km.move();
 							this.km.mode = 400;
 						}
@@ -17249,14 +16884,25 @@ MainProgram.prototype.aMove = function() {
 								}
 
 							if (this.km.list_kazu >= 1) {
-								this.km.activeKaimono(6, 308, 60, 184);
+								this.km.activeKaimono(
+									6,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 140,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 20,
+									184
+								);
 								this.km.mode = 410;
 							} else {
 								this.km.init1(6);
 								this.km.init1(8);
 								this.km.setMessage(8, "Error");
 								this.km.addItem(8, "Please set any item on shop menu.");
-								this.km.activeSerifu(8, 250, 100, 216, Color.red);
+								this.km.activeSerifu(
+									8,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 82,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 60,
+									216,
+									Color.red
+								);
 								this.km.mode = 440;
 							}
 						}
@@ -17270,11 +16916,17 @@ MainProgram.prototype.aMove = function() {
 							this.km.init1(7);
 							this.km.setMessage(
 								7,
-								"" + this.shop_item_name[this.km.list_s] + this.tdb.getValue("shop_serifu2")
+								`${this.shop_item_name[this.km.list_s]}${this.tdb.getValue("shop_serifu2")}`
 							);
 							this.km.addItem(7, this.tdb.getValue("shop_serifu3"));
 							this.km.addItem(7, this.tdb.getValue("shop_serifu4"));
-							this.km.activeSerifutuki(7, 16, 86, 236, this.shop_name);
+							this.km.activeSerifutuki(
+								7,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 152,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+								236,
+								this.shop_name
+							);
 							this.km.mode = 420;
 						}
 					} else if (this.km.mode == 420) {
@@ -17288,47 +16940,61 @@ MainProgram.prototype.aMove = function() {
 									this.km.init1(8);
 									this.km.addItem(
 										8,
-										"" + this.shop_item_name[this.km.list_s] + this.tdb.getValue("shop_serifu5")
+										`${this.shop_item_name[this.km.list_s]}${this.tdb.getValue("shop_serifu5")}`
 									);
-									this.km.activeIchigyou(8, 16, 170, 236);
+									this.km.activeIchigyou(
+										8,
+										rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 152,
+										rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 130,
+										236
+									);
 									this.score -= this.shop_item_teika[this.km.list_s];
 									this.ig.shop_kattaitem = this.km.list_s;
 									switch (this.ig.shop_kattaitem) {
+										// 買ったアイテム
+
 										default:
 											break;
 
 										case 0:
+											// グレネード３発
 											this.j_gr_kazu += 3;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 1:
+											// ジェット
 											this.j_jet_fuel += 80;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 2:
+											// ドリル
 											this.j_drell_f = true;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 3:
+											// ヘルメット
 											this.j_helm_f = true;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 4:
+											// しっぽ
 											this.j_tail_f = true;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 5:
+											// バリア
 											this.j_v_c = 150;
 											this.j_v_kakudo = 0;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 6:
+											// ファイヤーボール
 											this.j_fire_f = true;
 											this.j_fire_type = this.default_j_fire_type;
 											if (this.j_fire_type == 3 || this.j_fire_type == 4) this.j_fire_range = 10;
@@ -17336,12 +17002,14 @@ MainProgram.prototype.aMove = function() {
 											break;
 
 										case 7:
+											// １ｕｐ
 											if (this.j_tokugi == 17) this.setMyHP(String(this.getMyHP() + 1));
 											else this.j_left++;
 											this.gs.rsAddSound(7);
 											break;
 
 										case 8:
+											// 制限時間増加
 											if (this.time_max > 0) this.time += 30000;
 											this.gs.rsAddSound(7);
 											break;
@@ -17350,7 +17018,12 @@ MainProgram.prototype.aMove = function() {
 								} else {
 									this.km.init1(8);
 									this.km.addItem(8, this.tdb.getValue("shop_serifu6"));
-									this.km.activeIchigyou(8, 16, 172, 236);
+									this.km.activeIchigyou(
+										8,
+										rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 152,
+										rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 132,
+										236
+									);
 									this.km.mode = 430;
 									this.co_j.c1 = 10;
 								}
@@ -17419,9 +17092,9 @@ MainProgram.prototype.aMove = function() {
 			case 87: // ヘルメットかドリルをくれる人
 				if (
 					k3 > this.maps.wx - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17438,13 +17111,25 @@ MainProgram.prototype.aMove = function() {
 								this.km.init1(3);
 								this.km.setMessage(3, this.mes1_name);
 								this.addSerifu(3, 1, 3);
-								this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+								this.km.activeSerifu(
+									3,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+									272,
+									Color.cyan
+								);
 								this.km.mode = 200;
 							} else {
 								this.km.init1(3);
 								this.km.setMessage(3, this.mes1_name);
 								this.addSerifu(3, 2, 3);
-								this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+								this.km.activeSerifu(
+									3,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+									272,
+									Color.cyan
+								);
 								this.km.mode = 250;
 							}
 							this.km.move();
@@ -17485,7 +17170,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.setMessage(7, this.tdb.getValue("shop_serifu1"));
 							this.km.addItem(7, this.shop_item_name[3]);
 							this.km.addItem(7, this.shop_item_name[2]);
-							this.km.activeSerifutuki(7, 72, 86, 160, this.mes1_name);
+							this.km.activeSerifutuki(
+								7,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 96,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+								160,
+								this.mes1_name
+							);
 							this.km.mode = 220;
 						}
 					} else if (this.km.mode == 220) {
@@ -17496,15 +17187,25 @@ MainProgram.prototype.aMove = function() {
 						} else if (this.km.kettei_c == 1) {
 							if (this.km.selectedIndex[7] == 0) {
 								this.km.init1(8);
-								this.km.addItem(8, "" + this.shop_item_name[3] + this.tdb.getValue("shop_serifu5"));
-								this.km.activeIchigyou(8, 244, 136, 236);
+								this.km.addItem(8, `${this.shop_item_name[3]}${this.tdb.getValue("shop_serifu5")}`);
+								this.km.activeIchigyou(
+									8,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 76,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 96,
+									236
+								);
 								this.j_helm_f = true;
 								this.gs.rsAddSound(7);
 								this.km.mode = 230;
 							} else {
 								this.km.init1(8);
-								this.km.addItem(8, "" + this.shop_item_name[2] + this.tdb.getValue("shop_serifu5"));
-								this.km.activeIchigyou(8, 244, 136, 236);
+								this.km.addItem(8, `${this.shop_item_name[2]}${this.tdb.getValue("shop_serifu5")}`);
+								this.km.activeIchigyou(
+									8,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 76,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 96,
+									236
+								);
 								this.j_drell_f = true;
 								this.gs.rsAddSound(7);
 								this.km.mode = 230;
@@ -17524,7 +17225,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.init1(3);
 							this.km.setMessage(3, this.mes1_name);
 							this.addSerifu(3, 2, 3);
-							this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+							this.km.activeSerifu(
+								3,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+								272,
+								Color.cyan
+							);
 							this.km.mode = 250;
 						}
 					} else if (
@@ -17545,9 +17252,9 @@ MainProgram.prototype.aMove = function() {
 			case 88: // グレネードかジェットをくれる人
 				if (
 					k3 > this.maps.wx - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17564,13 +17271,25 @@ MainProgram.prototype.aMove = function() {
 								this.km.init1(3);
 								this.km.setMessage(3, this.mes2_name);
 								this.addSerifu(3, 3, 3);
-								this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+								this.km.activeSerifu(
+									3,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+									272,
+									Color.cyan
+								);
 								this.km.mode = 300;
 							} else {
 								this.km.init1(3);
 								this.km.setMessage(3, this.mes2_name);
 								this.addSerifu(3, 4, 3);
-								this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+								this.km.activeSerifu(
+									3,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+									272,
+									Color.cyan
+								);
 								this.km.mode = 350;
 							}
 							this.km.move();
@@ -17611,7 +17330,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.setMessage(7, this.tdb.getValue("shop_serifu1"));
 							this.km.addItem(7, this.shop_item_name[0]);
 							this.km.addItem(7, this.shop_item_name[1]);
-							this.km.activeSerifutuki(7, 72, 86, 160, this.mes2_name);
+							this.km.activeSerifutuki(
+								7,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 96,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+								160,
+								this.mes2_name
+							);
 							this.km.mode = 320;
 						}
 					} else if (this.km.mode == 320) {
@@ -17622,15 +17347,25 @@ MainProgram.prototype.aMove = function() {
 						} else if (this.km.kettei_c == 1) {
 							if (this.km.selectedIndex[7] == 0) {
 								this.km.init1(8);
-								this.km.addItem(8, "" + this.shop_item_name[0] + this.tdb.getValue("shop_serifu5"));
-								this.km.activeIchigyou(8, 244, 136, 236);
+								this.km.addItem(8, `${this.shop_item_name[0]}${this.tdb.getValue("shop_serifu5")}`);
+								this.km.activeIchigyou(
+									8,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 76,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 96,
+									236
+								);
 								this.j_gr_kazu += 3;
 								this.gs.rsAddSound(7);
 								this.km.mode = 330;
 							} else {
 								this.km.init1(8);
-								this.km.addItem(8, "" + this.shop_item_name[1] + this.tdb.getValue("shop_serifu5"));
-								this.km.activeIchigyou(8, 244, 136, 236);
+								this.km.addItem(8, `${this.shop_item_name[1]}${this.tdb.getValue("shop_serifu5")}`);
+								this.km.activeIchigyou(
+									8,
+									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 76,
+									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 96,
+									236
+								);
 								this.j_jet_fuel += 80;
 								this.gs.rsAddSound(7);
 								this.km.mode = 330;
@@ -17650,7 +17385,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.init1(3);
 							this.km.setMessage(3, this.mes2_name);
 							this.addSerifu(3, 4, 3);
-							this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+							this.km.activeSerifu(
+								3,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+								272,
+								Color.cyan
+							);
 							this.km.mode = 350;
 						}
 					} else if (
@@ -17671,9 +17412,9 @@ MainProgram.prototype.aMove = function() {
 			case 89: // ファイヤーボールセレクトの人
 				if (
 					k3 > this.maps.wx - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17689,7 +17430,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.init1(3);
 							this.km.setMessage(3, this.tdb.getValue("fs_name"));
 							this.addSerifu(3, 7, 3);
-							this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+							this.km.activeSerifu(
+								3,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+								272,
+								Color.cyan
+							);
 							this.km.mode = 200;
 							this.km.move();
 						}
@@ -17730,7 +17477,13 @@ MainProgram.prototype.aMove = function() {
 							this.km.addItem(7, this.tdb.getValue("fs_item_name1"));
 							this.km.addItem(7, this.tdb.getValue("fs_item_name2"));
 							this.km.addItem(7, this.tdb.getValue("fs_item_name3"));
-							this.km.activeSerifutuki(7, 40, 86, 240, this.tdb.getValue("fs_name"));
+							this.km.activeSerifutuki(
+								7,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 128,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+								240,
+								this.tdb.getValue("fs_name")
+							);
 							this.km.mode = 220;
 						}
 					} else if (this.km.mode == 220) {
@@ -17738,43 +17491,33 @@ MainProgram.prototype.aMove = function() {
 						if (this.km.cancel_c == 1) {
 							this.km.offActivewindow(7, 3);
 							this.km.mode = 200;
-						} else if (this.km.kettei_c == 1)
+						} else if (this.km.kettei_c == 1) {
+							this.km.init1(8);
+							this.km.addItem(
+								8,
+								`${this.tdb.getValue(`fs_item_name${this.km.selectedIndex[7] + 1}`)}${this.tdb.getValue(
+									"fs_serifu2"
+								)}`
+							);
+							this.km.activeIchigyou(
+								8,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 36,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 116,
+								236
+							);
+							this.j_fire_f = true;
 							if (this.km.selectedIndex[7] == 0) {
-								this.km.init1(8);
-								this.km.addItem(
-									8,
-									"" + this.tdb.getValue("fs_item_name1") + this.tdb.getValue("fs_serifu2")
-								);
-								this.km.activeIchigyou(8, 204, 156, 236);
-								this.j_fire_f = true;
 								this.j_fire_type = 1;
-								this.gs.rsAddSound(7);
-								this.km.mode = 230;
 							} else if (this.km.selectedIndex[7] == 1) {
-								this.km.init1(8);
-								this.km.addItem(
-									8,
-									"" + this.tdb.getValue("fs_item_name2") + this.tdb.getValue("fs_serifu2")
-								);
-								this.km.activeIchigyou(8, 204, 156, 236);
-								this.j_fire_f = true;
 								this.j_fire_type = 2;
 								this.j_fire_range = 9999;
-								this.gs.rsAddSound(7);
-								this.km.mode = 230;
 							} else {
-								this.km.init1(8);
-								this.km.addItem(
-									8,
-									"" + this.tdb.getValue("fs_item_name3") + this.tdb.getValue("fs_serifu2")
-								);
-								this.km.activeIchigyou(8, 204, 156, 236);
-								this.j_fire_f = true;
 								this.j_fire_type = 4;
 								this.j_fire_range = 10;
-								this.gs.rsAddSound(7);
-								this.km.mode = 230;
 							}
+							this.gs.rsAddSound(7);
+							this.km.mode = 230;
+						}
 					} else if (this.km.mode == 230) {
 						if (
 							this.co_j.x < k3 - 80 - 8 ||
@@ -17805,9 +17548,9 @@ MainProgram.prototype.aMove = function() {
 			case 90: // シーソー
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17863,9 +17606,9 @@ MainProgram.prototype.aMove = function() {
 			case 93: // ブランコ
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17900,9 +17643,9 @@ MainProgram.prototype.aMove = function() {
 			case 95: // スウィングバー
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -17983,12 +17726,12 @@ MainProgram.prototype.aMove = function() {
 				}
 				break;
 
-			case 100:
+			case 100: // 動く床（上下移動）
 				if (
 					k3 > this.maps.wx - 80 - 32 &&
-					k3 < this.maps.wx + 512 + 32 &&
+					k3 < this.maps.wx + this.gg.di.width + 32 &&
 					l3 > this.maps.wy - 16 &&
-					l3 < this.maps.wy + 320 + 32
+					l3 < this.maps.wy + this.gg.di.height + 32
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -18040,12 +17783,12 @@ MainProgram.prototype.aMove = function() {
 				}
 				break;
 
-			case 110:
+			case 110: // 動く床（左右移動）
 				if (
 					k3 > this.maps.wx - 80 - 32 &&
-					k3 < this.maps.wx + 512 + 32 &&
+					k3 < this.maps.wx + this.gg.di.width + 32 &&
 					l3 > this.maps.wy - 16 &&
-					l3 < this.maps.wy + 320 + 32
+					l3 < this.maps.wy + this.gg.di.height + 32
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -18123,9 +17866,9 @@ MainProgram.prototype.aMove = function() {
 			case 120: // 回転する動く床
 				if (
 					k3 > this.maps.wx - 80 - 32 &&
-					k3 < this.maps.wx + 512 + 32 &&
+					k3 < this.maps.wx + this.gg.di.width + 32 &&
 					l3 > this.maps.wy - 16 &&
-					l3 < this.maps.wy + 320 + 32
+					l3 < this.maps.wy + this.gg.di.height + 32
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -18229,19 +17972,19 @@ MainProgram.prototype.aMove = function() {
 				}
 				break;
 
-			case 150:
+			case 150: // スイッチ式動く床 ＯＮで上か下
 				this.aMoveOption(i);
 				k3 = characterobject.x;
 				l3 = characterobject.y;
 				break;
 
-			case 160:
+			case 160: // スイッチ式動く床 ＯＮで右か左
 				this.aMoveOption(i);
 				k3 = characterobject.x;
 				l3 = characterobject.y;
 				break;
 
-			case 300:
+			case 300: // 土管
 				if (characterobject.c3 >= 200) {
 					this.maps.map_bg[rightShiftIgnoreSign(k3, 5)][rightShiftIgnoreSign(l3, 5)] = 31;
 					this.maps.map_bg[rightShiftIgnoreSign(k3, 5)][rightShiftIgnoreSign(l3, 5) + 1] = 31;
@@ -18251,9 +17994,9 @@ MainProgram.prototype.aMove = function() {
 				}
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -18412,9 +18155,9 @@ MainProgram.prototype.aMove = function() {
 			case 400: // ドッスンスン
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -18495,9 +18238,9 @@ MainProgram.prototype.aMove = function() {
 			case 410: // FX Update 14以降追加されたドッスンスン
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -18513,6 +18256,7 @@ MainProgram.prototype.aMove = function() {
 				}
 				var byte8 = 0;
 				if (characterobject.c4 <= 1) {
+					// 上ドッスンスン
 					if (characterobject.c3 == 0) {
 						if (k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15) {
 							var l8 = rightShiftIgnoreSign(k3, 5);
@@ -18564,6 +18308,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 2) {
+					// 左ドッスンスン
 					if (characterobject.c3 == 0) {
 						if (
 							characterobject.vx - 160 - 40 <= this.co_j.x + 15 &&
@@ -18620,6 +18365,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 3) {
+					// 右ドッスンスン
 					if (characterobject.c3 == 0) {
 						if (
 							characterobject.vx + 96 + 160 + 40 > this.co_j.x + 15 &&
@@ -18676,7 +18422,8 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 4) {
-					characterobject.c1 = k3 - 512 - 32 - 128;
+					// 跳ねるドッスンスン
+					characterobject.c1 = k3 - this.gg.di.width - 32 - 128;
 					characterobject.c2 = k3 + 128 + 128;
 					k3 += characterobject.vx;
 					if (characterobject.vx < 0) {
@@ -18707,6 +18454,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 5) {
+					// 上がらないドッスンスン
 					if (characterobject.c3 == 0) {
 						if (
 							k3 - 48 < this.co_j.x + 15 &&
@@ -18753,6 +18501,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					} else if (characterobject.c3 == 200);
 				} else if (characterobject.c4 == 6) {
+					// 	エレベータードッスンスン 上
 					if (characterobject.c3 == 0) {
 						if (this.j_a_id == i) {
 							var j11 = rightShiftIgnoreSign(k3, 5);
@@ -18803,6 +18552,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 7) {
+					// エレベータードッスンスン 下
 					if (characterobject.c3 == 0) {
 						if (this.j_a_id == i) {
 							var l11 = rightShiftIgnoreSign(k3, 5);
@@ -18853,6 +18603,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 8) {
+					// 上下ドッスンスン
 					if (characterobject.c3 == 0) {
 						if (k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15 && l3 - 16 >= this.co_j.y) {
 							var j12 = rightShiftIgnoreSign(k3, 5);
@@ -18954,6 +18705,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 9) {
+					// 左右ドッスンスン
 					if (characterobject.c3 == 0) {
 						if (
 							characterobject.vx - 160 - 40 <= this.co_j.x + 15 &&
@@ -19063,6 +18815,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 10) {
+					// ロングレンジドッスンスン
 					if (characterobject.c3 == 0) {
 						if (k3 - 48 < this.co_j.x + 15 && k3 + 96 + 48 > this.co_j.x + 15 && l3 + 48 <= this.co_j.y) {
 							var j14 = rightShiftIgnoreSign(k3, 5);
@@ -19115,6 +18868,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 11) {
+					// 壁まで上下移動するドッスンスン
 					if (characterobject.c3 == 0) {
 						l3 -= 4;
 						byte8 = -1;
@@ -19159,6 +18913,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 12) {
+					// 壁まで左右移動するドッスンスン
 					var j15 = rightShiftIgnoreSign(k3 + 47, 5);
 					var i32 = rightShiftIgnoreSign(l3 + 63, 5);
 					if (this.maps.map_bg[j15][i32] == 19) {
@@ -19257,12 +19012,14 @@ MainProgram.prototype.aMove = function() {
 					characterobject.vy = l3;
 					l3 = characterobject.y;
 				} else if (characterobject.c4 == 13) {
+					// 乗ると左右移動するドッスンスン
 					if (characterobject.c3 == 0 && this.j_a_id == i) {
 						characterobject.c4 = 12;
 						characterobject.c3 = 1;
 						characterobject.vy = l3;
 					}
 				} else if (characterobject.c4 == 14) {
+					// 動かないドッスンスン
 					var k16 = rightShiftIgnoreSign(k3, 5);
 					var j33 = rightShiftIgnoreSign(k3 + 31, 5);
 					var i56 = rightShiftIgnoreSign(k3 + 63, 5);
@@ -19313,8 +19070,10 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				} else if (characterobject.c4 == 15) {
+					// 落ちるだけのドッスンスン
 					if (this.co_j.x >= k3 && this.co_j.x <= k3 + 64 && this.co_j.y >= l3 + 64) characterobject.c4 = 14;
 				} else if (characterobject.c4 == 16) {
+					// 左右へ押せるドッスンスン
 					if (this.souko_count3 == 1) characterobject.pt = 3400;
 					else characterobject.pt = 400;
 					var i17 = rightShiftIgnoreSign(k3, 5);
@@ -19389,8 +19148,10 @@ MainProgram.prototype.aMove = function() {
 							}
 						}
 				} else if (characterobject.c4 == 17) {
+					// 上へ押せるドッスンスン
 					if (l3 > characterobject.vy && (l3 -= 8) <= characterobject.vy) l3 = characterobject.vy;
 				} else if (characterobject.c4 == 18) {
+					// その場で跳ねるドッスンスン
 					characterobject.vy += 5;
 					if (characterobject.vy > 100) characterobject.vy = 100;
 					l3 += rounddown(characterobject.vy / 10);
@@ -19618,9 +19379,9 @@ MainProgram.prototype.aMove = function() {
 			case 500: // 乗ると落ちる床
 				if (
 					k3 > this.maps.wx - 96 - 32 &&
-					k3 < this.maps.wx + 512 + 32 &&
+					k3 < this.maps.wx + this.gg.di.width + 32 &&
 					l3 > this.maps.wy - 32 &&
-					l3 <= this.maps.wy + 368
+					l3 <= this.maps.wy + this.gg.di.height + 48
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -19668,9 +19429,9 @@ MainProgram.prototype.aMove = function() {
 			case 600: // 乗れるカイオール
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -19694,7 +19455,7 @@ MainProgram.prototype.aMove = function() {
 					}
 					if (this.co_j.x >= k3 - 144) characterobject.pt = 605;
 				} else if (characterobject.c3 == 100) {
-					characterobject.c1 = k3 - 512 - 32;
+					characterobject.c1 = k3 - this.gg.di.width - 32;
 					characterobject.c2 = k3 + 128;
 					if (this.j_a_id != i) {
 						characterobject.c4++;
@@ -19735,13 +19496,13 @@ MainProgram.prototype.aMove = function() {
 				break;
 
 			case 610: // 乗れるカイオール 方向キーで移動
-				characterobject.c1 = k3 - 512 - 32;
+				characterobject.c1 = k3 - this.gg.di.width - 32;
 				characterobject.c2 = k3 + 128;
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -19791,9 +19552,9 @@ MainProgram.prototype.aMove = function() {
 			case 700: // ジャンプ台
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -19919,9 +19680,9 @@ MainProgram.prototype.aMove = function() {
 					if (
 						characterobject.vx > 28 &&
 						(k3 < this.maps.wx ||
-							k3 > this.maps.wx + 512 - 32 ||
+							k3 > this.maps.wx + this.gg.di.width - 32 ||
 							l3 < this.maps.wy - 32 ||
-							l3 > this.maps.wy + 320 + 32)
+							l3 > this.maps.wy + this.gg.di.height + 32)
 					)
 						characterobject.vx = 28;
 				} else if (characterobject.vx == 32) {
@@ -19978,9 +19739,9 @@ MainProgram.prototype.aMove = function() {
 				}
 				if (
 					k3 > this.maps.wx - 224 &&
-					k3 < this.maps.wx + 512 + 224 &&
+					k3 < this.maps.wx + this.gg.di.width + 224 &&
 					l3 > this.maps.wy - 224 &&
-					l3 < this.maps.wy + 320 + 224
+					l3 < this.maps.wy + this.gg.di.height + 224
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20062,9 +19823,9 @@ MainProgram.prototype.aMove = function() {
 				}
 				if (
 					k3 > this.maps.wx - 150 &&
-					k3 < this.maps.wx + 512 + 150 &&
+					k3 < this.maps.wx + this.gg.di.width + 150 &&
 					l3 > this.maps.wy - 150 &&
-					l3 < this.maps.wy + 320 + 150
+					l3 < this.maps.wy + this.gg.di.height + 150
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20114,9 +19875,9 @@ MainProgram.prototype.aMove = function() {
 				}
 				if (
 					k3 > this.maps.wx - 150 &&
-					k3 < this.maps.wx + 512 + 150 &&
+					k3 < this.maps.wx + this.gg.di.width + 150 &&
 					l3 > this.maps.wy - 150 &&
-					l3 < this.maps.wy + 320 + 150
+					l3 < this.maps.wy + this.gg.di.height + 150
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20138,7 +19899,7 @@ MainProgram.prototype.aMove = function() {
 
 			case 1100: // 火山
 				if (characterobject.vx <= 0) {
-					if (k3 >= this.maps.wx && k3 <= this.maps.wx + 512 - 32)
+					if (k3 >= this.maps.wx && k3 <= this.maps.wx + this.gg.di.width - 32)
 						if (this.sl_step == 10 || this.sl_step == 11) {
 							characterobject.vx = 19;
 							this.gs.rsAddSound(17);
@@ -20156,9 +19917,9 @@ MainProgram.prototype.aMove = function() {
 				else characterobject.vx = 0;
 				if (
 					k3 > this.maps.wx - 224 &&
-					k3 < this.maps.wx + 512 + 224 &&
+					k3 < this.maps.wx + this.gg.di.width + 224 &&
 					l3 > this.maps.wy - 224 &&
-					l3 < this.maps.wy + 320 + 224
+					l3 < this.maps.wy + this.gg.di.height + 224
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20170,7 +19931,7 @@ MainProgram.prototype.aMove = function() {
 
 			case 1150: // 逆火山
 				if (characterobject.vx <= 0) {
-					if (k3 >= this.maps.wx && k3 <= this.maps.wx + 512 - 32)
+					if (k3 >= this.maps.wx && k3 <= this.maps.wx + this.gg.di.width - 32)
 						if (this.sl_step == 10 || this.sl_step == 11) {
 							characterobject.vx = 19;
 							this.gs.rsAddSound(17);
@@ -20188,9 +19949,9 @@ MainProgram.prototype.aMove = function() {
 				else characterobject.vx = 0;
 				if (
 					k3 > this.maps.wx - 224 &&
-					k3 < this.maps.wx + 512 + 224 &&
+					k3 < this.maps.wx + this.gg.di.width + 224 &&
 					l3 > this.maps.wy - 224 &&
-					l3 < this.maps.wy + 320 + 224
+					l3 < this.maps.wy + this.gg.di.height + 224
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20203,9 +19964,9 @@ MainProgram.prototype.aMove = function() {
 			case 1200: // 動くＴ字型
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20240,9 +20001,9 @@ MainProgram.prototype.aMove = function() {
 			case 1300: // ロープ
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20308,12 +20069,12 @@ MainProgram.prototype.aMove = function() {
 				else characterobject.vy += rounddown((characterobject.vx - 5) / 10);
 				break;
 
-			case 1400: // 得点で開く扉
+			case 1400: // 条件で開く扉
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20327,9 +20088,9 @@ MainProgram.prototype.aMove = function() {
 				if (characterobject.c3 <= 0) {
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					)
 						if (characterobject.c4 == 2) {
 							if (this.getCoinTotal() <= 0) characterobject.c3 = 100;
@@ -20397,9 +20158,9 @@ MainProgram.prototype.aMove = function() {
 			case 1500: // 人間大砲
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20436,9 +20197,9 @@ MainProgram.prototype.aMove = function() {
 			case 1600: // スポット処理
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20449,9 +20210,9 @@ MainProgram.prototype.aMove = function() {
 				if (
 					characterobject.c3 <= 0 &&
 					k3 >= this.maps.wx &&
-					k3 <= this.maps.wx + 512 - 32 &&
+					k3 <= this.maps.wx + this.gg.di.width - 32 &&
 					l3 >= this.maps.wy &&
-					l3 <= this.maps.wy + 320 - 32
+					l3 <= this.maps.wy + this.gg.di.height - 32
 				) {
 					this.spot_c = 100;
 					characterobject.c = 0;
@@ -20473,9 +20234,9 @@ MainProgram.prototype.aMove = function() {
 			case 1700: // 人食いワカメ
 				if (
 					k3 > this.maps.wx - 192 &&
-					k3 < this.maps.wx + 512 + 192 &&
+					k3 < this.maps.wx + this.gg.di.width + 192 &&
 					l3 > this.maps.wy - 192 &&
-					l3 < this.maps.wy + 320 + 192
+					l3 < this.maps.wy + this.gg.di.height + 192
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20485,9 +20246,9 @@ MainProgram.prototype.aMove = function() {
 				if (characterobject.c4 <= 0) {
 					if (
 						k3 + 63 >= this.maps.wx + 16 &&
-						k3 <= this.maps.wx + 512 - 16 &&
+						k3 <= this.maps.wx + this.gg.di.width - 16 &&
 						l3 + 63 >= this.maps.wy + 16 &&
-						l3 <= this.maps.wy + 320 - 16
+						l3 <= this.maps.wy + this.gg.di.height - 16
 					)
 						characterobject.c4 = 100;
 				} else if (characterobject.c4 == 100) {
@@ -20507,7 +20268,7 @@ MainProgram.prototype.aMove = function() {
 					}
 				} else if (characterobject.c4 >= 500 && characterobject.c4 < 600) {
 					characterobject.c4++;
-					if (characterobject.c4 >= 512) characterobject.c4 = 0;
+					if (characterobject.c4 >= this.gg.di.width) characterobject.c4 = 0;
 				}
 				if (this.co_j.c >= 100 && this.co_j.c < 200 && this.j_v_c <= 0) {
 					var k74 = rounddown((characterobject.vy * 64) / 100) - 64;
@@ -20532,9 +20293,9 @@ MainProgram.prototype.aMove = function() {
 			case 1800: // 回転するドッスンスン
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20642,9 +20403,9 @@ MainProgram.prototype.aMove = function() {
 			case 1850: // 回転する巨大ドッスンスン
 				if (
 					k3 > this.maps.wx - 180 &&
-					k3 < this.maps.wx + 512 + 180 &&
+					k3 < this.maps.wx + this.gg.di.width + 180 &&
 					l3 > this.maps.wy - 180 &&
-					l3 < this.maps.wy + 320 + 180
+					l3 < this.maps.wy + this.gg.di.height + 180
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20752,9 +20513,9 @@ MainProgram.prototype.aMove = function() {
 			case 1900: // 画面内で強制スクロール系
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -20766,17 +20527,18 @@ MainProgram.prototype.aMove = function() {
 					if (
 						(characterobject.c3 <= 11 || (characterobject.c3 >= 15 && characterobject.c3 <= 18)) &&
 						(k3 <= this.maps.wx - 32 ||
-							k3 >= this.maps.wx + 512 ||
+							k3 >= this.maps.wx + this.gg.di.width ||
 							l3 <= this.maps.wy - 32 ||
-							l3 >= this.maps.wy + 320)
+							l3 >= this.maps.wy + this.gg.di.height)
 					)
 						characterobject.c4 = 0;
-				} else if (characterobject.c3 == 0) {
+				} else if (characterobject.c3 == 0 || characterobject.c3 == 1) {
+					// 画面内で横方向強制スクロール
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 100;
 						if (this.nkscroll_zsc) {
@@ -20788,37 +20550,23 @@ MainProgram.prototype.aMove = function() {
 							if (this.nkscroll_view_y < this.maps.wy_mini) this.nkscroll_view_y = this.maps.wy_mini;
 							if (this.nkscroll_view_y > this.maps.wy_max) this.nkscroll_view_y = this.maps.wy_max;
 						}
-						this.nkscroll_vx = 1;
-						this.nkscroll_vy = 0;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 1) {
-					if (
-						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
-						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
-					) {
-						this.nkscroll_con = 100;
-						if (this.nkscroll_zsc) {
-							this.nkscroll_view_x = this.maps.wx;
-							this.nkscroll_view_y = this.maps.wy;
-						} else {
-							this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
-							this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
-							if (this.nkscroll_view_y < this.maps.wy_mini) this.nkscroll_view_y = this.maps.wy_mini;
-							if (this.nkscroll_view_y > this.maps.wy_max) this.nkscroll_view_y = this.maps.wy_max;
+						if (characterobject.c3 == 0) {
+							// 画面内で右強制スクロール
+							this.nkscroll_vx = 1;
+						} else if (characterobject.c3 == 1) {
+							// 画面内で左強制スクロール
+							this.nkscroll_vx = -1;
 						}
-						this.nkscroll_vx = -1;
 						this.nkscroll_vy = 0;
 						characterobject.c4 = 1;
 					}
-				} else if (characterobject.c3 == 2) {
+				} else if (characterobject.c3 == 2 || characterobject.c3 == 3) {
+					// 画面内で縦方向強制スクロール
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 100;
 						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
@@ -20826,31 +20574,22 @@ MainProgram.prototype.aMove = function() {
 						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
 						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
 						this.nkscroll_vx = 0;
-						this.nkscroll_vy = -1;
+						if (characterobject.c3 == 2) {
+							// 画面内で上強制スクロール
+							this.nkscroll_vy = -1;
+						} else if (characterobject.c3 == 3) {
+							// 画面内で下強制スクロール
+							this.nkscroll_vy = 1;
+						}
 						characterobject.c4 = 1;
 					}
-				} else if (characterobject.c3 == 3) {
+				} else if (characterobject.c3 >= 4 && characterobject.c3 <= 7) {
+					// 画面内で斜め方向強制スクロール
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
-					) {
-						this.nkscroll_con = 100;
-						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
-						if (this.nkscroll_view_x < this.maps.wx_mini) this.nkscroll_view_x = this.maps.wx_mini;
-						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
-						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
-						this.nkscroll_vx = 0;
-						this.nkscroll_vy = 1;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 4) {
-					if (
-						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
-						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 100;
 						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
@@ -20859,92 +20598,51 @@ MainProgram.prototype.aMove = function() {
 						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
 						if (this.nkscroll_view_y < this.maps.wy_mini) this.nkscroll_view_y = this.maps.wy_mini;
 						if (this.nkscroll_view_y > this.maps.wy_max) this.nkscroll_view_y = this.maps.wy_max;
-						this.nkscroll_vx = 1;
-						this.nkscroll_vy = -1;
+						if (characterobject.c3 == 4) {
+							// 画面内で右上強制スクロール
+							this.nkscroll_vx = 1;
+							this.nkscroll_vy = -1;
+						} else if (characterobject.c3 == 5) {
+							// 画面内で右下強制スクロール
+							this.nkscroll_vx = 1;
+							this.nkscroll_vy = 1;
+						} else if (characterobject.c3 == 6) {
+							// 	画面内で左上強制スクロール
+							this.nkscroll_vx = -1;
+							this.nkscroll_vy = -1;
+						} else if (characterobject.c3 == 7) {
+							// 画面内で左下強制スクロール
+							this.nkscroll_vx = -1;
+							this.nkscroll_vy = 1;
+						}
 						characterobject.c4 = 1;
 					}
-				} else if (characterobject.c3 == 5) {
+				} else if (characterobject.c3 == 8 || characterobject.c3 == 9) {
+					// スクロールスピードを変化
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
-						this.nkscroll_con = 100;
-						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
-						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
-						if (this.nkscroll_view_x < this.maps.wx_mini) this.nkscroll_view_x = this.maps.wx_mini;
-						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
-						if (this.nkscroll_view_y < this.maps.wy_mini) this.nkscroll_view_y = this.maps.wy_mini;
-						if (this.nkscroll_view_y > this.maps.wy_max) this.nkscroll_view_y = this.maps.wy_max;
-						this.nkscroll_vx = 1;
-						this.nkscroll_vy = 1;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 6) {
-					if (
-						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
-						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
-					) {
-						this.nkscroll_con = 100;
-						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
-						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
-						if (this.nkscroll_view_x < this.maps.wx_mini) this.nkscroll_view_x = this.maps.wx_mini;
-						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
-						if (this.nkscroll_view_y < this.maps.wy_mini) this.nkscroll_view_y = this.maps.wy_mini;
-						if (this.nkscroll_view_y > this.maps.wy_max) this.nkscroll_view_y = this.maps.wy_max;
-						this.nkscroll_vx = -1;
-						this.nkscroll_vy = -1;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 7) {
-					if (
-						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
-						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
-					) {
-						this.nkscroll_con = 100;
-						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
-						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy + 15, 5) * 32;
-						if (this.nkscroll_view_x < this.maps.wx_mini) this.nkscroll_view_x = this.maps.wx_mini;
-						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
-						if (this.nkscroll_view_y < this.maps.wy_mini) this.nkscroll_view_y = this.maps.wy_mini;
-						if (this.nkscroll_view_y > this.maps.wy_max) this.nkscroll_view_y = this.maps.wy_max;
-						this.nkscroll_vx = -1;
-						this.nkscroll_vy = 1;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 8) {
-					if (
-						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
-						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
-					) {
-						this.nkscroll_speed_x++;
-						if (this.nkscroll_speed_x > 8) this.nkscroll_speed_x = 8;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 9) {
-					if (
-						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
-						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
-					) {
-						this.nkscroll_speed_x--;
-						if (this.nkscroll_speed_x < 1) this.nkscroll_speed_x = 1;
+						if (characterobject.c3 == 8) {
+							// スクロールスピードアップ
+							this.nkscroll_speed_x++;
+							if (this.nkscroll_speed_x > 8) this.nkscroll_speed_x = 8;
+						} else if (characterobject.c3 == 9) {
+							// スクロールスピードダウン
+							this.nkscroll_speed_x--;
+							if (this.nkscroll_speed_x < 1) this.nkscroll_speed_x = 1;
+						}
 						characterobject.c4 = 1;
 					}
 				} else if (characterobject.c3 == 10) {
+					// 画面内で全方向スクロール
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 200;
 						this.nkscroll_view_x = this.maps.wx;
@@ -20956,11 +20654,12 @@ MainProgram.prototype.aMove = function() {
 						characterobject.c4 = 1;
 					}
 				} else if (characterobject.c3 == 11) {
+					// 画面内でスクロール停止
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 100;
 						if (this.nkscroll_zsc) {
@@ -20978,7 +20677,8 @@ MainProgram.prototype.aMove = function() {
 						this.nkscroll_vy = 0;
 						characterobject.c4 = 1;
 					}
-				} else if (characterobject.c3 == 12) {
+				} else if (characterobject.c3 == 12 || characterobject.c3 == 13) {
+					// 自分が重なると強制スクロール
 					if (
 						k3 <= this.co_j.x + 15 &&
 						k3 + 31 >= this.co_j.x + 15 &&
@@ -20986,29 +20686,25 @@ MainProgram.prototype.aMove = function() {
 						l3 + 31 >= this.co_j.y
 					) {
 						this.nkscroll_con = 100;
-						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
-						this.nkscroll_view_y = this.maps.wy;
-						this.nkscroll_vx = 1;
-						this.nkscroll_vy = 0;
-						characterobject.c4 = 1;
-					}
-				} else if (characterobject.c3 == 13) {
-					if (
-						k3 <= this.co_j.x + 15 &&
-						k3 + 31 >= this.co_j.x + 15 &&
-						l3 <= this.co_j.y + 31 &&
-						l3 + 31 >= this.co_j.y
-					) {
-						this.nkscroll_con = 100;
-						this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
-						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
-						if (this.nkscroll_view_x < this.maps.wx_mini) this.nkscroll_view_x = this.maps.wx_mini;
-						if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
-						this.nkscroll_vx = 0;
-						this.nkscroll_vy = -1;
+						if (characterobject.c3 == 12) {
+							// 自分が重なると右強制スクロール
+							this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
+							this.nkscroll_view_y = this.maps.wy;
+							this.nkscroll_vx = 1;
+							this.nkscroll_vy = 0;
+						} else if (characterobject.c3 == 13) {
+							// 自分が重なると上強制スクロール
+							this.nkscroll_view_y = rightShiftIgnoreSign(this.maps.wy, 1) * 2;
+							this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx + 15, 5) * 32;
+							if (this.nkscroll_view_x < this.maps.wx_mini) this.nkscroll_view_x = this.maps.wx_mini;
+							if (this.nkscroll_view_x > this.maps.wx_max) this.nkscroll_view_x = this.maps.wx_max;
+							this.nkscroll_vx = 0;
+							this.nkscroll_vy = -1;
+						}
 						characterobject.c4 = 1;
 					}
 				} else if (characterobject.c3 == 14) {
+					// 自分が重なると全方向スクロール
 					if (
 						k3 <= this.co_j.x + 15 &&
 						k3 + 31 >= this.co_j.x + 15 &&
@@ -21025,11 +20721,12 @@ MainProgram.prototype.aMove = function() {
 						characterobject.c4 = 1;
 					}
 				} else if (characterobject.c3 == 15) {
+					// 画面内で横固定縦自由スクロール
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 300;
 						if (this.nkscroll_zsc) {
@@ -21046,11 +20743,12 @@ MainProgram.prototype.aMove = function() {
 						characterobject.c4 = 1;
 					}
 				} else if (characterobject.c3 == 16) {
+					// 画面内で右強制縦自由スクロール
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						this.nkscroll_con = 400;
 						this.nkscroll_view_x = rightShiftIgnoreSign(this.maps.wx, 1) * 2;
@@ -21060,11 +20758,12 @@ MainProgram.prototype.aMove = function() {
 						characterobject.c4 = 1;
 					}
 				} else if (characterobject.c3 == 17) {
+					// 画面内で左進行用の視界
 					if (
 						k3 >= this.maps.wx &&
-						k3 <= this.maps.wx + 512 - 32 &&
+						k3 <= this.maps.wx + this.gg.di.width - 32 &&
 						l3 >= this.maps.wy &&
-						l3 <= this.maps.wy + 320 - 32
+						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						if (this.view_move_type != 2) {
 							this.view_move_type = 2;
@@ -21079,11 +20778,12 @@ MainProgram.prototype.aMove = function() {
 						characterobject.c4 = 1;
 					}
 				} else if (
+					// 画面内で右進行用の視界
 					characterobject.c3 == 18 &&
 					k3 >= this.maps.wx &&
-					k3 <= this.maps.wx + 512 - 32 &&
+					k3 <= this.maps.wx + this.gg.di.width - 32 &&
 					l3 >= this.maps.wy &&
-					l3 <= this.maps.wy + 320 - 32
+					l3 <= this.maps.wy + this.gg.di.height - 32
 				) {
 					if (this.view_move_type != 1) {
 						this.view_move_type = 1;
@@ -21100,7 +20800,7 @@ MainProgram.prototype.aMove = function() {
 				break;
 
 			case 2000: // 曲線による坂や乗れる円等
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 2700;
@@ -21110,7 +20810,7 @@ MainProgram.prototype.aMove = function() {
 				break;
 
 			case 2100: // 人口太陽
-				if (k3 + 256 > this.maps.wx && k3 - 256 < this.maps.wx + 512) {
+				if (k3 + 256 > this.maps.wx && k3 - 256 < this.maps.wx + this.gg.di.width) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 2800;
@@ -21130,9 +20830,9 @@ MainProgram.prototype.aMove = function() {
 				else if (characterobject.c3 >= 360) characterobject.c3 -= 360;
 				if (
 					k3 > this.maps.wx - 200 &&
-					k3 < this.maps.wx + 512 + 200 &&
+					k3 < this.maps.wx + this.gg.di.width + 200 &&
 					l3 > this.maps.wy - 200 &&
-					l3 < this.maps.wy + 320 + 200
+					l3 < this.maps.wy + this.gg.di.height + 200
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21164,9 +20864,9 @@ MainProgram.prototype.aMove = function() {
 				else if (characterobject.c3 >= 360) characterobject.c3 -= 360;
 				if (
 					k3 > this.maps.wx - 200 &&
-					k3 < this.maps.wx + 512 + 200 &&
+					k3 < this.maps.wx + this.gg.di.width + 200 &&
 					l3 > this.maps.wy - 200 &&
-					l3 < this.maps.wy + 320 + 200
+					l3 < this.maps.wy + this.gg.di.height + 200
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21206,7 +20906,7 @@ MainProgram.prototype.aMove = function() {
 						characterobject.vy = -4;
 					}
 				}
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 3000;
@@ -21230,7 +20930,7 @@ MainProgram.prototype.aMove = function() {
 					l3 = characterobject.c3;
 					characterobject.c5 = 0;
 				}
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 3000;
@@ -21255,7 +20955,7 @@ MainProgram.prototype.aMove = function() {
 						l3 = characterobject.c3 - 160;
 						characterobject.c5 = 0;
 					}
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 3000;
@@ -21268,7 +20968,7 @@ MainProgram.prototype.aMove = function() {
 			case 2600: // 乗ると下がる円
 				if (this.isRideYuka(String(characterobject.c4)) == 1 && (l3 += 2) >= this.ochiru_y + 80)
 					l3 = this.ochiru_y + 80 + 64;
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 2700;
@@ -21282,7 +20982,7 @@ MainProgram.prototype.aMove = function() {
 				if (this.isRideYuka(String(characterobject.c4)) == 1) {
 					if ((l3 += 3) >= this.ochiru_y + 80) l3 = this.ochiru_y + 80 + 64;
 				} else if ((l3 -= 3) <= characterobject.c3) l3 = characterobject.c3;
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 2700;
@@ -21301,7 +21001,7 @@ MainProgram.prototype.aMove = function() {
 					if (characterobject.vy < -44) characterobject.vy = -44;
 				}
 				l3 += rounddown(characterobject.vy / 10);
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 2700;
@@ -21314,9 +21014,9 @@ MainProgram.prototype.aMove = function() {
 			case 2800: // 長いロープ
 				if (
 					k3 > this.maps.wx - 256 &&
-					k3 < this.maps.wx + 512 + 256 &&
+					k3 < this.maps.wx + this.gg.di.width + 256 &&
 					l3 > this.maps.wy - 256 &&
-					l3 < this.maps.wy + 320 + 256
+					l3 < this.maps.wy + this.gg.di.height + 256
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21396,9 +21096,9 @@ MainProgram.prototype.aMove = function() {
 			case 2900: // 左向きのトゲ４つ
 				if (
 					k3 > this.maps.wx - 32 - 32 &&
-					k3 < this.maps.wx + 512 + 32 &&
+					k3 < this.maps.wx + this.gg.di.width + 32 &&
 					l3 > this.maps.wy - 160 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21425,9 +21125,9 @@ MainProgram.prototype.aMove = function() {
 			case 2950: // 右向きのトゲ４つ
 				if (
 					k3 > this.maps.wx - 32 - 32 &&
-					k3 < this.maps.wx + 512 + 32 &&
+					k3 < this.maps.wx + this.gg.di.width + 32 &&
 					l3 > this.maps.wy - 160 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21454,9 +21154,9 @@ MainProgram.prototype.aMove = function() {
 			case 3000: // 左右へ押せるドッスンスンのゴール
 				if (
 					k3 > this.maps.wx - 96 - 32 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 64 - 32 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21485,9 +21185,9 @@ MainProgram.prototype.aMove = function() {
 			case 3100: // 右へ一方通行
 				if (
 					k3 > this.maps.wx - 160 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 160 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21500,9 +21200,9 @@ MainProgram.prototype.aMove = function() {
 			case 3110: // 左へ一方通行
 				if (
 					k3 > this.maps.wx - 160 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 160 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21515,9 +21215,9 @@ MainProgram.prototype.aMove = function() {
 			case 3120: // 上へ一方通行
 				if (
 					k3 > this.maps.wx - 160 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 160 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21538,9 +21238,9 @@ MainProgram.prototype.aMove = function() {
 			case 3130: // 下へ一方通行
 				if (
 					k3 > this.maps.wx - 160 &&
-					k3 < this.maps.wx + 512 &&
+					k3 < this.maps.wx + this.gg.di.width &&
 					l3 > this.maps.wy - 160 &&
-					l3 < this.maps.wy + 320
+					l3 < this.maps.wy + this.gg.di.height
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21553,9 +21253,9 @@ MainProgram.prototype.aMove = function() {
 			case 3200: // ゆれる棒
 				if (
 					k3 > this.maps.wx - 256 &&
-					k3 < this.maps.wx + 512 + 256 &&
+					k3 < this.maps.wx + this.gg.di.width + 256 &&
 					l3 > this.maps.wy - 256 &&
-					l3 < this.maps.wy + 320 + 256
+					l3 < this.maps.wy + this.gg.di.height + 256
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21650,7 +21350,7 @@ MainProgram.prototype.aMove = function() {
 					characterobject.vy = -92;
 				}
 				if (l3 - characterobject.c5 >= this.ochiru_y) l3 = this.ochiru_y + characterobject.c5 + 64;
-				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
+				if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + this.gg.di.width + 256) {
 					characterobject.gf = true;
 					this.a_hf = true;
 					characterobject.pt = 2700;
@@ -21663,9 +21363,9 @@ MainProgram.prototype.aMove = function() {
 			case 3400: // コンティニュー 残り人数のみ
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21695,9 +21395,9 @@ MainProgram.prototype.aMove = function() {
 			case 3500: // スイッチ 重なるとＯＮ／ＯＦＦ 周囲１０ブロック以内に影響
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21770,9 +21470,9 @@ MainProgram.prototype.aMove = function() {
 			case 3600: // スイッチ ↑キーでＯＮ／ＯＦＦ 周囲１０ブロック以内に影響
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21923,9 +21623,9 @@ MainProgram.prototype.aMove = function() {
 			case 4600: // ＫＥＹ１
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21953,9 +21653,9 @@ MainProgram.prototype.aMove = function() {
 			case 4610: // ＫＥＹ２
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -21983,9 +21683,9 @@ MainProgram.prototype.aMove = function() {
 			case 4700: // 鍵で開く扉
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -22052,9 +21752,9 @@ MainProgram.prototype.aMove = function() {
 			case 4800: // 落ちる鍵
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -22109,9 +21809,9 @@ MainProgram.prototype.aMove = function() {
 			case 5100: // しっぽで破壊 ＯＮの動作
 				if (
 					k3 > this.maps.wx - 96 &&
-					k3 < this.maps.wx + 512 + 64 &&
+					k3 < this.maps.wx + this.gg.di.width + 64 &&
 					l3 > this.maps.wy - 96 &&
-					l3 < this.maps.wy + 320 + 64
+					l3 < this.maps.wy + this.gg.di.height + 64
 				) {
 					characterobject.gf = true;
 					this.a_hf = true;
@@ -22354,12 +22054,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 		default:
 			break;
 
-		case 150:
+		case 150: // スイッチ式動く床 ＯＮで上か下
 			if (
 				j > this.maps.wx - 80 - 32 &&
-				j < this.maps.wx + 512 + 32 &&
+				j < this.maps.wx + this.gg.di.width + 32 &&
 				k > this.maps.wy - 32 &&
-				k < this.maps.wy + 320 + 32
+				k < this.maps.wy + this.gg.di.height + 32
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -22439,12 +22139,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 160:
+		case 160: // スイッチ式動く床 ＯＮで右か左
 			if (
 				j > this.maps.wx - 80 - 32 &&
-				j < this.maps.wx + 512 + 32 &&
+				j < this.maps.wx + this.gg.di.width + 32 &&
 				k > this.maps.wy - 32 &&
-				k < this.maps.wy + 320 + 32
+				k < this.maps.wy + this.gg.di.height + 32
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -22537,7 +22237,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 3700:
+		case 3700: // スイッチ式の扉 ＯＮで開く
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22558,7 +22258,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 3710:
+		case 3710: // スイッチ式の扉 ＯＮで閉まる
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22575,7 +22275,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 3800:
+		case 3800: // スイッチ式トゲ ＯＮでブロック４
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22628,7 +22328,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 3810:
+		case 3810: // スイッチ式トゲ ＯＦＦでブロック４
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22681,7 +22381,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 3900:
+		case 3900: // スイッチ式トゲ ＯＮで消える
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22724,7 +22424,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 3910:
+		case 3910: // スイッチ式トゲ ＯＮで出現
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22753,7 +22453,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 4000:
+		case 4000: // スイッチ式ハシゴ ＯＮで消える
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22806,7 +22506,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 4010:
+		case 4010: // スイッチ式ハシゴ ＯＮで出現
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -22843,12 +22543,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 4100:
+		case 4100: // スイッチ式電撃バリア縦 ＯＮで消える
 			if (
 				j > this.maps.wx - 64 &&
-				j < this.maps.wx + 512 + 32 &&
+				j < this.maps.wx + this.gg.di.width + 32 &&
 				k > this.maps.wy - 128 &&
-				k < this.maps.wy + 320 + 32 + 128
+				k < this.maps.wy + this.gg.di.height + 32 + 128
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -22883,12 +22583,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 4110:
+		case 4110: // スイッチ式電撃バリア縦 ＯＮで出現
 			if (
 				j > this.maps.wx - 64 &&
-				j < this.maps.wx + 512 + 32 &&
+				j < this.maps.wx + this.gg.di.width + 32 &&
 				k > this.maps.wy - 128 &&
-				k < this.maps.wy + 320 + 32 + 128
+				k < this.maps.wy + this.gg.di.height + 32 + 128
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -22923,12 +22623,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 4200:
+		case 4200: // スイッチ式電撃バリア横 ＯＮで消える
 			if (
 				j > this.maps.wx - 128 &&
-				j < this.maps.wx + 512 + 32 &&
+				j < this.maps.wx + this.gg.di.width + 32 &&
 				k > this.maps.wy - 64 &&
-				k < this.maps.wy + 320 + 32 + 128
+				k < this.maps.wy + this.gg.di.height + 32 + 128
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -22963,12 +22663,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 4210:
+		case 4210: // スイッチ式電撃バリア横 ＯＮで出現
 			if (
 				j > this.maps.wx - 128 &&
-				j < this.maps.wx + 512 + 32 &&
+				j < this.maps.wx + this.gg.di.width + 32 &&
 				k > this.maps.wy - 64 &&
-				k < this.maps.wy + 320 + 32 + 128
+				k < this.maps.wy + this.gg.di.height + 32 + 128
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -23003,7 +22703,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 4300:
+		case 4300: // スイッチ式ファイヤーバー
 			if (characterobject.vy == 0) {
 				if (characterobject.c5 == 1) characterobject.vy = 1;
 			} else if (characterobject.vy == 1) {
@@ -23198,9 +22898,9 @@ MainProgram.prototype.aMoveOption = function(i) {
 				}
 			if (
 				j > this.maps.wx - 150 &&
-				j < this.maps.wx + 512 + 150 &&
+				j < this.maps.wx + this.gg.di.width + 150 &&
 				k > this.maps.wy - 150 &&
-				k < this.maps.wy + 320 + 150
+				k < this.maps.wy + this.gg.di.height + 150
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -23275,7 +22975,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 4400:
+		case 4400: // スイッチ式ブロック ＯＮで消える
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -23322,7 +23022,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 4410:
+		case 4410: // スイッチ式ブロック ＯＮで出現
 			characterobject.gf = false;
 			this.a_hf = true;
 			characterobject.pt = 0;
@@ -23351,12 +23051,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c3 = 100;
 			break;
 
-		case 4500:
+		case 4500: // スイッチ式動くＴ字型
 			if (
 				j > this.maps.wx - 230 &&
-				j < this.maps.wx + 512 + 230 &&
+				j < this.maps.wx + this.gg.di.width + 230 &&
 				k > this.maps.wy - 230 &&
-				k < this.maps.wy + 320 + 230
+				k < this.maps.wy + this.gg.di.height + 230
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -23487,8 +23187,13 @@ MainProgram.prototype.aMoveOption = function(i) {
 			this.setYukaPosition(String(characterobject.c4), String(j26), String(l26), String(j25), String(l25));
 			break;
 
-		case 4900:
-			if (j > this.maps.wx - 32 && j < this.maps.wx + 512 && k > this.maps.wy - 32 && k < this.maps.wy + 320) {
+		case 4900: // ＫＥＹ１が３つでＯＮの動作の人 周囲１０ブロック以内に影響
+			if (
+				j > this.maps.wx - 32 &&
+				j < this.maps.wx + this.gg.di.width &&
+				k > this.maps.wy - 32 &&
+				k < this.maps.wy + this.gg.di.height
+			) {
 				characterobject.gf = true;
 				this.a_hf = true;
 				if (this.km.mode == 50) {
@@ -23502,13 +23207,25 @@ MainProgram.prototype.aMoveOption = function(i) {
 						this.km.init1(3);
 						this.km.setMessage(3, this.tdb.getValue("serifu_key1_on_name"));
 						this.addSerifu2(3, "serifu_key1_on-", 3);
-						this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+						this.km.activeSerifu(
+							3,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+							272,
+							Color.cyan
+						);
 						this.km.mode = 200;
 					} else {
 						this.km.init1(3);
 						this.km.setMessage(3, this.tdb.getValue("serifu_key1_on_name"));
 						this.addSerifu2(3, "serifu_key1_on-", 8, 10);
-						this.km.activeSerifu(3, 168, 40, 252, Color.cyan);
+						this.km.activeSerifu(
+							3,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+							252,
+							Color.cyan
+						);
 						this.km.mode = 250;
 					}
 					this.km.move();
@@ -23550,7 +23267,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 					this.km.setMessage(7, this.tdb.getValue("serifu_key1_on-4"));
 					this.km.addItem(7, this.tdb.getValue("serifu_key1_on-5"));
 					this.km.addItem(7, this.tdb.getValue("serifu_key1_on-6"));
-					this.km.active(7, 268, 86, 228);
+					this.km.active(
+						7,
+						rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 100,
+						rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+						228
+					);
 					this.km.mode = 220;
 					break;
 				}
@@ -23570,7 +23292,13 @@ MainProgram.prototype.aMoveOption = function(i) {
 							this.km.init1(8);
 							this.km.setMessage(8, this.tdb.getValue("serifu_key1_on_name"));
 							this.addSerifu2(8, "serifu_key1_on-", 8, 10);
-							this.km.activeSerifu(8, 8, 86, 252, Color.cyan);
+							this.km.activeSerifu(
+								8,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 160,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+								252,
+								Color.cyan
+							);
 							this.dkey_count[0] -= l2;
 							this.gs.rsAddSound(13);
 							var i13 = rightShiftIgnoreSign(j, 5);
@@ -23581,7 +23309,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 						} else {
 							this.km.init1(8);
 							this.km.addItem(8, this.tdb.getValue("serifu_key1_on-7"));
-							this.km.activeIchigyou(8, 40, 136, 216);
+							this.km.activeIchigyou(
+								8,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 128,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 96,
+								216
+							);
 							this.km.mode = 230;
 						}
 					} else {
@@ -23621,8 +23354,13 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 4910:
-			if (j > this.maps.wx - 32 && j < this.maps.wx + 512 && k > this.maps.wy - 32 && k < this.maps.wy + 320) {
+		case 4910: // ＫＥＹ２が３つでＯＮの動作の人 周囲１０ブロック以内に影響
+			if (
+				j > this.maps.wx - 32 &&
+				j < this.maps.wx + this.gg.di.width &&
+				k > this.maps.wy - 32 &&
+				k < this.maps.wy + this.gg.di.height
+			) {
 				characterobject.gf = true;
 				this.a_hf = true;
 				if (this.km.mode == 50) {
@@ -23636,13 +23374,25 @@ MainProgram.prototype.aMoveOption = function(i) {
 						this.km.init1(3);
 						this.km.setMessage(3, this.tdb.getValue("serifu_key2_on_name"));
 						this.addSerifu2(3, "serifu_key2_on-", 3);
-						this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+						this.km.activeSerifu(
+							3,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+							272,
+							Color.cyan
+						);
 						this.km.mode = 200;
 					} else {
 						this.km.init1(3);
 						this.km.setMessage(3, this.tdb.getValue("serifu_key2_on_name"));
 						this.addSerifu2(3, "serifu_key2_on-", 8, 10);
-						this.km.activeSerifu(3, 168, 40, 252, Color.cyan);
+						this.km.activeSerifu(
+							3,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+							252,
+							Color.cyan
+						);
 						this.km.mode = 250;
 					}
 					this.km.move();
@@ -23684,7 +23434,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 					this.km.setMessage(7, this.tdb.getValue("serifu_key2_on-4"));
 					this.km.addItem(7, this.tdb.getValue("serifu_key2_on-5"));
 					this.km.addItem(7, this.tdb.getValue("serifu_key2_on-6"));
-					this.km.active(7, 268, 86, 228);
+					this.km.active(
+						7,
+						rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 100,
+						rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+						228
+					);
 					this.km.mode = 220;
 					break;
 				}
@@ -23704,7 +23459,13 @@ MainProgram.prototype.aMoveOption = function(i) {
 							this.km.init1(8);
 							this.km.setMessage(8, this.tdb.getValue("serifu_key2_on_name"));
 							this.addSerifu2(8, "serifu_key2_on-", 8, 10);
-							this.km.activeSerifu(8, 8, 86, 252, Color.cyan);
+							this.km.activeSerifu(
+								8,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 160,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
+								252,
+								Color.cyan
+							);
 							this.dkey_count[1] -= i3;
 							this.gs.rsAddSound(13);
 							var j13 = rightShiftIgnoreSign(j, 5);
@@ -23715,7 +23476,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 						} else {
 							this.km.init1(8);
 							this.km.addItem(8, this.tdb.getValue("serifu_key2_on-7"));
-							this.km.activeIchigyou(8, 40, 136, 216);
+							this.km.activeIchigyou(
+								8,
+								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 128,
+								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 96,
+								216
+							);
 							this.km.mode = 230;
 						}
 					} else {
@@ -23755,12 +23521,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 			}
 			break;
 
-		case 5000:
+		case 5000: // 乗ると壊れるブロック
 			if (
 				j > this.maps.wx - 96 &&
-				j < this.maps.wx + 512 + 64 &&
+				j < this.maps.wx + this.gg.di.width + 64 &&
 				k > this.maps.wy - 96 &&
-				k < this.maps.wy + 320 + 64
+				k < this.maps.wy + this.gg.di.height + 64
 			) {
 				characterobject.gf = true;
 				this.a_hf = true;
@@ -23793,8 +23559,13 @@ MainProgram.prototype.aMoveOption = function(i) {
 			characterobject.c = 0;
 			break;
 
-		case 5300:
-			if (j > this.maps.wx - 32 && j < this.maps.wx + 512 && k > this.maps.wy - 32 && k < this.maps.wy + 320) {
+		case 5300: // 得点でグレネードを売る人
+			if (
+				j > this.maps.wx - 32 &&
+				j < this.maps.wx + this.gg.di.width &&
+				k > this.maps.wy - 32 &&
+				k < this.maps.wy + this.gg.di.height
+			) {
 				characterobject.gf = true;
 				this.a_hf = true;
 				if (this.km.mode == 50) {
@@ -23811,7 +23582,13 @@ MainProgram.prototype.aMoveOption = function(i) {
 						this.km.init1(3);
 						this.km.setMessage(3, this.tdb.getValue("shop_name"));
 						this.addSerifu2(3, "serifu_grenade_shop-", 3);
-						this.km.activeSerifu(3, 168, 40, 272, Color.cyan);
+						this.km.activeSerifu(
+							3,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
+							272,
+							Color.cyan
+						);
 						this.km.mode = 200;
 						this.km.move();
 					}
@@ -23861,7 +23638,12 @@ MainProgram.prototype.aMoveOption = function(i) {
 					this.km.addItem(7, "\uFF18");
 					this.km.addItem(7, "\uFF19");
 					this.km.addItem(7, "\uFF11\uFF10");
-					this.km.active(7, 52, 72, 144);
+					this.km.active(
+						7,
+						rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 116,
+						rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 32,
+						144
+					);
 					this.km.mode = 220;
 					break;
 				}
@@ -23883,12 +23665,22 @@ MainProgram.prototype.aMoveOption = function(i) {
 						this.gs.rsAddSound(7);
 						this.km.init1(8);
 						this.km.addItem(8, this.tdb.getValue("serifu_grenade_shop-6"));
-						this.km.activeIchigyou(8, 216, 120, 224);
+						this.km.activeIchigyou(
+							8,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 48,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 80,
+							224
+						);
 						this.km.mode = 230;
 					} else {
 						this.km.init1(8);
 						this.km.addItem(8, this.tdb.getValue("serifu_grenade_shop-5"));
-						this.km.activeIchigyou(8, 216, 120, 224);
+						this.km.activeIchigyou(
+							8,
+							rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 + 48,
+							rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 80,
+							224
+						);
 						this.km.mode = 240;
 					}
 					break;
@@ -24099,65 +23891,65 @@ MainProgram.prototype.hAttack = function(i, j) {
 				default:
 					break;
 
-				case 100:
+				case 100: // コインが1枚出る
 					this.mSet(i * 32, j * 32 - 32, 2000);
 					this.gs.rsAddSound(6);
 					break;
 
-				case 200:
+				case 200: // コインが3枚出る
 					this.mSet(i * 32, j * 32 - 32, 2010);
 					this.mSet(i * 32, j * 32 - 32, 2020);
 					this.mSet(i * 32, j * 32 - 32, 2000);
 					this.gs.rsAddSound(6);
 					break;
 
-				case 300:
+				case 300: // アイテム（ファイヤーボール）が出る
 					this.mSet(i * 32, j * 32 - 32, 2100);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 400:
+				case 400: // アイテム（バリア）が出る
 					this.mSet(i * 32, j * 32 - 32, 2110);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 500:
+				case 500: // アイテム（タイム）が出る
 					this.mSet(i * 32, j * 32 - 32, 2120);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 600:
+				case 600: // アイテム（ジェット）が出る
 					this.mSet(i * 32, j * 32 - 32, 2130);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 700:
+				case 700: // アイテム（ヘルメット）が出る
 					this.mSet(i * 32, j * 32 - 32, 2140);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 800:
+				case 800: // アイテム（しっぽ）が出る
 					this.mSet(i * 32, j * 32 - 32, 2150);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 900:
+				case 900: // アイテム（ドリル）が出る
 					this.mSet(i * 32, j * 32 - 32, 2160);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 1000:
+				case 1000: // アイテム（グレネード）が出る
 					this.mSet(i * 32, j * 32 - 32, 2170);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 1100:
+				case 1100: // アイテム（1UP）が出る
 					this.mSet(i * 32, j * 32 - 32, 2180);
 					this.stage_1up_f[this.stage - 1] = false;
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2000:
+				case 2000: // 右にブロック１が10個出る
 					var l = 1;
 					do {
 						if (l > 10) break;
@@ -24169,7 +23961,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2100:
+				case 2100: // 左にブロック１が10個出る
 					var i1 = -1;
 					do {
 						if (i1 < -10) break;
@@ -24181,7 +23973,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2200:
+				case 2200: // 上にハシゴが10個出る
 					for (var l2 = -1; l2 >= -10; l2--) {
 						var i5 = j + l2;
 						if (i5 < 10 || (this.maps.map_bg[i][i5] != 0 && this.maps.map_bg[i][i5] != 4)) break;
@@ -24192,7 +23984,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2300:
+				case 2300: // 上にブロック１が10個出る
 					var i3 = -1;
 					do {
 						if (i3 < -10) break;
@@ -24204,7 +23996,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2400:
+				case 2400: // 上にブロック１が2個出る
 					var j3 = -1;
 					do {
 						if (j3 < -2) break;
@@ -24216,7 +24008,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2500:
+				case 2500: // 右にブロック１が2個出る
 					var j1 = 1;
 					do {
 						if (j1 > 2) break;
@@ -24228,7 +24020,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2600:
+				case 2600: // 左にブロック１が2個出る
 					var k1 = -1;
 					do {
 						if (k1 < -2) break;
@@ -24240,17 +24032,17 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2700:
+				case 2700: // ジャンプ台が出る
 					this.aSet(i * 32, j * 32 - 32, 700, i * 32);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2800:
+				case 2800: // トゲが出る
 					this.maps.putBGCode(i, j - 1, 5);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 2900:
+				case 2900: // 周囲10マスのトゲをコインに変換
 					for (var k3 = -10; k3 <= 10; k3++) {
 						for (var l1 = -10; l1 <= 10; l1++)
 							if (
@@ -24266,7 +24058,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(6);
 					break;
 
-				case 3000:
+				case 3000: // 周囲10マスのトゲをブロック１に変換
 					for (var l3 = -10; l3 <= 10; l3++) {
 						for (var i2 = -10; i2 <= 10; i2++)
 							if (
@@ -24282,7 +24074,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(13);
 					break;
 
-				case 3100:
+				case 3100: // 周囲10マスのブロック１をコインに変換
 					for (var i4 = -10; i4 <= 10; i4++) {
 						for (var j2 = -10; j2 <= 10; j2++)
 							if (
@@ -24298,7 +24090,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(6);
 					break;
 
-				case 3200:
+				case 3200: // 周囲10マスのブロック４を消去
 					for (var j4 = -10; j4 <= 10; j4++) {
 						for (var k2 = -10; k2 <= 10; k2++)
 							if (
@@ -24314,22 +24106,22 @@ MainProgram.prototype.hAttack = function(i, j) {
 					this.gs.rsAddSound(7);
 					break;
 
-				case 3300:
+				case 3300: // アイテム（水平に飛ぶファイヤーボール）が出る
 					this.mSet(i * 32, j * 32 - 32, 2186);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 3400:
+				case 3400: // アイテム（跳ねるファイヤーボール）が出る
 					this.mSet(i * 32, j * 32 - 32, 2187);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 3500:
+				case 3500: // アイテム（ダブルファイヤーボール）が出る
 					this.mSet(i * 32, j * 32 - 32, 2188);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 3600:
+				case 3600: // 右にブロック１破壊砲発射
 					if (this.co_jm[6].c == 0) {
 						this.jmSet2(i * 32, j * 32, 206, 6);
 						break;
@@ -24341,7 +24133,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 206, 8);
 					break;
 
-				case 3700:
+				case 3700: // 左にブロック１破壊砲発射
 					if (this.co_jm[6].c == 0) {
 						this.jmSet2(i * 32, j * 32, 207, 6);
 						break;
@@ -24353,7 +24145,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 207, 8);
 					break;
 
-				case 3800:
+				case 3800: // 上にブロック１破壊砲発射
 					if (this.co_jm[6].c == 0) {
 						this.jmSet2(i * 32, j * 32, 208, 6);
 						break;
@@ -24365,7 +24157,7 @@ MainProgram.prototype.hAttack = function(i, j) {
 					if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 208, 8);
 					break;
 
-				case 3900:
+				case 3900: // 下にブロック１破壊砲発射
 					if (this.co_jm[6].c == 0) {
 						this.jmSet2(i * 32, j * 32, 209, 6);
 						break;
@@ -24377,32 +24169,32 @@ MainProgram.prototype.hAttack = function(i, j) {
 					if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 209, 8);
 					break;
 
-				case 4000:
+				case 4000: // アイテム（グレネード5発）が出る
 					this.mSet(i * 32, j * 32 - 32, 2171);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 4100:
+				case 4100: // アイテム（コンティニュー）が出る
 					this.mSet(i * 32, j * 32 - 32, 2172);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 4200:
+				case 4200: // 周囲10マスにスイッチONの影響を与える
 					this.onASwitch(i - 10, j - 10, i + 10, j + 10);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 4300:
+				case 4300: // 周囲10マスにスイッチOFFの影響を与える
 					this.offASwitch(i - 10, j - 10, i + 10, j + 10);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 4400:
+				case 4400: // 周囲5マスにスイッチONの影響を与える
 					this.onASwitch(i - 5, j - 5, i + 5, j + 5);
 					this.gs.rsAddSound(13);
 					break;
 
-				case 4500:
+				case 4500: // 周囲5マスにスイッチOFFの影響を与える
 					this.offASwitch(i - 5, j - 5, i + 5, j + 5);
 					this.gs.rsAddSound(13);
 					break;
@@ -25300,9 +25092,9 @@ MainProgram.prototype.drawYuka = function() {
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			if (
 				yukaobject.view_x + yukaobject.width <= 0 ||
-				yukaobject.view_x >= 512 ||
+				yukaobject.view_x >= this.gg.di.width ||
 				yukaobject.view_y + yukaobject.height <= 0 ||
-				yukaobject.view_y >= 320
+				yukaobject.view_y >= this.gg.di.height
 			) {
 				yukaobject.draw_f = false;
 				continue;
@@ -25317,9 +25109,9 @@ MainProgram.prototype.drawYuka = function() {
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			if (
 				yukaobject.view_x + yukaobject.width <= 0 ||
-				yukaobject.view_x >= 512 ||
+				yukaobject.view_x >= this.gg.di.width ||
 				yukaobject.view_y + yukaobject.height <= 0 ||
-				yukaobject.view_y >= 320
+				yukaobject.view_y >= this.gg.di.height
 			) {
 				yukaobject.draw_f = false;
 			} else {
@@ -25334,9 +25126,9 @@ MainProgram.prototype.drawYuka = function() {
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			if (
 				yukaobject.view_x + yukaobject.width <= 0 ||
-				yukaobject.view_x >= 512 ||
+				yukaobject.view_x >= this.gg.di.width ||
 				yukaobject.view_y + yukaobject.height <= 0 ||
-				yukaobject.view_y >= 320
+				yukaobject.view_y >= this.gg.di.height
 			) {
 				yukaobject.draw_f = false;
 				continue;
@@ -25351,7 +25143,7 @@ MainProgram.prototype.drawYuka = function() {
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var j3 = yukaobject.view_x;
 			var j8 = this.yo[i].x2 - this.maps.wx;
-			if ((j3 < 0 && j8 < 0) || (j3 >= 512 && j8 >= 512)) {
+			if ((j3 < 0 && j8 < 0) || (j3 >= this.gg.di.width && j8 >= this.gg.di.width)) {
 				yukaobject.draw_f = false;
 			} else {
 				yukaobject.draw_f = true;
@@ -25367,7 +25159,7 @@ MainProgram.prototype.drawYuka = function() {
 			var i6 = yukaobject.view_y;
 			var k8 = this.yo[i].x2 - this.maps.wx;
 			var i11 = this.yo[i].y2 - this.maps.wy;
-			if ((k3 < 0 && k8 < 0) || (k3 >= 512 && k8 >= 512)) {
+			if ((k3 < 0 && k8 < 0) || (k3 >= this.gg.di.width && k8 >= this.gg.di.width)) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25416,7 +25208,7 @@ MainProgram.prototype.drawYuka = function() {
 			var j6 = yukaobject.view_y;
 			var l8 = this.yo[i].x2 - this.maps.wx;
 			var j11 = this.yo[i].y2 - this.maps.wy;
-			if ((l3 < 0 && l8 < 0) || (l3 >= 512 && l8 >= 512)) {
+			if ((l3 < 0 && l8 < 0) || (l3 >= this.gg.di.width && l8 >= this.gg.di.width)) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25458,10 +25250,10 @@ MainProgram.prototype.drawYuka = function() {
 			this.hg.fillPolygon(ai, ai1, 3);
 			if (l3 <= l8) {
 				if (j6 >= j11) {
-					if (j6 < 320) this.hg.fillRect(l3, j6, l8 - l3, 320 - j6);
+					if (j6 < this.gg.di.height) this.hg.fillRect(l3, j6, l8 - l3, this.gg.di.height - j6);
 					continue;
 				}
-				if (j11 < 320) this.hg.fillRect(l3, j11, l8 - l3, 320 - j11);
+				if (j11 < this.gg.di.height) this.hg.fillRect(l3, j11, l8 - l3, this.gg.di.height - j11);
 				continue;
 			}
 			if (j11 >= j6) {
@@ -25478,7 +25270,7 @@ MainProgram.prototype.drawYuka = function() {
 			var k6 = yukaobject.view_y - yukaobject.x2;
 			var i9 = yukaobject.view_x + yukaobject.x2;
 			var k11 = yukaobject.view_y + yukaobject.x2;
-			if (i9 < 0 || i4 >= 512 || k11 < 0 || k6 >= 320) {
+			if (i9 < 0 || i4 >= this.gg.di.width || k11 < 0 || k6 >= this.gg.di.height) {
 				yukaobject.draw_f = false;
 			} else {
 				yukaobject.draw_f = true;
@@ -25493,7 +25285,7 @@ MainProgram.prototype.drawYuka = function() {
 			var j4 = yukaobject.view_x;
 			var l6 = yukaobject.view_y;
 			var j9 = yukaobject.view_x + 240;
-			if (j9 < 0 || j4 > 512 || l6 > 320) {
+			if (j9 < 0 || j4 > this.gg.di.width || l6 > this.gg.di.height) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25535,7 +25327,7 @@ MainProgram.prototype.drawYuka = function() {
 			var k4 = yukaobject.view_x;
 			var i7 = yukaobject.view_y;
 			var k9 = yukaobject.view_x + 240;
-			if (k9 < 0 || k4 > 512 || i7 > 320) {
+			if (k9 < 0 || k4 > this.gg.di.width || i7 > this.gg.di.height) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25561,7 +25353,7 @@ MainProgram.prototype.drawYuka = function() {
 			var j7 = yukaobject.view_y;
 			var l9 = yukaobject.view_x + 256;
 			var j12 = yukaobject.view_y + 128;
-			if (l9 < 0 || l4 > 512 || j7 > 320) {
+			if (l9 < 0 || l4 > this.gg.di.width || j7 > this.gg.di.height) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25607,7 +25399,7 @@ MainProgram.prototype.drawYuka = function() {
 			ai[3] = j20;
 			ai1[3] = j7 + 128;
 			this.hg.fillPolygon(ai, ai1, 4);
-			if (j12 < 320) this.hg.fillRect(l4, j7 + 128, 256, 320 - (j7 + 128));
+			if (j12 < this.gg.di.height) this.hg.fillRect(l4, j7 + 128, 256, this.gg.di.height - (j7 + 128));
 			continue;
 		}
 		if (yukaobject.con == 410) {
@@ -25617,7 +25409,7 @@ MainProgram.prototype.drawYuka = function() {
 			var k7 = yukaobject.view_y;
 			var i10 = yukaobject.view_x + 256;
 			var k12 = yukaobject.view_y + 128;
-			if (i10 < 0 || i5 > 512 || k7 > 320 || k12 < 0) {
+			if (i10 < 0 || i5 > this.gg.di.width || k7 > this.gg.di.height || k12 < 0) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25657,7 +25449,7 @@ MainProgram.prototype.drawYuka = function() {
 			var l7 = yukaobject.view_y;
 			var j10 = yukaobject.view_x + 256;
 			var l12 = yukaobject.view_y + 128;
-			if (j10 < 0 || j5 > 512 || l7 > 320) {
+			if (j10 < 0 || j5 > this.gg.di.width || l7 > this.gg.di.height) {
 				yukaobject.draw_f = false;
 				continue;
 			}
@@ -25703,7 +25495,7 @@ MainProgram.prototype.drawYuka = function() {
 			ai[3] = j20;
 			ai1[3] = l7 + 128;
 			this.hg.fillPolygon(ai, ai1, 4);
-			if (l12 < 320) this.hg.fillRect(j5, l7 + 128, 256, 320 - (l7 + 128));
+			if (l12 < this.gg.di.height) this.hg.fillRect(j5, l7 + 128, 256, this.gg.di.height - (l7 + 128));
 			continue;
 		}
 		if (yukaobject.con != 460) continue;
@@ -25713,7 +25505,7 @@ MainProgram.prototype.drawYuka = function() {
 		var i8 = yukaobject.view_y;
 		var k10 = yukaobject.view_x + 256;
 		var i13 = yukaobject.view_y + 128;
-		if (k10 < 0 || k5 > 512 || i8 > 320 || i13 < 0) {
+		if (k10 < 0 || k5 > this.gg.di.width || i8 > this.gg.di.height || i13 < 0) {
 			yukaobject.draw_f = false;
 			continue;
 		}
@@ -26214,8 +26006,8 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			// '9'
 			word1 = 9;
 			break;
-		// 'a'
 		case 97:
+			// 'a'
 			word1 = 20;
 			break;
 		case 98:
@@ -26473,64 +26265,64 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			break;
 		case 66:
 			// 'B' 亀（足元に空白があると向きを変える）
-			this.tSet(x * 32, y * 32, 100, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 100, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 67:
 			// 'C' 亀（足元に空白があると落ちる）
-			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 110, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 68:
 			// 'D' 亀（足元に空白があると落ちる 3匹連続）
-			this.tSet(x * 32, y * 32, 110, x * 32 - 512 - 32);
-			this.tSet(x * 32 + 75, y * 32, 110, x * 32 - 512 - 32);
-			this.tSet(x * 32 + 150, y * 32, 110, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 110, x * 32 - this.gg.di.width - 32);
+			this.tSet(x * 32 + 75, y * 32, 110, x * 32 - this.gg.di.width - 32);
+			this.tSet(x * 32 + 150, y * 32, 110, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 69:
 			// 'E' ピカチー
-			if (this.dengeki_mkf == 3) this.tSet(x * 32, y * 32, 201, x * 32 - 512 - 32);
-			else if (this.dengeki_mkf == 4) this.tSet(x * 32, y * 32, 202, x * 32 - 512 - 32);
-			else if (this.dengeki_mkf == 5) this.tSet(x * 32, y * 32, 203, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 200, x * 32 - 512 - 32);
+			if (this.dengeki_mkf == 3) this.tSet(x * 32, y * 32, 201, x * 32 - this.gg.di.width - 32);
+			else if (this.dengeki_mkf == 4) this.tSet(x * 32, y * 32, 202, x * 32 - this.gg.di.width - 32);
+			else if (this.dengeki_mkf == 5) this.tSet(x * 32, y * 32, 203, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 200, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 70:
 			// 'F' チコリン
 			if (this.chikorin_attack >= 2 && this.chikorin_attack <= 5)
-				this.tSet(x * 32, y * 32, 308 + this.chikorin_attack, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 6) this.tSet(x * 32, y * 32, 301, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 7) this.tSet(x * 32, y * 32, 320, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 8) this.tSet(x * 32, y * 32, 330, x * 32 - 512 - 32);
-			else if (this.chikorin_attack == 9) this.tSet(x * 32, y * 32, 335, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 300, x * 32 - 512 - 32);
+				this.tSet(x * 32, y * 32, 308 + this.chikorin_attack, x * 32 - this.gg.di.width - 32);
+			else if (this.chikorin_attack == 6) this.tSet(x * 32, y * 32, 301, x * 32 - this.gg.di.width - 32);
+			else if (this.chikorin_attack == 7) this.tSet(x * 32, y * 32, 320, x * 32 - this.gg.di.width - 32);
+			else if (this.chikorin_attack == 8) this.tSet(x * 32, y * 32, 330, x * 32 - this.gg.di.width - 32);
+			else if (this.chikorin_attack == 9) this.tSet(x * 32, y * 32, 335, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 300, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 71:
 			// 'G' ヒノララシ
-			this.tSet(x * 32, y * 32, 400, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 400, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 72:
 			// 'H' ポッピー（上下移動）
-			this.tSet(x * 32, y * 32, 500, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 500, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 73:
 			// 'I' ポッピー（直進）
-			if (this.poppie_attack == 2) this.tSet(x * 32, y * 32, 520, x * 32 - 512 - 32);
-			else if (this.poppie_attack == 3) this.tSet(x * 32, y * 32, 530, x * 32 - 512 - 32);
-			else if (this.poppie_attack == 4) this.tSet(x * 32, y * 32, 540, x * 32 - 512 - 32);
-			else if (this.poppie_attack == 5) this.tSet(x * 32, y * 32, 550, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32);
+			if (this.poppie_attack == 2) this.tSet(x * 32, y * 32, 520, x * 32 - this.gg.di.width - 32);
+			else if (this.poppie_attack == 3) this.tSet(x * 32, y * 32, 530, x * 32 - this.gg.di.width - 32);
+			else if (this.poppie_attack == 4) this.tSet(x * 32, y * 32, 540, x * 32 - this.gg.di.width - 32);
+			else if (this.poppie_attack == 5) this.tSet(x * 32, y * 32, 550, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 510, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 74:
 			// 'J' ポッピー（直進　3羽連続）
-			this.tSet(x * 32, y * 32, 510, x * 32 - 512 - 32 - 32);
-			this.tSet(x * 32 + 80, y * 32 - 40, 510, x * 32 - 512 - 32 - 32);
-			this.tSet(x * 32 + 140, y * 32 + 38, 510, x * 32 - 512 - 32 - 32);
+			this.tSet(x * 32, y * 32, 510, x * 32 - this.gg.di.width - 32 - 32);
+			this.tSet(x * 32 + 80, y * 32 - 40, 510, x * 32 - this.gg.di.width - 32 - 32);
+			this.tSet(x * 32 + 140, y * 32 + 38, 510, x * 32 - this.gg.di.width - 32 - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 75:
@@ -26579,39 +26371,39 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			break;
 		case 79:
 			// 'O' マリリ
-			if (this.mariri_attack == 2) this.tSet(x * 32, y * 32, 601, x * 32 - 512 - 32);
-			else if (this.mariri_attack == 3) this.tSet(x * 32, y * 32, 602, x * 32 - 512 - 32);
-			else if (this.mariri_attack == 4) this.tSet(x * 32, y * 32, 660, x * 32 - 512 - 32);
-			else if (this.mariri_attack == 5) this.tSet(x * 32, y * 32, 670, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 600, x * 32 - 512 - 32);
+			if (this.mariri_attack == 2) this.tSet(x * 32, y * 32, 601, x * 32 - this.gg.di.width - 32);
+			else if (this.mariri_attack == 3) this.tSet(x * 32, y * 32, 602, x * 32 - this.gg.di.width - 32);
+			else if (this.mariri_attack == 4) this.tSet(x * 32, y * 32, 660, x * 32 - this.gg.di.width - 32);
+			else if (this.mariri_attack == 5) this.tSet(x * 32, y * 32, 670, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 600, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 80:
 			// 'P' ヤチャモ
 			if (this.yachamo_attack >= 1 && this.yachamo_attack <= 5)
-				this.tSet(x * 32, y * 32, 699 + this.yachamo_attack, x * 32 - 512 - 32);
-			else if (this.yachamo_attack == 6) this.tSet(x * 32, y * 32, 710, x * 32 - 512 - 32);
-			else if (this.yachamo_attack == 7) this.tSet(x * 32, y * 32, 711, x * 32 - 512 - 32);
-			else if (this.yachamo_attack == 8) this.tSet(x * 32, y * 32, 720, x * 32 - 512 - 32);
-			else if (this.yachamo_attack == 9) this.tSet(x * 32, y * 32, 725, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 700, x * 32 - 512 - 32);
+				this.tSet(x * 32, y * 32, 699 + this.yachamo_attack, x * 32 - this.gg.di.width - 32);
+			else if (this.yachamo_attack == 6) this.tSet(x * 32, y * 32, 710, x * 32 - this.gg.di.width - 32);
+			else if (this.yachamo_attack == 7) this.tSet(x * 32, y * 32, 711, x * 32 - this.gg.di.width - 32);
+			else if (this.yachamo_attack == 8) this.tSet(x * 32, y * 32, 720, x * 32 - this.gg.di.width - 32);
+			else if (this.yachamo_attack == 9) this.tSet(x * 32, y * 32, 725, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 700, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 81:
 			// 'Q' ミズタロウ
-			if (this.j_tokugi == 14) this.tSet(x * 32, y * 32, 850, x * 32 - 512 - 32);
+			if (this.j_tokugi == 14) this.tSet(x * 32, y * 32, 850, x * 32 - this.gg.di.width - 32);
 			else if (this.mizutaro_attack >= 1 && this.mizutaro_attack <= 5)
-				this.tSet(x * 32, y * 32, 799 + this.mizutaro_attack, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 800, x * 32 - 512 - 32);
+				this.tSet(x * 32, y * 32, 799 + this.mizutaro_attack, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 800, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 82:
 			// 'R' エアームズ
-			if (this.airms_kf == 2) this.tSet(x * 32, y * 32, 950, x * 32 - 512 - 32);
-			else if (this.airms_kf == 3) this.tSet(x * 32, y * 32, 920, x * 32 - 512 - 32);
-			else if (this.airms_kf == 4) this.tSet(x * 32, y * 32, 921, x * 32 - 512 - 32);
-			else if (this.airms_kf == 5) this.tSet(x * 32, y * 32, 930, x * 32 - 512 - 32);
-			else this.tSet(x * 32, y * 32, 900, x * 32 - 512 - 32);
+			if (this.airms_kf == 2) this.tSet(x * 32, y * 32, 950, x * 32 - this.gg.di.width - 32);
+			else if (this.airms_kf == 3) this.tSet(x * 32, y * 32, 920, x * 32 - this.gg.di.width - 32);
+			else if (this.airms_kf == 4) this.tSet(x * 32, y * 32, 921, x * 32 - this.gg.di.width - 32);
+			else if (this.airms_kf == 5) this.tSet(x * 32, y * 32, 930, x * 32 - this.gg.di.width - 32);
+			else this.tSet(x * 32, y * 32, 900, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 83:
@@ -26621,12 +26413,12 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			this.co_b.x = x * 32;
 			this.co_b.y = y * 32 - 16;
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
-			if (this.co_b.x < 448) this.co_b.x = 448;
+			if (this.co_b.x < this.gg.di.width - 64) this.co_b.x = this.gg.di.width - 64;
 			else if (this.co_b.x > (this.mapWidth - 3) * 32) this.co_b.x = (this.mapWidth - 3) * 32;
 			if (this.sl_step == 10) this.sl_step = 11;
 			else this.sl_step = 1;
-			this.sl_wx = this.co_b.x - 384;
-			this.sl_wy = this.mapHeight * 32;
+			this.sl_wx = this.co_b.x - (this.gg.di.width - 128);
+			this.sl_wy = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 			if (this.boss_destroy_type == 2) this.co_b.x += 160;
 			break;
 		case 84:
@@ -26636,12 +26428,12 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			this.co_b.x = x * 32;
 			this.co_b.y = y * 32 - 16;
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
-			if (this.co_b.x < 448) this.co_b.x = 448;
+			if (this.co_b.x < this.gg.di.width - 64) this.co_b.x = this.gg.di.width - 64;
 			else if (this.co_b.x > (this.mapWidth - 3) * 32) this.co_b.x = (this.mapWidth - 3) * 32;
 			if (this.sl_step == 10) this.sl_step = 11;
 			else this.sl_step = 1;
-			this.sl_wx = this.co_b.x - 384;
-			this.sl_wy = this.mapHeight * 32;
+			this.sl_wx = this.co_b.x - (this.gg.di.width - 128);
+			this.sl_wy = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 			if (this.boss_destroy_type == 2) this.co_b.x += 160;
 			break;
 		case 85:
@@ -26674,28 +26466,28 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			break;
 		case 87:
 			// 'W' タイキング
-			if (this.taiking_attack == 2) this.tSet(x * 32, y * 32, 1050, x * 32 - 512 - 32);
-			else if (this.taiking_attack == 3) this.tSet(x * 32, y * 32, 1060, x * 32 - 512 - 32);
-			else if (this.taiking_attack == 4) this.tSet(x * 32, y * 32, 1070, x * 32 - 512 - 32);
-			else if (this.taiking_attack == 5) this.tSet(x * 32, y * 32, 1080, x * 32 - 512 - 32 - 32);
-			else if (this.j_tokugi == 14) this.tSet(x * 32, y * 32, 1002, x * 32 - 512 - 32 - 32);
-			else if (this.j_tokugi == 15) this.tSet(x * 32, y * 32, 1003, x * 32 - 512 - 32);
+			if (this.taiking_attack == 2) this.tSet(x * 32, y * 32, 1050, x * 32 - this.gg.di.width - 32);
+			else if (this.taiking_attack == 3) this.tSet(x * 32, y * 32, 1060, x * 32 - this.gg.di.width - 32);
+			else if (this.taiking_attack == 4) this.tSet(x * 32, y * 32, 1070, x * 32 - this.gg.di.width - 32);
+			else if (this.taiking_attack == 5) this.tSet(x * 32, y * 32, 1080, x * 32 - this.gg.di.width - 32 - 32);
+			else if (this.j_tokugi == 14) this.tSet(x * 32, y * 32, 1002, x * 32 - this.gg.di.width - 32 - 32);
+			else if (this.j_tokugi == 15) this.tSet(x * 32, y * 32, 1003, x * 32 - this.gg.di.width - 32);
 			else {
-				this.tSet(x * 32, y * 32 - 16, 1000, x * 32 - 512 - 32 - 32);
+				this.tSet(x * 32, y * 32 - 16, 1000, x * 32 - this.gg.di.width - 32 - 32);
 				word1 = 4;
 			}
 			if (this.maps.map_bg[x - 1][y] == 4 || this.maps.map_bg[x][y - 1] == 4) word1 = 4;
 			break;
 		case 88:
 			// 'X' クラゲッソ
-			if (this.kuragesso_attack == 2) this.tSet(x * 32, y * 32, 1150, x * 32 - 512 - 32);
-			else if (this.kuragesso_attack == 3) this.tSet(x * 32, y * 32, 1160, x * 32 - 512 - 32);
-			else if (this.kuragesso_attack == 4) this.tSet(x * 32, y * 32, 1170, x * 32 - 512 - 32);
-			else if (this.kuragesso_attack == 5) this.tSet(x * 32, y * 32, 1180, x * 32 - 512 - 32 - 32);
-			else if (this.j_tokugi == 14) this.tSet(x * 32, y * 32, 1102, x * 32 - 512 - 32);
-			else if (this.j_tokugi == 15) this.tSet(x * 32, y * 32, 1103, x * 32 - 512 - 32);
+			if (this.kuragesso_attack == 2) this.tSet(x * 32, y * 32, 1150, x * 32 - this.gg.di.width - 32);
+			else if (this.kuragesso_attack == 3) this.tSet(x * 32, y * 32, 1160, x * 32 - this.gg.di.width - 32);
+			else if (this.kuragesso_attack == 4) this.tSet(x * 32, y * 32, 1170, x * 32 - this.gg.di.width - 32);
+			else if (this.kuragesso_attack == 5) this.tSet(x * 32, y * 32, 1180, x * 32 - this.gg.di.width - 32 - 32);
+			else if (this.j_tokugi == 14) this.tSet(x * 32, y * 32, 1102, x * 32 - this.gg.di.width - 32);
+			else if (this.j_tokugi == 15) this.tSet(x * 32, y * 32, 1103, x * 32 - this.gg.di.width - 32);
 			else {
-				this.tSet(x * 32, y * 32, 1100, x * 32 - 512 - 32);
+				this.tSet(x * 32, y * 32, 1100, x * 32 - this.gg.di.width - 32);
 				word1 = 4;
 			}
 			if (this.maps.map_bg[x - 1][y] == 4 || this.maps.map_bg[x][y - 1] == 4) word1 = 4;
@@ -26713,22 +26505,22 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 			this.co_b.y = y * 32 - 16;
 			this.boss_kijyun_y = this.co_b.y;
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
-			if (this.co_b.x < 448) this.co_b.x = 448;
+			if (this.co_b.x < this.gg.di.width - 64) this.co_b.x = this.gg.di.width - 64;
 			else if (this.co_b.x > (this.mapWidth - 3) * 32) this.co_b.x = (this.mapWidth - 3) * 32;
 			if (this.sl_step == 10) this.sl_step = 11;
 			else this.sl_step = 1;
-			this.sl_wx = this.co_b.x - 384;
-			this.sl_wy = this.mapHeight * 32;
+			this.sl_wx = this.co_b.x - (this.gg.di.width - 128);
+			this.sl_wy = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 			if (this.boss_destroy_type == 2) this.co_b.x += 160;
 			break;
 		case 123:
 			// '{' 亀（追尾）
-			this.tSet(x * 32, y * 32, 1200, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 1200, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 		case 125:
 			// '}' 重力無視の追跡ピカチー等
-			this.tSet(x * 32, y * 32, 1400, x * 32 - 512 - 32);
+			this.tSet(x * 32, y * 32, 1400, x * 32 - this.gg.di.width - 32);
 			if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			break;
 
@@ -26739,7 +26531,7 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 					// カスタムパーツの場合は拡張元のIDで判定
 					var nativeCode = this.customParts[id].nativeCode;
 					if (nativeCode >= 5000 && nativeCode < 10000) {
-						this.tSet(x * 32, y * 32, id, x * 32 - 512 - 32);
+						this.tSet(x * 32, y * 32, id, x * 32 - this.gg.di.width - 32);
 						if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 					}
 				}
@@ -26750,7 +26542,7 @@ MainProgram.prototype.setChipValue = function(x, y, id) {
 				word1 = this.setAthleticOnMap(id - 1000, x, y);
 			} else if (id >= 5000 && id < 10000) {
 				// 5000 〜 9999 は敵コードとして扱う
-				this.tSet(x * 32, y * 32, id - 5000, x * 32 - 512 - 32);
+				this.tSet(x * 32, y * 32, id - 5000, x * 32 - this.gg.di.width - 32);
 				if (this.maps.map_bg[x - 1][y] == 4) word1 = 4;
 			}
 			break;

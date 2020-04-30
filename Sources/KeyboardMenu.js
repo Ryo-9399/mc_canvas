@@ -32,7 +32,7 @@ function KeyboardMenu(paramGameGraphics, paramGameKey, paramString) {
 }
 
 KeyboardMenu.prototype.initAll = function() {
-	for (var i = 0; i <= 15; i++) {
+	for (let i = 0; i <= 15; i++) {
 		this.init1(i);
 	}
 	this.c_fc = 0;
@@ -41,7 +41,7 @@ KeyboardMenu.prototype.initAll = function() {
 	this.aw = -1;
 	this.kettei_c = 2;
 	this.cancel_c = 2;
-	for (var i = 0; i <= 15; i++) {
+	for (let i = 0; i <= 15; i++) {
 		this.list_IDlist[i] = 0;
 	}
 	this.list_kazu = 0;
@@ -56,10 +56,10 @@ KeyboardMenu.prototype.init1 = function(paramInt) {
 	this.selectedIndex[paramInt] = 0;
 	this.item_kazu[paramInt] = 0;
 	this.message[paramInt] = "どうしますか？";
-	for (var i = 0; i <= 15; i++) {
+	for (let i = 0; i <= 15; i++) {
 		this.item[paramInt][i] = "";
 	}
-	for (var i = 0; i <= 15; i++) {
+	for (let i = 0; i <= 15; i++) {
 		this.item_int[paramInt][i] = 0;
 	}
 };
@@ -358,11 +358,15 @@ KeyboardMenu.prototype.move = function() {
 			}
 		}
 	}
+
+	// 決定キー（スペース、Z）を押す
 	if (!this.gk.tr1_f) {
 		this.kettei_c = 0;
 	} else if (this.kettei_c == 0) {
 		this.kettei_c = 1;
 	}
+
+	// キャンセルキー（X）を押す
 	if (!this.gk.x_f) {
 		this.cancel_c = 0;
 	} else if (this.cancel_c == 0) {
@@ -373,16 +377,17 @@ KeyboardMenu.prototype.move = function() {
 KeyboardMenu.prototype.drawMenus = function() {
 	const beforeFont = this.hg._font;
 	this.hg.setFont(new Font(this.gg.font_message, 0, 12));
-	for (var i = 0; i <= 15; i++) {
-		var c = this.c[i];
+	for (let i = 0; i <= 15; i++) {
+		const c = this.c[i];
 		if (c == 0) continue;
 		switch (c) {
 			case 100:
+				// active
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.message[i], this.x[i] + 24, this.y[i] + 6 + 12);
 				if (this.item_kazu[i] >= 1) {
-					for (var j = 0; j <= this.item_kazu[i] - 1; j++) {
+					for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
 						this.hg.drawString(this.item[i][j], this.x[i] + 24, this.y[i] + 6 + 18 + j * 14 + 12);
 					}
 				}
@@ -450,6 +455,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				this.hg.drawString("PP	" + this.item_int[15][2] + " / " + this.item_int[15][3], 378, 62);
 				break;
 			case 300:
+				// activeIchigyou
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 40);
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
@@ -463,6 +469,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 310:
+				// activeNigyou
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 58);
 				this.hg.setColor(this.item_color[i]);
 				this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
@@ -478,6 +485,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 320:
+				// activeYongyou
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 66 + (this.item_kazu[i] - 3) * 14 + 14);
 				this.hg.setColor(Color.magenta);
 				this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
@@ -486,7 +494,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				this.hg.setColor(Color.cyan);
 				this.hg.drawString(this.item[i][2], this.x[i] + 6, this.y[i] + 6 + 36 + 12);
 				this.hg.setColor(Color.white);
-				for (var j = 0; j <= this.item_kazu[3] - 4; j++) {
+				for (let j = 0; j <= this.item_kazu[3] - 4; j++) {
 					this.hg.drawString(this.item[3][j + 3], this.x[3] + 6, this.y[3] + 6 + 54 + j * 14 + 12);
 				}
 				if (this.c_fc <= 3) {
@@ -499,6 +507,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 321:
+				// activeYongyou2
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 108);
 				this.hg.setColor(Color.cyan);
 				this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
@@ -520,12 +529,13 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 330:
+				// activeSerifu
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + (this.item_kazu[i] + 1) * 14);
 				this.hg.setColor(this.item_color[i]);
 				this.hg.drawString(this.message[i], this.x[i] + 6, this.y[i] + 6 + 12);
 				this.hg.setColor(Color.white);
 				if (this.item_kazu[i] >= 1) {
-					for (var j = 0; j <= this.item_kazu[i] - 1; j++) {
+					for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
 						this.hg.drawString(this.item[i][j], this.x[i] + 6, this.y[i] + 6 + 18 + j * 14 + 12);
 					}
 				}
@@ -548,6 +558,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 350:
+				// activeIchigyouTime
 				if (this.item_int[i][0] == 100) {
 					this.item_int[i][0] = 55;
 					break;
@@ -561,6 +572,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 360:
+				// activeNigyouTime
 				if (this.item_int[i][0] == 200) {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 44);
 					this.hg.setColor(this.item_color[i]);
@@ -582,6 +594,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 400:
+				// activeJibun
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 128);
 				this.hg.setColor(Color.yellow);
 				this.hg.drawString(this.name_crys + "のステータス", this.x[i] + 6, this.y[i] + 6 + 12);
@@ -605,6 +618,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 420:
+				// activeToujou
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 116);
 				this.hg.setColor(new Color(96, 96, 96));
 				this.hg.fillRect(this.x[i] + 12, this.y[i] + 12, this.width[i] - 24, 48);
@@ -700,6 +714,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 500:
+				// activeCS
 				if (this.c_fc <= 3 || this.aw != 0) {
 					this.hg.drawImage(this.hi[72], 12 + 28 * this.selectedIndex[i], 288, this.ap);
 				} else {
@@ -707,6 +722,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 600:
+				// onKao
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 96);
 				var tmp01 = this.item_int[i][0];
 				var tmp02 = this.x[i] + rightShiftIgnoreSign(this.width[i] - 64, 1);
@@ -717,6 +733,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				this.gg.drawPT(tmp02 + 32, tmp03 + 32, tmp01 + 11, 0);
 				break;
 			case 610:
+				// onMituketa
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
 				this.hg.setColor(Color.yellow);
 				this.hg.drawString("モンスターずかん", this.x[i] + 6, this.y[i] + 6 + 12);
@@ -725,13 +742,14 @@ KeyboardMenu.prototype.drawMenus = function() {
 				this.hg.drawString("捕まえた数	" + this.item_int[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 14 + 12);
 				break;
 			case 700:
+				// activeSerifutuki
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14 + 18);
 				this.hg.setColor(Color.cyan);
 				this.hg.drawString(this.item[i][15], this.x[i] + 24, this.y[i] + 6 + 12);
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.message[i], this.x[i] + 24, this.y[i] + 6 + 12 + 18);
 				if (this.item_kazu[i] >= 1) {
-					for (var j = 0; j <= this.item_kazu[i] - 1; j++) {
+					for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
 						this.hg.drawString(this.item[i][j], this.x[i] + 24, this.y[i] + 6 + 18 + j * 14 + 12 + 18);
 					}
 				}
@@ -744,6 +762,7 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 800:
+				// onOkozukai
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 44);
 				this.hg.setColor(Color.yellow);
 				this.hg.drawString("おこづかい", this.x[i] + 6, this.y[i] + 6 + 12);
@@ -751,11 +770,12 @@ KeyboardMenu.prototype.drawMenus = function() {
 				this.hg.drawString("" + this.item_int[i][0] + "円", this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 				break;
 			case 900:
+				// activeKaimono
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
 				this.hg.setColor(Color.white);
 				this.hg.drawString(this.message[i], this.x[i] + 24, this.y[i] + 6 + 12);
 				if (this.item_kazu[i] >= 1) {
-					for (var j = 0; j <= this.item_kazu[i] - 1; j++) {
+					for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
 						this.hg.drawString(this.item[i][j], this.x[i] + 24, this.y[i] + 6 + 18 + j * 14 + 12);
 						this.hg.drawString(
 							"" + this.item_int[i][j],
@@ -773,10 +793,11 @@ KeyboardMenu.prototype.drawMenus = function() {
 				}
 				break;
 			case 1000:
+				// activeYasumu
 				this.drawWindowbox(this.x[i], this.y[i], this.width[i], 98);
 				this.hg.setColor(new Color(96, 96, 96));
 				this.hg.fillRect(this.x[i] + 12, this.y[i] + 12, 248, 48);
-				for (var j = 0; j <= 5; j++) {
+				for (let j = 0; j <= 5; j++) {
 					if (this.item_int[i][j] > 0) {
 						this.gg.drawPT(this.x[i] + 12 + 8 + j * 40, this.y[i] + 12 + 8, this.item_int[i][j], 0);
 					}

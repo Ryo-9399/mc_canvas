@@ -1,4 +1,4 @@
-import { createNDimensionArray, rightShiftIgnoreSign } from "./GlobalFunctions";
+import { createNDimensionArray, rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
 import { Color } from "./ImageBuff";
 
 class MapSystem {
@@ -76,8 +76,8 @@ class MapSystem {
 		this.os2_wx = rightShiftIgnoreSign(this.wx, 5);
 		this.os2_wy = rightShiftIgnoreSign(this.wy, 5);
 		this.gg.fill2();
-		for (let ny = 0; ny <= 10; ny++) {
-			for (let nx = 0; nx <= 16; nx++) {
+		for (let ny = 0; ny <= rounddown(this.gg.di.height / 32); ny++) {
+			for (let nx = 0; nx <= rounddown(this.gg.di.width / 32); nx++) {
 				if (this.map_bg[this.os2_wx + nx][this.os2_wy + ny] > 0) {
 					this.gg.drawPT2(32 + nx * 32, 32 + ny * 32, this.map_bg[this.os2_wx + nx][this.os2_wy + ny]);
 				}
@@ -106,9 +106,10 @@ class MapSystem {
 			this.gg.os2_g.drawImage(this.gg.os_img, 32 + xmod, 32 + ymod);
 		} else {
 			// 背景画像を描画する
+
 			this.gg.fill2();
 
-			// セカンド画像の描画
+			// セカンド画像を背景画像の奥に描画
 			if (
 				this.mp.second_gazou_visible &&
 				this.mp.second_gazou_priority === 1 &&
@@ -122,8 +123,8 @@ class MapSystem {
 				let repeat_times = [1, 1];
 				let scroll_x = 0;
 				let scroll_y = 0;
-				let image_width = 512;
-				let image_height = 320;
+				let image_width = this.gg.di.width;
+				let image_height = this.gg.di.height;
 				if (this.mp.second_gazou_scroll === 2) {
 					// 左右スクロール  速度１／４
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % image_width);
@@ -136,10 +137,10 @@ class MapSystem {
 					// 指定速度で強制スクロール
 					this.second_gazou_x += this.mp.second_gazou_scroll_speed_x;
 					this.second_gazou_y += this.mp.second_gazou_scroll_speed_y;
-					if (this.second_gazou_x < -512) this.second_gazou_x += 512;
-					if (this.second_gazou_x > 0) this.second_gazou_x -= 512;
-					if (this.second_gazou_y < -320) this.second_gazou_y += 320;
-					if (this.second_gazou_y > 0) this.second_gazou_y -= 320;
+					if (this.second_gazou_x < -this.gg.di.width) this.second_gazou_x += this.gg.di.width;
+					if (this.second_gazou_x > 0) this.second_gazou_x -= this.gg.di.width;
+					if (this.second_gazou_y < -this.gg.di.height) this.second_gazou_y += this.gg.di.height;
+					if (this.second_gazou_y > 0) this.second_gazou_y -= this.gg.di.height;
 					scroll_x = this.second_gazou_x;
 					scroll_y = this.second_gazou_y;
 					repeat_times = [2, 2];
@@ -162,7 +163,7 @@ class MapSystem {
 					// マップの指定座標に設置  画像サイズは任意
 					scroll_x = this.mp.second_gazou_scroll_x + 32 - this.wx;
 					scroll_y = this.mp.second_gazou_scroll_y + 320 - this.wy;
-					if (scroll_x >= 512 || scroll_y >= 320) {
+					if (scroll_x >= this.gg.di.width || scroll_y >= this.gg.di.height) {
 						repeat_times = [0, 0];
 					}
 				}
@@ -184,8 +185,8 @@ class MapSystem {
 				let repeat_times = [1, 1];
 				let scroll_x = 0;
 				let scroll_y = 0;
-				let image_width = 512;
-				let image_height = 320;
+				let image_width = this.gg.di.width;
+				let image_height = this.gg.di.height;
 				if (gazou_scroll === 2) {
 					// 左右スクロール（速度はマップの１／４）
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % image_width);
@@ -193,23 +194,23 @@ class MapSystem {
 				} else if (gazou_scroll === 3) {
 					// 右へ強制スクロール
 					this.gazou_x -= 2;
-					if (this.gazou_x <= -512) this.gazou_x += 512;
+					if (this.gazou_x <= -this.gg.di.width) this.gazou_x += this.gg.di.width;
 					scroll_x = this.gazou_x;
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 4) {
 					// 指定速度で強制スクロール
 					this.gazou_x += this.mp.gazou_scroll_speed_x;
 					this.gazou_y += this.mp.gazou_scroll_speed_y;
-					if (this.gazou_x < -512) this.gazou_x += 512;
-					if (this.gazou_x > 0) this.gazou_x -= 512;
-					if (this.gazou_y < -320) this.gazou_y += 320;
-					if (this.gazou_y > 0) this.gazou_y -= 320;
+					if (this.gazou_x < -this.gg.di.width) this.gazou_x += this.gg.di.width;
+					if (this.gazou_x > 0) this.gazou_x -= this.gg.di.width;
+					if (this.gazou_y < -this.gg.di.height) this.gazou_y += this.gg.di.height;
+					if (this.gazou_y > 0) this.gazou_y -= this.gg.di.height;
 					scroll_x = this.gazou_x;
 					scroll_y = this.gazou_y;
 					repeat_times = [2, 2];
 				} else if (gazou_scroll === 5) {
 					// 上下スクロール
-					scroll_x = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
 					repeat_times[1] = 2;
 				} else if (gazou_scroll === 6) {
 					// 全方向スクロール（速度はマップの１／２）
@@ -225,14 +226,20 @@ class MapSystem {
 					// 画像サイズ    ５１２×６４０専用
 					image_height = 640;
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+					scroll_y = -(
+						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) %
+						image_height
+					);
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 9) {
 					// 画像サイズ  １０２４×６４０専用
 					image_width = 1024;
 					image_height = 640;
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+					scroll_y = -(
+						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) %
+						image_height
+					);
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 10) {
 					// 左右スクロール（速度はマップの１／２）
@@ -242,7 +249,7 @@ class MapSystem {
 					// マップの指定座標に設置  画像サイズは任意
 					scroll_x = this.mp.gazou_scroll_x + 32 - this.wx;
 					scroll_y = this.mp.gazou_scroll_y + 320 - this.wy;
-					if (scroll_x >= 512 || scroll_y >= 320) {
+					if (scroll_x >= this.gg.di.width || scroll_y >= this.gg.di.height) {
 						repeat_times = [0, 0];
 					}
 				}
@@ -260,8 +267,8 @@ class MapSystem {
 		}
 		if (mode !== 4 && this.gg.layer_mode === 2) {
 			// 背景レイヤーを描画する
-			for (let j = 0; j <= 10; j++) {
-				for (let i = 0; i <= 16; i++) {
+			for (let j = 0; j <= rounddown(this.gg.di.height / 32); j++) {
+				for (let i = 0; i <= rounddown(this.gg.di.width / 32); i++) {
 					const layer_code = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
 					if (layer_code > 0 && layer_code < 255) {
 						this.gg.drawMapchip2(32 + i * 32, 32 + j * 32, layer_code);
@@ -274,8 +281,8 @@ class MapSystem {
 			const is_water_visible =
 				this.gg.layer_mode !== 2 || (this.mp.water_visible === 2 && this.gg.layer_mode === 2);
 			// マップ上の特別なブロックの見た目を調整する
-			for (let i = 0; i <= 10; i++) {
-				for (let j = 0; j <= 16; j++) {
+			for (let i = 0; i <= rounddown(this.gg.di.height / 32); i++) {
+				for (let j = 0; j <= rounddown(this.gg.di.width / 32); j++) {
 					const nx = this.os2_wx + j;
 					const ny = this.os2_wy + i;
 					let pt = this.map_bg[nx][ny];
@@ -417,8 +424,8 @@ class MapSystem {
 			this.gg.os2_g.copyArea(
 				32 + diff_view_nx * 32,
 				32 + diff_view_ny * 32,
-				544,
-				352,
+				this.gg.di.width + 32,
+				this.gg.di.height + 32,
 				-diff_view_nx * 32,
 				-diff_view_ny * 32
 			);
@@ -427,18 +434,18 @@ class MapSystem {
 			const draw_queue = [];
 			if (diff_view_ny !== 0) {
 				// 上方向にスクロールする場合は一番上、下方向にスクロールする場合は一番下の列のブロックを裏画面に追加で描画する
-				const ny_offset = diff_view_ny < 0 ? 0 : 10;
-				for (let i = 0; i <= 16; i++) {
+				const ny_offset = diff_view_ny < 0 ? 0 : rounddown(this.gg.di.height / 32);
+				for (let i = 0; i <= rounddown(this.gg.di.width / 32); i++) {
 					draw_queue.push([this.map_bg[this.os2_wx + i][this.os2_wy + ny_offset], 1 + i, 1 + ny_offset]);
 				}
 			}
 			if (diff_view_nx !== 0) {
 				// 右方向にスクロールする場合は一番右、左方向にスクロールする場合は一番左の列のブロックを裏画面に追加で描画する
-				const nx_offset = diff_view_nx < 0 ? 0 : 16;
-				for (let i = 0; i <= 10; i++) {
+				const nx_offset = diff_view_nx < 0 ? 0 : rounddown(this.gg.di.width / 32);
+				for (let i = 0; i <= rounddown(this.gg.di.height / 32); i++) {
 					// 上下方向にも同時にスクロールしている場合、端のブロックを二重で描画してしまうのを避ける
 					if (i === 0 && diff_view_ny < 0) continue;
-					if (i === 10 && diff_view_ny > 0) continue;
+					if (i === rounddown(this.gg.di.height / 32) && diff_view_ny > 0) continue;
 					draw_queue.push([this.map_bg[this.os2_wx + nx_offset][this.os2_wy + i], 1 + nx_offset, 1 + i]);
 				}
 			}
@@ -449,8 +456,8 @@ class MapSystem {
 		}
 
 		// マップ上の特別なブロックの見た目を調整する
-		for (let i = 0; i <= 10; i++) {
-			for (let j = 0; j <= 16; j++) {
+		for (let i = 0; i <= rounddown(this.gg.di.height / 32); i++) {
+			for (let j = 0; j <= rounddown(this.gg.di.width / 32); j++) {
 				const nx = this.os2_wx + j;
 				const ny = this.os2_wy + i;
 				const option = this.mp.map_data_option[nx][ny];
@@ -591,7 +598,12 @@ class MapSystem {
 	 */
 	putBGCode(nx, ny, code) {
 		this.map_bg[nx][ny] = code;
-		if (this.os2_wx <= nx && this.os2_wx + 16 >= nx && this.os2_wy <= ny && this.os2_wy + 10 >= ny) {
+		if (
+			this.os2_wx <= nx &&
+			this.os2_wx + rounddown(this.gg.di.width / 32) >= nx &&
+			this.os2_wy <= ny &&
+			this.os2_wy + rounddown(this.gg.di.height / 32) >= ny
+		) {
 			this.gg.drawBG2((nx - this.os2_wx) * 32 + 32, (ny - this.os2_wy) * 32 + 32, code);
 		}
 	}

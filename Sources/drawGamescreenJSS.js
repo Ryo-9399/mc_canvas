@@ -1,6 +1,6 @@
 import { Color, Font } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
-import { rightShiftIgnoreSign } from "./GlobalFunctions";
+import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
 
 /**
  * 仕掛けを描画します
@@ -213,11 +213,11 @@ export const drawA = function() {
 					this.vo_pa_y[2] = this.vo_y[i][1] - view_y - dy;
 					this.vo_pa_x[3] = this.vo_x[i][1] - view_x + dx;
 					this.vo_pa_y[3] = this.vo_y[i][1] - view_y + dy;
-					this.gg.os_g.setColor(this.gamecolor_firebar1);
-					this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+					this.hg.setColor(this.gamecolor_firebar1);
+					this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					if (this.g_c2 >= 2) {
 						// 内側の色を描画
-						this.gg.os_g.setColor(this.gamecolor_firebar2);
+						this.hg.setColor(this.gamecolor_firebar2);
 						const dx = Math.cos(rad) * 10;
 						const dy = Math.sin(rad) * 10;
 						this.vo_pa_x[0] = this.vo_x[i][2] - view_x + dx;
@@ -228,7 +228,7 @@ export const drawA = function() {
 						this.vo_pa_y[2] = this.vo_y[i][3] - view_y - dy;
 						this.vo_pa_x[3] = this.vo_x[i][3] - view_x + dx;
 						this.vo_pa_y[3] = this.vo_y[i][3] - view_y + dy;
-						this.gg.os_g.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+						this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 					}
 					break;
 				}
@@ -264,14 +264,14 @@ export const drawM = function() {
 				);
 			}
 		} else if (characterobject.pt === 1000) {
-			this.gg.os_g.setColor(this.gamecolor_mizunohadou);
+			this.hg.setColor(this.gamecolor_mizunohadou);
 			const radius = characterobject.c2;
-			this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1100) {
-			if (this.g_ac === 0) this.gg.os_g.setColor(this.gamecolor_grenade1);
-			else this.gg.os_g.setColor(this.gamecolor_grenade2);
+			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+			else this.hg.setColor(this.gamecolor_grenade2);
 			const radius = characterobject.c2;
-			this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else {
 			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
 		}
@@ -301,25 +301,25 @@ export const drawGamescreenMy = function() {
 		if (this.j_v_c > 40 || this.g_ac === 1) {
 			const center_x = this.co_j.wx + 16;
 			const center_y = this.co_j.wy + 16;
-			this.gg.os_g.setColor(Color.white);
+			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
 				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
 				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 		}
 	}
 	if (this.j_zan_cf) {
-		// NOTE: なにこれ
+		// スーパージャンプ時の残像をセット
 		this.j_zan_cf = false;
 		for (let i = 0; i < 6; i++) {
 			if (this.co_j.img !== null) {
@@ -413,20 +413,20 @@ export const drawMyAttack = function() {
 			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
 		} else {
 			const color = this.g_ac === 0 ? this.gamecolor_grenade1 : this.gamecolor_grenade2;
-			this.gg.os_g.setColor(color);
+			this.hg.setColor(color);
 			if (characterobject.pt === 1200) {
 				// エネルギー砲 左向き
 				const width = characterobject.vx - characterobject.x + 1;
-				this.gg.os_g.fillRect(co_wx, co_wy + 12, width, 8);
+				this.hg.fillRect(co_wx, co_wy + 12, width, 8);
 			} else if (characterobject.pt === 1205) {
 				// エネルギー砲 右向き
 				// NOTE: vxという変数を左端のX座標として使うのはさすがにひどいのでは
 				const width = characterobject.x - characterobject.vx + 1;
-				this.gg.os_g.fillRect(characterobject.vx - view_x, co_wy + 12, width, 8);
+				this.hg.fillRect(characterobject.vx - view_x, co_wy + 12, width, 8);
 			} else {
 				// グレネードの爆発
 				const radius = characterobject.c2;
-				this.gg.os_g.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+				this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 			}
 		}
 	}
@@ -448,7 +448,7 @@ export const drawBoss = function() {
 	 * @type {number}
 	 */
 	const boss_wy = this.co_b.y - wy;
-	if (boss_wx > 560) return;
+	if (boss_wx > this.gg.di.width + 48) return;
 	if (this.co_b.img !== null) {
 		this.hg.drawImage(this.co_b.img, boss_wx + this.co_b.zs_x, boss_wy + this.co_b.zs_y, this.ap);
 		return;
@@ -509,6 +509,7 @@ export const drawBoss = function() {
 			break;
 
 		case Boss.PATTERN_BOSS2_ROTATE_LEFT:
+			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
 			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
@@ -520,6 +521,7 @@ export const drawBoss = function() {
 			break;
 
 		case Boss.PATTERN_BOSS2_ROTATE_RIGHT:
+			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
 			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
@@ -556,21 +558,21 @@ export const drawBoss = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			this.gg.os_g.setColor(Color.white);
+			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
 		case Boss.PATTERN_BOSS3_ROTATE_LEFT:
@@ -586,21 +588,21 @@ export const drawBoss = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			this.gg.os_g.setColor(Color.white);
+			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
 		case Boss.PATTERN_BOSS3_ROTATE_RIGHT:
@@ -720,21 +722,21 @@ const drawBossLegacy = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			this.gg.os_g.setColor(Color.white);
+			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
 		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
@@ -743,21 +745,21 @@ const drawBossLegacy = function() {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
 			}
-			this.gg.os_g.setColor(Color.white);
+			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
 				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
 				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
 			}
 
-			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
+			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 	}
 };
@@ -802,13 +804,13 @@ export const drawHPGauge = function() {
 	const x = this.j_hp_v ? 40 : 64;
 	const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
 	this.hg.setFont(new Font(Font.DIALOG, 1, 16));
-	this.gg.os_g.setColor(this.gamecolor_score);
+	this.hg.setColor(this.gamecolor_score);
 	this.hg.drawString(this.gauge_text, x, y - 6);
-	this.gg.os_g.setColor(Color.red);
+	this.hg.setColor(Color.red);
 	this.hg.fillRect(x, y, 200, 8);
-	this.gg.os_g.setColor(Color.yellow);
+	this.hg.setColor(Color.yellow);
 	this.hg.fillRect(x, y, this.gauge_value, 8);
-	this.gg.os_g.setColor(Color.white);
+	this.hg.setColor(Color.white);
 	this.hg.drawRect(x - 1, y - 1, 201, 9);
 };
 
@@ -823,21 +825,22 @@ export const drawSpot = function() {
 		const diameter = this.spot_r;
 		this.hg.setColor(Color.black);
 		const left_wx = this.co_j.wx + 16 - radius;
-		if (left_wx > 0) this.hg.fillRect(0, 0, left_wx, 320);
+		if (left_wx > 0) this.hg.fillRect(0, 0, left_wx, this.gg.di.height);
 		const right_wx = this.co_j.wx + 16 + radius;
-		if (right_wx < 512) this.hg.fillRect(right_wx, 0, 512 - right_wx, 320);
+		if (right_wx < this.gg.di.width) this.hg.fillRect(right_wx, 0, this.gg.di.width - right_wx, this.gg.di.height);
 		const top_wy = this.co_j.wy + 16 - radius;
 		if (top_wy > 0) this.hg.fillRect(left_wx, 0, right_wx - left_wx, top_wy);
 		const bottom_wy = this.co_j.wy + 16 + radius;
-		if (bottom_wy < 320) this.hg.fillRect(left_wx, bottom_wy, right_wx - left_wx, 320 - bottom_wy);
+		if (bottom_wy < this.gg.di.height)
+			this.hg.fillRect(left_wx, bottom_wy, right_wx - left_wx, this.gg.di.height - bottom_wy);
 		this.spot_g.drawImage(this.gg.os_img, 0, 0, this.ap);
 		this.hg.setColor(Color.black);
-		this.hg.fillRect(0, 0, 512, 320);
+		this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
 		this.hg.dispose();
 		this.hg.setClip("ellipse", this.co_j.wx + 16 - radius, this.co_j.wy + 16 - radius, diameter, diameter);
 		this.hg.drawImage(this.spot_img, 0, 0, this.ap);
 		this.hg.setColor(new Color(0, 0, 0, 96));
-		this.hg.fillRect(0, 0, 512, 320);
+		this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
 		this.hg.setClip(
 			"ellipse",
 			this.co_j.wx + 16 - (radius - 24),
@@ -849,7 +852,7 @@ export const drawSpot = function() {
 		this.hg.dispose();
 	} else if (this.spot_c === 200) {
 		this.hg.setColor(Color.black);
-		this.hg.fillRect(0, 0, 512, 320);
+		this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
 	}
 };
 
@@ -857,9 +860,9 @@ export const drawSpot = function() {
  * 一言メッセージを描画
  */
 export const drawHitokotoMessage = function() {
-	const box_x = 208;
-	const box_y = 56;
 	const box_width = 224;
+	const box_x = rounddown(this.gg.di.width * 0.625 - box_width / 2);
+	const box_y = rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2);
 	// メッセージ内容を取得
 	const messages = [];
 	for (let i = 1; i <= 3; i++) {

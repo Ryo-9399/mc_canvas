@@ -2,7 +2,7 @@ import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
 import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
 import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
 import { GameSoundForApplet } from "./GameSoundForApplet";
-import { AudioClip, Game, rightShiftIgnoreSign, waitFor } from "./GlobalFunctions";
+import { AudioClip, Game, rightShiftIgnoreSign, waitFor, rounddown } from "./GlobalFunctions";
 import { Color, Font, ImageBuff } from "./ImageBuff";
 import { MainProgram } from "./MainProgram";
 import { MasaoJSS } from "./MasaoJSS";
@@ -38,7 +38,14 @@ function MasaoConstruction(params, __canvas, __game, options) {
 	// GlobalFunctionsより移動
 	this.params = params;
 	this.__canvas = __canvas;
-	this.__appimg = new ImageBuff(512, 320);
+
+	// 画面サイズが変更されていたら更新
+	if (this.getParameter("mcs_screen_size") == 1) {
+		this.__canvas.width = options.width || 640;
+		this.__canvas.height = options.height || 480;
+	}
+
+	this.__appimg = new ImageBuff(this.__canvas.width, this.__canvas.height);
 
 	this.__game = __game;
 
@@ -97,13 +104,13 @@ MasaoConstruction.prototype.paint = function(paramGraphics) {
 		}
 	} else if (!this.restart_f) {
 		paramGraphics.setColor(Color.black);
-		paramGraphics.fillRect(0, 0, 512, 320);
+		paramGraphics.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
 		paramGraphics.setColor(Color.white);
 		paramGraphics.setFont(new Font(Font.DIALOG, 0, 16));
 
 		var str = this.getParameter("now_loading");
 		if (str != null) {
-			paramGraphics.drawString(this.getParameter("now_loading"), 32, 160);
+			paramGraphics.drawString(this.getParameter("now_loading"), 32, rounddown(this.gg.di.height / 2));
 		}
 	}
 };
@@ -287,7 +294,7 @@ MasaoConstruction.prototype.init_j = function() {
 	var m = 0;
 	for (var p = 0; p < 3; p++) {
 		for (var q = 0; q < 30; q++) {
-			var str = "map" + p + "-" + q;
+			var str = `map${p}-${q}`;
 			if (this.tdb.getValue(str) != null && this.tdb.getValue(str) != "." && this.tdb.getValue(str) != "") {
 				m = 1;
 				break;
