@@ -3119,7 +3119,7 @@ MainProgram.prototype.mL100 = function() {
 		}
 		if (this.co_j.c >= 100 && this.co_j.c < 200 && this.co_j.y >= this.maps.wy + this.gg.di.height) this.jShinu(5);
 	} else if (this.nkscroll_con == 200) {
-		// 画面内で全方向スクロール
+		// 画面内で全方向スクロール または 視界変更
 		let flag = false;
 		if (this.nkscroll_my_view_x > this.maps.my_wx_max) {
 			this.nkscroll_my_view_x -= 8;
@@ -4408,9 +4408,9 @@ MainProgram.prototype.mapsMakeStageData = function(
 			this.maps.my_wx_mini = 96;
 			this.maps.my_wx_max = 224;
 			if (this.view_move_type === 2) {
-				const tmp = this.maps.my_wx_mini;
-				this.maps.my_wx_mini = this.maps.my_wx_max + 32;
-				this.maps.my_wx_max = this.gg.di.width - tmp - 32;
+				const tmp = this.maps.my_wx_mini; // 96
+				this.maps.my_wx_mini = this.maps.my_wx_max + 32; // 256
+				this.maps.my_wx_max = this.gg.di.width - tmp - 32; // 384
 			}
 			this.maps.my_wy_mini = 78;
 		}
@@ -20828,6 +20828,10 @@ MainProgram.prototype.aMove = function() {
 							this.nkscroll_my_view_y = this.co_j.y - this.nkscroll_view_y;
 							this.nkscroll_vx = 1;
 							this.nkscroll_vy = 0;
+
+							const tmp = this.maps.my_wx_mini;
+							this.maps.my_wx_mini = this.maps.my_wx_max + 32;
+							this.maps.my_wx_max = this.gg.di.width - tmp - 32;
 						}
 						characterobject.c4 = 1;
 					}
@@ -20848,6 +20852,10 @@ MainProgram.prototype.aMove = function() {
 						this.nkscroll_my_view_y = this.co_j.y - this.nkscroll_view_y;
 						this.nkscroll_vx = 1;
 						this.nkscroll_vy = 0;
+
+						const tmp = this.maps.my_wx_mini;
+						this.maps.my_wx_mini = this.gg.di.width - this.maps.my_wx_max - 32;
+						this.maps.my_wx_max = tmp - 32;
 					}
 					characterobject.c4 = 1;
 				}
