@@ -471,7 +471,7 @@ MainProgram.prototype.addMyTokugi = function(i) {
 			flag = true;
 			break;
 
-		case 10: // 	壁キック
+		case 10: // 壁キック
 			this.jst_kabe_kick = 1;
 			flag = true;
 			break;
@@ -611,6 +611,7 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 			break;
 
 		case 4:
+		case 29:
 			this.jst_key_down = 0;
 			flag = true;
 			break;
@@ -715,11 +716,6 @@ MainProgram.prototype.removeMyTokugi = function(i) {
 		case 26:
 		case 27:
 			this.jst_pc_attack = 0;
-			flag = true;
-			break;
-
-		case 29:
-			this.jst_key_down = 0;
 			flag = true;
 			break;
 	}
@@ -1309,9 +1305,9 @@ MainProgram.prototype.setJSMes = function(s) {
  * 指定した位置に敵を設置します。
  * 位置はブロック単位で指定します。
  *
- * @param {number} type 敵の種類
  * @param {number} x X座標
  * @param {number} y Y座標
+ * @param {number} type 敵の種類
  * @see {@link MasaoJSS#setEnemy}
  */
 MainProgram.prototype.sete = function(s, s1, s2) {
@@ -6912,6 +6908,7 @@ MainProgram.prototype.jM100 = function() {
 		this.j_jump_level = 1;
 	}
 	if (this.co_j.jimen_f) {
+		// 地面に足がついている
 		if (this.gk.tr1_c >= 1 && this.gk.tr1_c <= 5) {
 			if (
 				this.jst_pc_attack == 1 &&
@@ -7116,6 +7113,7 @@ MainProgram.prototype.jM100 = function() {
 								}
 							}
 						} else if (this.jst_pc_attack == 1 && this.j_cannon_c > 0 && this.j_cannon_type == 3) {
+							// サイコクラッシャーアタック使用時
 							this.co_j.pt = 1400;
 							if (this.j_cannon_c <= 5) {
 								this.co_j.pt = 102;
@@ -7123,6 +7121,7 @@ MainProgram.prototype.jM100 = function() {
 								if (this.co_j.jimen_f) this.co_j.pt = 100;
 							}
 						} else if (this.jst_pc_attack == 2 && this.j_cannon_c > 0 && this.j_cannon_type == 4) {
+							// ロケット頭突き使用時
 							this.co_j.pt = 84;
 							if (this.j_cannon_c <= 5) {
 								this.co_j.pt = 102;
@@ -7130,6 +7129,7 @@ MainProgram.prototype.jM100 = function() {
 								if (this.co_j.jimen_f) this.co_j.pt = 100;
 							}
 						} else if (this.jst_syouryuuken == 1 && this.gk.tr1_c == 1 && this.gk.up_f) {
+							// 昇龍拳使用時
 							this.j_zan_f = false;
 							this.j_jet_c = 0;
 							this.co_j.vx = 0;
@@ -7143,6 +7143,7 @@ MainProgram.prototype.jM100 = function() {
 							this.j_cannon_type = 2;
 							this.gs.rsAddSound(26);
 						} else if (this.jst_syouryuuken == 2 && this.gk.tr1_c == 1 && this.gk.up_f) {
+							// スカイアッパー使用時
 							this.j_zan_f = false;
 							this.j_jet_c = 0;
 							this.co_j.vx = 0;
@@ -7188,6 +7189,7 @@ MainProgram.prototype.jM100 = function() {
 							this.j_jump_level = 4;
 							this.gs.rsAddSound(3);
 						} else {
+							// スーパージャンプ中
 							this.co_j.vy = -340;
 							this.j_jump_level = 5;
 							if (this.jst_high_sjump == 1) this.co_j.vy = -390;
@@ -7291,14 +7293,17 @@ MainProgram.prototype.jM100 = function() {
 					this.j_jump_type != 7 &&
 					this.co_j.vy > 0
 				) {
+					// 落ちるのが遅い
 					this.co_j.vy -= 10;
 					if (this.co_j.vy > 70) this.co_j.vy = 70;
 				}
 				if (this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) {
+					// ジャンプできない時 ゆっくりと落ちる
 					if (this.co_j.vy >= 0) this.co_j.vy += 5;
 					if (this.co_j.vy > 90) this.co_j.vy = 90;
 				}
 				if (this.jst_key_down == 1 && this.down_key_c == 1) {
+					// 下キーを押すと急降下で急降下中
 					if (this.j_jump_type != 6)
 						if (this.j_jump_type == 1) {
 							if (this.co_j.vy < 100) {
@@ -7314,12 +7319,14 @@ MainProgram.prototype.jM100 = function() {
 							if (this.co_j.vy < 100) this.co_j.vy = 100;
 						}
 				} else if (this.jst_key_down == 2 && this.down_key_c == 1 && this.j_jump_type != 7) {
+					// 流星キック使用時
 					this.co_j.vx = 0;
 					this.j_jump_type = 7;
 					if (this.co_j.vy < 100) this.co_j.vy = 100;
 					this.gs.rsAddSound(18);
 				}
 				if (this.jst_double_jump == 1 && this.j_djump_kf && this.gk.tr1_c == 1 && !flag21) {
+					// 空中でもう１回ジャンプ
 					this.j_djump_kf = false;
 					var j27 = Math.abs(this.co_j.vx);
 					if (j27 < 60) {
@@ -8049,10 +8056,12 @@ MainProgram.prototype.jM100 = function() {
 		}
 		if (this.j_gr_kazu > 0)
 			if (this.grenade_type == 8) {
+				// ファイヤーボールを発射
 				if (this.j_fire_f) this.j_gr_kazu = 1;
 				if (this.co_jm[0].c == 0 || this.co_jm[1].c == 0) {
 					this.j_gr_kazu--;
 					if (this.j_fire_type == 4) {
+						// ファイヤーボール ダブル
 						if (this.co_jm[0].c == 0) {
 							this.co_jm[0].c = 106;
 							this.co_jm[0].x = this.co_j.x;
@@ -8084,20 +8093,31 @@ MainProgram.prototype.jM100 = function() {
 							this.gs.rsAddSound(23);
 						}
 					} else if (this.j_fire_type == 5) {
+						// ファイヤーボール ホーミングアミュレット
 						if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 110);
 						else this.jmSet(this.co_j.x, this.co_j.y, 115);
-					} else if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 100);
-					else this.jmSet(this.co_j.x, this.co_j.y, 105);
+					} else {
+						// ファイヤーボール その他
+						if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 100);
+						else this.jmSet(this.co_j.x, this.co_j.y, 105);
+					}
 				}
-			} else if (this.grenade_type == 7) this.jmSet2(this.co_j.x, this.co_j.y, 50, 2);
-			else if (this.grenade_type == 3 || this.grenade_type == 4) {
+			} else if (this.grenade_type == 7) {
+				// 夢想封印
+				this.jmSet2(this.co_j.x, this.co_j.y, 50, 2);
+			} else if (this.grenade_type == 3 || this.grenade_type == 4) {
+				// エネルギー砲
 				if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 60);
 				else this.jmSet(this.co_j.x, this.co_j.y, 65);
 			} else if (this.grenade_type == 9) {
+				// ブロック１破壊砲
 				if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 1207);
 				else this.jmSet(this.co_j.x, this.co_j.y, 1206);
-			} else if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 200);
-			else this.jmSet(this.co_j.x, this.co_j.y, 205);
+			} else {
+				// グレネード
+				if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 200);
+				else this.jmSet(this.co_j.x, this.co_j.y, 205);
+			}
 	}
 	if (this.grenade_type == 8 && this.j_fire_f) this.j_gr_kazu = 0;
 	if (this.tr2_c == 1) {
@@ -11027,7 +11047,7 @@ MainProgram.prototype.sakamichiY = function(i, j) {
 };
 
 /**
- * 敵の攻撃を発生させる
+ * 敵の攻撃やアイテムを発生させる
  * @param x {number} X座標(ピクセル座標)
  * @param y {number} y座標(ピクセル座標)
  * @param type {number} 種類
@@ -11260,32 +11280,32 @@ MainProgram.prototype.mSet = function(i, j, k) {
 					characterobject.c2 = 8;
 					break;
 
-				case 2181: // シューティングモードのアイテム1（？ブロック（コイン））
+				case 2181: // シューティングモード パワーアップアイテム1（？ブロック（コイン））
 					characterobject.c = 2100;
 					characterobject.c2 = 9;
 					break;
 
-				case 2182: // シューティングモードのアイテム2（？ブロック（コイン3枚））
+				case 2182: // シューティングモード パワーアップアイテム2（？ブロック（コイン3枚））
 					characterobject.c = 2100;
 					characterobject.c2 = 10;
 					break;
 
-				case 2185:
+				case 2185: // スポット処理 範囲拡大アイテム
 					characterobject.c = 2100;
 					characterobject.c2 = 11;
 					break;
 
-				case 2186: // アイテム（水平に飛ぶファイヤーボール）
+				case 2186: // アイテム（ファイヤーボール 水平に飛ぶ）
 					characterobject.c = 2100;
 					characterobject.c2 = 12;
 					break;
 
-				case 2187: // アイテム（跳ねるファイヤーボール）
+				case 2187: // アイテム（ファイヤーボール 跳ねる）
 					characterobject.c = 2100;
 					characterobject.c2 = 13;
 					break;
 
-				case 2188: // アイテム（ダブルファイヤーボール）
+				case 2188: // アイテム（ファイヤーボール ダブル）
 					characterobject.c = 2100;
 					characterobject.c2 = 14;
 					break;
@@ -12334,7 +12354,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 2000:
+			case 2000: // ？ブロックから出たコイン
 				characterobject.vy += 30;
 				if (characterobject.vy > 180) characterobject.vy = 180;
 				characterobject.y += rounddown(characterobject.vy / 10);
@@ -12353,7 +12373,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 2100:
+			case 2100: // アイテム
 				if (
 					(this.scroll_area < 2 || this.scroll_area > 5) &&
 					this.j_tokugi != 14 &&
@@ -12526,30 +12546,47 @@ MainProgram.prototype.mMove = function() {
 			else if (characterobject.c == 2100) {
 				this.gs.rsAddSound(7);
 				if (characterobject.c2 == 0) {
+					// ファイヤーボール
 					this.j_fire_f = true;
 					this.j_fire_type = this.default_j_fire_type;
 					if (this.j_tokugi == 7) this.j_fire_type = 2;
 					if (this.j_fire_type == 3 || this.j_fire_type == 4) this.j_fire_range = 10;
 					else if (this.j_fire_type == 2) this.j_fire_range = 9999;
 				} else if (characterobject.c2 == 1) {
+					// バリア
 					this.j_v_c = 150;
 					this.j_v_kakudo = 0;
 				} else if (characterobject.c2 == 2) {
+					// タイム
 					if (this.time_max > 0) this.time += 30000;
-				} else if (characterobject.c2 == 3) this.j_jet_fuel += 80;
-				else if (characterobject.c2 == 4) this.j_helm_f = true;
-				else if (characterobject.c2 == 5) this.j_tail_f = true;
-				else if (characterobject.c2 == 6) this.j_drell_f = true;
-				else if (characterobject.c2 == 7) this.j_gr_kazu++;
-				else if (characterobject.c2 == 8) {
+				} else if (characterobject.c2 == 3) {
+					// ジェット
+					this.j_jet_fuel += 80;
+				} else if (characterobject.c2 == 4) {
+					// ヘルメット
+					this.j_helm_f = true;
+				} else if (characterobject.c2 == 5) {
+					// しっぽ
+					this.j_tail_f = true;
+				} else if (characterobject.c2 == 6) {
+					// ドリル
+					this.j_drell_f = true;
+				} else if (characterobject.c2 == 7) {
+					// グレネード
+					this.j_gr_kazu++;
+				} else if (characterobject.c2 == 8) {
+					// 1UP
 					if (this.j_tokugi == 17) {
 						var j2 = this.getMyHP();
 						if (j2 < 10) this.setMyHP(String(j2 + 1));
 					} else {
 						this.j_left++;
 					}
-				} else if (characterobject.c2 == 9) this.j_double_f = true;
-				else if (characterobject.c2 == 10) {
+				} else if (characterobject.c2 == 9) {
+					// シューティングモード パワーアップアイテム1
+					this.j_double_f = true;
+				} else if (characterobject.c2 == 10) {
+					// シューティングモード パワーアップアイテム2
 					if (this.co_mu[0].c == 0) {
 						this.co_mu[0].c = 100;
 						if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300)
@@ -12582,29 +12619,37 @@ MainProgram.prototype.mMove = function() {
 						this.co_mu[1].y = this.mu_ato_y[k6];
 					}
 				} else if (characterobject.c2 == 11) {
+					// スポット処理 範囲拡大アイテム
 					if (this.spot_c == 100) {
 						this.spot_r += 48;
 						if (this.spot_r > 400) this.spot_c = 0;
 					}
 				} else if (characterobject.c2 == 12) {
+					// ファイヤーボール 水平に飛ぶ
 					this.j_fire_f = true;
 					this.j_fire_type = 2;
 					this.j_fire_range = 9999;
 				} else if (characterobject.c2 == 13) {
+					// ファイヤーボール 跳ねる
 					this.j_fire_f = true;
 					this.j_fire_type = 1;
 				} else if (characterobject.c2 == 14) {
+					// ファイヤーボール ダブル
 					this.j_fire_f = true;
 					this.j_fire_type = 4;
 					this.j_fire_range = 10;
-				} else if (characterobject.c2 == 15) this.j_gr_kazu += 5;
-				else if (characterobject.c2 == 16) {
+				} else if (characterobject.c2 == 15) {
+					// グレネード5発
+					this.j_gr_kazu += 5;
+				} else if (characterobject.c2 == 16) {
+					// コンティニュー
 					this.cpoint_con = 100;
 					this.cpoint_stage = this.stage;
 					this.cpoint_x = characterobject.x;
 					this.cpoint_y = characterobject.y;
 				}
 			} else if (characterobject.c == 2200) {
+				// ボスを倒した後の人面星
 				this.stage_cc = 1;
 				if (this.stage_max >= 2 && this.stage >= this.stage_max) this.addScore(995);
 				else this.addScore(95);
@@ -12679,28 +12724,34 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 					characterobject.vy = -28;
 					if (Math.abs(characterobject.vx) < 2) characterobject.vx = -2;
 					if (this.j_tokugi == 14) {
+						// シューティングモード
 						characterobject.c = 101;
 						characterobject.y = j;
 						characterobject.vx = -16;
 						characterobject.vy = 0;
 					} else if (this.j_tokugi == 15) {
+						// 4方向移動
 						characterobject.c = 101;
 						characterobject.y = j;
 						characterobject.vx = -16;
 						characterobject.vy = 0;
 						if (this.j_4_muki == 2) {
+							// 上向き
 							characterobject.vx = 0;
 							characterobject.vy = -16;
 						} else if (this.j_4_muki == 3) {
+							// 下向き
 							characterobject.vx = 0;
 							characterobject.vy = 16;
 						}
 					} else if (this.j_fire_type == 3) {
+						// 水平に飛ぶ 短射程
 						characterobject.c = 101;
 						characterobject.y = j;
 						characterobject.vx = -20;
 						characterobject.vy = 0;
 					} else if (this.j_fire_type == 2) {
+						// 水平に飛ぶ
 						characterobject.c = 101;
 						characterobject.y = j;
 						characterobject.vx = rounddown(this.co_j.vx / 10) - 12;
