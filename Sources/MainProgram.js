@@ -4392,12 +4392,13 @@ MainProgram.prototype.mapsMakeStageData = function(
 			this.maps.my_wx_mini = 132;
 			this.maps.my_wx_max = 252;
 			if (this.view_move_type === 2) {
+				const tmp = this.maps.my_wx_mini;
 				this.maps.my_wx_mini = this.maps.my_wx_max + 32;
-				this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
+				this.maps.my_wx_max = this.gg.di.width - tmp - 32;
 			}
 			this.maps.my_wy_mini = 116;
 		}
-		this.maps.my_wy_max = 300;
+		this.maps.my_wy_max = 300; // 480 - 148 - 32
 	} else if (this.gg.system_screen_size === 2) {
 		if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
 			this.maps.my_wx_mini = 176;
@@ -4407,12 +4408,13 @@ MainProgram.prototype.mapsMakeStageData = function(
 			this.maps.my_wx_mini = 96;
 			this.maps.my_wx_max = 224;
 			if (this.view_move_type === 2) {
+				const tmp = this.maps.my_wx_mini;
 				this.maps.my_wx_mini = this.maps.my_wx_max + 32;
-				this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
+				this.maps.my_wx_max = this.gg.di.width - tmp - 32;
 			}
 			this.maps.my_wy_mini = 78;
 		}
-		this.maps.my_wy_max = 176;
+		this.maps.my_wy_max = 176; // 320 - 112 - 32
 	}
 	c2 = this.mapWidth + 19;
 	this.gg.setBackcolor(Color.blue);
@@ -10035,6 +10037,7 @@ MainProgram.prototype.jMove = function() {
 					}
 
 					if (this.sl_step == 10 || this.sl_step == 11) {
+						// 強制スクロール中
 						this.maps.wx = this.co_j.x - 192;
 						this.ks_wx = this.maps.wx;
 					}
