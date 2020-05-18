@@ -4251,18 +4251,29 @@ MainProgram.prototype.init3 = function() {
 	for (let k2 = 0; k2 <= 11; k2++) this.ana_c[k2] = 0;
 
 	this.mapsMakeStageData(100 + this.stage);
-	if (this.cpoint_con == 100)
+
+	// コンティニューアイテムを取った時
+	if (this.cpoint_con == 100) {
+		// 現在のステージがコンティニューアイテムを取ったステージと同じ
 		if (this.stage == this.cpoint_stage) {
+			// 自分の位置を変更
 			this.co_j.x = this.cpoint_x;
 			this.co_j.y = this.cpoint_y;
+
+			// 取ったコンティニューアイテムや？ブロックを削除
 			for (let l2 = 0; l2 <= this.a_kazu; l2++)
 				if (this.co_a[l2].c == 3400 && this.co_a[l2].x == this.cpoint_x && this.co_a[l2].y == this.cpoint_y)
 					this.co_a[l2].c = 0;
 
 			this.hDelete(rightShiftIgnoreSign(this.co_j.x, 5), rightShiftIgnoreSign(this.co_j.y, 5) + 1, 4100);
+
+			// 視点を変更する
+			this.maps.wx = this.co_j.x - (this.view_move_type === 2 ? this.maps.my_wx_max : this.maps.my_wx_mini);
+			this.maps.wy = this.co_j.y - this.maps.my_wy_max;
 		} else {
 			this.cpoint_con = 0;
 		}
+	}
 	if (this.sl_step == 10 || this.sl_step == 11) {
 		this.ks_wx = this.maps.wx;
 		if (this.ks_wx <= 128) this.ks_wx = 32;
@@ -4659,7 +4670,7 @@ MainProgram.prototype.readCustomParts = function(customParts) {
 
 	/**
 	 * ES6のObject.assignっぽい関数
-	 * 1番目移行の引数のオブジェクトのプロパティを0番目の引数に書き込む
+	 * 1番目以降の引数のオブジェクトのプロパティを0番目の引数に書き込む
 	 */
 	function assign(target) {
 		for (var i = 1; i < arguments.length; i++) {
@@ -10038,6 +10049,7 @@ MainProgram.prototype.jMove = function() {
 
 					if (this.sl_step == 10 || this.sl_step == 11) {
 						// 強制スクロール中
+						//this.maps.wx = (this.maps.wx_mini < this.co_j.x - 192) ? this.co_j.x - 192 : this.maps.wx_mini;
 						this.maps.wx = this.co_j.x - 192;
 						this.ks_wx = this.maps.wx;
 					}
