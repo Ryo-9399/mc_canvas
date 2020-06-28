@@ -23654,7 +23654,7 @@ MainProgram.prototype.aMoveOption = function(i) {
 						!this.gk.tr1_f
 					) {
 						this.km.init1(3);
-						this.km.setMessage(3, this.tdb.getValue("shop_name"));
+						this.km.setMessage(3, this.tdb.getValue("serifu_grenade_shop_name"));
 						this.addSerifu2(3, "serifu_grenade_shop-", 3);
 						this.km.activeSerifu(
 							3,

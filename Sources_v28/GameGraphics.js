@@ -5,12 +5,12 @@ class GameGraphics {
 	constructor(applet) {
 		this.ap = applet;
 		/**
-		 * パターン画像の縦方向の分割数
+		 * パターン画像の横方向の分割数
 		 * @type {number}
 		 */
 		this.spt_kazu_x = 10;
 		/**
-		 * パターン画像の横方向の分割数
+		 * パターン画像の縦方向の分割数
 		 * @type {number}
 		 */
 		this.spt_kazu_y = 25;
