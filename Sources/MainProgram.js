@@ -3778,8 +3778,8 @@ MainProgram.prototype.init1 = function() {
 	["score", "highscore", "jet", "grenade"].forEach(name => {
 		this[`moji_${name}`] = this.tdb.getValue(`moji_${name}`);
 	});
-	this.moji_time = `  ${this.tdb.getValue("moji_time")} `;
-	this.moji_left = `  ${this.tdb.getValue("moji_left")} `;
+	this.moji_time = `    ${this.tdb.getValue("moji_time")} `;
+	this.moji_left = `    ${this.tdb.getValue("moji_left")} `;
 	this.moji_size = this.tdb.getValueInt("moji_size");
 	if (this.moji_size < 10) this.moji_size = 10;
 	else if (this.moji_size > 30) this.moji_size = 30;
