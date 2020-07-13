@@ -429,13 +429,13 @@ MainProgram.prototype.mainLoop = function() {
 
 		case 60:
 			if (this.g_c1 == 0) {
-				if (this.gk.key_char == 0x76) this.g_c1 = 1;
+				if (this.gk.key_char == "v".toUpperCase().charCodeAt()) this.g_c1 = 1;
 			} else if (this.g_c1 == 1) {
-				if (this.gk.key_char == 0x65) this.g_c1 = 2;
-				else if (this.gk.key_char != 0x76) this.g_c1 = 0;
+				if (this.gk.key_char == "e".toUpperCase().charCodeAt()) this.g_c1 = 2;
+				else if (this.gk.key_char != "v".toUpperCase().charCodeAt()) this.g_c1 = 0;
 			} else if (this.g_c1 == 2)
-				if (this.gk.key_char == 0x72) this.ml_mode = 1000;
-				else if (this.gk.key_char != 0x65) this.g_c1 = 0;
+				if (this.gk.key_char == "r".toUpperCase().charCodeAt()) this.ml_mode = 1000;
+				else if (this.gk.key_char != "e".toUpperCase().charCodeAt()) this.g_c1 = 0;
 			if (!this.gm.button_f && !this.gk.tr1_f) break;
 			if (this.stage_select == 2) {
 				this.init2();

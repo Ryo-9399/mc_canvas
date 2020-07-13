@@ -2386,7 +2386,7 @@ MainProgram.prototype.drawItem = function() {
 
 		if (this.j_jet_fuel > 0) str += `${this.moji_jet} ${this.j_jet_fuel}`; //ジェットの燃料を表示
 		if (this.j_gr_kazu > 0) {
-			if (this.j_jet_fuel > 0) str += "  ";
+			if (this.j_jet_fuel > 0) str += "    ";
 			//グレネードを表示
 			str += this.moji_grenade;
 			if (this.j_gr_kazu !== 1) str += ` ${this.j_gr_kazu}`;
@@ -3422,13 +3422,13 @@ MainProgram.prototype.mainLoop = function() {
 		case 60:
 			drawTitle();
 			if (this.g_c1 == 0) {
-				if (this.gk.key_char == 0x76) this.g_c1 = 1;
+				if (this.gk.key_char == "v".toUpperCase().charCodeAt()) this.g_c1 = 1;
 			} else if (this.g_c1 == 1) {
-				if (this.gk.key_char == 0x65) this.g_c1 = 2;
-				else if (this.gk.key_char != 0x76) this.g_c1 = 0;
+				if (this.gk.key_char == "e".toUpperCase().charCodeAt()) this.g_c1 = 2;
+				else if (this.gk.key_char != "v".toUpperCase().charCodeAt()) this.g_c1 = 0;
 			} else if (this.g_c1 == 2)
-				if (this.gk.key_char == 0x72) this.ml_mode = 1000;
-				else if (this.gk.key_char != 0x65) this.g_c1 = 0;
+				if (this.gk.key_char == "r".toUpperCase().charCodeAt()) this.ml_mode = 1000;
+				else if (this.gk.key_char != "e".toUpperCase().charCodeAt()) this.g_c1 = 0;
 			if (
 				(this.title_lock_f && !this.start_game_f) ||
 				((!this.gm.button_f || this.gm.click_x >= this.gg.di.width || this.gm.click_y >= this.gg.di.height) &&
