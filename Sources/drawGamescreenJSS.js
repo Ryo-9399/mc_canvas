@@ -249,6 +249,7 @@ export const drawM = function() {
 		const co_wx = characterobject.x - view_x;
 		const co_wy = characterobject.y - view_y;
 		if (characterobject.c === 50) {
+			// 水しぶき
 			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
 			for (let ii = 0; ii < 2; ii++) {
 				const cx = characterobject.x + ii * 31;
@@ -264,14 +265,74 @@ export const drawM = function() {
 				);
 			}
 		} else if (characterobject.pt === 1000) {
+			// 水の波動
 			this.hg.setColor(this.gamecolor_mizunohadou);
 			const radius = characterobject.c2;
 			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+		} else if (characterobject.pt === 1010) {
+			// 水の波動 直進
+			this.hg.setColor(
+				new Color(
+					this.gamecolor_mizunohadou.getRed(),
+					this.gamecolor_mizunohadou.getGreen(),
+					this.gamecolor_mizunohadou.getBlue(),
+					176
+				)
+			);
+			const radius = characterobject.c2;
+			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
 		} else if (characterobject.pt === 1100) {
+			// 敵のグレネード
 			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
 			else this.hg.setColor(this.gamecolor_grenade2);
 			const radius = characterobject.c2;
 			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+		} else if (characterobject.pt === 1200) {
+			// ソーラービーム　第一段階
+			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+			else this.hg.setColor(this.gamecolor_grenade2);
+			const radius = characterobject.vy;
+			this.hg.drawOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+		} else if (characterobject.pt === 1210) {
+			// ソーラービーム 左へ発射　第二段階
+			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+			else this.hg.setColor(this.gamecolor_grenade2);
+			this.hg.fillRect(co_wx, co_wy + 11, characterobject.vx - characterobject.x + 1, 10);
+		} else if (characterobject.pt === 1215) {
+			// ソーラービーム 右へ発射　第二段階
+			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+			else this.hg.setColor(this.gamecolor_grenade2);
+			this.hg.fillRect(characterobject.vx - view_x, co_wy + 11, characterobject.x - characterobject.vx + 1, 10);
+		} else if (characterobject.pt === 1220) {
+			// 破壊光線　第一段階
+			this.hg.setColor(this.gamecolor_grenade1);
+			const radius = characterobject.vy;
+			this.hg.drawOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
+		} else if (characterobject.pt === 1230) {
+			// 破壊光線 左へ発射　第二段階
+			this.hg.setColor(
+				new Color(
+					this.gamecolor_grenade1.getRed(),
+					this.gamecolor_grenade1.getGreen(),
+					this.gamecolor_grenade1.getBlue(),
+					192
+				)
+			);
+			this.hg.fillRect(co_wx, co_wy + 9, characterobject.vx - characterobject.x + 1, 14);
+		} else if (characterobject.pt === 1235) {
+			// 破壊光線 右へ発射　第二段階
+			this.hg.setColor(
+				new Color(
+					this.gamecolor_grenade1.getRed(),
+					this.gamecolor_grenade1.getGreen(),
+					this.gamecolor_grenade1.getBlue(),
+					192
+				)
+			);
+			this.hg.fillRect(characterobject.vx - view_x, co_wy + 9, characterobject.x - characterobject.vx + 1, 14);
+		} else if (characterobject.pt === 1300) {
+			// コンティニュー
+			this.hg.drawImage(this.gg.spt_option_img[0], co_wx, co_wy, this.ap);
 		} else {
 			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
 		}
@@ -525,6 +586,34 @@ export const drawGamescreenMy = function() {
 			}
 		}
 	}
+};
+
+/**
+ * 土管を描画します
+ * @param dokan_id 土管の種類 0がリンク土管1, 1がリンク土管2, ...
+ * @param dokan_type 0:通常 1:下向き 2:左向き 3:右向き
+ * @param co_wx 土管の左上の点の画面上のX座標
+ * @param co_wy 土管の左上の点の画面上のY座標
+ */
+const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
+	const dokan_pt = 60 + dokan_id * 2;
+	// 土管の回転角度と回転の中心を算出する
+	let rad = 0;
+	if (dokan_type === 1) rad = Math.PI;
+	else if (dokan_type === 2) rad = -Math.PI / 2;
+	else if (dokan_type === 3) rad = Math.PI / 2;
+	let dokan_center_wx = co_wx + 32;
+	let dokan_center_wy = co_wy + 16;
+	if (dokan_type === 2 || dokan_type === 3) {
+		dokan_center_wx = co_wx + 16;
+		dokan_center_wy = co_wy + 32;
+	}
+	// 土管を回転させて描画
+	this.hg.dispose();
+	this.hg.rotate(rad, dokan_center_wx, dokan_center_wy);
+	this.hg.drawImage(this.hi[dokan_pt], dokan_center_wx - 32, dokan_center_wy - 16, this.ap);
+	this.hg.drawImage(this.hi[dokan_pt + 1], dokan_center_wx, dokan_center_wy - 16, this.ap);
+	this.hg.dispose();
 };
 
 /**

@@ -50,7 +50,7 @@ export const drawGamescreen = function() {
 
 	if (this.yuka_id_max >= 0) this.drawYuka();
 	if (this.m_kazu > 0) {
-		drawM.apply(this);
+		drawGameScreenJSS.drawM.apply(this);
 	}
 	if (this.jm_kazu > 0) {
 		drawGameScreenJSS.drawMyAttack.apply(this);
@@ -1050,105 +1050,4 @@ const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
 	this.hg.drawImage(this.hi[dokan_pt], dokan_center_wx - 32, dokan_center_wy - 16, this.ap);
 	this.hg.drawImage(this.hi[dokan_pt + 1], dokan_center_wx, dokan_center_wy - 16, this.ap);
 	this.hg.dispose();
-};
-
-/**
- * 敵の攻撃・アイテムを描画します
- */
-const drawM = function() {
-	const view_x = this.maps.wx;
-	const view_y = this.maps.wy;
-	for (let i = 0; i <= 79; i++) {
-		if (this.co_m[i].c < 50) continue;
-		const characterobject = this.co_m[i];
-		const co_wx = characterobject.x - view_x;
-		const co_wy = characterobject.y - view_y;
-		if (characterobject.c === 50) {
-			// 水しぶき
-			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
-			for (let ii = 0; ii < 2; ii++) {
-				const cx = characterobject.x + ii * 31;
-				const cy = characterobject.y;
-				const bgc = this.maps.getBGCode(cx, cy);
-				if (bgc < 20) continue;
-				if (this.gg.layer_mode === 2 && bgc === 29) continue;
-				this.gg.drawPT(
-					rightShiftIgnoreSign(cx, 5) * 32 - view_x,
-					rightShiftIgnoreSign(cy, 5) * 32 - view_y,
-					bgc,
-					0
-				);
-			}
-		} else if (characterobject.pt === 1000) {
-			// 水の波動
-			this.hg.setColor(this.gamecolor_mizunohadou);
-			const radius = characterobject.c2;
-			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
-		} else if (characterobject.pt === 1010) {
-			// 水の波動 直進
-			this.hg.setColor(
-				new Color(
-					this.gamecolor_mizunohadou.getRed(),
-					this.gamecolor_mizunohadou.getGreen(),
-					this.gamecolor_mizunohadou.getBlue(),
-					176
-				)
-			);
-			const radius = characterobject.c2;
-			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
-		} else if (characterobject.pt === 1100) {
-			// 敵のグレネード
-			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
-			else this.hg.setColor(this.gamecolor_grenade2);
-			const radius = characterobject.c2;
-			this.hg.fillOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
-		} else if (characterobject.pt === 1200) {
-			// ソーラービーム　第一段階
-			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
-			else this.hg.setColor(this.gamecolor_grenade2);
-			const radius = characterobject.vy;
-			this.hg.drawOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
-		} else if (characterobject.pt === 1210) {
-			// ソーラービーム 左へ発射　第二段階
-			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
-			else this.hg.setColor(this.gamecolor_grenade2);
-			this.hg.fillRect(co_wx, co_wy + 11, characterobject.vx - characterobject.x + 1, 10);
-		} else if (characterobject.pt === 1215) {
-			// ソーラービーム 右へ発射　第二段階
-			if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
-			else this.hg.setColor(this.gamecolor_grenade2);
-			this.hg.fillRect(characterobject.vx - view_x, co_wy + 11, characterobject.x - characterobject.vx + 1, 10);
-		} else if (characterobject.pt === 1220) {
-			// 破壊光線　第一段階
-			this.hg.setColor(this.gamecolor_grenade1);
-			const radius = characterobject.vy;
-			this.hg.drawOval(co_wx + 16 - radius, co_wy + 16 - radius, radius * 2, radius * 2);
-		} else if (characterobject.pt === 1230) {
-			// 破壊光線 左へ発射　第二段階
-			this.hg.setColor(
-				new Color(
-					this.gamecolor_grenade1.getRed(),
-					this.gamecolor_grenade1.getGreen(),
-					this.gamecolor_grenade1.getBlue(),
-					192
-				)
-			);
-			this.hg.fillRect(co_wx, co_wy + 9, characterobject.vx - characterobject.x + 1, 14);
-		} else if (characterobject.pt === 1235) {
-			// 破壊光線 右へ発射　第二段階
-			this.hg.setColor(
-				new Color(
-					this.gamecolor_grenade1.getRed(),
-					this.gamecolor_grenade1.getGreen(),
-					this.gamecolor_grenade1.getBlue(),
-					192
-				)
-			);
-			this.hg.fillRect(characterobject.vx - view_x, co_wy + 9, characterobject.x - characterobject.vx + 1, 14);
-		} else if (characterobject.pt === 1300) {
-			this.hg.drawImage(this.gg.spt_option_img[0], co_wx, co_wy, this.ap);
-		} else {
-			this.hg.drawImage(this.hih[characterobject.pth][characterobject.pt], co_wx, co_wy, this.ap);
-		}
-	}
 };
