@@ -280,7 +280,6 @@ export const drawM = function() {
 
 /**
  * 主人公を描画します
- * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
  */
 export const drawGamescreenMy = function() {
@@ -361,7 +360,7 @@ export const drawGamescreenMy = function() {
 		this.j_zan_pth[this.j_zan_p] = this.co_j.muki;
 		if (this.j_zan_c < 9) {
 			this.j_zan_c++;
-			if (this.co_j.vy >= 0) this.j_zan_c = 9;
+			if (this.j_cannon_c <= 0 && this.co_j.vy >= 0) this.j_zan_c = 9;
 		} else {
 			this.j_zan_nagasa--;
 			if (this.j_zan_nagasa < 0) this.j_zan_f = false;
@@ -371,6 +370,64 @@ export const drawGamescreenMy = function() {
 		// 主人公本体の描画
 		if (this.co_j.img !== null) {
 			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
+		} else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c === 1500 && this.co_j.pt < 1000) {
+			// 人間砲台に入る
+			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
+			// 主人公を隠すために人間砲台を描画
+			const characterobject = this.co_a[this.j_rope_id];
+			const co_wx = characterobject.x - view_x;
+			const co_wy = characterobject.y - view_y;
+			const rad = (characterobject.c4 * Math.PI) / 180;
+			this.hg.setColor(this.gamecolor_mizunohadou);
+			this.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
+			this.vo_pa_x[0] = co_wx + 16 + Math.cos(rad + Math.PI / 2) * 20;
+			this.vo_pa_y[0] = co_wy + 16 + Math.sin(rad + Math.PI / 2) * 20;
+			this.vo_pa_x[1] = co_wx + 16 + Math.cos(rad - Math.PI / 2) * 20;
+			this.vo_pa_y[1] = co_wy + 16 + Math.sin(rad - Math.PI / 2) * 20;
+			this.vo_pa_x[2] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad - Math.PI / 2) * 20;
+			this.vo_pa_y[2] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad - Math.PI / 2) * 20;
+			this.vo_pa_x[3] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad + Math.PI / 2) * 20;
+			this.vo_pa_y[3] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad + Math.PI / 2) * 20;
+			this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+			this.hg.setColor(this.gamecolor_firebar2);
+			if (characterobject.c3 === 0 || characterobject.c3 === 1) {
+				this.vo_pa_x[0] = co_wx + 16 - 6;
+				this.vo_pa_y[0] = co_wy + 16 - 4;
+				this.vo_pa_x[1] = co_wx + 16 + 6;
+				this.vo_pa_y[1] = co_wy + 16 - 4;
+				this.vo_pa_x[2] = co_wx + 16 + 12;
+				this.vo_pa_y[2] = co_wy + 32 + 12;
+				this.vo_pa_x[3] = co_wx + 16 - 12;
+				this.vo_pa_y[3] = co_wy + 32 + 12;
+			} else if (characterobject.c3 === 2) {
+				this.vo_pa_x[0] = co_wx + 16 - 6;
+				this.vo_pa_y[0] = co_wy + 16 + 4;
+				this.vo_pa_x[1] = co_wx + 16 + 6;
+				this.vo_pa_y[1] = co_wy + 16 + 4;
+				this.vo_pa_x[2] = co_wx + 16 + 12;
+				this.vo_pa_y[2] = co_wy - 32;
+				this.vo_pa_x[3] = co_wx + 16 - 12;
+				this.vo_pa_y[3] = co_wy - 32;
+			} else if (characterobject.c3 === 3) {
+				this.vo_pa_x[0] = co_wx + 16 - 4;
+				this.vo_pa_y[0] = co_wy + 16 - 6;
+				this.vo_pa_x[1] = co_wx + 16 - 4;
+				this.vo_pa_y[1] = co_wy + 16 + 6;
+				this.vo_pa_x[2] = co_wx + 64;
+				this.vo_pa_y[2] = co_wy + 16 + 12;
+				this.vo_pa_x[3] = co_wx + 64;
+				this.vo_pa_y[3] = co_wy + 16 - 12;
+			} else {
+				this.vo_pa_x[0] = co_wx + 16 + 4;
+				this.vo_pa_y[0] = co_wy + 16 - 6;
+				this.vo_pa_x[1] = co_wx + 16 + 4;
+				this.vo_pa_y[1] = co_wy + 16 + 6;
+				this.vo_pa_x[2] = co_wx - 32;
+				this.vo_pa_y[2] = co_wy + 16 + 12;
+				this.vo_pa_x[3] = co_wx - 32;
+				this.vo_pa_y[3] = co_wy + 16 - 12;
+			}
+			this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
 		} else if (this.co_j.pt < 1000) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
 		} else if (this.co_j.pt === 1000) {
@@ -390,11 +447,83 @@ export const drawGamescreenMy = function() {
 			}
 		} else if (this.co_j.pt === 1100) {
 			// 土管に入る
-			const j_dy = Math.max(0, Math.min(32, this.co_j.c1));
-			this.gg.drawPT(this.co_j.wx, this.co_j.wy + j_dy, 100, this.co_j.muki);
-			this.gg.drawPT(this.co_j.wx - 16, this.co_j.wy + 32, 60 + this.co_j.c2 * 2, 0);
-			this.gg.drawPT(this.co_j.wx + 16, this.co_j.wy + 32, 61 + this.co_j.c2 * 2, 0);
-		} else if (this.co_j.pt !== 1110);
+			// 土管の種類 0がリンク土管1, 1がリンク土管2, ...
+			const dokan_id = this.co_j.c2 % 100;
+			// 0:通常 1:下向き 2:左向き 3:右向き
+			const dokan_type = Math.floor(this.co_j.c2 / 100);
+			// 主人公を少しづつ土管に入れる
+			let j_dx = 0;
+			let j_dy = 0;
+			// 主人公の位置を[0,32]の範囲に収める
+			const j_diff = Math.max(0, Math.min(32, this.co_j.c1));
+			if (dokan_type === 1) j_dy = -j_diff;
+			else if (dokan_type === 2) j_dx = j_diff;
+			else if (dokan_type === 3) j_dx = -j_diff;
+			else j_dy = j_diff;
+			// 位置をずらして主人公を描画
+			this.gg.drawPT(this.co_j.wx + j_dx, this.co_j.wy + j_dy, 100, this.co_j.muki);
+			// 土管の左上の点の座標を算出
+			const dokan_diff = [[-16, 32], [-16, -32], [32, -16], [-32, -16]];
+			const [d_dx, d_dy] = dokan_diff[dokan_type];
+			const dokan_wx = this.co_j.wx + d_dx;
+			const dokan_wy = this.co_j.wy + d_dy;
+			// 土管を回転させて描画
+			drawDokan.apply(this, [dokan_id, dokan_type, dokan_wx, dokan_wy]);
+		} else if (this.co_j.pt !== 1110) {
+			if (this.co_j.pt === 1200) {
+				// ロープ等を上って静止しているとき
+				this.hg.dispose();
+				if (this.co_a[this.j_rope_id].c === 3200)
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				else
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				this.hg.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
+				this.hg.dispose();
+			} else if (this.co_j.pt === 1201) {
+				// ロープ等を上っているとき
+				this.hg.dispose();
+				if (this.co_a[this.j_rope_id].c === 3200)
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				else
+					this.hg.rotate(
+						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
+						this.co_j.wx + 16,
+						this.co_j.wy + 16
+					);
+				this.hg.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
+				this.hg.dispose();
+			} else if (this.co_j.pt === 1300) {
+				// 昇龍拳
+				if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+				else this.hg.setColor(this.gamecolor_grenade2);
+				this.hg.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
+				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 101, this.co_j.muki);
+			} else if (this.co_j.pt === 1400) {
+				// サイコクラッシャーアタック
+				if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+				else this.hg.setColor(this.gamecolor_grenade2);
+				this.hg.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
+				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 83, this.co_j.muki);
+			} else if (this.co_j.pt === 1500) {
+				// 流星キック
+				if (this.g_ac === 0) this.hg.setColor(this.gamecolor_grenade1);
+				else this.hg.setColor(this.gamecolor_grenade2);
+				this.hg.fillOval(this.co_j.wx - 8, this.co_j.wy - 8, 48, 48);
+				this.gg.drawPT(this.co_j.wx, this.co_j.wy, 202, this.co_j.muki);
+			}
+		}
 	}
 };
 
