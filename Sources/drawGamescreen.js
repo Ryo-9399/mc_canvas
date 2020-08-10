@@ -7,21 +7,26 @@ import * as drawGameScreenJSS from "./drawGamescreenJSS";
  * ゲーム画面を描画します
  */
 export const drawGamescreen = function() {
-	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1)
+	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1) {
+		// 背景レイヤーを使用している、または背景画像を使用している時にマップチップの描画
 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
-	else if (this.setmapc_f) {
+	} else if (this.setmapc_f) {
+		// MasaoJSS#setMapchipを使ったときに標準レイヤーの描画
 		this.setmapc_f = false;
 		this.maps.drawMap(this.maps.wx, this.maps.wy);
 	} else {
+		// 上記以外の時に標準レイヤーの描画
 		this.maps.drawMapScroll(this.g_ac2);
 	}
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	this.co_j.wx = this.co_j.x - view_x;
 	this.co_j.wy = this.co_j.y - view_y;
-	if (this.ana_kazu > 0) {
-		drawGameScreenJSS.drawAna.apply(this);
-	}
+
+	// ロードランナーで掘った穴の描画
+	if (this.ana_kazu > 0) drawGameScreenJSS.drawAna.apply(this);
+
+	// 左右へ押せるドッスンスンのゴールの描画
 	if (this.souko_count1 >= 1) {
 		for (let i = 0; i <= this.a_kazu; i++) {
 			if (this.co_a[i].pt === 3300 && this.co_a[i].gf) {
@@ -44,17 +49,15 @@ export const drawGamescreen = function() {
 			}
 		}
 	}
-	if (this.a_hf) {
-		drawGameScreenJSS.drawA.apply(this);
-	}
+	// 仕掛けの描画
+	if (this.a_hf) drawGameScreenJSS.drawA.apply(this);
 
+	// 自作床の描画
 	if (this.yuka_id_max >= 0) this.drawYuka();
-	if (this.m_kazu > 0) {
-		drawGameScreenJSS.drawM.apply(this);
-	}
-	if (this.jm_kazu > 0) {
-		drawGameScreenJSS.drawMyAttack.apply(this);
-	}
+	// 敵の攻撃・アイテムの描画
+	if (this.m_kazu > 0) drawGameScreenJSS.drawM.apply(this);
+	// 主人公の攻撃の描画
+	if (this.jm_kazu > 0) drawGameScreenJSS.drawMyAttack.apply(this);
 	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
@@ -65,16 +68,13 @@ export const drawGamescreen = function() {
 					this.ap
 				);
 	}
-	if (this.system_draw_mode < 3) {
-		drawGameScreenJSS.drawGamescreenEnemy.apply(this);
-	}
+	// 敵の描画
+	if (this.system_draw_mode < 3) drawGameScreenJSS.drawGamescreenEnemy.apply(this);
 	// ボスの描画
 	drawGameScreenJSS.drawBoss.apply(this);
 
 	// 主人公の描画
-	if (this.system_draw_mode < 2) {
-		drawGameScreenJSS.drawGamescreenMy.apply(this);
-	}
+	if (this.system_draw_mode < 2) drawGameScreenJSS.drawGamescreenMy.apply(this);
 	if (this.j_muteki_c > 0) this.j_muteki_c--;
 
 	// MasaoJSS#showRectで設定された矩形を表示
@@ -159,9 +159,7 @@ export const drawGamescreen = function() {
 		}
 	}
 	// ゲージを表示
-	if (this.gauge_v) {
-		drawGameScreenJSS.drawHPGauge.apply(this);
-	}
+	if (this.gauge_v) drawGameScreenJSS.drawHPGauge.apply(this);
 	// スポット処理
 	drawGameScreenJSS.drawSpot.apply(this);
 	// 一言メッセージ
@@ -170,5 +168,6 @@ export const drawGamescreen = function() {
 		this.hitokoto_c--;
 		drawGameScreenJSS.drawHitokotoMessage.apply(this);
 	}
+	// お店やアイテムをくれる人などのメッセージウィンドウ
 	this.km.drawMenus();
 };

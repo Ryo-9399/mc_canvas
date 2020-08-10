@@ -38,7 +38,6 @@ export const drawGamescreenUgokuyuka = function() {
 
 /**
  * 敵を描画します
- * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
  */
 export const drawGamescreenEnemy = function() {
@@ -55,6 +54,7 @@ export const drawGamescreenEnemy = function() {
 	}
 };
 
+// ロードランナーで掘った穴を描画します
 export const drawAna = function() {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
@@ -1696,13 +1696,9 @@ export const drawGamescreenWindow = function() {
 		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
 	}
 	// ゲージを表示
-	if (this.gauge_v) {
-		drawHPGauge.apply(this);
-	}
+	if (this.gauge_v) drawHPGauge.apply(this);
 	// 一言メッセージ
-	if (this.hitokoto_c > -1) {
-		drawHitokotoMessage.apply(this);
-	}
+	if (this.hitokoto_c > -1) drawHitokotoMessage.apply(this);
 };
 
 /**
