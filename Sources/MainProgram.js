@@ -3284,6 +3284,7 @@ MainProgram.prototype.mL100 = function() {
 		}
 	}
 	if (this.system_draw_mode != 4) {
+		// ゲーム画面を描画
 		this.draw_lock_f = true;
 		this.drawGamescreen();
 		this.draw_lock_f = false;
@@ -11584,7 +11585,7 @@ MainProgram.prototype.mMove = function() {
 				characterobject.pth = 0;
 				break;
 
-			case 70:
+			case 70: // 敵のグレネード
 				characterobject.c1++;
 				switch (characterobject.c1) {
 					case 1:
