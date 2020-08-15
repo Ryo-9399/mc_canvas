@@ -68,18 +68,18 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	userInitJS();
 
 	this.masaoEvent = function(g, image) {
-		var i = Applet1.getMode();
-		if (i == 1) userTitleJS(g);
-		else if (i >= 100 && i < 200) {
+		const mode = Applet1.getMode();
+		if (mode == 1) userTitleJS(g);
+		else if (mode >= 100 && mode < 200) {
 			if (Applet1.getJSMes() == 1) {
 				Applet1.setJSMes("2");
 				userGameStartJS();
 			} else {
 				userGameJS(g, Applet1.getViewXReal(), Applet1.getViewYReal());
 			}
-		} else if (i == 200) userGameoverJS(g);
-		else if (i == 300) userEndingJS(g);
-		else if (i == 400) userChizuJS(g);
+		} else if (mode == 200) userGameoverJS(g);
+		else if (mode == 300) userEndingJS(g);
+		else if (mode == 400) userChizuJS(g);
 		my_offscreen_img = image;
 	};
 
@@ -172,11 +172,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			} else {
 				boss_x = getParamInt("oriboss_x");
 				if (boss_x < 0) boss_x = 0;
-				if (boss_x > 179) boss_x = 179;
+				if (boss_x > mc.mp.mapWidth) boss_x = mc.mp.mapWidth;
 				boss_x = (boss_x + 1) * 32;
 				boss_y = getParamInt("oriboss_y");
 				if (boss_y < 0) boss_y = 0;
-				if (boss_y > 29) boss_y = 29;
+				if (boss_y > mc.mp.mapHeight) boss_y = mc.mp.mapHeight;
 				boss_y = (boss_y + 10) * 32;
 			}
 			boss_x_shoki = boss_x;
@@ -225,7 +225,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			if (boss_jyoutai > 0) {
 				boss_anime_type = getParamInt("oriboss_anime_type");
 				if (boss_anime_type != 2) boss_anime_type = 1;
-				sl_x = boss_x - 512;
+				sl_x = boss_x - mc.gg.di.width;
 				Applet1.setScrollLock(sl_x);
 				boss_shageki_c = 5;
 			}
@@ -255,7 +255,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					boss_jyoutai = 20;
 					boss_bc = 30;
 				} else {
-					Applet1.setMapchip((i >> 5) - 1 + 6, (j >> 5) - 10 + 4, 8);
+					Applet1.setMapchip(
+						(i >> 5) - 1 + rounddown(mc.gg.di.width / 32 / 2) - 2,
+						(j >> 5) - 10 + rounddown(mc.gg.di.height / 32) - 6,
+						8
+					);
 				}
 			}
 		} else if (boss_jyoutai == 80) {
@@ -265,18 +269,21 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			if (boss_jyoutai == 100) {
 				boss_x = boss_x + boss_vx;
 				if (boss_ugoki == 24 || boss_ugoki == 25 || boss_ugoki == 26) {
-					if (boss_x + (boss_width >> 1) <= sl_x + 256) {
-						boss_x = sl_x + 256 - (boss_width >> 1);
+					if (boss_x + (boss_width >> 1) <= sl_x + rounddown(mc.gg.di.width / 2)) {
+						boss_x = sl_x + rounddown(mc.gg.di.width / 2) - (boss_width >> 1);
 						if (boss_ugoki == 24) {
+							// 中央で停止
 							boss_jyoutai = 2500;
 							boss_vx = boss_speed * -1;
 							boss_vy = 0;
 						} else if (boss_ugoki == 26) {
+							// 巨大化 中央から
 							boss_jyoutai = 2700;
 							boss_vx = boss_speed * -1;
 							boss_vy = 0;
 							boss_kyo_f = true;
 						} else {
+							// 中央で停止 主人公の方を向く
 							boss_jyoutai = 2600;
 							boss_vx = boss_speed * -1;
 							if (boss_x + (boss_width >> 1) < mc.mp.co_j.x + 15) boss_vx = boss_speed;
@@ -284,113 +291,140 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						}
 					}
 				} else if (boss_ugoki == 4 || boss_ugoki == 5 || boss_ugoki == 20 || boss_ugoki == 21) {
-					if (boss_x <= sl_x + 320) {
-						boss_x = sl_x + 320;
+					if (boss_x <= sl_x + mc.gg.di.width - 192) {
+						boss_x = sl_x + mc.gg.di.width - 192;
 						boss_vx = 0;
 						if (boss_ugoki == 4) {
+							// 左回り
 							boss_jyoutai = 500;
 							boss_kakudo = 0;
 						} else if (boss_ugoki == 20) {
+							// ＨＰが半分以下になると左回り
 							boss_jyoutai = 2100;
 							boss_kakudo = 0;
 						} else if (boss_ugoki == 21) {
+							// ＨＰが１／３以下になると左回り
 							boss_jyoutai = 2200;
 							boss_kakudo = 0;
 						} else {
+							// 右回り
 							boss_jyoutai = 600;
 							boss_kakudo = 0;
 						}
 						boss_jyoutai_b = boss_jyoutai;
 					}
 				} else if (boss_ugoki == 16 || boss_ugoki == 17) {
-					if (boss_x <= sl_x + 512 - boss_width) {
-						boss_x = sl_x + 512 - boss_width;
+					if (boss_x <= sl_x + mc.gg.di.width - boss_width) {
+						boss_x = sl_x + mc.gg.di.width - boss_width;
 						boss_vx = 0;
 						if (boss_ugoki == 16) {
+							// 画面の内側を左回り
 							boss_jyoutai = 1700;
 							boss_vy = boss_speed * -1;
 							boss_vx = boss_speed * -1;
 						} else {
+							// 画面の内側を右回り
 							boss_jyoutai = 1800;
 							boss_vy = boss_speed;
 							boss_vx = boss_speed * -1;
 						}
 						boss_jyoutai_b = boss_jyoutai;
 					}
-				} else if (boss_x <= sl_x + 384) {
-					boss_x = sl_x + 384;
+				} else if (boss_x <= sl_x + mc.gg.di.width - 128) {
+					boss_x = sl_x + mc.gg.di.width - 128;
 					boss_vx = 0;
 					if (boss_ugoki == 2) {
+						// 左右移動
 						boss_jyoutai = 300;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 3) {
+						// 上下移動
 						boss_jyoutai = 400;
 						boss_vy = boss_speed * -1;
 					} else if (boss_ugoki == 6) {
+						// 四角形左回り
 						boss_jyoutai = 700;
 						boss_vy = boss_speed * -1;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 7) {
+						// 四角形右回り
 						boss_jyoutai = 800;
 						boss_vy = boss_speed;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 8) {
+						// ＨＰが半分になると左へ移動
 						boss_jyoutai = 900;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 9) {
+						// ＨＰが減ると左と右へ移動
 						boss_jyoutai = 1000;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 10) {
+						// ＨＰが半分になると上へ移動
 						boss_jyoutai = 1100;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 11) {
+						// ＨＰが減ると上と下へ移動
 						boss_jyoutai = 1200;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 12) {
+						// ＨＰが半分になると下へ移動
 						boss_jyoutai = 1300;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 13) {
+						// ＨＰが減ると下と上へ移動
 						boss_jyoutai = 1400;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 14) {
+						// 画面の端で方向転換
 						boss_jyoutai = 1500;
 						boss_vx = boss_speed * -1;
 						boss_vy = boss_speed * -1;
 					} else if (boss_ugoki == 15) {
+						// ジグザグ移動
 						boss_jyoutai = 1600;
 						boss_vx = (boss_speed >> 1) * -1;
 						boss_vy = boss_speed * -1;
 					} else if (boss_ugoki == 18) {
+						// ＨＰが半分以下になると左右移動
 						boss_jyoutai = 1900;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 19) {
+						// ＨＰが１／３以下になると左右移動
 						boss_jyoutai = 2000;
 						boss_vx = boss_speed * -1;
 					} else if (boss_ugoki == 22) {
+						// 斜め上へ往復
 						boss_jyoutai = 2300;
 						boss_vx = boss_speed * -1;
 						boss_vy = boss_speed * -1;
 					} else if (boss_ugoki == 23) {
+						// 斜め下へ往復
 						boss_jyoutai = 2400;
 						boss_vx = boss_speed * -1;
 						boss_vy = boss_speed;
 					} else if (boss_ugoki == 27) {
+						// 巨大化 右から
 						boss_jyoutai = 2800;
 						boss_vx = boss_speed * -1;
 						boss_vy = 0;
 						boss_kyo_f = true;
 					} else {
+						// 停止
 						boss_jyoutai = 200;
 						boss_vx = 0;
 					}
 					boss_jyoutai_b = boss_jyoutai;
 				}
-			} else if (boss_jyoutai == 200) shagekiBoss();
-			else if (boss_jyoutai == 300) {
+			} else if (boss_jyoutai == 200) {
+				// 停止
+				shagekiBoss();
+			} else if (boss_jyoutai == 300) {
+				// 左右移動
 				if (boss_vx < 0) {
 					boss_x += boss_vx;
-					if (boss_x <= boss_x_shoki - 512) {
-						boss_x = boss_x_shoki - 512;
+					if (boss_x <= boss_x_shoki - mc.gg.di.width) {
+						boss_x = boss_x_shoki - mc.gg.di.width;
 						boss_vx = boss_speed;
 					}
 				} else {
@@ -402,6 +436,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 400) {
+				// 上下移動
 				if (boss_vy < 0) {
 					boss_y += boss_vy;
 					if (boss_y <= boss_y_shoki - 96) {
@@ -417,22 +452,41 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 500) {
+				// 左回り
 				boss_kakudo -= boss_speed;
 				if (boss_kakudo < 0) boss_kakudo += 360;
-				boss_x = boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+				boss_x =
+					boss_x_shoki -
+					rounddown(mc.gg.di.width / 2) +
+					rounddown(
+						Math.cos((boss_kakudo * 3.14) / 180) * 32 * ((mc.gg.di.width - 256) / 32 / 2 - 1),
+						true,
+						mc.mp
+					) -
+					32;
 				boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 				if (boss_kakudo > 180) boss_vx = -1;
 				else boss_vx = 1;
 				shagekiBoss();
 			} else if (boss_jyoutai == 600) {
+				// 右回り
 				boss_kakudo += boss_speed;
 				if (boss_kakudo >= 360) boss_kakudo -= 360;
-				boss_x = boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+				boss_x =
+					boss_x_shoki -
+					rounddown(mc.gg.di.width / 2) +
+					rounddown(
+						Math.cos((boss_kakudo * 3.14) / 180) * 32 * ((mc.gg.di.width - 256) / 32 / 2 - 1),
+						true,
+						mc.mp
+					) -
+					32;
 				boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 				if (boss_kakudo < 180) boss_vx = -1;
 				else boss_vx = 1;
 				shagekiBoss();
 			} else if (boss_jyoutai == 700) {
+				// 四角形左回り
 				if (boss_vx < 0) {
 					if (boss_y > boss_y_shoki - 64) {
 						boss_y -= boss_speed;
@@ -443,8 +497,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						}
 					} else {
 						boss_x += boss_vx;
-						if (boss_x <= boss_x_shoki - 512 + 128 - boss_width) {
-							boss_x = boss_x_shoki - 512 + 128 - boss_width;
+						if (boss_x <= boss_x_shoki - mc.gg.di.width + 128 - boss_width) {
+							boss_x = boss_x_shoki - mc.gg.di.width + 128 - boss_width;
 							boss_vx = boss_speed;
 							boss_vy = boss_speed;
 							boss_hmove_f = false;
@@ -468,6 +522,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 800) {
+				// 四角形右回り
 				if (boss_vx < 0) {
 					if (boss_y < boss_y_shoki + 64) {
 						boss_y += boss_speed;
@@ -478,8 +533,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 						}
 					} else {
 						boss_x += boss_vx;
-						if (boss_x <= boss_x_shoki - 512 + 128 - boss_width) {
-							boss_x = boss_x_shoki - 512 + 128 - boss_width;
+						if (boss_x <= boss_x_shoki - mc.gg.di.width + 128 - boss_width) {
+							boss_x = boss_x_shoki - mc.gg.di.width + 128 - boss_width;
 							boss_vx = boss_speed;
 							boss_vy = boss_speed * -1;
 							boss_hmove_f = false;
@@ -503,6 +558,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai >= 900 && boss_jyoutai < 1000) {
+				// ＨＰが半分になると左へ移動
 				if (boss_jyoutai == 900) {
 					if (boss_hp <= boss_hp_max >> 1) {
 						boss_jyoutai = 910;
@@ -513,13 +569,14 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 910) {
 					boss_x += boss_vx;
-					if (boss_x <= boss_x_shoki - 512) {
-						boss_x = boss_x_shoki - 512;
+					if (boss_x <= boss_x_shoki - mc.gg.di.width) {
+						boss_x = boss_x_shoki - mc.gg.di.width;
 						boss_jyoutai = 920;
 						boss_vx = boss_speed;
 					}
 				} else if (boss_jyoutai == 920) shagekiBoss();
 			} else if (boss_jyoutai >= 1000 && boss_jyoutai < 1100) {
+				// ＨＰが減ると左と右へ移動
 				if (boss_jyoutai == 1000) {
 					if (boss_hp <= Math.floor((boss_hp_max * 2) / 3)) {
 						boss_jyoutai = 1010;
@@ -530,8 +587,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1010) {
 					boss_x += boss_vx;
-					if (boss_x <= boss_x_shoki - 512) {
-						boss_x = boss_x_shoki - 512;
+					if (boss_x <= boss_x_shoki - mc.gg.di.width) {
+						boss_x = boss_x_shoki - mc.gg.di.width;
 						boss_jyoutai = 1020;
 						boss_vx = boss_speed;
 					}
@@ -553,6 +610,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1040) shagekiBoss();
 			} else if (boss_jyoutai >= 1100 && boss_jyoutai < 1200) {
+				// ＨＰが半分になると上へ移動
 				if (boss_jyoutai == 1100) {
 					if (boss_hp <= boss_hp_max >> 1) {
 						boss_jyoutai = 1110;
@@ -563,12 +621,13 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1110) {
 					boss_y += boss_vy;
-					if (boss_y <= j + 32) {
-						boss_y = j + 32;
+					if (boss_y <= j + 32 + mc.gg.di.height - 320) {
+						boss_y = j + 32 + mc.gg.di.height - 320;
 						boss_jyoutai = 1120;
 					}
 				} else if (boss_jyoutai == 1120) shagekiBoss();
 			} else if (boss_jyoutai >= 1200 && boss_jyoutai < 1300) {
+				// ＨＰが減ると上と下へ移動
 				if (boss_jyoutai == 1200) {
 					if (boss_hp <= Math.floor((boss_hp_max * 2) / 3)) {
 						boss_jyoutai = 1210;
@@ -579,8 +638,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1210) {
 					boss_y += boss_vy;
-					if (boss_y <= j + 32) {
-						boss_y = j + 32;
+					if (boss_y <= j + 32 + mc.gg.di.height - 320) {
+						boss_y = j + 32 + mc.gg.di.height - 320;
 						boss_jyoutai = 1220;
 					}
 				} else if (boss_jyoutai == 1220) {
@@ -593,12 +652,13 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1230) {
 					boss_y += boss_vy;
-					if (boss_y >= j + 320 - boss_height - 32) {
-						boss_y = j + 320 - boss_height - 32;
+					if (boss_y >= j + mc.gg.di.height - boss_height - 32) {
+						boss_y = j + mc.gg.di.height - boss_height - 32;
 						boss_jyoutai = 1240;
 					}
 				} else if (boss_jyoutai == 1240) shagekiBoss();
 			} else if (boss_jyoutai >= 1300 && boss_jyoutai < 1400) {
+				// ＨＰが半分になると下へ移動
 				if (boss_jyoutai == 1300) {
 					if (boss_hp <= boss_hp_max >> 1) {
 						boss_jyoutai = 1310;
@@ -609,12 +669,13 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1310) {
 					boss_y += boss_vy;
-					if (boss_y >= j + 320 - boss_height - 32) {
-						boss_y = j + 320 - boss_height - 32;
+					if (boss_y >= j + mc.gg.di.height - boss_height - 32) {
+						boss_y = j + mc.gg.di.height - boss_height - 32;
 						boss_jyoutai = 1320;
 					}
 				} else if (boss_jyoutai == 1320) shagekiBoss();
 			} else if (boss_jyoutai >= 1400 && boss_jyoutai < 1500) {
+				// ＨＰが減ると下と上へ移動
 				if (boss_jyoutai == 1400) {
 					if (boss_hp <= Math.floor((boss_hp_max * 2) / 3)) {
 						boss_jyoutai = 1410;
@@ -625,8 +686,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1410) {
 					boss_y += boss_vy;
-					if (boss_y >= j + 320 - boss_height - 32) {
-						boss_y = j + 320 - boss_height - 32;
+					if (boss_y >= j + mc.gg.di.height - boss_height - 32) {
+						boss_y = j + mc.gg.di.height - boss_height - 32;
 						boss_jyoutai = 1420;
 					}
 				} else if (boss_jyoutai == 1420) {
@@ -639,16 +700,17 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_jyoutai == 1430) {
 					boss_y += boss_vy;
-					if (boss_y <= j + 32) {
-						boss_y = j + 32;
+					if (boss_y <= j + 32 + mc.gg.di.height - 320) {
+						boss_y = j + 32 + mc.gg.di.height - 320;
 						boss_jyoutai = 1440;
 					}
 				} else if (boss_jyoutai == 1440) shagekiBoss();
 			} else if (boss_jyoutai >= 1500 && boss_jyoutai < 1600) {
+				// 画面の端で方向転換
 				if (boss_vx > 0) {
 					boss_x += boss_vx;
-					if (boss_x >= i + 512 - boss_width) {
-						boss_x = i + 512 - boss_width;
+					if (boss_x >= i + mc.gg.di.width - boss_width) {
+						boss_x = i + mc.gg.di.width - boss_width;
 						boss_vx = boss_speed * -1;
 					}
 				} else if (boss_vx < 0) {
@@ -660,8 +722,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				if (boss_vy > 0) {
 					boss_y += boss_vy;
-					if (boss_y >= j + 320 - boss_height) {
-						boss_y = j + 320 - boss_height;
+					if (boss_y >= j + mc.gg.di.height - boss_height) {
+						boss_y = j + mc.gg.di.height - boss_height;
 						boss_vy = boss_speed * -1;
 					}
 				} else if (boss_vy < 0) {
@@ -673,10 +735,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai >= 1600 && boss_jyoutai < 1700) {
+				// ジグザグ移動
 				if (boss_vx > 0) {
 					boss_x += boss_vx;
-					if (boss_x >= i + 512 - boss_width) {
-						boss_x = i + 512 - boss_width;
+					if (boss_x >= i + mc.gg.di.width - boss_width) {
+						boss_x = i + mc.gg.di.width - boss_width;
 						boss_vx = (boss_speed >> 1) * -1;
 					}
 				} else if (boss_vx < 0) {
@@ -688,19 +751,20 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				if (boss_vy > 0) {
 					boss_y += boss_vy;
-					if (boss_y >= j + 320 - boss_height - 64) {
-						boss_y = j + 320 - boss_height - 64;
+					if (boss_y >= j + mc.gg.di.height - boss_height - 64) {
+						boss_y = j + mc.gg.di.height - boss_height - 64;
 						boss_vy = boss_speed * -1;
 					}
 				} else if (boss_vy < 0) {
 					boss_y += boss_vy;
-					if (boss_y <= j + 64) {
-						boss_y = j + 64;
+					if (boss_y <= j + 64 + mc.gg.di.height - 320) {
+						boss_y = j + 64 + mc.gg.di.height - 320;
 						boss_vy = boss_speed;
 					}
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 1700) {
+				// 画面の内側を左回り
 				if (boss_vx < 0) {
 					if (!boss_hmove_f) {
 						boss_y -= boss_speed;
@@ -720,15 +784,15 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (!boss_hmove_f) {
 					boss_y += boss_speed;
-					if (boss_y >= j + 320 - boss_height) {
-						boss_y = j + 320 - boss_height;
+					if (boss_y >= j + mc.gg.di.height - boss_height) {
+						boss_y = j + mc.gg.di.height - boss_height;
 						boss_vy = 0;
 						boss_hmove_f = true;
 					}
 				} else {
 					boss_x += boss_vx;
-					if (boss_x >= i + 512 - boss_width) {
-						boss_x = i + 512 - boss_width;
+					if (boss_x >= i + mc.gg.di.width - boss_width) {
+						boss_x = i + mc.gg.di.width - boss_width;
 						boss_vx = boss_speed * -1;
 						boss_vy = boss_speed * -1;
 						boss_hmove_f = false;
@@ -736,11 +800,12 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 1800) {
+				// 画面の内側を右回り
 				if (boss_vx < 0) {
 					if (!boss_hmove_f) {
 						boss_y += boss_speed;
-						if (boss_y >= j + 320 - boss_height) {
-							boss_y = j + 320 - boss_height;
+						if (boss_y >= j + mc.gg.di.height - boss_height) {
+							boss_y = j + mc.gg.di.height - boss_height;
 							boss_vy = 0;
 							boss_hmove_f = true;
 						}
@@ -762,8 +827,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else {
 					boss_x += boss_vx;
-					if (boss_x >= i + 512 - boss_width) {
-						boss_x = i + 512 - boss_width;
+					if (boss_x >= i + mc.gg.di.width - boss_width) {
+						boss_x = i + mc.gg.di.width - boss_width;
 						boss_vx = boss_speed * -1;
 						boss_vy = boss_speed;
 						boss_hmove_f = false;
@@ -771,6 +836,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai >= 1900 && boss_jyoutai < 2000) {
+				// ＨＰが半分以下になると左右移動
 				if (boss_jyoutai == 1900) {
 					if (boss_hp <= boss_hp_max >> 1) {
 						boss_jyoutai = 1910;
@@ -778,8 +844,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_vx < 0) {
 					boss_x += boss_vx;
-					if (boss_x <= boss_x_shoki - 512) {
-						boss_x = boss_x_shoki - 512;
+					if (boss_x <= boss_x_shoki - mc.gg.di.width) {
+						boss_x = boss_x_shoki - mc.gg.di.width;
 						boss_vx = boss_speed;
 					}
 				} else {
@@ -791,6 +857,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai >= 2000 && boss_jyoutai < 2100) {
+				// ＨＰが１／３以下になると左右移動
 				if (boss_jyoutai == 2000) {
 					if (boss_hp <= Math.floor(boss_hp_max / 3)) {
 						boss_jyoutai = 2010;
@@ -798,8 +865,8 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				} else if (boss_vx < 0) {
 					boss_x += boss_vx;
-					if (boss_x <= boss_x_shoki - 512) {
-						boss_x = boss_x_shoki - 512;
+					if (boss_x <= boss_x_shoki - mc.gg.di.width) {
+						boss_x = boss_x_shoki - mc.gg.di.width;
 						boss_vx = boss_speed;
 					}
 				} else {
@@ -811,6 +878,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai >= 2100 && boss_jyoutai < 2200) {
+				// ＨＰが半分以下になると左回り
 				if (boss_jyoutai == 2100) {
 					if (boss_hp <= boss_hp_max >> 1) {
 						boss_jyoutai = 2110;
@@ -820,13 +888,21 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					boss_kakudo -= boss_speed;
 					if (boss_kakudo < 0) boss_kakudo += 360;
 					boss_x =
-						boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+						boss_x_shoki -
+						rounddown(mc.gg.di.width / 2) +
+						rounddown(
+							Math.cos((boss_kakudo * 3.14) / 180) * 32 * ((mc.gg.di.width - 256) / 32 / 2 - 1),
+							true,
+							mc.mp
+						) -
+						32;
 					boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 					if (boss_kakudo > 180) boss_vx = -1;
 					else boss_vx = 1;
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai >= 2200 && boss_jyoutai < 2300) {
+				// ＨＰが１／３以下になると左回り
 				if (boss_jyoutai == 2200) {
 					if (boss_hp <= Math.floor(boss_hp_max / 3)) {
 						boss_jyoutai = 2110;
@@ -836,13 +912,21 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					boss_kakudo -= boss_speed;
 					if (boss_kakudo < 0) boss_kakudo += 360;
 					boss_x =
-						boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+						boss_x_shoki -
+						rounddown(mc.gg.di.width / 2) +
+						rounddown(
+							Math.cos((boss_kakudo * 3.14) / 180) * 32 * ((mc.gg.di.width - 256) / 32 / 2 - 1),
+							true,
+							mc.mp
+						) -
+						32;
 					boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 					if (boss_kakudo > 180) boss_vx = -1;
 					else boss_vx = 1;
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 2300) {
+				// 斜め上へ往復
 				if (boss_vy < 0) {
 					boss_y += boss_vy;
 					boss_x += boss_vx;
@@ -864,6 +948,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 2400) {
+				// 斜め下へ往復
 				if (boss_vy < 0) {
 					boss_y += boss_vy;
 					boss_x += boss_vx;
@@ -884,8 +969,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					}
 				}
 				shagekiBoss();
-			} else if (boss_jyoutai == 2500) shagekiBoss();
-			else if (boss_jyoutai >= 2600 && boss_jyoutai < 2700) {
+			} else if (boss_jyoutai == 2500) {
+				// 中央で停止
+				shagekiBoss();
+			} else if (boss_jyoutai >= 2600 && boss_jyoutai < 2700) {
+				// 中央で停止 主人公の方を向く
 				if (boss_jyoutai < 2616) boss_jyoutai++;
 				else if (boss_vx <= 0) {
 					if (boss_x + (boss_width >> 1) < mc.mp.co_j.x + 15) {
@@ -898,15 +986,17 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 2700) {
+				// 巨大化 中央から
 				boss_c1++;
 				if (boss_c1 > 1) boss_c1 = 0;
-				if (boss_c1 == 0 && boss_kyo_width < 1024) {
+				if (boss_c1 == 0 && boss_kyo_width < mc.gg.di.width * 2) {
 					boss_kyo_width += 2;
 					boss_kyo_height += 2;
 				}
 				shagekiBoss();
 			} else if (boss_jyoutai == 2800) {
-				if (boss_kyo_width < 1024) {
+				// 巨大化 右から
+				if (boss_kyo_width < mc.gg.di.width * 2) {
 					boss_kyo_width += 2;
 					boss_kyo_height += 2;
 				}
@@ -1017,6 +1107,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					else if (boss_tubure_right_img != null)
 						g.drawImage(boss_tubure_right_img, boss_x - i, boss_y - j, Applet1);
 			} else {
+				// 巨大化中
 				var graphics2d = mc.gg.os_img.getGraphics();
 				graphics2d.translate(boss_x - i + (boss_width >> 1), boss_y - j + (boss_height >> 1));
 				var f = boss_kyo_width / boss_width;
@@ -1659,25 +1750,30 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			}
 		}
 		if (boss_waza_select == 2) {
+			// 技１と技２を交互に使う
 			if (flag) {
 				boss_waza_genzai++;
 				if (boss_waza_genzai > 1) boss_waza_genzai = 0;
 			}
 		} else if (boss_waza_select == 3) {
+			// 技１と技２と技３を順番に使う
 			if (flag) {
 				boss_waza_genzai++;
 				if (boss_waza_genzai > 2) boss_waza_genzai = 0;
 			}
 		} else if (boss_waza_select == 4) {
+			// 最初は技１ ＨＰが半分になると技２
 			if (flag || flag1)
 				if (boss_hp <= boss_hp_max >> 1) boss_waza_genzai = 1;
 				else boss_waza_genzai = 0;
 		} else if (boss_waza_select == 5) {
+			// 最初は技１ ＨＰが減ると技２技３
 			if (flag || flag1)
 				if (boss_hp <= Math.floor(boss_hp_max / 3)) boss_waza_genzai = 2;
 				else if (boss_hp <= Math.floor((boss_hp_max * 2) / 3)) boss_waza_genzai = 1;
 				else boss_waza_genzai = 0;
 		} else if (boss_waza_select == 6) {
+			// 技１を３回の後 技２
 			if (flag)
 				if (boss_waza_select_option >= 1) {
 					boss_waza_genzai = 0;
@@ -1690,6 +1786,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					boss_waza_genzai = 1;
 				}
 		} else if (boss_waza_select == 7) {
+			// 技１を３回の後 技２と技３を交互
 			if (flag)
 				if (boss_waza_select_option >= 1) {
 					boss_waza_genzai = 0;
@@ -1701,34 +1798,49 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				} else if (boss_waza_genzai == 1) boss_waza_genzai = 2;
 				else boss_waza_genzai = 1;
 		} else if (boss_waza_select == 8) {
+			// 左向きでは技１ 右では技２
 			if (flag || flag1)
 				if (boss_vx <= 0) boss_waza_genzai = 0;
 				else boss_waza_genzai = 1;
 		} else if (boss_waza_select == 9) {
+			// 中央では技１ 上では技２ 下では技３
 			if (flag || flag1)
 				if (boss_ugoki == 16 || boss_ugoki == 17) {
+					// 画面の内側を左回り　または　画面の内側を右回り
 					if (!boss_hmove_f) boss_waza_genzai = 0;
-					else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 160) boss_waza_genzai = 1;
+					else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < rounddown(mc.gg.di.height / 2))
+						boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
 				} else if (boss_ugoki == 6 || boss_ugoki == 7) {
+					// 四角形左回り　または　四角形右回り
 					if (!boss_hmove_f) boss_waza_genzai = 0;
 					else if (boss_y < boss_y_shoki) boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
-				} else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 96) boss_waza_genzai = 1;
-				else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy >= 224) boss_waza_genzai = 2;
+				} else if (boss_ugoki == 14) {
+					// 画面の端で方向転換
+					if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < 96) boss_waza_genzai = 1;
+					else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy >= 224) boss_waza_genzai = 2;
+				} else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy < mc.gg.di.height - 224) boss_waza_genzai = 1;
+				else if (boss_y + (boss_height >> 1) - mc.mp.maps.wy >= mc.gg.di.height - 96) boss_waza_genzai = 2;
 				else boss_waza_genzai = 0;
 		} else if (boss_waza_select == 10) {
+			// 中央では技１ 右では技２ 左では技３
 			if (flag || flag1)
 				if (boss_ugoki == 16 || boss_ugoki == 17) {
+					// 画面の内側を左回り　または　画面の内側を右回り
 					if (boss_hmove_f) boss_waza_genzai = 0;
-					else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx > 256) boss_waza_genzai = 1;
+					else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx > rounddown(mc.gg.di.width / 2))
+						boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
 				} else if (boss_ugoki == 6 || boss_ugoki == 7) {
+					// 四角形左回り　または　四角形右回り
 					if (boss_hmove_f) boss_waza_genzai = 0;
-					else if (boss_x > boss_x_shoki - 256) boss_waza_genzai = 1;
+					else if (boss_x > boss_x_shoki - rounddown(mc.gg.di.width / 2)) boss_waza_genzai = 1;
 					else boss_waza_genzai = 2;
-				} else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx < 128) boss_waza_genzai = 2;
-				else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx >= 384) boss_waza_genzai = 1;
+				} else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx < rounddown(mc.gg.di.width * 0.25))
+					boss_waza_genzai = 2;
+				else if (boss_x + (boss_width >> 1) - mc.mp.maps.wx >= rounddown(mc.gg.di.width * 0.75))
+					boss_waza_genzai = 1;
 				else boss_waza_genzai = 0;
 		} else {
 			boss_waza_genzai = 0;
@@ -1736,9 +1848,9 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	}
 
 	function initXImage() {
-		for (var i = 0; i <= 3; i++) ximage_c[i] = 0;
+		for (let i = 0; i <= 3; i++) ximage_c[i] = 0;
 
-		var j = getParamInt("ximage1_view_x");
+		let j = getParamInt("ximage1_view_x");
 		if (j > 0) {
 			ximage_view_x[0] = (j + 1) * 32;
 			ximage_x[0] = getParamInt("ximage1_x");
@@ -1773,7 +1885,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	}
 
 	function moveXImage(g, i) {
-		for (var j = 0; j <= 3; j++) {
+		for (let j = 0; j <= 3; j++) {
 			if (ximage_c[j] <= 0) continue;
 			if (ximage_c[j] >= 100 && i >= ximage_view_x[j]) ximage_c[j]--;
 			if (ximage_c[j] < 100) {
@@ -1784,11 +1896,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	}
 
 	function loadXBackImage() {
-		for (var i = 0; i < 8; i++) x_backimage_view_x[i] = 0;
+		for (let j = 0; j < 8; j++) {
+			x_backimage_view_x[j] = 0;
 
-		for (var j = 0; j < 8; j++) {
-			var s = j + 1 + "";
-			var k = getParamInt("x_backimage" + s + "_view_x");
+			let s = j + 1 + "";
+			let k = getParamInt("x_backimage" + s + "_view_x");
 			if (k > 0) {
 				x_backimage_view_x[j] = (k + 1) * 32;
 				x_backimage_img[j] = newImageOnLoadClassic(getParameter("x_backimage" + s + "_filename"));
@@ -1797,15 +1909,15 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	}
 
 	function initXBackImage() {
-		for (var i = 0; i < 8; i++) {
+		for (let i = 0; i < 8; i++) {
 			x_backimage_vf[i] = false;
 			if (x_backimage_view_x[i] <= 0) x_backimage_vf[i] = true;
 		}
 	}
 
 	function moveXBackImage() {
-		if (mc.mp.gg.layer_mode != 2 && mc.mp.mcs_haikei_visible != 1) return;
-		for (var i = 0; i < 8; i++)
+		if (mc.gg.layer_mode != 2 && mc.mp.mcs_haikei_visible != 1) return;
+		for (let i = 0; i < 8; i++)
 			if (
 				!x_backimage_vf[i] &&
 				x_backimage_img[i] != null &&
@@ -1820,7 +1932,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	}
 
 	function newImageOnLoadClassic(s) {
-		var image = Applet1.getImage(s);
+		const image = Applet1.getImage(s);
 		return image;
 	}
 
@@ -1834,7 +1946,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 	 * @param {boolean} option option が true かつ bc-use-rounddown がfalseの時Canvasオリジナルに
 	 * @returns {number} 小数切り捨て後の値
 	 */
-	function rounddown(val, option = false, mp) {
+	function rounddown(val, option, mp) {
 		if (val >= 0 || (option && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
 		else return -Math.floor(-val);
 	}

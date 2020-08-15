@@ -139,8 +139,7 @@ function MasaoJSS(mc, caseInsensitive) {
 				if (i < 0) i = 0;
 				if (i >= mc.mp.mapWidth) i = mc.mp.mapWidth - 1;
 				return i;
-			}
-			if (mc.mp.ml_mode == 200) {
+			} else if (mc.mp.ml_mode == 200) {
 				var j = rightShiftIgnoreSign(mc.mp.ig.co_j.x + 15, 5);
 				return j;
 			}
@@ -164,8 +163,7 @@ function MasaoJSS(mc, caseInsensitive) {
 				if (i < 0) i = 0;
 				if (i >= mc.mp.mapHeight) i = mc.mp.mapHeight - 1;
 				return i;
-			}
-			if (mc.mp.ml_mode == 200) {
+			} else if (mc.mp.ml_mode == 200) {
 				var j = rightShiftIgnoreSign(mc.mp.ig.co_j.y + 15, 5);
 				return j;
 			}
@@ -280,9 +278,9 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * 指定した位置に敵を設置します。
 	 * 位置はブロック単位で指定します。
 	 *
-	 * @param {number} type 敵の種類
 	 * @param {number} x X座標
 	 * @param {number} y Y座標
+	 * @param {number} type 敵の種類
 	 */
 	this.setEnemy = function(s, s1, s2) {
 		if (mc.mp) {
@@ -1840,7 +1838,16 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * * 140: ロープにつかまっている状態
 	 * * 145: 乗れるカイオール（方向キーで移動）に乗っている状態
 	 * * 150: {@link MasaoJSS#setMyWait|setMyWait}で硬直している状態
-	 * * 200〜250: 死亡
+	 * * 200: 敵に接触した
+	 * * 210: 死亡し、ゲームオーバー画面が出る前
+	 * * 220: 上から潰れて死亡
+	 * * 230: 横から潰れて死亡
+	 * * 240: 針などに触れて死亡
+	 * * 250: ドットイート等で敵に接触した
+	 * * 300: 土管に入る
+	 * * 310: 土管移動中
+	 * * 320: 土管から出る
+	 * * 400: 人間大砲に入る＆照準合わせ中
 	 *
 	 * @returns {number} 主人公の状態
 	 */
@@ -1970,13 +1977,15 @@ function MasaoJSS(mc, caseInsensitive) {
 	/**
 	 * 指定した敵の種類および状態を数値で取得します。
 	 *
+	 * * 0: 敵の完全消滅
 	 * * 10: 未出現
-	 * * 50: 敵（死亡）
-	 * * 52: 敵（死亡）
-	 * * 54: 敵（死亡）
-	 * * 55: 爆風
-	 * * 57: 爆風
-	 * * 60: 追跡亀（復活待ち）
+	 * * 50: 敵死亡
+	 * * 52: アイテム攻撃による敵死亡
+	 * * 54: 追跡亀をアイテムで倒す
+	 * * 55: シューティングまたは４方向移動の時敵をアイテムで倒す
+	 * * 57: 重力無視の追跡ピカチー等をアイテムで倒す
+	 * * 60: アイテムで倒した追跡亀の復活待機中
+	 * * 65: アイテムで倒した重力無視の追跡ピカチー等の復活待機中
 	 * * 100: 亀（空白で向きを変える、左向き）
 	 * * 104:
 	 * * 105: 亀（空白で向きを変える、右向き）
@@ -1984,7 +1993,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * * 115: 亀（空白で落ちる、右向き）
 	 * * 120: 亀（落下中、左向き）
 	 * * 125: 亀（落下中、右向き）
-	 * * 150:
+	 * * 150: 亀（投げられている）
 	 * * 200: ピカチー（地上）
 	 * * 210: ピカチー（ジャンプ中）
 	 * * 300: チコリン（はっぱカッター）
@@ -1994,7 +2003,6 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * * 335: チコリン（ソーラービーム右向き）
 	 * * 400: ヒノララシ（左向き）
 	 * * 404:
-	 * * 410: ヒノララシ
 	 * * 405: ヒノララシ（右向き）
 	 * * 410: ヒノララシ（穴に落ちる、左向き）
 	 * * 415: ヒノララシ（穴に落ちる、右向き）
@@ -2044,6 +2052,12 @@ function MasaoJSS(mc, caseInsensitive) {
 	 * * 1200: 追跡亀（左向き）
 	 * * 1210: 追跡亀（右向き）
 	 * * 1220: 追跡亀（落下中）
+	 * * 1300: ロードランナーで穴に落下中
+	 * * 1310: ロードランナーで穴に落下し終わった状態
+	 * * 1400: 重力無視の追跡ピカチー等（左向き）
+	 * * 1410: 重力無視の追跡ピカチー等（右向き）
+	 * * 1420: 重力無視の追跡ピカチー等（上移動）
+	 * * 1430: 重力無視の追跡ピカチー等（下移動）
 	 *
 	 * @param {number} id 敵ID
 	 *
@@ -3322,7 +3336,7 @@ function MasaoJSS(mc, caseInsensitive) {
 	this.getKeyCount = function(s) {
 		let i = 0;
 		if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
-			let n = parseInt(s);
+			const n = parseInt(s);
 			if (isNaN(n)) i = 0;
 			if (n === 1 || n === 2) {
 				i = mc.mp.dkey_count[n - 1];
@@ -3330,6 +3344,142 @@ function MasaoJSS(mc, caseInsensitive) {
 			}
 		}
 		return i;
+	};
+
+	/**
+	 * 指定した位置にアイテムを設置します。
+	 * 位置はブロック単位で指定します。
+	 *
+	 * @param {number} x X座標
+	 * @param {number} y Y座標
+	 * @param {number} type 敵の種類
+	 *
+	 * @since canvas正男
+	 */
+	this.setItem = function(x = 0, y = 0, type = 0) {
+		if (mc.mp) {
+			if (mc.mp.ml_mode != 100) return false;
+			let flag = false;
+
+			const _x = parseInt(x);
+			const _y = parseInt(y);
+			const _type = parseInt(type);
+			if (isNaN(_x) || isNaN(_y) || isNaN(_type)) _type = 0;
+			if (_type <= 0) return false;
+			if (_x < 0 || _x >= mc.mp.mapWidth || _y < 0 || _y >= mc.mp.mapHeight) return false;
+			const px = (_x + 1) * 32;
+			const py = (_y + 10) * 32;
+			switch (_type) {
+				default:
+					break;
+
+				case 1: // 人面星
+					mc.mp.setmapc(_x, _y, 8);
+					flag = true;
+					break;
+
+				case 2: // コイン
+					mc.mp.setmapc(_x, _y, 9);
+					flag = true;
+					break;
+
+				case 3: // ファイヤーボール
+					mc.mp.mSet(px, py, 2100);
+					flag = true;
+					break;
+
+				case 4: // バリア
+					mc.mp.mSet(px, py, 2110);
+					flag = true;
+					break;
+
+				case 5: // タイム
+					mc.mp.mSet(px, py, 2120);
+					flag = true;
+					break;
+
+				case 6: // ジェット
+					mc.mp.mSet(px, py, 2130);
+					flag = true;
+					break;
+
+				case 7: // ヘルメット
+					mc.mp.mSet(px, py, 2140);
+					flag = true;
+					break;
+
+				case 8: // しっぽ
+					mc.mp.mSet(px, py, 2150);
+					flag = true;
+					break;
+
+				case 9: // ドリル
+					mc.mp.mSet(px, py, 2160);
+					flag = true;
+					break;
+
+				case 10: // グレネード
+					mc.mp.mSet(px, py, 2170);
+					flag = true;
+					break;
+
+				case 11: // 1UP
+					mc.mp.mSet(px, py, 2180);
+					flag = true;
+					break;
+
+				case 12: // シューティングモード パワーアップアイテム1
+					mc.mp.mSet(px, py, 2181);
+					flag = true;
+					break;
+
+				case 13: // シューティングモード パワーアップアイテム2
+					mc.mp.mSet(px, py, 2182);
+					flag = true;
+					break;
+
+				case 14: // スポット処理 範囲拡大アイテム
+					mc.mp.mSet(px, py, 2185);
+					flag = true;
+					break;
+
+				case 15: // ファイヤーボール 水平に飛ぶ
+					mc.mp.mSet(px, py, 2186);
+					flag = true;
+					break;
+
+				case 16: // ファイヤーボール 跳ねる
+					mc.mp.mSet(px, py, 2187);
+					flag = true;
+					break;
+
+				case 17: // ファイヤーボール ダブル
+					mc.mp.mSet(px, py, 2188);
+					flag = true;
+					break;
+
+				case 18: // グレネード5発
+					mc.mp.mSet(px, py, 2171);
+					flag = true;
+					break;
+
+				case 19: // コンティニュー
+					mc.mp.mSet(px, py, 2172);
+					flag = true;
+					break;
+
+				case 20: // ＫＥＹ１
+					mc.mp.aSet(px, py, 4600, px);
+					flag = true;
+					break;
+
+				case 21: // ＫＥＹ２
+					mc.mp.aSet(px, py, 4610, px);
+					flag = true;
+					break;
+			}
+			return flag;
+		} else return false;
 	};
 
 	/**

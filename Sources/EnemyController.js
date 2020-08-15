@@ -367,7 +367,7 @@ EnemyController.TurtleFall = {
 					l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 					characterobject.c = 110;
 				}
-				if (i >= 120 && l20 > mp.maps.wx + 512) characterobject.c = 0;
+				if (i >= 120 && l20 > mp.maps.wx + mp.gg.di.width) characterobject.c = 0;
 				if (i45 == 19) {
 					if (
 						rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign(l20 + 15 - 3, 5) &&
@@ -688,7 +688,7 @@ EnemyController.Pikachie = {
 					characterobject.vy === 0 &&
 					(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y) &&
 					i21 >= mp.maps.wy - 128 &&
-					i21 <= mp.maps.wy + 320 + 128
+					i21 <= mp.maps.wy + mp.gg.di.height + 128
 				)
 					if (characterobject.c3 === 1) {
 						// 水平水鉄砲
@@ -933,9 +933,9 @@ EnemyController.ChikorinThrower = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32
+						i21 <= mp.maps.wy + mp.gg.di.height - 32
 					) {
 						// 射程に入ったら行動開始
 						characterobject.c1 = 100;
@@ -998,9 +998,9 @@ EnemyController.ChikorinMidareuchi = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx - 16 &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 288 &&
 						mp.co_j.x <= l20 + 192 &&
 						Math.abs(mp.co_j.x - l20) >= 88 &&
@@ -1168,9 +1168,9 @@ EnemyController.ChikorinSolarBeam = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx - 16 &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 352 &&
 						mp.co_j.x <= l20 - 72 &&
 						Math.abs(mp.co_j.y - i21) < 32
@@ -1211,9 +1211,9 @@ EnemyController.ChikorinSolarBeam = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx - 16 - 144 &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x <= l20 + 352 &&
 						mp.co_j.x >= l20 + 72 &&
 						Math.abs(mp.co_j.y - i21) < 32
@@ -1676,7 +1676,7 @@ EnemyController.HinorarashiFall = {
 					l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 					characterobject.c = 410;
 				}
-				if (i >= 120 && l20 > mp.maps.wx + 512) characterobject.c = 0;
+				if (i >= 120 && l20 > mp.maps.wx + mp.gg.di.width) characterobject.c = 0;
 				if (i46 === 19) {
 					if (
 						rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign(l20 + 15 - properties.walk_speed, 5) &&
@@ -1968,9 +1968,9 @@ EnemyController.PoppieFire = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 288 &&
 						mp.co_j.x <= l20 + 192 &&
 						Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2028,9 +2028,9 @@ EnemyController.PoppieFire3 = {
 						// 発射可能だったら発射態勢へ
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 320 &&
 							mp.co_j.x <= l20 + 256 &&
 							Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2099,9 +2099,9 @@ EnemyController.PoppieBubble3 = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 288 &&
 						mp.co_j.x <= l20 + 192 &&
 						Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2197,9 +2197,9 @@ EnemyController.PoppieHurricaneBlast = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 228 &&
 						mp.co_j.x <= l20 + 192 &&
 						Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2606,7 +2606,7 @@ EnemyController.Mariri = {
 						l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 						characterobject.c = 600;
 					}
-					if (i >= 120 && l20 > mp.maps.wx + 512) characterobject.c = 0;
+					if (i >= 120 && l20 > mp.maps.wx + mp.gg.di.width) characterobject.c = 0;
 				}
 				if (i21 >= mp.ochiru_y) characterobject.c = 0;
 
@@ -2956,7 +2956,7 @@ EnemyController.Yachamo = {
 						}
 					} else if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						mp.co_j.x >= l20 - 256 &&
 						mp.co_j.x <= l20 + 192 &&
 						Math.abs(mp.co_j.x - l20) >= 96
@@ -3021,9 +3021,9 @@ EnemyController.YachamoFast = {
 					// 射程に入ったら行動開始
 					if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 320 &&
 						mp.co_j.x <= l20 + 192 &&
 						Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -3110,9 +3110,9 @@ EnemyController.YachamoHyperBeam = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx - 16 &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 352 &&
 						mp.co_j.x <= l20 - 72 &&
 						Math.abs(mp.co_j.y - i21) < 64
@@ -3154,9 +3154,9 @@ EnemyController.YachamoHyperBeam = {
 				if (characterobject.c1 <= 0) {
 					if (
 						l20 >= mp.maps.wx - 16 - 144 &&
-						l20 <= mp.maps.wx + 512 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 						i21 >= mp.maps.wy &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x <= l20 + 352 &&
 						mp.co_j.x >= l20 + 72 &&
 						Math.abs(mp.co_j.y - i21) < 32
@@ -3544,8 +3544,8 @@ EnemyController.AirmsStay = {
 					// 射程に入ったら投下開始
 					if (
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.x >= l20 - 256 &&
 						mp.co_j.x <= l20 + 256 &&
 						mp.co_j.y >= i21 + 16
@@ -3610,8 +3610,8 @@ EnemyController.AirmsLeftRight = {
 							l20 == characterobject.c3 - 4 - 64 ||
 							l20 == characterobject.c3 - 4 - 128) &&
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.y >= i21 + 16
 					)
 						mp.mSet(l20 + 2, i21, 600);
@@ -3634,8 +3634,8 @@ EnemyController.AirmsLeftRight = {
 					if (
 						(l20 === characterobject.c3 + 4 - 32 || l20 === characterobject.c3 + 4 - 96) &&
 						l20 >= mp.maps.wx &&
-						l20 <= mp.maps.wx + 512 - 32 &&
-						i21 <= mp.maps.wy + 320 - 32 &&
+						l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
+						i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 						mp.co_j.y >= i21 + 16
 					)
 						mp.mSet(l20 - 2, i21, 605);
@@ -5366,7 +5366,7 @@ EnemyController.TurtleChaser = {
 					if (mp.maps.getBGCode(mp.co_j.x + 15, mp.co_j.y + 31) >= 20)
 						mp.co_j.y = rightShiftIgnoreSign(mp.co_j.y + 31, 5) * 32 - 32;
 				}
-				if (i21 >= mp.maps.wy_max + 320) {
+				if (i21 >= mp.maps.wy_max + mp.gg.di.height) {
 					characterobject.c = 60;
 					characterobject.c1 = 0;
 				}
