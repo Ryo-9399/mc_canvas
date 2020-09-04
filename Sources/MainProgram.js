@@ -4577,12 +4577,10 @@ MainProgram.prototype.mapsMakeStageData = function(
 		for (var j1 = 0; j1 < this.maps.width; j1++) {
 			var c1 = 0;
 			if (mainLayer) {
-				try {
-					c1 = mainLayer.map[k3 - 10][j1 - 1];
-					if (!c1) {
-						c1 = 0;
-					}
-				} catch (ex) {}
+				c1 = mainLayer.map[k3 - 10] ? mainLayer.map[k3 - 10][j1 - 1] : 0;
+				if (!c1) {
+					c1 = 0;
+				}
 			} else {
 				c1 = as[k3].charCodeAt(j1);
 			}
