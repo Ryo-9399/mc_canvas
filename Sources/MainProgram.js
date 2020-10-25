@@ -25169,6 +25169,7 @@ MainProgram.prototype.drawYuka = function() {
 		var yukaobject = this.yo[i];
 		if (yukaobject.con == 0) continue;
 		if (yukaobject.con == 100) {
+			// 矩形（ファイル名を指定）
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			if (
@@ -25186,6 +25187,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 110) {
+			// 矩形
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			if (
@@ -25203,6 +25205,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 120) {
+			// 矩形（パターンチップから設定）
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			if (
@@ -25220,20 +25223,24 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 200) {
+			// 線分
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var j3 = yukaobject.view_x;
+			var l5 = yukaobject.view_y;
 			var j8 = this.yo[i].x2 - this.maps.wx;
+			var l10 = this.yo[i].y2 - this.maps.wy;
 			if ((j3 < 0 && j8 < 0) || (j3 >= this.gg.di.width && j8 >= this.gg.di.width)) {
 				yukaobject.draw_f = false;
 			} else {
 				yukaobject.draw_f = true;
 				this.hg.setColor(yukaobject.color);
-				//this.hg.drawLine(j3, l5, j8, l10);
+				this.hg.drawLine(j3, l5, j8, l10);
 			}
 			continue;
 		}
 		if (yukaobject.con == 210) {
+			// 直角三角形
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var k3 = yukaobject.view_x;
@@ -25283,6 +25290,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 220) {
+			// 台形
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var l3 = yukaobject.view_x;
@@ -25345,6 +25353,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 300) {
+			// 円
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var i4 = yukaobject.view_x - yukaobject.x2;
@@ -25361,6 +25370,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 350) {
+			// 上半分の半円
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var j4 = yukaobject.view_x;
@@ -25403,6 +25413,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 360) {
+			// 上半分の半円（線のみ）
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var k4 = yukaobject.view_x;
@@ -25428,6 +25439,7 @@ MainProgram.prototype.drawYuka = function() {
 			} while (true);
 		}
 		if (yukaobject.con == 400) {
+			// 右上がりの曲線
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var l4 = yukaobject.view_x;
@@ -25484,6 +25496,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 410) {
+			// 右上がりの曲線（線のみ）
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var i5 = yukaobject.view_x;
@@ -25524,6 +25537,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con == 450) {
+			// 右下がりの曲線
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var j5 = yukaobject.view_x;
@@ -25580,6 +25594,7 @@ MainProgram.prototype.drawYuka = function() {
 			continue;
 		}
 		if (yukaobject.con != 460) continue;
+		// 右下がりの曲線（線のみ）
 		yukaobject.view_x = this.yo[i].x - this.maps.wx;
 		yukaobject.view_y = this.yo[i].y - this.maps.wy;
 		var k5 = yukaobject.view_x;
