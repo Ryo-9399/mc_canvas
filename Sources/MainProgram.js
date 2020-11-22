@@ -16754,6 +16754,7 @@ MainProgram.prototype.aMove = function() {
 
 			case 70: // ファイヤーバー 1本
 				if (characterobject.c4 == 2) {
+					// スウィングファイヤーバー 左
 					characterobject.c3 += characterobject.vx;
 					if (characterobject.c3 <= 110) {
 						characterobject.c3 = 110;
@@ -16763,6 +16764,7 @@ MainProgram.prototype.aMove = function() {
 						characterobject.vx = -2;
 					}
 				} else if (characterobject.c4 == 3) {
+					// スウィングファイヤーバー 右
 					characterobject.c3 += characterobject.vx;
 					if (characterobject.c3 <= 290) {
 						characterobject.c3 = 290;
@@ -16790,6 +16792,7 @@ MainProgram.prototype.aMove = function() {
 					var k89;
 					var j92;
 					if (Math.abs(characterobject.vx) == 2) {
+						// ファイヤーバー２本またはファイヤーバー３本またはスウィングファイヤーバー
 						var d = 0.017453292519943295;
 						i85 = k3 + rounddown(Math.cos(characterobject.c3 * d) * 25, true, this);
 						j87 = l3 + rounddown(Math.sin(characterobject.c3 * d) * 25, true, this);
@@ -21162,6 +21165,7 @@ MainProgram.prototype.aMove = function() {
 						}
 					}
 				if (characterobject.c3 != 1) {
+					// つかまると動く　ではない
 					if (characterobject.vy > 156) {
 						characterobject.vx -= 2;
 						if (characterobject.vx < -22) characterobject.vx = -22;
@@ -21402,6 +21406,7 @@ MainProgram.prototype.aMove = function() {
 					}
 				if (characterobject.c3 != 1) {
 					if (characterobject.c4 == 1) {
+						// 広角
 						if (characterobject.vy > 330) {
 							characterobject.vx -= 2;
 							if (characterobject.vx < -22) characterobject.vx = -22;
