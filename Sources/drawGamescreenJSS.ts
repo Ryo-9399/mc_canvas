@@ -865,7 +865,7 @@ export const drawHitokotoMessage = function(this: MainProgram) {
 
 	// 変更前のフォントを保持
 	const beforeFont = this.hg._font;
-	this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
+	this.hg.setFont(new Font(this.gg.font_message, 0, 12));
 	// 名前を描画
 	this.hg.setColor(Color.cyan);
 	const param_name = `hitokoto${this.hitokoto_num}_name`;

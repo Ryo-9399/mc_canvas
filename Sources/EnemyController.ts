@@ -714,24 +714,24 @@ namespace EnemyController {
 									l20,
 									rightShiftIgnoreSign(i21, 5) * 32,
 									733,
-									Math.floor(Math.cos(d) * 9),
-									Math.floor(Math.sin(d) * 9)
+									rounddown(Math.cos(d) * 9, true, mp),
+									rounddown(Math.sin(d) * 9, true, mp)
 								);
 								d = 3.6633334159851074;
 								mp.mSet2(
 									l20,
 									rightShiftIgnoreSign(i21, 5) * 32,
 									733,
-									Math.floor(Math.cos(d) * 9),
-									Math.floor(Math.sin(d) * 9)
+									rounddown(Math.cos(d) * 9, true, mp),
+									rounddown(Math.sin(d) * 9, true, mp)
 								);
 								d = 2.6166667938232422;
 								mp.mSet2(
 									l20,
 									rightShiftIgnoreSign(i21, 5) * 32,
 									733,
-									Math.floor(Math.cos(d) * 9),
-									Math.floor(Math.sin(d) * 9)
+									rounddown(Math.cos(d) * 9, true, mp),
+									rounddown(Math.sin(d) * 9, true, mp)
 								);
 								mp.gs.rsAddSound(10);
 							} else {
@@ -740,24 +740,24 @@ namespace EnemyController {
 									l20,
 									rightShiftIgnoreSign(i21, 5) * 32,
 									733,
-									Math.floor(Math.cos(d1) * 9),
-									Math.floor(Math.sin(d1) * 9)
+									rounddown(Math.cos(d1) * 9, true, mp),
+									rounddown(Math.sin(d1) * 9, true, mp)
 								);
 								d1 = 5.7566671371459961;
 								mp.mSet2(
 									l20,
 									rightShiftIgnoreSign(i21, 5) * 32,
 									733,
-									Math.floor(Math.cos(d1) * 9),
-									Math.floor(Math.sin(d1) * 9)
+									rounddown(Math.cos(d1) * 9, true, mp),
+									rounddown(Math.sin(d1) * 9, true, mp)
 								);
 								d1 = 0.52333337068557739;
 								mp.mSet2(
 									l20,
 									rightShiftIgnoreSign(i21, 5) * 32,
 									733,
-									Math.floor(Math.cos(d1) * 9),
-									Math.floor(Math.sin(d1) * 9)
+									rounddown(Math.cos(d1) * 9, true, mp),
+									rounddown(Math.sin(d1) * 9, true, mp)
 								);
 								mp.gs.rsAddSound(10);
 							}
@@ -1017,20 +1017,20 @@ namespace EnemyController {
 						characterobject.c1++;
 						if (characterobject.c1 == 101) {
 							var d2 = 4.7100000381469727;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d2) * 10), Math.floor(Math.sin(d2) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d2) * 10, true, mp), rounddown(Math.sin(d2) * 10, true, mp));
 							mp.gs.rsAddSound(11);
 						} else if (characterobject.c1 == 105) {
 							var d3 = 3.9249999523162842;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d3) * 10), Math.floor(Math.sin(d3) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d3) * 10, true, mp), rounddown(Math.sin(d3) * 10, true, mp));
 						} else if (characterobject.c1 == 109) {
 							var d4 = 3.1400001049041748;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d4) * 10), Math.floor(Math.sin(d4) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d4) * 10, true, mp), rounddown(Math.sin(d4) * 10, true, mp));
 						} else if (characterobject.c1 == 113) {
 							var d5 = 3.6633334159851074;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d5) * 10), Math.floor(Math.sin(d5) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d5) * 10, true, mp), rounddown(Math.sin(d5) * 10, true, mp));
 						} else if (characterobject.c1 >= 121) {
 							var d6 = 4.1866669654846191;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d6) * 10), Math.floor(Math.sin(d6) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d6) * 10, true, mp), rounddown(Math.sin(d6) * 10, true, mp));
 							characterobject.c1 = 300;
 						}
 					} else if (characterobject.c1 >= 200 && characterobject.c1 < 300) {
@@ -1038,20 +1038,20 @@ namespace EnemyController {
 						characterobject.c1++;
 						if (characterobject.c1 == 201) {
 							var d7 = 4.7100000381469727;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d7) * 10), Math.floor(Math.sin(d7) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d7) * 10, true, mp), rounddown(Math.sin(d7) * 10, true, mp));
 							mp.gs.rsAddSound(11);
 						} else if (characterobject.c1 == 205) {
 							var d8 = 5.4950003623962402;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d8) * 10), Math.floor(Math.sin(d8) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d8) * 10, true, mp), rounddown(Math.sin(d8) * 10, true, mp));
 						} else if (characterobject.c1 == 209) {
 							var d9 = 0.0;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d9) * 10), Math.floor(Math.sin(d9) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d9) * 10, true, mp), rounddown(Math.sin(d9) * 10, true, mp));
 						} else if (characterobject.c1 == 213) {
 							var d10 = 5.7566671371459961;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d10) * 10), Math.floor(Math.sin(d10) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d10) * 10, true, mp), rounddown(Math.sin(d10) * 10, true, mp));
 						} else if (characterobject.c1 >= 221) {
 							var d11 = 5.2333335876464844;
-							mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d11) * 10), Math.floor(Math.sin(d11) * 10));
+							mp.mSet2(l20, i21, 731, rounddown(Math.cos(d11) * 10, true, mp), rounddown(Math.sin(d11) * 10, true, mp));
 							characterobject.c1 = 300;
 						}
 					} else {
@@ -2028,19 +2028,19 @@ namespace EnemyController {
 					} else if (characterobject.c1 === 1) {
 						if (l20 + 8 >= mp.co_j.x) {
 							var d12 = 3.1400001049041748;
-							mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+							mp.mSet2(l20, i21, 730, rounddown(Math.cos(d12) * 9, true, mp), rounddown(Math.sin(d12) * 9, true, mp));
 							d12 = 3.6633334159851074;
-							mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+							mp.mSet2(l20, i21, 730, rounddown(Math.cos(d12) * 9, true, mp), rounddown(Math.sin(d12) * 9, true, mp));
 							d12 = 2.6166667938232422;
-							mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d12) * 9), Math.floor(Math.sin(d12) * 9));
+							mp.mSet2(l20, i21, 730, rounddown(Math.cos(d12) * 9, true, mp), rounddown(Math.sin(d12) * 9, true, mp));
 							mp.gs.rsAddSound(18);
 						} else {
 							var d13 = 0.0;
-							mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+							mp.mSet2(l20, i21, 730, rounddown(Math.cos(d13) * 9, true, mp), rounddown(Math.sin(d13) * 9, true, mp));
 							d13 = 5.7566671371459961;
-							mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+							mp.mSet2(l20, i21, 730, rounddown(Math.cos(d13) * 9, true, mp), rounddown(Math.sin(d13) * 9, true, mp));
 							d13 = 0.52333337068557739;
-							mp.mSet2(l20, i21, 730, Math.floor(Math.cos(d13) * 9), Math.floor(Math.sin(d13) * 9));
+							mp.mSet2(l20, i21, 730, rounddown(Math.cos(d13) * 9, true, mp), rounddown(Math.sin(d13) * 9, true, mp));
 							mp.gs.rsAddSound(18);
 						}
 						characterobject.c1 = 2;
@@ -2753,19 +2753,55 @@ namespace EnemyController {
 									if (Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y)
 										if (l20 + 8 >= mp.co_j.x) {
 											var d14 = 3.1400001049041748;
-											mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+											mp.mSet2(
+												l20,
+												i21,
+												731,
+												rounddown(Math.cos(d14) * 9, true, mp),
+												rounddown(Math.sin(d14) * 9, true, mp)
+											);
 											d14 = 3.6633334159851074;
-											mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+											mp.mSet2(
+												l20,
+												i21,
+												731,
+												rounddown(Math.cos(d14) * 9, true, mp),
+												rounddown(Math.sin(d14) * 9, true, mp)
+											);
 											d14 = 4.1866669654846191;
-											mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d14) * 9), Math.floor(Math.sin(d14) * 9));
+											mp.mSet2(
+												l20,
+												i21,
+												731,
+												rounddown(Math.cos(d14) * 9, true, mp),
+												rounddown(Math.sin(d14) * 9, true, mp)
+											);
 											mp.gs.rsAddSound(11);
 										} else {
 											var d15 = 0.0;
-											mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+											mp.mSet2(
+												l20,
+												i21,
+												731,
+												rounddown(Math.cos(d15) * 9, true, mp),
+												rounddown(Math.sin(d15) * 9, true, mp)
+											);
 											d15 = 5.7566671371459961;
-											mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+											mp.mSet2(
+												l20,
+												i21,
+												731,
+												rounddown(Math.cos(d15) * 9, true, mp),
+												rounddown(Math.sin(d15) * 9, true, mp)
+											);
 											d15 = 5.2333335876464844;
-											mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d15) * 9), Math.floor(Math.sin(d15) * 9));
+											mp.mSet2(
+												l20,
+												i21,
+												731,
+												rounddown(Math.cos(d15) * 9, true, mp),
+												rounddown(Math.sin(d15) * 9, true, mp)
+											);
 											mp.gs.rsAddSound(11);
 										}
 								} else if (characterobject.c3 === 4) {
@@ -3061,19 +3097,55 @@ namespace EnemyController {
 								// はっぱカッター3発
 								if (l20 + 8 >= mp.co_j.x) {
 									var d16 = 3.1400001049041748;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d16) * 9, true, mp),
+										rounddown(Math.sin(d16) * 9, true, mp)
+									);
 									d16 = 3.6633334159851074;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d16) * 9, true, mp),
+										rounddown(Math.sin(d16) * 9, true, mp)
+									);
 									d16 = 4.1866669654846191;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d16) * 9), Math.floor(Math.sin(d16) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d16) * 9, true, mp),
+										rounddown(Math.sin(d16) * 9, true, mp)
+									);
 									mp.gs.rsAddSound(11);
 								} else {
 									var d17 = 0.0;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d17) * 9, true, mp),
+										rounddown(Math.sin(d17) * 9, true, mp)
+									);
 									d17 = 5.7566671371459961;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d17) * 9, true, mp),
+										rounddown(Math.sin(d17) * 9, true, mp)
+									);
 									d17 = 5.2333335876464844;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d17) * 9), Math.floor(Math.sin(d17) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d17) * 9, true, mp),
+										rounddown(Math.sin(d17) * 9, true, mp)
+									);
 									mp.gs.rsAddSound(11);
 								}
 							} else if (characterobject.c4 === 2) {
@@ -3159,19 +3231,55 @@ namespace EnemyController {
 								// はっぱカッター3発
 								if (l20 + 8 >= mp.co_j.x) {
 									var d18 = 3.1400001049041748;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d18) * 9, true, mp),
+										rounddown(Math.sin(d18) * 9, true, mp)
+									);
 									d18 = 3.6633334159851074;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d18) * 9, true, mp),
+										rounddown(Math.sin(d18) * 9, true, mp)
+									);
 									d18 = 4.1866669654846191;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d18) * 9), Math.floor(Math.sin(d18) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d18) * 9, true, mp),
+										rounddown(Math.sin(d18) * 9, true, mp)
+									);
 									mp.gs.rsAddSound(11);
 								} else {
 									var d19 = 0.0;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d19) * 9, true, mp),
+										rounddown(Math.sin(d19) * 9, true, mp)
+									);
 									d19 = 5.7566671371459961;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d19) * 9, true, mp),
+										rounddown(Math.sin(d19) * 9, true, mp)
+									);
 									d19 = 5.2333335876464844;
-									mp.mSet2(l20, i21, 731, Math.floor(Math.cos(d19) * 9), Math.floor(Math.sin(d19) * 9));
+									mp.mSet2(
+										l20,
+										i21,
+										731,
+										rounddown(Math.cos(d19) * 9, true, mp),
+										rounddown(Math.sin(d19) * 9, true, mp)
+									);
 									mp.gs.rsAddSound(11);
 								}
 							} else if (characterobject.c4 === 2) {
@@ -3734,8 +3842,10 @@ namespace EnemyController {
 				if (characterobject.c === 1070) {
 					characterobject.c1 -= properties.speed;
 					if (characterobject.c1 < 0) characterobject.c1 += 360;
-					var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-					var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+					var l20 =
+						characterobject.c3 + rounddown(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
+					var i21 =
+						characterobject.c4 + rounddown(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
 					characterobject.pt = 166;
 					if (characterobject.c1 < 180) characterobject.pth = 1;
 					else characterobject.pth = 0;
@@ -3773,8 +3883,10 @@ namespace EnemyController {
 				if (characterobject.c === 1080) {
 					characterobject.c1 += properties.speed;
 					if (characterobject.c1 >= 360) characterobject.c1 -= 360;
-					var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-					var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+					var l20 =
+						characterobject.c3 + rounddown(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
+					var i21 =
+						characterobject.c4 + rounddown(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
 					characterobject.pt = 166;
 					if (characterobject.c1 < 180) characterobject.pth = 0;
 					else characterobject.pth = 1;
@@ -4025,8 +4137,10 @@ namespace EnemyController {
 				if (characterobject.c === 1170) {
 					characterobject.c1 -= properties.speed;
 					if (characterobject.c1 < 0) characterobject.c1 += 360;
-					var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-					var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+					var l20 =
+						characterobject.c3 + rounddown(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
+					var i21 =
+						characterobject.c4 + rounddown(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
 					characterobject.pt = 167;
 					if (characterobject.c1 < 180) characterobject.pth = 1;
 					else characterobject.pth = 0;
@@ -4064,8 +4178,10 @@ namespace EnemyController {
 				if (characterobject.c === 1180) {
 					characterobject.c1 += properties.speed;
 					if (characterobject.c1 >= 360) characterobject.c1 -= 360;
-					var l20 = characterobject.c3 + Math.floor(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius);
-					var i21 = characterobject.c4 + Math.floor(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius);
+					var l20 =
+						characterobject.c3 + rounddown(Math.cos((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
+					var i21 =
+						characterobject.c4 + rounddown(Math.sin((characterobject.c1 * 3.14) / 180) * properties.radius, true, mp);
 					characterobject.pt = 167;
 					if (characterobject.c1 < 180) characterobject.pth = 0;
 					else characterobject.pth = 1;

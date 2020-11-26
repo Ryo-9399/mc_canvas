@@ -419,16 +419,16 @@ CanvasMasao.MasaoKani2 = function(mc) {
 			} else if (boss_jyoutai == 500) {
 				boss_kakudo -= boss_speed;
 				if (boss_kakudo < 0) boss_kakudo += 360;
-				boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
-				boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
+				boss_x = boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+				boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 				if (boss_kakudo > 180) boss_vx = -1;
 				else boss_vx = 1;
 				shagekiBoss();
 			} else if (boss_jyoutai == 600) {
 				boss_kakudo += boss_speed;
 				if (boss_kakudo >= 360) boss_kakudo -= 360;
-				boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
-				boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
+				boss_x = boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+				boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 				if (boss_kakudo < 180) boss_vx = -1;
 				else boss_vx = 1;
 				shagekiBoss();
@@ -819,8 +819,9 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				} else {
 					boss_kakudo -= boss_speed;
 					if (boss_kakudo < 0) boss_kakudo += 360;
-					boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
-					boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
+					boss_x =
+						boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+					boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 					if (boss_kakudo > 180) boss_vx = -1;
 					else boss_vx = 1;
 				}
@@ -834,8 +835,9 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				} else {
 					boss_kakudo -= boss_speed;
 					if (boss_kakudo < 0) boss_kakudo += 360;
-					boss_x = boss_x_shoki - 256 + Math.floor(Math.cos((boss_kakudo * 3.14) / 180) * 96) - 32;
-					boss_y = boss_y_shoki + 32 + Math.floor(Math.sin((boss_kakudo * 3.14) / 180) * 96) - 32;
+					boss_x =
+						boss_x_shoki - 256 + rounddown(Math.cos((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
+					boss_y = boss_y_shoki + 32 + rounddown(Math.sin((boss_kakudo * 3.14) / 180) * 96, true, mc.mp) - 32;
 					if (boss_kakudo > 180) boss_vx = -1;
 					else boss_vx = 1;
 				}
@@ -1063,10 +1065,12 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 2) {
+				// 電撃
 				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 100);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 3) {
+				// 電撃３連射
 				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 7 || boss_shageki_c2 == 13)
 					mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 100);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(10);
@@ -1075,11 +1079,13 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 4) {
+				// はっぱカッター
 				if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 200);
 				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 205);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 5) {
+				// はっぱカッター３連射
 				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 9 || boss_shageki_c2 == 17)
 					if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 200);
 					else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 205);
@@ -1089,11 +1095,13 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 6) {
+				// 火の粉
 				if (boss_vx <= 0) mc.mp.mSet(boss_x + 32, boss_y + ((boss_height - 32) >> 1), 300);
 				else mc.mp.mSet(boss_x + boss_width - 32, boss_y + ((boss_height - 32) >> 1), 305);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 7) {
+				// 火の粉２連射
 				if (boss_vx <= 0) {
 					mc.mp.mSet(boss_x + 32, boss_y + ((boss_height - 32) >> 1) - 16, 300);
 					mc.mp.mSet(boss_x + 32, boss_y + ((boss_height - 32) >> 1) + 16, 300);
@@ -1105,79 +1113,82 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 8) {
+				// 水鉄砲
 				if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 400);
 				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 405);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 9) {
+				// 爆撃
 				if (boss_vx == 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 16, 606);
 				else if (boss_vx < 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 16, 600);
 				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 16, 605);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 10) {
+				// バブル光線 扇型発射
 				if (boss_shageki_c2 == 1) {
 					if (boss_vx <= 0) {
 						var d = 3.3144445419311523;
-						var j1 = Math.floor(Math.cos(d) * 12);
-						var l7 = Math.floor(Math.sin(d) * 12) * -1;
+						var j1 = rounddown(Math.cos(d) * 12, true, mc.mp);
+						var l7 = rounddown(Math.sin(d) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 						d = 2.9655554294586182;
-						j1 = Math.floor(Math.cos(d) * 12);
-						l7 = Math.floor(Math.sin(d) * 12) * -1;
+						j1 = rounddown(Math.cos(d) * 12, true, mc.mp);
+						l7 = rounddown(Math.sin(d) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 						d = 3.6633334159851074;
-						j1 = Math.floor(Math.cos(d) * 12);
-						l7 = Math.floor(Math.sin(d) * 12) * -1;
+						j1 = rounddown(Math.cos(d) * 12, true, mc.mp);
+						l7 = rounddown(Math.sin(d) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 						d = 2.6166667938232422;
-						j1 = Math.floor(Math.cos(d) * 12);
-						l7 = Math.floor(Math.sin(d) * 12) * -1;
+						j1 = rounddown(Math.cos(d) * 12, true, mc.mp);
+						l7 = rounddown(Math.sin(d) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j1, l7);
 					} else {
 						var d1 = 3.3144445419311523;
-						var k1 = Math.floor(Math.cos(d1) * 12) * -1;
-						var i8 = Math.floor(Math.sin(d1) * 12) * -1;
+						var k1 = rounddown(Math.cos(d1) * 12, true, mc.mp) * -1;
+						var i8 = rounddown(Math.sin(d1) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 						d1 = 2.9655554294586182;
-						k1 = Math.floor(Math.cos(d1) * 12) * -1;
-						i8 = Math.floor(Math.sin(d1) * 12) * -1;
+						k1 = rounddown(Math.cos(d1) * 12, true, mc.mp) * -1;
+						i8 = rounddown(Math.sin(d1) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 						d1 = 3.6633334159851074;
-						k1 = Math.floor(Math.cos(d1) * 12) * -1;
-						i8 = Math.floor(Math.sin(d1) * 12) * -1;
+						k1 = rounddown(Math.cos(d1) * 12, true, mc.mp) * -1;
+						i8 = rounddown(Math.sin(d1) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 						d1 = 2.6166667938232422;
-						k1 = Math.floor(Math.cos(d1) * 12) * -1;
-						i8 = Math.floor(Math.sin(d1) * 12) * -1;
+						k1 = rounddown(Math.cos(d1) * 12, true, mc.mp) * -1;
+						i8 = rounddown(Math.sin(d1) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k1, i8);
 					}
 				} else if (boss_shageki_c2 == 11)
 					if (boss_vx <= 0) {
 						var d2 = 3.1400001049041748;
-						var l1 = Math.floor(Math.cos(d2) * 12);
-						var j8 = Math.floor(Math.sin(d2) * 12) * -1;
+						var l1 = rounddown(Math.cos(d2) * 12, true, mc.mp);
+						var j8 = rounddown(Math.sin(d2) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l1, j8);
 						d2 = 2.7038888931274414;
-						l1 = Math.floor(Math.cos(d2) * 12);
-						j8 = Math.floor(Math.sin(d2) * 12) * -1;
+						l1 = rounddown(Math.cos(d2) * 12, true, mc.mp);
+						j8 = rounddown(Math.sin(d2) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l1, j8);
 						d2 = 3.5761110782623291;
-						l1 = Math.floor(Math.cos(d2) * 12);
-						j8 = Math.floor(Math.sin(d2) * 12) * -1;
+						l1 = rounddown(Math.cos(d2) * 12, true, mc.mp);
+						j8 = rounddown(Math.sin(d2) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l1, j8);
 					} else {
 						var d3 = 3.1400001049041748;
-						var i2 = Math.floor(Math.cos(d3) * 12) * -1;
-						var k8 = Math.floor(Math.sin(d3) * 12) * -1;
+						var i2 = rounddown(Math.cos(d3) * 12, true, mc.mp) * -1;
+						var k8 = rounddown(Math.sin(d3) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i2, k8);
 						d3 = 2.7038888931274414;
-						i2 = Math.floor(Math.cos(d3) * 12) * -1;
-						k8 = Math.floor(Math.sin(d3) * 12) * -1;
+						i2 = rounddown(Math.cos(d3) * 12, true, mc.mp) * -1;
+						k8 = rounddown(Math.sin(d3) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i2, k8);
 						d3 = 3.5761110782623291;
-						i2 = Math.floor(Math.cos(d3) * 12) * -1;
-						k8 = Math.floor(Math.sin(d3) * 12) * -1;
+						i2 = rounddown(Math.cos(d3) * 12, true, mc.mp) * -1;
+						k8 = rounddown(Math.sin(d3) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i2, k8);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(18);
@@ -1186,18 +1197,19 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 11) {
+				// バブル光線 放射状に発射
 				if (boss_shageki_c2 == 1) {
 					for (var i = 0; i <= 330; i += 30) {
 						var d4 = (i * 3.14) / 180;
-						var j2 = Math.floor(Math.cos(d4) * 12);
-						var l8 = Math.floor(Math.sin(d4) * 12) * -1;
+						var j2 = rounddown(Math.cos(d4) * 12, true, mc.mp);
+						var l8 = rounddown(Math.sin(d4) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j2, l8);
 					}
 				} else if (boss_shageki_c2 == 11) {
 					for (var j = 15; j <= 345; j += 30) {
 						var d5 = (j * 3.14) / 180;
-						var k2 = Math.floor(Math.cos(d5) * 12);
-						var i9 = Math.floor(Math.sin(d5) * 12) * -1;
+						var k2 = rounddown(Math.cos(d5) * 12, true, mc.mp);
+						var i9 = rounddown(Math.sin(d5) * 12, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, k2, i9);
 					}
 				}
@@ -1207,36 +1219,43 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 12) {
+				// 前へ亀を投げる
 				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, -4);
 				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, 4);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 13) {
+				// 後へ亀を投げる
 				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, 2);
 				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 150, -2);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 14) {
+				// 前へヒノララシを投げる
 				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, -6);
 				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, 6);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 15) {
+				// 後へヒノララシを投げる
 				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, 2);
 				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 450, -2);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 16) {
+				// 前へマリリを投げる
 				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, -5);
 				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, 5);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 17) {
+				// 後へマリリを投げる
 				if (boss_vx <= 0) mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, 2);
 				else mc.mp.tSetBoss(boss_x + ((boss_width - 32) >> 1), boss_y, 650, -2);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 18) {
+				// ハリケンブラスト
 				for (var k = 10; k <= 310; k += 60) {
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 901, k, 0);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 911, k, 0);
@@ -1246,39 +1265,40 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 19) {
+				// バブル光線 扇型発射 少なめ
 				if (boss_shageki_c2 == 1) {
 					if (boss_vx <= 0) {
 						var d6 = 3.1400001049041748;
-						var l2 = Math.floor(Math.cos(d6) * 8);
-						var j9 = Math.floor(Math.sin(d6) * 8) * -1;
+						var l2 = rounddown(Math.cos(d6) * 8, true, mc.mp);
+						var j9 = rounddown(Math.sin(d6) * 8, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l2, j9);
 						d6 = 2.6166667938232422;
-						l2 = Math.floor(Math.cos(d6) * 8);
-						j9 = Math.floor(Math.sin(d6) * 8) * -1;
+						l2 = rounddown(Math.cos(d6) * 8, true, mc.mp);
+						j9 = rounddown(Math.sin(d6) * 8, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l2, j9);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l2, j9 * -1);
 					} else {
 						var d7 = 3.1400001049041748;
-						var i3 = Math.floor(Math.cos(d7) * 8) * -1;
-						var k9 = Math.floor(Math.sin(d7) * 8) * -1;
+						var i3 = rounddown(Math.cos(d7) * 8, true, mc.mp) * -1;
+						var k9 = rounddown(Math.sin(d7) * 8, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i3, k9);
 						d7 = 2.6166667938232422;
-						i3 = Math.floor(Math.cos(d7) * 8) * -1;
-						k9 = Math.floor(Math.sin(d7) * 8) * -1;
+						i3 = rounddown(Math.cos(d7) * 8, true, mc.mp) * -1;
+						k9 = rounddown(Math.sin(d7) * 8, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i3, k9);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, i3, k9 * -1);
 					}
 				} else if (boss_shageki_c2 == 20)
 					if (boss_vx <= 0) {
 						var d8 = 2.7911112308502197;
-						var j3 = Math.floor(Math.cos(d8) * 8);
-						var l9 = Math.floor(Math.sin(d8) * 8) * -1;
+						var j3 = rounddown(Math.cos(d8) * 8, true, mc.mp);
+						var l9 = rounddown(Math.sin(d8) * 8, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j3, l9);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, j3, l9 * -1);
 					} else {
 						var d9 = 2.7911112308502197;
-						var k3 = Math.floor(Math.cos(d9) * 8) * -1;
-						var i10 = Math.floor(Math.sin(d9) * 8) * -1;
+						var k3 = rounddown(Math.cos(d9) * 8, true, mc.mp) * -1;
+						var i10 = rounddown(Math.sin(d9) * 8, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k3, i10);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 710, k3, i10 * -1);
 					}
@@ -1288,20 +1308,21 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 20) {
+				// バブル光線 上へ扇型発射
 				if (boss_shageki_c2 == 1) {
 					var d10 = 1.5700000524520874;
-					var l3 = Math.floor(Math.cos(d10) * 8);
-					var j10 = Math.floor(Math.sin(d10) * 8) * -1;
+					var l3 = rounddown(Math.cos(d10) * 8, true, mc.mp);
+					var j10 = rounddown(Math.sin(d10) * 8, true, mc.mp) * -1;
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, l3, j10);
 					d10 = 1.0466667413711548;
-					l3 = Math.floor(Math.cos(d10) * 8);
-					j10 = Math.floor(Math.sin(d10) * 8) * -1;
+					l3 = rounddown(Math.cos(d10) * 8, true, mc.mp);
+					j10 = rounddown(Math.sin(d10) * 8, true, mc.mp) * -1;
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, l3, j10);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, l3 * -1, j10);
 				} else if (boss_shageki_c2 == 20) {
 					var d11 = 1.2211111783981323;
-					var i4 = Math.floor(Math.cos(d11) * 8);
-					var k10 = Math.floor(Math.sin(d11) * 8) * -1;
+					var i4 = rounddown(Math.cos(d11) * 8, true, mc.mp);
+					var k10 = rounddown(Math.sin(d11) * 8, true, mc.mp) * -1;
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, i4, k10);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, i4 * -1, k10);
 				}
@@ -1311,20 +1332,21 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 21) {
+				// バブル光線 下へ扇型発射
 				if (boss_shageki_c2 == 1) {
 					var d12 = 1.5700000524520874;
-					var j4 = Math.floor(Math.cos(d12) * 8);
-					var l10 = Math.floor(Math.sin(d12) * 8);
+					var j4 = rounddown(Math.cos(d12) * 8, true, mc.mp);
+					var l10 = rounddown(Math.sin(d12) * 8, true, mc.mp);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, j4, l10);
 					d12 = 1.0466667413711548;
-					j4 = Math.floor(Math.cos(d12) * 8);
-					l10 = Math.floor(Math.sin(d12) * 8);
+					j4 = rounddown(Math.cos(d12) * 8, true, mc.mp);
+					l10 = rounddown(Math.sin(d12) * 8, true, mc.mp);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, j4, l10);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, j4 * -1, l10);
 				} else if (boss_shageki_c2 == 20) {
 					var d13 = 1.2211111783981323;
-					var k4 = Math.floor(Math.cos(d13) * 8);
-					var i11 = Math.floor(Math.sin(d13) * 8);
+					var k4 = rounddown(Math.cos(d13) * 8, true, mc.mp);
+					var i11 = rounddown(Math.sin(d13) * 8, true, mc.mp);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k4, i11);
 					mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k4 * -1, i11);
 				}
@@ -1334,52 +1356,53 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 22) {
+				// はっぱカッター 斜め上へ連射
 				if (boss_shageki_c2 == 1) {
 					if (boss_vx <= 0) {
 						var d14 = 3.1400001049041748;
-						var l4 = Math.floor(Math.cos(d14) * 10);
-						var j11 = Math.floor(Math.sin(d14) * 10);
+						var l4 = rounddown(Math.cos(d14) * 10, true, mc.mp);
+						var j11 = rounddown(Math.sin(d14) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l4, j11);
 						d14 = 3.8377780914306641;
-						l4 = Math.floor(Math.cos(d14) * 10);
-						j11 = Math.floor(Math.sin(d14) * 10);
+						l4 = rounddown(Math.cos(d14) * 10, true, mc.mp);
+						j11 = rounddown(Math.sin(d14) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l4, j11);
 						d14 = 4.5355558395385742;
-						l4 = Math.floor(Math.cos(d14) * 10);
-						j11 = Math.floor(Math.sin(d14) * 10);
+						l4 = rounddown(Math.cos(d14) * 10, true, mc.mp);
+						j11 = rounddown(Math.sin(d14) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l4, j11);
 					} else {
 						var d15 = 3.1400001049041748;
-						var i5 = Math.floor(Math.cos(d15) * 10) * -1;
-						var k11 = Math.floor(Math.sin(d15) * 10);
+						var i5 = rounddown(Math.cos(d15) * 10, true, mc.mp) * -1;
+						var k11 = rounddown(Math.sin(d15) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i5, k11);
 						d15 = 3.8377780914306641;
-						i5 = Math.floor(Math.cos(d15) * 10) * -1;
-						k11 = Math.floor(Math.sin(d15) * 10);
+						i5 = rounddown(Math.cos(d15) * 10, true, mc.mp) * -1;
+						k11 = rounddown(Math.sin(d15) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i5, k11);
 						d15 = 4.5355558395385742;
-						i5 = Math.floor(Math.cos(d15) * 10) * -1;
-						k11 = Math.floor(Math.sin(d15) * 10);
+						i5 = rounddown(Math.cos(d15) * 10, true, mc.mp) * -1;
+						k11 = rounddown(Math.sin(d15) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i5, k11);
 					}
 				} else if (boss_shageki_c2 == 18)
 					if (boss_vx <= 0) {
 						var d16 = 3.4888889789581299;
-						var j5 = Math.floor(Math.cos(d16) * 10);
-						var l11 = Math.floor(Math.sin(d16) * 10);
+						var j5 = rounddown(Math.cos(d16) * 10, true, mc.mp);
+						var l11 = rounddown(Math.sin(d16) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j5, l11);
 						d16 = 4.1866669654846191;
-						j5 = Math.floor(Math.cos(d16) * 10);
-						l11 = Math.floor(Math.sin(d16) * 10);
+						j5 = rounddown(Math.cos(d16) * 10, true, mc.mp);
+						l11 = rounddown(Math.sin(d16) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j5, l11);
 					} else {
 						var d17 = 3.4888889789581299;
-						var k5 = Math.floor(Math.cos(d17) * 10) * -1;
-						var i12 = Math.floor(Math.sin(d17) * 10);
+						var k5 = rounddown(Math.cos(d17) * 10, true, mc.mp) * -1;
+						var i12 = rounddown(Math.sin(d17) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k5, i12);
 						d17 = 4.1866669654846191;
-						k5 = Math.floor(Math.cos(d17) * 10) * -1;
-						i12 = Math.floor(Math.sin(d17) * 10);
+						k5 = rounddown(Math.cos(d17) * 10, true, mc.mp) * -1;
+						i12 = rounddown(Math.sin(d17) * 10, true, mc.mp);
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k5, i12);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
@@ -1388,52 +1411,53 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 23) {
+				// はっぱカッター 斜め下へ連射
 				if (boss_shageki_c2 == 1) {
 					if (boss_vx <= 0) {
 						var d18 = 3.1400001049041748;
-						var l5 = Math.floor(Math.cos(d18) * 10);
-						var j12 = Math.floor(Math.sin(d18) * 10) * -1;
+						var l5 = rounddown(Math.cos(d18) * 10, true, mc.mp);
+						var j12 = rounddown(Math.sin(d18) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l5, j12);
 						d18 = 3.8377780914306641;
-						l5 = Math.floor(Math.cos(d18) * 10);
-						j12 = Math.floor(Math.sin(d18) * 10) * -1;
+						l5 = rounddown(Math.cos(d18) * 10, true, mc.mp);
+						j12 = rounddown(Math.sin(d18) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l5, j12);
 						d18 = 4.5355558395385742;
-						l5 = Math.floor(Math.cos(d18) * 10);
-						j12 = Math.floor(Math.sin(d18) * 10) * -1;
+						l5 = rounddown(Math.cos(d18) * 10, true, mc.mp);
+						j12 = rounddown(Math.sin(d18) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, l5, j12);
 					} else {
 						var d19 = 3.1400001049041748;
-						var i6 = Math.floor(Math.cos(d19) * 10) * -1;
-						var k12 = Math.floor(Math.sin(d19) * 10) * -1;
+						var i6 = rounddown(Math.cos(d19) * 10, true, mc.mp) * -1;
+						var k12 = rounddown(Math.sin(d19) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i6, k12);
 						d19 = 3.8377780914306641;
-						i6 = Math.floor(Math.cos(d19) * 10) * -1;
-						k12 = Math.floor(Math.sin(d19) * 10) * -1;
+						i6 = rounddown(Math.cos(d19) * 10, true, mc.mp) * -1;
+						k12 = rounddown(Math.sin(d19) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i6, k12);
 						d19 = 4.5355558395385742;
-						i6 = Math.floor(Math.cos(d19) * 10) * -1;
-						k12 = Math.floor(Math.sin(d19) * 10) * -1;
+						i6 = rounddown(Math.cos(d19) * 10, true, mc.mp) * -1;
+						k12 = rounddown(Math.sin(d19) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, i6, k12);
 					}
 				} else if (boss_shageki_c2 == 18)
 					if (boss_vx <= 0) {
 						var d20 = 3.4888889789581299;
-						var j6 = Math.floor(Math.cos(d20) * 10);
-						var l12 = Math.floor(Math.sin(d20) * 10) * -1;
+						var j6 = rounddown(Math.cos(d20) * 10, true, mc.mp);
+						var l12 = rounddown(Math.sin(d20) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j6, l12);
 						d20 = 4.1866669654846191;
-						j6 = Math.floor(Math.cos(d20) * 10);
-						l12 = Math.floor(Math.sin(d20) * 10) * -1;
+						j6 = rounddown(Math.cos(d20) * 10, true, mc.mp);
+						l12 = rounddown(Math.sin(d20) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, j6, l12);
 					} else {
 						var d21 = 3.4888889789581299;
-						var k6 = Math.floor(Math.cos(d21) * 10) * -1;
-						var i13 = Math.floor(Math.sin(d21) * 10) * -1;
+						var k6 = rounddown(Math.cos(d21) * 10, true, mc.mp) * -1;
+						var i13 = rounddown(Math.sin(d21) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k6, i13);
 						d21 = 4.1866669654846191;
-						k6 = Math.floor(Math.cos(d21) * 10) * -1;
-						i13 = Math.floor(Math.sin(d21) * 10) * -1;
+						k6 = rounddown(Math.cos(d21) * 10, true, mc.mp) * -1;
+						i13 = rounddown(Math.sin(d21) * 10, true, mc.mp) * -1;
 						mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, k6, i13);
 					}
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
@@ -1442,45 +1466,53 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 24) {
+				// 水の波動
 				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 90);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 25) {
+				// グレネード 短射程
 				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -5, -32);
 				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + 16, 800, 5, -32);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 26) {
+				// グレネード 中射程
 				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -10, -32);
 				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + 16, 800, 10, -32);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 27) {
+				// グレネード 長射程
 				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + 16, 800, -15, -32);
 				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + 16, 800, 15, -32);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 28) {
+				// プラズマ砲
 				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 810, -12, 0);
 				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 810, 12, 0);
 				mc.mp.gs.rsAddSound(22);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 29) {
+				// 破壊光線
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 77, -1, 0);
 				mc.mp.gs.rsAddSound(14);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 30) {
+				// ソーラービーム
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 75, -1, 0);
 				mc.mp.gs.rsAddSound(11);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 31) {
+				// うずしお
 				if (boss_vx <= 0) {
 					for (var l = 0; l <= 270; l += 90)
 						mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 970, l, 0);
@@ -1492,6 +1524,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 32) {
+				// はっぱカッター 左へ３連射
 				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 9 || boss_shageki_c2 == 17)
 					mc.mp.mSet(boss_x + 16, boss_y + 16, 200);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
@@ -1500,6 +1533,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 33) {
+				// はっぱカッター 右へ３連射
 				if (boss_shageki_c2 == 1 || boss_shageki_c2 == 9 || boss_shageki_c2 == 17)
 					mc.mp.mSet(boss_x + boss_width - 48, boss_y + 16, 205);
 				if (boss_shageki_c2 == 1) mc.mp.gs.rsAddSound(11);
@@ -1508,81 +1542,91 @@ CanvasMasao.MasaoKani2 = function(mc) {
 					flag = true;
 				}
 			} else if (j14 == 34) {
+				// はっぱカッター 水平発射
 				if (boss_vx <= 0) mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, -8, 0);
 				else mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, 8, 0);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 35) {
+				// はっぱカッター 左へ水平発射
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 731, -8, 0);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 36) {
+				// はっぱカッター 右へ水平発射
 				mc.mp.mSet2(boss_x + boss_width - 48, boss_y + ((boss_height - 32) >> 1), 731, 8, 0);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 37) {
+				// バブル光線 左へ４発発射
 				var d22 = 3.4016668796539307;
-				var l6 = Math.floor(Math.cos(d22) * 8);
-				var j13 = Math.floor(Math.sin(d22) * 8) * -1;
+				var l6 = rounddown(Math.cos(d22) * 8, true, mc.mp);
+				var j13 = rounddown(Math.sin(d22) * 8, true, mc.mp) * -1;
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13);
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13 * -1);
 				d22 = 3.9249999523162842;
-				l6 = Math.floor(Math.cos(d22) * 8);
-				j13 = Math.floor(Math.sin(d22) * 8) * -1;
+				l6 = rounddown(Math.cos(d22) * 8, true, mc.mp);
+				j13 = rounddown(Math.sin(d22) * 8, true, mc.mp) * -1;
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13);
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, l6, j13 * -1);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 38) {
+				// バブル光線 右へ４発発射
 				var d23 = 3.4016668796539307;
-				var i7 = Math.floor(Math.cos(d23) * 8) * -1;
-				var k13 = Math.floor(Math.sin(d23) * 8) * -1;
+				var i7 = rounddown(Math.cos(d23) * 8, true, mc.mp) * -1;
+				var k13 = rounddown(Math.sin(d23) * 8, true, mc.mp) * -1;
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13);
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13 * -1);
 				d23 = 3.9249999523162842;
-				i7 = Math.floor(Math.cos(d23) * 8) * -1;
-				k13 = Math.floor(Math.sin(d23) * 8) * -1;
+				i7 = rounddown(Math.cos(d23) * 8, true, mc.mp) * -1;
+				k13 = rounddown(Math.sin(d23) * 8, true, mc.mp) * -1;
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13);
 				mc.mp.mSet2(boss_x + 16, boss_y + ((boss_height - 32) >> 1), 710, i7, k13 * -1);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 39) {
+				// バブル光線 上へ発射
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, 0, -8);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 40) {
+				// バブル光線 下へ発射
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, 0, 8);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 41) {
+				// バブル光線 上へ４発発射
 				var d24 = 4.9716668128967285;
-				var j7 = Math.floor(Math.cos(d24) * 8) * -1;
-				var l13 = Math.floor(Math.sin(d24) * 8);
+				var j7 = rounddown(Math.cos(d24) * 8, true, mc.mp) * -1;
+				var l13 = rounddown(Math.sin(d24) * 8, true, mc.mp);
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7, l13);
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7 * -1, l13);
 				d24 = 5.4950003623962402;
-				j7 = Math.floor(Math.cos(d24) * 8) * -1;
-				l13 = Math.floor(Math.sin(d24) * 8);
+				j7 = rounddown(Math.cos(d24) * 8, true, mc.mp) * -1;
+				l13 = rounddown(Math.sin(d24) * 8, true, mc.mp);
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7, l13);
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + 16, 710, j7 * -1, l13);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 42) {
+				// バブル光線 下へ４発発射
 				var d25 = 4.9716668128967285;
-				var k7 = Math.floor(Math.cos(d25) * 8) * -1;
-				var i14 = Math.floor(Math.sin(d25) * 8) * -1;
+				var k7 = rounddown(Math.cos(d25) * 8, true, mc.mp) * -1;
+				var i14 = rounddown(Math.sin(d25) * 8, true, mc.mp) * -1;
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7, i14);
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7 * -1, i14);
 				d25 = 5.4950003623962402;
-				k7 = Math.floor(Math.cos(d25) * 8) * -1;
-				i14 = Math.floor(Math.sin(d25) * 8) * -1;
+				k7 = rounddown(Math.cos(d25) * 8, true, mc.mp) * -1;
+				i14 = rounddown(Math.sin(d25) * 8, true, mc.mp) * -1;
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7, i14);
 				mc.mp.mSet2(boss_x + ((boss_width - 32) >> 1), boss_y + boss_height - 48, 710, k7 * -1, i14);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 43) {
+				// はっぱカッター ２発水平発射
 				if (boss_vx <= 0) {
 					mc.mp.mSet2(boss_x + 16, boss_y, 731, -8, 0);
 					mc.mp.mSet2(boss_x + 16, boss_y + boss_height - 32, 731, -8, 0);
@@ -1594,17 +1638,20 @@ CanvasMasao.MasaoKani2 = function(mc) {
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 44) {
+				// 水の波動 水平発射
 				if (boss_vx <= 0) mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 95);
 				else mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 96);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 45) {
+				// 水の波動 左へ発射
 				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 95);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
 				flag = true;
 			} else if (j14 == 46) {
+				// 水の波動 右へ発射
 				mc.mp.mSet(boss_x + ((boss_width - 32) >> 1), boss_y + ((boss_height - 32) >> 1), 96);
 				mc.mp.gs.rsAddSound(18);
 				boss_shageki_c = k14;
@@ -1779,6 +1826,17 @@ CanvasMasao.MasaoKani2 = function(mc) {
 
 	function getParameter(s) {
 		return mc.getParameter(s);
+	}
+
+	/**
+	 * 小数切り捨て
+	 * @param {number} val 切り捨てを行いたい小数
+	 * @param {boolean} option option が true かつ bc-use-rounddown がfalseの時Canvasオリジナルに
+	 * @returns {number} 小数切り捨て後の値
+	 */
+	function rounddown(val, option = false, mp) {
+		if (val >= 0 || (option && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
+		else return -Math.floor(-val);
 	}
 };
 

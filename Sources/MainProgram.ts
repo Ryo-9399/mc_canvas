@@ -751,163 +751,159 @@ class MainProgram {
 		var flag = false;
 		switch (i) {
 			case 1:
+			case 30: // ヘルメット
 				this.j_helm_f = true;
 				flag = true;
 				break;
 
-			case 2:
+			case 2: // ドリル
 				this.j_drell_f = true;
 				flag = true;
 				break;
 
-			case 3:
+			case 3: // 落ちるのが遅い
 				this.jst_slow_down = 1;
 				flag = true;
 				break;
 
-			case 4:
+			case 4: // 下キーを押すと急降下
 				this.jst_key_down = 1;
 				flag = true;
 				break;
 
-			case 5:
+			case 5: // 全速体当たりで敵を倒せる
 				this.jst_fast_run_attack = 1;
 				flag = true;
 				break;
 
-			case 6:
+			case 6: // 空中の左右加速度が高い
 				this.jst_fly_left_right = 1;
 				flag = true;
 				break;
 
-			case 7:
+			case 7: // 速く走れる
 				this.jst_fast_run = 1;
 				flag = true;
 				break;
 
-			case 8:
+			case 8: // 走れない
 				this.jst_fast_run = 2;
 				flag = true;
 				break;
 
-			case 9:
+			case 9: // 空中でもう１回ジャンプできる
 				this.jst_double_jump = 1;
 				flag = true;
 				break;
 
-			case 10:
+			case 10: // 	壁キック
 				this.jst_kabe_kick = 1;
 				flag = true;
 				break;
 
-			case 11:
+			case 11: // 壁ジャンプ
 				this.jst_kabe_kick = 2;
 				flag = true;
 				break;
 
-			case 12:
+			case 12: // ジャンプ時にファイヤーボールが出ない
 				this.jst_fire_xkey_only = 1;
 				flag = true;
 				break;
 
-			case 13:
+			case 13: // ジャンプの高さを固定 小
 				this.jst_jump_level_fix = 1;
 				flag = true;
 				break;
 
-			case 14:
+			case 14: // ジャンプの高さを固定 小中
 				this.jst_jump_level_fix = 2;
 				flag = true;
 				break;
 
-			case 15:
+			case 15: // ジャンプの高さを固定 中
 				this.jst_jump_level_fix = 3;
 				flag = true;
 				break;
 
-			case 16:
+			case 16: // ジャンプの高さを固定 大
 				this.jst_jump_level_fix = 4;
 				flag = true;
 				break;
 
-			case 17:
+			case 17: // しっぽ 敵を倒せる
 				this.j_tail_type = 1;
 				this.j_tail_f = true;
 				flag = true;
 				break;
 
-			case 18:
+			case 18: // しっぽ ブロック１を壊せる
 				this.j_tail_type = 2;
 				this.j_tail_f = true;
 				flag = true;
 				break;
 
-			case 19:
+			case 19: // しっぽ 敵を倒せてブロック１を壊せる
 				this.j_tail_type = 3;
 				this.j_tail_f = true;
 				flag = true;
 				break;
 
-			case 20:
+			case 20: // ファイヤーボール 跳ねる
 				this.j_fire_type = 1;
 				this.j_fire_f = true;
 				flag = true;
 				break;
 
-			case 21:
+			case 21: // ファイヤーボール 水平に飛ぶ
 				this.j_fire_type = 2;
 				this.j_fire_range = 9999;
 				this.j_fire_f = true;
 				flag = true;
 				break;
 
-			case 22:
+			case 22: // ファイヤーボール ダブル
 				this.j_fire_type = 4;
 				this.j_fire_range = 10;
 				this.j_fire_f = true;
 				flag = true;
 				break;
 
-			case 23:
+			case 23: // ファイヤーボール 水平に飛ぶ 短射程
 				this.j_fire_type = 3;
 				this.j_fire_range = 10;
 				this.j_fire_f = true;
 				flag = true;
 				break;
 
-			case 24:
+			case 24: // ファイヤーボール ホーミングアミュレット
 				this.j_fire_type = 5;
 				this.j_fire_f = true;
 				flag = true;
 				break;
 
-			case 25:
+			case 25: // 昇龍拳
 				this.jst_syouryuuken = 1;
 				flag = true;
 				break;
 
-			case 26:
+			case 26: // サイコクラッシャーアタック
 				this.jst_pc_attack = 1;
 				flag = true;
 				break;
 
-			case 27:
+			case 27: // ロケット頭突き
 				this.jst_pc_attack = 2;
 				flag = true;
 				break;
 
-			case 28:
+			case 28: // スカイアッパー
 				this.jst_syouryuuken = 2;
 				flag = true;
 				break;
 
-			case 29:
+			case 29: // 流星キック
 				this.jst_key_down = 2;
-				flag = true;
-				break;
-
-			case 30:
-				this.j_helm_f = true;
 				flag = true;
 				break;
 		}
@@ -924,6 +920,7 @@ class MainProgram {
 		var flag = false;
 		switch (i) {
 			case 1:
+			case 30:
 				this.j_helm_f = false;
 				flag = true;
 				break;
@@ -954,10 +951,6 @@ class MainProgram {
 				break;
 
 			case 7:
-				this.jst_fast_run = 0;
-				flag = true;
-				break;
-
 			case 8:
 				this.jst_fast_run = 0;
 				flag = true;
@@ -969,10 +962,6 @@ class MainProgram {
 				break;
 
 			case 10:
-				this.jst_kabe_kick = 0;
-				flag = true;
-				break;
-
 			case 11:
 				this.jst_kabe_kick = 0;
 				flag = true;
@@ -984,20 +973,8 @@ class MainProgram {
 				break;
 
 			case 13:
-				this.jst_jump_level_fix = 0;
-				flag = true;
-				break;
-
 			case 14:
-				this.jst_jump_level_fix = 0;
-				flag = true;
-				break;
-
 			case 15:
-				this.jst_jump_level_fix = 0;
-				flag = true;
-				break;
-
 			case 16:
 				this.jst_jump_level_fix = 0;
 				flag = true;
@@ -1055,32 +1032,19 @@ class MainProgram {
 				break;
 
 			case 25:
-				this.jst_syouryuuken = 0;
-				flag = true;
-				break;
-
-			case 26:
-				this.jst_pc_attack = 0;
-				flag = true;
-				break;
-
-			case 27:
-				this.jst_pc_attack = 0;
-				flag = true;
-				break;
-
 			case 28:
 				this.jst_syouryuuken = 0;
 				flag = true;
 				break;
 
-			case 29:
-				this.jst_key_down = 0;
+			case 26:
+			case 27:
+				this.jst_pc_attack = 0;
 				flag = true;
 				break;
 
-			case 30:
-				this.j_helm_f = false;
+			case 29:
+				this.jst_key_down = 0;
 				flag = true;
 				break;
 		}
@@ -1373,7 +1337,11 @@ class MainProgram {
 	 * * 0: タイトル画像
 	 * * 1: エンディング画像
 	 * * 2: ゲームクリア画像
-	 * * 3: ？ TODO: 要調査
+	 * * 3: 地図画面
+	 * * 4: ステージ１の背景画像
+	 * * 5: ステージ２の背景画像
+	 * * 6: ステージ３の背景画像
+	 * * 7: ステージ４の背景画像
 	 * * 8: パターン画像
 	 * * 9: 背景マップチップ画像
 	 *
@@ -1391,7 +1359,7 @@ class MainProgram {
 		else if (i == 9) {
 			this.gg.setMapchipImage(s1);
 		} else {
-			if (this.gg.layer_mode != 2 && i > 3) return false;
+			if (this.gg.layer_mode != 2 && this.mcs_haikei_visible != 1 && i > 3) return false;
 			this.gg.li[i] = this.gg.loadImage(s1)!;
 			if (i == 3 && this.ml_mode == 200) this.ig.drawOs2();
 		}
@@ -1690,181 +1658,181 @@ class MainProgram {
 			default:
 				break;
 
-			case 1:
+			case 1: // 亀 足元に空白があると落ちる
 				this.tSet(i, j, 100, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 2:
+			case 2: // 亀 足元に空白があると向きを変える
 				this.tSet(i, j, 110, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 3:
+			case 3: // 亀 ３匹連続
 				this.tSet(i, j, 110, i - 512 - 32);
 				this.tSet(i + 75, j, 110, i - 512 - 32);
 				this.tSet(i + 150, j, 110, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 4:
+			case 4: // ピカチー
 				this.tSet(i, j, 200, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 5:
+			case 5: // チコリン
 				this.tSet(i, j, 300, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 6:
+			case 6: // ヒノララシ
 				this.tSet(i, j, 400, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 7:
+			case 7: // ポッピー 上下移動
 				this.tSet(i, j, 500, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 8:
+			case 8: // ポッピー 直進
 				this.tSet(i, j, 510, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 9:
+			case 9: // ポッピー ３羽連続
 				this.tSet(i, j, 510, i - 512 - 32 - 32);
 				this.tSet(i + 80, j - 40, 510, i - 512 - 32 - 32);
 				this.tSet(i + 140, j + 38, 510, i - 512 - 32 - 32);
 				flag = true;
 				break;
 
-			case 10:
+			case 10: // マリリ
 				this.tSet(i, j, 600, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 11:
+			case 11: // ヤチャモ
 				this.tSet(i, j, 700, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 12:
+			case 12: // ミズタロウ
 				this.tSet(i, j, 800, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 13:
+			case 13: // エアームズ
 				this.tSet(i, j, 900, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 14:
+			case 14: // 水なしタイキング
 				this.tSet(i, j - 16, 1000, i - 512 - 32 - 32);
 				flag = true;
 				break;
 
-			case 15:
+			case 15: // 水なしクラゲッソ
 				this.tSet(i, j, 1100, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 16:
+			case 16: // 電撃
 				this.mSet(i, j, 100);
 				this.gs.rsAddSound(10);
 				flag = true;
 				break;
 
-			case 17:
+			case 17: // 葉っぱカッターが左に１枚
 				this.mSet(i, j, 200);
 				this.gs.rsAddSound(11);
 				flag = true;
 				break;
 
-			case 18:
+			case 18: // 葉っぱカッターが右に１枚
 				this.mSet(i, j, 205);
 				this.gs.rsAddSound(11);
 				flag = true;
 				break;
 
-			case 19:
+			case 19: // 火の粉左
 				this.mSet(i, j, 300);
 				this.gs.rsAddSound(14);
 				flag = true;
 				break;
 
-			case 20:
+			case 20: // 火の粉右
 				this.mSet(i, j, 305);
 				this.gs.rsAddSound(14);
 				flag = true;
 				break;
 
-			case 21:
+			case 21: // 水鉄砲左
 				this.mSet(i, j, 400);
 				this.gs.rsAddSound(15);
 				flag = true;
 				break;
 
-			case 22:
+			case 22: // 水鉄砲右
 				this.mSet(i, j, 405);
 				this.gs.rsAddSound(15);
 				flag = true;
 				break;
 
-			case 23:
+			case 23: // エアームズ爆弾左
 				this.mSet(i, j + 19, 600);
 				flag = true;
 				break;
 
-			case 24:
+			case 24: // エアームズ爆弾右
 				this.mSet(i, j + 19, 605);
 				flag = true;
 				break;
 
-			case 25:
+			case 25: // エアームズ爆弾直下降
 				this.mSet(i, j + 19, 606);
 				flag = true;
 				break;
 
-			case 26:
+			case 26: // 水の波動
 				this.mSet(i, j, 90);
 				this.gs.rsAddSound(18);
 				flag = true;
 				break;
 
-			case 27:
+			case 27: // 左にグレネード 短射程
 				this.mSet2(i, j, 800, -5, -32);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 28:
+			case 28: // 左にグレネード 中射程
 				this.mSet2(i, j, 800, -10, -32);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 29:
+			case 29: // 左にグレネード 長射程
 				this.mSet2(i, j, 800, -15, -32);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 30:
+			case 30: // 噴火（威力小）
 				this.mSet2(i, j, 500, 8 - this.ranInt(17), -25);
 				flag = true;
 				break;
 
-			case 31:
+			case 31: // 噴火（威力大）
 				this.mSet2(i, j, 500, 12 - this.ranInt(25), -30);
 				flag = true;
 				break;
 
-			case 32:
+			case 32: // カイオール版バブル光線（１発目）
 				for (var l = 0; l <= 7; l++) {
 					var d = (l * 45 * 3.14) / 180;
-					var l1 = Math.floor(Math.cos(d) * 8);
-					var k2 = Math.floor(Math.sin(d) * 8) * -1;
+					var l1 = rounddown(Math.cos(d) * 8, true, this);
+					var k2 = rounddown(Math.sin(d) * 8, true, this) * -1;
 					this.mSet2(i, j, 710, l1, k2);
 					this.gs.rsAddSound(18);
 				}
@@ -1872,171 +1840,171 @@ class MainProgram {
 				flag = true;
 				break;
 
-			case 33:
+			case 33: // 左にバブル光線３発
 				var d1 = 3.1400001049041748;
-				var i2 = Math.floor(Math.cos(d1) * 12);
-				var l2 = Math.floor(Math.sin(d1) * 12) * -1;
+				var i2 = rounddown(Math.cos(d1) * 12, true, this);
+				var l2 = rounddown(Math.sin(d1) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, i2, l2);
 				d1 = 2.7038888931274414;
-				i2 = Math.floor(Math.cos(d1) * 12);
-				l2 = Math.floor(Math.sin(d1) * 12) * -1;
+				i2 = rounddown(Math.cos(d1) * 12, true, this);
+				l2 = rounddown(Math.sin(d1) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, i2, l2);
 				d1 = 3.5761110782623291;
-				i2 = Math.floor(Math.cos(d1) * 12);
-				l2 = Math.floor(Math.sin(d1) * 12) * -1;
+				i2 = rounddown(Math.cos(d1) * 12, true, this);
+				l2 = rounddown(Math.sin(d1) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, i2, l2);
 				this.gs.rsAddSound(18);
 				flag = true;
 				break;
 
-			case 34:
+			case 34: // 左にバブル光線４発
 				var d2 = 3.3144445419311523;
-				var j2 = Math.floor(Math.cos(d2) * 12);
-				var i3 = Math.floor(Math.sin(d2) * 12) * -1;
+				var j2 = rounddown(Math.cos(d2) * 12, true, this);
+				var i3 = rounddown(Math.sin(d2) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, j2, i3);
 				d2 = 2.9655554294586182;
-				j2 = Math.floor(Math.cos(d2) * 12);
-				i3 = Math.floor(Math.sin(d2) * 12) * -1;
+				j2 = rounddown(Math.cos(d2) * 12, true, this);
+				i3 = rounddown(Math.sin(d2) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, j2, i3);
 				d2 = 3.6633334159851074;
-				j2 = Math.floor(Math.cos(d2) * 12);
-				i3 = Math.floor(Math.sin(d2) * 12) * -1;
+				j2 = rounddown(Math.cos(d2) * 12, true, this);
+				i3 = rounddown(Math.sin(d2) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, j2, i3);
 				d2 = 2.6166667938232422;
-				j2 = Math.floor(Math.cos(d2) * 12);
-				i3 = Math.floor(Math.sin(d2) * 12) * -1;
+				j2 = rounddown(Math.cos(d2) * 12, true, this);
+				i3 = rounddown(Math.sin(d2) * 12, true, this) * -1;
 				this.mSet2(i, j, 710, j2, i3);
 				this.gs.rsAddSound(18);
 				flag = true;
 				break;
 
-			case 35:
+			case 35: // 左回りファイアーバー
 				this.aSet(i + 16, j + 16, 70, i);
 				flag = true;
 				break;
 
-			case 36:
+			case 36: // 右回りファイアーバー
 				this.aSet(i + 16, j + 16, 71, i);
 				flag = true;
 				break;
 
-			case 37:
+			case 37: // ファイヤーバー３本 左回り
 				this.aSet(i + 16, j + 16, 72, i);
 				this.aSet(i + 16, j + 16, 74, i);
 				this.aSet(i + 16, j + 16, 76, i);
 				flag = true;
 				break;
 
-			case 38:
+			case 38: // ファイヤーバー３本 右回り
 				this.aSet(i + 16, j + 16, 73, i);
 				this.aSet(i + 16, j + 16, 75, i);
 				this.aSet(i + 16, j + 16, 77, i);
 				flag = true;
 				break;
 
-			case 39:
+			case 39: // 上下に動く床
 				this.aSet(i, j, 101, i);
 				flag = true;
 				break;
 
-			case 40:
+			case 40: // 左右に動く床
 				this.aSet(i, j + 9, 111, i);
 				flag = true;
 				break;
 
-			case 41:
+			case 41: // チコリン（はっぱカッター 乱れ射ち）
 				this.tSet(i, j, 320, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 42:
+			case 42: // チコリン（左にソーラービーム）
 				this.tSet(i, j, 330, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 43:
+			case 43: // マリリ（左右移動）
 				this.tSet(i, j, 660, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 44:
+			case 44: // マリリ（体当たり）
 				this.tSet(i, j, 670, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 45:
+			case 45: // ヤチャモ（火の粉三連射）
 				this.tSet(i, j, 710, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 46:
+			case 46: // ヤチャモ（左に破壊光線）
 				this.tSet(i, j, 720, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 47:
+			case 47: // エアームズ（左右に動いて爆弾投下）
 				this.tSet(i, j, 930, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 48:
+			case 48: // エアームズ（その場て爆弾投下）
 				this.tSet(i, j, 920, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 49:
+			case 49: // タイキング（はねる）
 				this.tSet(i, j, 1050, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 50:
+			case 50: // タイキング（縄張りを守る）
 				this.tSet(i, j, 1060, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 51:
+			case 51: // タイキング（左回り）
 				this.tSet(i, j, 1070, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 52:
+			case 52: // タイキング（右回り）
 				this.tSet(i, j, 1080, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 53:
+			case 53: // クラゲッソ（近づくと落ちる）
 				this.tSet(i, j, 1150, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 54:
+			case 54: // クラゲッソ（縄張りを守る）
 				this.tSet(i, j, 1160, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 55:
+			case 55: // クラゲッソ（左回り）
 				this.tSet(i, j, 1170, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 56:
+			case 56: // クラゲッソ（右回り）
 				this.tSet(i, j, 1180, i - 512 - 32);
 				flag = true;
 				break;
 
-			case 57:
+			case 57: // グラーダの投げる亀
 				this.tSetBoss(i, j, 150, -4);
 				break;
 
-			case 58:
+			case 58: // グラーダの投げるヒノララシ
 				this.tSetBoss(i, j, 450, -3);
 				break;
 
-			case 59:
+			case 59: // グラーダの投げるマリリ
 				this.tSetBoss(i, j, 650, -3);
 				break;
 
-			case 60:
+			case 60: // ハリケンブラスト
 				for (var i1 = 0; i1 <= 300; i1 += 90) {
 					this.mSet2(i, j, 950, i1, 0);
 					this.mSet2(i, j, 960, 300 - i1, 0);
@@ -2046,164 +2014,164 @@ class MainProgram {
 				flag = true;
 				break;
 
-			case 61:
+			case 61: // 左にはっぱカッター 乱れ射ち
 				var d3 = 3.1400001049041748;
-				this.mSet2(i, j, 731, Math.floor(Math.cos(d3) * 9), Math.floor(Math.sin(d3) * 9));
+				this.mSet2(i, j, 731, rounddown(Math.cos(d3) * 9, true, this), rounddown(Math.sin(d3) * 9, true, this));
 				d3 = 3.6633334159851074;
-				this.mSet2(i, j, 731, Math.floor(Math.cos(d3) * 9), Math.floor(Math.sin(d3) * 9));
+				this.mSet2(i, j, 731, rounddown(Math.cos(d3) * 9, true, this), rounddown(Math.sin(d3) * 9, true, this));
 				d3 = 4.1866669654846191;
-				this.mSet2(i, j, 731, Math.floor(Math.cos(d3) * 9), Math.floor(Math.sin(d3) * 9));
+				this.mSet2(i, j, 731, rounddown(Math.cos(d3) * 9, true, this), rounddown(Math.sin(d3) * 9, true, this));
 				this.gs.rsAddSound(11);
 				flag = true;
 				break;
 
-			case 62:
+			case 62: // 右にはっぱカッター 乱れ射ち
 				var d4 = 0.0;
-				this.mSet2(i, j, 731, Math.floor(Math.cos(d4) * 9), Math.floor(Math.sin(d4) * 9));
+				this.mSet2(i, j, 731, rounddown(Math.cos(d4) * 9, true, this), rounddown(Math.sin(d4) * 9, true, this));
 				d4 = 5.7566671371459961;
-				this.mSet2(i, j, 731, Math.floor(Math.cos(d4) * 9), Math.floor(Math.sin(d4) * 9));
+				this.mSet2(i, j, 731, rounddown(Math.cos(d4) * 9, true, this), rounddown(Math.sin(d4) * 9, true, this));
 				d4 = 5.2333335876464844;
-				this.mSet2(i, j, 731, Math.floor(Math.cos(d4) * 9), Math.floor(Math.sin(d4) * 9));
+				this.mSet2(i, j, 731, rounddown(Math.cos(d4) * 9, true, this), rounddown(Math.sin(d4) * 9, true, this));
 				this.gs.rsAddSound(11);
 				flag = true;
 				break;
 
-			case 63:
+			case 63: // 左にみずでっぽう 水平発射
 				this.mSet2(i - 16, j, 732, -10, 0);
 				this.gs.rsAddSound(15);
 				flag = true;
 				break;
 
-			case 64:
+			case 64: // 右にみずでっぽう 水平発射
 				this.mSet2(i - 16, j, 732, 10, 0);
 				this.gs.rsAddSound(15);
 				flag = true;
 				break;
 
-			case 65:
+			case 65: // 左にソーラービーム
 				this.mSet2(i, j, 75, -1, 0);
 				this.gs.rsAddSound(11);
 				flag = true;
 				break;
 
-			case 66:
+			case 66: // 左にプラズマ砲
 				this.mSet2(i, j, 810, -12, 0);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 67:
+			case 67: // 右にプラズマ砲
 				this.mSet2(i, j, 810, 12, 0);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 68:
+			case 68: // 左に破壊光線
 				this.mSet2(i, j, 77, -1, 0);
 				this.gs.rsAddSound(14);
 				flag = true;
 				break;
 
-			case 69:
+			case 69: // 左に電撃３発
 				var d5 = 3.1400001049041748;
-				this.mSet2(i, j, 733, Math.floor(Math.cos(d5) * 9), Math.floor(Math.sin(d5) * 9));
+				this.mSet2(i, j, 733, rounddown(Math.cos(d5) * 9, true, this), rounddown(Math.sin(d5) * 9, true, this));
 				d5 = 3.6633334159851074;
-				this.mSet2(i, j, 733, Math.floor(Math.cos(d5) * 9), Math.floor(Math.sin(d5) * 9));
+				this.mSet2(i, j, 733, rounddown(Math.cos(d5) * 9, true, this), rounddown(Math.sin(d5) * 9, true, this));
 				d5 = 2.6166667938232422;
-				this.mSet2(i, j, 733, Math.floor(Math.cos(d5) * 9), Math.floor(Math.sin(d5) * 9));
+				this.mSet2(i, j, 733, rounddown(Math.cos(d5) * 9, true, this), rounddown(Math.sin(d5) * 9, true, this));
 				this.gs.rsAddSound(10);
 				flag = true;
 				break;
 
-			case 70:
+			case 70: // 右に電撃３発
 				var d6 = 0.0;
-				this.mSet2(i, j, 733, Math.floor(Math.cos(d6) * 9), Math.floor(Math.sin(d6) * 9));
+				this.mSet2(i, j, 733, rounddown(Math.cos(d6) * 9, true, this), rounddown(Math.sin(d6) * 9, true, this));
 				d6 = 5.7566671371459961;
-				this.mSet2(i, j, 733, Math.floor(Math.cos(d6) * 9), Math.floor(Math.sin(d6) * 9));
+				this.mSet2(i, j, 733, rounddown(Math.cos(d6) * 9, true, this), rounddown(Math.sin(d6) * 9, true, this));
 				d6 = 0.52333337068557739;
-				this.mSet2(i, j, 733, Math.floor(Math.cos(d6) * 9), Math.floor(Math.sin(d6) * 9));
+				this.mSet2(i, j, 733, rounddown(Math.cos(d6) * 9, true, this), rounddown(Math.sin(d6) * 9, true, this));
 				this.gs.rsAddSound(10);
 				flag = true;
 				break;
 
-			case 71:
+			case 71: // 左にうずしお
 				for (var j1 = 0; j1 <= 270; j1 += 90) this.mSet2(i, j, 970, j1, 0);
 
 				this.gs.rsAddSound(18);
 				flag = true;
 				break;
 
-			case 72:
+			case 72: // 右にうずしお
 				for (var k1 = 0; k1 <= 270; k1 += 90) this.mSet2(i, j, 980, k1, 0);
 
 				this.gs.rsAddSound(18);
 				flag = true;
 				break;
 
-			case 73:
+			case 73: // 左に流星群（中距離）
 				this.mSet2(i, j, 740, -4, 9);
 				flag = true;
 				break;
 
-			case 74:
+			case 74: // 左に流星群（短距離）
 				this.mSet2(i, j, 740, -4, 11);
 				flag = true;
 				break;
 
-			case 75:
+			case 75: // 右に流星群（中距離）
 				this.mSet2(i, j, 740, 4, 9);
 				flag = true;
 				break;
 
-			case 76:
+			case 76: // 右に流星群（短距離）
 				this.mSet2(i, j, 740, 4, 11);
 				flag = true;
 				break;
 
-			case 77:
+			case 77: // 右にグレネード 短射程
 				this.mSet2(i, j, 800, 5, -32);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 78:
+			case 78: // 右にグレネード 中射程
 				this.mSet2(i, j, 800, 10, -32);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 79:
+			case 79: // 右にグレネード 長射程
 				this.mSet2(i, j, 800, 15, -32);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 80:
+			case 80: // ブロック１の破片
 				this.mSet2(i, j, 80, 12, -24);
 				this.mSet2(i, j, 80, -12, -24);
 				this.gs.rsAddSound(16);
 				flag = true;
 				break;
 
-			case 81:
+			case 81: // 落下グレネード
 				this.mSet2(i, j, 800, 0, 0);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 82:
+			case 82: // グレネードの爆風のみ
 				this.mSet2(i, j, 801, 0, 0);
 				this.gs.rsAddSound(22);
 				flag = true;
 				break;
 
-			case 83:
+			case 83: // 右にソーラービーム
 				this.mSet2(i, j, 85, -1, 0);
 				this.gs.rsAddSound(11);
 				flag = true;
 				break;
 
-			case 84:
+			case 84: // 右に破壊光線
 				this.mSet2(i, j, 87, -1, 0);
 				this.gs.rsAddSound(14);
 				flag = true;
@@ -2422,6 +2390,7 @@ class MainProgram {
 			i++;
 			j += 10;
 			this.maps.map_bg[i][j] = k;
+			if (this.map_data_option[i][j]) this.map_data_option[i][j] = false; //map_data_optionをリセット
 			this.setmapc_f = true;
 			return true;
 		}
@@ -2658,38 +2627,97 @@ class MainProgram {
 	 * 画面上部のスコア・残り時間・HP・残機を描画します
 	 */
 	drawScore() {
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+		// 変更前のフォントを保持
+		const beforeFont = this.hg._font;
+
+		this.hg.setColor(this.gamecolor_score);
+		this.hg.setFont(new Font(this.gg.font_score, 1, this.moji_size));
 
 		// 描画座標
 		const display_x = 40;
 		const display_y = this.moji_size + 14;
 
-		// NOTE: 謎の仕様なので廃止検討
-		// スコアを表示しない場合のみスペースが挿入される部分がある
+		// スコアを表示する場合は表示領域の関係上スペースを省略する
 		const spacer = this.score_v ? "" : " ";
 		let str = "";
 		if (this.score_v) {
 			// 得点を表示する
-			str += `${this.moji_score} ${this.score}  ${this.moji_highscore} ${this.highscore}`;
+			str += `${this.moji_score} ${this.score}    ${this.moji_highscore} ${this.highscore}`;
 		}
 		if (this.j_left_shoki > 0 || this.j_left > 0) {
 			// 残機を表示
-			str += `${this.moji_left}${spacer}${this.j_left}`;
+			str += `${this.moji_left}${spacer}${this.j_left}${spacer}${spacer}${spacer}${spacer}`;
 		}
 		if (this.time_max > 0) {
 			// 制限時間を表示
 			const time_sec = Math.floor(this.time / 1000);
-			str += `${spacer}${this.moji_time}${spacer}${time_sec}`;
+			str += `${this.moji_time}${spacer}${time_sec}`;
 		}
-		this.gg.os_g.drawString(str, display_x, display_y);
+		this.hg.drawString(str, display_x, display_y);
 
 		// 2行目Y座標
 		const display_y2 = display_y * 2 - 6;
 		// HP表示
 		if (this.j_hp_v && this.ml_mode === 100) {
 			const str_hp = `${this.j_hp_moji} ${this.j_hp}`;
-			this.gg.os_g.drawString(str_hp, display_x, display_y2);
+			this.hg.drawString(str_hp, display_x, display_y2);
+		}
+		// フォントを元に戻す
+		this.hg.setFont(beforeFont);
+	}
+
+	/**
+	 * 画面下部のグレネードの数・ジェットの残量・鍵を描画します
+	 */
+	drawItem() {
+		// 変更前のフォントを保持
+		const beforeFont = this.hg._font;
+
+		// グレネードの数・ジェットの残量の描画座標
+		const display_x = 40;
+		let display_y = 287;
+
+		//鍵を表示
+		if (this.dkey_count[0] + this.dkey_count[1] >= 1) {
+			// 鍵の描画座標
+			let key_x = 8;
+			const key_y = 280;
+
+			/**
+			 * @param n {number} 鍵の種類
+			 */
+			const drawKey = n => {
+				if (this.dkey_count[n - 1] > 0) {
+					[...Array(this.dkey_count[n - 1])].map(() => {
+						this.hg.setColor(this.dkey_back_color);
+						this.hg.fillRect(key_x - 2, key_y - 2, 36, 36);
+						this.hg.drawImage(this.gg.spt_option_img[n + 2], key_x, key_y, this.ap);
+						key_x += 36;
+						display_y = 255;
+					});
+				}
+			};
+
+			drawKey(1); // KEY1
+			drawKey(2); // KEY2
+		}
+
+		if (this.j_jet_fuel > 0 || this.j_gr_kazu > 0) {
+			let str = "";
+			this.hg.setColor(this.gamecolor_score);
+
+			this.hg.setFont(new Font(this.gg.font_score, 1, this.moji_size));
+
+			if (this.j_jet_fuel > 0) str += `${this.moji_jet} ${this.j_jet_fuel}`; //ジェットの燃料を表示
+			if (this.j_gr_kazu > 0) {
+				if (this.j_jet_fuel > 0) str += "  ";
+				//グレネードを表示
+				str += this.moji_grenade;
+				if (this.j_gr_kazu !== 1) str += ` ${this.j_gr_kazu}`;
+			}
+			this.hg.drawString(str, display_x, display_y + this.moji_size);
+			// フォントを元に戻す
+			this.hg.setFont(beforeFont);
 		}
 	}
 
@@ -2698,8 +2726,11 @@ class MainProgram {
 	 * 地図画面でのスコア表示に使われる
 	 */
 	drawScore2() {
-		this.gg.os_g.setColor(this.gamecolor_score);
-		this.gg.os_g.setFont(new Font("Dialog", 1, this.moji_size));
+		// 変更前のフォントを保持
+		const beforeFont = this.hg._font;
+
+		this.hg.setColor(this.gamecolor_score);
+		this.hg.setFont(new Font(this.gg.font_score, 1, this.moji_size));
 
 		// 描画座標
 		const display_x = 40;
@@ -2708,13 +2739,15 @@ class MainProgram {
 		let str = "";
 		if (this.score_v) {
 			// 得点を表示する
-			str = `${this.moji_score} ${this.score}  ${this.moji_highscore} ${this.highscore}`;
+			str = `${this.moji_score} ${this.score}    ${this.moji_highscore} ${this.highscore}`;
 		}
 		if (this.j_left_shoki > 0 || this.j_left > 0) {
 			// 残機を表示
 			str += `${this.moji_left}${this.j_left}`;
 		}
-		this.gg.os_g.drawString(str, display_x, display_y);
+		this.hg.drawString(str, display_x, display_y);
+		// フォントを元に戻す
+		this.hg.setFont(beforeFont);
 	}
 
 	/**
@@ -3834,39 +3867,7 @@ class MainProgram {
 		this.dso_cf = false;
 		if (this.system_draw_mode != 4) this.drawScore();
 		this.gs.rsPlay();
-		var c = 0x118;
-		var c1 = 0x11f;
-		if (this.dkey_count[0] + this.dkey_count[1] >= 1) {
-			var j9 = 8;
-			if (this.dkey_count[0] > 0) {
-				for (var k2 = 1; k2 <= this.dkey_count[0]; k2++) {
-					this.hg.setColor(this.dkey_back_color);
-					this.hg.fillRect(j9 - 2, c - 2, 36, 36);
-					this.hg.drawImage(this.gg.spt_option_img[3], j9, c, this.ap);
-					j9 += 36;
-					c1 = 255;
-				}
-			}
-			if (this.dkey_count[1] > 0) {
-				for (var l2 = 1; l2 <= this.dkey_count[1]; l2++) {
-					this.hg.setColor(this.dkey_back_color);
-					this.hg.fillRect(j9 - 2, c - 2, 36, 36);
-					this.hg.drawImage(this.gg.spt_option_img[4], j9, c, this.ap);
-					j9 += 36;
-					c1 = 255;
-				}
-			}
-		}
-		this.gg.os_g.setColor(this.gamecolor_score);
-		if (this.j_jet_fuel > 0) {
-			var s = "" + this.moji_jet + " " + this.j_jet_fuel;
-			if (this.j_gr_kazu > 0)
-				if (this.j_gr_kazu == 1) s = "" + s + "  " + this.moji_grenade;
-				else s = "" + s + "  " + this.moji_grenade + " " + this.j_gr_kazu;
-			this.hg.drawString(s, 40, c1 + this.moji_size);
-		} else if (this.j_gr_kazu > 0)
-			if (this.j_gr_kazu == 1) this.hg.drawString(this.moji_grenade, 40, c1 + this.moji_size);
-			else this.hg.drawString("" + this.moji_grenade + " " + this.j_gr_kazu, 40, c1 + this.moji_size);
+		if (this.system_draw_mode != 4) this.drawItem();
 		if (this.gk.key_code == 84) {
 			this.gk.key_code = 0;
 			this.ml_mode = 50;
@@ -3888,8 +3889,8 @@ class MainProgram {
 				this.gg.drawListImage(0, 0, 1);
 				this.drawScore();
 			} else if (this.ml_mode == 250 || this.ml_mode == 260) {
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				this.hg.setColor(Color.black);
+				this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
 				this.drawScore();
 			}
 	}
@@ -3899,11 +3900,65 @@ class MainProgram {
 	 */
 	mainLoop() {
 		this.gk.left_right_lock = false;
+
+		const drawStageStart = () => {
+			// 複数ステージ時にステージ開始画面を描画
+			this.hg.setColor(this.gamecolor_kaishi);
+			this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+			if (this.stage >= this.stage_max) {
+				// ラストステージ
+				this.gg.drawPT(160, 144, 52, 0);
+				this.gg.drawPT(192, 144, 53, 0);
+				this.gg.drawPT(224, 144, 54, 0);
+				this.gg.drawPT(256, 144, 55, 0);
+				this.gg.drawPT(288, 144, 56, 0);
+				this.gg.drawPT(320, 144, 57, 0);
+			} else {
+				// ステージ1〜3
+				this.gg.drawPT(192, 144, 70, 0);
+				this.gg.drawPT(224, 144, 71, 0);
+				this.gg.drawPT(256, 144, 72, 0);
+				if (this.stage >= this.stage_max) this.gg.drawPT(288, 144, 75, 0);
+				if (this.stage == 3) this.gg.drawPT(288, 144, 75, 0);
+				else if (this.stage == 2) this.gg.drawPT(288, 144, 74, 0);
+				else this.gg.drawPT(288, 144, 73, 0);
+			}
+			this.drawScore();
+		};
+
+		const drawBlack = () => {
+			// 地図画面からステージ開始時に画面を真っ暗にする
+			this.hg.setColor(Color.black);
+			this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+		};
+
+		const drawTitle = () => {
+			// タイトル画面を表示。スコアやハイスコアが存在する時、スコアも表示する
+			this.gg.drawListImage(0, 0, 0); // タイトル画像を表示
+			if (this.score > 0 || this.highscore > 0) this.drawScore();
+		};
+
+		const drawGameOver = () => {
+			// ゲームオーバー画面を表示
+			this.gg.setBackcolor(Color.black);
+			this.gg.fill();
+			this.gg.drawListImage(0, 0, 2); // ゲームオーバー画像を表示
+			this.drawScore();
+		};
+
+		const returningTitle = () => {
+			// Tキーを押すとタイトルに戻る
+			if (this.gk.key_code == 84) {
+				this.gk.key_code = 0;
+				this.ml_mode = 50;
+			}
+		};
+
 		switch (this.ml_mode) {
 			default:
 				break;
 
-			case 50:
+			case 50: // タイトル画面
 				this.draw_lock_f = false;
 				if (this.start_game_f) {
 					this.gs.play(0);
@@ -3911,24 +3966,21 @@ class MainProgram {
 					if (this.stage_select == 2) {
 						this.init2();
 						this.ig.worldInit();
-						this.gg.os_g.setColor(Color.black);
-						this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+						drawBlack();
 						this.ml_mode = 200;
 						this.gs.playBGM(7);
 						break;
 					}
 					this.init2();
 					this.init3();
-					this.gg.drawListImage(0, 0, 0);
-					if (this.score > 0 || this.highscore > 0) this.drawScore();
+					drawTitle();
 					if (this.j_left <= 0 && this.stage_max <= 1) this.ml_mode = 100;
 					else this.ml_mode = 90;
 					if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
 					break;
 				}
 				this.gs.playBGM(5);
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
+				drawTitle();
 				this.stage = 1;
 				if (!this.gm.button_f && !this.gk.tr1_f && !this.gk.tr2_f) {
 					this.ml_mode = 60;
@@ -3938,8 +3990,7 @@ class MainProgram {
 				break;
 
 			case 60:
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
+				drawTitle();
 				if (this.g_c1 == 0) {
 					if (this.gk.key_char == 0x76) this.g_c1 = 1;
 				} else if (this.g_c1 == 1) {
@@ -3961,8 +4012,7 @@ class MainProgram {
 				if (this.stage_select == 2) {
 					this.init2();
 					this.ig.worldInit();
-					this.gg.os_g.setColor(Color.black);
-					this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+					drawBlack();
 					this.ml_mode = 200;
 					this.gs.playBGM(7);
 					break;
@@ -3970,19 +4020,17 @@ class MainProgram {
 				this.init2();
 				this.ml_mode = 100;
 				this.init3();
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
+				drawTitle();
 				if (this.j_left <= 0 && this.stage_max <= 1) this.ml_mode = 100;
 				else this.ml_mode = 90;
 				if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
 				break;
 
-			case 80:
+			case 80: // ステージ開始
 				this.init2();
 				this.ml_mode = 100;
 				this.init3();
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
+				drawTitle();
 				if (this.j_left <= 0) this.ml_mode = 100;
 				else this.ml_mode = 90;
 				if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
@@ -3992,25 +4040,7 @@ class MainProgram {
 				this.dso_cf = true;
 				this.init3();
 				if (this.mode_wait_stagestart == 0) this.ml_mode = 100;
-				this.gg.os_g.setColor(this.gamecolor_kaishi);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
-				if (this.stage >= this.stage_max) {
-					this.gg.drawPT(160, 144, 52, 0);
-					this.gg.drawPT(192, 144, 53, 0);
-					this.gg.drawPT(224, 144, 54, 0);
-					this.gg.drawPT(256, 144, 55, 0);
-					this.gg.drawPT(288, 144, 56, 0);
-					this.gg.drawPT(320, 144, 57, 0);
-				} else {
-					this.gg.drawPT(192, 144, 70, 0);
-					this.gg.drawPT(224, 144, 71, 0);
-					this.gg.drawPT(256, 144, 72, 0);
-					if (this.stage >= this.stage_max) this.gg.drawPT(288, 144, 75, 0);
-					if (this.stage == 3) this.gg.drawPT(288, 144, 75, 0);
-					else if (this.stage == 2) this.gg.drawPT(288, 144, 74, 0);
-					else this.gg.drawPT(288, 144, 73, 0);
-				}
-				this.drawScore();
+				drawStageStart();
 				this.ml_mode = 91;
 				this.ml_mode_c = 0;
 				if (this.stage >= 1 && this.stage <= 4) this.gs.playBGM(this.stage - 1);
@@ -4019,32 +4049,11 @@ class MainProgram {
 			case 91:
 				this.ml_mode_c++;
 				if (this.ml_mode_c > this.mode_wait_stagestart) this.ml_mode = 100;
-				this.gg.os_g.setColor(this.gamecolor_kaishi);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
-				if (this.stage >= this.stage_max) {
-					this.gg.drawPT(160, 144, 52, 0);
-					this.gg.drawPT(192, 144, 53, 0);
-					this.gg.drawPT(224, 144, 54, 0);
-					this.gg.drawPT(256, 144, 55, 0);
-					this.gg.drawPT(288, 144, 56, 0);
-					this.gg.drawPT(320, 144, 57, 0);
-				} else {
-					this.gg.drawPT(192, 144, 70, 0);
-					this.gg.drawPT(224, 144, 71, 0);
-					this.gg.drawPT(256, 144, 72, 0);
-					if (this.stage >= this.stage_max) this.gg.drawPT(288, 144, 75, 0);
-					if (this.stage == 3) this.gg.drawPT(288, 144, 75, 0);
-					else if (this.stage == 2) this.gg.drawPT(288, 144, 74, 0);
-					else this.gg.drawPT(288, 144, 73, 0);
-				}
-				this.drawScore();
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				drawStageStart(); // 2.8では呼び出されていなかったのでもしかしたら不要？
+				returningTitle();
 				break;
 
-			case 95:
+			case 95: // 地図画面時 ショップで購入したアイテムを反映
 				this.stage = this.ig.checkStage();
 				this.init3();
 				switch (this.ig.shop_kattaitem) {
@@ -4085,8 +4094,7 @@ class MainProgram {
 						if (this.time_max > 0) this.time += 30000;
 						break;
 				}
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore();
 				this.ml_mode = 96;
 				this.ml_mode_c = 0;
@@ -4096,46 +4104,31 @@ class MainProgram {
 			case 96:
 				this.ml_mode_c++;
 				if (this.ml_mode_c > 8) this.ml_mode = 100;
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore();
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				returningTitle();
 				break;
 
-			case 110:
+			case 110: // ポーズ中
 				if (this.ml_mode_c < 8) this.ml_mode_c++;
 				if (this.ml_mode_c == 1) {
-					this.gg.os_g.setColor(new Color(0, 0, 0, 160));
-					this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+					this.hg.setColor(new Color(0, 0, 0, 160));
+					this.hg.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+					this.drawItem();
+					this.drawScore();
+					this.hg.setColor(Color.white);
+					this.hg.setFont(new Font(Font.DIALOG, 1, 32));
+					this.hg.drawString("PAUSE", 200, 144);
 				}
-				this.drawScore();
-				if (this.j_jet_fuel > 0) {
-					var s = "" + this.moji_jet + " " + this.j_jet_fuel;
-					if (this.j_gr_kazu > 0)
-						if (this.j_gr_kazu == 1) s = "" + s + "  " + this.moji_grenade;
-						else s = "" + s + "  " + this.moji_grenade + " " + this.j_gr_kazu;
-					this.hg.drawString(s, 40, 287 + this.moji_size);
-				} else if (this.j_gr_kazu > 0)
-					if (this.j_gr_kazu == 1) this.hg.drawString(this.moji_grenade, 40, 287 + this.moji_size);
-					else this.hg.drawString("" + this.moji_grenade + " " + this.j_gr_kazu, 40, 287 + this.moji_size);
-				this.gg.os_g.setColor(Color.white);
-				this.gg.os_g.setFont(new Font("Dialog", 1, 32));
-				this.gg.os_g.drawString("PAUSE", 200, 144);
 				if (this.gk.key_code == 80 && this.ml_mode_c >= 8) {
 					this.gk.key_code = 0;
 					this.ml_mode = 100;
 					this.gk.init();
 				}
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				returningTitle();
 				break;
 
-			case 200:
+			case 200: // 地図画面
 				this.ig.drawMap();
 				this.ig.mainProgram();
 				this.time = 0;
@@ -4143,15 +4136,11 @@ class MainProgram {
 				if (this.ig.mp_mode == 110)
 					if (this.ig.dokan_khID >= 1) this.ml_mode = 230;
 					else this.ml_mode = 95;
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				returningTitle();
 				break;
 
 			case 230:
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore2();
 				this.ml_mode = 231;
 				this.ml_mode_c = 0;
@@ -4159,8 +4148,7 @@ class MainProgram {
 				break;
 
 			case 231:
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore2();
 				this.ml_mode_c++;
 				if (this.ml_mode_c == 5) {
@@ -4172,10 +4160,7 @@ class MainProgram {
 
 					location.href = s1;
 				} else if (this.ml_mode_c > 80) this.ml_mode = 50;
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				returningTitle();
 				break;
 
 			case 250:
@@ -4183,8 +4168,7 @@ class MainProgram {
 				this.ig.worldInit2();
 				this.ml_mode = 251;
 				this.ml_mode_c = 0;
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore();
 				this.gs.playBGM(7);
 				break;
@@ -4192,13 +4176,9 @@ class MainProgram {
 			case 251:
 				this.ml_mode_c++;
 				if (this.ml_mode_c > 8) this.ml_mode = 200;
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore();
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				returningTitle();
 				break;
 
 			case 260:
@@ -4206,8 +4186,7 @@ class MainProgram {
 				this.ig.worldInit3();
 				this.ml_mode = 261;
 				this.ml_mode_c = 0;
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore();
 				this.gs.playBGM(7);
 				break;
@@ -4215,24 +4194,17 @@ class MainProgram {
 			case 261:
 				this.ml_mode_c++;
 				if (this.ml_mode_c > 8) this.ml_mode = 200;
-				this.gg.os_g.setColor(Color.black);
-				this.gg.os_g.fillRect(0, 0, this.gg.di.width, this.gg.di.height);
+				drawBlack();
 				this.drawScore();
-				if (this.gk.key_code == 84) {
-					this.gk.key_code = 0;
-					this.ml_mode = 50;
-				}
+				returningTitle();
 				break;
 
-			case 300:
+			case 300: // ゲームオーバー
 				if (this.mode_wait_gameover == 0) {
 					this.gk.key_code = 0;
 					this.ml_mode = 50;
 				} else {
-					this.gg.setBackcolor(Color.black);
-					this.gg.fill();
-					this.gg.drawListImage(0, 0, 2);
-					this.drawScore();
+					drawGameOver();
 					this.ml_mode = 310;
 					this.ml_mode_c = 0;
 					this.gs.play(1);
@@ -4242,25 +4214,20 @@ class MainProgram {
 				break;
 
 			case 310:
-				this.gg.setBackcolor(Color.black);
-				this.gg.fill();
-				this.gg.drawListImage(0, 0, 2);
-				this.drawScore();
+				drawGameOver();
 				this.ml_mode_c++;
 				if (this.ml_mode_c > this.mode_wait_gameover) {
 					this.ml_mode = 50;
 					this.gk.key_code = 0;
-					this.gg.drawListImage(0, 0, 0);
-					if (this.score > 0 || this.highscore > 0) this.drawScore();
+					drawTitle();
 				}
 				if (this.gk.key_code != 84) break;
 				this.gk.key_code = 0;
 				this.ml_mode = 50;
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
+				drawTitle();
 				break;
 
-			case 400:
+			case 400: // エンディング
 				if (this.mode_wait_ending == 0) {
 					this.gk.key_code = 0;
 					this.ml_mode = 50;
@@ -4275,27 +4242,24 @@ class MainProgram {
 				break;
 
 			case 410:
+				//↓エンディング画像が昔は重ねて表示していたせいでαチャンネル付きPNGではおかしな表示になっていた…
 				//this.gg.drawListImage(0, 0, 1);
 				this.ml_mode_c++;
 				if (this.ml_mode_c > this.mode_wait_ending) {
 					this.ml_mode = 50;
-					this.gg.drawListImage(0, 0, 0);
-					if (this.score > 0 || this.highscore > 0) this.drawScore();
+					drawTitle();
 					this.gk.key_code = 0;
 				}
 				if (this.gk.key_code != 84) break;
 				this.gk.key_code = 0;
 				this.ml_mode = 50;
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
+				drawTitle();
 				break;
 
 			case 500:
 				this.gg.setBackcolor(Color.black);
 				this.gg.fill();
-				this.gg.drawListImage(0, 0, 0);
-				if (this.score > 0 || this.highscore > 0) this.drawScore();
-				this.ml_mode = 50;
+				drawTitle();
 				this.ml_mode = 50;
 				break;
 
@@ -4309,9 +4273,9 @@ class MainProgram {
 			case 1010:
 				this.gg.setBackcolor(Color.black);
 				this.gg.fill();
-				this.hg.setFont(new Font("Dialog", 0, 46));
+				this.hg.setFont(new Font(Font.DIALOG, 0, 46));
 				this.hg.setColor(Color.white);
-				this.hg.setFont(new Font("Dialog", 0, 20));
+				this.hg.setFont(new Font(Font.DIALOG, 0, 20));
 				this.hg.drawString("Title    MASAO CONSTRUCTION FX", 50, 50);
 				this.hg.drawString("Version    Update 16 Build 62", 50, 80);
 				this.hg.drawString("Language   Java2 SDK 1.6.0 Update 16", 50, 110);
@@ -4492,8 +4456,6 @@ class MainProgram {
 		if (this.grenade_type < 1 || this.grenade_type > 9) this.grenade_type = 1;
 		this.boss_destroy_type = this.tdb.getValueInt("boss_destroy_type");
 		if (this.boss_destroy_type != 2) this.boss_destroy_type = 1;
-		this.boss_hp_max = this.tdb.getValueInt("boss_hp_max");
-		if (this.boss_hp_max < 1) this.boss_hp_max = 1;
 		this.j_tail_ap_boss = this.tdb.getValueInt("j_tail_ap_boss");
 		if (this.j_tail_ap_boss < 0) this.j_tail_ap_boss = 4;
 		this.suberuyuka_hkf = this.tdb.getValueInt("suberuyuka_hkf");
@@ -4748,6 +4710,9 @@ class MainProgram {
 		this.j_muteki_c = 0;
 		this.j_4_muki = 1;
 		this.j_speed = 80;
+		// ボスの最大HPを初期化
+		this.boss_hp_max = this.tdb.getValueInt("boss_hp_max");
+		if (this.boss_hp_max < 1) this.boss_hp_max = 1;
 		this.boss_hp = this.boss_hp_max;
 		this.tpika_p = 0;
 		this.hitokoto_c = -1;
@@ -5192,12 +5157,7 @@ class MainProgram {
 				for (var i1 = 0; i1 < this.maps.width; i1++) {
 					var word0 = 0;
 					if (mapchipLayer) {
-						try {
-							word0 = mapchipLayer.map[j3 - 10][i1 - 1];
-							if (!word0) {
-								word0 = 0;
-							}
-						} catch (ex) {}
+						word0 = mapchipLayer.map[j3 - 10] ? mapchipLayer.map[j3 - 10][i1 - 1] : 0;
 					} else {
 						var c = as1[j3].charAt(i1 * 2);
 						if (c == ".") continue;
@@ -5948,10 +5908,12 @@ class MainProgram {
 		}
 		if (this.jst_auto_right > 0)
 			if (this.jst_auto_right == 1) {
+				//特技 ひたすら右に歩く の状態
 				this.gk.right_f = true;
 				this.gk.left_f = false;
 				this.j_hashiru_f = false;
 			} else if (this.jst_auto_right == 2) {
+				//特技 ひたすら右に走る の状態
 				this.gk.right_f = true;
 				this.gk.left_f = false;
 				this.j_hashiru_f = true;
@@ -7813,7 +7775,10 @@ class MainProgram {
 								l29 = this.maps.map_bg[rightShiftIgnoreSign(this.co_j.x + 15, 5)][
 									rightShiftIgnoreSign(this.co_j.y - 1, 5)
 								];
-								if (l29 <= 9) {
+								const isThrough = this.maps.mp.map_data_option[rightShiftIgnoreSign(this.co_j.x + 15, 5)][
+									rightShiftIgnoreSign(this.co_j.y - 1, 5)
+								];
+								if (l29 <= 9 || l29 === 15 || (l29 === 18 && isThrough) || (l29 === 19 && isThrough)) {
 									for (var k6 = 0; k6 <= 5; k6++) {
 										this.j_zan_x[k6] = j5;
 										this.j_zan_y[k6] = k5;
@@ -10113,6 +10078,7 @@ class MainProgram {
 			this.down_key_c = 0;
 		}
 		if (this.co_j.c == 110) {
+			// 敵を踏む
 			if (this.gk.left_f) {
 				this.co_j.vx -= 10;
 				if (this.co_j.vx < -60) this.co_j.vx = -60;
@@ -10133,15 +10099,18 @@ class MainProgram {
 			this.co_j.pt = 109;
 			this.moveViewPosition();
 		} else if (this.co_j.c == 120) {
+			// アイテムのドリルで穴を掘っている
 			this.co_j.c1++;
 			if (this.co_j.c1 > 6) this.co_j.c = 100;
 			this.co_j.pt = 119;
 			this.moveViewPosition();
 		} else if (this.co_j.c == 130) {
+			// ロードランナー時に特技として穴を掘っている
 			this.co_j.c1++;
 			if (this.co_j.c1 > 9) this.co_j.c = 100;
 			this.moveViewPosition();
 		} else if (this.co_j.c == 140) {
+			// 	ロープまたはゆれる棒につかまっている
 			if (this.gk.right_f) this.co_j.muki = 1;
 			else if (this.gk.left_f) this.co_j.muki = 0;
 			if (this.co_a[this.j_rope_id].c == 3200) {
@@ -10175,11 +10144,11 @@ class MainProgram {
 			}
 			this.co_j.x =
 				this.co_a[this.j_rope_id].x +
-				Math.floor(Math.cos((this.co_a[this.j_rope_id].vy * 3.1415926535897931) / 180) * this.j_rope_r) -
+				rounddown(Math.cos((this.co_a[this.j_rope_id].vy * 3.1415926535897931) / 180) * this.j_rope_r, true, this) -
 				16;
 			this.co_j.y =
 				this.co_a[this.j_rope_id].y +
-				Math.floor(Math.sin((this.co_a[this.j_rope_id].vy * 3.1415926535897931) / 180) * this.j_rope_r) -
+				rounddown(Math.sin((this.co_a[this.j_rope_id].vy * 3.1415926535897931) / 180) * this.j_rope_r, true, this) -
 				16;
 			this.co_j.vx = 0;
 			this.co_j.vy = 0;
@@ -10285,6 +10254,7 @@ class MainProgram {
 			else this.co_j.pt = 1200;
 			this.moveViewPosition();
 		} else if (this.co_j.c == 145) {
+			// 乗れるカイオール（方向キーで移動）に乗っている
 			if (this.gk.right_f) {
 				this.co_j.muki = 1;
 				this.co_a[this.j_rope_id].x += 4;
@@ -10431,12 +10401,14 @@ class MainProgram {
 			}
 			this.moveViewPosition();
 		} else if (this.co_j.c == 150) {
+			// setMyWaitで硬直している お店など利用中
 			this.co_j.pt = this.setmyw_pt;
 			this.co_j.muki = this.setmyw_muki;
 			this.co_j.c1--;
 			if (this.co_j.c1 <= 0) this.co_j.c = 100;
 			this.moveViewPosition();
 		} else if (this.co_j.c == 200) {
+			// 敵に接触した
 			this.co_j.vy += 25;
 			if (this.co_j.vy > 100) this.co_j.vy = 100;
 			this.co_j.y += rounddown(this.co_j.vy / 10);
@@ -10471,6 +10443,7 @@ class MainProgram {
 				this.co_j.pt = 0;
 			}
 		} else if (this.co_j.c == 210) {
+			// 死亡し、ゲームオーバー画面が出る前
 			if (this.spot_c == 100) this.spot_c = 200;
 			if (this.stage_cc <= 0) {
 				this.co_j.c1++;
@@ -10484,6 +10457,7 @@ class MainProgram {
 				}
 			}
 		} else if (this.co_j.c == 220) {
+			// 上から潰れて死亡
 			this.co_j.pt = 114;
 			this.co_j.c1++;
 			if (this.co_j.c1 >= 25) {
@@ -10491,6 +10465,7 @@ class MainProgram {
 				this.co_j.c1 = 0;
 			}
 		} else if (this.co_j.c == 230) {
+			// 横から潰れて死亡
 			this.co_j.pt = 115;
 			this.co_j.c1++;
 			if (this.co_j.c1 >= 25) {
@@ -10498,6 +10473,7 @@ class MainProgram {
 				this.co_j.c1 = 0;
 			}
 		} else if (this.co_j.c == 240) {
+			// 針などに触れて死亡
 			if (this.co_j.c2 >= 100) this.co_j.y += 10;
 			this.co_j.wx = this.co_j.x - this.maps.wx;
 			this.co_j.wy = this.co_j.y - this.maps.wy;
@@ -10530,6 +10506,7 @@ class MainProgram {
 				this.co_j.pt = 0;
 			}
 		} else if (this.co_j.c == 250) {
+			// ドットイート等で敵に接触した
 			this.co_j.c1++;
 			if (this.co_j.c1 <= 5) {
 				this.co_j.pt = 110;
@@ -10553,6 +10530,7 @@ class MainProgram {
 			this.co_j.wx = this.co_j.x - this.maps.wx;
 			this.co_j.wy = this.co_j.y - this.maps.wy;
 		} else if (this.co_j.c == 300) {
+			// 土管に入る
 			this.co_j.pt = 1100;
 			this.co_j.c1++;
 			if (this.co_j.c1 >= 32) {
@@ -10565,6 +10543,7 @@ class MainProgram {
 			if (this.co_j.c1 == 1) this.gs.rsAddSound(21);
 			this.moveViewPosition();
 		} else if (this.co_j.c == 310) {
+			// 土管移動中
 			this.co_j.pt = 1110;
 			if (this.stage_cc <= 0) {
 				this.co_j.c1++;
@@ -10666,6 +10645,7 @@ class MainProgram {
 				} else if (this.co_j.c1 > 80) this.ml_mode = 50;
 			}
 		} else if (this.co_j.c == 320) {
+			// 土管から出る
 			this.co_j.pt = 1100;
 			this.co_j.c1--;
 			if (this.co_j.c1 <= 0) {
@@ -10674,6 +10654,7 @@ class MainProgram {
 				this.co_j.pt = 100;
 			}
 		} else if (this.co_j.c == 400) {
+			// 人間大砲に入る＆照準合わせ中
 			if (this.co_j.c1 > 48) {
 				this.co_j.c1--;
 				this.co_j.pt = 100;
@@ -10718,15 +10699,16 @@ class MainProgram {
 				this.co_j.muki = 1;
 			}
 			if (this.co_j.c1 > 48) {
+				// 人間大砲に入っている途中
 				this.co_j.x =
 					this.co_a[this.j_rope_id].x +
 					16 +
-					Math.floor(Math.cos((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1) -
+					rounddown(Math.cos((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1, true, this) -
 					16;
 				this.co_j.y =
 					this.co_a[this.j_rope_id].y +
 					16 +
-					Math.floor(Math.sin((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1) -
+					rounddown(Math.sin((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1, true, this) -
 					16;
 			} else {
 				this.co_j.x = this.co_a[this.j_rope_id].x;
@@ -10734,21 +10716,22 @@ class MainProgram {
 			}
 			this.j_cannon_c = 1;
 			if (this.tr1_c >= 1 && this.tr1_c <= 5 && this.co_a[this.j_rope_id].c4 % 15 == 0 && this.co_j.c1 <= 48) {
+				// 人間大砲に完全に入った
 				this.co_j.x =
 					this.co_a[this.j_rope_id].x +
 					16 +
-					Math.floor(Math.cos((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1) -
+					rounddown(Math.cos((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1, true, this) -
 					16;
 				this.co_j.y =
 					this.co_a[this.j_rope_id].y +
 					16 +
-					Math.floor(Math.sin((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1) -
+					rounddown(Math.sin((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * this.co_j.c1, true, this) -
 					16;
 				this.j_jump_type = 0;
 				this.co_j.ac = 0;
 				this.co_j.c = 100;
-				this.co_j.vx = Math.floor(Math.cos((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * 160);
-				this.co_j.vy = Math.floor(Math.sin((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * 160);
+				this.co_j.vx = rounddown(Math.cos((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * 160, true, this);
+				this.co_j.vy = rounddown(Math.sin((this.co_a[this.j_rope_id].c4 * 3.1415926535897931) / 180) * 160, true, this);
 				this.j_jump_level = 5;
 				this.j_djump_kf = true;
 				this.co_j.pt = 101;
@@ -10772,6 +10755,7 @@ class MainProgram {
 				this.gs.rsAddSound(19);
 			}
 			if (this.co_j.c1 <= 48 && this.co_j.c != 100) {
+				// 人間大砲から発射中
 				this.co_j.wx = this.co_j.x - this.maps.wx;
 				this.co_j.wy = this.co_j.y - this.maps.wy;
 				if (
@@ -11192,7 +11176,7 @@ class MainProgram {
 					break;
 
 				case 50:
-					// ?
+					// 敵死亡
 					characterobject.c1++;
 					if (
 						characterobject.c2 >= 0 &&
@@ -11213,7 +11197,7 @@ class MainProgram {
 					break;
 
 				case 52:
-					// ?
+					// アイテム攻撃による敵死亡
 					l20 += characterobject.vx;
 					characterobject.vy += 5;
 					if (characterobject.vy > 25) characterobject.vy = 25;
@@ -11225,7 +11209,7 @@ class MainProgram {
 					break;
 
 				case 54:
-					// ?
+					// 追跡亀をアイテムで倒す
 					l20 += characterobject.vx;
 					characterobject.vy += 5;
 					if (characterobject.vy > 25) characterobject.vy = 25;
@@ -11237,7 +11221,7 @@ class MainProgram {
 					break;
 
 				case 55:
-					// ?
+					// シューティングまたは４方向移動の時敵をアイテムで倒す
 					characterobject.c1++;
 					if (characterobject.c1 == 1) this.addScore(10);
 					characterobject.pth = 0;
@@ -11252,6 +11236,7 @@ class MainProgram {
 					break;
 
 				case 57:
+					// 重力無視の追跡ピカチー等をアイテムで倒す
 					characterobject.c1++;
 					characterobject.pth = 0;
 					if (characterobject.c1 <= 3) characterobject.pt = 172;
@@ -11266,6 +11251,7 @@ class MainProgram {
 					break;
 
 				case 60:
+					// アイテムで倒した追跡亀の復活待機中
 					if (characterobject.c1 == 1) {
 						i21 = this.maps.wy_mini - 32;
 						var j = 0;
@@ -11299,6 +11285,7 @@ class MainProgram {
 					break;
 
 				case 65:
+					// アイテムで倒した重力無視の追跡ピカチー等の復活待機中
 					characterobject.c1++;
 					if (characterobject.c1 < 50) {
 						i21 = this.maps.wy_mini - 32;
@@ -11371,24 +11358,24 @@ class MainProgram {
 						characterobject.c1++;
 						if (characterobject.c1 == 8) {
 							var d20 = 3.1400001049041748;
-							var k29 = Math.floor(Math.cos(d20) * 12);
-							var i33 = Math.floor(Math.sin(d20) * 12) * -1;
+							var k29 = rounddown(Math.cos(d20) * 12, true, this);
+							var i33 = rounddown(Math.sin(d20) * 12, true, this) * -1;
 							this.mSet2(l20, i21, 730, k29, i33);
 							d20 = 2.7038888931274414;
-							k29 = Math.floor(Math.cos(d20) * 12);
-							i33 = Math.floor(Math.sin(d20) * 12) * -1;
+							k29 = rounddown(Math.cos(d20) * 12, true, this);
+							i33 = rounddown(Math.sin(d20) * 12, true, this) * -1;
 							this.mSet2(l20, i21, 730, k29, i33);
 							d20 = 2.2677779197692871;
-							k29 = Math.floor(Math.cos(d20) * 12);
-							i33 = Math.floor(Math.sin(d20) * 12) * -1;
+							k29 = rounddown(Math.cos(d20) * 12, true, this);
+							i33 = rounddown(Math.sin(d20) * 12, true, this) * -1;
 							this.mSet2(l20, i21, 730, k29, i33);
 							d20 = 3.5761110782623291;
-							k29 = Math.floor(Math.cos(d20) * 12);
-							i33 = Math.floor(Math.sin(d20) * 12) * -1;
+							k29 = rounddown(Math.cos(d20) * 12, true, this);
+							i33 = rounddown(Math.sin(d20) * 12, true, this) * -1;
 							this.mSet2(l20, i21, 730, k29, i33);
 							d20 = 4.0122222900390625;
-							k29 = Math.floor(Math.cos(d20) * 12);
-							i33 = Math.floor(Math.sin(d20) * 12) * -1;
+							k29 = rounddown(Math.cos(d20) * 12, true, this);
+							i33 = rounddown(Math.sin(d20) * 12, true, this) * -1;
 							this.mSet2(l20, i21, 730, k29, i33);
 							this.gs.rsAddSound(18);
 						}
@@ -11444,8 +11431,8 @@ class MainProgram {
 						if (characterobject.c1 == 1) {
 							for (var j9 = 0; j9 <= 315; j9 += 45) {
 								var d21 = (j9 * 3.14) / 180;
-								var l29 = Math.floor(Math.cos(d21) * 12);
-								var j33 = Math.floor(Math.sin(d21) * 12) * -1;
+								var l29 = rounddown(Math.cos(d21) * 12, true, this);
+								var j33 = rounddown(Math.sin(d21) * 12, true, this) * -1;
 								this.mSet2(l20, i21, 730, l29, j33);
 							}
 						}
@@ -11663,7 +11650,7 @@ class MainProgram {
 				characterobject.c1 = 0;
 				this.m_kazu++;
 				switch (k) {
-					case 90:
+					case 90: // 水の波動
 						characterobject.c2 = 4;
 						characterobject.vx = 0;
 						characterobject.vy = 0;
@@ -11682,7 +11669,7 @@ class MainProgram {
 						characterobject.vy = 0;
 						break;
 
-					case 100:
+					case 100: // 電撃
 						var k1 = this.co_j.x - i;
 						var i2 = this.co_j.y - j;
 						var i1 = Math.floor(Math.sqrt(k1 * k1 + i2 * i2));
@@ -11729,7 +11716,7 @@ class MainProgram {
 						}
 						break;
 
-					case 200:
+					case 200: // 葉っぱカッターが左に１枚
 						characterobject.c2 = 0;
 						characterobject.vx = -4 - this.ranInt(6);
 						characterobject.vy = -22;
@@ -11746,7 +11733,7 @@ class MainProgram {
 						characterobject.y += characterobject.vy;
 						break;
 
-					case 205:
+					case 205: // 葉っぱカッターが右に１枚
 						characterobject.c = 200;
 						characterobject.c2 = 0;
 						characterobject.vx = 4 + this.ranInt(6);
@@ -11764,23 +11751,23 @@ class MainProgram {
 						characterobject.y += characterobject.vy;
 						break;
 
-					case 300:
+					case 300: // 火の粉左
 						characterobject.vx = -12;
 						characterobject.x += characterobject.vx;
 						break;
 
-					case 305:
+					case 305: // 火の粉右
 						characterobject.c = 300;
 						characterobject.vx = 12;
 						characterobject.x += characterobject.vx;
 						break;
 
-					case 400:
+					case 400: // 水鉄砲左
 						characterobject.vx = -80;
 						characterobject.vy = -225;
 						break;
 
-					case 405:
+					case 405: // 水鉄砲右
 						characterobject.c = 400;
 						characterobject.vx = 80;
 						characterobject.vy = -225;
@@ -11791,18 +11778,18 @@ class MainProgram {
 						characterobject.vy = -22;
 						break;
 
-					case 600:
+					case 600: // エアームズ爆弾左
 						characterobject.vx = -40;
 						characterobject.vy = 0;
 						break;
 
-					case 605:
+					case 605: // エアームズ爆弾右
 						characterobject.c = 600;
 						characterobject.vx = 40;
 						characterobject.vy = 0;
 						break;
 
-					case 606:
+					case 606: // エアームズ爆弾直下降
 						characterobject.c = 600;
 						characterobject.vx = 0;
 						characterobject.vy = 0;
@@ -12096,7 +12083,7 @@ class MainProgram {
 			if (this.co_m[i].c == 0) continue;
 			var characterobject = this.co_m[i];
 			switch (characterobject.c) {
-				case 50:
+				case 50: // 水しぶき
 					characterobject.c1++;
 					if (characterobject.c1 <= 5) characterobject.pt = 80;
 					else if (characterobject.c1 <= 10) characterobject.pt = 81;
@@ -12105,7 +12092,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 60:
+				case 60: // 自分が水中で出す泡
 					characterobject.y -= 5;
 					var j4 = rightShiftIgnoreSign(characterobject.y, 5);
 					var word0 = this.maps.map_bg[rightShiftIgnoreSign(characterobject.x + 11, 5)][j4];
@@ -12126,7 +12113,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 65:
+				case 65: // 爆発
 					characterobject.c1++;
 					if (characterobject.c1 <= 3) characterobject.pt = 172;
 					else if (characterobject.c1 <= 6) characterobject.pt = 173;
@@ -12294,7 +12281,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 80:
+				case 80: // ブロックの破片
 					if (characterobject.vy >= 5)
 						if (characterobject.vx > 2) characterobject.vx--;
 						else if (characterobject.vx < -2) characterobject.vx++;
@@ -12465,7 +12452,7 @@ class MainProgram {
 					characterobject.pt = 1010;
 					break;
 
-				case 100:
+				case 100: // 電撃
 					characterobject.x += characterobject.vx;
 					characterobject.y += characterobject.vy;
 					var k3 = rightShiftIgnoreSign(characterobject.x + 15, 5);
@@ -12489,7 +12476,7 @@ class MainProgram {
 					}
 					break;
 
-				case 150:
+				case 150: //電撃 上記とブロックに接触した時の消滅判定が異なる
 					characterobject.x += characterobject.vx;
 					characterobject.y += characterobject.vy;
 					if (
@@ -12513,7 +12500,7 @@ class MainProgram {
 					}
 					break;
 
-				case 200:
+				case 200: // はっぱカッター
 					characterobject.x += characterobject.vx;
 					characterobject.vy += 2;
 					if (characterobject.vy > 12) characterobject.vy = 12;
@@ -12549,7 +12536,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 300:
+				case 300: // 火の粉
 					characterobject.x += characterobject.vx;
 					var k5 = rightShiftIgnoreSign(characterobject.y + 15, 5);
 					if (
@@ -12565,7 +12552,7 @@ class MainProgram {
 					else characterobject.pth = 1;
 					break;
 
-				case 400:
+				case 400: //みずでっぽう
 					characterobject.x += rounddown(characterobject.vx / 10);
 					characterobject.vy += 25;
 					if (characterobject.vy > 180) characterobject.vy = 180;
@@ -12579,7 +12566,7 @@ class MainProgram {
 					else characterobject.pth = 1;
 					break;
 
-				case 500:
+				case 500: // 火山の噴火
 					if (characterobject.vy >= 5)
 						if (characterobject.vx > 2) characterobject.vx--;
 						else if (characterobject.vx < -2) characterobject.vx++;
@@ -12594,7 +12581,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 550:
+				case 550: // 逆火山の噴火
 					if (characterobject.vy >= 5)
 						if (characterobject.vx > 2) characterobject.vx--;
 						else if (characterobject.vx < -2) characterobject.vx++;
@@ -12609,7 +12596,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 600:
+				case 600: // 爆撃
 					if (characterobject.vx > 0) characterobject.vx -= 2;
 					else if (characterobject.vx < 0) characterobject.vx += 2;
 					characterobject.x += rounddown(characterobject.vx / 10);
@@ -12642,7 +12629,7 @@ class MainProgram {
 					}
 					break;
 
-				case 610:
+				case 610: // 爆発 case 65 と全く同じ
 					characterobject.c1++;
 					if (characterobject.c1 <= 3) characterobject.pt = 172;
 					else if (characterobject.c1 <= 6) characterobject.pt = 173;
@@ -12709,7 +12696,7 @@ class MainProgram {
 					}
 					break;
 
-				case 740:
+				case 740: // りゅうせいぐん
 					characterobject.x += characterobject.vx;
 					characterobject.y += characterobject.vy;
 					if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 32)
@@ -12720,7 +12707,7 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 800:
+				case 800: // グレネード
 					if (characterobject.vy == 9999) {
 						characterobject.x += characterobject.vx;
 						if (characterobject.x <= this.maps.wx - 16 || characterobject.x >= this.maps.wx + 512 - 16)
@@ -12754,7 +12741,7 @@ class MainProgram {
 					else characterobject.pth = 1;
 					break;
 
-				case 900:
+				case 900: // バブル光線
 					characterobject.c1 += 4;
 					if (characterobject.c1 < 128) characterobject.c2 += 3;
 					else if (characterobject.c1 < 192) characterobject.c2 += 3;
@@ -12766,9 +12753,11 @@ class MainProgram {
 					if (characterobject.c2 >= 360) characterobject.c2 -= 360;
 					if (characterobject.c1 > 576) characterobject.c = 0;
 					characterobject.x =
-						characterobject.vx + Math.floor(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1);
+						characterobject.vx +
+						rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
 					characterobject.y =
-						characterobject.vy + Math.floor(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1);
+						characterobject.vy +
+						rounddown(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1, true, this);
 					if (characterobject.c3 == 1) {
 						characterobject.pt = 168 + this.g_c1;
 						characterobject.pth = 0;
@@ -12790,9 +12779,11 @@ class MainProgram {
 					if (characterobject.c2 < 0) characterobject.c2 += 360;
 					if (characterobject.c1 > 576) characterobject.c = 0;
 					characterobject.x =
-						characterobject.vx + Math.floor(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1);
+						characterobject.vx +
+						rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
 					characterobject.y =
-						characterobject.vy + Math.floor(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1);
+						characterobject.vy +
+						rounddown(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1, true, this);
 					if (characterobject.c3 == 1) {
 						characterobject.pt = 168 + this.g_c1;
 						characterobject.pth = 0;
@@ -12814,9 +12805,11 @@ class MainProgram {
 					if (characterobject.c2 >= 360) characterobject.c2 -= 360;
 					if (characterobject.c1 > 204) characterobject.c = 0;
 					characterobject.x =
-						characterobject.vx + Math.floor(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1);
+						characterobject.vx +
+						rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
 					characterobject.y =
-						characterobject.vy + Math.floor(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1);
+						characterobject.vy +
+						rounddown(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1, true, this);
 					characterobject.pt = 168 + this.g_c1;
 					characterobject.pth = 0;
 					break;
@@ -12833,9 +12826,11 @@ class MainProgram {
 					if (characterobject.c2 < 0) characterobject.c2 += 360;
 					if (characterobject.c1 > 204) characterobject.c = 0;
 					characterobject.x =
-						characterobject.vx + Math.floor(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1);
+						characterobject.vx +
+						rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
 					characterobject.y =
-						characterobject.vy + Math.floor(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1);
+						characterobject.vy +
+						rounddown(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1, true, this);
 					characterobject.pt = 168 + this.g_c1;
 					characterobject.pth = 0;
 					break;
@@ -12856,9 +12851,11 @@ class MainProgram {
 					}
 					if (characterobject.vx < this.maps.wx - 100) characterobject.c = 0;
 					characterobject.x =
-						characterobject.vx + Math.floor(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1);
+						characterobject.vx +
+						rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
 					characterobject.y =
-						characterobject.vy + Math.floor(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1);
+						characterobject.vy +
+						rounddown(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1, true, this);
 					characterobject.pt = 168 + this.g_c1;
 					characterobject.pth = 0;
 					break;
@@ -12879,9 +12876,11 @@ class MainProgram {
 					}
 					if (characterobject.vx > this.maps.wx + 512 + 100) characterobject.c = 0;
 					characterobject.x =
-						characterobject.vx + Math.floor(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1);
+						characterobject.vx +
+						rounddown(Math.cos((characterobject.c2 * 3.14) / 180) * characterobject.c1, true, this);
 					characterobject.y =
-						characterobject.vy + Math.floor(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1);
+						characterobject.vy +
+						rounddown(Math.sin((characterobject.c2 * 3.14) / 180) * -1 * characterobject.c1, true, this);
 					characterobject.pt = 168 + this.g_c1;
 					characterobject.pth = 0;
 					break;
@@ -12927,12 +12926,13 @@ class MainProgram {
 					characterobject.pth = 0;
 					break;
 
-				case 2200:
+				case 2200: // 人面星
 					if (characterobject.x < this.maps.wx) characterobject.x = this.maps.wx;
 					else if (characterobject.x > this.maps.wx + 512 - 32) characterobject.x = this.maps.wx + 512 - 32;
 					if (characterobject.y < this.maps.wy + 64) characterobject.y = this.maps.wy + 64;
 					else if (characterobject.y > this.maps.wy + 224) characterobject.y = this.maps.wy + 224;
 					if (this.stage_max >= 2 && this.stage >= this.stage_max) {
+						// 複数ステージ制ではラストステージでミレニアム人面星に
 						if (this.g_ac2 == 0) characterobject.pt = 99;
 						else characterobject.pt = 98;
 					} else if (this.g_ac2 == 0) characterobject.pt = 95;
@@ -13095,7 +13095,7 @@ class MainProgram {
 					else if (characterobject.c2 == 10) {
 						if (this.co_mu[0].c == 0) {
 							this.co_mu[0].c = 100;
-							if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300) this.boss_hp += 10;
+							if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300) this.boss_hp = this.boss_hp_max += 10;
 							for (var i7 = 0; i7 <= 7; i7++) {
 								var l5 = this.mu_ato_p - i7;
 								if (l5 < 0) l5 += 32;
@@ -13109,7 +13109,7 @@ class MainProgram {
 							this.co_mu[0].y = this.mu_ato_y[i6];
 						} else if (this.co_mu[1].c == 0) {
 							this.co_mu[1].c = 100;
-							if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300) this.boss_hp += 10;
+							if (this.co_b.c == 100 || this.co_b.c == 200 || this.co_b.c == 300) this.boss_hp = this.boss_hp_max += 10;
 							for (var j7 = 8; j7 <= 14; j7++) {
 								var j6 = this.mu_ato_p - j7;
 								if (j6 < 0) j6 += 32;
@@ -17250,12 +17250,12 @@ class MainProgram {
 						var j92;
 						if (Math.abs(characterobject.vx) == 2) {
 							var d = 0.017453292519943295;
-							i85 = k3 + Math.floor(Math.cos(characterobject.c3 * d) * 25);
-							j87 = l3 + Math.floor(Math.sin(characterobject.c3 * d) * 25);
+							i85 = k3 + rounddown(Math.cos(characterobject.c3 * d) * 25, true, this);
+							j87 = l3 + rounddown(Math.sin(characterobject.c3 * d) * 25, true, this);
 							this.vo_x[i][0] = i85;
 							this.vo_y[i][0] = j87;
-							k89 = k3 + Math.floor(Math.cos(characterobject.c3 * d) * 172);
-							j92 = l3 + Math.floor(Math.sin(characterobject.c3 * d) * 172);
+							k89 = k3 + rounddown(Math.cos(characterobject.c3 * d) * 172, true, this);
+							j92 = l3 + rounddown(Math.sin(characterobject.c3 * d) * 172, true, this);
 							this.vo_x[i][1] = k89;
 							this.vo_y[i][1] = j92;
 							this.vo_x[i][2] = k3 + Math.cos(characterobject.c3 * d) * 31;
@@ -17264,12 +17264,12 @@ class MainProgram {
 							this.vo_y[i][3] = l3 + Math.sin(characterobject.c3 * d) * 166;
 						} else {
 							var d1 = 0.017453292519943295;
-							i85 = k3 + Math.floor(Math.cos(characterobject.c3 * d1) * 25);
-							j87 = l3 + Math.floor(Math.sin(characterobject.c3 * d1) * 25);
+							i85 = k3 + rounddown(Math.cos(characterobject.c3 * d1) * 25, true, this);
+							j87 = l3 + rounddown(Math.sin(characterobject.c3 * d1) * 25, true, this);
 							this.vo_x[i][0] = i85;
 							this.vo_y[i][0] = j87;
-							k89 = k3 + Math.floor(Math.cos(characterobject.c3 * d1) * 140);
-							j92 = l3 + Math.floor(Math.sin(characterobject.c3 * d1) * 140);
+							k89 = k3 + rounddown(Math.cos(characterobject.c3 * d1) * 140, true, this);
+							j92 = l3 + rounddown(Math.sin(characterobject.c3 * d1) * 140, true, this);
 							this.vo_x[i][1] = k89;
 							this.vo_y[i][1] = j92;
 							this.vo_x[i][2] = k3 + Math.cos(characterobject.c3 * d1) * 31;
@@ -17310,7 +17310,7 @@ class MainProgram {
 					}
 					break;
 
-				case 80:
+				case 80: // 一言メッセージ
 					if (k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -17332,7 +17332,7 @@ class MainProgram {
 					}
 					break;
 
-				case 86:
+				case 86: // お店
 					if (k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -17549,7 +17549,7 @@ class MainProgram {
 					}
 					break;
 
-				case 87:
+				case 87: // ヘルメットかドリルをくれる人
 					if (k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -17663,7 +17663,7 @@ class MainProgram {
 					}
 					break;
 
-				case 88:
+				case 88: // グレネードかジェットをくれる人
 					if (k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -17777,7 +17777,7 @@ class MainProgram {
 					}
 					break;
 
-				case 89:
+				case 89: // ファイヤーボールセレクトの人
 					if (k3 > this.maps.wx - 32 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 32 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -17890,7 +17890,7 @@ class MainProgram {
 					}
 					break;
 
-				case 90:
+				case 90: // シーソー
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -17914,21 +17914,23 @@ class MainProgram {
 								if (this.co_j.x + 15 > k3 + 80) characterobject.vy++;
 								if (characterobject.vy > 56) characterobject.vy = 56;
 							}
-						var j85 = k3 + Math.floor(Math.cos(((characterobject.vy + 180) * 3.1415926535897931) / 180) * 160);
-						var k87 = l3 + Math.floor(Math.sin(((characterobject.vy + 180) * 3.1415926535897931) / 180) * 160);
-						var l89 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 160);
-						var k92 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 160);
-						j85 += Math.floor(Math.cos(((characterobject.vy + 270) * 3.1415926535897931) / 180) * 12);
-						k87 += Math.floor(Math.sin(((characterobject.vy + 270) * 3.1415926535897931) / 180) * 12);
-						l89 += Math.floor(Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12);
-						k92 += Math.floor(Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12);
+						var j85 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180) * 3.1415926535897931) / 180) * 160, true, this);
+						var k87 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180) * 3.1415926535897931) / 180) * 160, true, this);
+						var l89 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 160, true, this);
+						var k92 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 160, true, this);
+						j85 += rounddown(Math.cos(((characterobject.vy + 270) * 3.1415926535897931) / 180) * 12, true, this);
+						k87 += rounddown(Math.sin(((characterobject.vy + 270) * 3.1415926535897931) / 180) * 12, true, this);
+						l89 += rounddown(Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12, true, this);
+						k92 += rounddown(Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12, true, this);
 						this.setYukaPosition(String(characterobject.c4), String(j85), String(k87), String(l89), String(k92));
 					} else {
 						characterobject.gf = false;
 					}
 					break;
 
-				case 93:
+				case 93: // ブランコ
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -17954,14 +17956,14 @@ class MainProgram {
 					}
 					if (characterobject.vx > 0) characterobject.vy += rounddown((characterobject.vx + 5) / 10);
 					else characterobject.vy += rounddown((characterobject.vx - 5) / 10);
-					var k85 = k3 + Math.floor(Math.cos(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192);
-					var l87 = l3 + Math.floor(Math.sin(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192);
-					var i90 = k3 + Math.floor(Math.cos(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192);
-					var l92 = l3 + Math.floor(Math.sin(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192);
+					var k85 = k3 + rounddown(Math.cos(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192, true, this);
+					var l87 = l3 + rounddown(Math.sin(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192, true, this);
+					var i90 = k3 + rounddown(Math.cos(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192, true, this);
+					var l92 = l3 + rounddown(Math.sin(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192, true, this);
 					this.setYukaPosition(String(characterobject.c4), String(k85), String(l87), String(i90), String(l92));
 					break;
 
-				case 95:
+				case 95: // スウィングバー
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -17999,38 +18001,38 @@ class MainProgram {
 					if (characterobject.c3 == 1) {
 						var l85 =
 							k3 +
-							Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 192) +
-							Math.floor(Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 192, true, this) +
+							rounddown(Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12, true, this);
 						var i88 =
 							l3 +
-							Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 192) +
-							Math.floor(Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 192, true, this) +
+							rounddown(Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12, true, this);
 						var j90 =
 							k3 +
-							Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 60) +
-							Math.floor(Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 60, true, this) +
+							rounddown(Math.cos(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12, true, this);
 						var i93 =
 							l3 +
-							Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 60) +
-							Math.floor(Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 60, true, this) +
+							rounddown(Math.sin(((characterobject.vy + 90) * 3.1415926535897931) / 180) * 12, true, this);
 						this.setYukaPosition(String(characterobject.c4), String(l85), String(i88), String(j90), String(i93));
 					} else if (characterobject.c3 == 2) {
 						var i86 =
 							k3 +
-							Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 60) +
-							Math.floor(Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 60, true, this) +
+							rounddown(Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12, true, this);
 						var j88 =
 							l3 +
-							Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 60) +
-							Math.floor(Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 60, true, this) +
+							rounddown(Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12, true, this);
 						var k90 =
 							k3 +
-							Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 192) +
-							Math.floor(Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 192, true, this) +
+							rounddown(Math.cos(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12, true, this);
 						var j93 =
 							l3 +
-							Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 192) +
-							Math.floor(Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12);
+							rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 192, true, this) +
+							rounddown(Math.sin(((characterobject.vy - 90) * 3.1415926535897931) / 180) * 12, true, this);
 						this.setYukaPosition(String(characterobject.c4), String(i86), String(j88), String(k90), String(j93));
 					}
 					break;
@@ -18160,7 +18162,7 @@ class MainProgram {
 					}
 					break;
 
-				case 120:
+				case 120: // 回転する動く床
 					if (
 						k3 > this.maps.wx - 80 - 32 &&
 						k3 < this.maps.wx + 512 + 32 &&
@@ -18187,8 +18189,8 @@ class MainProgram {
 						if (characterobject.c3 < 0) characterobject.c3 += 360;
 					}
 					var d2 = (characterobject.c3 * 3.14) / 180;
-					var j86 = characterobject.vx + Math.floor(Math.cos(d2) * 126) + 16 - 40;
-					var k88 = characterobject.vy + Math.floor(Math.sin(d2) * -126) + 16 - 7;
+					var j86 = characterobject.vx + rounddown(Math.cos(d2) * 126, true, this) + 16 - 40;
+					var k88 = characterobject.vy + rounddown(Math.sin(d2) * -126, true, this) + 16 - 7;
 					var i95 = j86 - k3;
 					var j95 = k88 - l3;
 					l3 += j95;
@@ -18427,7 +18429,7 @@ class MainProgram {
 					}
 					break;
 
-				case 400:
+				case 400: // ドッスンスン
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -18500,7 +18502,7 @@ class MainProgram {
 					}
 					break;
 
-				case 410:
+				case 410: // FX Update 14以降追加されたドッスンスン
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -19598,7 +19600,7 @@ class MainProgram {
 					}
 					break;
 
-				case 500:
+				case 500: // 乗ると落ちる床
 					if (
 						k3 > this.maps.wx - 96 - 32 &&
 						k3 < this.maps.wx + 512 + 32 &&
@@ -19648,7 +19650,7 @@ class MainProgram {
 					if ((this.co_j.c == 100 || this.co_j.c == 130) && this.j_a_id == i) this.co_j.y = l3 - 32;
 					break;
 
-				case 600:
+				case 600: // 乗れるカイオール
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -19711,7 +19713,7 @@ class MainProgram {
 					}
 					break;
 
-				case 610:
+				case 610: // 乗れるカイオール 方向キーで移動
 					characterobject.c1 = k3 - 512 - 32;
 					characterobject.c2 = k3 + 128;
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
@@ -19761,7 +19763,7 @@ class MainProgram {
 					}
 					break;
 
-				case 700:
+				case 700: // ジャンプ台
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -19779,6 +19781,7 @@ class MainProgram {
 						characterobject.gf = false;
 					}
 					if (characterobject.c4 == 2) {
+						// 左へ飛ばすバネ
 						characterobject.pt = 750;
 						if (characterobject.c3 > 0) characterobject.c3--;
 						if (this.co_j.x >= k3 - 32 && this.co_j.x < k3 && Math.abs(this.co_j.y - l3) <= 16) {
@@ -19813,6 +19816,7 @@ class MainProgram {
 							this.gs.rsAddSound(4);
 						}
 					} else if (characterobject.c4 == 3) {
+						// 右へ飛ばすバネ
 						characterobject.pt = 751;
 						if (characterobject.c3 > 0) characterobject.c3--;
 						if (this.co_j.x <= k3 + 32 && this.co_j.x > k3 && Math.abs(this.co_j.y - l3) <= 16) {
@@ -19879,7 +19883,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1000:
+				case 1000: // ファイヤーウォール
 					if (characterobject.vx < 32) {
 						characterobject.vx++;
 						if (
@@ -19988,7 +19992,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1010:
+				case 1010: // ファイヤーウォール 壁まで上下
 					if (characterobject.c3 == 0) {
 						l3 -= 8;
 						var k20 = rightShiftIgnoreSign(k3, 5);
@@ -20050,7 +20054,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1020:
+				case 1020: // ファイヤーウォール 壁まで左右
 					if (characterobject.c3 == 0) {
 						var i21 = rightShiftIgnoreSign((k3 -= 8) - 1, 5);
 						var l37 = rightShiftIgnoreSign(l3, 5);
@@ -20102,7 +20106,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1100:
+				case 1100: // 火山
 					if (characterobject.vx <= 0) {
 						if (k3 >= this.maps.wx && k3 <= this.maps.wx + 512 - 32)
 							if (this.sl_step == 10 || this.sl_step == 11) {
@@ -20134,7 +20138,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1150:
+				case 1150: // 逆火山
 					if (characterobject.vx <= 0) {
 						if (k3 >= this.maps.wx && k3 <= this.maps.wx + 512 - 32)
 							if (this.sl_step == 10 || this.sl_step == 11) {
@@ -20166,7 +20170,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1200:
+				case 1200: // 動くＴ字型
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -20188,18 +20192,18 @@ class MainProgram {
 					}
 					if (characterobject.vx > 0) characterobject.vy += rounddown((characterobject.vx + 5) / 10);
 					else characterobject.vy += rounddown((characterobject.vx - 5) / 10);
-					var k86 = k3 + Math.floor(Math.cos(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192);
-					var l88 = l3 + Math.floor(Math.sin(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192);
-					var l90 = k3 + Math.floor(Math.cos(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192);
-					var k93 = l3 + Math.floor(Math.sin(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192);
-					k86 += Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12);
-					l88 += Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12);
-					l90 += Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12);
-					k93 += Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12);
+					var k86 = k3 + rounddown(Math.cos(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192, true, this);
+					var l88 = l3 + rounddown(Math.sin(((characterobject.vy + 20) * 3.1415926535897931) / 180) * 192, true, this);
+					var l90 = k3 + rounddown(Math.cos(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192, true, this);
+					var k93 = l3 + rounddown(Math.sin(((characterobject.vy - 20) * 3.1415926535897931) / 180) * 192, true, this);
+					k86 += rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
+					l88 += rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
+					l90 += rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
+					k93 += rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
 					this.setYukaPosition(String(characterobject.c4), String(l90), String(k93), String(k86), String(l88));
 					break;
 
-				case 1300:
+				case 1300: // ロープ
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -20218,17 +20222,17 @@ class MainProgram {
 					}
 					if (this.co_j.c >= 100 && this.co_j.c < 200)
 						if (this.j_rope_cf && this.j_rope_id == i) {
-							var j79 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 32);
-							var l93 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 184);
+							var j79 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 32, true, this);
+							var l93 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 184, true, this);
 							if (this.co_j.y + 16 < j79 - 48 || this.co_j.y + 16 > l93 + 24) this.j_rope_cf = false;
-							var j73 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 32);
+							var j73 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 32, true, this);
 							if (this.co_j.x + 16 < j73 - 32 - 76 || this.co_j.x + 16 > j73 + 32 + 76) this.j_rope_cf = false;
 						} else if ((this.co_j.c != 140 || this.j_rope_id != i) && this.co_j.c == 100) {
-							var k79 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 32);
-							var i94 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 184);
+							var k79 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 32, true, this);
+							var i94 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 184, true, this);
 							if (this.co_j.y + 16 >= k79 && this.co_j.y + 16 <= i94) {
-								var k73 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 32);
-								var j91 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 184);
+								var k73 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 32, true, this);
+								var j91 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 184, true, this);
 								var l4 = this.co_j.y + 16 - k79;
 								l4 = k73 + rounddown(((j91 - k73) * l4) / 152);
 								if (this.co_j.x + 16 > l4 - 32 && this.co_j.x + 16 < l4 + 32) {
@@ -20260,7 +20264,7 @@ class MainProgram {
 					else characterobject.vy += rounddown((characterobject.vx - 5) / 10);
 					break;
 
-				case 1400:
+				case 1400: // 得点で開く扉
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -20341,7 +20345,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1500:
+				case 1500: // 人間大砲
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -20355,13 +20359,13 @@ class MainProgram {
 					}
 					characterobject.pt = 2200;
 					if (this.j_rope_cf && this.j_rope_id == i) {
-						var i74 = k3 + 16 + Math.floor(Math.cos((characterobject.c4 * 3.1415926535897931) / 180) * 60);
-						var i80 = l3 + 16 + Math.floor(Math.sin((characterobject.c4 * 3.1415926535897931) / 180) * 60);
+						var i74 = k3 + 16 + rounddown(Math.cos((characterobject.c4 * 3.1415926535897931) / 180) * 60, true, this);
+						var i80 = l3 + 16 + rounddown(Math.sin((characterobject.c4 * 3.1415926535897931) / 180) * 60, true, this);
 						if (Math.abs(this.co_j.x + 16 - i74) >= 40 || Math.abs(this.co_j.y + 16 - i80) >= 36)
 							this.j_rope_cf = false;
 					} else if ((this.co_j.c < 400 || this.co_j.c >= 500 || this.j_rope_id != i) && this.co_j.c == 100) {
-						var j74 = k3 + 16 + Math.floor(Math.cos((characterobject.c4 * 3.1415926535897931) / 180) * 80);
-						var j80 = l3 + 16 + Math.floor(Math.sin((characterobject.c4 * 3.1415926535897931) / 180) * 80);
+						var j74 = k3 + 16 + rounddown(Math.cos((characterobject.c4 * 3.1415926535897931) / 180) * 80, true, this);
+						var j80 = l3 + 16 + rounddown(Math.sin((characterobject.c4 * 3.1415926535897931) / 180) * 80, true, this);
 						if (Math.abs(this.co_j.x + 16 - j74) < 20 && Math.abs(this.co_j.y + 16 - j80) < 16) {
 							this.co_j.c = 400;
 							this.co_j.ac = 0;
@@ -20376,7 +20380,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1600:
+				case 1600: // スポット処理
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -20408,7 +20412,7 @@ class MainProgram {
 					}
 					break;
 
-				case 1700:
+				case 1700: // 人食いワカメ
 					if (
 						k3 > this.maps.wx - 192 &&
 						k3 < this.maps.wx + 512 + 192 &&
@@ -20467,7 +20471,7 @@ class MainProgram {
 					characterobject.pt = 2400;
 					break;
 
-				case 1800:
+				case 1800: // 回転するドッスンスン
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -20484,24 +20488,32 @@ class MainProgram {
 					if (characterobject.vy >= 360) characterobject.vy -= 360;
 					if (characterobject.vy < 0) characterobject.vy += 360;
 					if (characterobject.gf) {
-						var l86 = k3 + Math.floor(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87);
-						var i89 = l3 + Math.floor(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87);
-						var l91 = k3 + Math.floor(Math.cos(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 87);
-						var k94 = l3 + Math.floor(Math.sin(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 87);
+						var l86 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87, true, this);
+						var i89 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87, true, this);
+						var l91 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 87, true, this);
+						var k94 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 87, true, this);
 						this.setYukaPosition(String(characterobject.c3), String(l86), String(i89), String(l91), String(k94));
-						l86 = k3 + Math.floor(Math.cos(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 87);
-						i89 = l3 + Math.floor(Math.sin(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 87);
+						l86 = k3 + rounddown(Math.cos(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 87, true, this);
+						i89 = l3 + rounddown(Math.sin(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 87, true, this);
 						this.setYukaPosition(String(characterobject.c4), String(l91), String(k94), String(l86), String(i89));
-						l91 = k3 + Math.floor(Math.cos(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 87);
-						k94 = l3 + Math.floor(Math.sin(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 87);
+						l91 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 87, true, this);
+						k94 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 87, true, this);
 						this.setYukaPosition(String(characterobject.c5), String(l86), String(i89), String(l91), String(k94));
-						l86 = k3 + Math.floor(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87);
-						i89 = l3 + Math.floor(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87);
+						l86 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87, true, this);
+						i89 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 87, true, this);
 						this.setYukaPosition(String(characterobject.pth), String(l91), String(k94), String(l86), String(i89));
 					}
 					break;
 
-				case 1850:
+				case 1850: // 回転する巨大ドッスンスン
 					if (
 						k3 > this.maps.wx - 180 &&
 						k3 < this.maps.wx + 512 + 180 &&
@@ -20518,24 +20530,32 @@ class MainProgram {
 					if (characterobject.vy >= 360) characterobject.vy -= 360;
 					if (characterobject.vy < 0) characterobject.vy += 360;
 					if (characterobject.gf) {
-						var i87 = k3 + Math.floor(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144);
-						var j89 = l3 + Math.floor(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144);
-						var i92 = k3 + Math.floor(Math.cos(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 144);
-						var l94 = l3 + Math.floor(Math.sin(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 144);
+						var i87 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144, true, this);
+						var j89 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144, true, this);
+						var i92 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 144, true, this);
+						var l94 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 360 - 34) * 3.1415926535897931) / 180) * 144, true, this);
 						this.setYukaPosition(String(characterobject.c3), String(i87), String(j89), String(i92), String(l94));
-						i87 = k3 + Math.floor(Math.cos(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 144);
-						j89 = l3 + Math.floor(Math.sin(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 144);
+						i87 = k3 + rounddown(Math.cos(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 144, true, this);
+						j89 = l3 + rounddown(Math.sin(((characterobject.vy + 34) * 3.1415926535897931) / 180) * 144, true, this);
 						this.setYukaPosition(String(characterobject.c4), String(i92), String(l94), String(i87), String(j89));
-						i92 = k3 + Math.floor(Math.cos(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 144);
-						l94 = l3 + Math.floor(Math.sin(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 144);
+						i92 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 144, true, this);
+						l94 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180 - 34) * 3.1415926535897931) / 180) * 144, true, this);
 						this.setYukaPosition(String(characterobject.c5), String(i87), String(j89), String(i92), String(l94));
-						i87 = k3 + Math.floor(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144);
-						j89 = l3 + Math.floor(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144);
+						i87 =
+							k3 + rounddown(Math.cos(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144, true, this);
+						j89 =
+							l3 + rounddown(Math.sin(((characterobject.vy + 180 + 34) * 3.1415926535897931) / 180) * 144, true, this);
 						this.setYukaPosition(String(characterobject.pth), String(i92), String(l94), String(i87), String(j89));
 					}
 					break;
 
-				case 1900:
+				case 1900: // 画面内で強制スクロール系
 					if (k3 > this.maps.wx - 96 && k3 < this.maps.wx + 512 && l3 > this.maps.wy - 64 && l3 < this.maps.wy + 320) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -20880,7 +20900,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2000:
+				case 2000: // 曲線による坂や乗れる円等
 					if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -20890,7 +20910,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2100:
+				case 2100: // 人口太陽
 					if (k3 + 256 > this.maps.wx && k3 - 256 < this.maps.wx + 512) {
 						characterobject.gf = true;
 						this.a_hf = true;
@@ -20905,7 +20925,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2200:
+				case 2200: // ファイヤーリング
 					characterobject.c3 += characterobject.vx;
 					if (characterobject.c3 < 0) characterobject.c3 += 360;
 					else if (characterobject.c3 >= 360) characterobject.c3 -= 360;
@@ -20939,7 +20959,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2250:
+				case 2250: // ファイヤーリング２本
 					characterobject.c3 += characterobject.vx;
 					if (characterobject.c3 < 0) characterobject.c3 += 360;
 					else if (characterobject.c3 >= 360) characterobject.c3 -= 360;
@@ -20973,7 +20993,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2300:
+				case 2300: // 上下移動する半円
 					if (characterobject.vy < 0) {
 						l3 += characterobject.vy;
 						if (l3 <= characterobject.c3 - 160) {
@@ -20997,7 +21017,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2400:
+				case 2400: // 乗ると上がる半円
 					if (characterobject.c5 <= 0) {
 						if (this.isRideYuka(String(characterobject.c4)) == 1) characterobject.c5 = 100;
 					} else if (characterobject.c5 == 100) {
@@ -21021,7 +21041,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2500:
+				case 2500: // 乗ると下がる半円
 					if (characterobject.c5 != 1000)
 						if (characterobject.c5 <= 0) {
 							if (this.isRideYuka(String(characterobject.c4)) == 1) characterobject.c5 = 100;
@@ -21046,7 +21066,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2600:
+				case 2600: // 乗ると下がる円
 					if (this.isRideYuka(String(characterobject.c4)) == 1 && (l3 += 2) >= this.ochiru_y + 80)
 						l3 = this.ochiru_y + 80 + 64;
 					if (k3 + 256 > this.maps.wx && k3 < this.maps.wx + 512 + 256) {
@@ -21059,7 +21079,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2610:
+				case 2610: // 乗ると下がる円 降りると上がる
 					if (this.isRideYuka(String(characterobject.c4)) == 1) {
 						if ((l3 += 3) >= this.ochiru_y + 80) l3 = this.ochiru_y + 80 + 64;
 					} else if ((l3 -= 3) <= characterobject.c3) l3 = characterobject.c3;
@@ -21073,7 +21093,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2700:
+				case 2700: // 上下移動する円
 					if (l3 <= characterobject.c3) {
 						characterobject.vy += 4;
 						if (characterobject.vy > 44) characterobject.vy = 44;
@@ -21092,7 +21112,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2800:
+				case 2800: // 長いロープ
 					if (
 						k3 > this.maps.wx - 256 &&
 						k3 < this.maps.wx + 512 + 256 &&
@@ -21111,8 +21131,8 @@ class MainProgram {
 							var i61 = l3 - (this.co_j.y + 16);
 							var j72 = Math.floor(Math.sqrt(j38 * j38 + i61 * i61));
 							if (j72 >= 12 && j72 <= 244) {
-								var k75 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * j72);
-								var j81 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * j72);
+								var k75 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * j72, true, this);
+								var j81 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * j72, true, this);
 								if (Math.abs(this.co_j.x + 16 - k75) >= 24 || Math.abs(this.co_j.y + 16 - j81) >= 24)
 									this.j_rope_cf = false;
 							} else {
@@ -21123,8 +21143,8 @@ class MainProgram {
 							var j61 = l3 - (this.co_j.y + 16);
 							var k72 = Math.floor(Math.sqrt(k38 * k38 + j61 * j61));
 							if (k72 >= 12 && k72 <= 220) {
-								var l75 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * k72);
-								var k81 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * k72);
+								var l75 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * k72, true, this);
+								var k81 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * k72, true, this);
 								if (Math.abs(this.co_j.x + 16 - l75) < 20 && Math.abs(this.co_j.y + 16 - k81) < 20) {
 									this.co_j.c = 140;
 									this.co_j.ac = 0;
@@ -21162,7 +21182,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2900:
+				case 2900: // 左向きのトゲ４つ
 					if (
 						k3 > this.maps.wx - 32 - 32 &&
 						k3 < this.maps.wx + 512 + 32 &&
@@ -21191,7 +21211,7 @@ class MainProgram {
 					}
 					break;
 
-				case 2950:
+				case 2950: // 右向きのトゲ４つ
 					if (
 						k3 > this.maps.wx - 32 - 32 &&
 						k3 < this.maps.wx + 512 + 32 &&
@@ -21220,7 +21240,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3000:
+				case 3000: // 左右へ押せるドッスンスンのゴール
 					if (
 						k3 > this.maps.wx - 96 - 32 &&
 						k3 < this.maps.wx + 512 &&
@@ -21246,7 +21266,7 @@ class MainProgram {
 					} while (true);
 					break;
 
-				case 3100:
+				case 3100: // 右へ一方通行
 					if (
 						k3 > this.maps.wx - 160 &&
 						k3 < this.maps.wx + 512 &&
@@ -21261,7 +21281,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3110:
+				case 3110: // 左へ一方通行
 					if (
 						k3 > this.maps.wx - 160 &&
 						k3 < this.maps.wx + 512 &&
@@ -21276,7 +21296,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3120:
+				case 3120: // 上へ一方通行
 					if (
 						k3 > this.maps.wx - 160 &&
 						k3 < this.maps.wx + 512 &&
@@ -21299,7 +21319,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3130:
+				case 3130: // 下へ一方通行
 					if (
 						k3 > this.maps.wx - 160 &&
 						k3 < this.maps.wx + 512 &&
@@ -21314,7 +21334,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3200:
+				case 3200: // ゆれる棒
 					if (
 						k3 > this.maps.wx - 256 &&
 						k3 < this.maps.wx + 512 + 256 &&
@@ -21333,8 +21353,8 @@ class MainProgram {
 							var k61 = l3 - (this.co_j.y + 16);
 							var l72 = Math.floor(Math.sqrt(l38 * l38 + k61 * k61));
 							if (l72 >= 12 && l72 <= 244) {
-								var i76 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * l72);
-								var l81 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * l72);
+								var i76 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * l72, true, this);
+								var l81 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * l72, true, this);
 								if (Math.abs(this.co_j.x + 16 - i76) >= 24 || Math.abs(this.co_j.y + 16 - l81) >= 24)
 									this.j_rope_cf = false;
 							} else {
@@ -21345,8 +21365,8 @@ class MainProgram {
 							var l61 = l3 - (this.co_j.y + 16);
 							var i73 = Math.floor(Math.sqrt(i39 * i39 + l61 * l61));
 							if (i73 >= 12 && i73 <= 220) {
-								var j76 = k3 + Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * i73);
-								var i82 = l3 + Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * i73);
+								var j76 = k3 + rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * i73, true, this);
+								var i82 = l3 + rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * i73, true, this);
 								if (Math.abs(this.co_j.x + 16 - j76) < 20 && Math.abs(this.co_j.y + 16 - i82) < 20) {
 									this.co_j.c = 140;
 									this.co_j.ac = 0;
@@ -21392,7 +21412,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3300:
+				case 3300: // 跳ねる円
 					characterobject.vy += 4;
 					if (characterobject.vy > 64) characterobject.vy = 64;
 					if (characterobject.vy < -60) l3 -= 6;
@@ -21412,7 +21432,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3400:
+				case 3400: // コンティニュー 残り人数のみ
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21444,7 +21464,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3500:
+				case 3500: // スイッチ 重なるとＯＮ／ＯＦＦ 周囲１０ブロック以内に影響
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21517,7 +21537,7 @@ class MainProgram {
 					}
 					break;
 
-				case 3600:
+				case 3600: // スイッチ ↑キーでＯＮ／ＯＦＦ 周囲１０ブロック以内に影響
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21572,103 +21592,103 @@ class MainProgram {
 					}
 					break;
 
-				case 3700:
+				case 3700: // スイッチ式の扉 ＯＮで開く
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 3710:
+				case 3710: // スイッチ式の扉 ＯＮで閉まる
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 3800:
+				case 3800: // スイッチ式トゲ ＯＮでブロック４
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 3810:
+				case 3810: // スイッチ式トゲ ＯＦＦでブロック４
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 3900:
+				case 3900: // スイッチ式トゲ ＯＮで消える
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 3910:
+				case 3910: // スイッチ式トゲ ＯＮで出現
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4000:
+				case 4000: // スイッチ式ハシゴ ＯＮで消える
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4010:
+				case 4010: // スイッチ式ハシゴ ＯＮで出現
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4100:
+				case 4100: // スイッチ式電撃バリア縦 ＯＮで消える
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4110:
+				case 4110: // スイッチ式電撃バリア縦 ＯＮで出現
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4200:
+				case 4200: // スイッチ式電撃バリア横 ＯＮで消える
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4210:
+				case 4210: // スイッチ式電撃バリア横 ＯＮで出現
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4300:
+				case 4300: // スイッチ式ファイヤーバー
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4400:
+				case 4400: // スイッチ式ブロック ＯＮで消える
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4410:
+				case 4410: // スイッチ式ブロック ＯＮで出現
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4500:
+				case 4500: // スイッチ式動くＴ字型
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4600:
+				case 4600: // ＫＥＹ１
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21698,7 +21718,7 @@ class MainProgram {
 					}
 					break;
 
-				case 4610:
+				case 4610: // ＫＥＹ２
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21728,7 +21748,7 @@ class MainProgram {
 					}
 					break;
 
-				case 4700:
+				case 4700: // 鍵で開く扉
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21797,7 +21817,7 @@ class MainProgram {
 					}
 					break;
 
-				case 4800:
+				case 4800: // 落ちる鍵
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21836,25 +21856,25 @@ class MainProgram {
 					}
 					break;
 
-				case 4900:
+				case 4900: // ＫＥＹ１が３つでＯＮの動作の人 周囲１０ブロック以内に影響
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 4910:
+				case 4910: // ＫＥＹ２が３つでＯＮの動作の人 周囲１０ブロック以内に影響
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 5000:
+				case 5000: // 乗ると壊れるブロック
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
 					break;
 
-				case 5100:
+				case 5100: // しっぽで破壊 ＯＮの動作
 					if (
 						k3 > this.maps.wx - 96 &&
 						k3 < this.maps.wx + 512 + 64 &&
@@ -21893,7 +21913,7 @@ class MainProgram {
 					}
 					break;
 
-				case 5200:
+				case 5200: // スイッチ式ブロック縦 ＯＮで消える
 					characterobject.gf = false;
 					this.a_hf = true;
 					characterobject.pt = 0;
@@ -21932,7 +21952,7 @@ class MainProgram {
 					}
 					break;
 
-				case 5210:
+				case 5210: // スイッチ式ブロック縦 ＯＮで出現
 					characterobject.gf = false;
 					this.a_hf = true;
 					characterobject.pt = 0;
@@ -21959,7 +21979,7 @@ class MainProgram {
 					}
 					break;
 
-				case 5300:
+				case 5300: // 得点でグレネードを売る人
 					this.aMoveOption(i);
 					k3 = characterobject.x;
 					l3 = characterobject.y;
@@ -22513,8 +22533,10 @@ class MainProgram {
 						k16 + k22 <= this.mapHeight + 9 &&
 						(this.maps.map_bg[k10][k16 + k22] == 0 || this.maps.map_bg[k10][k16 + k22] == 4);
 						k22++
-					)
+					) {
 						this.maps.putBGCode(k10, k16 + k22, 10);
+						this.map_data_option[k10][k16 + k22] = true;
+					}
 
 					characterobject.c3 = 100;
 				}
@@ -22526,8 +22548,10 @@ class MainProgram {
 						var l22 = 0;
 						l22 <= 9 && l16 + l22 <= this.mapHeight + 9 && this.maps.map_bg[l10][l16 + l22] == 10;
 						l22++
-					)
+					) {
 						this.maps.putBGCode(l10, l16 + l22, 0);
+						this.map_data_option[l10][l16 + l22] = false;
+					}
 
 					characterobject.c3 = 200;
 					break;
@@ -22541,8 +22565,10 @@ class MainProgram {
 					i17 + i23 <= this.mapHeight + 9 &&
 					(this.maps.map_bg[i11][i17 + i23] == 0 || this.maps.map_bg[i11][i17 + i23] == 4);
 					i23++
-				)
+				) {
 					this.maps.putBGCode(i11, i17 + i23, 10);
+					this.map_data_option[i11][i17 + i23] = true;
+				}
 
 				characterobject.c3 = 100;
 				break;
@@ -22561,8 +22587,10 @@ class MainProgram {
 						j17 + j23 <= this.mapHeight + 9 &&
 						(this.maps.map_bg[j11][j17 + j23] == 0 || this.maps.map_bg[j11][j17 + j23] == 4);
 						j23++
-					)
+					) {
 						this.maps.putBGCode(j11, j17 + j23, 10);
+						this.map_data_option[j11][j17 + j23] = true;
+					}
 
 					characterobject.c3 = 200;
 					break;
@@ -22570,8 +22598,14 @@ class MainProgram {
 				if (characterobject.c5 != 0) break;
 				var k11 = rightShiftIgnoreSign(j, 5);
 				var k17 = rightShiftIgnoreSign(k, 5);
-				for (var k23 = 0; k23 <= 9 && k17 + k23 <= this.mapHeight + 9 && this.maps.map_bg[k11][k17 + k23] == 10; k23++)
+				for (
+					var k23 = 0;
+					k23 <= 9 && k17 + k23 <= this.mapHeight + 9 && this.maps.map_bg[k11][k17 + k23] == 10;
+					k23++
+				) {
 					this.maps.putBGCode(k11, k17 + k23, 0);
+					this.map_data_option[k11][k17 + k23] = false;
+				}
 
 				characterobject.c3 = 100;
 				break;
@@ -22944,12 +22978,12 @@ class MainProgram {
 					var k26;
 					if (Math.abs(characterobject.vx) == 2) {
 						var d = 0.017453292519943295;
-						i25 = j + Math.floor(Math.cos(characterobject.c3 * d) * 25);
-						k25 = k + Math.floor(Math.sin(characterobject.c3 * d) * 25);
+						i25 = j + rounddown(Math.cos(characterobject.c3 * d) * 25, true, this);
+						k25 = k + rounddown(Math.sin(characterobject.c3 * d) * 25, true, this);
 						this.vo_x[i][0] = i25;
 						this.vo_y[i][0] = k25;
-						i26 = j + Math.floor(Math.cos(characterobject.c3 * d) * 172);
-						k26 = k + Math.floor(Math.sin(characterobject.c3 * d) * 172);
+						i26 = j + rounddown(Math.cos(characterobject.c3 * d) * 172, true, this);
+						k26 = k + rounddown(Math.sin(characterobject.c3 * d) * 172, true, this);
 						this.vo_x[i][1] = i26;
 						this.vo_y[i][1] = k26;
 						this.vo_x[i][2] = j + Math.cos(characterobject.c3 * d) * 31;
@@ -22958,12 +22992,12 @@ class MainProgram {
 						this.vo_y[i][3] = k + Math.sin(characterobject.c3 * d) * 166;
 					} else {
 						var d1 = 0.017453292519943295;
-						i25 = j + Math.floor(Math.cos(characterobject.c3 * d1) * 25);
-						k25 = k + Math.floor(Math.sin(characterobject.c3 * d1) * 25);
+						i25 = j + rounddown(Math.cos(characterobject.c3 * d1) * 25, true, this);
+						k25 = k + rounddown(Math.sin(characterobject.c3 * d1) * 25, true, this);
 						this.vo_x[i][0] = i25;
 						this.vo_y[i][0] = k25;
-						i26 = j + Math.floor(Math.cos(characterobject.c3 * d1) * 140);
-						k26 = k + Math.floor(Math.sin(characterobject.c3 * d1) * 140);
+						i26 = j + rounddown(Math.cos(characterobject.c3 * d1) * 140, true, this);
+						k26 = k + rounddown(Math.sin(characterobject.c3 * d1) * 140, true, this);
 						this.vo_x[i][1] = i26;
 						this.vo_y[i][1] = k26;
 						this.vo_x[i][2] = j + Math.cos(characterobject.c3 * d1) * 31;
@@ -23205,14 +23239,14 @@ class MainProgram {
 							characterobject.c3 = 0;
 						}
 					}
-				var j25 = j + Math.floor(Math.cos(((characterobject.vy + 17) * 3.1415926535897931) / 180) * 224);
-				var l25 = k + Math.floor(Math.sin(((characterobject.vy + 17) * 3.1415926535897931) / 180) * 224);
-				var j26 = j + Math.floor(Math.cos(((characterobject.vy - 17) * 3.1415926535897931) / 180) * 224);
-				var l26 = k + Math.floor(Math.sin(((characterobject.vy - 17) * 3.1415926535897931) / 180) * 224);
-				j25 += Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12);
-				l25 += Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12);
-				j26 += Math.floor(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12);
-				l26 += Math.floor(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12);
+				var j25 = j + rounddown(Math.cos(((characterobject.vy + 17) * 3.1415926535897931) / 180) * 224, true, this);
+				var l25 = k + rounddown(Math.sin(((characterobject.vy + 17) * 3.1415926535897931) / 180) * 224, true, this);
+				var j26 = j + rounddown(Math.cos(((characterobject.vy - 17) * 3.1415926535897931) / 180) * 224, true, this);
+				var l26 = k + rounddown(Math.sin(((characterobject.vy - 17) * 3.1415926535897931) / 180) * 224, true, this);
+				j25 += rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
+				l25 += rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
+				j26 += rounddown(Math.cos((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
+				l26 += rounddown(Math.sin((characterobject.vy * 3.1415926535897931) / 180) * 12, true, this);
 				this.setYukaPosition(String(characterobject.c4), String(j26), String(l26), String(j25), String(l25));
 				break;
 
@@ -23899,7 +23933,7 @@ class MainProgram {
 							var i5 = j + l2;
 							if (i5 < 10 || (this.maps.map_bg[i][i5] != 0 && this.maps.map_bg[i][i5] != 4)) break;
 							this.maps.putBGCode(i, i5, 10);
-							if (this.gg.layer_mode == 2 && this.clear_type != 3) this.maps.map_bg_layer[i][i5] = 5;
+							if (this.gg.layer_mode == 2 && this.clear_type != 3) this.map_data_option[i][i5] = true;
 						}
 
 						this.gs.rsAddSound(13);
@@ -25217,8 +25251,8 @@ class MainProgram {
 				ai1[j21] = l6 + 64;
 				j21++;
 				for (var j = 140; j >= 90; j -= 5) {
-					ai[j21] = Math.floor(j4 + 120 + Math.cos((j * 3.1415926535897931) / 180) * 144);
-					ai1[j21] = Math.floor(l6 + 144 - Math.sin((j * 3.1415926535897931) / 180) * 144);
+					ai[j21] = rounddown(j4 + 120 + Math.cos((j * 3.1415926535897931) / 180) * 144, true, this);
+					ai1[j21] = rounddown(l6 + 144 - Math.sin((j * 3.1415926535897931) / 180) * 144, true, this);
 					j21++;
 				}
 
@@ -25228,8 +25262,8 @@ class MainProgram {
 				this.hg.fillPolygon(ai, ai1, j21);
 				j21 = 0;
 				for (var k = 90; k >= 40; k -= 5) {
-					ai[j21] = Math.floor(j4 + 120 + Math.cos((k * 3.1415926535897931) / 180) * 144);
-					ai1[j21] = Math.floor(l6 + 144 - Math.sin((k * 3.1415926535897931) / 180) * 144);
+					ai[j21] = rounddown(j4 + 120 + Math.cos((k * 3.1415926535897931) / 180) * 144, true, this);
+					ai1[j21] = rounddown(l6 + 144 - Math.sin((k * 3.1415926535897931) / 180) * 144, true, this);
 					j21++;
 				}
 
@@ -25257,10 +25291,10 @@ class MainProgram {
 				var l = 140;
 				do {
 					if (l < 45) continue label0;
-					var j14 = Math.floor(k4 + 120 + Math.cos((l * 3.1415926535897931) / 180) * 144);
-					var k16 = Math.floor(i7 + 144 - Math.sin((l * 3.1415926535897931) / 180) * 144);
-					var l17 = Math.floor(k4 + 120 + Math.cos(((l - 5) * 3.1415926535897931) / 180) * 144);
-					var i19 = Math.floor(i7 + 144 - Math.sin(((l - 5) * 3.1415926535897931) / 180) * 144);
+					var j14 = rounddown(k4 + 120 + Math.cos((l * 3.1415926535897931) / 180) * 144, true, this);
+					var k16 = rounddown(i7 + 144 - Math.sin((l * 3.1415926535897931) / 180) * 144, true, this);
+					var l17 = rounddown(k4 + 120 + Math.cos(((l - 5) * 3.1415926535897931) / 180) * 144, true, this);
+					var i19 = rounddown(i7 + 144 - Math.sin(((l - 5) * 3.1415926535897931) / 180) * 144, true, this);
 					this.hg.drawLine(j14, k16, l17, i19);
 					if (l == 140) this.hg.drawLine(k4, i7 + 63, j14, k16);
 					else if (l == 45) this.hg.drawLine(k4 + 239, i7 + 63, l17, i19);
@@ -25282,8 +25316,8 @@ class MainProgram {
 				this.hg.setColor(yukaobject.color);
 				var k21 = 0;
 				for (var i1 = 0; i1 <= 50; i1 += 5) {
-					ai[k21] = Math.floor(l4 + Math.sin((i1 * 3.1415926535897931) / 180) * 160);
-					ai1[k21] = Math.floor(j7 - 32 + Math.cos((i1 * 3.1415926535897931) / 180) * 160);
+					ai[k21] = rounddown(l4 + Math.sin((i1 * 3.1415926535897931) / 180) * 160, true, this);
+					ai1[k21] = rounddown(j7 - 32 + Math.cos((i1 * 3.1415926535897931) / 180) * 160, true, this);
 					if (i1 == 50) {
 						j20 = ai[k21];
 						k20 = ai1[k21];
@@ -25296,8 +25330,8 @@ class MainProgram {
 				this.hg.fillPolygon(ai, ai1, 12);
 				k21 = 0;
 				for (var j1 = 0; j1 <= 50; j1 += 5) {
-					ai[k21] = Math.floor(l4 + 256 - Math.sin((j1 * 3.1415926535897931) / 180) * 160);
-					ai1[k21] = Math.floor(j7 + 160 - Math.cos((j1 * 3.1415926535897931) / 180) * 160);
+					ai[k21] = rounddown(l4 + 256 - Math.sin((j1 * 3.1415926535897931) / 180) * 160, true, this);
+					ai1[k21] = rounddown(j7 + 160 - Math.cos((j1 * 3.1415926535897931) / 180) * 160, true, this);
 					if (j1 == 50) {
 						l20 = ai[k21];
 						i21 = ai1[k21];
@@ -25337,10 +25371,10 @@ class MainProgram {
 				yukaobject.draw_f = true;
 				this.hg.setColor(yukaobject.color);
 				for (var k1 = 0; k1 <= 45; k1 += 5) {
-					var k14 = Math.floor(i5 + Math.sin((k1 * 3.1415926535897931) / 180) * 160);
-					var l16 = Math.floor(k7 - 32 + Math.cos((k1 * 3.1415926535897931) / 180) * 160);
-					var i18 = Math.floor(i5 + Math.sin(((k1 + 5) * 3.1415926535897931) / 180) * 160);
-					var j19 = Math.floor(k7 - 32 + Math.cos(((k1 + 5) * 3.1415926535897931) / 180) * 160);
+					var k14 = rounddown(i5 + Math.sin((k1 * 3.1415926535897931) / 180) * 160, true, this);
+					var l16 = rounddown(k7 - 32 + Math.cos((k1 * 3.1415926535897931) / 180) * 160, true, this);
+					var i18 = rounddown(i5 + Math.sin(((k1 + 5) * 3.1415926535897931) / 180) * 160, true, this);
+					var j19 = rounddown(k7 - 32 + Math.cos(((k1 + 5) * 3.1415926535897931) / 180) * 160, true, this);
 					this.hg.drawLine(k14, l16, i18, j19);
 					if (k1 == 45) {
 						j20 = i18;
@@ -25349,10 +25383,10 @@ class MainProgram {
 				}
 
 				for (var l1 = 0; l1 <= 45; l1 += 5) {
-					var l14 = Math.floor(i5 + 256 - Math.sin((l1 * 3.1415926535897931) / 180) * 160);
-					var i17 = Math.floor(k7 + 160 - Math.cos((l1 * 3.1415926535897931) / 180) * 160);
-					var j18 = Math.floor(i5 + 256 - Math.sin(((l1 + 5) * 3.1415926535897931) / 180) * 160);
-					var k19 = Math.floor(k7 + 160 - Math.cos(((l1 + 5) * 3.1415926535897931) / 180) * 160);
+					var l14 = rounddown(i5 + 256 - Math.sin((l1 * 3.1415926535897931) / 180) * 160, true, this);
+					var i17 = rounddown(k7 + 160 - Math.cos((l1 * 3.1415926535897931) / 180) * 160, true, this);
+					var j18 = rounddown(i5 + 256 - Math.sin(((l1 + 5) * 3.1415926535897931) / 180) * 160, true, this);
+					var k19 = rounddown(k7 + 160 - Math.cos(((l1 + 5) * 3.1415926535897931) / 180) * 160, true, this);
 					this.hg.drawLine(l14, i17, j18, k19);
 					if (l1 == 45) {
 						l20 = j18;
@@ -25378,8 +25412,8 @@ class MainProgram {
 				this.hg.setColor(yukaobject.color);
 				var l21 = 0;
 				for (var i2 = 0; i2 <= 50; i2 += 5) {
-					ai[l21] = Math.floor(j10 - Math.sin((i2 * 3.1415926535897931) / 180) * 160);
-					ai1[l21] = Math.floor(l7 - 32 + Math.cos((i2 * 3.1415926535897931) / 180) * 160);
+					ai[l21] = rounddown(j10 - Math.sin((i2 * 3.1415926535897931) / 180) * 160, true, this);
+					ai1[l21] = rounddown(l7 - 32 + Math.cos((i2 * 3.1415926535897931) / 180) * 160, true, this);
 					if (i2 == 50) {
 						j20 = ai[l21];
 						k20 = ai1[l21];
@@ -25392,8 +25426,8 @@ class MainProgram {
 				this.hg.fillPolygon(ai, ai1, 12);
 				l21 = 0;
 				for (var j2 = 0; j2 <= 50; j2 += 5) {
-					ai[l21] = Math.floor(j5 + Math.sin((j2 * 3.1415926535897931) / 180) * 160);
-					ai1[l21] = Math.floor(l7 + 160 - Math.cos((j2 * 3.1415926535897931) / 180) * 160);
+					ai[l21] = rounddown(j5 + Math.sin((j2 * 3.1415926535897931) / 180) * 160, true, this);
+					ai1[l21] = rounddown(l7 + 160 - Math.cos((j2 * 3.1415926535897931) / 180) * 160, true, this);
 					if (j2 == 50) {
 						l20 = ai[l21];
 						i21 = ai1[l21];
@@ -25433,10 +25467,10 @@ class MainProgram {
 			yukaobject.draw_f = true;
 			this.hg.setColor(yukaobject.color);
 			for (var k2 = 0; k2 <= 45; k2 += 5) {
-				var i15 = Math.floor(k10 - Math.sin((k2 * 3.1415926535897931) / 180) * 160);
-				var j17 = Math.floor(i8 - 32 + Math.cos((k2 * 3.1415926535897931) / 180) * 160);
-				var k18 = Math.floor(k10 - Math.sin(((k2 + 5) * 3.1415926535897931) / 180) * 160);
-				var l19 = Math.floor(i8 - 32 + Math.cos(((k2 + 5) * 3.1415926535897931) / 180) * 160);
+				var i15 = rounddown(k10 - Math.sin((k2 * 3.1415926535897931) / 180) * 160, true, this);
+				var j17 = rounddown(i8 - 32 + Math.cos((k2 * 3.1415926535897931) / 180) * 160, true, this);
+				var k18 = rounddown(k10 - Math.sin(((k2 + 5) * 3.1415926535897931) / 180) * 160, true, this);
+				var l19 = rounddown(i8 - 32 + Math.cos(((k2 + 5) * 3.1415926535897931) / 180) * 160, true, this);
 				this.hg.drawLine(i15, j17, k18, l19);
 				if (k2 == 45) {
 					j20 = k18;
@@ -25445,10 +25479,10 @@ class MainProgram {
 			}
 
 			for (var l2 = 0; l2 <= 45; l2 += 5) {
-				var j15 = Math.floor(k5 + Math.sin((l2 * 3.1415926535897931) / 180) * 160);
-				var k17 = Math.floor(i8 + 160 - Math.cos((l2 * 3.1415926535897931) / 180) * 160);
-				var l18 = Math.floor(k5 + Math.sin(((l2 + 5) * 3.1415926535897931) / 180) * 160);
-				var i20 = Math.floor(i8 + 160 - Math.cos(((l2 + 5) * 3.1415926535897931) / 180) * 160);
+				var j15 = rounddown(k5 + Math.sin((l2 * 3.1415926535897931) / 180) * 160, true, this);
+				var k17 = rounddown(i8 + 160 - Math.cos((l2 * 3.1415926535897931) / 180) * 160, true, this);
+				var l18 = rounddown(k5 + Math.sin(((l2 + 5) * 3.1415926535897931) / 180) * 160, true, this);
+				var i20 = rounddown(i8 + 160 - Math.cos(((l2 + 5) * 3.1415926535897931) / 180) * 160, true, this);
 				this.hg.drawLine(j15, k17, l18, i20);
 				if (l2 == 45) {
 					l20 = l18;

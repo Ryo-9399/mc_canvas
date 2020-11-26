@@ -179,7 +179,7 @@ export function makeKnownDefaultParameters() {
 		filename_chizu: "chizu.gif",
 		game_speed: "70",
 		se_switch: "2",
-		se_filename: "1",
+		se_filename: "2",
 		filename_se_start: "item.au",
 		filename_se_gameover: "gameover.au",
 		filename_se_clear: "clear.au",
@@ -318,7 +318,9 @@ export function makeKnownDefaultParameters() {
 		audio_se_switch_ogg: "1",
 		audio_bgm_switch_wave: "2",
 		audio_bgm_switch_mp3: "1",
-		audio_bgm_switch_ogg: "1"
+		audio_bgm_switch_ogg: "1",
+		font_score: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
+		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace"
 	};
 }
 

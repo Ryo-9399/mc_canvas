@@ -1,5 +1,6 @@
 import { CharacterObject } from "../CharacterObject";
 import { MainProgram } from "../MainProgram";
+import { rounddown } from "../GlobalFunctions";
 
 // ボスの状態
 export const DYING = 40;
@@ -472,8 +473,8 @@ class Boss extends CharacterObject {
 					// 左向きの場合は角度に180度足す
 					const dd = direction !== 1 ? 180 : 0;
 					const rad = (normalizeDegree(degree * mirror + dd) * 3.14) / 180;
-					const x = Math.floor(Math.cos(rad) * 12);
-					const y = Math.floor(Math.sin(rad) * 10);
+					const x = rounddown(Math.cos(rad) * 12, true, mp);
+					const y = rounddown(Math.sin(rad) * 10, true, mp);
 					mp.mSet2(this.x, this.y + 16, 740, x, y);
 					break;
 				}
@@ -558,8 +559,8 @@ class Boss extends CharacterObject {
 				// 反転しても角度が同じ場合は一発しか出さない
 				if (degree_normalized !== degree_inversed) rads.push((degree_inversed * 3.14) / 180);
 				for (const rad of rads) {
-					const cos = Math.floor(Math.cos(rad) * 12);
-					const sin = Math.floor(Math.sin(rad) * 10);
+					const cos = rounddown(Math.cos(rad) * 12, true, mp);
+					const sin = rounddown(Math.sin(rad) * 10, true, mp);
 					mp.mSet2(this.x, this.y, 710, cos, sin);
 				}
 				break;
@@ -615,8 +616,8 @@ class Boss extends CharacterObject {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
-			const cos = Math.floor(Math.cos(d) * 8);
-			const sin = -Math.floor(Math.sin(d) * 8);
+			const cos = rounddown(Math.cos(d) * 8, true, mp);
+			const sin = -rounddown(Math.sin(d) * 8, true, mp);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 			mp.gs.rsAddSound(18);
 		}
@@ -669,8 +670,8 @@ class Boss extends CharacterObject {
 			}
 		}
 		if (rad !== null) {
-			const cos = Math.floor(Math.cos(rad) * 12);
-			const sin = Math.floor(Math.sin(rad) * 8);
+			const cos = rounddown(Math.cos(rad) * 12, true, mp);
+			const sin = rounddown(Math.sin(rad) * 8, true, mp);
 			mp.mSet2(this.x, this.y, 711, cos, sin);
 		}
 
@@ -851,7 +852,7 @@ class Boss extends CharacterObject {
 			// 元の位置に戻る
 			const speed = -2 * mirror;
 			this.x += speed;
-			checkBorder(speed, x_standby_left, x_standby_right, true, -20);
+			checkBorder(speed, x_standby_right, x_standby_left, true, -20);
 		}
 	}
 

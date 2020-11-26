@@ -408,8 +408,8 @@ class KeyboardMenu {
 	}
 
 	drawMenus() {
-		var beforeFont = this.hg._font;
-		this.hg.setFont(new Font(Font.SANS_SERIF, 0, 12));
+		const beforeFont = this.hg._font;
+		this.hg.setFont(new Font(this.gg.font_message, 0, 12));
 		for (var i = 0; i <= 15; i++) {
 			var c = this.c[i];
 			if (c == 0) continue;

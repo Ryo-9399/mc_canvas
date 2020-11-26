@@ -1,4 +1,5 @@
 import { CharacterObject } from "../CharacterObject";
+import { rounddown } from "../GlobalFunctions";
 
 // ボスの状態
 export const DYING = 40;
@@ -452,8 +453,8 @@ class Boss extends CharacterObject {
 		for (let i = 0; i < 8; i++) {
 			// NOTE: 後方互換性のためMath.PI等ではなく3.14を用いてラジアンに変換する
 			const d = (normalizeDegree(i * 45 + degree) * 3.14) / 180;
-			const cos = Math.floor(Math.cos(d) * 8);
-			const sin = -Math.floor(Math.sin(d) * 8);
+			const cos = rounddown(Math.cos(d) * 8, true, mp);
+			const sin = -rounddown(Math.sin(d) * 8, true, mp);
 			mp.mSet2(this.x, this.y - 8, 710, cos, sin);
 		}
 	}
@@ -555,7 +556,7 @@ class Boss extends CharacterObject {
 			// 元の位置に戻る
 			const speed = -2 * mirror;
 			this.x += speed;
-			checkBorder(speed, x_standby_left, x_standby_right, true, -20);
+			checkBorder(speed, x_standby_right, x_standby_left, true, -20);
 		}
 	}
 

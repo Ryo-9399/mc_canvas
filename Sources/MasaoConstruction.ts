@@ -176,7 +176,7 @@ class MasaoConstruction {
 			paramGraphics.setColor(Color.black);
 			paramGraphics.fillRect(0, 0, 512, 320);
 			paramGraphics.setColor(Color.white);
-			paramGraphics.setFont(new Font("Dialog", 0, 16));
+			paramGraphics.setFont(new Font(Font.DIALOG, 0, 16));
 
 			var str = this.getParameter("now_loading");
 			if (str != null) {
@@ -300,7 +300,7 @@ class MasaoConstruction {
 			if (this.variable_sleep_time) {
 				if (this.sleep_time_visible) {
 					this.gg.os_g.setColor(this.mp.gamecolor_score);
-					this.gg.os_g.setFont(new Font("Dialog", 1, this.mp.moji_size));
+					this.gg.os_g.setFont(new Font(Font.DIALOG, 1, this.mp.moji_size));
 					this.gg.os_g.drawString("VARIABLE SLEEP  1", 40, (14 + this.mp.moji_size) * 3);
 					this.gg.os_g.drawString("MAIN PROGRAM TIME  " + i, 40, (14 + this.mp.moji_size) * 4);
 					this.gg.os_g.drawString("SLEEP TIME  " + j, 40, (14 + this.mp.moji_size) * 5);
@@ -315,7 +315,7 @@ class MasaoConstruction {
 			} else {
 				if (this.sleep_time_visible) {
 					this.gg.os_g.setColor(this.mp.gamecolor_score);
-					this.gg.os_g.setFont(new Font("Dialog", 1, this.mp.moji_size));
+					this.gg.os_g.setFont(new Font(Font.DIALOG, 1, this.mp.moji_size));
 					this.gg.os_g.drawString("VARIABLE SLEEP  0", 40, (14 + this.mp.moji_size) * 3);
 					this.gg.os_g.drawString("MAIN PROGRAM TIME  " + i, 40, (14 + this.mp.moji_size) * 4);
 					this.gg.os_g.drawString("SLEEP TIME  " + this.th_interval, 40, (14 + this.mp.moji_size) * 5);
@@ -489,6 +489,40 @@ class MasaoConstruction {
 		if (this.tdb.getValueInt("audio_bgm_switch_mp3") == 2) this.audio_bgm_no_mp3 = true;
 		if (this.tdb.getValueInt("audio_bgm_switch_ogg") == 2) this.audio_bgm_no_ogg = true;
 		this.gs = new (GameSoundForApplet.factory(this.tdb))(this.tdb, this);
+
+		// 入力されたフォントをCSS形式に変換
+		const ParamFontToCSS = font_params => {
+			let font_param;
+
+			// 「,」で区切られた文字列を空白を取り除いて配列に変換
+			const font_params_arr = font_params.trim().split(/\s*(?:,|$)\s*/);
+
+			font_params_arr.forEach((e, i, a) => {
+				// キーワードで指定ではない　かつ　引用符が付けられていない場合に引用符を付ける
+				if (
+					e !== "serif" &&
+					e !== "sans-serif" &&
+					e !== "monospace" &&
+					e !== "cursive" &&
+					e !== "fantasy" &&
+					e !== "system-ui" &&
+					!((e[0] === "'" && e[e.length - 1] === "'") || (e[0] === '"' && e[e.length - 1] === '"'))
+				)
+					a[i] = `'${e}'`;
+			});
+
+			// 文字列に変換
+			font_param = font_params_arr.join();
+
+			// キーワード指定がないときに、指定されたフォントが使えなかった場合 Font.DIALOG (デフォルト値)が使われるように
+			if (font_param.match(/^(?!.*(serif|monospace|cursive|fantasy|system-ui)$).*$/)) {
+				font_param += `,${Font.DIALOG_str}`;
+			}
+
+			return font_param;
+		};
+		this.gg.font_score = ParamFontToCSS(this.tdb.getValue("font_score"));
+		this.gg.font_message = ParamFontToCSS(this.tdb.getValue("font_message"));
 
 		this.mp = new MainProgram(this.gg, this.gm, this.gk, this.gs, this.tdb);
 		// ハイスコアイベント用のリスナ登録
