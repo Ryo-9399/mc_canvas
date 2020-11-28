@@ -13,7 +13,7 @@ import {
 	drawGamescreenMy,
 	drawGamescreenEnemy,
 	drawGamescreenWindow,
-	drawGamescreenUgokuyuka
+	drawGamescreenUgokuyuka,
 } from "./drawGamescreenJSS";
 import { InversionKind, GameGraphicsForApplet } from "./GameGraphicsForApplet";
 import { Option, MainLayer, MapchipLayer } from "./MasaoOption";
@@ -1132,9 +1132,9 @@ class MainProgram {
 	 * @param {string} line3 メッセージ（3行目）
 	 * @see {@link MasaoJSS#showMessage}
 	 */
-	showmSet(s: string, s1: string | null, s2: string | null, s3: string | null, s4: string | null) {
+	showmSet(s: string | number, s1: string | null, s2: string | null, s3: string | null, s4: string | null) {
 		if (this.ml_mode != 100) return false;
-		this.showm_c = parseInt(s);
+		this.showm_c = parseInt(s as string);
 		if (isNaN(this.showm_c)) this.showm_c = 0;
 		if (this.showm_c <= 0) {
 			return false;
@@ -1170,11 +1170,11 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功するとtrueを返す
 	 * @see {@link MasaoJSS#showImage}
 	 */
-	showiSet(s: string, s1: string, s2: string, s3: string) {
+	showiSet(s: string | number, s1: string | number, s2: string | number, s3: string) {
 		if (this.ml_mode != 100) return false;
-		this.showi_c = parseInt(s);
-		this.showi_x = parseInt(s1);
-		this.showi_y = parseInt(s2);
+		this.showi_c = parseInt(s as string);
+		this.showi_x = parseInt(s1 as string);
+		this.showi_y = parseInt(s2 as string);
 		if (isNaN(this.showi_c) || isNaN(this.showi_x) || isNaN(this.showi_y)) this.showi_c = 0;
 		if (this.showi_c <= 0) {
 			return false;
@@ -1211,15 +1211,15 @@ class MainProgram {
 	 * @returns {boolean} 主人公を停止状態にできたかどうか
 	 * @see {@link MasaoJSS#setMyWait}
 	 */
-	setMyWait(s: string, s1: string, s2: string) {
+	setMyWait(s: string | number, s1: string | number, s2: string | number) {
 		var i = -1;
 		var j = 100;
 		var k = 1;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) i = -1;
 		if (i < 0) return false;
 		if (this.co_j.c >= 200) return false;
@@ -1349,10 +1349,10 @@ class MainProgram {
 	 * @param {string} filename ファイル名
 	 * @see {@link MasaoJSS#setSystemImage}
 	 */
-	setSystemImage(s: string, s1: string) {
+	setSystemImage(s: string | number, s1: string) {
 		var i;
 
-		i = parseInt(s);
+		i = parseInt(s as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0 || i > 9) return false;
 		if (i == 8) this.gg.setPatternImage(s1);
@@ -1464,12 +1464,12 @@ class MainProgram {
 	 * @param {number} time 時間（フレーム）
 	 * @see {@link MasaoJSS#setModeWait}
 	 */
-	setModeWait(s: string, s1: string) {
+	setModeWait(s: string | number, s1: string | number) {
 		var i = 0;
 		var j = 100;
 
-		i = parseInt(s);
-		j = parseInt(s1);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
 		if (isNaN(i) || isNaN(j)) i = -1;
 		if (i < 0 || i > 2) return false;
 		if (j < 0) return false;
@@ -1491,16 +1491,16 @@ class MainProgram {
 	 * @see {@link MainProgram#showrSet}
 	 * @see {@link MainProgram#showoSet}
 	 */
-	setPenColor(s: string, s1: string, s2: string, s3: string) {
+	setPenColor(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
 		var i = 255;
 		var j = 255;
 		var k = 255;
 		var l = 255;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
-		l = parseInt(s3);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
+		l = parseInt(s3 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) {
 			return false;
@@ -1521,14 +1521,14 @@ class MainProgram {
 	 * @param {number} height 矩形の高さ
 	 * @see {@link MasaoJSS#showRect}
 	 */
-	showrSet(s: string, s1: string, s2: string, s3: string, s4: string) {
+	showrSet(s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string | number) {
 		if (this.ml_mode != 100) return false;
 
-		this.showr_c = parseInt(s);
-		this.showr_x = parseInt(s1);
-		this.showr_y = parseInt(s2);
-		this.showr_width = parseInt(s3);
-		this.showr_height = parseInt(s4);
+		this.showr_c = parseInt(s as string);
+		this.showr_x = parseInt(s1 as string);
+		this.showr_y = parseInt(s2 as string);
+		this.showr_width = parseInt(s3 as string);
+		this.showr_height = parseInt(s4 as string);
 		if (
 			isNaN(this.showr_c) ||
 			isNaN(this.showr_x) ||
@@ -1551,14 +1551,14 @@ class MainProgram {
 	 * @param {number} height 楕円の高さ
 	 * @see {@link MasaoJSS#showOval}
 	 */
-	showoSet(s: string, s1: string, s2: string, s3: string, s4: string) {
+	showoSet(s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string | number) {
 		if (this.ml_mode != 100) return false;
 
-		this.showo_c = parseInt(s);
-		this.showo_x = parseInt(s1);
-		this.showo_y = parseInt(s2);
-		this.showo_width = parseInt(s3);
-		this.showo_height = parseInt(s4);
+		this.showo_c = parseInt(s as string);
+		this.showo_x = parseInt(s1 as string);
+		this.showo_y = parseInt(s2 as string);
+		this.showo_width = parseInt(s3 as string);
+		this.showo_height = parseInt(s4 as string);
 		if (
 			isNaN(this.showo_c) ||
 			isNaN(this.showo_x) ||
@@ -1624,8 +1624,8 @@ class MainProgram {
 	 * @returns {boolean}
 	 * @see {@link MasaoJSS#setJSMes}
 	 */
-	setJSMes(s: string) {
-		this.js_mes = parseInt(s);
+	setJSMes(s: string | number) {
+		this.js_mes = parseInt(s as string);
 		if (isNaN(this.js_mes)) this.js_mes = 0;
 		return true;
 	}
@@ -1639,16 +1639,16 @@ class MainProgram {
 	 * @param {number} y Y座標
 	 * @see {@link MasaoJSS#setEnemy}
 	 */
-	sete(s: string, s1: string, s2: string) {
+	sete(s: string | number, s1: string | number, s2: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		var flag = false;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) k = 0;
 		if (k <= 0) return false;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) return false;
@@ -2186,11 +2186,11 @@ class MainProgram {
 	 * @param {number} x X座標
 	 * @see {@link MasaoJSS#setScrollLock}
 	 */
-	setScrollLock(s: string) {
+	setScrollLock(s: string | number) {
 		var i = 32;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
+		i = parseInt(s as string);
 		if (isNaN(i)) i = 32;
 		if (i < 32) i = 32;
 		if (this.sl_step == 10 || this.sl_step == 11) this.sl_step = 11;
@@ -2212,7 +2212,7 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link MasaoJSS#attackFire}
 	 */
-	attackFire(s: string, s1: string, s2: string, s3: string) {
+	attackFire(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 32;
@@ -2220,10 +2220,10 @@ class MainProgram {
 		var i1 = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
-		l = parseInt(s3);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
+		l = parseInt(s3 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) return -1;
 		if (this.jm_kazu > 0) {
@@ -2259,7 +2259,7 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link MasaoJSS#attackTail}
 	 */
-	attackTail(s: string, s1: string, s2: string, s3: string) {
+	attackTail(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 32;
@@ -2267,10 +2267,10 @@ class MainProgram {
 		var i1 = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
-		l = parseInt(s3);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
+		l = parseInt(s3 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) return -1;
 		if (this.j_tail_ac >= 3 && this.j_tail_ac <= 7 && this.attacktail_yf) {
@@ -2302,7 +2302,7 @@ class MainProgram {
 	 * @returns {number} 倒した敵の数 エラー時は-1
 	 * @see {@link MasaoJSS#destroyEnemy}
 	 */
-	destroyEnemy(s: string, s1: string, s2: string, s3: string) {
+	destroyEnemy(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
@@ -2310,10 +2310,10 @@ class MainProgram {
 		var i1 = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
-		l = parseInt(s3);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
+		l = parseInt(s3 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) return -1;
 		for (var j1 = 0; j1 <= this.t_kazu; j1++) {
@@ -2373,15 +2373,15 @@ class MainProgram {
 	 * @returns {boolean} 変更に成功したかどうか
 	 * @see {@link MasaoJSS#setMapchip}
 	 */
-	setmapc(s: string, s1: string, s2: string) {
+	setmapc(s: string | number, s1: string | number, s2: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) k = -1;
 		if (k < 0 || k > 249) return false;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2404,14 +2404,14 @@ class MainProgram {
 	 * @returns {number} マップチップ番号 失敗した場合は-1
 	 * @see {@link MasaoJSS#getMapchip}
 	 */
-	getmapc(s: string, s1: string) {
+	getmapc(s: string | number, s1: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s);
-		j = parseInt(s1);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
 		if (isNaN(i) || isNaN(j)) k = -1;
 		if (k < 0) return -1;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2433,16 +2433,16 @@ class MainProgram {
 	 * @returns {boolean} 変更に成功したかどうか
 	 * @see {@link MasaoJSS#setMapchip2}
 	 */
-	setmapc2(s: string, s1: string, s2: string) {
+	setmapc2(s: string | number, s1: string | number, s2: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		if (this.ml_mode != 100) return false;
 		if (this.gg.layer_mode != 2) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) k = -1;
 		if (k < 0 || k > 255) return false;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2463,15 +2463,15 @@ class MainProgram {
 	 * @returns {number} マップチップ番号 失敗した場合は-1
 	 * @see {@link MasaoJSS#getMapchip2}
 	 */
-	getmapc2(s: string, s1: string) {
+	getmapc2(s: string | number, s1: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		if (this.ml_mode != 100) return -1;
 		if (this.gg.layer_mode != 2) return -1;
 
-		i = parseInt(s);
-		j = parseInt(s1);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
 		if (isNaN(i) || isNaN(j)) k = -1;
 		if (k < 0) return -1;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2491,10 +2491,9 @@ class MainProgram {
 	 * @returns {boolean} 常にtrue
 	 * @see {@link MasaoJSS#showMyHP}
 	 */
-	showMyHP(s: string) {
+	showMyHP(s: string | null) {
 		this.j_hp_v = true;
-		this.j_hp_moji = s;
-		if (this.j_hp_moji == null) this.j_hp_moji = "";
+		this.j_hp_moji = s ?? "";
 		return true;
 	}
 
@@ -2505,10 +2504,10 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setMyMaxHP}
 	 */
-	setMyMaxHP(s: string) {
+	setMyMaxHP(s: string | number) {
 		var i = -1;
 
-		i = parseInt(s);
+		i = parseInt(s as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0) return false;
 		this.j_hp_max = i;
@@ -2528,14 +2527,14 @@ class MainProgram {
 	 * @returns {boolean} 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setMyHP}
 	 */
-	setMyHP(s: string) {
+	setMyHP(s: string | number) {
 		if (
 			(this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) &&
 			this.co_j.c >= 100 &&
 			this.co_j.c < 200
 		) {
 			var i;
-			i = parseInt(s);
+			i = parseInt(s as string);
 			if (isNaN(i)) i = -1;
 			if (i < 0) {
 				return false;
@@ -2572,10 +2571,10 @@ class MainProgram {
 	 * @returns {boolean} ダメージを与えることに成功したかどうか
 	 * @see {@link MasaoJSS#setMyHPDamage}
 	 */
-	setMyHPDamage(s: string) {
+	setMyHPDamage(s: string | number) {
 		if (this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200) {
 			var j;
-			j = parseInt(s);
+			j = parseInt(s as string);
 			if (isNaN(j)) j = 0xfffe7961;
 			if (j == 0xfffe7961) return false;
 			if (this.j_muteki_c > 0) return true;
@@ -5198,7 +5197,7 @@ class MainProgram {
 				var c1 = 0;
 				if (mainLayer) {
 					try {
-						c1 = mainLayer.map[k3 - 10][j1 - 1] as number;  // TODO: 文字列によるカスタムパーツへの対応
+						c1 = mainLayer.map[k3 - 10][j1 - 1] as number; // TODO: 文字列によるカスタムパーツへの対応
 						if (!c1) {
 							c1 = 0;
 						}
@@ -5268,14 +5267,14 @@ class MainProgram {
 					result[key] = {
 						properties: Object.assign({}, native.properties, obj.properties),
 						native: native,
-						nativeCode: obj.extends
+						nativeCode: obj.extends,
 					};
 				} else if (obj.extends in result) {
 					// 継承可能なのでコピー
 					result[key] = {
 						properties: Object.assign({}, result[obj.extends].properties, obj.properties),
 						native: result[obj.extends].native,
-						nativeCode: result[obj.extends].nativeCode
+						nativeCode: result[obj.extends].nativeCode,
 					};
 				} else {
 					// 継承元がまだ見つからない
@@ -5294,7 +5293,7 @@ class MainProgram {
 		}
 		if (pending.length > 0) {
 			// 解決されなかった関係がある
-			pending.forEach(function(key) {
+			pending.forEach(function (key) {
 				console.warn("カスタムパーツコード" + key + "を解決できませんでした");
 			});
 		}
@@ -11137,7 +11136,7 @@ class MainProgram {
 			return {
 				properties: obj.properties,
 				native: obj,
-				nativeCode: (code as number) + 5000
+				nativeCode: (code as number) + 5000,
 			};
 		}
 		return null;
@@ -24197,17 +24196,17 @@ class MainProgram {
 	 * @returns {number} 床ID 失敗した場合は-1
 	 * @see {@link MasaoJSS#newYuka}
 	 */
-	newYuka(s: string, s1: string, s2: string, s3: string, s4: string) {
+	newYuka(s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string) {
 		var j = 32;
 		var k = 320;
 		var l = 96;
 		var i1 = 64;
 		if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 95) return -1;
 
-		j = parseInt(s);
-		k = parseInt(s1);
-		l = parseInt(s2);
-		i1 = parseInt(s3);
+		j = parseInt(s as string);
+		k = parseInt(s1 as string);
+		l = parseInt(s2 as string);
+		i1 = parseInt(s3 as string);
 		if (isNaN(j) || isNaN(k) || isNaN(l) || isNaN(i1)) j = -9999;
 		if (j == -9999) return -1;
 		var i = 0;
@@ -24339,16 +24338,30 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaPosition}
 	 */
-	setYukaPosition(s: string, s1: string, s2: string, s3?: string, s4?: string) {
+	setYukaPosition(id: string | number, x: string | number, y: string | number): boolean;
+	setYukaPosition(
+		id: string | number,
+		x: string | number,
+		y: string | number,
+		x2: string | number,
+		y2: string | number
+	): boolean;
+	setYukaPosition(
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3?: string | number,
+		s4?: string | number
+	) {
 		if (s3 === undefined || s4 === undefined) {
 			var i = 0;
 			var j = 32;
 			var k = 320;
 			if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-			i = parseInt(s);
-			j = parseInt(s1);
-			k = parseInt(s2);
+			i = parseInt(s as string);
+			j = parseInt(s1 as string);
+			k = parseInt(s2 as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k)) i = -1;
 			if (i < 0) return false;
 			if (i > this.yuka_id_max) return false;
@@ -24371,11 +24384,11 @@ class MainProgram {
 			var i1 = 320;
 			if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-			i = parseInt(s);
-			j = parseInt(s1);
-			k = parseInt(s2);
-			l = parseInt(s3);
-			i1 = parseInt(s4);
+			i = parseInt(s as string);
+			j = parseInt(s1 as string);
+			k = parseInt(s2 as string);
+			l = parseInt(s3 as string);
+			i1 = parseInt(s4 as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l) || isNaN(i1)) i = -1;
 			if (i < 0) return false;
 			if (i > this.yuka_id_max) return false;
@@ -24401,13 +24414,13 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaType}
 	 */
-	setYukaType(s: string, s1: string) {
+	setYukaType(s: string | number, s1: string | number) {
 		var i = 0;
 		var j = 1;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
 		if (isNaN(i) || isNaN(j)) j = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24427,12 +24440,12 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#disposeYuka}
 	 */
-	disposeYuka(s: string) {
+	disposeYuka(s: string | number) {
 		var i = 0;
 		var byte0 = 1;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
+		i = parseInt(s as string);
 		if (isNaN(i)) byte0 = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24456,9 +24469,21 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaColor}
 	 */
-	setYukaColor(id: string, r: string, g: string, b: string, alpha: string): boolean;
+	setYukaColor(
+		id: string | number,
+		r: string | number,
+		g: string | number,
+		b: string | number,
+		alpha: string | number
+	): boolean;
 	setYukaColor(index: number, color: Color): boolean;
-	setYukaColor(a1: string | number, a2: string | Color, a3?: string, a4?: string, a5?: string): boolean {
+	setYukaColor(
+		a1: string | number,
+		a2: string | number | Color,
+		a3?: string | number,
+		a4?: string | number,
+		a5?: string | number
+	): boolean {
 		if (arguments.length == 5) {
 			var i = 0;
 			var j = 255;
@@ -24564,12 +24589,12 @@ class MainProgram {
 	 * @returns {number}
 	 * @see {@link MasaoJSS#isRideYuka}
 	 */
-	isRideYuka(s: string) {
+	isRideYuka(s: string | number) {
 		var i = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return -1;
 		if (this.co_j.c < 100 || this.co_j.c >= 200) return -1;
 
-		i = parseInt(s);
+		i = parseInt(s as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0) return -1;
 		if (i > this.yuka_id_max) return -1;
@@ -26690,9 +26715,9 @@ class MainProgram {
 			"jst_syouryuuken",
 			"jst_pc_attack",
 			"up_key_c",
-			"down_key_c"
+			"down_key_c",
 		] as const;
-		var result = {} as { [K in (typeof props)[number]]: MainProgram[K] } & {
+		var result = {} as { [K in typeof props[number]]: MainProgram[K] } & {
 			map_data_option: ReturnType<typeof compressSparseBooleanArray2>;
 			co_j: ReturnType<typeof serializeCharacterObject>;
 			co_t: ReturnType<typeof compressCharacterObjectArray>;
@@ -26702,7 +26727,7 @@ class MainProgram {
 			co_mu: ReturnType<typeof compressCharacterObjectArray>;
 			yo: ReturnType<typeof serializeYukaObject>[];
 		};
-		props.forEach(key => {
+		props.forEach((key) => {
 			(result as any)[key] = this[key];
 		});
 		// map_data_optionは巨大なので圧縮する
@@ -26710,7 +26735,7 @@ class MainProgram {
 		result.co_j = serializeCharacterObject(this.co_j);
 		// CharacterObjectの配列も小さくする
 		var coProps = ["co_t", "co_m", "co_a", "co_jm", "co_mu"] as const;
-		coProps.forEach(key => {
+		coProps.forEach((key) => {
 			(result as any)[key] = compressCharacterObjectArray(this[key]);
 		});
 		// YukaObjectの配列も小さくする
@@ -26727,7 +26752,7 @@ class MainProgram {
 					if (arr[x][y]) {
 						result_arr.push({
 							x: x,
-							y: y
+							y: y,
 						});
 					}
 				}
@@ -26735,13 +26760,13 @@ class MainProgram {
 			return {
 				width: width,
 				height: height,
-				arr: result_arr
+				arr: result_arr,
 			};
 		}
 
 		// CharacterObjectの配列を変換
-		function compressCharacterObjectArray<K extends (typeof coProps)[number]>(arr: MainProgram[K]) {
-			return arr.map(function(obj: CharacterObject) {
+		function compressCharacterObjectArray<K extends typeof coProps[number]>(arr: MainProgram[K]) {
+			return arr.map(function (obj: CharacterObject) {
 				if (obj.c <= 0) {
 					// Cが0なのは使われていないオブジェクト
 					return 0;

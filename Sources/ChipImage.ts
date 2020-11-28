@@ -2,7 +2,7 @@ import { createNDimensionArray } from "./GlobalFunctions";
 import { ImageBuff } from "./ImageBuff";
 import { InversionKind } from "./GameGraphicsForApplet";
 
-type ChipInversionKind = InversionKind | 2 | 3;
+export type ChipInversionKind = InversionKind | 2 | 3;
 
 /**
  * 1枚の画像から複数のチップ画像を生成するクラス

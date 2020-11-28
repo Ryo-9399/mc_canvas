@@ -1,7 +1,8 @@
-import { ChipImage } from "./ChipImage";
+import { ChipImage, ChipInversionKind } from "./ChipImage";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
 import { MasaoConstruction } from "./MasaoConstruction";
+import { InversionKind } from "./GameGraphicsForApplet";
 
 /**
  * ユーザーJavaScriptから正男を操作するAPIを提供するオブジェクトです。
@@ -120,13 +121,15 @@ class MasaoJSS {
 	setMyDirection: (s: string | number) => boolean;
 	setHTMLText: (s: string) => boolean;
 	newYuka: (s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string) => number;
-	setYukaPosition: (
-		s: string | number,
-		s1: string | number,
-		s2: string | number,
-		s3: string | number,
-		s4: string | number
-	) => boolean;
+	setYukaPosition:
+		| ((s: string | number, s1: string | number, s2: string | number) => boolean)
+		| ((
+				s: string | number,
+				s1: string | number,
+				s2: string | number,
+				s3: string | number,
+				s4: string | number
+		  ) => boolean);
 	setYukaType: (s: string | number, s1: string | number) => boolean;
 	disposeYuka: (s: string | number) => boolean;
 	setYukaColor: (
@@ -212,6 +215,8 @@ class MasaoJSS {
 	pause: (s: any) => boolean;
 	getRandomF: () => number;
 	getRandom: (max: any) => any;
+	getJetFuel: () => number;
+	getKeyCount: (type: string | number) => number;
 	getPartsDefinition: (code: any) => any;
 
 	constructor(mc: MasaoConstruction, caseInsensitive: boolean) {
@@ -219,7 +224,7 @@ class MasaoJSS {
 		this.oci = new Array(256);
 		this.ci = null;
 
-		this.masaoEvent = function(g, image) {
+		this.masaoEvent = function (g, image) {
 			this.my_offscreen_img = image;
 		};
 
@@ -228,7 +233,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getHighscore = function() {
+		this.getHighscore = function () {
 			var i = 0;
 			if (mc.mp) {
 				i = mc.mp.highscore;
@@ -242,7 +247,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getScore = function() {
+		this.getScore = function () {
 			var i = 0;
 			if (mc.mp) i = mc.mp.score;
 			return i;
@@ -256,7 +261,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getMode = function() {
+		this.getMode = function () {
 			var i = 0;
 			if (mc.mp) {
 				var j = mc.mp.ml_mode;
@@ -279,7 +284,7 @@ class MasaoJSS {
 		 *
 		 * @returns {boolean}
 		 */
-		this.soundOn = function() {
+		this.soundOn = function () {
 			if (mc.gs) {
 				mc.gs.soundOn();
 				return true;
@@ -293,7 +298,7 @@ class MasaoJSS {
 		 *
 		 * @returns {boolean}
 		 */
-		this.soundOff = function() {
+		this.soundOff = function () {
 			if (mc.gs) {
 				mc.gs.soundOff();
 				return true;
@@ -305,7 +310,7 @@ class MasaoJSS {
 		/**
 		 * 音声をONにします。
 		 */
-		this.onSound = function() {
+		this.onSound = function () {
 			if (mc.gs) {
 				mc.gs.soundOn();
 				return true;
@@ -317,7 +322,7 @@ class MasaoJSS {
 		/**
 		 * 音声をOFFにします。
 		 */
-		this.offSound = function() {
+		this.offSound = function () {
 			if (mc.gs) {
 				mc.gs.soundOff();
 				return true;
@@ -335,7 +340,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getMyX = function() {
+		this.getMyX = function () {
 			if (mc.mp) {
 				if (mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 					var i = rightShiftIgnoreSign(mc.mp.co_j.x + 15, 5) - 1;
@@ -360,7 +365,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getMyY = function() {
+		this.getMyY = function () {
 			if (mc.mp) {
 				if (mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 					var i = rightShiftIgnoreSign(mc.mp.co_j.y + 15, 5) - 10;
@@ -383,7 +388,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getViewX = function() {
+		this.getViewX = function () {
 			if (mc.mp && mc.mp.ml_mode == 100) {
 				var i = rightShiftIgnoreSign(mc.mp.maps.wx, 5) - 1;
 				if (i < 0) i = 0;
@@ -401,7 +406,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.getViewY = function() {
+		this.getViewY = function () {
 			if (mc.mp && mc.mp.ml_mode == 100) {
 				var i = rightShiftIgnoreSign(mc.mp.maps.wy, 5) - 10;
 				if (i < 0) i = 0;
@@ -420,7 +425,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @returns {boolean}
 		 */
-		this.setMyPosition = function(s, s1) {
+		this.setMyPosition = function (s, s1) {
 			if (mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				var j;
@@ -451,7 +456,7 @@ class MasaoJSS {
 		 * @param {string} line2 メッセージ（2行目）
 		 * @param {string} line3 メッセージ（3行目）
 		 */
-		this.showMessage = function(s, s1, s2, s3, s4) {
+		this.showMessage = function (s, s1, s2, s3, s4) {
 			if (mc.mp) {
 				var flag1 = mc.mp.showmSet(s, s1, s2, s3, s4);
 				return flag1;
@@ -470,7 +475,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @param {ImageBuff} buf 表示する画像
 		 */
-		this.showImage = function(s, s1, s2, s3) {
+		this.showImage = function (s, s1, s2, s3) {
 			if (mc.mp) {
 				var flag1 = mc.mp.showiSet(s, s1, s2, s3);
 				return flag1;
@@ -487,7 +492,7 @@ class MasaoJSS {
 		 * @param {number} x X座標
 		 * @param {number} y Y座標
 		 */
-		this.setEnemy = function(s, s1, s2) {
+		this.setEnemy = function (s, s1, s2) {
 			if (mc.mp) {
 				var flag1 = mc.mp.sete(s, s1, s2);
 				return flag1;
@@ -503,7 +508,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @param {number} chip マップチップ番号
 		 */
-		this.setMapchip = function(s, s1, s2) {
+		this.setMapchip = function (s, s1, s2) {
 			if (mc.mp) {
 				var flag1 = mc.mp.setmapc(s, s1, s2);
 				return flag1;
@@ -519,7 +524,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @returns {number} マップチップ番号
 		 */
-		this.getMapchip = function(s, s1) {
+		this.getMapchip = function (s, s1) {
 			if (mc.mp) return mc.mp.getmapc(s, s1);
 			else return -1;
 		};
@@ -531,7 +536,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @param {number} chip マップチップ番号
 		 */
-		this.setMapchip2 = function(s, s1, s2) {
+		this.setMapchip2 = function (s, s1, s2) {
 			if (mc.mp) {
 				var flag1 = mc.mp.setmapc2(s, s1, s2);
 				return flag1;
@@ -547,7 +552,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @returns {number} マップチップ番号
 		 */
-		this.getMapchip2 = function(s, s1) {
+		this.getMapchip2 = function (s, s1) {
 			if (mc.mp) return mc.mp.getmapc2(s, s1);
 			else return -1;
 		};
@@ -556,7 +561,7 @@ class MasaoJSS {
 		 * 背景画像を設定します。
 		 * @param {string} filename 画像のファイル名
 		 */
-		this.setBackImage = function(s) {
+		this.setBackImage = function (s) {
 			if (mc.mp) {
 				var flag1 = mc.mp.setbacki(s);
 				return flag1;
@@ -568,7 +573,7 @@ class MasaoJSS {
 		/**
 		 * 左キーを入力します。
 		 */
-		this.pressLeft = function() {
+		this.pressLeft = function () {
 			if (mc.gk) {
 				mc.gk.left_f = true;
 				return true;
@@ -580,7 +585,7 @@ class MasaoJSS {
 		/**
 		 * 左キーを入力し、さらにダッシュ状態にします。
 		 */
-		this.pressLeft2 = function() {
+		this.pressLeft2 = function () {
 			if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				mc.gk.left_f = true;
 				mc.gk.left_c = 2;
@@ -594,7 +599,7 @@ class MasaoJSS {
 		/**
 		 * 左キーを開放します。
 		 */
-		this.releaseLeft = function() {
+		this.releaseLeft = function () {
 			if (mc.gk) {
 				mc.gk.left_f = false;
 				return true;
@@ -606,7 +611,7 @@ class MasaoJSS {
 		/**
 		 * 右キーを入力します。
 		 */
-		this.pressRight = function() {
+		this.pressRight = function () {
 			if (mc.gk) {
 				mc.gk.right_f = true;
 				return true;
@@ -618,7 +623,7 @@ class MasaoJSS {
 		/**
 		 * 右キーを入力し、さらにダッシュ状態にします。
 		 */
-		this.pressRight2 = function() {
+		this.pressRight2 = function () {
 			if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				mc.gk.right_f = true;
 				mc.gk.right_c = 2;
@@ -632,7 +637,7 @@ class MasaoJSS {
 		/**
 		 * 右キーを開放します。
 		 */
-		this.releaseRight = function() {
+		this.releaseRight = function () {
 			if (mc.gk) {
 				mc.gk.right_f = false;
 				return true;
@@ -644,7 +649,7 @@ class MasaoJSS {
 		/**
 		 * 上キーを入力します。
 		 */
-		this.pressUp = function() {
+		this.pressUp = function () {
 			if (mc.gk) {
 				mc.gk.up_f = true;
 				return true;
@@ -656,7 +661,7 @@ class MasaoJSS {
 		/**
 		 * 上キーを開放します。
 		 */
-		this.releaseUp = function() {
+		this.releaseUp = function () {
 			if (mc.gk) {
 				mc.gk.up_f = false;
 				return true;
@@ -668,7 +673,7 @@ class MasaoJSS {
 		/**
 		 * 下キーを入力します。
 		 */
-		this.pressDown = function() {
+		this.pressDown = function () {
 			if (mc.gk) {
 				mc.gk.down_f = true;
 				mc.gk.tr2_f = true;
@@ -681,7 +686,7 @@ class MasaoJSS {
 		/**
 		 * 下キーを開放します。
 		 */
-		this.releaseDown = function() {
+		this.releaseDown = function () {
 			if (mc.gk) {
 				mc.gk.down_f = false;
 				mc.gk.tr2_f = false;
@@ -694,7 +699,7 @@ class MasaoJSS {
 		/**
 		 * ジャンプキーを入力します。
 		 */
-		this.pressTrigger1 = function() {
+		this.pressTrigger1 = function () {
 			if (mc.gk) {
 				mc.gk.tr1_f = true;
 				return true;
@@ -706,7 +711,7 @@ class MasaoJSS {
 		/**
 		 * ジャンプキーを開放します。
 		 */
-		this.releaseTrigger1 = function() {
+		this.releaseTrigger1 = function () {
 			if (mc.gk) {
 				mc.gk.tr1_f = false;
 				return true;
@@ -718,7 +723,7 @@ class MasaoJSS {
 		/**
 		 * 全てのキーを開放します。
 		 */
-		this.releaseAll = function() {
+		this.releaseAll = function () {
 			if (mc.gk) {
 				mc.gk.up_f = false;
 				mc.gk.down_f = false;
@@ -737,7 +742,7 @@ class MasaoJSS {
 		 * 最後に入力されたキーのキーコードを取得します。
 		 * @returns {number} キーコード
 		 */
-		this.getKeyCode = function() {
+		this.getKeyCode = function () {
 			if (mc.gk) return mc.gk.key_code;
 			else return -1;
 		};
@@ -745,7 +750,7 @@ class MasaoJSS {
 		/**
 		 * {@link MasaoJSS#getKeyCode|getKeyCode}で取得できるキーコードを0にリセットします。
 		 */
-		this.resetKeyCode = function() {
+		this.resetKeyCode = function () {
 			if (mc.gk) {
 				mc.gk.key_code = 0;
 				return true;
@@ -762,7 +767,7 @@ class MasaoJSS {
 		 * @param {number} flag ファイアボールのあり/なし
 		 */
 
-		this.equipFire = function(s) {
+		this.equipFire = function (s) {
 			if (typeof s == "undefined") s = "1";
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
@@ -788,7 +793,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} time 持続時間（フレーム数）
 		 */
-		this.equipBarrier = function(s) {
+		this.equipBarrier = function (s) {
 			if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s as string);
@@ -810,7 +815,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} fuel 新しい残り燃料数
 		 */
-		this.setJetFuel = function(s) {
+		this.setJetFuel = function (s) {
 			if (mc.gk && mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s as string);
@@ -833,7 +838,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} fuel 新しい残り燃料数
 		 */
-		this.equipJet = function(s) {
+		this.equipJet = function (s) {
 			var flag = this.setJetFuel(s);
 			return flag;
 		};
@@ -841,7 +846,7 @@ class MasaoJSS {
 		/**
 		 * タイトル画面に戻ります。
 		 */
-		this.restart = function() {
+		this.restart = function () {
 			return mc.restart();
 		};
 
@@ -851,7 +856,7 @@ class MasaoJSS {
 		 * @param {string} name param名
 		 * @returns {string} paramの値
 		 */
-		this.getValue = function(s) {
+		this.getValue = function (s) {
 			if (mc.th_jm <= 0) return mc.tdb.getValue(s);
 			else return null;
 		};
@@ -862,7 +867,7 @@ class MasaoJSS {
 		 * @param {string} name param名
 		 * @returns {string} paramの値
 		 */
-		this.getParamValue = function(s) {
+		this.getParamValue = function (s) {
 			if (mc.th_jm <= 0) return mc.tdb.getValue(s);
 			else return null;
 		};
@@ -873,7 +878,7 @@ class MasaoJSS {
 		 * @param {string} name param名
 		 * @param {string} value 新しい値
 		 */
-		this.setValue = function(s, s1) {
+		this.setValue = function (s, s1) {
 			if (mc.th_jm <= 0) return mc.tdb.setValue(s, s1);
 			else return false;
 		};
@@ -884,7 +889,7 @@ class MasaoJSS {
 		 * @param {string} name param名
 		 * @param {string} value 新しい値
 		 */
-		this.setParamValue = function(s, s1) {
+		this.setParamValue = function (s, s1) {
 			if (mc.th_jm <= 0) return mc.tdb.setValue(s, s1);
 			else return false;
 		};
@@ -895,7 +900,7 @@ class MasaoJSS {
 		 * マップの左端は32です。
 		 * @returns {number} 主人公のX座標
 		 */
-		this.getMyXReal = function() {
+		this.getMyXReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = mc.mp.co_j.x;
 				return i;
@@ -910,7 +915,7 @@ class MasaoJSS {
 		 * マップの上端は320です。
 		 * @returns {number} 主人公のX座標
 		 */
-		this.getMyYReal = function() {
+		this.getMyYReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = mc.mp.co_j.y;
 				return i;
@@ -925,7 +930,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} x X座標
 		 */
-		this.setMyXReal = function(s) {
+		this.setMyXReal = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s as string);
@@ -946,7 +951,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} y X座標
 		 */
-		this.setMyYReal = function(s) {
+		this.setMyYReal = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s as string);
@@ -966,7 +971,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} 主人公のX方向速度
 		 */
-		this.getMyVX = function() {
+		this.getMyVX = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = mc.mp.co_j.vx;
 				return i;
@@ -980,7 +985,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} 主人公のY方向速度
 		 */
-		this.getMyVY = function() {
+		this.getMyVY = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = mc.mp.co_j.vy;
 				return i;
@@ -995,7 +1000,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 現在のX方向スクロール位置
 		 */
-		this.getViewXReal = function() {
+		this.getViewXReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i = mc.mp.maps.wx;
 				return i;
@@ -1010,7 +1015,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 現在のY方向スクロール位置
 		 */
-		this.getViewYReal = function() {
+		this.getViewYReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i = mc.mp.maps.wy;
 				return i;
@@ -1024,7 +1029,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 敵の総数
 		 */
-		this.getEnemyTotal = function() {
+		this.getEnemyTotal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i = 0;
 				for (var j = 0; j <= mc.mp.t_kazu; j++) if (mc.mp.co_t[j].c >= 100 || mc.mp.co_t[j].c == 10) i++;
@@ -1040,7 +1045,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} ボスのX座標
 		 */
-		this.getBossXReal = function() {
+		this.getBossXReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i = mc.mp.co_b.x;
 				return i;
@@ -1054,7 +1059,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} ボスのY座標
 		 */
-		this.getBossYReal = function() {
+		this.getBossYReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i = mc.mp.co_b.y;
 				return i;
@@ -1073,7 +1078,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} [type=1] 死因
 		 */
-		this.setMyMiss = function(s) {
+		this.setMyMiss = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s as string);
@@ -1096,10 +1101,10 @@ class MasaoJSS {
 		 *
 		 * @param {number} [type=1] 高さ
 		 */
-		this.setMyPress = function(s) {
+		this.setMyPress = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = 1;
 				}
@@ -1115,10 +1120,10 @@ class MasaoJSS {
 		 *
 		 * @param {number} type 効果音の番号
 		 */
-		this.playSound = function(s) {
+		this.playSound = function (s) {
 			if (!mc.gs) return false;
 			var i;
-			i = parseInt(s);
+			i = parseInt(s as string);
 			if (isNaN(i)) {
 				i = -1;
 			}
@@ -1138,7 +1143,7 @@ class MasaoJSS {
 		 * @param {string} filename ファイル名
 		 * @since canvas正男
 		 */
-		this.setSound = function(s, s1) {
+		this.setSound = function (s, s1) {
 			if (!mc.gs) return false;
 			var i;
 			i = parseInt(s as string);
@@ -1158,7 +1163,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} x X座標
 		 */
-		this.setScrollLock = function(s) {
+		this.setScrollLock = function (s) {
 			var flag = false;
 			if (this.getMode() >= 100 && this.getMode() < 200) flag = mc.mp.setScrollLock(s);
 			return flag;
@@ -1175,7 +1180,7 @@ class MasaoJSS {
 		 * @param {number} height 範囲のY方向大きさ
 		 * @returns {number}
 		 */
-		this.attackFire = function(s, s1, s2, s3) {
+		this.attackFire = function (s, s1, s2, s3) {
 			var i = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200) i = mc.mp.attackFire(s, s1, s2, s3);
 			return i;
@@ -1188,10 +1193,10 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#setScore|setScore}
 		 */
-		this.addScore = function(s) {
+		this.addScore = function (s) {
 			if (!mc.mp) return false;
 			var i;
-			i = parseInt(s);
+			i = parseInt(s as string);
 			if (isNaN(i)) {
 				i = 0;
 			}
@@ -1214,7 +1219,7 @@ class MasaoJSS {
 		 * @see {@link MasaoJSS#showRect|showRect}
 		 * @see {@link MasaoJSS#showOval|showOval}
 		 */
-		this.setPenColor = function(s, s1, s2, s3) {
+		this.setPenColor = function (s, s1, s2, s3) {
 			if (typeof s3 == "undefined") s3 = "255";
 			if (mc.mp) {
 				var flag = mc.mp.setPenColor(s, s1, s2, s3);
@@ -1236,7 +1241,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#setPenColor|setPenColor}
 		 */
-		this.showRect = function(s, s1, s2, s3, s4) {
+		this.showRect = function (s, s1, s2, s3, s4) {
 			if (mc.mp) {
 				var flag1 = mc.mp.showrSet(s, s1, s2, s3, s4);
 				return flag1;
@@ -1257,7 +1262,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#setPenColor|setPenColor}
 		 */
-		this.showOval = function(s, s1, s2, s3, s4) {
+		this.showOval = function (s, s1, s2, s3, s4) {
 			if (mc.mp) {
 				var flag1 = mc.mp.showoSet(s, s1, s2, s3, s4);
 				return flag1;
@@ -1273,7 +1278,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} メッセージ
 		 */
-		this.getJSMes = function() {
+		this.getJSMes = function () {
 			if (mc.mp) {
 				var i = mc.mp.getJSMes();
 				return i;
@@ -1292,7 +1297,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#hideGauge|hideGauge}
 		 */
-		this.showGauge = function(s, s1) {
+		this.showGauge = function (s, s1) {
 			if (mc.mp) {
 				var flag = mc.mp.showGauge(s, s1);
 				return flag;
@@ -1306,7 +1311,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#showGauge|showGauge}
 		 */
-		this.hideGauge = function() {
+		this.hideGauge = function () {
 			if (mc.mp) {
 				var flag = mc.mp.hideGauge();
 				return flag;
@@ -1322,7 +1327,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#getJSMes|getJSMes}
 		 */
-		this.setJSMes = function(s) {
+		this.setJSMes = function (s) {
 			if (mc.mp) {
 				mc.mp.setJSMes(s);
 				return true;
@@ -1335,7 +1340,7 @@ class MasaoJSS {
 		 * タイトル画面で、ユーザーの入力によるゲーム開始をできなくします。
 		 * {@link MasaoJSS#startGame|startGame}によるゲーム開始は可能です。
 		 */
-		this.setTitleLock = function() {
+		this.setTitleLock = function () {
 			if (mc.mp) {
 				mc.mp.title_lock_f = true;
 				return true;
@@ -1347,7 +1352,7 @@ class MasaoJSS {
 		/**
 		 * タイトル画面時、ゲームを開始させます。
 		 */
-		this.startGame = function() {
+		this.startGame = function () {
 			if (mc.mp) {
 				mc.mp.start_game_f = true;
 				return true;
@@ -1363,10 +1368,10 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#setGrenadeCount|setGrenadeCount}と同じです。
 		 */
-		this.equipGrenade = function(s) {
+		this.equipGrenade = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -1398,7 +1403,7 @@ class MasaoJSS {
 		 * @param {number} type 画像の種類
 		 * @param {string} filename ファイル名
 		 */
-		this.setSystemImage = function(s, s1) {
+		this.setSystemImage = function (s, s1) {
 			if (mc.mp) return mc.mp.setSystemImage(s, s1);
 			else return false;
 		};
@@ -1412,7 +1417,7 @@ class MasaoJSS {
 		 * @param {number} type タイミング
 		 * @param {number} time 時間（フレーム）
 		 */
-		this.setModeWait = function(s, s1) {
+		this.setModeWait = function (s, s1) {
 			if (mc.mp) return mc.mp.setModeWait(s, s1);
 			else return false;
 		};
@@ -1422,7 +1427,7 @@ class MasaoJSS {
 		 *
 		 * @param {string} name HPの名前
 		 */
-		this.showMyHP = function(s) {
+		this.showMyHP = function (s) {
 			if (mc.mp) return mc.mp.showMyHP(s);
 			else return false;
 		};
@@ -1432,7 +1437,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} maxhp 最大HP
 		 */
-		this.setMyMaxHP = function(s) {
+		this.setMyMaxHP = function (s) {
 			if (mc.mp) return mc.mp.setMyMaxHP(s);
 			else return false;
 		};
@@ -1442,7 +1447,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} hp HP
 		 */
-		this.setMyHP = function(s) {
+		this.setMyHP = function (s) {
 			if (mc.mp) return mc.mp.setMyHP(s);
 			else return false;
 		};
@@ -1452,7 +1457,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 現在のHP
 		 */
-		this.getMyHP = function() {
+		this.getMyHP = function () {
 			if (mc.mp) return mc.mp.getMyHP();
 			else return 0;
 		};
@@ -1465,7 +1470,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} damage ダメージ値
 		 */
-		this.setMyHPDamage = function(s) {
+		this.setMyHPDamage = function (s) {
 			if (mc.mp) return mc.mp.setMyHPDamage(s);
 			else return false;
 		};
@@ -1478,14 +1483,14 @@ class MasaoJSS {
 		 * @param {number} pattern 停止している間のパターンコード
 		 * @param {number} direction 向き（0なら左、1なら右）
 		 */
-		this.setMyWait = function(s, s1, s2) {
+		this.setMyWait = function (s, s1, s2) {
 			return mc.mp.setMyWait(s, s1, s2);
 		};
 
 		/**
 		 * ステージクリアします。
 		 */
-		this.setStageClear = function() {
+		this.setStageClear = function () {
 			if (mc.mp) return mc.mp.setStageClear();
 			else return false;
 		};
@@ -1496,10 +1501,10 @@ class MasaoJSS {
 		 *
 		 * @param {number} range 射程
 		 */
-		this.setFireRange = function(s) {
+		this.setFireRange = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = 0;
 				}
@@ -1520,10 +1525,10 @@ class MasaoJSS {
 		 *
 		 * @param {number} tail しっぽの装備
 		 */
-		this.equipTail = function(s) {
+		this.equipTail = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -1549,7 +1554,7 @@ class MasaoJSS {
 		 * @param {number} width 範囲の横幅
 		 * @param {number} height 範囲の高さ
 		 */
-		this.attackTail = function(s, s1, s2, s3) {
+		this.attackTail = function (s, s1, s2, s3) {
 			var i = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200) i = mc.mp.attackTail(s, s1, s2, s3);
 			return i;
@@ -1564,7 +1569,7 @@ class MasaoJSS {
 		 * @param {number} height 範囲のY方向大きさ
 		 * @returns {number} 倒した敵の数
 		 */
-		this.destroyEnemy = function(s, s1, s2, s3) {
+		this.destroyEnemy = function (s, s1, s2, s3) {
 			var i = -1;
 			if (this.getMode() >= 100 && this.getMode() < 200) i = mc.mp.destroyEnemy(s, s1, s2, s3);
 			return i;
@@ -1574,7 +1579,7 @@ class MasaoJSS {
 		 * Zキーが押されているか判定し、押されていれば1、押されていなければ0を返します。
 		 * @returns {number}
 		 */
-		this.isPressZKey = function() {
+		this.isPressZKey = function () {
 			return !mc.gk || !mc.gk.z_f ? 0 : 1;
 		};
 
@@ -1582,7 +1587,7 @@ class MasaoJSS {
 		 * Xキーが押されているか判定し、押されていれば1、押されていなければ0を返します。
 		 * @returns {number}
 		 */
-		this.isPressXKey = function() {
+		this.isPressXKey = function () {
 			return !mc.gk || !mc.gk.x_f ? 0 : 1;
 		};
 
@@ -1590,7 +1595,7 @@ class MasaoJSS {
 		 * スペースキーが押されているか判定し、押されていれば1、押されていなければ0を返します。
 		 * @returns {number}
 		 */
-		this.isPressSpaceKey = function() {
+		this.isPressSpaceKey = function () {
 			return !mc.gk || !mc.gk.space_f ? 0 : 1;
 		};
 
@@ -1601,7 +1606,7 @@ class MasaoJSS {
 		 * @returns {number} 主人公の向き
 		 * @see {@link MasaoJSS#getMyDirection4way|getMyDirection4way}
 		 */
-		this.getMyDirection = function() {
+		this.getMyDirection = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
 				if (mc.mp.j_tokugi == 15) i = mc.mp.j_4_muki;
@@ -1620,9 +1625,9 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#getMyDirection|getMyDirection}
 		 */
-		this.setMyDirection = function(s) {
+		this.setMyDirection = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
-				var i = parseInt(s);
+				var i = parseInt(s as string);
 				if (isNaN(i)) i = -1;
 				if (i < 0) return false;
 				if (mc.mp.j_tokugi == 15) {
@@ -1630,7 +1635,7 @@ class MasaoJSS {
 					mc.mp.j_4_muki = i;
 				} else {
 					if (i > 1) return false;
-					mc.mp.co_j.muki = i;
+					mc.mp.co_j.muki = i as InversionKind;
 				}
 				return true;
 			} else {
@@ -1638,7 +1643,7 @@ class MasaoJSS {
 			}
 		};
 
-		this.setHTMLText = function(
+		this.setHTMLText = function (
 			s // 使用不可
 		) {
 			/*if(mc.mp)
@@ -1688,7 +1693,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 床ID 失敗した場合は-1
 		 */
-		this.newYuka = function(s, s1, s2, s3, s4) {
+		this.newYuka = function (s, s1, s2, s3, s4) {
 			if (mc.mp) return mc.mp.newYuka(s, s1, s2, s3, s4);
 			else return -1;
 		};
@@ -1706,7 +1711,7 @@ class MasaoJSS {
 		 * @returns {boolean} 成功したかどうか
 		 * @see {@link MasaoJSS#newYuka|newYuka}
 		 */
-		this.setYukaPosition = function(s, s1, s2, s3, s4) {
+		this.setYukaPosition = function (s, s1, s2, s3, s4) {
 			if (mc.mp) {
 				if (typeof s3 == "undefined") return mc.mp.setYukaPosition(s, s1, s2);
 				else return mc.mp.setYukaPosition(s, s1, s2, s3, s4);
@@ -1721,7 +1726,7 @@ class MasaoJSS {
 		 * @param {number} type type値
 		 * @returns {boolean} 成功したかどうか
 		 */
-		this.setYukaType = function(s, s1) {
+		this.setYukaType = function (s, s1) {
 			if (mc.mp) return mc.mp.setYukaType(s, s1);
 			else return false;
 		};
@@ -1732,7 +1737,7 @@ class MasaoJSS {
 		 * @param {number} id 床ID
 		 * @returns {boolean} 成功したかどうか
 		 */
-		this.disposeYuka = function(s) {
+		this.disposeYuka = function (s) {
 			if (mc.mp) return mc.mp.disposeYuka(s);
 			else return false;
 		};
@@ -1748,7 +1753,7 @@ class MasaoJSS {
 		 * @param {number} alpha 不透明度
 		 * @returns {boolean} 成功したかどうか
 		 */
-		this.setYukaColor = function(s, s1, s2, s3, s4) {
+		this.setYukaColor = function (s, s1, s2, s3, s4) {
 			if (mc.mp) return mc.mp.setYukaColor(s, s1, s2, s3, s4);
 			else return false;
 		};
@@ -1761,7 +1766,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isRideYuka = function(s) {
+		this.isRideYuka = function (s) {
 			if (mc.mp) return mc.mp.isRideYuka(s);
 			else return -1;
 		};
@@ -1771,10 +1776,10 @@ class MasaoJSS {
 		 *
 		 * @param {number} vx X方向速度
 		 */
-		this.setMyVX = function(s) {
+		this.setMyVX = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -9999;
 				}
@@ -1794,10 +1799,10 @@ class MasaoJSS {
 		 *
 		 * @param {number} vy Y方向速度
 		 */
-		this.setMyVY = function(s) {
+		this.setMyVY = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -9999;
 				}
@@ -1819,7 +1824,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 地面に立っているか
 		 */
-		this.isRideGround = function() {
+		this.isRideGround = function () {
 			if (mc.mp) return mc.mp.isRideGround();
 			else return -1;
 		};
@@ -1833,7 +1838,7 @@ class MasaoJSS {
 		 * @param {number} direction 向き（0ならそのまま、1なら左右逆
 		 * @returns {boolean} 成功したかどうか
 		 */
-		this.setYukaPattern = function(s, s1, s2) {
+		this.setYukaPattern = function (s, s1, s2) {
 			if (mc.mp) return mc.mp.setYukaPattern(s, s1, s2);
 			else return false;
 		};
@@ -1846,7 +1851,7 @@ class MasaoJSS {
 		 * @param {String|ImageBuff} image ファイル名または画像オブジェクト
 		 * @returns {boolean} 成功したかどうか
 		 */
-		this.setYukaImage = function(s, image) {
+		this.setYukaImage = function (s, image) {
 			if (mc.mp) return mc.mp.setYukaImage(s, image);
 			else return false;
 		};
@@ -1858,7 +1863,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} speed 主人公の移動速度
 		 */
-		this.setMySpeed = function(s) {
+		this.setMySpeed = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s);
@@ -1887,12 +1892,12 @@ class MasaoJSS {
 		 * @param {number} x2 範囲右下の座標
 		 * @param {number} y2 範囲右下の座標
 		 */
-		this.setScrollArea = function(s, s1, s2, s3) {
+		this.setScrollArea = function (s, s1, s2, s3) {
 			if (mc.mp) return mc.mp.setScrollArea(s, s1, s2, s3);
 			else return false;
 		};
 
-		this.loadTextFile = function(
+		this.loadTextFile = function (
 			s // 使用不可
 		) {
 			return null;
@@ -1903,7 +1908,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isPressUpKey = function() {
+		this.isPressUpKey = function () {
 			return !mc.gk || !mc.gk.up_f ? 0 : 1;
 		};
 
@@ -1912,7 +1917,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isPressDownKey = function() {
+		this.isPressDownKey = function () {
 			return !mc.gk || !mc.gk.down_f ? 0 : 1;
 		};
 
@@ -1921,7 +1926,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isPressLeftKey = function() {
+		this.isPressLeftKey = function () {
 			return !mc.gk || !mc.gk.left_f ? 0 : 1;
 		};
 
@@ -1930,7 +1935,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isPressRightKey = function() {
+		this.isPressRightKey = function () {
 			return !mc.gk || !mc.gk.right_f ? 0 : 1;
 		};
 
@@ -1942,7 +1947,7 @@ class MasaoJSS {
 		 *
 		 * @returns {ImageBuff} 画像オブジェクト
 		 */
-		this.newImageOnLoad = function(s) {
+		this.newImageOnLoad = function (s) {
 			var img = new ImageBuff();
 			img.load(s);
 			mc.pushMessage("load", img);
@@ -1959,7 +1964,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} mode 描画モード
 		 */
-		this.setSystemDrawMode = function(s) {
+		this.setSystemDrawMode = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -1990,7 +1995,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} kind 描画するものの指定
 		 */
-		this.drawSystemObject = function(s) {
+		this.drawSystemObject = function (s) {
 			if (mc.mp) {
 				if (mc.mp.ml_mode != 100) return false;
 				if (mc.mp.dso_cf) return false;
@@ -2047,7 +2052,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 主人公の状態
 		 */
-		this.getMyObjectCondition = function() {
+		this.getMyObjectCondition = function () {
 			if (mc.mp) return mc.mp.co_j.c;
 			else return 0;
 		};
@@ -2058,7 +2063,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} アニメーションカウンタ
 		 */
-		this.getMyObjectAC = function() {
+		this.getMyObjectAC = function () {
 			if (mc.mp) return mc.mp.co_j.ac;
 			else return 0;
 		};
@@ -2068,7 +2073,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} パターンコード
 		 */
-		this.getMyObjectPattern = function() {
+		this.getMyObjectPattern = function () {
 			if (mc.mp) return mc.mp.co_j.pt;
 			else return 0;
 		};
@@ -2081,7 +2086,7 @@ class MasaoJSS {
 		 * @returns {number} 主人公の向き
 		 * @see {@link MasaoJSS#getMyDirection|getMyDirection}
 		 */
-		this.getMyDirection4way = function() {
+		this.getMyDirection4way = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
 				if (mc.mp.j_tokugi == 15) i = mc.mp.j_4_muki;
@@ -2098,7 +2103,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} pattern パターンコード
 		 */
-		this.setMyObjectPattern = function(s) {
+		this.setMyObjectPattern = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2124,7 +2129,7 @@ class MasaoJSS {
 		 * @param {number} x 画像の表示位置
 		 * @param {number} y 画像の表示位置
 		 */
-		this.setMyObjectImage = function(image, s, s1) {
+		this.setMyObjectImage = function (image, s, s1) {
 			if (mc.mp) {
 				var i;
 				var j;
@@ -2149,7 +2154,7 @@ class MasaoJSS {
 		 * @param {number} id 敵ID
 		 * @param {number} pattern パターンコード
 		 */
-		this.setEnemyObjectPattern = function(s, s1) {
+		this.setEnemyObjectPattern = function (s, s1) {
 			var j = 0;
 			if (mc.mp) {
 				var i;
@@ -2252,7 +2257,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 敵の状態
 		 */
-		this.getEnemyObjectCondition = function(s) {
+		this.getEnemyObjectCondition = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2273,7 +2278,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} パターンコード
 		 */
-		this.getEnemyObjectPattern = function(s) {
+		this.getEnemyObjectPattern = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2294,7 +2299,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} X座標
 		 */
-		this.getEnemyObjectX = function(s) {
+		this.getEnemyObjectX = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2315,7 +2320,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} Y座標
 		 */
-		this.getEnemyObjectY = function(s) {
+		this.getEnemyObjectY = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2334,7 +2339,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 敵IDの最大値
 		 */
-		this.getEnemyObjectLength = function() {
+		this.getEnemyObjectLength = function () {
 			if (mc.mp) return mc.mp.t_kazu + 1;
 			else return 0;
 		};
@@ -2347,7 +2352,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 敵の向き
 		 */
-		this.getEnemyObjectDirection = function(s) {
+		this.getEnemyObjectDirection = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2375,7 +2380,7 @@ class MasaoJSS {
 		 * @param {number} x 表示位置
 		 * @param {number} y 表示位置
 		 */
-		this.setEnemyObjectImage = function(s, image, s1, s2) {
+		this.setEnemyObjectImage = function (s, image, s1, s2) {
 			var j = 0;
 			var k = 0;
 			if (mc.mp) {
@@ -2405,7 +2410,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} アニメーションカウンタ
 		 */
-		this.getEnemyAC = function() {
+		this.getEnemyAC = function () {
 			if (mc.mp) return mc.mp.g_c2;
 			else return 0;
 		};
@@ -2423,7 +2428,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} チップ画像ID
 		 */
-		this.newChipImage = function(s, s1, s2, s3, s4) {
+		this.newChipImage = function (s, s1, s2, s3, s4) {
 			var i = -1;
 			var j = 0;
 			var k = 0;
@@ -2442,8 +2447,9 @@ class MasaoJSS {
 			if (j1 > 31) return -1;
 			i1 = j1;
 			var img = this.newImageOnLoad(s);
-			this.oci[i1] = new ChipImage(i, j, k, l, img);
-			mc.pushMessage("makeChipImage", img, { chipimage: this.oci[i1] });
+			const ci = new ChipImage(i, j, k, l, img);
+			this.oci[i1] = ci;
+			mc.pushMessage("makeChipImage", img, { chipimage: ci });
 			return i1;
 		};
 
@@ -2454,7 +2460,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} id チップ画像ID
 		 */
-		this.makeReverseChipImage = function(s) {
+		this.makeReverseChipImage = function (s) {
 			var i = 0;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -2462,11 +2468,15 @@ class MasaoJSS {
 			}
 			if (i < 0) return false;
 			else {
-				this.oci[i].createImageBuffer(1);
-				this.oci[i].createImageBuffer(2);
-				this.oci[i].createImageBuffer(3);
-				mc.pushMessage("makeReverseChipImage", this.oci[i].ai_img, {
-					chipimage: this.oci[i]
+				const ci = this.oci[i];
+				if (ci === null) {
+					return false;
+				}
+				ci.createImageBuffer(1);
+				ci.createImageBuffer(2);
+				ci.createImageBuffer(3);
+				mc.pushMessage("makeReverseChipImage", ci.ai_img, {
+					chipimage: ci,
 				});
 				return true;
 			}
@@ -2483,7 +2493,7 @@ class MasaoJSS {
 		 *
 		 * @returns {ImageBuff} チップの画像オブジェクト
 		 */
-		this.getChipImage = function(s, s1, s2) {
+		this.getChipImage = function (s, s1, s2) {
 			var i = 0;
 			var j = -1;
 			var k = 0;
@@ -2497,8 +2507,10 @@ class MasaoJSS {
 			}
 			if (i < 0) return null;
 			if (j < 0) return null;
+			const ci = this.oci[i];
+			if (ci === null) return null;
 			if (k < 0 || k > 3) k = 0;
-			return this.oci[i].getChipImage(j, k);
+			return ci.getChipImage(j, k as ChipInversionKind);
 		};
 
 		/**
@@ -2506,7 +2518,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} id チップ画像ID
 		 */
-		this.disposeChipImage = function(s) {
+		this.disposeChipImage = function (s) {
 			var i = 0;
 			i = parseInt(s);
 			if (isNaN(i)) {
@@ -2530,7 +2542,7 @@ class MasaoJSS {
 		 * @param {number} x2 範囲右下の座標
 		 * @param {number} y2 範囲右下の座標
 		 */
-		this.setScrollAreaReal = function(s, s1, s2, s3) {
+		this.setScrollAreaReal = function (s, s1, s2, s3) {
 			if (mc.mp) return mc.mp.setScrollAreaReal(s, s1, s2, s3);
 			else return false;
 		};
@@ -2543,7 +2555,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isPressCodeKey = function(s) {
+		this.isPressCodeKey = function (s) {
 			if (mc.gk) {
 				var i;
 				i = parseInt(s);
@@ -2565,7 +2577,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#playBGMLoop|playBGMLoop}
 		 */
-		this.playBGM = function(s) {
+		this.playBGM = function (s) {
 			if (mc.gs) return mc.gs.playUserBGMFile(s);
 			else return false;
 		};
@@ -2578,7 +2590,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#playBGM|playBGM}
 		 */
-		this.playBGMLoop = function(s) {
+		this.playBGMLoop = function (s) {
 			if (mc.gs) return mc.gs.playUserBGMFileLoop(s);
 			else return false;
 		};
@@ -2587,7 +2599,7 @@ class MasaoJSS {
 		 * BGMを停止します。
 		 *
 		 */
-		this.stopBGM = function() {
+		this.stopBGM = function () {
 			if (mc.gs) {
 				mc.gs.stopBGM();
 				return true;
@@ -2601,7 +2613,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} ボスのHP
 		 */
-		this.getBossHP = function() {
+		this.getBossHP = function () {
 			if (mc.mp) return mc.mp.getBossHP();
 			else return 0;
 		};
@@ -2611,7 +2623,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} hp 新しいHP
 		 */
-		this.setBossHP = function(s) {
+		this.setBossHP = function (s) {
 			var i = parseInt(s);
 			if (isNaN(i)) return false;
 			if (mc.mp) return mc.mp.setBossHP(i);
@@ -2624,7 +2636,7 @@ class MasaoJSS {
 		 *
 		 * @return {number} ボスの向き
 		 */
-		this.getBossDirection = function() {
+		this.getBossDirection = function () {
 			if (mc.mp) return mc.mp.getBossDirection();
 			else return 0;
 		};
@@ -2635,7 +2647,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number}
 		 */
-		this.isBossAttackMode = function() {
+		this.isBossAttackMode = function () {
 			if (mc.mp) return mc.mp.isBossAttackMode();
 			else return 0;
 		};
@@ -2645,7 +2657,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} ボスのX座標
 		 */
-		this.setBossXReal = function(s) {
+		this.setBossXReal = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2664,7 +2676,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} ボスのY座標
 		 */
-		this.setBossYReal = function(s) {
+		this.setBossYReal = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2686,7 +2698,7 @@ class MasaoJSS {
 		 * @param {number} x 画像の位置
 		 * @param {number} y 画像の位置
 		 */
-		this.setBossObjectImage = function(image, s, s1) {
+		this.setBossObjectImage = function (image, s, s1) {
 			if (mc.mp) {
 				var i;
 				var j;
@@ -2712,7 +2724,7 @@ class MasaoJSS {
 		 * @param {number} dest 書き換え対象のパターンコード
 		 * @param {number} newcode 新しい画像のパターンコード
 		 */
-		this.setSystemPattern = function(s, s1) {
+		this.setSystemPattern = function (s, s1) {
 			var j = 1;
 			if (mc.mp) {
 				var i;
@@ -2744,7 +2756,7 @@ class MasaoJSS {
 		 * @param {number} dir 向き
 		 * @param {ImageBuff} image 画像
 		 */
-		this.setSystemPatternImage = function(s, s1, image) {
+		this.setSystemPatternImage = function (s, s1, image) {
 			var j = 0;
 			if (mc.mp) {
 				var i;
@@ -2763,7 +2775,7 @@ class MasaoJSS {
 			}
 		};
 
-		this.setFontSize = function(s) {
+		this.setFontSize = function (s) {
 			if (mc.gg) {
 				var i;
 				i = parseInt(s);
@@ -2795,24 +2807,19 @@ class MasaoJSS {
 		 *
 		 * @returns {Font} フォントオブジェクト
 		 */
-		this.newFont = function(s, s1, s2) {
+		this.newFont = function (s, s1, s2) {
 			var j = 0;
-			if (mc.gg) {
-				var i;
-				j = parseInt(s1);
-				i = parseInt(s2);
-				if (isNaN(i) || isNaN(j)) {
-					i = -1;
-				}
-				if (i <= 0) return null;
-				if (j == 1) j = 1;
-				else if (j == 2) j = 2;
-				else j = 0;
-				var font = new Font(s, j, i);
-				return font;
-			} else {
-				return null;
+			var i;
+			j = parseInt(s1);
+			i = parseInt(s2);
+			if (isNaN(i) || isNaN(j)) {
+				i = -1;
 			}
+			if (j == 1) j = 1;
+			else if (j == 2) j = 2;
+			else j = 0;
+			var font = new Font(s, j, i);
+			return font;
 		};
 
 		/**
@@ -2825,7 +2832,7 @@ class MasaoJSS {
 		 * @param {number} y 右下Y座標
 		 * @returns {number} コインの数
 		 */
-		this.getCoinCount = function(s, s1, s2, s3) {
+		this.getCoinCount = function (s, s1, s2, s3) {
 			if (arguments.length === 0) {
 				if (mc.mp) return mc.mp.getCoinCount(0, 0, mc.mp.mapWidth - 1, mc.mp.mapHeight - 1);
 				else return -1;
@@ -2864,7 +2871,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#removeMyTokugi|removeMyTokugi}
 		 */
-		this.addMyTokugi = function(s) {
+		this.addMyTokugi = function (s) {
 			var flag = false;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
@@ -2886,7 +2893,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#addMyTokugi|addMyTokugi}
 		 */
-		this.removeMyTokugi = function(s) {
+		this.removeMyTokugi = function (s) {
 			var flag = false;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
@@ -2908,7 +2915,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#addScore|addScore}
 		 */
-		this.setScore = function(s) {
+		this.setScore = function (s) {
 			if (mc.mp) {
 				var i;
 				i = parseInt(s);
@@ -2928,7 +2935,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} バリアの残り時間
 		 */
-		this.getBarrierTime = function() {
+		this.getBarrierTime = function () {
 			if (mc.mp && mc.mp.ml_mode == 100 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i = mc.mp.j_v_c;
 				return i;
@@ -2943,7 +2950,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 残りタイム
 		 */
-		this.getTimeLimit = function() {
+		this.getTimeLimit = function () {
 			if (mc.mp && mc.mp.time_max > 0 && mc.mp.ml_mode == 100) {
 				var i = Math.floor(mc.mp.time / 1000);
 				return i;
@@ -2958,7 +2965,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} time 残りタイム
 		 */
-		this.setTimeLimit = function(s) {
+		this.setTimeLimit = function (s) {
 			if (mc.mp && mc.mp.time_max > 0) {
 				var i;
 				i = parseInt(s);
@@ -2984,7 +2991,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @param {number} athletic 仕掛け番号
 		 */
-		this.setAthletic = function(s, s1, s2) {
+		this.setAthletic = function (s, s1, s2) {
 			var j = 0;
 			var k = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
@@ -3029,7 +3036,7 @@ class MasaoJSS {
 		 *
 		 * @param {string} filename ファイル名
 		 */
-		this.setSecondImage = function(s) {
+		this.setSecondImage = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var image = mc.gg.loadImage(s);
 				mc.mp.second_gazou_img = image;
@@ -3046,7 +3053,7 @@ class MasaoJSS {
 		 *
 		 * @see {@link MasaoJSS#equipGrenade|equipGrenade}と同じです。
 		 */
-		this.setGrenadeCount = function(s) {
+		this.setGrenadeCount = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
 				i = parseInt(s);
@@ -3069,7 +3076,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} left 新しい残りコンティニュー数
 		 */
-		this.setMyLeft = function(s) {
+		this.setMyLeft = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
 				i = parseInt(s);
@@ -3092,7 +3099,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} グレネードの残り弾数
 		 */
-		this.getGrenadeCount = function() {
+		this.getGrenadeCount = function () {
 			var i = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				i = mc.mp.j_gr_kazu;
@@ -3108,7 +3115,7 @@ class MasaoJSS {
 		 *
 		 * @returns {number} 残機数
 		 */
-		this.getMyLeft = function() {
+		this.getMyLeft = function () {
 			var i = -1;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				i = mc.mp.j_left;
@@ -3129,7 +3136,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} j_enemy_press
 		 */
-		this.setEnemyPress = function(s) {
+		this.setEnemyPress = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
 				i = parseInt(s);
@@ -3154,7 +3161,7 @@ class MasaoJSS {
 		 * @param {number} code パターンコード
 		 * @param {Numbeer} dir 向き
 		 */
-		this.drawPattern = function(s, s1, s2, s3) {
+		this.drawPattern = function (s, s1, s2, s3) {
 			var j = 0;
 			var k = 0;
 			var l = 0;
@@ -3170,7 +3177,7 @@ class MasaoJSS {
 				if (i == -9999) return false;
 				if (k < 0 || k > 249) k = 0;
 				if (l < 0 || l > 1) l = 0;
-				mc.gg.drawPattern(i, j, k, l);
+				mc.gg.drawPattern(i, j, k, l as InversionKind);
 				return true;
 			} else {
 				return false;
@@ -3186,7 +3193,7 @@ class MasaoJSS {
 		 * @param {number} b B成分
 		 * @param {number} alpha 不透明度
 		 */
-		this.setOffscreenColor = function(s, s1, s2, s3) {
+		this.setOffscreenColor = function (s, s1, s2, s3) {
 			var j = 0;
 			var k = 0;
 			var l = 0;
@@ -3215,7 +3222,7 @@ class MasaoJSS {
 			}
 		};
 
-		this.drawImage = function(
+		this.drawImage = function (
 			s,
 			s1,
 			s2 // 使用不可
@@ -3266,7 +3273,7 @@ class MasaoJSS {
 		 * @param {number} [x4] 点4のX座標
 		 * @param {number} [y4] 点4のY座標
 		 */
-		this.fillPolygon = function(s, s1, s2, s3, s4, s5, s6, s7) {
+		this.fillPolygon = function (s, s1, s2, s3, s4, s5, s6, s7) {
 			var ai, ai1;
 			if (mc.gg) {
 				if (arguments.length == 6) {
@@ -3287,7 +3294,7 @@ class MasaoJSS {
 						mc.gg.os_g.fillPolygon(ai, ai1, 3);
 						return true;
 					}
-				} else if (arguments.length == 8) {
+				} else {
 					ai = new Array(3);
 					ai1 = new Array(3);
 					ai[0] = parseInt(s);
@@ -3331,7 +3338,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @param {number} angle 角度（度数法）
 		 */
-		this.drawImageRotate = function(image, s, s1, s2) {
+		this.drawImageRotate = function (image, s, s1, s2) {
 			var j = 0;
 			var k = 0;
 			if (mc.gg) {
@@ -3346,12 +3353,16 @@ class MasaoJSS {
 					return false;
 				} else {
 					var graphics2d = mc.gg.os_img.getGraphics();
-					var l = i + image._width / 2;
-					var i1 = j + image._height / 2;
-					graphics2d.rotate((k * Math.PI) / 180, l, i1);
-					graphics2d.drawImage(image, i, j, this);
-					graphics2d.dispose();
-					return true;
+					if (graphics2d) {
+						var l = i + image._width / 2;
+						var i1 = j + image._height / 2;
+						graphics2d.rotate((k * Math.PI) / 180, l, i1);
+						graphics2d.drawImage(image, i, j, this);
+						graphics2d.dispose();
+						return true;
+					} else {
+						return false;
+					}
 				}
 			} else {
 				return false;
@@ -3370,7 +3381,7 @@ class MasaoJSS {
 		 * @param {number} scalex X方向倍率
 		 * @param {number} scaley Y方向倍率
 		 */
-		this.drawImageScale = function(image, s, s1, s2, s3) {
+		this.drawImageScale = function (image, s, s1, s2, s3) {
 			var j = 0;
 			var k = 100;
 			var l = 100;
@@ -3387,11 +3398,15 @@ class MasaoJSS {
 					return false;
 				} else {
 					var graphics2d = mc.gg.os_img.getGraphics();
-					graphics2d.translate(i, j);
-					graphics2d.scale(k / 100, l / 100);
-					graphics2d.drawImage(image, 0, 0, this);
-					graphics2d.dispose();
-					return true;
+					if (graphics2d) {
+						graphics2d.translate(i, j);
+						graphics2d.scale(k / 100, l / 100);
+						graphics2d.drawImage(image, 0, 0, this);
+						graphics2d.dispose();
+						return true;
+					} else {
+						return false;
+					}
 				}
 			} else {
 				return false;
@@ -3408,7 +3423,7 @@ class MasaoJSS {
 		 * @param {number} y Y座標
 		 * @param {number} alpha 不透明度
 		 */
-		this.drawImageAlphaComposite = function(image, s, s1, s2) {
+		this.drawImageAlphaComposite = function (image, s, s1, s2) {
 			var j = 0;
 			var k = 100;
 			if (mc.gg) {
@@ -3423,10 +3438,14 @@ class MasaoJSS {
 				if (k < 0) k = 0;
 				else if (k > 100) k = 100;
 				var graphics2d = mc.gg.os_img.getGraphics();
-				graphics2d.setGlobalAlpha((k / 100) * 255);
-				graphics2d.drawImage(image, i, j, this);
-				graphics2d.dispose();
-				return true;
+				if (graphics2d) {
+					graphics2d.setGlobalAlpha((k / 100) * 255);
+					graphics2d.drawImage(image, i, j, this);
+					graphics2d.dispose();
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -3439,7 +3458,7 @@ class MasaoJSS {
 		 * @returns {number}
 		 * @since canvas正男
 		 */
-		this.isPaused = function() {
+		this.isPaused = function () {
 			if (mc.mp) {
 				if (mc.mp.ml_mode == 110) return 1;
 				else return 0;
@@ -3455,7 +3474,7 @@ class MasaoJSS {
 		 *
 		 * @since canvas正男
 		 */
-		this.pause = function(s) {
+		this.pause = function (s) {
 			var i;
 			if (mc.mp) {
 				i = parseInt(s);
@@ -3477,7 +3496,7 @@ class MasaoJSS {
 		 * @returns {number} ゲーム内シードに依存した乱数。ゲームが開始されていないときにはMath.random()を返す。
 		 * @since canvas正男
 		 */
-		this.getRandomF = function() {
+		this.getRandomF = function () {
 			if (mc.mp) {
 				return mc.mp.ranInt(0x80000000) / 0x80000000;
 			} else {
@@ -3493,7 +3512,7 @@ class MasaoJSS {
 		 * @returns {number} ゲーム内シードに依存した乱数。ゲームが開始されていないときにはMath.random()を使用した乱数を返す。
 		 * @since canvas正男
 		 */
-		this.getRandom = function(max) {
+		this.getRandom = function (max) {
 			if (mc.mp) {
 				return mc.mp.ranInt(max);
 			} else {
@@ -3507,7 +3526,7 @@ class MasaoJSS {
 		 * @returns {number} ジェットの残量
 		 * @since canvas正男
 		 */
-		this.getJetFuel = function() {
+		this.getJetFuel = function () {
 			let i = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				i = mc.mp.j_jet_fuel;
@@ -3527,10 +3546,10 @@ class MasaoJSS {
 		 * @returns {number} 鍵の数
 		 * @since canvas正男
 		 */
-		this.getKeyCount = function(s) {
+		this.getKeyCount = function (type) {
 			let i = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
-				let n = parseInt(s);
+				let n = parseInt(type as string);
 				if (isNaN(n)) i = 0;
 				if (n === 1 || n === 2) {
 					i = mc.mp.dkey_count[n - 1];
@@ -3548,7 +3567,7 @@ class MasaoJSS {
 		 * ↓TODO↓
 		 * @since カスタムパーツ
 		 */
-		this.getPartsDefinition = function(code) {
+		this.getPartsDefinition = function (code) {
 			var customParts = mc.mp.customParts;
 			if (customParts && customParts[code]) {
 				// カスタムパーツだ
@@ -3563,34 +3582,41 @@ class MasaoJSS {
 
 		if (caseInsensitive && "undefined" !== typeof Proxy) {
 			// メソッドの大文字小文字の違いを無視するフラグが立っている
+			type StringKeyOfThis = keyof this & string;
+			type CaseInsensitiveThis = {
+				[K in keyof this]: this[K];
+			} &
+				{
+					[K in StringKeyOfThis as Lowercase<K>]: this[K];
+				};
 			// 関数名を集める
-			var functions = Object.keys(this).filter(function(key) {
-				return "function" === typeof this[key];
-			}, this);
+			var functions = (Object.keys(this) as (keyof this)[]).filter((key) => {
+				return "string" === key && "function" === typeof this[key];
+			}) as StringKeyOfThis[];
 			// 小文字化した関数を追加
-			functions.forEach(function(key) {
-				this[key.toLowerCase()] = this[key];
-			}, this);
+			functions.forEach((key) => {
+				(this as any)[key.toLowerCase()] = this[key]; // TODO: any消し
+			});
 			// Proxyを間にはさむ
-			var proxy = new Proxy(this, {
-				get: function(target, prop, receiver) {
+			var proxy = new Proxy(this as CaseInsensitiveThis, {
+				get(target, prop, receiver) {
 					if (prop in target) {
-						return target[prop];
+						return target[prop as keyof CaseInsensitiveThis];
 					} else {
 						// maybe undefined
 						if (typeof prop === "string") {
-							return target[prop.toLowerCase()];
+							return (target as any)[prop.toLowerCase()];
 						} else {
-							return target[prop];
+							return (target as any)[prop];
 						}
 					}
-				}
+				},
 			});
 			// 最適化のための通常の関数はProxyを通さない
 			var result = Object.create(proxy);
-			functions.forEach(function(key) {
+			functions.forEach((key) => {
 				result[key] = this[key];
-			}, this);
+			});
 			return result;
 		}
 	}

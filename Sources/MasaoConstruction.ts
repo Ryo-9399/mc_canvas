@@ -449,7 +449,7 @@ class MasaoConstruction {
 
 		this.gm = new GameMouse();
 		var _gm = this.gm;
-		this.__canvas.addEventListener("mousedown", e => {
+		this.__canvas.addEventListener("mousedown", (e) => {
 			e.stopImmediatePropagation();
 			// このオブジェクトにフォーカスを当てる
 			Game.focus.focus(this);
@@ -458,7 +458,7 @@ class MasaoConstruction {
 			// マウスイベントを発生
 			GameMouse_mousePressed(_gm, e);
 		});
-		this.__canvas.addEventListener("mouseup", function(e) {
+		this.__canvas.addEventListener("mouseup", function (e) {
 			GameMouse_mouseReleased(_gm, e);
 		});
 
@@ -470,7 +470,7 @@ class MasaoConstruction {
 		document.addEventListener("keydown", _handler);
 		this.__game.__resourceList.push({
 			type: "eventListener",
-			release: () => document.removeEventListener("keydown", _handler)
+			release: () => document.removeEventListener("keydown", _handler),
 		});
 
 		_handler = (e: KeyboardEvent) => {
@@ -479,7 +479,7 @@ class MasaoConstruction {
 		document.addEventListener("keyup", _handler);
 		this.__game.__resourceList.push({
 			type: "eventListener",
-			release: () => document.removeEventListener("keyup", _handler)
+			release: () => document.removeEventListener("keyup", _handler),
 		});
 
 		if (this.tdb.getValueInt("audio_se_switch_wave") == 2) this.audio_se_no_wave = true;
@@ -1488,7 +1488,11 @@ class MasaoConstruction {
 		paramString5?: string
 	) {
 		if (this.mp != null) {
-			return this.mp.setYukaPosition(paramString1, paramString2, paramString3, paramString4, paramString5);
+			if (paramString4 !== undefined && paramString5 !== undefined) {
+				return this.mp.setYukaPosition(paramString1, paramString2, paramString3, paramString4, paramString5);
+			} else {
+				return this.mp.setYukaPosition(paramString1, paramString2, paramString3);
+			}
 		}
 		return false;
 	}
@@ -2282,7 +2286,7 @@ class MasaoConstruction {
 	pushMessage<T extends keyof MasaoMessageMap>(
 		type: T,
 		target: MasaoMessageMap[T]["target"],
-		parameters: MasaoMessageMap[T]["parameters"]
+		parameters?: MasaoMessageMap[T]["parameters"]
 	) {
 		var newMessage = {} as MasaoMessage;
 		newMessage.type = type;
@@ -2324,7 +2328,7 @@ class MasaoConstruction {
 	 */
 	getSnapshot() {
 		var result = {
-			mp: this.mp.getSnapshot()
+			mp: this.mp.getSnapshot(),
 		};
 		return result;
 	}
