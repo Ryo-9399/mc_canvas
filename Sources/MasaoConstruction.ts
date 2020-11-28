@@ -491,7 +491,7 @@ class MasaoConstruction {
 		this.gs = new (GameSoundForApplet.factory(this.tdb))(this.tdb, this);
 
 		// 入力されたフォントをCSS形式に変換
-		const ParamFontToCSS = font_params => {
+		const ParamFontToCSS = (font_params: string) => {
 			let font_param;
 
 			// 「,」で区切られた文字列を空白を取り除いて配列に変換

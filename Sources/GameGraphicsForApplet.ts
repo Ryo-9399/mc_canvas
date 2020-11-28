@@ -33,6 +33,8 @@ class GameGraphicsForApplet {
 	amapchip_img: ImageBuff | undefined;
 	smapchip_img: ImageBuff[];
 	apt_img: ImageBuff;
+	font_score: string;
+	font_message: string;
 
 	constructor(dagdatabase: TagDataBase, applet: MasaoConstruction) {
 		this.tdb = dagdatabase;
@@ -116,6 +118,9 @@ class GameGraphicsForApplet {
 			// ハック
 			if (this.amapchip_img == null) this.amapchip_img = new ImageBuff(512, 512);
 		}
+
+		this.font_score = "";
+		this.font_message = "";
 	}
 
 	/**

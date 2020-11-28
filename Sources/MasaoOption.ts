@@ -21,33 +21,41 @@ export interface Option {
 	"bc-no-webaudio"?: boolean;
 	"bc-no-overlap-sound"?: boolean;
 	"bc-case-insensitive"?: boolean;
+	"bc-use-rounddown"?: boolean;
 	"custom-loop"?: ILoop;
 }
 
-interface AdvancedMap {
+export interface AdvancedMap {
 	stages: Stage[];
 	customParts?: { [key: string]: CustomParts };
 }
-interface Stage {
+export interface Stage {
 	size: { x: number; y: number };
 	layers: Layer[];
 }
-interface Layer {
+export interface MainLayer {
 	id?: string;
-	type: "main" | "mapchip";
+	type: "main";
 	src?: string;
-	map: (number | string)[];
+	map: (number | string)[][];
 }
-interface CustomParts {
+export interface MapchipLayer {
+	id?: string;
+	type: "mapchip";
+	src?: string;
+	map: number[][];
+}
+export type Layer = MainLayer | MapchipLayer;
+export interface CustomParts {
 	extends: number | string;
 	properties: { [key: string]: unknown };
 }
 
-interface Extension {
+export interface Extension {
 	inject(mc: MasaoConstruction, options: Option): void;
 }
 
-interface ILoop {
+export interface ILoop {
 	new (game: Game, forceSetInterval: boolean): LoopInstance;
 }
 

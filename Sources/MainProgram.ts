@@ -16,7 +16,7 @@ import {
 	drawGamescreenUgokuyuka
 } from "./drawGamescreenJSS";
 import { InversionKind, GameGraphicsForApplet } from "./GameGraphicsForApplet";
-import { Option } from "./MasaoOption";
+import { Option, MainLayer, MapchipLayer } from "./MasaoOption";
 import { GameMouse } from "./GameMouse";
 import { GameKey } from "./GameKey";
 import { GameSoundForApplet } from "./GameSoundForApplet";
@@ -2686,7 +2686,7 @@ class MainProgram {
 			/**
 			 * @param n {number} 鍵の種類
 			 */
-			const drawKey = n => {
+			const drawKey = (n: number) => {
 				if (this.dkey_count[n - 1] > 0) {
 					[...Array(this.dkey_count[n - 1])].map(() => {
 						this.hg.setColor(this.dkey_back_color);
@@ -5015,8 +5015,8 @@ class MainProgram {
 
 		var advance_map = this.tdb.options["advanced-map"];
 		var stage = null;
-		var mainLayer = null;
-		var mapchipLayer = null;
+		var mainLayer: MainLayer | undefined = undefined;
+		var mapchipLayer: MapchipLayer | undefined = undefined;
 		var customParts = null;
 
 		if (advance_map) {
@@ -5025,13 +5025,13 @@ class MainProgram {
 			this.mapWidth = stage.size.x;
 			this.mapHeight = stage.size.y;
 			// レイヤー定義の中からメインレイヤーと背景レイヤーを抽出
-			stage.layers.forEach(function(layer) {
+			for (const layer of stage.layers) {
 				if (layer.type === "main") {
 					mainLayer = layer;
 				} else if (layer.type === "mapchip") {
 					mapchipLayer = layer;
 				}
-			});
+			}
 			// カスタムチップの定義を解析
 			if (advance_map.customParts != null) {
 				this.customParts = this.readCustomParts(advance_map.customParts);
@@ -5198,7 +5198,7 @@ class MainProgram {
 				var c1 = 0;
 				if (mainLayer) {
 					try {
-						c1 = mainLayer.map[k3 - 10][j1 - 1];
+						c1 = mainLayer.map[k3 - 10][j1 - 1] as number;  // TODO: 文字列によるカスタムパーツへの対応
 						if (!c1) {
 							c1 = 0;
 						}
@@ -26722,7 +26722,7 @@ class MainProgram {
 			var width = arr.length;
 			var height = (arr[0] && arr[0].length) || 0;
 			var result_arr = [];
-			for (var x = 0; y < width; x++) {
+			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
 					if (arr[x][y]) {
 						result_arr.push({

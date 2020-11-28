@@ -1,6 +1,7 @@
 import { MasaoConstruction } from "./MasaoConstruction";
 import { Params, Option, LoopInstance } from "./MasaoOption";
 import { ImageBuff } from "./ImageBuff";
+import { MainProgram } from "./MainProgram";
 
 declare function requestIdleCallback(
 	callback: (deadline: IdleDeadline) => void,
@@ -197,7 +198,7 @@ class Game {
 			}, 500);
 			this.__resourceList.push({
 				type: "setInterval",
-				value: __interval_id
+				value: __interval_id,
 			});
 
 			// 表示リストにパッドを登録
@@ -260,7 +261,7 @@ class Game {
 		__loop.start(__st, this.__loop.bind(this));
 		this.__resourceList.push({
 			type: "Loop",
-			value: __loop
+			value: __loop,
 		});
 	}
 
@@ -350,36 +351,36 @@ class Game {
 	// 動作する部分を管理するオブジェクト
 	// Game.focus.focus(obj) : このオブジェクトobjにフォーカスを当てる
 	// Game.focus.hasFocus(obj) : このオブジェクトobjにフォーカスが当たっているならばtrueを返す
-	static focus = (function() {
+	static focus = (function () {
 		var focusedObject: unknown;
-		document.addEventListener("mousedown", function() {
+		document.addEventListener("mousedown", function () {
 			focusedObject = null;
 		});
 		return {
-			focus: function(obj: typeof focusedObject) {
+			focus: function (obj: typeof focusedObject) {
 				focusedObject = obj;
 			},
-			hasFocus: function(obj: typeof focusedObject) {
+			hasFocus: function (obj: typeof focusedObject) {
 				return focusedObject === obj;
-			}
+			},
 		};
 	})();
 
 	// 仮装パッドの表示リストを管理するオブジェクト
 	// Game.padAccessor.append(pad) : パッドpadをリストに登録する
 	// Game.padAccessor.show(pad) : パッドpadを表示し、リストの他のパッドを非表示にする
-	static padAccessor = (function() {
+	static padAccessor = (function () {
 		var padArray: HTMLCanvasElement[] = [];
 		return {
-			append: function(pad: HTMLCanvasElement) {
+			append: function (pad: HTMLCanvasElement) {
 				padArray.push(pad);
 			},
-			show: function(pad: HTMLCanvasElement) {
+			show: function (pad: HTMLCanvasElement) {
 				for (var i = 0; i < padArray.length; i++) {
 					if (pad !== padArray[i]) padArray[i].style.display = "none";
 					else pad.style.display = "inline";
 				}
-			}
+			},
 		};
 	})();
 
@@ -628,7 +629,7 @@ class Game {
 			var co = Game.pad.codes[ch];
 			this.__mc.gk.keyPressed({
 				keyCode: co,
-				preventDefault: function() {}
+				preventDefault: function () {},
 			});
 		}
 	}
@@ -638,7 +639,7 @@ class Game {
 			var co = Game.pad.codes[ch];
 			this.__mc.gk.keyReleased({
 				keyCode: co,
-				preventDefault: function() {}
+				preventDefault: function () {},
 			});
 		}
 	}
@@ -661,7 +662,7 @@ class Game {
 			[5, 60, 87, 60, 87, 140, 5, 140],
 			[175, 60, 93, 60, 93, 140, 175, 140],
 			[30, 5, 30, 80, 150, 80, 150, 5],
-			[30, 195, 30, 120, 150, 120, 150, 195]
+			[30, 195, 30, 120, 150, 120, 150, 195],
 		],
 		chars: ["X", "Z", "T", "P", "←", "→", "↑", "↓"],
 		codes: [88, 90, 84, 80, 37, 39, 38, 40],
@@ -671,9 +672,9 @@ class Game {
 			button: "rgba(128, 128, 128, 0.5)",
 			active: "rgba(0, 0, 0, 0.5)",
 			text: "black",
-			border: "black"
+			border: "black",
 		},
-		avoidAD: false
+		avoidAD: false,
 	};
 }
 
@@ -792,8 +793,10 @@ function createNDimensionArray(...lengths: number[]) {
  * @param {boolean} option option が true かつ bc-use-rounddown がfalseの時Canvasオリジナルに
  * @returns {number} 小数切り捨て後の値
  */
-function rounddown(val, option = false, mp) {
-	if (val >= 0 || (option && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
+function rounddown(val: number): number;
+function rounddown(val: number, option: true, mp: MainProgram): number;
+function rounddown(val: number, option?: boolean, mp?: MainProgram) {
+	if (val >= 0 || (option && mp && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
 	else return -Math.floor(-val);
 }
 
@@ -803,9 +806,7 @@ function rightShiftIgnoreSign(s: number, n: number) {
 }
 
 function makeRandomString() {
-	return Math.random()
-		.toString(36)
-		.slice(2);
+	return Math.random().toString(36).slice(2);
 }
 
 /**
@@ -980,12 +981,12 @@ class Loop {
 						// まだ実行しきれていない場合は次のidleに回す
 						// （didTimeoutがtrueの場合は超高負荷なので諦める）
 						idle(cb, {
-							timeout: IDLE_TIMEOUT
+							timeout: IDLE_TIMEOUT,
 						});
 					}
 				},
 				{
-					timeout: IDLE_TIMEOUT
+					timeout: IDLE_TIMEOUT,
 				}
 			);
 		}
@@ -1006,7 +1007,7 @@ var timestamp =
 		? performance.now.bind(performance)
 		: Date.now
 		? Date.now.bind(Date)
-		: function() {
+		: function () {
 				return new Date().getTime() * 1000;
 		  };
 
@@ -1019,28 +1020,28 @@ var idle: (...args: Parameters<typeof requestIdleCallback>) => void =
 	"function" === typeof requestIdleCallback
 		? requestIdleCallback
 		: "function" === typeof setImmediate
-		? function(cb) {
-				setImmediate(function() {
+		? function (cb) {
+				setImmediate(function () {
 					var n = timestamp();
 					var deadline = {
 						didTimeout: false,
-						timeRemaining: function() {
+						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
 							return 50 + n - timestamp();
-						}
+						},
 					};
 					cb(deadline);
 				});
 		  }
-		: function(cb) {
-				setTimeout(function() {
+		: function (cb) {
+				setTimeout(function () {
 					var n = timestamp();
 					var deadline = {
 						didTimeout: false,
-						timeRemaining: function() {
+						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
 							return 50 + n - timestamp();
-						}
+						},
 					};
 					cb(deadline);
 				}, 1);
@@ -1054,5 +1055,5 @@ export {
 	createNDimensionArray,
 	rounddown,
 	rightShiftIgnoreSign,
-	makeRandomString
+	makeRandomString,
 };
