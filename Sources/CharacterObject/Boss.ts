@@ -96,7 +96,7 @@ class Boss extends CharacterObject {
 	move(mp: MainProgram) {
 		// ボスが居座るX座標
 		const x_standby_left = mp.sl_wx + 96;
-		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
+		const x_standby_right = mp.sl_wx + mp.gg.di.width - 96 - 32;
 		switch (this.c) {
 			case DYING:
 				// 死亡
@@ -108,7 +108,7 @@ class Boss extends CharacterObject {
 						mp.setStageClear();
 					} else {
 						// 人面星を配置する
-						mp.mSet(mp.maps.wx + 256, mp.maps.wy + 128, 2200);
+						mp.mSet(mp.maps.wx + rounddown(mp.gg.di.width / 2), mp.maps.wy + mp.gg.di.height - 192, 2200);
 						mp.gs.rsAddSound(13);
 					}
 				}
@@ -168,8 +168,8 @@ class Boss extends CharacterObject {
 					if (mp.boss_destroy_type === 2) {
 						// 画面外から登場する
 						this.x -= 8;
-						if (this.x <= mp.sl_wx + 512 - 128) {
-							this.x = mp.sl_wx + 512 - 128;
+						if (this.x <= mp.sl_wx + mp.gg.di.width - 128) {
+							this.x = mp.sl_wx + mp.gg.di.width - 128;
 
 							this.showBossHPGauge(mp);
 							this.c = BOSS1_ATTACK_LEFT;
@@ -218,8 +218,8 @@ class Boss extends CharacterObject {
 					if (mp.boss_destroy_type === 2) {
 						// 画面外から登場する
 						this.x -= 8;
-						if (this.x <= mp.sl_wx + 512 - 128) {
-							this.x = mp.sl_wx + 512 - 128;
+						if (this.x <= mp.sl_wx + mp.gg.di.width - 128) {
+							this.x = mp.sl_wx + mp.gg.di.width - 128;
 							this.showBossHPGauge(mp);
 							this.c = BOSS2_ATTACK_LEFT;
 							this.c1 = 0;
@@ -269,8 +269,8 @@ class Boss extends CharacterObject {
 					if (mp.boss_destroy_type === 2) {
 						// 画面外から登場する
 						this.x -= 8;
-						if (this.x <= mp.sl_wx + 512 - 128) {
-							this.x = mp.sl_wx + 512 - 128;
+						if (this.x <= mp.sl_wx + mp.gg.di.width - 128) {
+							this.x = mp.sl_wx + mp.gg.di.width - 128;
 							this.showBossHPGauge(mp);
 							if ((mp.boss3_type >= 2 && mp.boss3_type <= 4) || (mp.boss3_type >= 6 && mp.boss3_type <= 8)) {
 								this.c = BOSS3_TACKLE_ATTACK_LEFT;
@@ -493,7 +493,8 @@ class Boss extends CharacterObject {
 				mp.mSet2(this.x, this.y, 500, -3, -24);
 				mp.mSet2(this.x, this.y, 500, 3, -24);
 			} else if (this.c1 >= 28 && this.c1 <= 98) {
-				if (this.c1 % 7 === 0) mp.mSet2(this.x, this.y, 500, (-15 + mp.ranInt(20)) * mirror, -30);
+				if (this.c1 % 7 === 0)
+					mp.mSet2(this.x, this.y, 500, rounddown(((-15 + mp.ranInt(20)) * mirror * mp.gg.di.width) / 512), -30);
 			} else if (this.c1 === 130) {
 				const dir = mp.ranInt(8) + 3;
 				mp.mSet2(this.x, this.y, 500, dir, -30);
@@ -726,9 +727,22 @@ class Boss extends CharacterObject {
 				this.c1 === 120 ||
 				this.c1 === 140
 			) {
-				const dx = direction === 1 ? 0 : 512 - 32;
-				if (this.c1 <= 45) mp.mSet2(mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
-				mp.mSet2(mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 9);
+				const dx = direction === 1 ? 0 : mp.gg.di.width - 32;
+				if (this.c1 <= 45)
+					mp.mSet2(
+						mp.maps.wx + dx - rounddown((8 * mp.ranInt(10) * mirror * mp.gg.di.width) / 512),
+						mp.maps.wy - 32,
+						740,
+						-4 * mirror,
+						9
+					);
+				mp.mSet2(
+					mp.maps.wx + dx - rounddown((8 * (mp.ranInt(35) + 14) * mirror * mp.gg.di.width) / 512),
+					mp.maps.wy - 32,
+					740,
+					-4 * mirror,
+					9
+				);
 			} else if (
 				this.c1 === 15 ||
 				this.c1 === 35 ||
@@ -739,10 +753,22 @@ class Boss extends CharacterObject {
 				this.c1 === 135 ||
 				this.c1 === 155
 			) {
-				const dx = direction === 1 ? 0 : 512 - 32;
+				const dx = direction === 1 ? 0 : mp.gg.di.width - 32;
 				if (this.c1 <= 55)
-					mp.mSet2(mp.maps.wx + dx - 8 * mp.ranInt(10) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 11);
-				mp.mSet2(mp.maps.wx + dx - 8 * (mp.ranInt(35) + 14) * mirror, mp.maps.wy - 32, 740, -4 * mirror, 11);
+					mp.mSet2(
+						mp.maps.wx + dx - rounddown((8 * mp.ranInt(10) * mirror * mp.gg.di.width) / 512),
+						mp.maps.wy - 32,
+						740,
+						-4 * mirror,
+						11
+					);
+				mp.mSet2(
+					mp.maps.wx + dx - rounddown((8 * (mp.ranInt(35) + 14) * mirror * mp.gg.di.width) / 512),
+					mp.maps.wy - 32,
+					740,
+					-4 * mirror,
+					11
+				);
 			}
 			if (this.c1 >= 250) this.c1 = 55;
 		} else {
@@ -751,7 +777,7 @@ class Boss extends CharacterObject {
 			const powers = [-5, -10, -15, -20, -5, -15, -10, 4, -5];
 			for (const [count, power] of zip(attack_count, powers)) {
 				if (this.c1 === count) {
-					mp.mSet2(this.x, this.y, 800, power * mirror, -32);
+					mp.mSet2(this.x, this.y, 800, rounddown((power * mirror * mp.gg.di.width) / 512), -32);
 					mp.gs.rsAddSound(22);
 					break;
 				}
@@ -777,10 +803,10 @@ class Boss extends CharacterObject {
 
 		// 画面外判定に用いる座標
 		const x_border_left = mp.sl_wx + 16;
-		const x_border_right = mp.sl_wx + 16 + 512 - 64;
+		const x_border_right = mp.sl_wx + 16 + mp.gg.di.width - 64;
 		// ボスが居座るX座標
 		const x_standby_left = mp.sl_wx + 96;
-		const x_standby_right = mp.sl_wx + 512 - 96 - 32;
+		const x_standby_right = mp.sl_wx + mp.gg.di.width - 96 - 32;
 
 		const flag_type_fast = mp.boss3_type === 3 || mp.boss3_type === 7;
 		const flag_type_jump = mp.boss3_type === 4 || mp.boss3_type === 8;
@@ -897,7 +923,7 @@ class Boss extends CharacterObject {
 			mp.boss_hp = 0;
 			this.showBossHPGauge(mp);
 		}
-		if (this.y >= mp.maps.wy + 320 + 16) {
+		if (this.y >= mp.maps.wy + mp.gg.di.height + 16) {
 			// 画面下まで落ちた
 			this.c = DYING;
 			this.c1 = 0;

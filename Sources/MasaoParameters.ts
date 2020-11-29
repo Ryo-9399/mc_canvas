@@ -3,15 +3,20 @@
  */
 export function makeKnownDefaultParameters() {
 	return {
-		"chizu-0": "...............",
-		"chizu-1": ".b33E33333c..C.",
-		"chizu-2": "....2.....2..2.",
-		"chizu-3": "....2.....2..2.",
-		"chizu-4": "....A33a331331.",
-		"chizu-5": ".i.....2.......",
-		"chizu-6": ".2.....2.......",
-		"chizu-7": ".B33D3313f3d...",
-		"chizu-8": "...............",
+		"chizu-0": "...................",
+		"chizu-1": ".b33E33333c..C.....",
+		"chizu-2": "....2.....2..2.....",
+		"chizu-3": "....2.....2..2.....",
+		"chizu-4": "....A33a331331.....",
+		"chizu-5": ".i.....2...........",
+		"chizu-6": ".2.....2...........",
+		"chizu-7": ".B33D3313f3d.......",
+		"chizu-8": "...................",
+		"chizu-9": "...................",
+		"chizu-10": "...................",
+		"chizu-11": "...................",
+		"chizu-12": "...................",
+		"chizu-13": "...................",
 		mes1_name: "ダケシ",
 		"serifu1-1": "人の命は、お金では買えないと言われています。",
 		"serifu1-2": "しかし、お店へ行けば、ＳＣＯＲＥで買えます。",
@@ -320,7 +325,8 @@ export function makeKnownDefaultParameters() {
 		audio_bgm_switch_mp3: "1",
 		audio_bgm_switch_ogg: "1",
 		font_score: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
-		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace"
+		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
+		mcs_screen_size: "2",
 	};
 }
 

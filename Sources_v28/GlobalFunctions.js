@@ -25,8 +25,6 @@ function Game(params, id, options) {
 	var randomID = makeRandomString();
 
 	options = options || {};
-	options.width = options.width || 512;
-	options.height = options.height || 320;
 	//Extends内のものをここに入れると反映される
 	options.extensions = options.extensions || [];
 
@@ -58,8 +56,8 @@ function Game(params, id, options) {
 	// メインCanvasオブジェクト
 	this.__canvas = document.createElement("canvas");
 	this.__canvas.id = this.__canvasID;
-	this.__canvas.width = options.width;
-	this.__canvas.height = options.height;
+	this.__canvas.width = options.width || 512;
+	this.__canvas.height = options.height || 320;
 	this.__canvas.textContent = "※お使いのブラウザはHTML5に対応していないため表示できません。";
 	this.__box.appendChild(this.__canvas);
 
@@ -102,7 +100,7 @@ function Game(params, id, options) {
 		ss = __pad_btn.style;
 		ss.width = "24em";
 		ss.height = "2.5em";
-		__pad_btn.onclick = function() {
+		__pad_btn.onclick = function () {
 			if (__pad.style.display == "inline") __pad.style.display = "none";
 			else {
 				Game.padAccessor.show(__pad);
@@ -118,7 +116,7 @@ function Game(params, id, options) {
 		var __pad = (this.__pad = document.createElement("canvas"));
 		__pad.width = 500;
 		__pad.height = 200;
-		var __pad_event = function(e) {
+		var __pad_event = function (e) {
 			this.__pad_event(e);
 		}.bind(this);
 		__pad.addEventListener("touchstart", __pad_event, false);
@@ -135,7 +133,7 @@ function Game(params, id, options) {
 		//ss.left = "0px";
 		//ss.textAlign = "right";
 		var __interval_id = setInterval(
-			function() {
+			function () {
 				var w = innerWidth;
 				var h = innerHeight;
 				var rw = w < h ? w : h;
@@ -150,7 +148,7 @@ function Game(params, id, options) {
 		);
 		this.__resourceList.push({
 			type: "setInterval",
-			value: __interval_id
+			value: __interval_id,
 		});
 
 		// 表示リストにパッドを登録
@@ -201,7 +199,7 @@ function Game(params, id, options) {
 	__loop.start(__st, this.__loop.bind(this));
 	this.__resourceList.push({
 		type: "Loop",
-		value: __loop
+		value: __loop,
 	});
 }
 
@@ -210,7 +208,7 @@ function Game(params, id, options) {
  *
  * @param {Object} [options] オプション
  */
-Game.replaceAll = function(options) {
+Game.replaceAll = function (options) {
 	if (document.readyState == "complete") {
 		onload();
 	} else {
@@ -255,7 +253,7 @@ Game.replaceAll = function(options) {
  * @param {string} id アプレットのID
  * @param {Object} [options] オプション
  */
-Game.replace = function(id, options) {
+Game.replace = function (id, options) {
 	if (document.readyState == "complete") {
 		// load済みの場合は即座に呼び出す
 		onload();
@@ -269,7 +267,7 @@ Game.replace = function(id, options) {
 	}
 };
 
-Game.replaceByDom = function(paramScope, options) {
+Game.replaceByDom = function (paramScope, options) {
 	var paramTags = paramScope.getElementsByTagName("param");
 	var paramLength = paramTags.length;
 	var params = {};
@@ -290,36 +288,36 @@ Game.replaceByDom = function(paramScope, options) {
 // 動作する部分を管理するオブジェクト
 // Game.focus.focus(obj) : このオブジェクトobjにフォーカスを当てる
 // Game.focus.hasFocus(obj) : このオブジェクトobjにフォーカスが当たっているならばtrueを返す
-Game.focus = (function() {
+Game.focus = (function () {
 	var focusedObject;
-	document.addEventListener("mousedown", function() {
+	document.addEventListener("mousedown", function () {
 		focusedObject = null;
 	});
 	return {
-		focus: function(obj) {
+		focus: function (obj) {
 			focusedObject = obj;
 		},
-		hasFocus: function(obj) {
+		hasFocus: function (obj) {
 			return focusedObject === obj;
-		}
+		},
 	};
 })();
 
 // 仮装パッドの表示リストを管理するオブジェクト
 // Game.padAccessor.append(pad) : パッドpadをリストに登録する
 // Game.padAccessor.show(pad) : パッドpadを表示し、リストの他のパッドを非表示にする
-Game.padAccessor = (function() {
+Game.padAccessor = (function () {
 	var padArray = [];
 	return {
-		append: function(pad) {
+		append: function (pad) {
 			padArray.push(pad);
 		},
-		show: function(pad) {
+		show: function (pad) {
 			for (var i = 0; i < padArray.length; i++) {
 				if (pad !== padArray[i]) padArray[i].style.display = "none";
 				else pad.style.display = "inline";
 			}
-		}
+		},
 	};
 })();
 
@@ -327,7 +325,7 @@ Game.padAccessor = (function() {
  * ゲームを終了する関数です。
  * ゲームのメインループを終了し、このインスタンスによって追加されたDOMオブジェクトやタイマーを除去します。
  */
-Game.prototype.kill = function() {
+Game.prototype.kill = function () {
 	//ゲームを止める
 	this.__mc.stop();
 	//__resourceListの中身を全部後始末してあげる
@@ -350,7 +348,7 @@ Game.prototype.kill = function() {
 /**
  * ゲームのメインループを1回実行する関数です。
  */
-Game.prototype.__loop = function() {
+Game.prototype.__loop = function () {
 	var pt = new Date().getTime();
 	if (pt - this.__pt < this.__st) return;
 	this.__pt = pt - 10;
@@ -427,7 +425,7 @@ Game.prototype.__loop = function() {
  * ソフトウェアパッド更新関数
  * @internal
  */
-Game.prototype.__pad_update = function() {
+Game.prototype.__pad_update = function () {
 	var r = this.__pad.getBoundingClientRect();
 	var dx = r.left;
 	var dy = r.top;
@@ -556,27 +554,27 @@ Game.prototype.__pad_update = function() {
 	}
 };
 
-Game.prototype.__pad_pressed = function(ch) {
+Game.prototype.__pad_pressed = function (ch) {
 	if (this.__mc.gk) {
 		var co = Game.pad.codes[ch];
 		this.__mc.gk.keyPressed({
 			keyCode: co,
-			preventDefault: function() {}
+			preventDefault: function () {},
 		});
 	}
 };
 
-Game.prototype.__pad_released = function(ch) {
+Game.prototype.__pad_released = function (ch) {
 	if (this.__mc.gk) {
 		var co = Game.pad.codes[ch];
 		this.__mc.gk.keyReleased({
 			keyCode: co,
-			preventDefault: function() {}
+			preventDefault: function () {},
 		});
 	}
 };
 
-Game.prototype.__pad_event = function(e) {
+Game.prototype.__pad_event = function (e) {
 	e.preventDefault();
 	this.__pad_touches = [];
 	for (var i = 0; i < e.touches.length; i++) {
@@ -594,7 +592,7 @@ Game.pad = {
 		[5, 60, 87, 60, 87, 140, 5, 140],
 		[175, 60, 93, 60, 93, 140, 175, 140],
 		[30, 5, 30, 80, 150, 80, 150, 5],
-		[30, 195, 30, 120, 150, 120, 150, 195]
+		[30, 195, 30, 120, 150, 120, 150, 195],
 	],
 	chars: ["X", "Z", "T", "P", "←", "→", "↑", "↓"],
 	codes: [88, 90, 84, 80, 37, 39, 38, 40],
@@ -604,9 +602,9 @@ Game.pad = {
 		button: "rgba(128, 128, 128, 0.5)",
 		active: "rgba(0, 0, 0, 0.5)",
 		text: "black",
-		border: "black"
+		border: "black",
 	},
-	avoidAD: false
+	avoidAD: false,
 };
 
 // メディアの読み込みを待つ関数
@@ -649,13 +647,13 @@ function AudioClip(url) {
 	}
 	__box.appendChild(this._dat);*/
 }
-AudioClip.prototype._oncanplaythrough = function() {
+AudioClip.prototype._oncanplaythrough = function () {
 	//this._loaded = true;
 };
 function AudioClip__oncanplaythrough(obj) {
 	//obj._oncanplaythrough();
 }
-AudioClip.prototype._onerror = function() {
+AudioClip.prototype._onerror = function () {
 	//this._error = true;
 	//this._dat.src = "";
 };
@@ -663,7 +661,7 @@ function AudioClip__onerror(obj) {
 	//obj._onerror();
 }
 
-AudioClip.prototype.play = function() {
+AudioClip.prototype.play = function () {
 	try {
 		this._dat.loop = false;
 		this._dat.currentTime = 0;
@@ -674,7 +672,7 @@ AudioClip.prototype.play = function() {
 	return true;
 };
 
-AudioClip.prototype.loop = function() {
+AudioClip.prototype.loop = function () {
 	try {
 		this._dat.loop = true;
 		this._dat.currentTime = 0;
@@ -685,7 +683,7 @@ AudioClip.prototype.loop = function() {
 	return true;
 };
 
-AudioClip.prototype.stop = function() {
+AudioClip.prototype.stop = function () {
 	try {
 		this._dat.pause();
 	} catch (e) {
@@ -732,9 +730,7 @@ function rightShiftIgnoreSign(s, n) {
 }
 
 function makeRandomString() {
-	return Math.random()
-		.toString(36)
-		.slice(2);
+	return Math.random().toString(36).slice(2);
 }
 
 /**
@@ -792,7 +788,7 @@ function Loop(game, forceSetInterval) {
  * @param {number} interval ループの間隔
  * @param {Function} callback ループで呼び出される関数
  */
-Loop.prototype.start = function(interval, callback) {
+Loop.prototype.start = function (interval, callback) {
 	this.running = true;
 	this.interval = interval;
 	this.callback = callback;
@@ -816,7 +812,7 @@ Loop.prototype.start = function(interval, callback) {
 /**
  * ループを停止します。
  */
-Loop.prototype.stop = function() {
+Loop.prototype.stop = function () {
 	if (!this.running) {
 		return;
 	}
@@ -832,7 +828,7 @@ Loop.prototype.stop = function() {
  * 次回のループを登録する関数です。
  * @private
  */
-Loop.prototype._next = function() {
+Loop.prototype._next = function () {
 	if (this.mode === 1) {
 		this.timerid = requestAnimationFrame(this._loop);
 	}
@@ -842,7 +838,7 @@ Loop.prototype._next = function() {
  * 1回のループを処理する関数です。
  * @private
  */
-Loop.prototype._loop = function() {
+Loop.prototype._loop = function () {
 	if (!this.running) {
 		return;
 	}
@@ -897,12 +893,12 @@ Loop.prototype._loop = function() {
 					// まだ実行しきれていない場合は次のidleに回す
 					// （didTimeoutがtrueの場合は超高負荷なので諦める）
 					idle(cb, {
-						timeout: IDLE_TIMEOUT
+						timeout: IDLE_TIMEOUT,
 					});
 				}
 			},
 			{
-				timeout: IDLE_TIMEOUT
+				timeout: IDLE_TIMEOUT,
 			}
 		);
 	}
@@ -922,7 +918,7 @@ var timestamp =
 		? performance.now.bind(performance)
 		: Date.now
 		? Date.now.bind(Date)
-		: function() {
+		: function () {
 				return new Date().getTime() * 1000;
 		  };
 
@@ -935,28 +931,28 @@ var idle =
 	"function" === typeof requestIdleCallback
 		? requestIdleCallback
 		: "function" === typeof setImmediate
-		? function(cb) {
-				setImmediate(function() {
+		? function (cb) {
+				setImmediate(function () {
 					var n = timestamp();
 					var deadline = {
 						didTimeout: false,
-						timeRemaining: function() {
+						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
 							return 50 + n - timestamp();
-						}
+						},
 					};
 					cb(deadline);
 				});
 		  }
-		: function(cb) {
-				setTimeout(function() {
+		: function (cb) {
+				setTimeout(function () {
 					var n = timestamp();
 					var deadline = {
 						didTimeout: false,
-						timeRemaining: function() {
+						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
 							return 50 + n - timestamp();
-						}
+						},
 					};
 					cb(deadline);
 				}, 1);

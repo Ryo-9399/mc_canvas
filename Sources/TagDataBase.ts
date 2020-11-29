@@ -26,49 +26,49 @@ class TagDataBase {
 		var str1;
 		for (var k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "map" + k + "-" + j;
+				str1 = `map${k}-${j}`;
 				this.params[str1] = ".";
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "map" + k + "-" + j + "-s";
+				str1 = `map${k}-${j}-s`;
 				this.params[str1] = ".";
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "map" + k + "-" + j + "-t";
+				str1 = `map${k}-${j}-t`;
 				this.params[str1] = ".";
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "map" + k + "-" + j + "-f";
+				str1 = `map${k}-${j}-f`;
 				this.params[str1] = ".";
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "layer" + k + "-" + j;
+				str1 = `layer${k}-${j}`;
 				this.params[str1] = str3;
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "layer" + k + "-" + j + "-s";
+				str1 = `layer${k}-${j}-s`;
 				this.params[str1] = str3;
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "layer" + k + "-" + j + "-t";
+				str1 = `layer${k}-${j}-t`;
 				this.params[str1] = str3;
 			}
 		}
 		for (k = 0; k <= 2; k++) {
 			for (j = 0; j <= 29; j++) {
-				str1 = "layer" + k + "-" + j + "-f";
+				str1 = `layer${k}-${j}-f`;
 				this.params[str1] = str3;
 			}
 		}

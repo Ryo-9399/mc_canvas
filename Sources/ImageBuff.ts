@@ -54,13 +54,13 @@ class ImageBuff implements ImageBuff {
 		this._height = -1;
 		this._dat = new Image();
 		var _this = this;
-		this._dat.onload = function() {
+		this._dat.onload = function () {
 			ImageBuff_onload(_this);
 		};
-		this._dat.onerror = function() {
+		this._dat.onerror = function () {
 			ImageBuff_onerror(_this);
 		};
-		this._dat.onabort = function() {
+		this._dat.onabort = function () {
 			ImageBuff_onerror(_this);
 		};
 		this._dat.src = url;
@@ -409,7 +409,7 @@ class Graphics {
 	setColor(color: Color) {
 		if (this._ctx == null) return false;
 		this._color = new Color(color.r, color.g, color.b, color.a);
-		var val = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a / 255 + ")";
+		const val = `rgba(${color.r},${color.g},${color.b},${color.a / 255})`;
 		this._ctx.strokeStyle = val;
 		this._ctx.fillStyle = val;
 		return true;

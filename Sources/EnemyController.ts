@@ -22,13 +22,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 歩くスピード
-			walk_speed: 3
+			walk_speed: 3,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(co) {};
+		initFactory: function (enemyCode, properties) {
+			return function (co) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 100) {
@@ -266,7 +266,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -280,10 +280,10 @@ namespace EnemyController {
 			// 歩くスピード
 			walk_speed: 3,
 			// 落ちるスピード
-			fall_speed: 5
+			fall_speed: 5,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				if (enemyCode === 150) {
 					// 投げられたマリリ
 					characterobject.vy = -28;
@@ -292,8 +292,8 @@ namespace EnemyController {
 				}
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -380,7 +380,7 @@ namespace EnemyController {
 						l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 						characterobject.c = 110;
 					}
-					if (i >= 120 && l20 > mp.maps.wx + 512) characterobject.c = 0;
+					if (i >= 120 && l20 > mp.maps.wx + mp.gg.di.width) characterobject.c = 0;
 					if (i45 == 19) {
 						if (
 							rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign(l20 + 15 - 3, 5) &&
@@ -534,7 +534,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -552,11 +552,11 @@ namespace EnemyController {
 			// 索敵範囲
 			search_range: 240,
 			// 攻撃から次の攻撃までのインターバルフレーム数
-			interval: 30
+			interval: 30,
 		},
 		// 初期化関数を作る関数
-		initFactory: function(enemyCode, properties) {
-			return function(co) {
+		initFactory: function (enemyCode, properties) {
+			return function (co) {
 				// ピカチーの敵コード: 200〜203
 				// コードによって攻撃の種類が異なる
 
@@ -567,8 +567,8 @@ namespace EnemyController {
 			};
 		},
 		// コントローラ関数を作る関数
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				// ピカチーの挙動
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
@@ -695,7 +695,7 @@ namespace EnemyController {
 						characterobject.vy === 0 &&
 						(Math.abs(mp.co_j.x - l20) > 32 || i21 <= mp.co_j.y) &&
 						i21 >= mp.maps.wy - 128 &&
-						i21 <= mp.maps.wy + 320 + 128
+						i21 <= mp.maps.wy + mp.gg.di.height + 128
 					)
 						if (characterobject.c3 === 1) {
 							// 水平水鉄砲
@@ -788,7 +788,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -808,11 +808,11 @@ namespace EnemyController {
 				2: 2,
 				10: 1,
 				18: 1,
-				26: 1
-			}
+				26: 1,
+			},
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(co) {
+		initFactory: function (enemyCode, properties) {
+			return function (co) {
 				// 敵コードは300に統一
 				co.c2 = 300;
 				// 攻撃の種類をc3に入れておく
@@ -821,8 +821,8 @@ namespace EnemyController {
 				}
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -875,7 +875,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -886,10 +886,10 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 投げる間隔
-			interval: 40
+			interval: 40,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(co) {
+		initFactory: function (enemyCode, properties) {
+			return function (co) {
 				co.c2 = 310;
 				switch (enemyCode) {
 					case 310:
@@ -915,8 +915,8 @@ namespace EnemyController {
 				}
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 310) {
@@ -939,9 +939,9 @@ namespace EnemyController {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32
+							i21 <= mp.maps.wy + mp.gg.di.height - 32
 						) {
 							// 射程に入ったら行動開始
 							characterobject.c1 = 100;
@@ -964,7 +964,7 @@ namespace EnemyController {
 					characterobject.pth = 0;
 				}
 			};
-		}
+		},
 	};
 
 	/**
@@ -972,11 +972,11 @@ namespace EnemyController {
 	 */
 	export const ChikorinMidareuchi: EnemyControllerFactory<{}> = {
 		properties: {},
-		initFactory: function(enemyCode, properties) {
-			return function(co) {};
+		initFactory: function (enemyCode, properties) {
+			return function (co) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 320) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -1000,9 +1000,9 @@ namespace EnemyController {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx - 16 &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 288 &&
 							mp.co_j.x <= l20 + 192 &&
 							Math.abs(mp.co_j.x - l20) >= 88 &&
@@ -1067,7 +1067,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1078,13 +1078,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// ビームを撃ってから次に撃つまでの間隔
-			interval: 120
+			interval: 120,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(co) {};
+		initFactory: function (enemyCode, properties) {
+			return function (co) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 330) {
@@ -1108,9 +1108,9 @@ namespace EnemyController {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx - 16 &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 352 &&
 							mp.co_j.x <= l20 - 72 &&
 							Math.abs(mp.co_j.y - i21) < 32
@@ -1147,9 +1147,9 @@ namespace EnemyController {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx - 16 - 144 &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x <= l20 + 352 &&
 							mp.co_j.x >= l20 + 72 &&
 							Math.abs(mp.co_j.y - i21) < 32
@@ -1168,7 +1168,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1179,13 +1179,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 歩くスピード
-			walk_speed: 4
+			walk_speed: 4,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(co) {};
+		initFactory: function (enemyCode, properties) {
+			return function (co) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 400) {
@@ -1471,7 +1471,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1483,10 +1483,10 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 歩くスピード
-			walk_speed: 4
+			walk_speed: 4,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.vy = -22;
 				if (characterobject.vx <= 0) {
 					characterobject.muki = 0;
@@ -1495,8 +1495,8 @@ namespace EnemyController {
 				}
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 410) {
@@ -1598,7 +1598,7 @@ namespace EnemyController {
 						l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 						characterobject.c = 410;
 					}
-					if (i >= 120 && l20 > mp.maps.wx + 512) characterobject.c = 0;
+					if (i >= 120 && l20 > mp.maps.wx + mp.gg.di.width) characterobject.c = 0;
 					if (i46 === 19) {
 						if (
 							rightShiftIgnoreSign(l20 + 15, 5) > rightShiftIgnoreSign(l20 + 15 - properties.walk_speed, 5) &&
@@ -1754,7 +1754,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1768,10 +1768,10 @@ namespace EnemyController {
 			// 普段の飛行速度
 			speed: 4,
 			// 折り返し時の加速度
-			accel: 1
+			accel: 1,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				// 初期y座標
 				var j = characterobject.y;
 
@@ -1782,8 +1782,8 @@ namespace EnemyController {
 				characterobject.vy = -4;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 500) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -1806,7 +1806,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1817,13 +1817,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 左右移動の速度
-			speed: 3
+			speed: 3,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 510) {
@@ -1859,7 +1859,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1870,22 +1870,22 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 発射の間隔
-			interval: 40
+			interval: 40,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 520) {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 288 &&
 							mp.co_j.x <= l20 + 192 &&
 							Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -1915,7 +1915,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -1923,15 +1923,15 @@ namespace EnemyController {
 	 */
 	export const PoppieFire3: EnemyControllerFactory<{}> = {
 		properties: {},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				var j = characterobject.y;
 				characterobject.c3 = j;
 				characterobject.c4 = 0;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 530) {
@@ -1943,9 +1943,9 @@ namespace EnemyController {
 							// 発射可能だったら発射態勢へ
 							if (
 								l20 >= mp.maps.wx &&
-								l20 <= mp.maps.wx + 512 - 32 &&
+								l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 								i21 >= mp.maps.wy &&
-								i21 <= mp.maps.wy + 320 - 32 &&
+								i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 								mp.co_j.x >= l20 - 320 &&
 								mp.co_j.x <= l20 + 256 &&
 								Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -1992,7 +1992,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2003,22 +2003,22 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 発射の間隔
-			interval: 40
+			interval: 40,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 540) {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 288 &&
 							mp.co_j.x <= l20 + 192 &&
 							Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2056,7 +2056,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2067,22 +2067,22 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 発射の間隔
-			interval: 80
+			interval: 80,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 550) {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 228 &&
 							mp.co_j.x <= l20 + 192 &&
 							Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2109,7 +2109,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2124,10 +2124,10 @@ namespace EnemyController {
 			// null = 初期値
 			jump_vy: null,
 			// 横方向の移動速度
-			speed: 5
+			speed: 5,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				if (enemyCode === 650) {
 					// 投げられたマリリ
 					characterobject.vy = -28;
@@ -2142,8 +2142,8 @@ namespace EnemyController {
 				}
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 600) {
@@ -2484,7 +2484,7 @@ namespace EnemyController {
 							l20 = rightShiftIgnoreSign(l20 + 31, 5) * 32 - 32;
 							characterobject.c = 600;
 						}
-						if (i >= 120 && l20 > mp.maps.wx + 512) characterobject.c = 0;
+						if (i >= 120 && l20 > mp.maps.wx + mp.gg.di.width) characterobject.c = 0;
 					}
 					if (i21 >= mp.ochiru_y) characterobject.c = 0;
 
@@ -2530,7 +2530,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2547,22 +2547,22 @@ namespace EnemyController {
 			// 移動の距離
 			distance: 128,
 			// 移動間の間隔
-			interval: 20
+			interval: 20,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x;
 				characterobject.c4 = properties.interval >> 1;
 			};
 		},
-		controllerFactory: function(properties) {
+		controllerFactory: function (properties) {
 			// 待機フレームの半分
 			var wait_half = properties.interval >> 1;
 			// 右待機中フレーム
 			var right_wait = properties.interval;
 			// 左待機中フレーム
 			var left_wait = properties.interval * 2 + 10;
-			return function(characterobject, mp) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 660) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -2601,7 +2601,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2615,15 +2615,15 @@ namespace EnemyController {
 			// 体当たりのスピード
 			attack_speed: 10,
 			// 定位置に戻るときのスピード
-			return_speed: 4
+			return_speed: 4,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x;
 				characterobject.c4 = 0;
 			};
 		},
-		controllerFactory: function(properties) {
+		controllerFactory: function (properties) {
 			//// TODO
 			//// 待機フレームの半分
 			//var wait_half = properties.interval >> 1;
@@ -2631,7 +2631,7 @@ namespace EnemyController {
 			//var right_wait = properties.interval;
 			//// 左待機中フレーム
 			//var left_wait = properties.interval * 2 + 10;
-			return function(characterobject, mp) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 670) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -2690,7 +2690,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2702,18 +2702,18 @@ namespace EnemyController {
 		properties: {
 			// 攻撃の間隔
 			// null = 初期値
-			interval: null
+			interval: null,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				// 敵コードを700に統一
 				characterobject.c2 = 700;
 				// 攻撃方法を覚えておく
 				characterobject.c3 = enemyCode - 700;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 700) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -2836,7 +2836,7 @@ namespace EnemyController {
 							}
 						} else if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							mp.co_j.x >= l20 - 256 &&
 							mp.co_j.x <= l20 + 192 &&
 							Math.abs(mp.co_j.x - l20) >= 96
@@ -2852,7 +2852,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2863,18 +2863,18 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 攻撃の間隔
-			interval: 35
+			interval: 35,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				// 敵コードを710に統一
 				characterobject.c2 = 710;
 				// 攻撃方法を覚えておく
 				characterobject.c3 = enemyCode - 710;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 710) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -2899,9 +2899,9 @@ namespace EnemyController {
 						// 射程に入ったら行動開始
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 320 &&
 							mp.co_j.x <= l20 + 192 &&
 							Math.abs(mp.co_j.x - l20) >= 64 &&
@@ -2943,7 +2943,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -2954,13 +2954,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 攻撃の間隔
-			interval: 80
+			interval: 80,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -2986,9 +2986,9 @@ namespace EnemyController {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx - 16 &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 352 &&
 							mp.co_j.x <= l20 - 72 &&
 							Math.abs(mp.co_j.y - i21) < 64
@@ -3026,9 +3026,9 @@ namespace EnemyController {
 					if (characterobject.c1 <= 0) {
 						if (
 							l20 >= mp.maps.wx - 16 - 144 &&
-							l20 <= mp.maps.wx + 512 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
 							i21 >= mp.maps.wy &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x <= l20 + 352 &&
 							mp.co_j.x >= l20 + 72 &&
 							Math.abs(mp.co_j.y - i21) < 32
@@ -3047,7 +3047,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3058,17 +3058,17 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 歩く速度
-			walk_speed: 3
+			walk_speed: 3,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				// 敵コードを800に統一
 				characterobject.c2 = 800;
 				characterobject.c4 = enemyCode - 800;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -3333,7 +3333,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3347,13 +3347,13 @@ namespace EnemyController {
 			// 飛行速度
 			speed: 4,
 			// 攻撃の間隔
-			interval: 26
+			interval: 26,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 900) {
 					// 飛行中
 					var l20 = characterobject.x;
@@ -3385,7 +3385,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3396,17 +3396,17 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 攻撃の間隔
-			interval: 30
+			interval: 30,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				// 敵コードは920に統一
 				characterobject.c2 = 920;
 				characterobject.c3 = enemyCode - 920;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 920) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -3415,8 +3415,8 @@ namespace EnemyController {
 						// 射程に入ったら投下開始
 						if (
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.x >= l20 - 256 &&
 							mp.co_j.x <= l20 + 256 &&
 							mp.co_j.y >= i21 + 16
@@ -3443,7 +3443,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3454,16 +3454,16 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 飛行速度
-			speed: 4
+			speed: 4,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x;
 				characterobject.c4 = 20;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 930) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -3483,8 +3483,8 @@ namespace EnemyController {
 								l20 == characterobject.c3 - 4 - 64 ||
 								l20 == characterobject.c3 - 4 - 128) &&
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.y >= i21 + 16
 						)
 							mp.mSet(l20 + 2, i21, 600);
@@ -3507,8 +3507,8 @@ namespace EnemyController {
 						if (
 							(l20 === characterobject.c3 + 4 - 32 || l20 === characterobject.c3 + 4 - 96) &&
 							l20 >= mp.maps.wx &&
-							l20 <= mp.maps.wx + 512 - 32 &&
-							i21 <= mp.maps.wy + 320 - 32 &&
+							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
+							i21 <= mp.maps.wy + this.gg.di.height - 32 &&
 							mp.co_j.y >= i21 + 16
 						)
 							mp.mSet(l20 - 2, i21, 605);
@@ -3526,7 +3526,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3540,13 +3540,13 @@ namespace EnemyController {
 			// 飛行速度
 			speed: 4,
 			// 攻撃の間隔
-			interval: 26
+			interval: 26,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 950) {
@@ -3592,7 +3592,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3603,13 +3603,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 移動速度
-			speed: 3
+			speed: 3,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -3641,7 +3641,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3655,13 +3655,13 @@ namespace EnemyController {
 			// ジャンプの初速
 			jump_vy: -26,
 			// 着地後の待機時間
-			interval: 10
+			interval: 10,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -3723,7 +3723,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3737,13 +3737,13 @@ namespace EnemyController {
 			// 横方向移動速度
 			speed_x: 3,
 			// 縦方向移動速度
-			speed_y: 2
+			speed_y: 2,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -3816,7 +3816,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3830,15 +3830,15 @@ namespace EnemyController {
 			// 角速度（degree）
 			speed: 5,
 			// 回転半径
-			radius: 64
+			radius: 64,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x - 64;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1070) {
 					characterobject.c1 -= properties.speed;
 					if (characterobject.c1 < 0) characterobject.c1 += 360;
@@ -3856,7 +3856,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3871,15 +3871,15 @@ namespace EnemyController {
 			// 角速度（degree）
 			speed: 5,
 			// 回転半径
-			radius: 64
+			radius: 64,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x - 64;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1080) {
 					characterobject.c1 += properties.speed;
 					if (characterobject.c1 >= 360) characterobject.c1 -= 360;
@@ -3897,7 +3897,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3908,13 +3908,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 攻撃の間隔
-			interval: 77
+			interval: 77,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1100) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -3941,7 +3941,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -3952,13 +3952,13 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 落下の初速
-			init_vy: 2
+			init_vy: 2,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1150) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -4019,7 +4019,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -4034,13 +4034,13 @@ namespace EnemyController {
 			// 横方向移動速度
 			speed_x: 3,
 			// 縦方向移動速度
-			speed_y: 2
+			speed_y: 2,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {};
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1160) {
 					var l20 = characterobject.x;
 					var i21 = characterobject.y;
@@ -4110,7 +4110,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -4125,15 +4125,15 @@ namespace EnemyController {
 			// 角速度（degree）
 			speed: 5,
 			// 回転半径
-			radius: 64
+			radius: 64,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x - 64;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1170) {
 					characterobject.c1 -= properties.speed;
 					if (characterobject.c1 < 0) characterobject.c1 += 360;
@@ -4151,7 +4151,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -4166,15 +4166,15 @@ namespace EnemyController {
 			// 角速度（degree）
 			speed: 5,
 			// 回転半径
-			radius: 64
+			radius: 64,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				characterobject.c3 = characterobject.x - 64;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp) {
 				if (characterobject.c === 1180) {
 					characterobject.c1 += properties.speed;
 					if (characterobject.c1 >= 360) characterobject.c1 -= 360;
@@ -4192,7 +4192,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -4203,16 +4203,16 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 歩行速度
-			walk_speed: 4
+			walk_speed: 4,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject) {
 				// 画面外にいても動く
 				characterobject.c = 1220;
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 				if (characterobject.c === 1200) {
@@ -5157,7 +5157,7 @@ namespace EnemyController {
 						if (mp.maps.getBGCode(mp.co_j.x + 15, mp.co_j.y + 31) >= 20)
 							mp.co_j.y = rightShiftIgnoreSign(mp.co_j.y + 31, 5) * 32 - 32;
 					}
-					if (i21 >= mp.maps.wy_max + 320) {
+					if (i21 >= mp.maps.wy_max + this.gg.di.height) {
 						characterobject.c = 60;
 						characterobject.c1 = 0;
 					}
@@ -5346,7 +5346,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -5357,10 +5357,10 @@ namespace EnemyController {
 	}> = {
 		properties: {
 			// 移動速度
-			speed: 4
+			speed: 4,
 		},
-		initFactory: function(enemyCode, properties) {
-			return function(characterobject, mp) {
+		initFactory: function (enemyCode, properties) {
+			return function (characterobject, mp) {
 				characterobject.c = 1430;
 				// パターン画像が1匹ごとに変わる（3種類まで）
 				characterobject.c2 = mp.tpika_p;
@@ -5370,8 +5370,8 @@ namespace EnemyController {
 				}
 			};
 		},
-		controllerFactory: function(properties) {
-			return function(characterobject, mp, i) {
+		controllerFactory: function (properties) {
+			return function (characterobject, mp, i) {
 				var l20 = characterobject.x;
 				var i21 = characterobject.y;
 
@@ -5503,7 +5503,7 @@ namespace EnemyController {
 				}
 				return false;
 			};
-		}
+		},
 	};
 
 	/**
@@ -5631,7 +5631,7 @@ namespace EnemyController {
 		// 追跡亀
 		1200: EnemyController.TurtleChaser,
 		// 重力無視の追跡ピカチー等
-		1400: EnemyController.PikachieChaser
+		1400: EnemyController.PikachieChaser,
 	};
 }
 
