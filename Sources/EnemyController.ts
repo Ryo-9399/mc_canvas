@@ -3508,7 +3508,7 @@ namespace EnemyController {
 							(l20 === characterobject.c3 + 4 - 32 || l20 === characterobject.c3 + 4 - 96) &&
 							l20 >= mp.maps.wx &&
 							l20 <= mp.maps.wx + mp.gg.di.width - 32 &&
-							i21 <= mp.maps.wy + this.gg.di.height - 32 &&
+							i21 <= mp.maps.wy + mp.gg.di.height - 32 &&
 							mp.co_j.y >= i21 + 16
 						)
 							mp.mSet(l20 - 2, i21, 605);
@@ -5157,7 +5157,7 @@ namespace EnemyController {
 						if (mp.maps.getBGCode(mp.co_j.x + 15, mp.co_j.y + 31) >= 20)
 							mp.co_j.y = rightShiftIgnoreSign(mp.co_j.y + 31, 5) * 32 - 32;
 					}
-					if (i21 >= mp.maps.wy_max + this.gg.di.height) {
+					if (i21 >= mp.maps.wy_max + mp.gg.di.height) {
 						characterobject.c = 60;
 						characterobject.c1 = 0;
 					}

@@ -35,6 +35,9 @@ class GameGraphicsForApplet {
 	apt_img: ImageBuff;
 	font_score: string;
 	font_message: string;
+	system_screen_size: number;
+	system_screen_width: number;
+	system_screen_height: number;
 
 	constructor(dagdatabase: TagDataBase, applet: MasaoConstruction) {
 		this.tdb = dagdatabase;

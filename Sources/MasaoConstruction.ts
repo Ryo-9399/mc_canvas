@@ -115,7 +115,7 @@ class MasaoConstruction {
 		this.__canvas = __canvas;
 
 		// 画面サイズが変更されていたら更新
-		if (this.getParameter("mcs_screen_size") == 1) {
+		if (parseInt(this.getParameter("mcs_screen_size") as string) == 1) {
 			this.__canvas.width = options.width || 640;
 			this.__canvas.height = options.height || 480;
 		}

@@ -32,6 +32,7 @@ class IdouGamen {
 	mp_mode: number;
 	shop_kattaitem: number;
 	cc_hankei: number;
+	cc_hankei_max: number;
 	cc_kakudo: number;
 	cc_p1_x: number[];
 	cc_p1_y: number[];

@@ -263,7 +263,7 @@ class Game {
 		});
 
 		// 画面サイズが変更されていたら更新
-		if (this.__mc.getParameter("mcs_screen_size") == 1) {
+		if (parseInt(this.__mc.getParameter("mcs_screen_size") as string) == 1) {
 			this.__canvas.width = options.width || 640;
 			this.__canvas.height = options.height || 480;
 		}
