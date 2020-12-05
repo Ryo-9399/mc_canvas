@@ -218,6 +218,7 @@ class MasaoJSS {
 	getJetFuel: () => number;
 	getKeyCount: (type: string | number) => number;
 	getPartsDefinition: (code: any) => any;
+	setItem: (x?: string | number, y?: string | number, type?: string | number) => boolean;
 
 	constructor(mc: MasaoConstruction, caseInsensitive: boolean) {
 		this.my_offscreen_img = null;
@@ -3588,9 +3589,9 @@ class MasaoJSS {
 				if (mc.mp.ml_mode != 100) return false;
 				let flag = false;
 
-				const _x = parseInt(x);
-				const _y = parseInt(y);
-				const _type = parseInt(type);
+				const _x = parseInt(x as string);
+				const _y = parseInt(y as string);
+				let _type = parseInt(type as string);
 				if (isNaN(_x) || isNaN(_y) || isNaN(_type)) _type = 0;
 				if (_type <= 0) return false;
 				if (_x < 0 || _x >= mc.mp.mapWidth || _y < 0 || _y >= mc.mp.mapHeight) return false;
