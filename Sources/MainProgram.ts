@@ -2705,7 +2705,7 @@ class MainProgram {
 
 			if (this.j_jet_fuel > 0) str += `${this.moji_jet} ${this.j_jet_fuel}`; //ジェットの燃料を表示
 			if (this.j_gr_kazu > 0) {
-				if (this.j_jet_fuel > 0) str += "  ";
+				if (this.j_jet_fuel > 0) str += "    ";
 				//グレネードを表示
 				str += this.moji_grenade;
 				if (this.j_gr_kazu !== 1) str += ` ${this.j_gr_kazu}`;
@@ -3431,7 +3431,7 @@ class MainProgram {
 			}
 			if (this.co_j.c >= 100 && this.co_j.c < 200 && this.co_j.y >= this.maps.wy + this.gg.di.height) this.jShinu(5);
 		} else if (this.nkscroll_con == 200) {
-			// 画面内で全方向スクロール
+			// 画面内で全方向スクロール または 視界変更
 			let flag = false;
 			if (this.nkscroll_my_view_x > this.maps.my_wx_max) {
 				this.nkscroll_my_view_x -= 8;
@@ -3734,13 +3734,13 @@ class MainProgram {
 			case 60:
 				drawTitle();
 				if (this.g_c1 == 0) {
-					if (this.gk.key_char == 0x76) this.g_c1 = 1;
+					if (this.gk.key_char == "v".toUpperCase().charCodeAt()) this.g_c1 = 1;
 				} else if (this.g_c1 == 1) {
-					if (this.gk.key_char == 0x65) this.g_c1 = 2;
-					else if (this.gk.key_char != 0x76) this.g_c1 = 0;
+					if (this.gk.key_char == "e".toUpperCase().charCodeAt()) this.g_c1 = 2;
+					else if (this.gk.key_char != "v".toUpperCase().charCodeAt()) this.g_c1 = 0;
 				} else if (this.g_c1 == 2)
-					if (this.gk.key_char == 0x72) this.ml_mode = 1000;
-					else if (this.gk.key_char != 0x65) this.g_c1 = 0;
+					if (this.gk.key_char == "r".toUpperCase().charCodeAt()) this.ml_mode = 1000;
+					else if (this.gk.key_char != "e".toUpperCase().charCodeAt()) this.g_c1 = 0;
 				if (
 					(this.title_lock_f && !this.start_game_f) ||
 					((!this.gm.button_f || this.gm.click_x >= this.gg.di.width || this.gm.click_y >= this.gg.di.height) &&
@@ -4086,8 +4086,8 @@ class MainProgram {
 		(["score", "highscore", "jet", "grenade"] as const).forEach((name) => {
 			this[concatString("moji_", name)] = this.tdb.getValue(concatString("moji_", name));
 		});
-		this.moji_time = `  ${this.tdb.getValue("moji_time")} `;
-		this.moji_left = `  ${this.tdb.getValue("moji_left")} `;
+		this.moji_time = `    ${this.tdb.getValue("moji_time")} `;
+		this.moji_left = `    ${this.tdb.getValue("moji_left")} `;
 		this.moji_size = this.tdb.getValueInt("moji_size");
 		if (this.moji_size < 10) this.moji_size = 10;
 		else if (this.moji_size > 30) this.moji_size = 30;
@@ -4562,18 +4562,29 @@ class MainProgram {
 		for (let k2 = 0; k2 <= 11; k2++) this.ana_c[k2] = 0;
 
 		this.mapsMakeStageData(100 + this.stage);
-		if (this.cpoint_con == 100)
+
+		// コンティニューアイテムを取った時
+		if (this.cpoint_con == 100) {
+			// 現在のステージがコンティニューアイテムを取ったステージと同じ
 			if (this.stage == this.cpoint_stage) {
+				// 自分の位置を変更
 				this.co_j.x = this.cpoint_x;
 				this.co_j.y = this.cpoint_y;
+
+				// 取ったコンティニューアイテムや？ブロックを削除
 				for (let l2 = 0; l2 <= this.a_kazu; l2++)
 					if (this.co_a[l2].c == 3400 && this.co_a[l2].x == this.cpoint_x && this.co_a[l2].y == this.cpoint_y)
 						this.co_a[l2].c = 0;
 
 				this.hDelete(rightShiftIgnoreSign(this.co_j.x, 5), rightShiftIgnoreSign(this.co_j.y, 5) + 1, 4100);
+
+				// 視点を変更する
+				this.maps.wx = this.co_j.x - (this.view_move_type === 2 ? this.maps.my_wx_max : this.maps.my_wx_mini);
+				this.maps.wy = this.co_j.y - this.maps.my_wy_max;
 			} else {
 				this.cpoint_con = 0;
 			}
+		}
 		if (this.sl_step == 10 || this.sl_step == 11) {
 			this.ks_wx = this.maps.wx;
 			if (this.ks_wx <= 128) this.ks_wx = 32;
@@ -4719,9 +4730,9 @@ class MainProgram {
 				this.maps.my_wx_mini = 96;
 				this.maps.my_wx_max = 224;
 				if (this.view_move_type === 2) {
-					const tmp = this.maps.my_wx_mini;
-					this.maps.my_wx_mini = this.maps.my_wx_max + 32;
-					this.maps.my_wx_max = this.gg.di.width - tmp - 32;
+					const tmp = this.maps.my_wx_mini; // 96
+					this.maps.my_wx_mini = this.maps.my_wx_max + 32; // 256
+					this.maps.my_wx_max = this.gg.di.width - tmp - 32; // 384
 				}
 				this.maps.my_wy_mini = 78;
 			}
@@ -10269,6 +10280,7 @@ class MainProgram {
 
 						if (this.sl_step == 10 || this.sl_step == 11) {
 							// 強制スクロール中
+							//this.maps.wx = (this.maps.wx_mini < this.co_j.x - 192) ? this.co_j.x - 192 : this.maps.wx_mini;
 							this.maps.wx = this.co_j.x - 192;
 							this.ks_wx = this.maps.wx;
 						}
@@ -20710,6 +20722,10 @@ class MainProgram {
 								this.nkscroll_my_view_y = this.co_j.y - this.nkscroll_view_y;
 								this.nkscroll_vx = 1;
 								this.nkscroll_vy = 0;
+
+								const tmp = this.maps.my_wx_mini;
+								this.maps.my_wx_mini = this.maps.my_wx_max + 32;
+								this.maps.my_wx_max = this.gg.di.width - tmp - 32;
 							}
 							characterobject.c4 = 1;
 						}
@@ -20730,6 +20746,10 @@ class MainProgram {
 							this.nkscroll_my_view_y = this.co_j.y - this.nkscroll_view_y;
 							this.nkscroll_vx = 1;
 							this.nkscroll_vy = 0;
+
+							const tmp = this.maps.my_wx_mini;
+							this.maps.my_wx_mini = this.gg.di.width - this.maps.my_wx_max - 32;
+							this.maps.my_wx_max = tmp - 32;
 						}
 						characterobject.c4 = 1;
 					}
@@ -23465,7 +23485,7 @@ class MainProgram {
 					if (this.km.mode == 100) {
 						if (this.co_j.x >= j - 80 && this.co_j.x <= j + 64 && Math.abs(k - this.co_j.y) < 8 && !this.gk.tr1_f) {
 							this.km.init1(3);
-							this.km.setMessage(3, this.tdb.getValue("shop_name"));
+							this.km.setMessage(3, this.tdb.getValue("serifu_grenade_shop_name"));
 							this.addSerifu2(3, "serifu_grenade_shop-", 3);
 							this.km.activeSerifu(
 								3,

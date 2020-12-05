@@ -59,7 +59,7 @@ class GameKey {
 	 */
 	keyPressed(paramKeyEvent: Pick<KeyboardEvent, "keyCode" | "preventDefault">) {
 		this.key_code = paramKeyEvent.keyCode;
-		this.key_char = paramKeyEvent.keyCode;
+		this.key_char = paramKeyEvent.keyCode; // GameKey.key_charはタイトル画面からバージョン画面を表示するときにしか使っていない
 		if (this.key_code >= 0 && this.key_code <= 255) {
 			this.codekey_f[this.key_code] = true;
 		}

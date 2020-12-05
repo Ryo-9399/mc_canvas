@@ -82,11 +82,11 @@ function MainProgram(gamegraphics, gamemouse, gamekey) {
 	this.init1();
 }
 
-MainProgram.prototype.start = function() {
+MainProgram.prototype.start = function () {
 	this.ml_mode = 50;
 };
 
-MainProgram.prototype.paraInt = function(s) {
+MainProgram.prototype.paraInt = function (s) {
 	var s1 = this.gg.ap.getParameter(s);
 	var i;
 	i = parseInt(s1);
@@ -94,12 +94,12 @@ MainProgram.prototype.paraInt = function(s) {
 	return i;
 };
 
-MainProgram.prototype.addHighscoreEvent = function(highscoreeventhandler) {
+MainProgram.prototype.addHighscoreEvent = function (highscoreeventhandler) {
 	this.heh = highscoreeventhandler;
 	return true;
 };
 
-MainProgram.prototype.sendHighscore = function() {
+MainProgram.prototype.sendHighscore = function () {
 	var flag = false;
 	if (Object.prototype.toString.call(this.heh) == "[object Function]") {
 		var i = this.highscore;
@@ -108,7 +108,7 @@ MainProgram.prototype.sendHighscore = function() {
 	}
 };
 
-MainProgram.prototype.moveGameCounter = function() {
+MainProgram.prototype.moveGameCounter = function () {
 	switch (this.g_c3) {
 		case 0:
 			this.g_c3 = 1;
@@ -176,12 +176,12 @@ MainProgram.prototype.moveGameCounter = function() {
 	}
 };
 
-MainProgram.prototype.ranInit = function() {
+MainProgram.prototype.ranInit = function () {
 	//seedを初期化
 	this.ran_seed = (Math.random() * 0x100000000) | 0;
 };
 
-MainProgram.prototype.ranInt = function(i) {
+MainProgram.prototype.ranInt = function (i) {
 	//xor-shift 乱数(a=9, b=11, c=19)
 	var ran_seed = this.ran_seed;
 	ran_seed = (ran_seed ^ (ran_seed << 9)) >>> 0;
@@ -194,7 +194,7 @@ MainProgram.prototype.ranInt = function(i) {
 /**
  * 画面上部のスコア・残り時間・HP・残機を描画します
  */
-MainProgram.prototype.drawScore = function() {
+MainProgram.prototype.drawScore = function () {
 	this.hg.setColor(this.gamecolor_score);
 	this.hg.setFont(new Font(Font.DIALOG, 1, this.moji_size));
 
@@ -223,7 +223,7 @@ MainProgram.prototype.drawScore = function() {
  * 画面上部にスコア・残機のみを描画します
  * 地図画面でのスコア表示に使われる
  */
-MainProgram.prototype.drawScore2 = function() {
+MainProgram.prototype.drawScore2 = function () {
 	this.hg.setColor(this.gamecolor_score);
 	this.hg.setFont(new Font(Font.DIALOG, 1, this.moji_size));
 
@@ -249,7 +249,7 @@ MainProgram.prototype.drawScore2 = function() {
  *
  * @param {number} score 加算するスコア
  */
-MainProgram.prototype.addScore = function(score) {
+MainProgram.prototype.addScore = function (score) {
 	this.score += score;
 	if (this.score_1up_1 > 0 && this.score >= this.score_1up_1) {
 		this.j_left++;
@@ -267,7 +267,7 @@ MainProgram.prototype.addScore = function(score) {
  * @param {number} person_id セリフを言う人の番号
  * @param {number} max_row 1からmax_row行目までを表示する
  */
-MainProgram.prototype.addSerifu = function(index, person_id, max_row) {
+MainProgram.prototype.addSerifu = function (index, person_id, max_row) {
 	for (let i = 1; i <= max_row; i++) {
 		const message = this.gg.ap.getParameter("serifu" + person_id + "-" + i);
 		// NOTE: issue #34
@@ -275,7 +275,7 @@ MainProgram.prototype.addSerifu = function(index, person_id, max_row) {
 	}
 };
 
-MainProgram.prototype.mL100 = function() {
+MainProgram.prototype.mL100 = function () {
 	this.moveGameCounter();
 	this.aMove();
 	if (this.co_j.c == 100) this.jM100();
@@ -393,7 +393,7 @@ MainProgram.prototype.mL100 = function() {
 	}
 };
 
-MainProgram.prototype.mainLoop = function() {
+MainProgram.prototype.mainLoop = function () {
 	const drawBlack = () => {
 		// 地図画面からステージ開始時に画面を真っ暗にする
 		this.hg.setColor(Color.black);
@@ -429,13 +429,13 @@ MainProgram.prototype.mainLoop = function() {
 
 		case 60:
 			if (this.g_c1 == 0) {
-				if (this.gk.key_char == 0x76) this.g_c1 = 1;
+				if (this.gk.key_char == "v".toUpperCase().charCodeAt()) this.g_c1 = 1;
 			} else if (this.g_c1 == 1) {
-				if (this.gk.key_char == 0x65) this.g_c1 = 2;
-				else if (this.gk.key_char != 0x76) this.g_c1 = 0;
+				if (this.gk.key_char == "e".toUpperCase().charCodeAt()) this.g_c1 = 2;
+				else if (this.gk.key_char != "v".toUpperCase().charCodeAt()) this.g_c1 = 0;
 			} else if (this.g_c1 == 2)
-				if (this.gk.key_char == 0x72) this.ml_mode = 1000;
-				else if (this.gk.key_char != 0x65) this.g_c1 = 0;
+				if (this.gk.key_char == "r".toUpperCase().charCodeAt()) this.ml_mode = 1000;
+				else if (this.gk.key_char != "e".toUpperCase().charCodeAt()) this.g_c1 = 0;
 			if (!this.gm.button_f && !this.gk.tr1_f) break;
 			if (this.stage_select == 2) {
 				this.init2();
@@ -666,7 +666,7 @@ MainProgram.prototype.mainLoop = function() {
 	}
 };
 
-MainProgram.prototype.init1 = function() {
+MainProgram.prototype.init1 = function () {
 	this.time_max = this.paraInt("time_max");
 	var k = this.paraInt("score_v");
 	if (k == 2) this.score_v = false;
@@ -865,7 +865,7 @@ MainProgram.prototype.init1 = function() {
 	}
 };
 
-MainProgram.prototype.init2 = function() {
+MainProgram.prototype.init2 = function () {
 	if (this.score > this.highscore) this.highscore = this.score;
 	this.j_left = this.j_left_shoki;
 	this.score_1up_1 = this.score_1up_1_para;
@@ -879,7 +879,7 @@ MainProgram.prototype.init2 = function() {
 	else this.time = 0;
 };
 
-MainProgram.prototype.init3 = function() {
+MainProgram.prototype.init3 = function () {
 	this.sendHighscore();
 	this.g_c1 = 0;
 	this.g_c2 = 0;
@@ -987,7 +987,7 @@ MainProgram.prototype.init3 = function() {
 	this.maps.drawMap(this.maps.wx, this.maps.wy);
 };
 
-MainProgram.prototype.mapsMakeStageData = function(i) {
+MainProgram.prototype.mapsMakeStageData = function (i) {
 	this.maps.init();
 	var as = this.maps.map_string;
 	this.maps.wx = 32;
@@ -1312,11 +1312,11 @@ MainProgram.prototype.mapsMakeStageData = function(i) {
 	this.co_j.wy = this.co_j.y - this.maps.wy;
 };
 
-MainProgram.prototype.drawGamescreen = function() {
+MainProgram.prototype.drawGamescreen = function () {
 	drawGamescreen.apply(this);
 };
 
-MainProgram.prototype.jM100 = function() {
+MainProgram.prototype.jM100 = function () {
 	var flag = false;
 	var flag1 = false;
 	this.j_mizu_f = false;
@@ -2189,7 +2189,7 @@ MainProgram.prototype.jM100 = function() {
 	else if (this.maps.wy > this.maps.wy_max) this.maps.wy = this.maps.wy_max;
 };
 
-MainProgram.prototype.jMove = function() {
+MainProgram.prototype.jMove = function () {
 	var flag = false;
 	this.j_mizu_f = false;
 	var k = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
@@ -2430,7 +2430,7 @@ MainProgram.prototype.jMove = function() {
 	}
 };
 
-MainProgram.prototype.jShinu = function(i) {
+MainProgram.prototype.jShinu = function (i) {
 	this.co_j.c1 = 0;
 	this.co_j.c2 = 0;
 	this.j_zan_f = false;
@@ -2443,7 +2443,7 @@ MainProgram.prototype.jShinu = function(i) {
 	} else if (i == 3) this.co_j.c = 220;
 };
 
-MainProgram.prototype.jZutuki = function(i, j, k) {
+MainProgram.prototype.jZutuki = function (i, j, k) {
 	for (var l = 0; l <= this.t_kazu; l++)
 		if (this.co_t[l].c >= 100) {
 			var characterobject = this.co_t[l];
@@ -2472,7 +2472,7 @@ MainProgram.prototype.jZutuki = function(i, j, k) {
  * @param teki_type {(string|number)} 敵の種類
  * @param l {number} その敵が出現するスクロール位置
  */
-MainProgram.prototype.tSet = function(x, y, teki_type, l) {
+MainProgram.prototype.tSet = function (x, y, teki_type, l) {
 	for (let i = 0; i <= 119; i++) {
 		if (this.co_t[i].c > 0) continue;
 		const characterobject = this.co_t[i];
@@ -2504,7 +2504,7 @@ MainProgram.prototype.tSet = function(x, y, teki_type, l) {
 	}
 };
 
-MainProgram.prototype.tSetBoss = function(i, j, k, l) {
+MainProgram.prototype.tSetBoss = function (i, j, k, l) {
 	this.t_kazu = 129;
 	for (var i1 = 120; i1 <= 129; i1++) {
 		if (this.co_t[i1].c > 0) continue;
@@ -2543,7 +2543,7 @@ MainProgram.prototype.tSetBoss = function(i, j, k, l) {
 	}
 };
 
-MainProgram.prototype.tMove = function() {
+MainProgram.prototype.tMove = function () {
 	var flag = false;
 	for (var i = 0; i <= this.t_kazu; i++)
 		if (this.co_t[i].c != 0 && this.co_t[i].x >= this.maps.wx - 512) {
@@ -3381,7 +3381,7 @@ MainProgram.prototype.tMove = function() {
 		}
 };
 
-MainProgram.prototype.sakamichiY = function(i, j) {
+MainProgram.prototype.sakamichiY = function (i, j) {
 	var k = (i + 15) >> 5;
 	var l = (j + 31) >> 5;
 	var word0 = this.maps.map_bg[k][l];
@@ -3423,7 +3423,7 @@ MainProgram.prototype.sakamichiY = function(i, j) {
 	return k2;
 };
 
-MainProgram.prototype.mSet = function(i, j, k) {
+MainProgram.prototype.mSet = function (i, j, k) {
 	for (var l = 0; l <= 23; l++) {
 		if (this.co_m[l].c > 0) continue;
 		var characterobject = this.co_m[l];
@@ -3580,7 +3580,7 @@ MainProgram.prototype.mSet = function(i, j, k) {
 	}
 };
 
-MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
+MainProgram.prototype.mSet2 = function (i, j, k, l, i1) {
 	for (var j1 = 0; j1 <= 23; j1++) {
 		if (this.co_m[j1].c > 0) continue;
 		var characterobject = this.co_m[j1];
@@ -3609,7 +3609,7 @@ MainProgram.prototype.mSet2 = function(i, j, k, l, i1) {
 	}
 };
 
-MainProgram.prototype.mMove = function() {
+MainProgram.prototype.mMove = function () {
 	for (var i = 0; i <= 23; i++)
 		if (this.co_m[i].c != 0) {
 			var characterobject = this.co_m[i];
@@ -4010,7 +4010,7 @@ MainProgram.prototype.mMove = function() {
 		}
 };
 
-MainProgram.prototype.jmSet = function(i, j, k) {
+MainProgram.prototype.jmSet = function (i, j, k) {
 	for (var l = 0; l <= 1; l++) {
 		if (this.co_jm[l].c > 0) continue;
 		var characterobject = this.co_jm[l];
@@ -4077,7 +4077,7 @@ MainProgram.prototype.jmSet = function(i, j, k) {
 	}
 };
 
-MainProgram.prototype.jmMove = function() {
+MainProgram.prototype.jmMove = function () {
 	for (var i = 0; i <= 1; i++)
 		if (this.co_jm[i].c != 0) {
 			var characterobject = this.co_jm[i];
@@ -4364,7 +4364,7 @@ MainProgram.prototype.jmMove = function() {
 		}
 };
 
-MainProgram.prototype.aSet = function(i, j, k, l) {
+MainProgram.prototype.aSet = function (i, j, k, l) {
 	for (var i1 = 0; i1 <= 31; i1++) {
 		if (this.co_a[i1].c > 0) continue;
 		var characterobject = this.co_a[i1];
@@ -4549,7 +4549,7 @@ MainProgram.prototype.aSet = function(i, j, k, l) {
 	}
 };
 
-MainProgram.prototype.aMove = function() {
+MainProgram.prototype.aMove = function () {
 	var flag = false;
 	var flag1 = false;
 	this.j_a_id = -1;
@@ -5269,7 +5269,7 @@ MainProgram.prototype.aMove = function() {
 	}
 };
 
-MainProgram.prototype.bMove = function() {
+MainProgram.prototype.bMove = function () {
 	this.co_b.update(this);
 };
 
@@ -5282,7 +5282,7 @@ MainProgram.prototype.bMove = function() {
  * @param code {number} 設置するブロックのコード
  * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
  */
-MainProgram.prototype.hSet = function(blockX, blockY, code) {
+MainProgram.prototype.hSet = function (blockX, blockY, code) {
 	for (let i = 0; i <= 63; i++) {
 		// まだ使われていないものを探して追加する
 		if (this.co_h[i].c > 0) continue;
@@ -5294,7 +5294,7 @@ MainProgram.prototype.hSet = function(blockX, blockY, code) {
 	}
 };
 
-MainProgram.prototype.hAttack = function(i, j) {
+MainProgram.prototype.hAttack = function (i, j) {
 	for (var k = 0; k <= 63; k++) {
 		var characterobject = this.co_h[k];
 		if (characterobject.c == 0 || characterobject.x != i || characterobject.y != j) continue;
