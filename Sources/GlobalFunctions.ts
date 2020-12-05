@@ -808,6 +808,16 @@ function makeRandomString() {
 	return Math.random().toString(36).slice(2);
 }
 
+type Placeholder = string | number | bigint | boolean;
+type ConcatString<S extends Placeholder[]> = S extends []
+	? ""
+	: number[] extends S["length"][]
+	? string
+	: `${S[0]}${ConcatString<S extends [any, ...infer Rest] ? Rest : []>}`;
+function concatString<S extends Placeholder[]>(...str: S): ConcatString<S> {
+	return str.join("") as any;
+}
+
 /**
  * requestAnimationFrameまたはsetIntervalを用いたループを行うためのクラスです。
  * @constructor
@@ -1055,4 +1065,5 @@ export {
 	rounddown,
 	rightShiftIgnoreSign,
 	makeRandomString,
+	concatString,
 };

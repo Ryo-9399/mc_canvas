@@ -25,6 +25,10 @@ class MapSystem {
 	gazou_y: number;
 	second_gazou_x: number;
 	second_gazou_y: number;
+	my_wx_mini: number;
+	my_wx_max: number;
+	my_wy_mini: number;
+	my_wy_max: number;
 
 	constructor(width: number, height: number, gamegraphics: GameGraphicsForApplet, mainprogram: MainProgram) {
 		this.width = width;
@@ -48,6 +52,10 @@ class MapSystem {
 		this.gazou_y = 0;
 		this.second_gazou_x = 0;
 		this.second_gazou_y = 0;
+		this.my_wx_mini = 0;
+		this.my_wx_max = 0;
+		this.my_wy_mini = 0;
+		this.my_wy_max = 0;
 		this.init();
 	}
 

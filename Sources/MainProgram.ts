@@ -1,6 +1,6 @@
 import { CharacterObject } from "./CharacterObject";
 import { Boss } from "./CharacterObject/Boss";
-import { createNDimensionArray, rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { createNDimensionArray, rightShiftIgnoreSign, rounddown, concatString } from "./GlobalFunctions";
 import { IdouGamen } from "./IdouGamen";
 import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
 import { KeyboardMenu } from "./KeyboardMenu";
@@ -2878,7 +2878,7 @@ class MainProgram {
 		for (l = k1; l <= k2; l++) {
 			const s1 = this.tdb.getValue(`${s}${l}`);
 			let i1;
-			i1 = parseInt(s1);
+			i1 = parseInt(s1 as string);
 			if (isNaN(i1)) i1 = -1;
 			// NOTE: issue #34
 			if (i1 != 0) this.km.addItem(i, s1 || "");
@@ -4048,15 +4048,15 @@ class MainProgram {
 		 * @param {number} b
 		 * @param {string} param
 		 */
-		const setColorParam = (r, g, b, param) => {
+		const setColorParam = (r: string, g: string, b: string, param: `gamecolor_${string}` & keyof MainProgram) => {
 			const color = [r, g, b];
-			color.forEach((e, i, a) => {
-				let n = this.tdb.getValueInt(e);
+			const numColor = color.map((c) => {
+				let n = this.tdb.getValueInt(c);
 				if (n < 0) n = 0;
 				else if (n > 255) n = 255;
-				a[i] = n;
+				return n;
 			});
-			this[param] = new Color(color[0], color[1], color[2]);
+			this[param] = new Color(numColor[0], numColor[1], numColor[2]);
 		};
 		this.mode_wait_ending = 120;
 		this.mode_wait_gameover = 45;
@@ -4070,25 +4070,25 @@ class MainProgram {
 		var k = this.tdb.getValueInt("score_v");
 		if (k == 2) this.score_v = false;
 		else this.score_v = true;
-		["", "_s", "_t", "_f"].forEach((stage) => {
+		(["", "_s", "_t", "_f"] as const).forEach((stage) => {
 			setColorParam(
 				`backcolor_red${stage}`,
 				`backcolor_green${stage}`,
 				`backcolor_blue${stage}`,
-				`gamecolor_back${stage}`
+				concatString("gamecolor_back", stage)
 			);
 		});
-		["kaishi", "mizunohadou"].forEach((name) => {
-			setColorParam(`${name}_red`, `${name}_green`, `${name}_blue`, `gamecolor_${name}`);
+		(["kaishi", "mizunohadou"] as const).forEach((name) => {
+			setColorParam(`${name}_red`, `${name}_green`, `${name}_blue`, concatString("gamecolor_", name));
 		});
 		setColorParam("scorecolor_red", "scorecolor_green", "scorecolor_blue", "gamecolor_score");
-		["grenade", "firebar"].forEach((name) => {
-			for (let i = 1; i <= 2; i++) {
-				setColorParam(`${name}_red${i}`, `${name}_green${i}`, `${name}_blue${i}`, `gamecolor_${name}${i}`);
-			}
+		(["grenade", "firebar"] as const).forEach((name) => {
+			([1, 2] as const).forEach((i) => {
+				setColorParam(`${name}_red${i}`, `${name}_green${i}`, `${name}_blue${i}`, concatString("gamecolor_", name, i));
+			});
 		});
-		["score", "highscore", "jet", "grenade"].forEach((name) => {
-			this[`moji_${name}`] = this.tdb.getValue(`moji_${name}`);
+		(["score", "highscore", "jet", "grenade"] as const).forEach((name) => {
+			this[concatString("moji_", name)] = this.tdb.getValue(concatString("moji_", name));
 		});
 		this.moji_time = `  ${this.tdb.getValue("moji_time")} `;
 		this.moji_left = `  ${this.tdb.getValue("moji_left")} `;
@@ -4105,11 +4105,12 @@ class MainProgram {
 		this.stage_kaishi = this.tdb.getValueInt("stage_kaishi");
 		if (this.stage_kaishi < 1) this.stage_kaishi = 1;
 		if (this.stage_kaishi > this.stage_max) this.stage_kaishi = this.stage_max;
-		for (let j1 = 1; j1 <= 2; j1++) {
-			this[`score_1up_${j1}_para`] = this.tdb.getValueInt(`score_1up_${j1}`);
-			if (this[`score_1up_${j1}_para`] < 0) this[`score_1up_${j1}_para`] = 0;
-			if (this.stage_max <= 1 && this.j_left_shoki <= 0) this[`score_1up_${j1}_para`] = 0;
-		}
+		([1, 2] as const).forEach((j1) => {
+			const key = concatString("score_1up_", j1, "_para");
+			this[key] = this.tdb.getValueInt(concatString("score_1up_", j1));
+			if (this[key] < 0) this[key] = 0;
+			if (this.stage_max <= 1 && this.j_left_shoki <= 0) this[key] = 0;
+		});
 		this.default_j_tail_type = this.tdb.getValueInt("j_tail_type");
 		if (this.default_j_tail_type < 1 || this.default_j_tail_type > 3) this.default_j_tail_type = 1;
 		this.j_tail_type = this.default_j_tail_type;
@@ -4134,12 +4135,12 @@ class MainProgram {
 		i = this.tdb.getValueInt("j_tokugi");
 		if (i >= 1 && i <= 19) this.j_tokugi = i;
 		else this.j_tokugi = 1;
-		for (let j1 = 1; j1 <= 4; j1++) {
-			const n = j1 > 1 ? j1 : "";
-			const tokugi = this.tdb.getValueInt(`j_add_tokugi${n}`);
-			if (tokugi >= 1) this[`j_add_tokugi${n}`] = tokugi;
-			else this[`j_add_tokugi${n}`] = 0;
-		}
+		(["", "2", "3", "4"] as const).forEach((n) => {
+			const key = concatString("j_add_tokugi", n);
+			const tokugi = this.tdb.getValueInt(key);
+			if (tokugi >= 1) this[key] = tokugi;
+			else this[key] = 0;
+		});
 		i = this.tdb.getValueInt("dengeki_mkf");
 		if (i >= 1 && i <= 5) this.dengeki_mkf = i;
 		else this.dengeki_mkf = 1;
@@ -4167,7 +4168,7 @@ class MainProgram {
 		i = this.tdb.getValueInt("kuragesso_attack");
 		if (i >= 1 && i <= 5) this.kuragesso_attack = i;
 		else this.kuragesso_attack = 1;
-		[
+		([
 			"ugokuyuka1",
 			"ugokuyuka2",
 			"ugokuyuka3",
@@ -4180,8 +4181,8 @@ class MainProgram {
 			"dokan2",
 			"dokan3",
 			"dokan4",
-		].forEach((param) => {
-			const paramname = `${param}_type`;
+		] as const).forEach((param) => {
+			const paramname = concatString(param, "_type");
 			this[paramname] = this.tdb.getValueInt(paramname);
 			if (this[paramname] < 1 || this[paramname] > 1249) this[paramname] = 1;
 		});
@@ -4197,12 +4198,12 @@ class MainProgram {
 		if (this.boss3_type < 1 || this.boss3_type > 8) this.boss3_type = 1;
 		this.gazou_scroll = this.tdb.getValueInt("gazou_scroll");
 		if (this.gazou_scroll < 2 || this.gazou_scroll > 11) this.gazou_scroll = 1;
-		[
+		([
 			"gazou_scroll_speed_x",
 			"gazou_scroll_speed_y",
 			"second_gazou_scroll_speed_x",
 			"second_gazou_scroll_speed_y",
-		].forEach((param) => {
+		] as const).forEach((param) => {
 			this[param] = this.tdb.getValueInt(param);
 			if (this[param] < -32) this[param] = -32;
 			else if (this[param] > 32) this[param] = 32;
@@ -4224,13 +4225,13 @@ class MainProgram {
 		this.setumei_name = this.tdb.getValue("setumei_name");
 		this.door_score = this.tdb.getValueInt("door_score");
 		if (this.door_score < 10) this.door_score = 10;
-		for (let j1 = 0; j1 <= 8; j1++) {
-			this.shop_item_name[j1] = this.tdb.getValue(`shop_item_name${j1 + 1}`);
+		([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).forEach((j1) => {
+			this.shop_item_name[j1 - 1] = this.tdb.getValue(concatString("shop_item_name", j1));
 
-			let teika = this.tdb.getValueInt(`shop_item_teika${j1 + 1}`);
+			let teika = this.tdb.getValueInt(concatString("shop_item_name", j1));
 			if (teika < 0) teika = 0;
-			this.shop_item_teika[j1] = teika;
-		}
+			this.shop_item_teika[j1 - 1] = teika;
+		});
 
 		this.scroll_area = this.tdb.getValueInt("scroll_area");
 		if (this.scroll_area < 1 || this.scroll_area > 5) this.scroll_area = 1;
@@ -4246,9 +4247,13 @@ class MainProgram {
 		) {
 			this.second_gazou_visible = true;
 			this.second_gazou_stage_img[0] = this.gg.loadImage(this.tdb.getValue("filename_second_haikei"));
-			if (this.stage_select == 2 || this.stage_max >= 2)
-				for (let k1 = 1; k1 <= 3; k1++)
-					this.second_gazou_stage_img[k1] = this.gg.loadImage(this.tdb.getValue(`filename_second_haikei${k1 + 1}`));
+			if (this.stage_select == 2 || this.stage_max >= 2) {
+				([2, 3, 4] as const).forEach((k1) => {
+					this.second_gazou_stage_img[k1 - 1] = this.gg.loadImage(
+						this.tdb.getValue(concatString("filename_second_haikei", k1))
+					);
+				});
+			}
 		}
 		this.second_gazou_scroll = this.tdb.getValueInt("second_gazou_scroll");
 		if (this.second_gazou_scroll < 1 || this.second_gazou_scroll > 8) this.second_gazou_scroll = 1;
@@ -4450,10 +4455,10 @@ class MainProgram {
 				break;
 		}
 		this.j_tail_type = this.default_j_tail_type;
-		for (let i = 1; i <= 4; i++) {
-			const n = i > 1 ? i : "";
-			if (this[`j_add_tokugi${n}`] >= 2) this.addMyTokugi(this[`j_add_tokugi${n}`]);
-		}
+		(["", "2", "3", "4"] as const).forEach((n) => {
+			const key = concatString("j_add_tokugi", n);
+			if (this[key] >= 2) this.addMyTokugi(this[key]);
+		});
 		for (let i = 0; i <= 5; i++) {
 			this.j_zan_x[i] = 0;
 			this.j_zan_y[i] = 0;
@@ -5543,7 +5548,7 @@ class MainProgram {
 	 * @param {number} BGCode 自分の中心のマップコード
 	 * @param {number} mode
 	 */
-	AwaMove(BGCode, mode) {
+	AwaMove(BGCode: number, mode: number) {
 		if (
 			BGCode == 4 ||
 			((BGCode == 8 || BGCode == 9) &&
@@ -10248,7 +10253,7 @@ class MainProgram {
 					}
 				} else if (this.co_j.c1 == 10) {
 					// リンク土管
-					location.href = this.tdb.getValue(`url${this.co_j.c2 + 1}`);
+					location.href = this.tdb.getValue(concatString("url", (this.co_j.c2 + 1) as 1 | 2 | 3 | 4));
 				} else if (this.co_j.c1 > 80) this.ml_mode = 50;
 			}
 		} else if (this.co_j.c == 320) {
