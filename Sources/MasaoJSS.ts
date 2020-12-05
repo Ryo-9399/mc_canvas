@@ -486,9 +486,9 @@ class MasaoJSS {
 		 * 指定した位置に敵を設置します。
 		 * 位置はブロック単位で指定します。
 		 *
-		 * @param {number} type 敵の種類
 		 * @param {number} x X座標
 		 * @param {number} y Y座標
+		 * @param {number} type 敵の種類
 		 */
 		this.setEnemy = function (s, s1, s2) {
 			if (mc.mp) {
@@ -3563,7 +3563,7 @@ class MasaoJSS {
 		this.getKeyCount = function (type) {
 			let i = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
-				let n = parseInt(type as string);
+				const n = parseInt(type as string);
 				if (isNaN(n)) i = 0;
 				if (n === 1 || n === 2) {
 					i = mc.mp.dkey_count[n - 1];
@@ -3571,6 +3571,142 @@ class MasaoJSS {
 				}
 			}
 			return i;
+		};
+
+		/**
+		 * 指定した位置にアイテムを設置します。
+		 * 位置はブロック単位で指定します。
+		 *
+		 * @param {number} x X座標
+		 * @param {number} y Y座標
+		 * @param {number} type 敵の種類
+		 *
+		 * @since canvas正男
+		 */
+		this.setItem = function (x = 0, y = 0, type = 0) {
+			if (mc.mp) {
+				if (mc.mp.ml_mode != 100) return false;
+				let flag = false;
+
+				const _x = parseInt(x);
+				const _y = parseInt(y);
+				const _type = parseInt(type);
+				if (isNaN(_x) || isNaN(_y) || isNaN(_type)) _type = 0;
+				if (_type <= 0) return false;
+				if (_x < 0 || _x >= mc.mp.mapWidth || _y < 0 || _y >= mc.mp.mapHeight) return false;
+				const px = (_x + 1) * 32;
+				const py = (_y + 10) * 32;
+				switch (_type) {
+					default:
+						break;
+
+					case 1: // 人面星
+						mc.mp.setmapc(_x, _y, 8);
+						flag = true;
+						break;
+
+					case 2: // コイン
+						mc.mp.setmapc(_x, _y, 9);
+						flag = true;
+						break;
+
+					case 3: // ファイヤーボール
+						mc.mp.mSet(px, py, 2100);
+						flag = true;
+						break;
+
+					case 4: // バリア
+						mc.mp.mSet(px, py, 2110);
+						flag = true;
+						break;
+
+					case 5: // タイム
+						mc.mp.mSet(px, py, 2120);
+						flag = true;
+						break;
+
+					case 6: // ジェット
+						mc.mp.mSet(px, py, 2130);
+						flag = true;
+						break;
+
+					case 7: // ヘルメット
+						mc.mp.mSet(px, py, 2140);
+						flag = true;
+						break;
+
+					case 8: // しっぽ
+						mc.mp.mSet(px, py, 2150);
+						flag = true;
+						break;
+
+					case 9: // ドリル
+						mc.mp.mSet(px, py, 2160);
+						flag = true;
+						break;
+
+					case 10: // グレネード
+						mc.mp.mSet(px, py, 2170);
+						flag = true;
+						break;
+
+					case 11: // 1UP
+						mc.mp.mSet(px, py, 2180);
+						flag = true;
+						break;
+
+					case 12: // シューティングモード パワーアップアイテム1
+						mc.mp.mSet(px, py, 2181);
+						flag = true;
+						break;
+
+					case 13: // シューティングモード パワーアップアイテム2
+						mc.mp.mSet(px, py, 2182);
+						flag = true;
+						break;
+
+					case 14: // スポット処理 範囲拡大アイテム
+						mc.mp.mSet(px, py, 2185);
+						flag = true;
+						break;
+
+					case 15: // ファイヤーボール 水平に飛ぶ
+						mc.mp.mSet(px, py, 2186);
+						flag = true;
+						break;
+
+					case 16: // ファイヤーボール 跳ねる
+						mc.mp.mSet(px, py, 2187);
+						flag = true;
+						break;
+
+					case 17: // ファイヤーボール ダブル
+						mc.mp.mSet(px, py, 2188);
+						flag = true;
+						break;
+
+					case 18: // グレネード5発
+						mc.mp.mSet(px, py, 2171);
+						flag = true;
+						break;
+
+					case 19: // コンティニュー
+						mc.mp.mSet(px, py, 2172);
+						flag = true;
+						break;
+
+					case 20: // ＫＥＹ１
+						mc.mp.aSet(px, py, 4600, px);
+						flag = true;
+						break;
+
+					case 21: // ＫＥＹ２
+						mc.mp.aSet(px, py, 4610, px);
+						flag = true;
+						break;
+				}
+				return flag;
+			} else return false;
 		};
 
 		/**
