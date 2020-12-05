@@ -3734,13 +3734,13 @@ class MainProgram {
 			case 60:
 				drawTitle();
 				if (this.g_c1 == 0) {
-					if (this.gk.key_char == "v".toUpperCase().charCodeAt()) this.g_c1 = 1;
+					if (this.gk.key_char == "v".toUpperCase().charCodeAt(0)) this.g_c1 = 1;
 				} else if (this.g_c1 == 1) {
-					if (this.gk.key_char == "e".toUpperCase().charCodeAt()) this.g_c1 = 2;
-					else if (this.gk.key_char != "v".toUpperCase().charCodeAt()) this.g_c1 = 0;
+					if (this.gk.key_char == "e".toUpperCase().charCodeAt(0)) this.g_c1 = 2;
+					else if (this.gk.key_char != "v".toUpperCase().charCodeAt(0)) this.g_c1 = 0;
 				} else if (this.g_c1 == 2)
-					if (this.gk.key_char == "r".toUpperCase().charCodeAt()) this.ml_mode = 1000;
-					else if (this.gk.key_char != "e".toUpperCase().charCodeAt()) this.g_c1 = 0;
+					if (this.gk.key_char == "r".toUpperCase().charCodeAt(0)) this.ml_mode = 1000;
+					else if (this.gk.key_char != "e".toUpperCase().charCodeAt(0)) this.g_c1 = 0;
 				if (
 					(this.title_lock_f && !this.start_game_f) ||
 					((!this.gm.button_f || this.gm.click_x >= this.gg.di.width || this.gm.click_y >= this.gg.di.height) &&
