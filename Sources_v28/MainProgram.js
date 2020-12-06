@@ -645,16 +645,20 @@ MainProgram.prototype.mainLoop = function () {
 		case 1000:
 			this.gg.setBackcolor(Color.black);
 			this.gg.fill();
-			this.hg.setFont(new Font(Font.DIALOG, 0, 46));
+			this.hg.setFont(new Font(Font.DIALOG, 0, 46)); // ?
 			this.hg.setColor(Color.white);
 			this.hg.setFont(new Font(Font.DIALOG, 0, 20));
-			this.hg.drawString("Title        MASAO CONSTRUCTION", 50, 50);
-			this.hg.drawString("Version      2.8", 50, 80);
-			this.hg.drawString("Language     Java2  SDK 1.3.1", 50, 110);
-			this.hg.drawString("OS           WindowsXP", 50, 140);
-			this.hg.drawString("Browser      InternetExplorer 6.0", 50, 170);
-			this.hg.drawString("Programing   Fukuda Naoto", 50, 200);
-			this.hg.drawString("Date         2003/6", 50, 230);
+			[
+				"Title        MASAO CONSTRUCTION",
+				"Version      2.8",
+				"Language     Java2  SDK 1.3.1",
+				"OS           WindowsXP",
+				"Browser      InternetExplorer 6.0",
+				"Programing   Fukuda Naoto",
+				"Date         2003/6",
+			].forEach((string, i) => {
+				this.hg.drawString(string, 50, 50 + i * 30);
+			});
 			this.ml_mode = 1010;
 			this.ml_mode_c = 0;
 			break;
