@@ -1262,7 +1262,7 @@ export const drawGamescreenMy = function (this: MainProgram) {
  * @param co_wx 土管の左上の点の画面上のX座標
  * @param co_wy 土管の左上の点の画面上のY座標
  */
-const drawDokan = function (dokan_id, dokan_type, co_wx, co_wy) {
+const drawDokan = function (this: MainProgram, dokan_id: number, dokan_type: number, co_wx: number, co_wy: number) {
 	const dokan_pt = 60 + dokan_id * 2;
 	// 土管の回転角度と回転の中心を算出する
 	let rad = 0;
