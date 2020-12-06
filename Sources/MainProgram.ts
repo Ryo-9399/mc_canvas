@@ -4888,12 +4888,10 @@ class MainProgram {
 			for (var j1 = 0; j1 < this.maps.width; j1++) {
 				var c1 = 0;
 				if (mainLayer) {
-					try {
-						c1 = mainLayer.map[k3 - 10][j1 - 1] as number; // TODO: 文字列によるカスタムパーツへの対応
-						if (!c1) {
-							c1 = 0;
-						}
-					} catch (ex) {}
+					c1 = mainLayer.map[k3 - 10] ? (mainLayer.map[k3 - 10][j1 - 1] as number) : 0;
+					if (!c1) {
+						c1 = 0;
+					}
 				} else {
 					c1 = as[k3].charCodeAt(j1);
 				}
@@ -16914,6 +16912,7 @@ class MainProgram {
 
 				case 70: // ファイヤーバー 1本
 					if (characterobject.c4 == 2) {
+						// スウィングファイヤーバー 左
 						characterobject.c3 += characterobject.vx;
 						if (characterobject.c3 <= 110) {
 							characterobject.c3 = 110;
@@ -16923,6 +16922,7 @@ class MainProgram {
 							characterobject.vx = -2;
 						}
 					} else if (characterobject.c4 == 3) {
+						// スウィングファイヤーバー 右
 						characterobject.c3 += characterobject.vx;
 						if (characterobject.c3 <= 290) {
 							characterobject.c3 = 290;
@@ -16950,6 +16950,7 @@ class MainProgram {
 						var k89;
 						var j92;
 						if (Math.abs(characterobject.vx) == 2) {
+							// ファイヤーバー２本またはファイヤーバー３本またはスウィングファイヤーバー
 							var d = 0.017453292519943295;
 							i85 = k3 + rounddown(Math.cos(characterobject.c3 * d) * 25, true, this);
 							j87 = l3 + rounddown(Math.sin(characterobject.c3 * d) * 25, true, this);
@@ -21034,6 +21035,7 @@ class MainProgram {
 							}
 						}
 					if (characterobject.c3 != 1) {
+						// つかまると動く　ではない
 						if (characterobject.vy > 156) {
 							characterobject.vx -= 2;
 							if (characterobject.vx < -22) characterobject.vx = -22;
@@ -21257,6 +21259,7 @@ class MainProgram {
 						}
 					if (characterobject.c3 != 1) {
 						if (characterobject.c4 == 1) {
+							// 広角
 							if (characterobject.vy > 330) {
 								characterobject.vx -= 2;
 								if (characterobject.vx < -22) characterobject.vx = -22;
@@ -25026,6 +25029,7 @@ class MainProgram {
 			var yukaobject = this.yo[i];
 			if (yukaobject.con == 0) continue;
 			if (yukaobject.con == 100) {
+				// 矩形（ファイル名を指定）
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				if (
@@ -25042,6 +25046,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 110) {
+				// 矩形
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				if (
@@ -25059,6 +25064,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 120) {
+				// 矩形（パターンチップから設定）
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				if (
@@ -25076,20 +25082,24 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 200) {
+				// 線分
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var j3 = yukaobject.view_x;
+				var l5 = yukaobject.view_y;
 				var j8 = this.yo[i].x2 - this.maps.wx;
+				var l10 = this.yo[i].y2 - this.maps.wy;
 				if ((j3 < 0 && j8 < 0) || (j3 >= this.gg.di.width && j8 >= this.gg.di.width)) {
 					yukaobject.draw_f = false;
 				} else {
 					yukaobject.draw_f = true;
 					this.hg.setColor(yukaobject.color);
-					//this.hg.drawLine(j3, l5, j8, l10);
+					this.hg.drawLine(j3, l5, j8, l10);
 				}
 				continue;
 			}
 			if (yukaobject.con == 210) {
+				// 直角三角形
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var k3 = yukaobject.view_x;
@@ -25139,6 +25149,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 220) {
+				// 台形
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var l3 = yukaobject.view_x;
@@ -25201,6 +25212,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 300) {
+				// 円
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var i4 = yukaobject.view_x - yukaobject.x2;
@@ -25217,6 +25229,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 350) {
+				// 上半分の半円
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var j4 = yukaobject.view_x;
@@ -25259,6 +25272,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 360) {
+				// 上半分の半円（線のみ）
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var k4 = yukaobject.view_x;
@@ -25284,6 +25298,7 @@ class MainProgram {
 				} while (true);
 			}
 			if (yukaobject.con == 400) {
+				// 右上がりの曲線
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var l4 = yukaobject.view_x;
@@ -25340,6 +25355,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 410) {
+				// 右上がりの曲線（線のみ）
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var i5 = yukaobject.view_x;
@@ -25380,6 +25396,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con == 450) {
+				// 右下がりの曲線
 				yukaobject.view_x = this.yo[i].x - this.maps.wx;
 				yukaobject.view_y = this.yo[i].y - this.maps.wy;
 				var j5 = yukaobject.view_x;
@@ -25436,6 +25453,7 @@ class MainProgram {
 				continue;
 			}
 			if (yukaobject.con != 460) continue;
+			// 右下がりの曲線（線のみ）
 			yukaobject.view_x = this.yo[i].x - this.maps.wx;
 			yukaobject.view_y = this.yo[i].y - this.maps.wy;
 			var k5 = yukaobject.view_x;
