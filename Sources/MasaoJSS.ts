@@ -3,6 +3,7 @@ import { rightShiftIgnoreSign } from "./GlobalFunctions";
 import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
 import { MasaoConstruction } from "./MasaoConstruction";
 import { InversionKind } from "./GameGraphicsForApplet";
+import { MainProgram, Parts } from "./MainProgram";
 
 /**
  * ユーザーJavaScriptから正男を操作するAPIを提供するオブジェクトです。
@@ -143,81 +144,104 @@ class MasaoJSS {
 	setMyVX: (s: string | number) => boolean;
 	setMyVY: (s: string | number) => boolean;
 	isRideGround: () => 0 | 1 | -1;
-	setYukaPattern: (s: any, s1: any, s2: any) => any;
-	setYukaImage: (s: any, image: any) => any;
-	setMySpeed: (s: any) => boolean;
-	setScrollArea: (s: any, s1: any, s2: any, s3: any) => any;
-	loadTextFile: (s: any) => any;
+	setYukaPattern: (s: string | number, s1: string | number, s2: string | number) => boolean;
+	setYukaImage: (s: string | number, image: string | ImageBuff) => boolean;
+	setMySpeed: (s: string | number) => boolean;
+	setScrollArea: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => boolean;
+	/** 使用不可 */
+	loadTextFile: (s: string) => null;
 	isPressUpKey: () => 0 | 1;
 	isPressDownKey: () => 0 | 1;
 	isPressLeftKey: () => 0 | 1;
 	isPressRightKey: () => 0 | 1;
-	newImageOnLoad: (s: any) => ImageBuff;
-	setSystemDrawMode: (s: any) => boolean;
-	drawSystemObject: (s: any) => boolean;
-	getMyObjectCondition: () => any;
-	getMyObjectAC: () => any;
-	getMyObjectPattern: () => any;
-	getMyDirection4way: () => any;
-	setMyObjectPattern: (s: any) => boolean;
-	setMyObjectImage: (image: any, s: any, s1: any) => boolean;
-	setEnemyObjectPattern: (s: any, s1: any) => boolean;
-	getEnemyObjectCondition: (s: any) => any;
-	getEnemyObjectPattern: (s: any) => any;
-	getEnemyObjectX: (s: any) => any;
-	getEnemyObjectY: (s: any) => any;
-	getEnemyObjectLength: () => any;
-	getEnemyObjectDirection: (s: any) => number;
-	setEnemyObjectImage: (s: any, image: any, s1: any, s2: any) => boolean;
-	getEnemyAC: () => any;
-	newChipImage: (s: any, s1: any, s2: any, s3: any, s4: any) => number;
-	makeReverseChipImage: (s: any) => boolean;
-	getChipImage: (s: any, s1: any, s2: any) => any;
-	disposeChipImage: (s: any) => boolean;
-	setScrollAreaReal: (s: any, s1: any, s2: any, s3: any) => any;
-	isPressCodeKey: (s: any) => 0 | 1;
-	playBGM: (s: any) => any;
-	playBGMLoop: (s: any) => any;
+	newImageOnLoad: (s: string) => ImageBuff;
+	setSystemDrawMode: (s: string | number) => boolean;
+	drawSystemObject: (s: string | number) => boolean;
+	getMyObjectCondition: () => number;
+	getMyObjectAC: () => number;
+	getMyObjectPattern: () => number;
+	getMyDirection4way: () => number;
+	setMyObjectPattern: (s: string | number) => boolean;
+	setMyObjectImage: (image: ImageBuff | null, s: string | number, s1: string | number) => boolean;
+	setEnemyObjectPattern: (s: string | number, s1: string | number) => boolean;
+	getEnemyObjectCondition: (s: string | number) => number;
+	getEnemyObjectPattern: (s: string | number) => number;
+	getEnemyObjectX: (s: string | number) => number;
+	getEnemyObjectY: (s: string | number) => number;
+	getEnemyObjectLength: () => number;
+	getEnemyObjectDirection: (s: string | number) => number;
+	setEnemyObjectImage: (s: string | number, image: ImageBuff, s1: string | number, s2: string | number) => boolean;
+	getEnemyAC: () => number;
+	newChipImage: (
+		s: string,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number,
+		s4: string | number
+	) => number;
+	makeReverseChipImage: (s: string | number) => boolean;
+	getChipImage: (s: string | number, s1: string | number, s2: string | number) => ImageBuff | null;
+	disposeChipImage: (s: string | number) => boolean;
+	setScrollAreaReal: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => boolean;
+	isPressCodeKey: (s: string | number) => 0 | 1;
+	playBGM: (s: string) => boolean;
+	playBGMLoop: (s: string) => boolean;
 	stopBGM: () => boolean;
-	getBossHP: () => any;
-	setBossHP: (s: any) => any;
-	getBossDirection: () => any;
-	isBossAttackMode: () => any;
-	setBossXReal: (s: any) => any;
-	setBossYReal: (s: any) => any;
-	setBossObjectImage: (image: any, s: any, s1: any) => boolean;
-	setSystemPattern: (s: any, s1: any) => boolean;
-	setSystemPatternImage: (s: any, s1: any, image: any) => boolean;
-	setFontSize: (s: any) => boolean;
-	newFont: (s: any, s1: any, s2: any) => Font;
-	getCoinCount: (s: any, s1: any, s2: any, s3: any) => any;
-	addMyTokugi: (s: any) => any;
-	removeMyTokugi: (s: any) => any;
-	setScore: (s: any) => boolean;
-	getBarrierTime: () => any;
+	getBossHP: () => number;
+	setBossHP: (s: string | number) => boolean;
+	getBossDirection: () => 0 | 1;
+	isBossAttackMode: () => 0 | 1;
+	setBossXReal: (s: string | number) => boolean;
+	setBossYReal: (s: string | number) => boolean;
+	setBossObjectImage: (image: ImageBuff, s: string | number, s1: string | number) => boolean;
+	setSystemPattern: (s: string | number, s1: string | number) => boolean;
+	setSystemPatternImage: (s: string | number, s1: string | number, image: ImageBuff) => boolean;
+	setFontSize: (s: string | number) => boolean;
+	newFont: (s: string, s1: string | number, s2: string | number) => Font;
+	getCoinCount: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => number;
+	addMyTokugi: (s: string | number) => boolean;
+	removeMyTokugi: (s: string | number) => boolean;
+	setScore: (s: string | number) => boolean;
+	getBarrierTime: () => number;
 	getTimeLimit: () => number;
-	setTimeLimit: (s: any) => boolean;
-	setAthletic: (s: any, s1: any, s2: any) => boolean;
-	setSecondImage: (s: any) => boolean;
-	setGrenadeCount: (s: any) => boolean;
-	setMyLeft: (s: any) => boolean;
+	setTimeLimit: (s: string | number) => boolean;
+	setAthletic: (s: string | number, s1: string | number, s2: string | number) => boolean;
+	setSecondImage: (s: string) => boolean;
+	setGrenadeCount: (s: string | number) => boolean;
+	setMyLeft: (s: string | number) => boolean;
 	getGrenadeCount: () => number;
 	getMyLeft: () => number;
-	setEnemyPress: (s: any) => boolean;
-	drawPattern: (s: any, s1: any, s2: any, s3: any) => boolean;
-	setOffscreenColor: (s: any, s1: any, s2: any, s3: any) => boolean;
-	drawImage: (s: any, s1: any, s2: any) => boolean;
-	fillPolygon: (s: any, s1: any, s2: any, s3: any, s4: any, s5: any, s6: any, s7: any) => boolean;
-	drawImageRotate: (image: any, s: any, s1: any, s2: any) => boolean;
-	drawImageScale: (image: any, s: any, s1: any, s2: any, s3: any) => boolean;
-	drawImageAlphaComposite: (image: any, s: any, s1: any, s2: any) => boolean;
+	setEnemyPress: (s: string | number) => boolean;
+	drawPattern: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => boolean;
+	setOffscreenColor: (s: string | number, s1: string | number, s2: string | number, s3: string | number) => boolean;
+	/** 使用不可 */
+	drawImage: (s: string, s1: string | number, s2: string | number) => boolean;
+	fillPolygon: (
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number,
+		s4: string | number,
+		s5: string | number,
+		s6?: string | number,
+		s7?: string | number
+	) => boolean;
+	drawImageRotate: (image: ImageBuff, s: string | number, s1: string | number, s2: string | number) => boolean;
+	drawImageScale: (
+		image: ImageBuff,
+		s: string | number,
+		s1: string | number,
+		s2: string | number,
+		s3: string | number
+	) => boolean;
+	drawImageAlphaComposite: (image: ImageBuff, s: string | number, s1: string | number, s2: string | number) => boolean;
 	isPaused: () => 0 | 1;
-	pause: (s: any) => boolean;
+	pause: (s: string | number) => boolean;
 	getRandomF: () => number;
-	getRandom: (max: any) => any;
+	getRandom: (max: number) => number;
 	getJetFuel: () => number;
 	getKeyCount: (type: string | number) => number;
-	getPartsDefinition: (code: any) => any;
+	getPartsDefinition: (code: string | number) => Parts | null;
 	setItem: (x?: string | number, y?: string | number, type?: string | number) => boolean;
 
 	constructor(mc: MasaoConstruction, caseInsensitive: boolean) {
@@ -1865,7 +1889,7 @@ class MasaoJSS {
 		this.setMySpeed = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -1966,7 +1990,7 @@ class MasaoJSS {
 		this.setSystemDrawMode = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -1999,7 +2023,7 @@ class MasaoJSS {
 				if (mc.mp.ml_mode != 100) return false;
 				if (mc.mp.dso_cf) return false;
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2114,7 +2138,7 @@ class MasaoJSS {
 		this.setMyObjectPattern = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2141,8 +2165,8 @@ class MasaoJSS {
 			if (mc.mp) {
 				var i;
 				var j;
-				i = parseInt(s);
-				j = parseInt(s1);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
 				if (isNaN(i) || isNaN(j)) {
 					i = 0;
 					j = 0;
@@ -2166,8 +2190,8 @@ class MasaoJSS {
 			var j = 0;
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
 				if (isNaN(i) || isNaN(j)) {
 					i = -1;
 				}
@@ -2275,7 +2299,7 @@ class MasaoJSS {
 		this.getEnemyObjectCondition = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2296,7 +2320,7 @@ class MasaoJSS {
 		this.getEnemyObjectPattern = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2317,7 +2341,7 @@ class MasaoJSS {
 		this.getEnemyObjectX = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2338,7 +2362,7 @@ class MasaoJSS {
 		this.getEnemyObjectY = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2370,7 +2394,7 @@ class MasaoJSS {
 		this.getEnemyObjectDirection = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2400,9 +2424,9 @@ class MasaoJSS {
 			var k = 0;
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k)) {
 					i = -1;
 				}
@@ -2449,10 +2473,10 @@ class MasaoJSS {
 			var k = 0;
 			var l = 0;
 			var i1 = 0;
-			i = parseInt(s1);
-			j = parseInt(s2);
-			k = parseInt(s3);
-			l = parseInt(s4);
+			i = parseInt(s1 as string);
+			j = parseInt(s2 as string);
+			k = parseInt(s3 as string);
+			l = parseInt(s4 as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) {
 				i = -1;
 			}
@@ -2477,7 +2501,7 @@ class MasaoJSS {
 		 */
 		this.makeReverseChipImage = function (s) {
 			var i = 0;
-			i = parseInt(s);
+			i = parseInt(s as string);
 			if (isNaN(i)) {
 				i = -1;
 			}
@@ -2514,9 +2538,9 @@ class MasaoJSS {
 			var k = 0;
 			if (!s1) s1 = "0";
 			if (!s2) s2 = "0";
-			i = parseInt(s);
-			j = parseInt(s1);
-			k = parseInt(s2);
+			i = parseInt(s as string);
+			j = parseInt(s1 as string);
+			k = parseInt(s2 as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k)) {
 				i = -1;
 			}
@@ -2535,7 +2559,7 @@ class MasaoJSS {
 		 */
 		this.disposeChipImage = function (s) {
 			var i = 0;
-			i = parseInt(s);
+			i = parseInt(s as string);
 			if (isNaN(i)) {
 				i = -1;
 			}
@@ -2573,7 +2597,7 @@ class MasaoJSS {
 		this.isPressCodeKey = function (s) {
 			if (mc.gk) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2639,7 +2663,7 @@ class MasaoJSS {
 		 * @param {number} hp 新しいHP
 		 */
 		this.setBossHP = function (s) {
-			var i = parseInt(s);
+			var i = parseInt(s as string);
 			if (isNaN(i)) return false;
 			if (mc.mp) return mc.mp.setBossHP(i);
 			else return false;
@@ -2675,7 +2699,7 @@ class MasaoJSS {
 		this.setBossXReal = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -9999;
 				}
@@ -2694,7 +2718,7 @@ class MasaoJSS {
 		this.setBossYReal = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -9999;
 				}
@@ -2717,8 +2741,8 @@ class MasaoJSS {
 			if (mc.mp) {
 				var i;
 				var j;
-				i = parseInt(s);
-				j = parseInt(s1);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
 				if (isNaN(i) || isNaN(j)) {
 					i = 0;
 					j = 0;
@@ -2743,8 +2767,8 @@ class MasaoJSS {
 			var j = 1;
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
 				if (isNaN(i) || isNaN(j)) {
 					i = -1;
 				}
@@ -2775,8 +2799,8 @@ class MasaoJSS {
 			var j = 0;
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
 				if (isNaN(i) || isNaN(j)) {
 					i = -1;
 				}
@@ -2793,7 +2817,7 @@ class MasaoJSS {
 		this.setFontSize = function (s) {
 			if (mc.gg) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2825,8 +2849,8 @@ class MasaoJSS {
 		this.newFont = function (s, s1, s2) {
 			var j = 0;
 			var i;
-			j = parseInt(s1);
-			i = parseInt(s2);
+			j = parseInt(s1 as string);
+			i = parseInt(s2 as string);
 			if (isNaN(i) || isNaN(j)) {
 				i = -1;
 			}
@@ -2864,10 +2888,10 @@ class MasaoJSS {
 			}
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
-				l = parseInt(s3);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
+				l = parseInt(s3 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) {
 					i = -1;
 				}
@@ -2890,7 +2914,7 @@ class MasaoJSS {
 			var flag = false;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2912,7 +2936,7 @@ class MasaoJSS {
 			var flag = false;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -2933,7 +2957,7 @@ class MasaoJSS {
 		this.setScore = function (s) {
 			if (mc.mp) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = 0;
 				}
@@ -2983,7 +3007,7 @@ class MasaoJSS {
 		this.setTimeLimit = function (s) {
 			if (mc.mp && mc.mp.time_max > 0) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -3011,9 +3035,9 @@ class MasaoJSS {
 			var k = 0;
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				j = parseInt(s);
-				k = parseInt(s1);
-				i = parseInt(s2);
+				j = parseInt(s as string);
+				k = parseInt(s1 as string);
+				i = parseInt(s2 as string);
 				if (isNaN(j) || isNaN(k) || isNaN(i)) {
 					i = -1;
 				}
@@ -3071,7 +3095,7 @@ class MasaoJSS {
 		this.setGrenadeCount = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -3094,7 +3118,7 @@ class MasaoJSS {
 		this.setMyLeft = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -3154,7 +3178,7 @@ class MasaoJSS {
 		this.setEnemyPress = function (s) {
 			if (this.getMode() >= 100 && this.getMode() < 200) {
 				var i;
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) {
 					i = -1;
 				}
@@ -3182,10 +3206,10 @@ class MasaoJSS {
 			var l = 0;
 			if (mc.gg) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
-				l = parseInt(s3);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
+				l = parseInt(s3 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) {
 					i = -9999;
 				}
@@ -3214,10 +3238,10 @@ class MasaoJSS {
 			var l = 0;
 			if (mc.gg) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
-				l = parseInt(s3);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
+				l = parseInt(s3 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) {
 					i = -9999;
 				}
@@ -3294,12 +3318,12 @@ class MasaoJSS {
 				if (arguments.length == 6) {
 					ai = new Array(3);
 					ai1 = new Array(3);
-					ai[0] = parseInt(s);
-					ai1[0] = parseInt(s1);
-					ai[1] = parseInt(s2);
-					ai1[1] = parseInt(s3);
-					ai[2] = parseInt(s4);
-					ai1[2] = parseInt(s5);
+					ai[0] = parseInt(s as string);
+					ai1[0] = parseInt(s1 as string);
+					ai[1] = parseInt(s2 as string);
+					ai1[1] = parseInt(s3 as string);
+					ai[2] = parseInt(s4 as string);
+					ai1[2] = parseInt(s5 as string);
 					if (isNaN(ai[0]) || isNaN(ai1[0]) || isNaN(ai[1]) || isNaN(ai1[1]) || isNaN(ai[2]) || isNaN(ai1[2])) {
 						ai[0] = -9999;
 					}
@@ -3312,14 +3336,14 @@ class MasaoJSS {
 				} else {
 					ai = new Array(3);
 					ai1 = new Array(3);
-					ai[0] = parseInt(s);
-					ai1[0] = parseInt(s1);
-					ai[1] = parseInt(s2);
-					ai1[1] = parseInt(s3);
-					ai[2] = parseInt(s4);
-					ai1[2] = parseInt(s5);
-					ai[3] = parseInt(s6);
-					ai1[3] = parseInt(s7);
+					ai[0] = parseInt(s as string);
+					ai1[0] = parseInt(s1 as string);
+					ai[1] = parseInt(s2 as string);
+					ai1[1] = parseInt(s3 as string);
+					ai[2] = parseInt(s4 as string);
+					ai1[2] = parseInt(s5 as string);
+					ai[3] = parseInt(s6 as string);
+					ai1[3] = parseInt(s7 as string);
 					if (
 						isNaN(ai[0]) ||
 						isNaN(ai1[0]) ||
@@ -3358,9 +3382,9 @@ class MasaoJSS {
 			var k = 0;
 			if (mc.gg) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k)) {
 					i = -9999;
 				}
@@ -3402,10 +3426,10 @@ class MasaoJSS {
 			var l = 100;
 			if (mc.gg) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
-				l = parseInt(s3);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
+				l = parseInt(s3 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) {
 					i = -9999;
 				}
@@ -3443,9 +3467,9 @@ class MasaoJSS {
 			var k = 100;
 			if (mc.gg) {
 				var i;
-				i = parseInt(s);
-				j = parseInt(s1);
-				k = parseInt(s2);
+				i = parseInt(s as string);
+				j = parseInt(s1 as string);
+				k = parseInt(s2 as string);
 				if (isNaN(i) || isNaN(j) || isNaN(k)) {
 					i = -9999;
 				}
@@ -3492,7 +3516,7 @@ class MasaoJSS {
 		this.pause = function (s) {
 			var i;
 			if (mc.mp) {
-				i = parseInt(s);
+				i = parseInt(s as string);
 				if (isNaN(i)) i = -1;
 				if (i < 0 || i > 1) return false;
 				if (i == 0 && mc.mp.ml_mode == 110) mc.mp.ml_mode = 100;
@@ -3726,7 +3750,7 @@ class MasaoJSS {
 			}
 			if (5000 <= code && code < 10000) {
 				// 敵コードだ
-				return mc.mp.getEnemyDefinition(code - 5000);
+				return mc.mp.getEnemyDefinition((code as number) - 5000);
 			}
 			return null;
 		};

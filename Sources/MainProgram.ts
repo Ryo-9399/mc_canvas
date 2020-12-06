@@ -1373,17 +1373,17 @@ class MainProgram {
 	 * @param {number} y2 範囲右下の座標
 	 * @see {@link MasaoJSS#setScrollArea}
 	 */
-	setScrollArea(s: string, s1: string, s2: string, s3: string) {
+	setScrollArea(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = this.mapWidth - rounddown(this.gg.di.width / 32);
 		let l = this.mapHeight - rounddown(this.gg.di.height / 32);
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
-		l = parseInt(s3);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
+		l = parseInt(s3 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0 || i > this.mapWidth - rounddown(this.gg.di.width / 32)) return false;
 		if (k < 0 || k > this.mapWidth - rounddown(this.gg.di.width / 32)) return false;
@@ -1417,17 +1417,17 @@ class MainProgram {
 	 * @param {number} y2 範囲右下の座標
 	 * @see {@link MasaoJSS#setScrollAreaReal}
 	 */
-	setScrollAreaReal(s: string, s1: string, s2: string, s3: string) {
+	setScrollAreaReal(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = this.mapWidth - rounddown(this.gg.di.width / 32);
 		let l = this.mapHeight - rounddown(this.gg.di.height / 32);
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
-		l = parseInt(s3);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
+		l = parseInt(s3 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 32 || i > (this.mapWidth - 15) * 32) return false;
 		if (k < 32 || k > (this.mapWidth - 15) * 32) return false;
@@ -24489,15 +24489,15 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaPattern}
 	 */
-	setYukaPattern(s: string, s1: string, s2: string) {
+	setYukaPattern(s: string | number, s1: string | number, s2: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
-		j = parseInt(s1);
-		k = parseInt(s2);
+		i = parseInt(s as string);
+		j = parseInt(s1 as string);
+		k = parseInt(s2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) i = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24522,11 +24522,11 @@ class MainProgram {
 	 * @returns {boolean} 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaImage}
 	 */
-	setYukaImage(s: string, a2: string | ImageBuff | null) {
+	setYukaImage(s: string | number, a2: string | ImageBuff | null) {
 		var i = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s);
+		i = parseInt(s as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -26764,4 +26764,4 @@ class MainProgram {
 	}
 }
 
-export { MainProgram };
+export { MainProgram, Parts };
