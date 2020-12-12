@@ -2,11 +2,12 @@ import { Color, Font } from "./ImageBuff";
 import { rightShiftIgnoreSign } from "./GlobalFunctions";
 
 import * as drawGameScreenJSS from "./drawGamescreenJSS";
+import { MainProgram } from "./MainProgram";
 
 /**
  * ゲーム画面を描画します
  */
-export const drawGamescreen = function() {
+export const drawGamescreen = function (this: MainProgram) {
 	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1) {
 		// 背景レイヤーを使用している、または背景画像を使用している時にマップチップの描画
 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
@@ -61,12 +62,7 @@ export const drawGamescreen = function() {
 	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
-				this.hg.drawImage(
-					this.hih[1][105 + this.g_ac],
-					this.co_mu[i].x - view_x,
-					this.co_mu[i].y - view_y,
-					this.ap
-				);
+				this.hg.drawImage(this.hih[1][105 + this.g_ac], this.co_mu[i].x - view_x, this.co_mu[i].y - view_y, this.ap);
 	}
 	// 敵の描画
 	if (this.system_draw_mode < 3) drawGameScreenJSS.drawGamescreenEnemy.apply(this);
@@ -89,9 +85,11 @@ export const drawGamescreen = function() {
 	}
 	// MasaoJSS#showImageで設定された画像を表示
 	if (this.showi_c > 0) {
-		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
-		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		if (this.showi_img) {
+			// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
+			if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+			else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		}
 	}
 	// TODO: 描画関数でカウンタ更新やめろ
 	if (this.showr_c > 0) this.showr_c--;
@@ -101,8 +99,8 @@ export const drawGamescreen = function() {
 	// TODO:MapSystem.prototype.drawMapLayerに同じような処理があるのでそっちに統合
 
 	if (this.second_gazou_visible && this.second_gazou_priority === 2 && this.second_gazou_img !== null) {
-		const draw = (x, y) => {
-			this.hg.drawImage(this.second_gazou_img, x, y);
+		const draw = (x: number, y: number) => {
+			this.hg.drawImage(this.second_gazou_img!, x, y);
 		};
 		// [x方向の繰り返し回数, y方向の繰り返し回数]
 		let repeat_times = [1, 1];
@@ -126,8 +124,8 @@ export const drawGamescreen = function() {
 			if (this.maps.second_gazou_x > 0) this.maps.second_gazou_x -= this.gg.di.width;
 			if (this.maps.second_gazou_y < -this.gg.di.height) this.maps.second_gazou_y += this.gg.di.height;
 			if (this.maps.second_gazou_y > 0) this.maps.second_gazou_y -= this.gg.di.height;
-			scroll_x = this.second_gazou_x;
-			scroll_y = this.second_gazou_y;
+			scroll_x = (this as any).second_gazou_x; // TODO: 型付け
+			scroll_y = (this as any).second_gazou_y; // TODO: 型付け
 			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 5) {
 			// 左右スクロール  速度３／２

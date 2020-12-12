@@ -1,8 +1,36 @@
 import { createNDimensionArray, rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
-import { Color } from "./ImageBuff";
+import { Color, ImageBuff } from "./ImageBuff";
+import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
+import { MainProgram } from "./MainProgram";
 
 class MapSystem {
-	constructor(width, height, gamegraphics, mainprogram) {
+	width: number;
+	height: number;
+	gg: GameGraphicsForApplet;
+	mp: MainProgram;
+	map_bg: number[][];
+	map_bg_layer: number[][];
+	map_string: string[];
+	map_string_layer: string[];
+	wx: number;
+	wy: number;
+	wx_mini: number;
+	wy_mini: number;
+	wx_max: number;
+	wy_max: number;
+	os2_wx: number;
+	os2_wy: number;
+	hi: ImageBuff[];
+	gazou_x: number;
+	gazou_y: number;
+	second_gazou_x: number;
+	second_gazou_y: number;
+	my_wx_mini: number;
+	my_wx_max: number;
+	my_wy_mini: number;
+	my_wy_max: number;
+
+	constructor(width: number, height: number, gamegraphics: GameGraphicsForApplet, mainprogram: MainProgram) {
 		this.width = width;
 		this.height = height;
 		this.gg = gamegraphics;
@@ -13,10 +41,10 @@ class MapSystem {
 		this.map_string_layer = new Array(this.height);
 		this.wx = 0;
 		this.wy = 0;
-		this.wx_mini = undefined;
-		this.wy_mini = undefined;
-		this.wx_max = undefined;
-		this.wy_max = undefined;
+		this.wx_mini = 0;
+		this.wy_mini = 0;
+		this.wx_max = 0;
+		this.wy_max = 0;
 		this.os2_wx = 0;
 		this.os2_wy = 0;
 		this.hi = this.gg.spt_img[0];
@@ -24,6 +52,10 @@ class MapSystem {
 		this.gazou_y = 0;
 		this.second_gazou_x = 0;
 		this.second_gazou_y = 0;
+		this.my_wx_mini = 0;
+		this.my_wx_max = 0;
+		this.my_wy_mini = 0;
+		this.my_wy_max = 0;
 		this.init();
 	}
 
@@ -51,7 +83,7 @@ class MapSystem {
 	/**
 	 * TODO: 要調査
 	 */
-	setBank(mode) {
+	setBank(mode: number) {
 		let dest = 30;
 		if (mode === 1) dest = 40;
 		else if (mode === 2) dest = 50;
@@ -68,7 +100,7 @@ class MapSystem {
 	 * @param {number} view_x 画面に描画される範囲の左上のX座標
 	 * @param {number} view_y 画面に描画される範囲の左上のY座標
 	 */
-	drawMap(view_x, view_y) {
+	drawMap(view_x: number, view_y: number) {
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
@@ -94,7 +126,7 @@ class MapSystem {
 	 * @param {number} gazou_scroll 背景画像のスクロール設定
 	 * @param {number} mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
 	 */
-	drawMapLayer(view_x, view_y, g_ac2, gazou_scroll, mode) {
+	drawMapLayer(view_x: number, view_y: number, g_ac2: number, gazou_scroll: number, mode: number) {
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
@@ -110,14 +142,10 @@ class MapSystem {
 			this.gg.fill2();
 
 			// セカンド画像を背景画像の奥に描画
-			if (
-				this.mp.second_gazou_visible &&
-				this.mp.second_gazou_priority === 1 &&
-				this.mp.second_gazou_img != null
-			) {
-				const draw = (x, y) => {
+			if (this.mp.second_gazou_visible && this.mp.second_gazou_priority === 1 && this.mp.second_gazou_img != null) {
+				const draw = (x: number, y: number) => {
 					// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img, x + xmod + 32, y + ymod + 32);
+					this.gg.os2_g.drawImage(this.mp.second_gazou_img!, x + xmod + 32, y + ymod + 32);
 				};
 				// [x方向の繰り返し回数, y方向の繰り返し回数]
 				let repeat_times = [1, 1];
@@ -177,7 +205,7 @@ class MapSystem {
 			// 背景画像の描画
 			const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
 			if (background_image != null) {
-				const draw = (x, y) => {
+				const draw = (x: number, y: number) => {
 					// 裏画面に背景画像を描画する際、スクロールに応じて描画位置をずらす
 					this.gg.os2_g.drawImage(background_image, x + xmod + 32, y + ymod + 32);
 				};
@@ -227,8 +255,7 @@ class MapSystem {
 					image_height = 640;
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
 					scroll_y = -(
-						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) %
-						image_height
+						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) % image_height
 					);
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 9) {
@@ -237,8 +264,7 @@ class MapSystem {
 					image_height = 640;
 					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
 					scroll_y = -(
-						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) %
-						image_height
+						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) % image_height
 					);
 					repeat_times[0] = 2;
 				} else if (gazou_scroll === 10) {
@@ -278,8 +304,7 @@ class MapSystem {
 		}
 		if (mode !== 3) {
 			//水の表示条件　レイヤー表示無し（背景画像は表示）　または　レイヤー表示ありかつ水を常に表示の時
-			const is_water_visible =
-				this.gg.layer_mode !== 2 || (this.mp.water_visible === 2 && this.gg.layer_mode === 2);
+			const is_water_visible = this.gg.layer_mode !== 2 || (this.mp.water_visible === 2 && this.gg.layer_mode === 2);
 			// マップ上の特別なブロックの見た目を調整する
 			for (let i = 0; i <= rounddown(this.gg.di.height / 32); i++) {
 				for (let j = 0; j <= rounddown(this.gg.di.width / 32); j++) {
@@ -295,14 +320,16 @@ class MapSystem {
 						//脱出ハシゴがクリア条件の場合
 						if (this.gg.layer_mode === 2) {
 							//レイヤーを表示する場合
-							if (this.mp.water_visible === 2)
-								if ((pt === 4 && this.mp.water_visible !== 2) || pt === 29) pt = 0; //水を常に表示するにしていない場合、水を非表示、緑色のブロックを非表示、他は表示
+							if (this.mp.water_visible === 2) if ((pt === 4 && this.mp.water_visible !== 2) || pt === 29) pt = 0; //水を常に表示するにしていない場合、水を非表示、緑色のブロックを非表示、他は表示
 						}
 					} else if (this.gg.layer_mode === 2) {
 						//クリア条件がその他でレイヤーを表示する場合
 						if (
 							(pt === 4 && this.mp.water_visible !== 2) ||
-							(pt === 15 || pt === 18 || pt === 19 || pt === 29) ||
+							pt === 15 ||
+							pt === 18 ||
+							pt === 19 ||
+							pt === 29 ||
 							(pt === 10 && !option)
 						)
 							pt = 0; //水を常に表示するにしていない場合、水を非表示、ハシゴも表示設定がない場合非表示、他は非表示
@@ -330,8 +357,7 @@ class MapSystem {
 						case 8:
 							// 人面星
 							const is_millennium = this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max;
-							const is_apparent =
-								(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
+							const is_apparent = (this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
 							if (is_apparent) {
 								pt = 94;
 								if (is_millennium) pt = 98; // ミレニアム人面星
@@ -408,7 +434,7 @@ class MapSystem {
 	 * TODO: 要調査
 	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
 	 */
-	drawMapScroll(g_ac2) {
+	drawMapScroll(g_ac2: number) {
 		const xmod = this.wx % 32;
 		const ymod = this.wy % 32;
 		// 画面左上のブロック座標
@@ -487,8 +513,7 @@ class MapSystem {
 					case 8: {
 						// 人面星
 						const is_millennium = this.mp.stage_max >= 2 && this.mp.stage >= this.mp.stage_max;
-						const is_apparent =
-							(this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
+						const is_apparent = (this.mp.clear_type !== 2 && this.mp.clear_type !== 3) || this.mp.coin_kazu <= 0;
 
 						let pt = 94;
 						if (is_millennium) pt = 98; // ミレニアム人面星
@@ -547,8 +572,7 @@ class MapSystem {
 								this.gg.os2_g.fillRect(32 + j * 32, 32 + i * 32, 32, 32);
 							}
 							this.gg.os2_g.setColor(Color.white);
-							for (let k = 0; k < 32; k++)
-								this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + 31 - k, 1, 1);
+							for (let k = 0; k < 32; k++) this.gg.os2_g.fillRect(32 + j * 32 + k, 32 + i * 32 + 31 - k, 1, 1);
 						} else if (this.map_bg[nx][ny - 1] === 4) {
 							this.gg.drawBG2(32 + j * 32, 32 + i * 32, 4);
 							this.gg.drawPT2(32 + j * 32, 32 + i * 32, 18);
@@ -586,7 +610,7 @@ class MapSystem {
 	 * @returns {number}
 	 * @see {@link MainProgram#setChipValue}
 	 */
-	getBGCode(x, y) {
+	getBGCode(x: number, y: number) {
 		return this.map_bg[rightShiftIgnoreSign(x, 5)][rightShiftIgnoreSign(y, 5)];
 	}
 
@@ -596,7 +620,7 @@ class MapSystem {
 	 * @param ny {number} Y座標(ブロック座標)
 	 * @param {number} code マップコード
 	 */
-	putBGCode(nx, ny, code) {
+	putBGCode(nx: number, ny: number, code: number) {
 		this.map_bg[nx][ny] = code;
 		if (
 			this.os2_wx <= nx &&

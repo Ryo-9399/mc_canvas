@@ -1,5 +1,5 @@
 // MasaoKani2クラス
-CanvasMasao.MasaoKani2 = function(mc) {
+CanvasMasao.MasaoKani2 = function (mc) {
 	var Applet1;
 	var boss_v;
 	var boss_x;
@@ -67,7 +67,7 @@ CanvasMasao.MasaoKani2 = function(mc) {
 
 	userInitJS();
 
-	this.masaoEvent = function(g, image) {
+	this.masaoEvent = function (g, image) {
 		const mode = Applet1.getMode();
 		if (mode == 1) userTitleJS(g);
 		else if (mode >= 100 && mode < 200) {
@@ -1953,11 +1953,11 @@ CanvasMasao.MasaoKani2 = function(mc) {
 };
 
 //inject（MasaoConstructionのインスタンスをMasaoKani2にする）
-CanvasMasao.MasaoKani2.inject = function(mc) {
-	mc.userInit = function() {
+CanvasMasao.MasaoKani2.inject = function (mc) {
+	mc.userInit = function () {
 		this.masaoKani2 = new CanvasMasao.MasaoKani2(this);
 	};
-	mc.userSub = function(g, image) {
+	mc.userSub = function (g, image) {
 		this.masaoKani2.masaoEvent(g, image);
 	};
 };
