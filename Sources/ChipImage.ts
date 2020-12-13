@@ -6,12 +6,6 @@ export type ChipInversionKind = InversionKind | 2 | 3;
 
 /**
  * 1枚の画像から複数のチップ画像を生成するクラス
- * @param i {number} チップ１枚の横幅
- * @param j {number} チップ1枚の高さ
- * @param k {number} チップが横に並ぶ数
- * @param l {number} チップが縦に並ぶ数
- * @param bufferedimage {ImageBuff} オリジナルの画像
- * @constructor
  */
 class ChipImage {
 	chip_width: number;
@@ -23,6 +17,13 @@ class ChipImage {
 	chip_img: Record<ChipInversionKind, ImageBuff>[];
 	ai_img: ImageBuff;
 
+  /**
+   * @param i チップ１枚の横幅
+   * @param j チップ1枚の高さ
+   * @param k チップが横に並ぶ数
+   * @param l チップが縦に並ぶ数
+   * @param bufferedimage オリジナルの画像
+   */
 	constructor(i: number, j: number, k: number, l: number, bufferedimage: ImageBuff) {
 		this.chip_width = i;
 		this.chip_height = j;
@@ -38,6 +39,7 @@ class ChipImage {
 	/**
 	 * 新しいチップ画像を内部的に生成する
 	 * createImageBufferを呼び出したあとに呼ぶ
+	 * @param bufferedimage (未使用)
 	 */
 	makeChipImage(bufferedimage?: ImageBuff) {
 		var localG;
@@ -73,6 +75,7 @@ class ChipImage {
 	/**
 	 * それぞれの画像が垂直・水平方向に反転したチップ画像を内部的に生成する
 	 * createImageBufferを呼び出したあとに呼ぶ
+	 * @returns 成功したかどうか
 	 */
 	makeReverseChipImage() {
 		var localG;
@@ -109,7 +112,7 @@ class ChipImage {
 
 	/**
 	 * 新しいチップ画像を作る ために内部の配列を初期化する
-	 * @param n {number} 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
+	 * @param n 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
 	 */
 	createImageBuffer(n: ChipInversionKind) {
 		var k, i;
@@ -125,9 +128,9 @@ class ChipImage {
 
 	/**
 	 * 単一のチップ画像を取得する
-	 * @param i {number} 取得するチップ画像の番号 (0ベースで、Y座標×X幅+X座標)
-	 * @param j {number} 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
-	 * @returns {ImageBuff | *} チップ画像 範囲指定がおかしければnullが、初期化用のメソッドがまだ呼ばれていないなど内部状態のどこかがおかしければundefinedとかよくわからないものが返る
+	 * @param i 取得するチップ画像の番号 (0ベースで、Y座標×X幅+X座標)
+	 * @param j 反転情報 (0:反転なし 1:水平反転 2:垂直反転 3:水平垂直反転
+	 * @returns チップ画像 範囲指定がおかしければnullが、初期化用のメソッドがまだ呼ばれていないなど内部状態のどこかがおかしければundefinedとかよくわからないものが返る
 	 */
 	getChipImage(i: number, j: ChipInversionKind) {
 		if (!j) j = 0;
