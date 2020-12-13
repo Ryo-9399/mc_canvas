@@ -1,8 +1,45 @@
 import { Dimension, createNDimensionArray, waitFor } from "./GlobalFunctions";
-import { Color, ImageBuff } from "./ImageBuff";
+import { Color, ImageBuff, Graphics } from "./ImageBuff";
+import { TagDataBase } from "./TagDataBase";
+import { MasaoConstruction } from "./MasaoConstruction";
+
+export type InversionKind = 0 | 1;
 
 class GameGraphicsForApplet {
-	constructor(dagdatabase, applet) {
+	tdb: TagDataBase;
+	ap: MasaoConstruction;
+	spt_kazu_x: number;
+	spt_kazu_y: number;
+	spt_kazu: number;
+	spt_h_kijyun: number;
+	mode: number;
+	oya: unknown;
+	di: Dimension;
+	backcolor: Color;
+	li: ImageBuff[];
+	mt: ImageBuff[];
+	os_img: ImageBuff;
+	os_g: Graphics;
+	os_g_bk: Graphics;
+	os2_img: ImageBuff;
+	os2_g: Graphics;
+	os32_img: ImageBuff;
+	os32_g: Graphics;
+	pg: unknown;
+	spt_img: ImageBuff[][];
+	hi: ImageBuff[] | undefined;
+	spt_option_img: ImageBuff[];
+	layer_mode: number;
+	amapchip_img: ImageBuff | undefined;
+	smapchip_img: ImageBuff[];
+	apt_img: ImageBuff;
+	font_score: string;
+	font_message: string;
+	system_screen_size: number;
+	system_screen_width: number;
+	system_screen_height: number;
+
+	constructor(dagdatabase: TagDataBase, applet: MasaoConstruction) {
 		this.tdb = dagdatabase;
 		this.ap = applet;
 		/**
@@ -54,17 +91,17 @@ class GameGraphicsForApplet {
 		 * ゲーム画面のグラフィック
 		 * @type {Graphics}
 		 */
-		this.os_g = this.os_img.getGraphics();
-		this.os_g_bk = this.os_img.getGraphicsBk();
+		this.os_g = this.os_img.getGraphics()!;
+		this.os_g_bk = this.os_img.getGraphicsBk()!;
 		this.os2_img = this.ap.createImage(this.di.width + 96, this.di.height + 96);
 		/**
 		 * 裏画面のグラフィック
 		 * 裏画面は描画予定のマップ上のブロックや地図画面を保持する
 		 * @type {Graphics}
 		 */
-		this.os2_g = this.os2_img.getGraphics();
+		this.os2_g = this.os2_img.getGraphics()!;
 		this.os32_img = this.ap.createImage(32, 32);
-		this.os32_g = this.os32_img.getGraphics();
+		this.os32_g = this.os32_img.getGraphics()!;
 		this.pg = undefined;
 		this.spt_img = createNDimensionArray(2, this.spt_kazu);
 		this.hi = undefined;
@@ -94,6 +131,9 @@ class GameGraphicsForApplet {
 			// ハック
 			if (this.amapchip_img == null) this.amapchip_img = new ImageBuff(512, 512);
 		}
+
+		this.font_score = "";
+		this.font_message = "";
 	}
 
 	/**
@@ -107,12 +147,16 @@ class GameGraphicsForApplet {
 				j = n * 10 + m;
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
-				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				if (localG) {
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
 				if (n >= this.spt_h_kijyun) {
 					this.spt_img[1][j] = new ImageBuff(32, 32);
 					localG = this.spt_img[1][j].getGraphics();
-					localG.scale(-1, 1);
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					if (localG) {
+						localG.scale(-1, 1);
+						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					}
 				} else {
 					this.spt_img[1][j] = this.spt_img[0][j];
 				}
@@ -147,8 +191,10 @@ class GameGraphicsForApplet {
 
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
-				localG.setGlobalAlpha(i5);
-				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				if (localG) {
+					localG.setGlobalAlpha(i5);
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
 			}
 		}
 		// ■■■32x32にカットする処理(mapchip)
@@ -161,7 +207,9 @@ class GameGraphicsForApplet {
 
 					this.smapchip_img[j] = new ImageBuff(32, 32);
 					localG = this.smapchip_img[j].getGraphics();
-					localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					if (localG && this.amapchip_img) {
+						localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					}
 				}
 			}
 		}
@@ -171,7 +219,7 @@ class GameGraphicsForApplet {
 	 * 画像を読み込み、新たなパターン画像とする
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
-	setPatternImage(filename) {
+	setPatternImage(filename: string) {
 		this.apt_img = this.ap.getImage(filename);
 		// TODO: ap.getImageがnullを返すことはあるのか？
 		// イメージを読み込めなかったときは操作を無効化するハック
@@ -184,12 +232,16 @@ class GameGraphicsForApplet {
 				j = n * 10 + m;
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
-				localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				if (localG) {
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
 				if (n >= this.spt_h_kijyun) {
 					this.spt_img[1][j] = new ImageBuff(32, 32);
 					localG = this.spt_img[1][j].getGraphics();
-					localG.scale(-1, 1);
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					if (localG) {
+						localG.scale(-1, 1);
+						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					}
 				} else {
 					this.spt_img[1][j] = this.spt_img[0][j];
 				}
@@ -201,7 +253,7 @@ class GameGraphicsForApplet {
 	 * 画像を読み込み、新たなマップチップ画像とする
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
-	setMapchipImage(filename) {
+	setMapchipImage(filename: string) {
 		if (this.layer_mode != 2) {
 			return;
 		}
@@ -220,7 +272,9 @@ class GameGraphicsForApplet {
 
 					this.smapchip_img[j] = new ImageBuff(32, 32);
 					localG = this.smapchip_img[j].getGraphics();
-					localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					if (localG) {
+						localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					}
 				}
 			}
 		}
@@ -231,7 +285,7 @@ class GameGraphicsForApplet {
 	 * @param {number} id 画像番号
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
-	addListImage(id, filename) {
+	addListImage(id: number, filename: string) {
 		this.li[id] = this.ap.getImage(filename);
 		this.mt.push(this.li[id]);
 	}
@@ -242,7 +296,7 @@ class GameGraphicsForApplet {
 	 * @param {number} id 画像番号
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
-	addListImage2(id, filename) {
+	addListImage2(id: number, filename: string) {
 		this.li[id] = this.ap.getImage(filename);
 	}
 
@@ -260,7 +314,7 @@ class GameGraphicsForApplet {
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 * @returns {ImageBuff|null} 読み込めない場合はnullを返す
 	 */
-	loadImage(filename) {
+	loadImage(filename: string) {
 		let image = null;
 		try {
 			image = this.ap.getImage(filename);
@@ -280,7 +334,7 @@ class GameGraphicsForApplet {
 	 * 指定されたGraphicsオブジェクトに現在のゲーム画面を描画する
 	 * @param {Graphics} graphics 描画先Graphicsオブジェクト
 	 */
-	copyOS(graphics) {
+	copyOS(graphics: Graphics) {
 		graphics.drawImage(this.os_img, 0, 0, this.ap);
 	}
 
@@ -304,7 +358,7 @@ class GameGraphicsForApplet {
 	 * 背景色を変更する
 	 * @param {Color} color
 	 */
-	setBackcolor(color) {
+	setBackcolor(color: Color) {
 		this.backcolor = color;
 	}
 
@@ -315,7 +369,7 @@ class GameGraphicsForApplet {
 	 * @param {number} pt [0,spt_kazu) パターンコード
 	 * @param {number} muki [0,1] 1なら左右反転
 	 */
-	drawPT(wx, wy, pt, muki) {
+	drawPT(wx: number, wy: number, pt: number, muki: InversionKind) {
 		this.os_g.drawImage(this.spt_img[muki][pt], wx, wy, this.ap);
 	}
 
@@ -325,8 +379,10 @@ class GameGraphicsForApplet {
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} pt [0,spt_kazu) パターンコード
 	 */
-	drawPT2(wx, wy, pt) {
-		this.os2_g.drawImage(this.hi[pt], wx, wy, this.ap);
+	drawPT2(wx: number, wy: number, pt: number) {
+		if (this.hi) {
+			this.os2_g.drawImage(this.hi[pt], wx, wy, this.ap);
+		}
 	}
 
 	/**
@@ -337,7 +393,7 @@ class GameGraphicsForApplet {
 	 * @param {number} pt [0,spt_kazu) パターンコード
 	 * @param {number} muki 1なら左右反転
 	 */
-	drawPattern(wx, wy, pt, muki) {
+	drawPattern(wx: number, wy: number, pt: number, muki: InversionKind) {
 		var i = 0;
 		if (muki == 1) {
 			i = 1;
@@ -353,7 +409,7 @@ class GameGraphicsForApplet {
 	 * @param {number} muki 1なら左右反転
 	 * @param {number} dy 描画しない部分の高さ
 	 */
-	drawPatternCut(wx, wy, pt, muki, dy) {
+	drawPatternCut(wx: number, wy: number, pt: number, muki: InversionKind, dy: number) {
 		var i = 0;
 		if (muki == 1) {
 			i = 1;
@@ -372,10 +428,12 @@ class GameGraphicsForApplet {
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} pt [0,spt_kazu) パターンコード
 	 */
-	drawBG2(wx, wy, pt) {
+	drawBG2(wx: number, wy: number, pt: number) {
 		this.os2_g.setColor(this.backcolor);
 		this.os2_g.fillRect(wx, wy, 32, 32);
-		this.os2_g.drawImage(this.hi[pt], wx, wy, this.ap);
+		if (this.hi) {
+			this.os2_g.drawImage(this.hi[pt], wx, wy, this.ap);
+		}
 	}
 
 	/**
@@ -386,10 +444,12 @@ class GameGraphicsForApplet {
 	 * @param {number} pt [0,spt_kazu) パターンコード
 	 * @param {Color} color 背後の色
 	 */
-	drawBG3(wx, wy, pt, color) {
+	drawBG3(wx: number, wy: number, pt: number, color: Color) {
 		this.os2_g.setColor(color);
 		this.os2_g.fillRect(wx, wy, 32, 32);
-		this.os2_g.drawImage(this.hi[pt], wx, wy, this.ap);
+		if (this.hi) {
+			this.os2_g.drawImage(this.hi[pt], wx, wy, this.ap);
+		}
 	}
 
 	/**
@@ -398,7 +458,7 @@ class GameGraphicsForApplet {
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} code パターンコード
 	 */
-	drawMapchip(wx, wy, code) {
+	drawMapchip(wx: number, wy: number, code: number) {
 		this.os_g.drawImage(this.smapchip_img[code], wx, wy, this.ap);
 	}
 
@@ -408,7 +468,7 @@ class GameGraphicsForApplet {
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} code パターンコード
 	 */
-	drawMapchip2(wx, wy, code) {
+	drawMapchip2(wx: number, wy: number, code: number) {
 		this.os2_g.drawImage(this.smapchip_img[code], wx, wy, this.ap);
 	}
 
@@ -418,7 +478,7 @@ class GameGraphicsForApplet {
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} id [0,this.li.length) 画像番号
 	 */
-	drawListImage(wx, wy, id) {
+	drawListImage(wx: number, wy: number, id: number) {
 		this.os_g.drawImage(this.li[id], wx, wy, this.ap);
 	}
 }

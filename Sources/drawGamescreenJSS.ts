@@ -1,11 +1,12 @@
 import { Color, Font } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
 import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { MainProgram } from "./MainProgram";
 
 /**
  * 仕掛けを描画します
  */
-export const drawGamescreenUgokuyuka = function() {
+export const drawGamescreenUgokuyuka = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	if (this.ana_kazu > 0) {
@@ -25,12 +26,7 @@ export const drawGamescreenUgokuyuka = function() {
 	if (this.j_tokugi === 14) {
 		for (let i = 0; i <= 1; i++)
 			if (this.co_mu[i].c >= 50)
-				this.hg.drawImage(
-					this.hih[1][105 + this.g_ac],
-					this.co_mu[i].x - view_x,
-					this.co_mu[i].y - view_y,
-					this.ap
-				);
+				this.hg.drawImage(this.hih[1][105 + this.g_ac], this.co_mu[i].x - view_x, this.co_mu[i].y - view_y, this.ap);
 	}
 	// ボスの描画
 	drawBossLegacy.apply(this);
@@ -40,7 +36,7 @@ export const drawGamescreenUgokuyuka = function() {
  * 敵を描画します
  * @see {@link MasaoJSS#drawSystemObject}
  */
-export const drawGamescreenEnemy = function() {
+export const drawGamescreenEnemy = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.t_kazu; i++) {
@@ -48,14 +44,14 @@ export const drawGamescreenEnemy = function() {
 		const co_wx = this.co_t[i].x - view_x;
 		const co_wy = this.co_t[i].y - view_y;
 		if (co_wx < -64 || co_wy > 576) continue;
-		if (this.co_t[i].img !== null)
-			this.hg.drawImage(this.co_t[i].img, co_wx + this.co_t[i].zs_x, co_wy + this.co_t[i].zs_y, this.ap);
+		const img = this.co_t[i].img;
+		if (img !== null) this.hg.drawImage(img, co_wx + this.co_t[i].zs_x, co_wy + this.co_t[i].zs_y, this.ap);
 		else this.hg.drawImage(this.hih[this.co_t[i].pth][this.co_t[i].pt], co_wx, co_wy, this.ap);
 	}
 };
 
 // ロードランナーで掘った穴を描画します
-export const drawAna = function() {
+export const drawAna = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 11; i++) {
@@ -80,7 +76,7 @@ export const drawAna = function() {
 /**
  * 仕掛けを描画します
  */
-export const drawA = function() {
+export const drawA = function (this: MainProgram) {
 	const ai = new Array(26); // ファイヤーリング表示用配列1
 	const ai1 = new Array(26); // ファイヤーリング表示用配列2
 	/**
@@ -91,7 +87,7 @@ export const drawA = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -106,7 +102,7 @@ export const drawA = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -931,7 +927,7 @@ export const drawA = function() {
 /**
  * 敵の攻撃・アイテムを描画します
  */
-export const drawM = function() {
+export const drawM = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 79; i++) {
@@ -948,12 +944,7 @@ export const drawM = function() {
 				const bgc = this.maps.getBGCode(cx, cy);
 				if (bgc < 20) continue;
 				if (this.gg.layer_mode === 2 && bgc === 29) continue;
-				this.gg.drawPT(
-					rightShiftIgnoreSign(cx, 5) * 32 - view_x,
-					rightShiftIgnoreSign(cy, 5) * 32 - view_y,
-					bgc,
-					0
-				);
+				this.gg.drawPT(rightShiftIgnoreSign(cx, 5) * 32 - view_x, rightShiftIgnoreSign(cy, 5) * 32 - view_y, bgc, 0);
 			}
 		} else if (characterobject.pt === 1000) {
 			// 水の波動
@@ -1034,7 +1025,7 @@ export const drawM = function() {
  * 主人公を描画します
  * @see {@link MasaoJSS#drawSystemObject}
  */
-export const drawGamescreenMy = function() {
+export const drawGamescreenMy = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	this.co_j.wx = this.co_j.x - view_x;
@@ -1094,13 +1085,9 @@ export const drawGamescreenMy = function() {
 			const zan_wx = this.j_zan_x[index] - view_x;
 			const zan_wy = this.j_zan_y[index] - view_y;
 			const muki = this.j_zan_pth[index];
-			if (this.j_zan_img[index] !== null)
-				this.hg.drawImage(
-					this.j_zan_img[index],
-					zan_wx + this.j_zan_zs_x[index],
-					zan_wy + this.j_zan_zs_y[index],
-					this.ap
-				);
+			const img = this.j_zan_img[index];
+			if (img !== null)
+				this.hg.drawImage(img, zan_wx + this.j_zan_zs_x[index], zan_wy + this.j_zan_zs_y[index], this.ap);
 			else this.hg.drawImage(this.hih[muki][this.j_zan_pt[index]], zan_wx, zan_wy, this.ap);
 		}
 
@@ -1215,7 +1202,12 @@ export const drawGamescreenMy = function() {
 			// 位置をずらして主人公を描画
 			this.gg.drawPT(this.co_j.wx + j_dx, this.co_j.wy + j_dy, 100, this.co_j.muki);
 			// 土管の左上の点の座標を算出
-			const dokan_diff = [[-16, 32], [-16, -32], [32, -16], [-32, -16]];
+			const dokan_diff = [
+				[-16, 32],
+				[-16, -32],
+				[32, -16],
+				[-32, -16],
+			];
 			const [d_dx, d_dy] = dokan_diff[dokan_type];
 			const dokan_wx = this.co_j.wx + d_dx;
 			const dokan_wy = this.co_j.wy + d_dy;
@@ -1226,34 +1218,18 @@ export const drawGamescreenMy = function() {
 				// ロープ等を上って静止しているとき
 				this.hg.dispose();
 				if (this.co_a[this.j_rope_id].c === 3200)
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				else
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				this.hg.drawImage(this.hih[this.co_j.muki][210], this.co_j.wx, this.co_j.wy, this.ap);
 				this.hg.dispose();
 			} else if (this.co_j.pt === 1201) {
 				// ロープ等を上っているとき
 				this.hg.dispose();
 				if (this.co_a[this.j_rope_id].c === 3200)
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy + 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				else
-					this.hg.rotate(
-						((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180,
-						this.co_j.wx + 16,
-						this.co_j.wy + 16
-					);
+					this.hg.rotate(((this.co_a[this.j_rope_id].vy - 90) * Math.PI) / 180, this.co_j.wx + 16, this.co_j.wy + 16);
 				this.hg.drawImage(this.hih[this.co_j.muki][211], this.co_j.wx, this.co_j.wy, this.ap);
 				this.hg.dispose();
 			} else if (this.co_j.pt === 1300) {
@@ -1286,7 +1262,7 @@ export const drawGamescreenMy = function() {
  * @param co_wx 土管の左上の点の画面上のX座標
  * @param co_wy 土管の左上の点の画面上のY座標
  */
-const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
+const drawDokan = function (this: MainProgram, dokan_id: number, dokan_type: number, co_wx: number, co_wy: number) {
 	const dokan_pt = 60 + dokan_id * 2;
 	// 土管の回転角度と回転の中心を算出する
 	let rad = 0;
@@ -1310,7 +1286,7 @@ const drawDokan = function(dokan_id, dokan_type, co_wx, co_wy) {
 /**
  * 主人公の攻撃を描画します
  */
-export const drawMyAttack = function() {
+export const drawMyAttack = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 8; i++) {
@@ -1344,7 +1320,7 @@ export const drawMyAttack = function() {
 /**
  * ボスを描画
  */
-export const drawBoss = function() {
+export const drawBoss = function (this: MainProgram) {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
 	/**
@@ -1370,7 +1346,7 @@ export const drawBoss = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -1385,7 +1361,7 @@ export const drawBoss = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -1528,7 +1504,7 @@ export const drawBoss = function() {
  * NOTE: Math.floorの有無を除くとv28のdrawBossとまったく同じ処理
  * TODO: この関数ごと消したい
  */
-const drawBossLegacy = function() {
+const drawBossLegacy = function (this: MainProgram) {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
 	/**
@@ -1550,7 +1526,7 @@ const drawBossLegacy = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWide = (code, nx, ny, x, y) => {
+	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
@@ -1565,7 +1541,7 @@ const drawBossLegacy = function() {
 	 * @param x 描画x座標
 	 * @param y 描画y座標
 	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
+	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
 		for (let cy = 0; cy < ny; cy++) {
 			for (let cx = 0; cx < nx; cx++) {
 				const code_x = nx - 1 - cx;
@@ -1678,7 +1654,7 @@ const drawBossLegacy = function() {
  * {@link MasaoJSS#drawSystemObject}以外では使われていない？
  * @see {@link MasaoJSS#drawSystemObject}
  */
-export const drawGamescreenWindow = function() {
+export const drawGamescreenWindow = function (this: MainProgram) {
 	// MasaoJSS#showRectで設定された矩形を表示
 	if (this.showr_c > 0) {
 		this.hg.setColor(this.js_pen_color);
@@ -1691,9 +1667,11 @@ export const drawGamescreenWindow = function() {
 	}
 	// MasaoJSS#showImageで設定された画像を表示
 	if (this.showi_c > 0) {
-		// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
-		if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
-		else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		if (this.showi_img) {
+			// TODO: this.hg.drawImageの第四引数は単に無視されるはずでは？プログラムの意図がわからないので要調査
+			if (this.gg.ap !== null) this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.ap);
+			else this.hg.drawImage(this.showi_img, this.showi_x, this.showi_y, this.gg.oya);
+		}
 	}
 	// ゲージを表示
 	if (this.gauge_v) drawHPGauge.apply(this);
@@ -1704,7 +1682,7 @@ export const drawGamescreenWindow = function() {
 /**
  * HPゲージを描画
  */
-export const drawHPGauge = function() {
+export const drawHPGauge = function (this: MainProgram) {
 	// 主人公のHPゲージが表示されているかどうかに応じて表示する座標を変える
 	const x = this.j_hp_v ? 40 : 64;
 	const y = this.j_hp_v ? (14 + this.moji_size) * 2 - 6 + 32 : 64;
@@ -1722,7 +1700,7 @@ export const drawHPGauge = function() {
 /**
  * スポット処理
  */
-export const drawSpot = function() {
+export const drawSpot = function (this: MainProgram) {
 	// TODO: co_j.wx, co_j.wyが更新されている前提の処理になっている
 	if (this.spot_c === 100) {
 		// TODO: そもそも変数名rで直径を表すな
@@ -1764,7 +1742,7 @@ export const drawSpot = function() {
 /**
  * 一言メッセージを描画
  */
-export const drawHitokotoMessage = function() {
+export const drawHitokotoMessage = function (this: MainProgram) {
 	const box_width = 224;
 	const box_x = rounddown(this.gg.di.width * 0.625 - box_width / 2);
 	const box_y = rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2);
@@ -1772,7 +1750,7 @@ export const drawHitokotoMessage = function() {
 	const messages = [];
 	for (let i = 1; i <= 3; i++) {
 		const param_name = `hitokoto${this.hitokoto_num}-${i}`;
-		const message = this.hitokoto_num === 5 ? this.showm_data[i] : this.tdb.getValue(param_name);
+		const message = this.hitokoto_num === 5 ? this.showm_data[i]! : this.tdb.getValue(param_name)!;
 		// 0と設定されている行は表示しない
 		if (parseInt(message) === 0) continue;
 		messages.push(message);
@@ -1787,7 +1765,7 @@ export const drawHitokotoMessage = function() {
 	// 名前を描画
 	this.hg.setColor(Color.cyan);
 	const param_name = `hitokoto${this.hitokoto_num}_name`;
-	const name = this.hitokoto_num === 5 ? this.showm_data[0] : this.tdb.getValue(param_name);
+	const name = this.hitokoto_num === 5 ? this.showm_data[0]! : this.tdb.getValue(param_name)!;
 	this.hg.drawString(name, box_x + 6, box_y + 6 + 12);
 
 	// メッセージ本文を描画
