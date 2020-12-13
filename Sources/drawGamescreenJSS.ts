@@ -50,7 +50,9 @@ export const drawGamescreenEnemy = function (this: MainProgram) {
 	}
 };
 
-// ロードランナーで掘った穴を描画します
+/**
+ * ロードランナーで掘った穴を描画します
+ */
 export const drawAna = function (this: MainProgram) {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
