@@ -1,6 +1,5 @@
 /**
  * マウス入力を管理する
- * @constructor
  */
 class GameMouse {
 	button_f: boolean;
@@ -24,7 +23,7 @@ class GameMouse {
 
 	/**
 	 * クリックされたときの処理
-	 * @param paramMouseEvent {MouseEvent}
+	 * @param paramMouseEvent
 	 */
 	mousePressed(paramMouseEvent: MouseEvent) {
 		var target = paramMouseEvent.target;
@@ -38,7 +37,7 @@ class GameMouse {
 
 	/**
 	 * マウスボタンが離されたときの処理
-	 * @param paramMouseEvent {MouseEvent}
+	 * @param paramMouseEvent
 	 */
 	mouseReleased(paramMouseEvent: MouseEvent) {
 		this.button_f = false;
