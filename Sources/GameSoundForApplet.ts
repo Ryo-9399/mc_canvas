@@ -54,16 +54,13 @@ class GameSoundForApplet {
 
 	/**
 	 * _loadに必要なものをinitする
-	 * @protected
 	 */
 	protected _init() {}
 
 	/**
 	 * se_filename フラグに応じてファイル名の配列を返す
-	 * @protected
-	 * @returns {string[]}
 	 */
-	_getSEFilenames() {
+	protected _getSEFilenames(): string[] {
 		var tdb = this.tdb;
 		var se_filename = parseInt(tdb.getValue("se_filename"));
 		var k;
@@ -132,10 +129,8 @@ class GameSoundForApplet {
 
 	/**
 	 * BGMのファイル名の配列を返す
-	 * @protected
-	 * @returns {string[]}
 	 */
-	_getBGMFilenames() {
+	protected _getBGMFilenames(): string[] {
 		var tdb = this.tdb;
 		return [
 			tdb.getValue("filename_fx_bgm_stage1"),
@@ -321,8 +316,6 @@ class GameSoundForApplet {
 
 	/**
 	 * Web Audio APIを使えるかどうか判定
-	 *
-	 * @static
 	 */
 	static factory(tdb: TagDataBase) {
 		if (
@@ -394,9 +387,8 @@ class GameSoundWebAudio extends GameSoundForApplet {
 	}
 	/**
 	 * 音声ファイルをXHRで読み込みcontextAudioClipに変換
-	 * @protected
 	 */
-	_loadAudioBufferInto(
+	protected _loadAudioBufferInto(
 		url: string,
 		target: (AudioBuffer | null)[],
 		index: number,
