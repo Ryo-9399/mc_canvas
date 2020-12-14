@@ -8,20 +8,46 @@ export type InversionKind = 0 | 1;
 class GameGraphicsForApplet {
 	tdb: TagDataBase;
 	ap: MasaoConstruction;
+	/**
+	 * パターン画像の横方向の分割数
+	 */
 	spt_kazu_x: number;
+	/**
+	 * パターン画像の縦方向の分割数
+	 */
 	spt_kazu_y: number;
+	/**
+	 * 分割されたパターン画像の総数
+	 * @type {number}
+	 */
 	spt_kazu: number;
 	spt_h_kijyun: number;
 	mode: number;
 	oya: unknown;
 	di: Dimension;
+	/**
+	 * 背景色
+	 */
 	backcolor: Color;
+	/**
+	 * タイトル画像などの一枚画像を格納する配列
+	 */
 	li: ImageBuff[];
+	/**
+	 * メディアトラッカー。画像が全て読み込み完了するのを待つために用いる
+	 */
 	mt: ImageBuff[];
 	os_img: ImageBuff;
+	/**
+	 * ゲーム画面のグラフィック
+	 */
 	os_g: Graphics;
 	os_g_bk: Graphics;
 	os2_img: ImageBuff;
+	/**
+	 * 裏画面のグラフィック
+	 * 裏画面は描画予定のマップ上のブロックや地図画面を保持する
+	 */
 	os2_g: Graphics;
 	os32_img: ImageBuff;
 	os32_g: Graphics;
@@ -42,20 +68,8 @@ class GameGraphicsForApplet {
 	constructor(dagdatabase: TagDataBase, applet: MasaoConstruction) {
 		this.tdb = dagdatabase;
 		this.ap = applet;
-		/**
-		 * パターン画像の横方向の分割数
-		 * @type {number}
-		 */
 		this.spt_kazu_x = 10;
-		/**
-		 * パターン画像の縦方向の分割数
-		 * @type {number}
-		 */
 		this.spt_kazu_y = 25;
-		/**
-		 * 分割されたパターン画像の総数
-		 * @type {number}
-		 */
 		this.spt_kazu = this.spt_kazu_x * this.spt_kazu_y;
 		this.spt_h_kijyun = 3;
 		this.mode = 2;
@@ -71,34 +85,13 @@ class GameGraphicsForApplet {
 			this.system_screen_height = 320;
 		}
 		this.di = new Dimension(this.system_screen_width, this.system_screen_height);
-		/**
-		 * 背景色
-		 * @type {Color}
-		 */
 		this.backcolor = Color.black;
-		/**
-		 * タイトル画像などの一枚画像を格納する配列
-		 * @type {Array<ImageBuff>}
-		 */
 		this.li = new Array(10);
-		/**
-		 * メディアトラッカー。画像が全て読み込み完了するのを待つために用いる
-		 * @type {Array<ImageBuff>}
-		 */
 		this.mt = [];
 		this.os_img = this.ap.createImage(this.di.width, this.di.height);
-		/**
-		 * ゲーム画面のグラフィック
-		 * @type {Graphics}
-		 */
 		this.os_g = this.os_img.getGraphics()!;
 		this.os_g_bk = this.os_img.getGraphicsBk()!;
 		this.os2_img = this.ap.createImage(this.di.width + 96, this.di.height + 96);
-		/**
-		 * 裏画面のグラフィック
-		 * 裏画面は描画予定のマップ上のブロックや地図画面を保持する
-		 * @type {Graphics}
-		 */
 		this.os2_g = this.os2_img.getGraphics()!;
 		this.os32_img = this.ap.createImage(32, 32);
 		this.os32_g = this.os32_img.getGraphics()!;
@@ -217,7 +210,7 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画像を読み込み、新たなパターン画像とする
-	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 * @param filename ファイル名(または画像のURL,相対パス)
 	 */
 	setPatternImage(filename: string) {
 		this.apt_img = this.ap.getImage(filename);
@@ -251,7 +244,7 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画像を読み込み、新たなマップチップ画像とする
-	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 * @param filename ファイル名(または画像のURL,相対パス)
 	 */
 	setMapchipImage(filename: string) {
 		if (this.layer_mode != 2) {
@@ -282,8 +275,8 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画像を読み込み、指定された番号の画像として格納する
-	 * @param {number} id 画像番号
-	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 * @param id 画像番号
+	 * @param filename ファイル名(または画像のURL,相対パス)
 	 */
 	addListImage(id: number, filename: string) {
 		this.li[id] = this.ap.getImage(filename);
@@ -293,8 +286,8 @@ class GameGraphicsForApplet {
 	/**
 	 * 画像を読み込み、指定された番号の画像として格納する
 	 * 読み込みの完了を監視しない
-	 * @param {number} id 画像番号
-	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 * @param id 画像番号
+	 * @param filename ファイル名(または画像のURL,相対パス)
 	 */
 	addListImage2(id: number, filename: string) {
 		this.li[id] = this.ap.getImage(filename);
@@ -311,8 +304,8 @@ class GameGraphicsForApplet {
 	/**
 	 * 外部ファイルから画像を読み込み、ImageBuffオブジェクトを返す
 	 * NOTE: 本来は読み込み完了まで待つが、待つ処理は現在実装されていない
-	 * @param {string} filename ファイル名(または画像のURL,相対パス)
-	 * @returns {ImageBuff|null} 読み込めない場合はnullを返す
+	 * @param filename ファイル名(または画像のURL,相対パス)
+	 * @returns 読み込めない場合はnullを返す
 	 */
 	loadImage(filename: string) {
 		let image = null;
@@ -332,7 +325,7 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 指定されたGraphicsオブジェクトに現在のゲーム画面を描画する
-	 * @param {Graphics} graphics 描画先Graphicsオブジェクト
+	 * @param graphics 描画先Graphicsオブジェクト
 	 */
 	copyOS(graphics: Graphics) {
 		graphics.drawImage(this.os_img, 0, 0, this.ap);
@@ -356,7 +349,7 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 背景色を変更する
-	 * @param {Color} color
+	 * @param color 新しい背景色
 	 */
 	setBackcolor(color: Color) {
 		this.backcolor = color;
@@ -364,10 +357,10 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画面上にパターン画像を描画する
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} pt [0,spt_kazu) パターンコード
-	 * @param {number} muki [0,1] 1なら左右反転
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param pt [0,spt_kazu) パターンコード
+	 * @param muki [0,1] 1なら左右反転
 	 */
 	drawPT(wx: number, wy: number, pt: number, muki: InversionKind) {
 		this.os_g.drawImage(this.spt_img[muki][pt], wx, wy, this.ap);
@@ -375,9 +368,9 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 裏画面上にパターン画像を描画する
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} pt [0,spt_kazu) パターンコード
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param pt [0,spt_kazu) パターンコード
 	 */
 	drawPT2(wx: number, wy: number, pt: number) {
 		if (this.hi) {
@@ -388,10 +381,10 @@ class GameGraphicsForApplet {
 	/**
 	 * 画面上にパターン画像を描画する
 	 * NOTE: drawPTとの違いとして、mukiが0,1以外の値をとる場合でも描画失敗とならずに描画を行う
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} pt [0,spt_kazu) パターンコード
-	 * @param {number} muki 1なら左右反転
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param pt [0,spt_kazu) パターンコード
+	 * @param muki 1なら左右反転
 	 */
 	drawPattern(wx: number, wy: number, pt: number, muki: InversionKind) {
 		var i = 0;
@@ -403,11 +396,11 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画面上にパターン画像を描画するが、上からdyピクセルの範囲は描画しない
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} pt [0,spt_kazu) パターンコード
-	 * @param {number} muki 1なら左右反転
-	 * @param {number} dy 描画しない部分の高さ
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param pt [0,spt_kazu) パターンコード
+	 * @param muki 1なら左右反転
+	 * @param dy 描画しない部分の高さ
 	 */
 	drawPatternCut(wx: number, wy: number, pt: number, muki: InversionKind, dy: number) {
 		var i = 0;
@@ -424,9 +417,9 @@ class GameGraphicsForApplet {
 	/**
 	 * 裏画面上にパターン画像を描画する
 	 * ただしパターン画像の透過部分を背景色で塗りつぶす
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} pt [0,spt_kazu) パターンコード
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param pt [0,spt_kazu) パターンコード
 	 */
 	drawBG2(wx: number, wy: number, pt: number) {
 		this.os2_g.setColor(this.backcolor);
@@ -439,10 +432,10 @@ class GameGraphicsForApplet {
 	/**
 	 * 裏画面上にパターン画像を描画する
 	 * ただしパターン画像の透過部分を指定した色で塗りつぶす
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} pt [0,spt_kazu) パターンコード
-	 * @param {Color} color 背後の色
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param pt [0,spt_kazu) パターンコード
+	 * @param color 背後の色
 	 */
 	drawBG3(wx: number, wy: number, pt: number, color: Color) {
 		this.os2_g.setColor(color);
@@ -454,9 +447,9 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画面上にマップチップ画像を描画する
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} code パターンコード
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param code パターンコード
 	 */
 	drawMapchip(wx: number, wy: number, code: number) {
 		this.os_g.drawImage(this.smapchip_img[code], wx, wy, this.ap);
@@ -464,9 +457,9 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 裏画面上にマップチップ画像を描画する
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} code パターンコード
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param code パターンコード
 	 */
 	drawMapchip2(wx: number, wy: number, code: number) {
 		this.os2_g.drawImage(this.smapchip_img[code], wx, wy, this.ap);
@@ -474,9 +467,9 @@ class GameGraphicsForApplet {
 
 	/**
 	 * 画面上にタイトル画面などの一枚画像を貼り付ける
-	 * @param {number} wx 画面上のX座標
-	 * @param {number} wy 画面上のY座標
-	 * @param {number} id [0,this.li.length) 画像番号
+	 * @param wx 画面上のX座標
+	 * @param wy 画面上のY座標
+	 * @param id [0,this.li.length) 画像番号
 	 */
 	drawListImage(wx: number, wy: number, id: number) {
 		this.os_g.drawImage(this.li[id], wx, wy, this.ap);
