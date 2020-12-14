@@ -1,6 +1,5 @@
 /**
  * キー入力を管理する
- * @constructor
  */
 class GameKey {
 	key_code = 0;
@@ -55,7 +54,7 @@ class GameKey {
 
 	/**
 	 * キー入力を受けた時の処理
-	 * @param paramKeyEvent {KeyboardEvent} 入力されたキーに関するイベント
+	 * @param paramKeyEvent 入力されたキーに関するイベント
 	 */
 	keyPressed(paramKeyEvent: Pick<KeyboardEvent, "keyCode" | "preventDefault">) {
 		this.key_code = paramKeyEvent.keyCode;
@@ -140,7 +139,7 @@ class GameKey {
 
 	/**
 	 * キーが離されたときの処理
-	 * @param paramKeyEvent {KeyboardEvent} キーに関するイベント
+	 * @param paramKeyEvent キーに関するイベント
 	 */
 	keyReleased(paramKeyEvent: Pick<KeyboardEvent, "keyCode" | "preventDefault">) {
 		var i = paramKeyEvent.keyCode;
@@ -220,7 +219,7 @@ class GameKey {
 
 	/**
 	 * 最後に押されたキーのキーコードを取得
-	 * @returns {number} キーコード
+	 * @returns キーコード
 	 */
 	getKeyCode() {
 		return this.key_code;
