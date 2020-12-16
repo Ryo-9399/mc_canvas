@@ -602,11 +602,12 @@ class Graphics {
 
 /**
  * JavaのGraphicsとの後方互換性を保つためのクラス (Graphicsを継承)
- * @param img {ImageBuff} もととなるImageBuffオブジェクト
- * @constructor
  */
 class GraphicsBk extends Graphics {
-	constructor(img: ImageBuff) {
+  /**
+   * @param img もととなるImageBuffオブジェクト
+   */
+  constructor(img: ImageBuff) {
 		super(img);
 	}
 
@@ -616,10 +617,10 @@ class GraphicsBk extends Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name drawImage
 	 * @variation 1
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param dx {number} 描画先X座標
-	 * @param dy {number} 描画先Y座標
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param img ImageBuffオブジェクト
+	 * @param dx 描画先X座標
+	 * @param dy 描画先Y座標
+	 * @returns 描画に成功したかどうか
 	 */
 	drawImage(img: ImageBuff, dx: number, dy: number, ap?: unknown): boolean;
 	/**
@@ -628,12 +629,12 @@ class GraphicsBk extends Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name drawImage
 	 * @variation 2
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param dx {number} 描画先X座標
-	 * @param dy {number} 描画先Y座標
-	 * @param dw {number} 描画される横方向の幅
-	 * @param dh {number} 描画される縦方向の高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param img ImageBuffオブジェクト
+	 * @param dx 描画先X座標
+	 * @param dy 描画先Y座標
+	 * @param dw 描画される横方向の幅
+	 * @param dh 描画される縦方向の高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	drawImage(img: ImageBuff, dx: number, dy: number, dw: number, dh: number, ap?: unknown): boolean;
 	/**
@@ -642,16 +643,16 @@ class GraphicsBk extends Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name drawImage
 	 * @variation 3
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param dx1 {number} 描画先矩形の1番目の隅のX座標
-	 * @param dy1 {number} 描画先矩形の1番目の隅のY座標
-	 * @param dx2 {number} 描画先矩形の2番目の隅のX座標
-	 * @param dy2 {number} 描画先矩形の2番目の隅のY座標
-	 * @param sx1 {number} ソース画像矩形の1番目の隅のX座標
-	 * @param sy1 {number} ソース画像矩形の1番目の隅のY座標
-	 * @param sx2 {number} ソース画像矩形の2番目の隅のX座標
-	 * @param sy2 {number} ソース画像矩形の2番目の隅のY座標
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param img ImageBuffオブジェクト
+	 * @param dx1 描画先矩形の1番目の隅のX座標
+	 * @param dy1 描画先矩形の1番目の隅のY座標
+	 * @param dx2 描画先矩形の2番目の隅のX座標
+	 * @param dy2 描画先矩形の2番目の隅のY座標
+	 * @param sx1 ソース画像矩形の1番目の隅のX座標
+	 * @param sy1 ソース画像矩形の1番目の隅のY座標
+	 * @param sx2 ソース画像矩形の2番目の隅のX座標
+	 * @param sy2 ソース画像矩形の2番目の隅のY座標
+	 * @returns 描画に成功したかどうか
 	 */
 	drawImage(
 		img: ImageBuff,
@@ -746,11 +747,6 @@ class GraphicsBk extends Graphics {
 
 /**
  * 色を表現するクラス
- * @param r {number} R(0-255)
- * @param g {number} G(0-255)
- * @param b {number} B(0-255)
- * @param [a=255] {number} アルファ値(0-255)
- * @constructor
  */
 class Color {
 	r: number;
@@ -758,7 +754,13 @@ class Color {
 	b: number;
 	a: number;
 
-	constructor(r: number, g: number, b: number, a?: number) {
+  /**
+   * @param r R(0-255)
+   * @param g G(0-255)
+   * @param b B(0-255)
+   * @param [a=255] アルファ値(0-255)
+   */
+  constructor(r: number, g: number, b: number, a?: number) {
 		if (r > 255) this.r = 255;
 		else if (r < 0) this.r = 0;
 		else this.r = r;
@@ -779,7 +781,6 @@ class Color {
 
 	/**
 	 * 赤色の値を取得する
-	 * @returns {number|*}
 	 */
 	getRed() {
 		return this.r;
@@ -787,7 +788,6 @@ class Color {
 
 	/**
 	 * 緑色の値を取得する
-	 * @returns {number|*}
 	 */
 	getGreen() {
 		return this.g;
@@ -795,7 +795,6 @@ class Color {
 
 	/**
 	 * 青色の値を取得する
-	 * @returns {number|*}
 	 */
 	getBlue() {
 		return this.b;
@@ -831,16 +830,17 @@ class Color {
 
 /**
  * フォントを表現するクラス
- * @param name {string} フォント名
- * @param style {string} フォントのスタイル指定 (0:通常 1:太字 2:イタリック)
- * @param size {number} フォントサイズ
- * @constructor
  */
 class Font {
 	_name: string;
 	_style: number;
 	_size: number;
 
+  /**
+   * @param name フォント名
+   * @param style フォントのスタイル指定 (0:通常 1:太字 2:イタリック)
+   * @param size フォントサイズ
+   */
 	constructor(name: string, style: number, size: number) {
 		this._name = name;
 		this._style = style;
