@@ -97,8 +97,8 @@ class MapSystem {
 
 	/**
 	 * 画面上にマップを描画する
-	 * @param {number} view_x 画面に描画される範囲の左上のX座標
-	 * @param {number} view_y 画面に描画される範囲の左上のY座標
+	 * @param view_x 画面に描画される範囲の左上のX座標
+	 * @param view_y 画面に描画される範囲の左上のY座標
 	 */
 	drawMap(view_x: number, view_y: number) {
 		this.wx = view_x;
@@ -120,11 +120,11 @@ class MapSystem {
 
 	/**
 	 * マップや背景レイヤー、背景画像を描画する
-	 * @param {number} view_x 画面に描画される範囲の左上のX座標
-	 * @param {number} view_y 画面に描画される範囲の左上のY座標
-	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
-	 * @param {number} gazou_scroll 背景画像のスクロール設定
-	 * @param {number} mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
+	 * @param view_x 画面に描画される範囲の左上のX座標
+	 * @param view_y 画面に描画される範囲の左上のY座標
+	 * @param g_ac2 コインなどのアニメーションに使用するカウンター
+	 * @param gazou_scroll 背景画像のスクロール設定
+	 * @param mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
 	 */
 	drawMapLayer(view_x: number, view_y: number, g_ac2: number, gazou_scroll: number, mode: number) {
 		this.wx = view_x;
@@ -432,7 +432,7 @@ class MapSystem {
 
 	/**
 	 * TODO: 要調査
-	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
+	 * @param g_ac2 コインなどのアニメーションに使用するカウンター
 	 */
 	drawMapScroll(g_ac2: number) {
 		const xmod = this.wx % 32;
@@ -605,9 +605,8 @@ class MapSystem {
 
 	/**
 	 * 指定した座標のマップコードを取得する
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} Y座標(ピクセル座標)
-	 * @returns {number}
+	 * @param x X座標(ピクセル座標)
+	 * @param y Y座標(ピクセル座標)
 	 * @see {@link MainProgram#setChipValue}
 	 */
 	getBGCode(x: number, y: number) {
@@ -616,9 +615,9 @@ class MapSystem {
 
 	/**
 	 * 指定したブロック座標のマップコードを書き換え、画面内である場合はその地点を再描画する
-	 * @param nx {number} X座標(ブロック座標)
-	 * @param ny {number} Y座標(ブロック座標)
-	 * @param {number} code マップコード
+	 * @param nx X座標(ブロック座標)
+	 * @param ny Y座標(ブロック座標)
+	 * @param code マップコード
 	 */
 	putBGCode(nx: number, ny: number, code: number) {
 		this.map_bg[nx][ny] = code;
