@@ -32,12 +32,6 @@ type Parts = {
 
 /**
  * ゲーム本体
- * @param gamegraphics {GameGraphicsForApplet}
- * @param gamemouse {GameMouse}
- * @param gamekey {GameKey}
- * @param gamesound {GameSoundForApplet}
- * @param tagdatabase {TagDataBase}
- * @constructor
  */
 class MainProgram {
 	mapWidth: number;
@@ -344,6 +338,13 @@ class MainProgram {
 	hg: Graphics;
 	ap: MasaoConstruction;
 
+	/**
+	 * @param gamegraphics
+	 * @param gamemouse
+	 * @param gamekey
+	 * @param gamesound
+	 * @param tagdatabase
+	 */
 	constructor(
 		gamegraphics: GameGraphicsForApplet,
 		gamemouse: GameMouse,
@@ -678,7 +679,7 @@ class MainProgram {
 
 	/**
 	 * 敵の最大インデックス(敵の総数-1)を取得
-	 * @returns {number}
+	 * @returns 敵の最大インデックス
 	 */
 	get t_kazu() {
 		if (this.co_t) {
@@ -690,7 +691,7 @@ class MainProgram {
 
 	/**
 	 * 仕掛けの最大インデックス(仕掛けの総数-1)を取得
-	 * @returns {number}
+	 * @returns 仕掛けの最大インデックス
 	 */
 	get a_kazu() {
 		if (this.co_a) {
@@ -702,7 +703,7 @@ class MainProgram {
 
 	/**
 	 * 床オブジェクトの最大インデックス(床オブジェクトの総数-1)を取得
-	 * @returns {number}
+	 * @returns 床オブジェクトの最大インデックス
 	 */
 	get yuka_id_max() {
 		if (this.yo) {
@@ -715,8 +716,8 @@ class MainProgram {
 	/**
 	 * ハイスコアイベントのコールバックを登録します
 	 * 複数回呼び出すと以前のイベントは置き換えられます
-	 * @param highscoreeventhandler {Function} ハイスコア更新時に呼び出されるコールバック関数 第一引数にハイスコアの得点が渡される
-	 * @returns {boolean} 常にtrue
+	 * @param highscoreeventhandler ハイスコア更新時に呼び出されるコールバック関数 第一引数にハイスコアの得点が渡される
+	 * @returns 常にtrue
 	 */
 	addHighscoreEvent(highscoreeventhandler: this["heh"]) {
 		this.heh = highscoreeventhandler;
@@ -743,8 +744,8 @@ class MainProgram {
 
 	/**
 	 * 主人公の特技を追加します
-	 * @param i {number} 特技の種類(1から30まで)
-	 * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+	 * @param i 特技の種類(1から30まで)
+	 * @returns 成功した場合(該当する特技が存在した場合)にtrueを返す
 	 * @see {@link MasaoJSS#addMyTokugi}
 	 */
 	addMyTokugi(i: number) {
@@ -912,8 +913,8 @@ class MainProgram {
 
 	/**
 	 * 主人公の特技を取り除きます
-	 * @param i {number} 特技の種類(1から30まで)
-	 * @returns {boolean} 成功した場合(該当する特技が存在した場合)にtrueを返す
+	 * @param i 特技の種類(1から30まで)
+	 * @returns 成功した場合(該当する特技が存在した場合)にtrueを返す
 	 * @see {@link MasaoJSS#removeMyTokugi}
 	 */
 	removeMyTokugi(i: number) {
@@ -1121,24 +1122,30 @@ class MainProgram {
 
 	/**
 	 * 一言メッセージを設定します
-	 * @param {number} time 表示時間（フレーム数）
-	 * @param {string} name 名前
-	 * @param {string} line1 メッセージ（1行目）
-	 * @param {string} line2 メッセージ（2行目）
-	 * @param {string} line3 メッセージ（3行目）
+	 * @param time 表示時間（フレーム数）
+	 * @param name 名前
+	 * @param line1 メッセージ（1行目）
+	 * @param line2 メッセージ（2行目）
+	 * @param line3 メッセージ（3行目）
 	 * @see {@link MasaoJSS#showMessage}
 	 */
-	showmSet(s: string | number, s1: string | null, s2: string | null, s3: string | null, s4: string | null) {
+	showmSet(
+		time: string | number,
+		name: string | null,
+		line1: string | null,
+		line2: string | null,
+		line3: string | null
+	) {
 		if (this.ml_mode != 100) return false;
-		this.showm_c = parseInt(s as string);
+		this.showm_c = parseInt(time as string);
 		if (isNaN(this.showm_c)) this.showm_c = 0;
 		if (this.showm_c <= 0) {
 			return false;
 		} else {
-			this.showm_data[0] = s1;
-			this.showm_data[1] = s2;
-			this.showm_data[2] = s3;
-			this.showm_data[3] = s4;
+			this.showm_data[0] = name;
+			this.showm_data[1] = line1;
+			this.showm_data[2] = line2;
+			this.showm_data[3] = line3;
 			return true;
 		}
 	}
@@ -1159,40 +1166,40 @@ class MainProgram {
 	 * マップ上に表示する画像を設定します
 	 * 座標はマップ上ではなくスクリーン上の位置で指定し、
 	 * 同時に設定できる画像は1つのみです
-	 * @param {number} time 表示時間（フレーム数）
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @param {ImageBuff} buf 表示する画像
-	 * @returns {boolean} 設定に成功するとtrueを返す
+	 * @param time 表示時間（フレーム数）
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param buf 表示する画像
+	 * @returns 設定に成功するとtrueを返す
 	 * @see {@link MasaoJSS#showImage}
 	 */
-	showiSet(s: string | number, s1: string | number, s2: string | number, s3: string) {
+	showiSet(time: string | number, x: string | number, y: string | number, buf: string) {
 		if (this.ml_mode != 100) return false;
-		this.showi_c = parseInt(s as string);
-		this.showi_x = parseInt(s1 as string);
-		this.showi_y = parseInt(s2 as string);
+		this.showi_c = parseInt(time as string);
+		this.showi_x = parseInt(x as string);
+		this.showi_y = parseInt(y as string);
 		if (isNaN(this.showi_c) || isNaN(this.showi_x) || isNaN(this.showi_y)) this.showi_c = 0;
 		if (this.showi_c <= 0) {
 			return false;
 		} else {
-			this.showi_img = this.gg.loadImage(s3);
+			this.showi_img = this.gg.loadImage(buf);
 			return true;
 		}
 	}
 
 	/**
 	 * 背景画像を設定します
-	 * @param {string} filename 画像のファイル名
-	 * @returns {boolean}
+	 * @param filename 画像のファイル名
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setBackImage}
 	 */
-	setbacki(s: string) {
+	setbacki(filename: string) {
 		if (this.ml_mode != 100) return false;
 		if (this.gg.layer_mode != 2 && this.mcs_haikei_visible != 1) {
 			return false;
 		} else {
 			this.setbacki_f = true;
-			this.setbacki_img = this.gg.loadImage(s);
+			this.setbacki_img = this.gg.loadImage(filename);
 			return true;
 		}
 	}
@@ -1201,21 +1208,21 @@ class MainProgram {
 	 * 主人公を一定時間停止させます。
 	 * 停止している間の主人公の画像（パターンコード）と向きを指定できます。
 	 *
-	 * @param {number} time 停止する時間（フレーム数）
-	 * @param {number} pattern 停止している間のパターンコード
-	 * @param {number} direction 向き（0なら左、1なら右）
-	 * @returns {boolean} 主人公を停止状態にできたかどうか
+	 * @param time 停止する時間（フレーム数）
+	 * @param pattern 停止している間のパターンコード
+	 * @param direction 向き（0なら左、1なら右）
+	 * @returns 主人公を停止状態にできたかどうか
 	 * @see {@link MasaoJSS#setMyWait}
 	 */
-	setMyWait(s: string | number, s1: string | number, s2: string | number) {
+	setMyWait(time: string | number, pattern: string | number, direction: string | number) {
 		let i = -1;
 		let j = 100;
 		let k = 1;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
+		i = parseInt(time as string);
+		j = parseInt(pattern as string);
+		k = parseInt(direction as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) i = -1;
 		if (i < 0) return false;
 		if (this.co_j.c >= 200) return false;
@@ -1235,7 +1242,7 @@ class MainProgram {
 	/**
 	 * ボスのHPを取得します。
 	 *
-	 * @returns {number} ボスのHP
+	 * @returns ボスのHP
 	 * @see {@link MasaoJSS#getBossHP}
 	 */
 	getBossHP() {
@@ -1247,8 +1254,8 @@ class MainProgram {
 	/**
 	 * ボスのHPを設定します。
 	 *
-	 * @param {number} hp 新しいHP
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param hp 新しいHP
+	 * @returns 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossHP}
 	 */
 	setBossHP(hp: number) {
@@ -1260,7 +1267,7 @@ class MainProgram {
 	 * ボスの向きを取得します。
 	 * 0が左向きで1が右向きです。
 	 *
-	 * @return {number} ボスの向き
+	 * @return ボスの向き
 	 * @see {@link MasaoJSS#getBossDirection}
 	 */
 	getBossDirection() {
@@ -1272,7 +1279,7 @@ class MainProgram {
 	 * ボスが攻撃中かどうかを取得します。
 	 * 攻撃中の場合1、そうでない場合は0となります。
 	 *
-	 * @returns {number}
+	 * @returns ボスが攻撃中かどうか
 	 * @see {@link MasaoJSS#isBossAttackMode}
 	 */
 	isBossAttackMode() {
@@ -1283,7 +1290,7 @@ class MainProgram {
 	/**
 	 * ボスのX座標を設定します。
 	 *
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @returns 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossXReal}
 	 */
 	setBossXReal(i: number) {
@@ -1299,7 +1306,7 @@ class MainProgram {
 	/**
 	 * ボスのY座標を設定します。
 	 *
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @returns 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossYReal}
 	 */
 	setBossYReal(i: number) {
@@ -1341,22 +1348,22 @@ class MainProgram {
 	 * * 8: パターン画像
 	 * * 9: 背景マップチップ画像
 	 *
-	 * @param {number} type 画像の種類
-	 * @param {string} filename ファイル名
+	 * @param type 画像の種類
+	 * @param filename ファイル名
 	 * @see {@link MasaoJSS#setSystemImage}
 	 */
-	setSystemImage(s: string | number, s1: string) {
+	setSystemImage(type: string | number, filename: string) {
 		let i;
 
-		i = parseInt(s as string);
+		i = parseInt(type as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0 || i > 9) return false;
-		if (i == 8) this.gg.setPatternImage(s1);
+		if (i == 8) this.gg.setPatternImage(filename);
 		else if (i == 9) {
-			this.gg.setMapchipImage(s1);
+			this.gg.setMapchipImage(filename);
 		} else {
 			if (this.gg.layer_mode != 2 && this.mcs_haikei_visible != 1 && i > 3) return false;
-			this.gg.li[i] = this.gg.loadImage(s1)!;
+			this.gg.li[i] = this.gg.loadImage(filename)!;
 			if (i == 3 && this.ml_mode == 200) this.ig.drawOs2();
 		}
 		return true;
@@ -1367,23 +1374,23 @@ class MainProgram {
 	 * 引数は全て画面の左上の位置で指定します。
 	 * マップの左上が(0, 0)です。
 	 *
-	 * @param {number} x1 範囲左上の座標
-	 * @param {number} y1 範囲左上の座標
-	 * @param {number} x2 範囲右下の座標
-	 * @param {number} y2 範囲右下の座標
+	 * @param x1 範囲左上の座標
+	 * @param y1 範囲左上の座標
+	 * @param x2 範囲右下の座標
+	 * @param y2 範囲右下の座標
 	 * @see {@link MasaoJSS#setScrollArea}
 	 */
-	setScrollArea(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
+	setScrollArea(x1: string | number, y1: string | number, x2: string | number, y2: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = this.mapWidth - rounddown(this.gg.di.width / 32);
 		let l = this.mapHeight - rounddown(this.gg.di.height / 32);
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
-		l = parseInt(s3 as string);
+		i = parseInt(x1 as string);
+		j = parseInt(y1 as string);
+		k = parseInt(x2 as string);
+		l = parseInt(y2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0 || i > this.mapWidth - rounddown(this.gg.di.width / 32)) return false;
 		if (k < 0 || k > this.mapWidth - rounddown(this.gg.di.width / 32)) return false;
@@ -1411,23 +1418,23 @@ class MainProgram {
 	 * 引数は全て画面の左上の位置で指定します。
 	 * マップの左上が(32, 320)です。
 	 *
-	 * @param {number} x1 範囲左上の座標
-	 * @param {number} y1 範囲左上の座標
-	 * @param {number} x2 範囲右下の座標
-	 * @param {number} y2 範囲右下の座標
+	 * @param x1 範囲左上の座標
+	 * @param y1 範囲左上の座標
+	 * @param x2 範囲右下の座標
+	 * @param y2 範囲右下の座標
 	 * @see {@link MasaoJSS#setScrollAreaReal}
 	 */
-	setScrollAreaReal(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
+	setScrollAreaReal(x1: string | number, y1: string | number, x2: string | number, y2: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = this.mapWidth - rounddown(this.gg.di.width / 32);
 		let l = this.mapHeight - rounddown(this.gg.di.height / 32);
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
-		l = parseInt(s3 as string);
+		i = parseInt(x1 as string);
+		j = parseInt(y1 as string);
+		k = parseInt(x2 as string);
+		l = parseInt(y2 as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 32 || i > (this.mapWidth - 15) * 32) return false;
 		if (k < 32 || k > (this.mapWidth - 15) * 32) return false;
@@ -1456,16 +1463,16 @@ class MainProgram {
 	 * * 1: ゲームオーバー画像の表示時間
 	 * * 2: ステージ開始時のステージ番号表示時間
 	 *
-	 * @param {number} type タイミング
-	 * @param {number} time 時間（フレーム）
+	 * @param type タイミング
+	 * @param time 時間（フレーム）
 	 * @see {@link MasaoJSS#setModeWait}
 	 */
-	setModeWait(s: string | number, s1: string | number) {
+	setModeWait(type: string | number, time: string | number) {
 		let i = 0;
 		let j = 100;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
+		i = parseInt(type as string);
+		j = parseInt(time as string);
 		if (isNaN(i) || isNaN(j)) i = -1;
 		if (i < 0 || i > 2) return false;
 		if (j < 0) return false;
@@ -1478,25 +1485,25 @@ class MainProgram {
 	/**
 	 * {@link MainProgram#showrSet}及び{@link MainProgram#showoSet}で表示される図形の色を指定します。各値は0から255までの整数で指定します。
 	 *
-	 * @param {number} r R成分
-	 * @param {number} g G成分
-	 * @param {number} b B成分
-	 * @param {number} [alpha=255] 不透明度
+	 * @param r R成分
+	 * @param g G成分
+	 * @param b B成分
+	 * @param alpha 不透明度
 	 *
 	 * @see {@link MasaoJSS#setPenColor}
 	 * @see {@link MainProgram#showrSet}
 	 * @see {@link MainProgram#showoSet}
 	 */
-	setPenColor(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
+	setPenColor(r: string | number, g: string | number, b: string | number, alpha: string | number) {
 		let i = 255;
 		let j = 255;
 		let k = 255;
 		let l = 255;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
-		l = parseInt(s3 as string);
+		i = parseInt(r as string);
+		j = parseInt(g as string);
+		k = parseInt(b as string);
+		l = parseInt(alpha as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) {
 			return false;
@@ -1510,21 +1517,27 @@ class MainProgram {
 	 * 一定時間表示する矩形を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
 	 * 同時に設定できる矩形は1つのみです。
 	 *
-	 * @param {number} time 表示時間（フレーム数）
-	 * @param {number} x 矩形の左端のX座標
-	 * @param {number} y 矩形の上端のY座標
-	 * @param {number} width 矩形の幅
-	 * @param {number} height 矩形の高さ
+	 * @param time 表示時間（フレーム数）
+	 * @param x 矩形の左端のX座標
+	 * @param y 矩形の上端のY座標
+	 * @param width 矩形の幅
+	 * @param height 矩形の高さ
 	 * @see {@link MasaoJSS#showRect}
 	 */
-	showrSet(s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string | number) {
+	showrSet(
+		time: string | number,
+		x: string | number,
+		y: string | number,
+		width: string | number,
+		height: string | number
+	) {
 		if (this.ml_mode != 100) return false;
 
-		this.showr_c = parseInt(s as string);
-		this.showr_x = parseInt(s1 as string);
-		this.showr_y = parseInt(s2 as string);
-		this.showr_width = parseInt(s3 as string);
-		this.showr_height = parseInt(s4 as string);
+		this.showr_c = parseInt(time as string);
+		this.showr_x = parseInt(x as string);
+		this.showr_y = parseInt(y as string);
+		this.showr_width = parseInt(width as string);
+		this.showr_height = parseInt(height as string);
 		if (
 			isNaN(this.showr_c) ||
 			isNaN(this.showr_x) ||
@@ -1540,21 +1553,27 @@ class MainProgram {
 	 * 一定時間表示する楕円を設定します。表示座標はマップ上の座標ではなくスクリーン上の座標で指定します。
 	 * 同時に設定できる楕円は1つのみです。
 	 *
-	 * @param {number} time 表示時間（フレーム数）
-	 * @param {number} x 楕円の左端のX座標
-	 * @param {number} y 楕円の上端のY座標
-	 * @param {number} width 楕円の幅
-	 * @param {number} height 楕円の高さ
+	 * @param time 表示時間（フレーム数）
+	 * @param x 楕円の左端のX座標
+	 * @param y 楕円の上端のY座標
+	 * @param width 楕円の幅
+	 * @param height 楕円の高さ
 	 * @see {@link MasaoJSS#showOval}
 	 */
-	showoSet(s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string | number) {
+	showoSet(
+		time: string | number,
+		x: string | number,
+		y: string | number,
+		width: string | number,
+		height: string | number
+	) {
 		if (this.ml_mode != 100) return false;
 
-		this.showo_c = parseInt(s as string);
-		this.showo_x = parseInt(s1 as string);
-		this.showo_y = parseInt(s2 as string);
-		this.showo_width = parseInt(s3 as string);
-		this.showo_height = parseInt(s4 as string);
+		this.showo_c = parseInt(time as string);
+		this.showo_x = parseInt(x as string);
+		this.showo_y = parseInt(y as string);
+		this.showo_width = parseInt(width as string);
+		this.showo_height = parseInt(height as string);
 		if (
 			isNaN(this.showo_c) ||
 			isNaN(this.showo_x) ||
@@ -1570,7 +1589,7 @@ class MainProgram {
 	 * JavaScript用メッセージを取得します。
 	 * メッセージはゲーム開始時1になります。
 	 *
-	 * @returns {number} メッセージ
+	 * @returns メッセージ
 	 * @see {@link MasaoJSS#getJSMes}
 	 */
 	getJSMes() {
@@ -1582,27 +1601,27 @@ class MainProgram {
 	 * showGaugeで表示できるゲージは1つだけで、ボスのHPゲージと共有です。
 	 * ゲージの値は最小が0、最大が200です。
 	 *
-	 * @param {number} value ゲージの値
-	 * @param {string} name ゲージに表示される文字列
+	 * @param value ゲージの値
+	 * @param name ゲージに表示される文字列
 	 * @see {@link MasaoJSS#showGauge}
 	 */
-	showGauge(s: string | number, s1: string) {
+	showGauge(value: string | number, name: string) {
 		let i = 0;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s as string);
+		i = parseInt(value as string);
 		if (isNaN(i)) i = 0;
 		if (i < 0) i = 0;
 		if (i > 200) i = 200;
 		this.gauge_v = true;
 		this.gauge_value = i;
-		this.gauge_text = s1;
+		this.gauge_text = name;
 		return true;
 	}
 
 	/**
 	 * ゲージを非表示にします。
-	 * @returns {boolean}
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#hideGauge}
 	 */
 	hideGauge() {
@@ -1617,7 +1636,7 @@ class MainProgram {
 	/**
 	 * JavaScript用メッセージを設定します。
 	 * @param s
-	 * @returns {boolean}
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setJSMes}
 	 */
 	setJSMes(s: string | number) {
@@ -1630,21 +1649,21 @@ class MainProgram {
 	 * 指定した位置に敵を設置します。
 	 * 位置はブロック単位で指定します。
 	 *
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @param {number} type 敵の種類
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param type 敵の種類
 	 * @see {@link MasaoJSS#setEnemy}
 	 */
-	sete(s: string | number, s1: string | number, s2: string | number) {
+	sete(x: string | number, y: string | number, type: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 0;
 		let flag = false;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
+		k = parseInt(type as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) k = 0;
 		if (k <= 0) return false;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) return false;
@@ -2179,14 +2198,14 @@ class MainProgram {
 	/**
 	 * スクロールロックを設定します。スクロール座標が指定したX座標に到達したら、そこで画面が固定されます。
 	 *
-	 * @param {number} x X座標
+	 * @param x X座標
 	 * @see {@link MasaoJSS#setScrollLock}
 	 */
-	setScrollLock(s: string | number) {
+	setScrollLock(x: string | number) {
 		let i = 32;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
+		i = parseInt(x as string);
 		if (isNaN(i)) i = 32;
 		if (i < 32) i = 32;
 		if (this.sl_step == 10 || this.sl_step == 11) this.sl_step = 11;
@@ -2201,14 +2220,14 @@ class MainProgram {
 	 * 指定範囲に入っていたファイヤーボールは消滅し、その数が返り値として返ります。
 	 * また、グレネードの当たり判定に入っていた場合、1つにつき返り値が10増加します。
 	 *
-	 * @param {number} x 範囲の左端のX座標
-	 * @param {number} y 範囲の上端のY座標
-	 * @param {number} width 範囲のX方向大きさ
-	 * @param {number} height 範囲のY方向大きさ
-	 * @returns {number}
+	 * @param x 範囲の左端のX座標
+	 * @param y 範囲の上端のY座標
+	 * @param width 範囲のX方向大きさ
+	 * @param height 範囲のY方向大きさ
+	 * @returns 当たり点数
 	 * @see {@link MasaoJSS#attackFire}
 	 */
-	attackFire(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
+	attackFire(x: string | number, y: string | number, width: string | number, height: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 32;
@@ -2216,10 +2235,10 @@ class MainProgram {
 		let i1 = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
-		l = parseInt(s3 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
+		k = parseInt(width as string);
+		l = parseInt(height as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) return -1;
 		if (this.jm_kazu > 0) {
@@ -2248,14 +2267,14 @@ class MainProgram {
 	 * 指定した矩形範囲にしっぽの攻撃判定を発生させます。
 	 * 範囲にしっぽが当たった場合は1を、当たっていない場合は0を、それ以外の場合は-1を返します。
 	 *
-	 * @param {number} x 範囲左端のX座標
-	 * @param {number} y 範囲上端のY座標
-	 * @param {number} width 範囲の横幅
-	 * @param {number} height 範囲の高さ
-	 * @returns {number}
+	 * @param x 範囲左端のX座標
+	 * @param y 範囲上端のY座標
+	 * @param width 範囲の横幅
+	 * @param height 範囲の高さ
+	 * @returns しっぽが当たったかどうか
 	 * @see {@link MasaoJSS#attackTail}
 	 */
-	attackTail(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
+	attackTail(x: string | number, y: string | number, width: string | number, height: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 32;
@@ -2263,10 +2282,10 @@ class MainProgram {
 		let i1 = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
-		l = parseInt(s3 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
+		k = parseInt(width as string);
+		l = parseInt(height as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) return -1;
 		if (this.j_tail_ac >= 3 && this.j_tail_ac <= 7 && this.attacktail_yf) {
@@ -2291,14 +2310,14 @@ class MainProgram {
 	/**
 	 * 指定した矩形範囲にいる敵を倒します。
 	 *
-	 * @param {number} x 範囲左端のX座標
-	 * @param {number} y 範囲上端のY座標
-	 * @param {number} width 範囲のX方向大きさ
-	 * @param {number} height 範囲のY方向大きさ
-	 * @returns {number} 倒した敵の数 エラー時は-1
+	 * @param x 範囲左端のX座標
+	 * @param y 範囲上端のY座標
+	 * @param width 範囲のX方向大きさ
+	 * @param height 範囲のY方向大きさ
+	 * @returns 倒した敵の数 エラー時は-1
 	 * @see {@link MasaoJSS#destroyEnemy}
 	 */
-	destroyEnemy(s: string | number, s1: string | number, s2: string | number, s3: string | number) {
+	destroyEnemy(x: string | number, y: string | number, width: string | number, height: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 0;
@@ -2306,10 +2325,10 @@ class MainProgram {
 		let i1 = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
-		l = parseInt(s3 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
+		k = parseInt(width as string);
+		l = parseInt(height as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l)) i = -1;
 		if (i < 0) return -1;
 		for (let j1 = 0; j1 <= this.t_kazu; j1++) {
@@ -2363,21 +2382,21 @@ class MainProgram {
 	/**
 	 * マップチップを1つ変更します。
 	 *
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @param {number} chip マップチップ番号
-	 * @returns {boolean} 変更に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param chip マップチップ番号
+	 * @returns 変更に成功したかどうか
 	 * @see {@link MasaoJSS#setMapchip}
 	 */
-	setmapc(s: string | number, s1: string | number, s2: string | number) {
+	setmapc(x: string | number, y: string | number, chip: string | number) {
 		let i = 0;
 		let j = 0;
 		var k = 0;
 		if (this.ml_mode != 100) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
+		k = parseInt(chip as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) k = -1;
 		if (k < 0 || k > 249) return false;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2395,19 +2414,19 @@ class MainProgram {
 	/**
 	 * マップチップを取得します。
 	 *
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @returns {number} マップチップ番号 失敗した場合は-1
+	 * @param x X座標
+	 * @param y Y座標
+	 * @returns マップチップ番号 失敗した場合は-1
 	 * @see {@link MasaoJSS#getMapchip}
 	 */
-	getmapc(s: string | number, s1: string | number) {
+	getmapc(x: string | number, y: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 0;
 		if (this.ml_mode != 100) return -1;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
 		if (isNaN(i) || isNaN(j)) k = -1;
 		if (k < 0) return -1;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2423,22 +2442,22 @@ class MainProgram {
 	/**
 	 * 背景レイヤーのマップチップを1つ変更します。
 	 *
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @param {number} chip マップチップ番号
-	 * @returns {boolean} 変更に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param chip マップチップ番号
+	 * @returns 変更に成功したかどうか
 	 * @see {@link MasaoJSS#setMapchip2}
 	 */
-	setmapc2(s: string | number, s1: string | number, s2: string | number) {
+	setmapc2(x: string | number, y: string | number, chip: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 0;
 		if (this.ml_mode != 100) return false;
 		if (this.gg.layer_mode != 2) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
+		k = parseInt(chip as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) k = -1;
 		if (k < 0 || k > 255) return false;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2454,20 +2473,20 @@ class MainProgram {
 	/**
 	 * 背景レイヤーのマップチップを取得します。
 	 *
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @returns {number} マップチップ番号 失敗した場合は-1
+	 * @param x X座標
+	 * @param y Y座標
+	 * @returns マップチップ番号 失敗した場合は-1
 	 * @see {@link MasaoJSS#getMapchip2}
 	 */
-	getmapc2(s: string | number, s1: string | number) {
+	getmapc2(x: string | number, y: string | number) {
 		let i = 0;
 		let j = 0;
 		let k = 0;
 		if (this.ml_mode != 100) return -1;
 		if (this.gg.layer_mode != 2) return -1;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
+		i = parseInt(x as string);
+		j = parseInt(y as string);
 		if (isNaN(i) || isNaN(j)) k = -1;
 		if (k < 0) return -1;
 		if (i < 0 || i >= this.mapWidth || j < 0 || j >= this.mapHeight) {
@@ -2483,27 +2502,27 @@ class MainProgram {
 	/**
 	 * 主人公のHP表示をONにします。
 	 *
-	 * @param {string|null} name HPの名前 nullにすると名前なし
-	 * @returns {boolean} 常にtrue
+	 * @param name HPの名前 nullにすると名前なし
+	 * @returns 常にtrue
 	 * @see {@link MasaoJSS#showMyHP}
 	 */
-	showMyHP(s: string | null) {
+	showMyHP(name: string | null) {
 		this.j_hp_v = true;
-		this.j_hp_moji = s ?? "";
+		this.j_hp_moji = name ?? "";
 		return true;
 	}
 
 	/**
 	 * 主人公の最大HPを設定します。
 	 *
-	 * @param {number} maxhp 最大HP
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param maxhp 最大HP
+	 * @returns 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setMyMaxHP}
 	 */
-	setMyMaxHP(s: string | number) {
+	setMyMaxHP(maxhp: string | number) {
 		let i = -1;
 
-		i = parseInt(s as string);
+		i = parseInt(maxhp as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0) return false;
 		this.j_hp_max = i;
@@ -2519,18 +2538,18 @@ class MainProgram {
 	/**
 	 * 主人公の現在のHPを設定します。
 	 *
-	 * @param {number} hp 0以上のHP
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param hp 0以上のHP
+	 * @returns 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setMyHP}
 	 */
-	setMyHP(s: string | number) {
+	setMyHP(hp: string | number) {
 		if (
 			(this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) &&
 			this.co_j.c >= 100 &&
 			this.co_j.c < 200
 		) {
 			let i;
-			i = parseInt(s as string);
+			i = parseInt(hp as string);
 			if (isNaN(i)) i = -1;
 			if (i < 0) {
 				return false;
@@ -2546,7 +2565,7 @@ class MainProgram {
 	/**
 	 * 主人公の現在のHPを取得します。
 	 *
-	 * @returns {number} 現在のHP
+	 * @returns 現在のHP
 	 * @see {@link MasaoJSS#getMyHP}
 	 */
 	getMyHP() {
@@ -2563,14 +2582,14 @@ class MainProgram {
 	 * 無敵時間中にこのメソッドを使うとHPは変化しませんが、返り値としてtrueが返ります。
 	 * 引数に負の値を与えると回復します。
 	 *
-	 * @param {number} damage ダメージ値
-	 * @returns {boolean} ダメージを与えることに成功したかどうか
+	 * @param damage ダメージ値
+	 * @returns ダメージを与えることに成功したかどうか
 	 * @see {@link MasaoJSS#setMyHPDamage}
 	 */
-	setMyHPDamage(s: string | number) {
+	setMyHPDamage(damage: string | number) {
 		if (this.ml_mode == 100 && this.co_j.c >= 100 && this.co_j.c < 200) {
 			let j;
-			j = parseInt(s as string);
+			j = parseInt(damage as string);
 			if (isNaN(j)) j = 0xfffe7961;
 			if (j == 0xfffe7961) return false;
 			if (this.j_muteki_c > 0) return true;
@@ -2605,8 +2624,8 @@ class MainProgram {
 
 	/**
 	 * 0以上i未満の乱整数を返します
-	 * @param i {number}
-	 * @returns {number} 0以上i未満のランダムな整数値
+	 * @param i 整数の最大値（この数自身は含まない）
+	 * @returns 0以上i未満のランダムな整数値
 	 */
 	ranInt(i: number) {
 		//xor-shift 乱数(a=9, b=11, c=19)
@@ -2679,7 +2698,7 @@ class MainProgram {
 			const key_y = this.gg.di.height - 40;
 
 			/**
-			 * @param n {number} 鍵の種類
+			 * @param n 鍵の種類
 			 */
 			const drawKey = (n: number) => {
 				if (this.dkey_count[n - 1] > 0) {
@@ -2749,7 +2768,7 @@ class MainProgram {
 	 * スコアを加算します。
 	 * 負の値を渡すとスコアが減ります。
 	 *
-	 * @param {number} score 加算するスコア
+	 * @param score 加算するスコア
 	 *
 	 * @see {@link MasaoJSS#addScore}
 	 */
@@ -2768,7 +2787,7 @@ class MainProgram {
 	/**
 	 * マップ全体に配置されたコインの総数を取得します
 	 * scroll_areaタグの設定によりスクロール可能な範囲が制限されている場合、その範囲の中のコインの総数を数えます
-	 * @returns {number} マップに本来存在するコインの総数
+	 * @returns マップに本来存在するコインの総数
 	 */
 	getCoinTotal() {
 		let c = this.mapWidth;
@@ -2790,14 +2809,14 @@ class MainProgram {
 	 * @param y1 始点のY座標
 	 * @param x2 終点のX座標
 	 * @param y2 終点のY座標
-	 * @returns {number}
+	 * @returns 指定矩形範囲内に配置されたコインの数
 	 */
-	getCoinCount(i: number, j: number, k: number, l: number) {
+	getCoinCount(x1: number, y1: number, x2: number, y2: number) {
 		if (this.ml_mode == 100 || this.ml_mode == 90 || this.ml_mode == 91 || this.ml_mode == 96) {
-			let j1 = i + 1;
-			let k1 = j + 10;
-			let l1 = k + 1;
-			let i2 = l + 10;
+			let j1 = x1 + 1;
+			let k1 = y1 + 10;
+			let l1 = x2 + 1;
+			let i2 = y2 + 10;
 			if (j1 < 1) j1 = 1;
 			if (j1 > this.mapWidth) j1 = this.mapWidth;
 			if (l1 < 1) l1 = 1;
@@ -2843,9 +2862,9 @@ class MainProgram {
 
 	/**
 	 * 主に地図画面表示で使うセリフを追加する
-	 * @param {number} index 追加する場所(？) TODO: 要調査
-	 * @param {number} person_id セリフを言う人の番号
-	 * @param {number} max_row 1からmax_row行目までを表示する
+	 * @param index 追加する場所(？) TODO: 要調査
+	 * @param person_id セリフを言う人の番号
+	 * @param max_row 1からmax_row行目までを表示する
 	 */
 	addSerifu(index: number, person_id: string | number, max_row: number) {
 		for (let i = 1; i <= max_row; i++) {
@@ -2857,27 +2876,27 @@ class MainProgram {
 
 	/**
 	 * FX以降に追加されたセリフを追加する
-	 * @param {number} index 追加する場所(？) TODO: 要調査
-	 * @param {number} person_param セリフを言う人のパラメータの名前
-	 * @param {number} start_row 表示開始する行
-	 * @param {number} end_row 表示終了する行
+	 * @param index 追加する場所(？) TODO: 要調査
+	 * @param person_param セリフを言う人のパラメータの名前
+	 * @param start_row 表示開始する行
+	 * @param end_row 表示終了する行
 	 */
-	addSerifu2(i: number, s: string, j: number, k?: number) {
+	addSerifu2(index: number, person_param: string, start_row: number, end_row?: number) {
 		let l, k1, k2;
-		if (k == undefined) {
+		if (end_row == undefined) {
 			k1 = 1;
-			k2 = j;
+			k2 = start_row;
 		} else {
-			k1 = j;
-			k2 = k;
+			k1 = start_row;
+			k2 = end_row;
 		}
 		for (l = k1; l <= k2; l++) {
-			const s1 = this.tdb.getValue(`${s}${l}`);
+			const s1 = this.tdb.getValue(`${person_param}${l}`);
 			let i1;
 			i1 = parseInt(s1 as string);
 			if (isNaN(i1)) i1 = -1;
 			// NOTE: issue #34
-			if (i1 != 0) this.km.addItem(i, s1 || "");
+			if (i1 != 0) this.km.addItem(index, s1 || "");
 		}
 	}
 
@@ -4048,10 +4067,10 @@ class MainProgram {
 		/**
 		 * 色パラメータを設定します。
 		 *
-		 * @param {number} r
-		 * @param {number} g
-		 * @param {number} b
-		 * @param {string} param
+		 * @param r
+		 * @param g
+		 * @param b
+		 * @param param
 		 */
 		const setColorParam = (r: string, g: string, b: string, param: `gamecolor_${string}` & keyof MainProgram) => {
 			const color = [r, g, b];
@@ -4991,522 +5010,522 @@ class MainProgram {
 
 	/**
 	 * マップ上に仕掛けを配置します 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap} 参照
-	 * @param type {number} 配置する仕掛けの種類
-	 * @param blockX {number} 配置先のブロックX座標
-	 * @param blockY {number} 配置先のブロックY座標
-	 * @returns {number}
+	 * @param type 配置する仕掛けの種類
+	 * @param blockX 配置先のブロックX座標
+	 * @param blockY 配置先のブロックY座標
+	 * @returns 配置された仕掛けのカテゴリを表す整数？ (TODO: 要調査)
 	 * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.setAthleticOnMap}
 	 */
-	setAthleticOnMap(i: number, j: number, k: number) {
+	setAthleticOnMap(type: number, blockX: number, blockY: number) {
 		let word0 = -1;
-		if (this.maps.map_bg[j - 1][k] == 4) word0 = 4;
-		if (i == 2) this.aSet(j * 32, k * 32, 500, j * 32);
-		else if (i == 3) this.aSet(j * 32, k * 32, 510, j * 32);
-		else if (i == 4) this.aSet(j * 32, k * 32, 120, j * 32);
-		else if (i == 5) this.aSet(j * 32, k * 32, 121, j * 32);
-		else if (i == 6) this.aSet(j * 32, k * 32, 600, j * 32);
-		else if (i == 7) this.aSet(j * 32, k * 32, 700, j * 32);
-		else if (i == 8) this.aSet(j * 32 - 32, k * 32, 410, j * 32);
-		else if (i == 9) this.aSet(j * 32 - 32, k * 32, 420, j * 32);
-		else if (i == 10) this.aSet(j * 32 - 32, k * 32, 430, j * 32);
-		else if (i == 11) this.aSet(j * 32 - 32, k * 32, 440, j * 32);
-		else if (i == 12) this.aSet(j * 32 - 32, k * 32, 450, j * 32);
-		else if (i == 13) this.aSet(j * 32 - 32, k * 32, 460, j * 32);
-		else if (i == 14) this.aSet(j * 32 - 32, k * 32, 470, j * 32);
-		else if (i == 15) this.aSet(j * 32 - 32, k * 32, 480, j * 32);
-		else if (i == 16) this.aSet(j * 32 - 32, k * 32, 481, j * 32);
-		else if (i == 17) this.aSet(j * 32 - 32, k * 32, 482, j * 32);
-		else if (i == 18) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 72, j * 32);
-			this.aSet(j * 32 + 16, k * 32 + 16, 73, j * 32);
+		if (this.maps.map_bg[blockX - 1][blockY] == 4) word0 = 4;
+		if (type == 2) this.aSet(blockX * 32, blockY * 32, 500, blockX * 32);
+		else if (type == 3) this.aSet(blockX * 32, blockY * 32, 510, blockX * 32);
+		else if (type == 4) this.aSet(blockX * 32, blockY * 32, 120, blockX * 32);
+		else if (type == 5) this.aSet(blockX * 32, blockY * 32, 121, blockX * 32);
+		else if (type == 6) this.aSet(blockX * 32, blockY * 32, 600, blockX * 32);
+		else if (type == 7) this.aSet(blockX * 32, blockY * 32, 700, blockX * 32);
+		else if (type == 8) this.aSet(blockX * 32 - 32, blockY * 32, 410, blockX * 32);
+		else if (type == 9) this.aSet(blockX * 32 - 32, blockY * 32, 420, blockX * 32);
+		else if (type == 10) this.aSet(blockX * 32 - 32, blockY * 32, 430, blockX * 32);
+		else if (type == 11) this.aSet(blockX * 32 - 32, blockY * 32, 440, blockX * 32);
+		else if (type == 12) this.aSet(blockX * 32 - 32, blockY * 32, 450, blockX * 32);
+		else if (type == 13) this.aSet(blockX * 32 - 32, blockY * 32, 460, blockX * 32);
+		else if (type == 14) this.aSet(blockX * 32 - 32, blockY * 32, 470, blockX * 32);
+		else if (type == 15) this.aSet(blockX * 32 - 32, blockY * 32, 480, blockX * 32);
+		else if (type == 16) this.aSet(blockX * 32 - 32, blockY * 32, 481, blockX * 32);
+		else if (type == 17) this.aSet(blockX * 32 - 32, blockY * 32, 482, blockX * 32);
+		else if (type == 18) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 72, blockX * 32);
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 73, blockX * 32);
 			word0 = 50;
-		} else if (i == 19) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 72, j * 32);
-			this.aSet(j * 32 + 16, k * 32 + 16, 74, j * 32);
-			this.aSet(j * 32 + 16, k * 32 + 16, 76, j * 32);
+		} else if (type == 19) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 72, blockX * 32);
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 74, blockX * 32);
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 76, blockX * 32);
 			word0 = 50;
-		} else if (i == 20) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 73, j * 32);
-			this.aSet(j * 32 + 16, k * 32 + 16, 75, j * 32);
-			this.aSet(j * 32 + 16, k * 32 + 16, 77, j * 32);
+		} else if (type == 20) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 73, blockX * 32);
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 75, blockX * 32);
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 77, blockX * 32);
 			word0 = 50;
-		} else if (i == 21) this.aSet(j * 32, k * 32, 85, j * 32);
-		else if (i == 22) {
+		} else if (type == 21) this.aSet(blockX * 32, blockY * 32, 85, blockX * 32);
+		else if (type == 22) {
 			word0 = 40;
-			this.hSet(j, k, 2000);
-		} else if (i == 23) {
+			this.hSet(blockX, blockY, 2000);
+		} else if (type == 23) {
 			word0 = 40;
-			this.hSet(j, k, 2100);
-		} else if (i == 24) {
+			this.hSet(blockX, blockY, 2100);
+		} else if (type == 24) {
 			word0 = 40;
-			this.hSet(j, k, 2200);
-		} else if (i == 25) this.aSet(j * 32, k * 32, 90, j * 32);
-		else if (i == 26) this.aSet(j * 32, k * 32, 91, j * 32);
-		else if (i == 27) this.aSet(j * 32, k * 32, 92, j * 32);
-		else if (i == 28) {
-			this.aSet(j * 32, k * 32, 93, j * 32);
+			this.hSet(blockX, blockY, 2200);
+		} else if (type == 25) this.aSet(blockX * 32, blockY * 32, 90, blockX * 32);
+		else if (type == 26) this.aSet(blockX * 32, blockY * 32, 91, blockX * 32);
+		else if (type == 27) this.aSet(blockX * 32, blockY * 32, 92, blockX * 32);
+		else if (type == 28) {
+			this.aSet(blockX * 32, blockY * 32, 93, blockX * 32);
 			word0 = 50;
-		} else if (i == 29) {
-			this.aSet(j * 32, k * 32, 93, j * 32);
-			this.aSet(j * 32, k * 32, 94, j * 32);
+		} else if (type == 29) {
+			this.aSet(blockX * 32, blockY * 32, 93, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32, 94, blockX * 32);
 			word0 = 50;
-		} else if (i == 30) {
-			this.aSet(j * 32, k * 32, 95, j * 32);
+		} else if (type == 30) {
+			this.aSet(blockX * 32, blockY * 32, 95, blockX * 32);
 			word0 = 50;
-		} else if (i == 31) {
-			this.aSet(j * 32, k * 32, 96, j * 32);
+		} else if (type == 31) {
+			this.aSet(blockX * 32, blockY * 32, 96, blockX * 32);
 			word0 = 50;
-		} else if (i == 32) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 78, j * 32);
+		} else if (type == 32) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 78, blockX * 32);
 			word0 = 50;
-		} else if (i == 33) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 79, j * 32);
+		} else if (type == 33) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 79, blockX * 32);
 			word0 = 50;
-		} else if (i == 34) {
+		} else if (type == 34) {
 			word0 = 40;
-			this.hSet(j, k, 2300);
-		} else if (i == 35) {
+			this.hSet(blockX, blockY, 2300);
+		} else if (type == 35) {
 			word0 = 40;
-			this.hSet(j, k, 2400);
-		} else if (i == 36) {
+			this.hSet(blockX, blockY, 2400);
+		} else if (type == 36) {
 			word0 = 40;
-			this.hSet(j, k, 2500);
-		} else if (i == 37) {
+			this.hSet(blockX, blockY, 2500);
+		} else if (type == 37) {
 			word0 = 40;
-			this.hSet(j, k, 2600);
-		} else if (i == 38) {
+			this.hSet(blockX, blockY, 2600);
+		} else if (type == 38) {
 			word0 = 40;
-			this.hSet(j, k, 2700);
-		} else if (i == 39) {
+			this.hSet(blockX, blockY, 2700);
+		} else if (type == 39) {
 			word0 = 40;
-			this.hSet(j, k, 2800);
-		} else if (i == 40) {
+			this.hSet(blockX, blockY, 2800);
+		} else if (type == 40) {
 			word0 = 40;
-			this.hSet(j, k, 2900);
-		} else if (i == 41) {
+			this.hSet(blockX, blockY, 2900);
+		} else if (type == 41) {
 			word0 = 40;
-			this.hSet(j, k, 3000);
-		} else if (i == 42) {
+			this.hSet(blockX, blockY, 3000);
+		} else if (type == 42) {
 			word0 = 40;
-			this.hSet(j, k, 3100);
-		} else if (i == 43) {
+			this.hSet(blockX, blockY, 3100);
+		} else if (type == 43) {
 			word0 = 40;
-			this.hSet(j, k, 3200);
-		} else if (i == 44) this.aSet(j * 32, k * 32, 86, j * 32);
-		else if (i == 45) this.aSet(j * 32, k * 32, 87, j * 32);
-		else if (i == 46) this.aSet(j * 32, k * 32, 88, j * 32);
-		else if (i == 47) this.aSet(j * 32, k * 32 + 32, 1000, j * 32);
-		else if (i == 48) this.aSet(j * 32, k * 32, 1001, j * 32);
-		else if (i == 49) this.aSet(j * 32 + 32, k * 32, 1002, j * 32);
-		else if (i == 50) this.aSet(j * 32, k * 32, 1003, j * 32);
-		else if (i == 51) this.aSet(j * 32, k * 32, 1010, j * 32);
-		else if (i == 52) this.aSet(j * 32, k * 32, 1020, j * 32);
-		else if (i == 53) this.aSet(j * 32 - 32, k * 32, 485, j * 32);
-		else if (i == 54) this.aSet(j * 32 - 32, k * 32, 486, j * 32);
-		else if (i == 55) this.aSet(j * 32 - 32, k * 32, 487, j * 32);
-		else if (i == 56) {
-			this.aSet(j * 32, k * 32, 1100, j * 32);
+			this.hSet(blockX, blockY, 3200);
+		} else if (type == 44) this.aSet(blockX * 32, blockY * 32, 86, blockX * 32);
+		else if (type == 45) this.aSet(blockX * 32, blockY * 32, 87, blockX * 32);
+		else if (type == 46) this.aSet(blockX * 32, blockY * 32, 88, blockX * 32);
+		else if (type == 47) this.aSet(blockX * 32, blockY * 32 + 32, 1000, blockX * 32);
+		else if (type == 48) this.aSet(blockX * 32, blockY * 32, 1001, blockX * 32);
+		else if (type == 49) this.aSet(blockX * 32 + 32, blockY * 32, 1002, blockX * 32);
+		else if (type == 50) this.aSet(blockX * 32, blockY * 32, 1003, blockX * 32);
+		else if (type == 51) this.aSet(blockX * 32, blockY * 32, 1010, blockX * 32);
+		else if (type == 52) this.aSet(blockX * 32, blockY * 32, 1020, blockX * 32);
+		else if (type == 53) this.aSet(blockX * 32 - 32, blockY * 32, 485, blockX * 32);
+		else if (type == 54) this.aSet(blockX * 32 - 32, blockY * 32, 486, blockX * 32);
+		else if (type == 55) this.aSet(blockX * 32 - 32, blockY * 32, 487, blockX * 32);
+		else if (type == 56) {
+			this.aSet(blockX * 32, blockY * 32, 1100, blockX * 32);
 			word0 = 26;
-		} else if (i == 57) {
-			this.aSet(j * 32, k * 32, 1150, j * 32);
+		} else if (type == 57) {
+			this.aSet(blockX * 32, blockY * 32, 1150, blockX * 32);
 			word0 = 26;
-		} else if (i == 58) this.aSet(j * 32, k * 32 + 32, 1200, j * 32);
-		else if (i == 59) {
-			this.aSet(j * 32, k * 32 + 32, 1200, j * 32);
-			this.aSet(j * 32, k * 32 + 32, 1201, j * 32);
-		} else if (i == 60) {
-			this.aSet(j * 32, k * 32, 1300, j * 32);
+		} else if (type == 58) this.aSet(blockX * 32, blockY * 32 + 32, 1200, blockX * 32);
+		else if (type == 59) {
+			this.aSet(blockX * 32, blockY * 32 + 32, 1200, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 32, 1201, blockX * 32);
+		} else if (type == 60) {
+			this.aSet(blockX * 32, blockY * 32, 1300, blockX * 32);
 			word0 = 50;
-		} else if (i == 61) {
-			this.aSet(j * 32, k * 32, 1300, j * 32);
-			this.aSet(j * 32, k * 32, 1301, j * 32);
+		} else if (type == 61) {
+			this.aSet(blockX * 32, blockY * 32, 1300, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32, 1301, blockX * 32);
 			word0 = 50;
-		} else if (i == 62) this.aSet(j * 32, k * 32, 610, j * 32);
-		else if (i == 63) this.aSet(j * 32, k * 32 + 32, 1005, j * 32);
-		else if (i == 64) this.aSet(j * 32, k * 32, 1006, j * 32);
-		else if (i == 65) this.aSet(j * 32 + 32, k * 32, 1007, j * 32);
-		else if (i == 66) this.aSet(j * 32, k * 32, 1008, j * 32);
-		else if (i == 67) {
+		} else if (type == 62) this.aSet(blockX * 32, blockY * 32, 610, blockX * 32);
+		else if (type == 63) this.aSet(blockX * 32, blockY * 32 + 32, 1005, blockX * 32);
+		else if (type == 64) this.aSet(blockX * 32, blockY * 32, 1006, blockX * 32);
+		else if (type == 65) this.aSet(blockX * 32 + 32, blockY * 32, 1007, blockX * 32);
+		else if (type == 66) this.aSet(blockX * 32, blockY * 32, 1008, blockX * 32);
+		else if (type == 67) {
 			word0 = 212;
-			this.aSet(j * 32, k * 32, 1400, j * 32);
-		} else if (i == 68) {
+			this.aSet(blockX * 32, blockY * 32, 1400, blockX * 32);
+		} else if (type == 68) {
 			word0 = 213;
-			this.aSet(j * 32, k * 32, 1401, j * 32);
-		} else if (i == 69) {
+			this.aSet(blockX * 32, blockY * 32, 1401, blockX * 32);
+		} else if (type == 69) {
 			word0 = 214;
-			this.aSet(j * 32, k * 32, 1402, j * 32);
-		} else if (i == 70) {
+			this.aSet(blockX * 32, blockY * 32, 1402, blockX * 32);
+		} else if (type == 70) {
 			word0 = 215;
-			this.aSet(j * 32, k * 32, 1403, j * 32);
-		} else if (i == 71) this.aSet(j * 32, k * 32, 1500, j * 32);
-		else if (i == 72) this.aSet(j * 32, k * 32, 1501, j * 32);
-		else if (i == 73) this.aSet(j * 32, k * 32, 1502, j * 32);
-		else if (i == 74) this.aSet(j * 32, k * 32, 1503, j * 32);
-		else if (i == 75) this.aSet(j * 32, k * 32, 1504, j * 32);
-		else if (i == 76) this.aSet(j * 32, k * 32, 701, j * 32);
-		else if (i == 77) this.aSet(j * 32, k * 32, 750, j * 32);
-		else if (i == 78) this.aSet(j * 32, k * 32, 751, j * 32);
-		else if (i == 79) this.aSet(j * 32, k * 32, 1600, j * 32);
-		else if (i == 80) this.aSet(j * 32, k * 32, 1601, j * 32);
-		else if (i == 81) this.aSet(j * 32, k * 32, 1602, j * 32);
-		else if (i == 82) this.aSet(j * 32, k * 32, 1603, j * 32);
-		else if (i == 83) this.mSet(j * 32, k * 32, 2185);
-		else if (i == 84) this.aSet(j * 32, k * 32, 1700, j * 32);
-		else if (i == 85) this.aSet(j * 32, k * 32, 1701, j * 32);
-		else if (i == 86) this.aSet(j * 32, k * 32, 1702, j * 32);
-		else if (i == 87) {
+			this.aSet(blockX * 32, blockY * 32, 1403, blockX * 32);
+		} else if (type == 71) this.aSet(blockX * 32, blockY * 32, 1500, blockX * 32);
+		else if (type == 72) this.aSet(blockX * 32, blockY * 32, 1501, blockX * 32);
+		else if (type == 73) this.aSet(blockX * 32, blockY * 32, 1502, blockX * 32);
+		else if (type == 74) this.aSet(blockX * 32, blockY * 32, 1503, blockX * 32);
+		else if (type == 75) this.aSet(blockX * 32, blockY * 32, 1504, blockX * 32);
+		else if (type == 76) this.aSet(blockX * 32, blockY * 32, 701, blockX * 32);
+		else if (type == 77) this.aSet(blockX * 32, blockY * 32, 750, blockX * 32);
+		else if (type == 78) this.aSet(blockX * 32, blockY * 32, 751, blockX * 32);
+		else if (type == 79) this.aSet(blockX * 32, blockY * 32, 1600, blockX * 32);
+		else if (type == 80) this.aSet(blockX * 32, blockY * 32, 1601, blockX * 32);
+		else if (type == 81) this.aSet(blockX * 32, blockY * 32, 1602, blockX * 32);
+		else if (type == 82) this.aSet(blockX * 32, blockY * 32, 1603, blockX * 32);
+		else if (type == 83) this.mSet(blockX * 32, blockY * 32, 2185);
+		else if (type == 84) this.aSet(blockX * 32, blockY * 32, 1700, blockX * 32);
+		else if (type == 85) this.aSet(blockX * 32, blockY * 32, 1701, blockX * 32);
+		else if (type == 86) this.aSet(blockX * 32, blockY * 32, 1702, blockX * 32);
+		else if (type == 87) {
 			word0 = 40;
-			this.hSet(j, k, 3300);
-		} else if (i == 88) {
+			this.hSet(blockX, blockY, 3300);
+		} else if (type == 88) {
 			word0 = 40;
-			this.hSet(j, k, 3400);
-		} else if (i == 89) {
+			this.hSet(blockX, blockY, 3400);
+		} else if (type == 89) {
 			word0 = 40;
-			this.hSet(j, k, 3500);
-		} else if (i == 90) this.aSet(j * 32, k * 32, 89, j * 32);
-		else if (i == 91) {
+			this.hSet(blockX, blockY, 3500);
+		} else if (type == 90) this.aSet(blockX * 32, blockY * 32, 89, blockX * 32);
+		else if (type == 91) {
 			word0 = 40;
-			this.hSet(j, k, 3600);
-		} else if (i == 92) {
+			this.hSet(blockX, blockY, 3600);
+		} else if (type == 92) {
 			word0 = 40;
-			this.hSet(j, k, 3700);
-		} else if (i == 93) {
+			this.hSet(blockX, blockY, 3700);
+		} else if (type == 93) {
 			word0 = 40;
-			this.hSet(j, k, 3800);
-		} else if (i == 94) {
+			this.hSet(blockX, blockY, 3800);
+		} else if (type == 94) {
 			word0 = 40;
-			this.hSet(j, k, 3900);
-		} else if (i == 95) {
+			this.hSet(blockX, blockY, 3900);
+		} else if (type == 95) {
 			word0 = 40;
-			this.hSet(j, k, 4000);
-		} else if (i == 96) this.aSet(j * 32, k * 32, 1800, j * 32);
-		else if (i == 97) this.aSet(j * 32, k * 32, 1801, j * 32);
-		else if (i == 98) this.aSet(j * 32, k * 32, 1850, j * 32);
-		else if (i == 99) this.aSet(j * 32, k * 32, 1851, j * 32);
-		else if (i == 100) {
-			this.aSet(j * 32, k * 32, 1900, j * 32);
-			var word1 = this.maps.map_bg[j - 1][k];
+			this.hSet(blockX, blockY, 4000);
+		} else if (type == 96) this.aSet(blockX * 32, blockY * 32, 1800, blockX * 32);
+		else if (type == 97) this.aSet(blockX * 32, blockY * 32, 1801, blockX * 32);
+		else if (type == 98) this.aSet(blockX * 32, blockY * 32, 1850, blockX * 32);
+		else if (type == 99) this.aSet(blockX * 32, blockY * 32, 1851, blockX * 32);
+		else if (type == 100) {
+			this.aSet(blockX * 32, blockY * 32, 1900, blockX * 32);
+			var word1 = this.maps.map_bg[blockX - 1][blockY];
 			if (word1 >= 20 && word1 <= 29) word0 = word1;
-		} else if (i == 101) {
-			this.aSet(j * 32, k * 32, 1901, j * 32);
-			var word2 = this.maps.map_bg[j - 1][k];
+		} else if (type == 101) {
+			this.aSet(blockX * 32, blockY * 32, 1901, blockX * 32);
+			var word2 = this.maps.map_bg[blockX - 1][blockY];
 			if (word2 >= 20 && word2 <= 29) word0 = word2;
-		} else if (i == 102) {
-			this.aSet(j * 32, k * 32, 1902, j * 32);
-			var word3 = this.maps.map_bg[j - 1][k];
+		} else if (type == 102) {
+			this.aSet(blockX * 32, blockY * 32, 1902, blockX * 32);
+			var word3 = this.maps.map_bg[blockX - 1][blockY];
 			if (word3 >= 20 && word3 <= 29) word0 = word3;
-		} else if (i == 103) {
-			this.aSet(j * 32, k * 32, 1903, j * 32);
-			var word4 = this.maps.map_bg[j - 1][k];
+		} else if (type == 103) {
+			this.aSet(blockX * 32, blockY * 32, 1903, blockX * 32);
+			var word4 = this.maps.map_bg[blockX - 1][blockY];
 			if (word4 >= 20 && word4 <= 29) word0 = word4;
-		} else if (i == 104) {
-			this.aSet(j * 32, k * 32, 1904, j * 32);
-			var word5 = this.maps.map_bg[j - 1][k];
+		} else if (type == 104) {
+			this.aSet(blockX * 32, blockY * 32, 1904, blockX * 32);
+			var word5 = this.maps.map_bg[blockX - 1][blockY];
 			if (word5 >= 20 && word5 <= 29) word0 = word5;
-		} else if (i == 105) {
-			this.aSet(j * 32, k * 32, 1905, j * 32);
-			var word6 = this.maps.map_bg[j - 1][k];
+		} else if (type == 105) {
+			this.aSet(blockX * 32, blockY * 32, 1905, blockX * 32);
+			var word6 = this.maps.map_bg[blockX - 1][blockY];
 			if (word6 >= 20 && word6 <= 29) word0 = word6;
-		} else if (i == 106) {
-			this.aSet(j * 32, k * 32, 1906, j * 32);
-			var word7 = this.maps.map_bg[j - 1][k];
+		} else if (type == 106) {
+			this.aSet(blockX * 32, blockY * 32, 1906, blockX * 32);
+			var word7 = this.maps.map_bg[blockX - 1][blockY];
 			if (word7 >= 20 && word7 <= 29) word0 = word7;
-		} else if (i == 107) {
-			this.aSet(j * 32, k * 32, 1907, j * 32);
-			var word8 = this.maps.map_bg[j - 1][k];
+		} else if (type == 107) {
+			this.aSet(blockX * 32, blockY * 32, 1907, blockX * 32);
+			var word8 = this.maps.map_bg[blockX - 1][blockY];
 			if (word8 >= 20 && word8 <= 29) word0 = word8;
-		} else if (i == 108) {
-			this.aSet(j * 32, k * 32, 1908, j * 32);
-			var word9 = this.maps.map_bg[j - 1][k];
+		} else if (type == 108) {
+			this.aSet(blockX * 32, blockY * 32, 1908, blockX * 32);
+			var word9 = this.maps.map_bg[blockX - 1][blockY];
 			if (word9 >= 20 && word9 <= 29) word0 = word9;
-		} else if (i == 109) {
-			this.aSet(j * 32, k * 32, 1909, j * 32);
-			var word10 = this.maps.map_bg[j - 1][k];
+		} else if (type == 109) {
+			this.aSet(blockX * 32, blockY * 32, 1909, blockX * 32);
+			var word10 = this.maps.map_bg[blockX - 1][blockY];
 			if (word10 >= 20 && word10 <= 29) word0 = word10;
-		} else if (i == 110) {
-			this.aSet(j * 32, k * 32, 1910, j * 32);
-			var word11 = this.maps.map_bg[j - 1][k];
+		} else if (type == 110) {
+			this.aSet(blockX * 32, blockY * 32, 1910, blockX * 32);
+			var word11 = this.maps.map_bg[blockX - 1][blockY];
 			if (word11 >= 20 && word11 <= 29) word0 = word11;
-		} else if (i == 111) {
-			this.aSet(j * 32, k * 32, 1911, j * 32);
-			var word12 = this.maps.map_bg[j - 1][k];
+		} else if (type == 111) {
+			this.aSet(blockX * 32, blockY * 32, 1911, blockX * 32);
+			var word12 = this.maps.map_bg[blockX - 1][blockY];
 			if (word12 >= 20 && word12 <= 29) word0 = word12;
-		} else if (i == 112) this.aSet(j * 32, k * 32, 1912, j * 32);
-		else if (i == 113) this.aSet(j * 32, k * 32, 1913, j * 32);
-		else if (i == 114) this.aSet(j * 32, k * 32, 1914, j * 32);
-		else if (i == 115) {
-			this.aSet(j * 32, k * 32, 1915, j * 32);
-			var word13 = this.maps.map_bg[j - 1][k];
+		} else if (type == 112) this.aSet(blockX * 32, blockY * 32, 1912, blockX * 32);
+		else if (type == 113) this.aSet(blockX * 32, blockY * 32, 1913, blockX * 32);
+		else if (type == 114) this.aSet(blockX * 32, blockY * 32, 1914, blockX * 32);
+		else if (type == 115) {
+			this.aSet(blockX * 32, blockY * 32, 1915, blockX * 32);
+			var word13 = this.maps.map_bg[blockX - 1][blockY];
 			if (word13 >= 20 && word13 <= 29) word0 = word13;
-		} else if (i == 116) {
-			this.aSet(j * 32, k * 32, 1916, j * 32);
-			var word14 = this.maps.map_bg[j - 1][k];
+		} else if (type == 116) {
+			this.aSet(blockX * 32, blockY * 32, 1916, blockX * 32);
+			var word14 = this.maps.map_bg[blockX - 1][blockY];
 			if (word14 >= 20 && word14 <= 29) word0 = word14;
-		} else if (i == 117) {
-			this.aSet(j * 32, k * 32, 1917, j * 32);
-			var word15 = this.maps.map_bg[j - 1][k];
+		} else if (type == 117) {
+			this.aSet(blockX * 32, blockY * 32, 1917, blockX * 32);
+			var word15 = this.maps.map_bg[blockX - 1][blockY];
 			if (word15 >= 20 && word15 <= 29) word0 = word15;
-		} else if (i == 118) {
-			this.aSet(j * 32, k * 32, 1918, j * 32);
-			var word16 = this.maps.map_bg[j - 1][k];
+		} else if (type == 118) {
+			this.aSet(blockX * 32, blockY * 32, 1918, blockX * 32);
+			var word16 = this.maps.map_bg[blockX - 1][blockY];
 			if (word16 >= 20 && word16 <= 29) word0 = word16;
-		} else if (i == 119) this.aSet(j * 32, k * 32, 2000, j * 32);
-		else if (i == 120) this.aSet(j * 32, k * 32, 2001, j * 32);
-		else if (i == 121) this.aSet(j * 32, k * 32, 2002, j * 32);
-		else if (i == 122) this.aSet(j * 32, k * 32, 2003, j * 32);
-		else if (i == 123) this.aSet(j * 32, k * 32, 2010, j * 32);
-		else if (i == 124) this.aSet(j * 32, k * 32, 2011, j * 32);
-		else if (i == 125) this.aSet(j * 32, k * 32, 2020, j * 32);
-		else if (i == 126) this.aSet(j * 32, k * 32, 2021, j * 32);
-		else if (i == 127) {
-			this.aSet(j * 32, k * 32 + 8, 72, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 74, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 76, j * 32);
-			this.aSet(j * 32, k * 32, 2100, j * 32);
-		} else if (i == 128) {
-			this.aSet(j * 32, k * 32 + 8, 73, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 75, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 77, j * 32);
-			this.aSet(j * 32, k * 32, 2100, j * 32);
-		} else if (i == 129) {
-			this.aSet(j * 32, k * 32 + 8, 2110, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2111, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2112, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2113, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2114, j * 32);
-			this.aSet(j * 32, k * 32, 2100, j * 32);
-		} else if (i == 130) {
-			this.aSet(j * 32, k * 32 + 8, 2120, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2121, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2122, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2123, j * 32);
-			this.aSet(j * 32, k * 32 + 8, 2124, j * 32);
-			this.aSet(j * 32, k * 32, 2100, j * 32);
-		} else if (i == 131) {
-			this.aSet(j * 32 + 160, k * 32 + 160, 2200, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2201, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2202, j * 32);
-		} else if (i == 132) {
-			this.aSet(j * 32 + 160, k * 32 + 160, 2210, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2211, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2212, j * 32);
-		} else if (i == 133) this.aSet(j * 32, k * 32, 2300, j * 32);
-		else if (i == 134) this.aSet(j * 32, k * 32, 2301, j * 32);
-		else if (i == 135) this.aSet(j * 32, k * 32, 2400, j * 32);
-		else if (i == 136) this.aSet(j * 32, k * 32, 2500, j * 32);
-		else if (i == 137) this.aSet(j * 32, k * 32, 2510, j * 32);
-		else if (i == 138) this.aSet(j * 32, k * 32, 2600, j * 32);
-		else if (i == 139) this.aSet(j * 32, k * 32, 2610, j * 32);
-		else if (i == 140) this.aSet(j * 32, k * 32, 2700, j * 32);
-		else if (i == 141) this.aSet(j * 32, k * 32, 2701, j * 32);
-		else if (i == 142) {
-			this.aSet(j * 32 + 160, k * 32 + 160, 2250, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2251, j * 32);
-		} else if (i == 143) {
-			this.aSet(j * 32 + 160, k * 32 + 160, 2260, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2261, j * 32);
-		} else if (i == 144) {
-			this.aSet(j * 32 + 160, k * 32 + 160, 2252, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2253, j * 32);
-		} else if (i == 145) {
-			this.aSet(j * 32 + 160, k * 32 + 160, 2262, j * 32);
-			this.aSet(j * 32 + 160, k * 32 + 160, 2263, j * 32);
-		} else if (i == 146) this.aSet(j * 32 - 32, k * 32, 489, j * 32);
-		else if (i == 147) this.aSet(j * 32 - 32, k * 32, 488, j * 32);
-		else if (i == 148) this.aSet(j * 32 - 32, k * 32, 490, j * 32);
-		else if (i == 149) this.aSet(j * 32 - 32, k * 32, 491, j * 32);
-		else if (i == 150) this.aSet(j * 32 - 32, k * 32, 492, j * 32);
-		else if (i == 151) {
-			this.aSet(j * 32, k * 32, 2800, j * 32);
+		} else if (type == 119) this.aSet(blockX * 32, blockY * 32, 2000, blockX * 32);
+		else if (type == 120) this.aSet(blockX * 32, blockY * 32, 2001, blockX * 32);
+		else if (type == 121) this.aSet(blockX * 32, blockY * 32, 2002, blockX * 32);
+		else if (type == 122) this.aSet(blockX * 32, blockY * 32, 2003, blockX * 32);
+		else if (type == 123) this.aSet(blockX * 32, blockY * 32, 2010, blockX * 32);
+		else if (type == 124) this.aSet(blockX * 32, blockY * 32, 2011, blockX * 32);
+		else if (type == 125) this.aSet(blockX * 32, blockY * 32, 2020, blockX * 32);
+		else if (type == 126) this.aSet(blockX * 32, blockY * 32, 2021, blockX * 32);
+		else if (type == 127) {
+			this.aSet(blockX * 32, blockY * 32 + 8, 72, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 74, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 76, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32, 2100, blockX * 32);
+		} else if (type == 128) {
+			this.aSet(blockX * 32, blockY * 32 + 8, 73, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 75, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 77, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32, 2100, blockX * 32);
+		} else if (type == 129) {
+			this.aSet(blockX * 32, blockY * 32 + 8, 2110, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2111, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2112, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2113, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2114, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32, 2100, blockX * 32);
+		} else if (type == 130) {
+			this.aSet(blockX * 32, blockY * 32 + 8, 2120, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2121, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2122, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2123, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32 + 8, 2124, blockX * 32);
+			this.aSet(blockX * 32, blockY * 32, 2100, blockX * 32);
+		} else if (type == 131) {
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2200, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2201, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2202, blockX * 32);
+		} else if (type == 132) {
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2210, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2211, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2212, blockX * 32);
+		} else if (type == 133) this.aSet(blockX * 32, blockY * 32, 2300, blockX * 32);
+		else if (type == 134) this.aSet(blockX * 32, blockY * 32, 2301, blockX * 32);
+		else if (type == 135) this.aSet(blockX * 32, blockY * 32, 2400, blockX * 32);
+		else if (type == 136) this.aSet(blockX * 32, blockY * 32, 2500, blockX * 32);
+		else if (type == 137) this.aSet(blockX * 32, blockY * 32, 2510, blockX * 32);
+		else if (type == 138) this.aSet(blockX * 32, blockY * 32, 2600, blockX * 32);
+		else if (type == 139) this.aSet(blockX * 32, blockY * 32, 2610, blockX * 32);
+		else if (type == 140) this.aSet(blockX * 32, blockY * 32, 2700, blockX * 32);
+		else if (type == 141) this.aSet(blockX * 32, blockY * 32, 2701, blockX * 32);
+		else if (type == 142) {
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2250, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2251, blockX * 32);
+		} else if (type == 143) {
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2260, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2261, blockX * 32);
+		} else if (type == 144) {
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2252, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2253, blockX * 32);
+		} else if (type == 145) {
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2262, blockX * 32);
+			this.aSet(blockX * 32 + 160, blockY * 32 + 160, 2263, blockX * 32);
+		} else if (type == 146) this.aSet(blockX * 32 - 32, blockY * 32, 489, blockX * 32);
+		else if (type == 147) this.aSet(blockX * 32 - 32, blockY * 32, 488, blockX * 32);
+		else if (type == 148) this.aSet(blockX * 32 - 32, blockY * 32, 490, blockX * 32);
+		else if (type == 149) this.aSet(blockX * 32 - 32, blockY * 32, 491, blockX * 32);
+		else if (type == 150) this.aSet(blockX * 32 - 32, blockY * 32, 492, blockX * 32);
+		else if (type == 151) {
+			this.aSet(blockX * 32, blockY * 32, 2800, blockX * 32);
 			word0 = 50;
-		} else if (i == 152) {
-			this.aSet(j * 32, k * 32, 2801, j * 32);
+		} else if (type == 152) {
+			this.aSet(blockX * 32, blockY * 32, 2801, blockX * 32);
 			word0 = 50;
-		} else if (i == 153) {
-			this.aSet(j * 32, k * 32, 2802, j * 32);
+		} else if (type == 153) {
+			this.aSet(blockX * 32, blockY * 32, 2802, blockX * 32);
 			word0 = 50;
-		} else if (i == 154) {
-			this.aSet(j * 32, k * 32, 2803, j * 32);
+		} else if (type == 154) {
+			this.aSet(blockX * 32, blockY * 32, 2803, blockX * 32);
 			word0 = 50;
-		} else if (i == 155) this.aSet(j * 32, k * 32, 2900, j * 32);
-		else if (i == 156) this.aSet(j * 32, k * 32, 2950, j * 32);
-		else if (i == 157) this.aSet(j * 32 - 32, k * 32, 3000, j * 32 - 32);
-		else if (i == 158) this.aSet(j * 32 - 32, k * 32, 3010, j * 32 - 32);
-		else if (i == 159) this.aSet(j * 32, k * 32, 3100, j * 32);
-		else if (i == 160) this.aSet(j * 32, k * 32, 3110, j * 32);
-		else if (i == 161) this.aSet(j * 32, k * 32, 3120, j * 32);
-		else if (i == 162) this.aSet(j * 32, k * 32, 3130, j * 32);
-		else if (i == 163) this.aSet(j * 32, k * 32, 3101, j * 32);
-		else if (i == 164) this.aSet(j * 32, k * 32, 3111, j * 32);
-		else if (i == 165) this.aSet(j * 32, k * 32, 3121, j * 32);
-		else if (i == 166) this.aSet(j * 32, k * 32, 3131, j * 32);
-		else if (i == 167) {
-			this.aSet(j * 32, k * 32, 3200, j * 32);
+		} else if (type == 155) this.aSet(blockX * 32, blockY * 32, 2900, blockX * 32);
+		else if (type == 156) this.aSet(blockX * 32, blockY * 32, 2950, blockX * 32);
+		else if (type == 157) this.aSet(blockX * 32 - 32, blockY * 32, 3000, blockX * 32 - 32);
+		else if (type == 158) this.aSet(blockX * 32 - 32, blockY * 32, 3010, blockX * 32 - 32);
+		else if (type == 159) this.aSet(blockX * 32, blockY * 32, 3100, blockX * 32);
+		else if (type == 160) this.aSet(blockX * 32, blockY * 32, 3110, blockX * 32);
+		else if (type == 161) this.aSet(blockX * 32, blockY * 32, 3120, blockX * 32);
+		else if (type == 162) this.aSet(blockX * 32, blockY * 32, 3130, blockX * 32);
+		else if (type == 163) this.aSet(blockX * 32, blockY * 32, 3101, blockX * 32);
+		else if (type == 164) this.aSet(blockX * 32, blockY * 32, 3111, blockX * 32);
+		else if (type == 165) this.aSet(blockX * 32, blockY * 32, 3121, blockX * 32);
+		else if (type == 166) this.aSet(blockX * 32, blockY * 32, 3131, blockX * 32);
+		else if (type == 167) {
+			this.aSet(blockX * 32, blockY * 32, 3200, blockX * 32);
 			word0 = 50;
-		} else if (i == 168) {
-			this.aSet(j * 32, k * 32, 3201, j * 32);
+		} else if (type == 168) {
+			this.aSet(blockX * 32, blockY * 32, 3201, blockX * 32);
 			word0 = 50;
-		} else if (i == 169) {
-			this.aSet(j * 32, k * 32, 3202, j * 32);
+		} else if (type == 169) {
+			this.aSet(blockX * 32, blockY * 32, 3202, blockX * 32);
 			word0 = 50;
-		} else if (i == 170) {
-			this.aSet(j * 32, k * 32, 3203, j * 32);
+		} else if (type == 170) {
+			this.aSet(blockX * 32, blockY * 32, 3203, blockX * 32);
 			word0 = 50;
-		} else if (i == 171) this.aSet(j * 32, k * 32, 3300, j * 32);
-		else if (i == 172) this.aSet(j * 32, k * 32, 3301, j * 32);
-		else if (i == 173) this.aSet(j * 32, k * 32, 350, j * 32);
-		else if (i == 174) this.aSet(j * 32, k * 32, 351, j * 32);
-		else if (i == 175) this.aSet(j * 32, k * 32, 352, j * 32);
-		else if (i == 176) this.aSet(j * 32, k * 32, 353, j * 32);
-		else if (i == 177) this.aSet(j * 32, k * 32, 360, j * 32);
-		else if (i == 178) this.aSet(j * 32, k * 32, 361, j * 32);
-		else if (i == 179) this.aSet(j * 32, k * 32, 362, j * 32);
-		else if (i == 180) this.aSet(j * 32, k * 32, 363, j * 32);
-		else if (i == 181) this.aSet(j * 32, k * 32, 3400, j * 32);
-		else if (i == 182) {
+		} else if (type == 171) this.aSet(blockX * 32, blockY * 32, 3300, blockX * 32);
+		else if (type == 172) this.aSet(blockX * 32, blockY * 32, 3301, blockX * 32);
+		else if (type == 173) this.aSet(blockX * 32, blockY * 32, 350, blockX * 32);
+		else if (type == 174) this.aSet(blockX * 32, blockY * 32, 351, blockX * 32);
+		else if (type == 175) this.aSet(blockX * 32, blockY * 32, 352, blockX * 32);
+		else if (type == 176) this.aSet(blockX * 32, blockY * 32, 353, blockX * 32);
+		else if (type == 177) this.aSet(blockX * 32, blockY * 32, 360, blockX * 32);
+		else if (type == 178) this.aSet(blockX * 32, blockY * 32, 361, blockX * 32);
+		else if (type == 179) this.aSet(blockX * 32, blockY * 32, 362, blockX * 32);
+		else if (type == 180) this.aSet(blockX * 32, blockY * 32, 363, blockX * 32);
+		else if (type == 181) this.aSet(blockX * 32, blockY * 32, 3400, blockX * 32);
+		else if (type == 182) {
 			word0 = 40;
-			this.hSet(j, k, 4100);
-		} else if (i == 183) this.aSet(j * 32, k * 32, 370, j * 32);
-		else if (i == 184) this.aSet(j * 32, k * 32, 371, j * 32);
-		else if (i == 185) this.aSet(j * 32, k * 32, 372, j * 32);
-		else if (i == 186) this.aSet(j * 32, k * 32, 373, j * 32);
-		else if (i == 187) this.aSet(j * 32, k * 32, 380, j * 32);
-		else if (i == 188) this.aSet(j * 32, k * 32, 381, j * 32);
-		else if (i == 189) this.aSet(j * 32, k * 32, 382, j * 32);
-		else if (i == 190) this.aSet(j * 32, k * 32, 383, j * 32);
-		else if (i == 191) this.aSet(j * 32, k * 32, 3500, j * 32);
-		else if (i == 192) this.aSet(j * 32, k * 32, 3600, j * 32);
-		else if (i == 193) this.aSet(j * 32, k * 32, 3700, j * 32);
-		else if (i == 194) this.aSet(j * 32, k * 32, 3710, j * 32);
-		else if (i == 195) this.aSet(j * 32, k * 32, 3800, j * 32);
-		else if (i == 196) this.aSet(j * 32, k * 32, 3810, j * 32);
-		else if (i == 197) this.aSet(j * 32, k * 32, 3900, j * 32);
-		else if (i == 198) this.aSet(j * 32, k * 32, 3910, j * 32);
-		else if (i == 199) this.aSet(j * 32, k * 32, 4000, j * 32);
-		else if (i == 200) this.aSet(j * 32, k * 32, 4010, j * 32);
-		else if (i == 201) this.aSet(j * 32, k * 32, 4100, j * 32);
-		else if (i == 202) this.aSet(j * 32, k * 32, 4110, j * 32);
-		else if (i == 203) this.aSet(j * 32, k * 32, 4200, j * 32);
-		else if (i == 204) this.aSet(j * 32, k * 32, 4210, j * 32);
-		else if (i == 205) this.aSet(j * 32, k * 32, 150, j * 32);
-		else if (i == 206) this.aSet(j * 32, k * 32, 151, j * 32);
-		else if (i == 207) this.aSet(j * 32, k * 32, 160, j * 32);
-		else if (i == 208) this.aSet(j * 32, k * 32, 161, j * 32);
-		else if (i == 209) this.aSet(j * 32, k * 32, 152, j * 32);
-		else if (i == 210) this.aSet(j * 32, k * 32, 162, j * 32);
-		else if (i == 211) this.aSet(j * 32, k * 32, 3501, j * 32);
-		else if (i == 212) this.aSet(j * 32, k * 32, 3601, j * 32);
-		else if (i == 213) {
+			this.hSet(blockX, blockY, 4100);
+		} else if (type == 183) this.aSet(blockX * 32, blockY * 32, 370, blockX * 32);
+		else if (type == 184) this.aSet(blockX * 32, blockY * 32, 371, blockX * 32);
+		else if (type == 185) this.aSet(blockX * 32, blockY * 32, 372, blockX * 32);
+		else if (type == 186) this.aSet(blockX * 32, blockY * 32, 373, blockX * 32);
+		else if (type == 187) this.aSet(blockX * 32, blockY * 32, 380, blockX * 32);
+		else if (type == 188) this.aSet(blockX * 32, blockY * 32, 381, blockX * 32);
+		else if (type == 189) this.aSet(blockX * 32, blockY * 32, 382, blockX * 32);
+		else if (type == 190) this.aSet(blockX * 32, blockY * 32, 383, blockX * 32);
+		else if (type == 191) this.aSet(blockX * 32, blockY * 32, 3500, blockX * 32);
+		else if (type == 192) this.aSet(blockX * 32, blockY * 32, 3600, blockX * 32);
+		else if (type == 193) this.aSet(blockX * 32, blockY * 32, 3700, blockX * 32);
+		else if (type == 194) this.aSet(blockX * 32, blockY * 32, 3710, blockX * 32);
+		else if (type == 195) this.aSet(blockX * 32, blockY * 32, 3800, blockX * 32);
+		else if (type == 196) this.aSet(blockX * 32, blockY * 32, 3810, blockX * 32);
+		else if (type == 197) this.aSet(blockX * 32, blockY * 32, 3900, blockX * 32);
+		else if (type == 198) this.aSet(blockX * 32, blockY * 32, 3910, blockX * 32);
+		else if (type == 199) this.aSet(blockX * 32, blockY * 32, 4000, blockX * 32);
+		else if (type == 200) this.aSet(blockX * 32, blockY * 32, 4010, blockX * 32);
+		else if (type == 201) this.aSet(blockX * 32, blockY * 32, 4100, blockX * 32);
+		else if (type == 202) this.aSet(blockX * 32, blockY * 32, 4110, blockX * 32);
+		else if (type == 203) this.aSet(blockX * 32, blockY * 32, 4200, blockX * 32);
+		else if (type == 204) this.aSet(blockX * 32, blockY * 32, 4210, blockX * 32);
+		else if (type == 205) this.aSet(blockX * 32, blockY * 32, 150, blockX * 32);
+		else if (type == 206) this.aSet(blockX * 32, blockY * 32, 151, blockX * 32);
+		else if (type == 207) this.aSet(blockX * 32, blockY * 32, 160, blockX * 32);
+		else if (type == 208) this.aSet(blockX * 32, blockY * 32, 161, blockX * 32);
+		else if (type == 209) this.aSet(blockX * 32, blockY * 32, 152, blockX * 32);
+		else if (type == 210) this.aSet(blockX * 32, blockY * 32, 162, blockX * 32);
+		else if (type == 211) this.aSet(blockX * 32, blockY * 32, 3501, blockX * 32);
+		else if (type == 212) this.aSet(blockX * 32, blockY * 32, 3601, blockX * 32);
+		else if (type == 213) {
 			word0 = 40;
-			this.hSet(j, k, 4200);
-		} else if (i == 214) {
+			this.hSet(blockX, blockY, 4200);
+		} else if (type == 214) {
 			word0 = 40;
-			this.hSet(j, k, 4300);
-		} else if (i == 215) {
+			this.hSet(blockX, blockY, 4300);
+		} else if (type == 215) {
 			word0 = 40;
-			this.hSet(j, k, 4400);
-		} else if (i == 216) {
+			this.hSet(blockX, blockY, 4400);
+		} else if (type == 216) {
 			word0 = 40;
-			this.hSet(j, k, 4500);
-		} else if (i == 217) this.aSet(j * 32, k * 32, 3502, j * 32);
-		else if (i == 218) this.aSet(j * 32, k * 32, 3602, j * 32);
-		else if (i == 219) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4300, j * 32);
+			this.hSet(blockX, blockY, 4500);
+		} else if (type == 217) this.aSet(blockX * 32, blockY * 32, 3502, blockX * 32);
+		else if (type == 218) this.aSet(blockX * 32, blockY * 32, 3602, blockX * 32);
+		else if (type == 219) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4300, blockX * 32);
 			word0 = 50;
-		} else if (i == 220) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4301, j * 32);
+		} else if (type == 220) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4301, blockX * 32);
 			word0 = 50;
-		} else if (i == 221) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4302, j * 32);
+		} else if (type == 221) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4302, blockX * 32);
 			word0 = 50;
-		} else if (i == 222) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4303, j * 32);
+		} else if (type == 222) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4303, blockX * 32);
 			word0 = 50;
-		} else if (i == 223) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4304, j * 32);
+		} else if (type == 223) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4304, blockX * 32);
 			word0 = 50;
-		} else if (i == 224) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4305, j * 32);
+		} else if (type == 224) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4305, blockX * 32);
 			word0 = 50;
-		} else if (i == 225) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4306, j * 32);
+		} else if (type == 225) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4306, blockX * 32);
 			word0 = 50;
-		} else if (i == 226) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4307, j * 32);
+		} else if (type == 226) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4307, blockX * 32);
 			word0 = 50;
-		} else if (i == 227) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4310, j * 32);
+		} else if (type == 227) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4310, blockX * 32);
 			word0 = 50;
-		} else if (i == 228) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4311, j * 32);
+		} else if (type == 228) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4311, blockX * 32);
 			word0 = 50;
-		} else if (i == 229) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4312, j * 32);
+		} else if (type == 229) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4312, blockX * 32);
 			word0 = 50;
-		} else if (i == 230) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4313, j * 32);
+		} else if (type == 230) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4313, blockX * 32);
 			word0 = 50;
-		} else if (i == 231) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4314, j * 32);
+		} else if (type == 231) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4314, blockX * 32);
 			word0 = 50;
-		} else if (i == 232) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4315, j * 32);
+		} else if (type == 232) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4315, blockX * 32);
 			word0 = 50;
-		} else if (i == 233) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4316, j * 32);
+		} else if (type == 233) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4316, blockX * 32);
 			word0 = 50;
-		} else if (i == 234) {
-			this.aSet(j * 32 + 16, k * 32 + 16, 4317, j * 32);
+		} else if (type == 234) {
+			this.aSet(blockX * 32 + 16, blockY * 32 + 16, 4317, blockX * 32);
 			word0 = 50;
-		} else if (i == 235) this.aSet(j * 32, k * 32, 4400, j * 32);
-		else if (i == 236) this.aSet(j * 32, k * 32, 4410, j * 32);
-		else if (i == 237) this.aSet(j * 32, k * 32 + 32, 4500, j * 32);
-		else if (i == 238) this.aSet(j * 32, k * 32 + 32, 4501, j * 32);
-		else if (i == 239) this.aSet(j * 32, k * 32 + 32, 4502, j * 32);
-		else if (i == 240) this.aSet(j * 32, k * 32 + 32, 4503, j * 32);
-		else if (i == 241) this.aSet(j * 32, k * 32 + 32, 4510, j * 32);
-		else if (i == 242) this.aSet(j * 32, k * 32 + 32, 4511, j * 32);
-		else if (i == 243) this.aSet(j * 32, k * 32 + 32, 4512, j * 32);
-		else if (i == 244) this.aSet(j * 32, k * 32 + 32, 4513, j * 32);
-		else if (i == 245) this.aSet(j * 32, k * 32, 4600, j * 32);
-		else if (i == 246) this.aSet(j * 32, k * 32, 4610, j * 32);
-		else if (i == 247) {
-			this.aSet(j * 32, k * 32, 4700, j * 32);
+		} else if (type == 235) this.aSet(blockX * 32, blockY * 32, 4400, blockX * 32);
+		else if (type == 236) this.aSet(blockX * 32, blockY * 32, 4410, blockX * 32);
+		else if (type == 237) this.aSet(blockX * 32, blockY * 32 + 32, 4500, blockX * 32);
+		else if (type == 238) this.aSet(blockX * 32, blockY * 32 + 32, 4501, blockX * 32);
+		else if (type == 239) this.aSet(blockX * 32, blockY * 32 + 32, 4502, blockX * 32);
+		else if (type == 240) this.aSet(blockX * 32, blockY * 32 + 32, 4503, blockX * 32);
+		else if (type == 241) this.aSet(blockX * 32, blockY * 32 + 32, 4510, blockX * 32);
+		else if (type == 242) this.aSet(blockX * 32, blockY * 32 + 32, 4511, blockX * 32);
+		else if (type == 243) this.aSet(blockX * 32, blockY * 32 + 32, 4512, blockX * 32);
+		else if (type == 244) this.aSet(blockX * 32, blockY * 32 + 32, 4513, blockX * 32);
+		else if (type == 245) this.aSet(blockX * 32, blockY * 32, 4600, blockX * 32);
+		else if (type == 246) this.aSet(blockX * 32, blockY * 32, 4610, blockX * 32);
+		else if (type == 247) {
+			this.aSet(blockX * 32, blockY * 32, 4700, blockX * 32);
 			word0 = 213;
-		} else if (i == 248) {
-			this.aSet(j * 32, k * 32, 4701, j * 32);
+		} else if (type == 248) {
+			this.aSet(blockX * 32, blockY * 32, 4701, blockX * 32);
 			word0 = 214;
-		} else if (i == 249) this.aSet(j * 32, k * 32, 4800, j * 32);
-		else if (i == 250) this.aSet(j * 32, k * 32, 4801, j * 32);
-		else if (i == 251) {
-			this.aSet(j * 32, k * 32, 4702, j * 32);
+		} else if (type == 249) this.aSet(blockX * 32, blockY * 32, 4800, blockX * 32);
+		else if (type == 250) this.aSet(blockX * 32, blockY * 32, 4801, blockX * 32);
+		else if (type == 251) {
+			this.aSet(blockX * 32, blockY * 32, 4702, blockX * 32);
 			word0 = 215;
-		} else if (i == 252) {
-			this.aSet(j * 32, k * 32, 4703, j * 32);
+		} else if (type == 252) {
+			this.aSet(blockX * 32, blockY * 32, 4703, blockX * 32);
 			word0 = 212;
-		} else if (i == 253) {
-			this.aSet(j * 32, k * 32, 5000, j * 32);
+		} else if (type == 253) {
+			this.aSet(blockX * 32, blockY * 32, 5000, blockX * 32);
 			word0 = 28;
-		} else if (i == 254) this.aSet(j * 32, k * 32, 4900, j * 32);
-		else if (i == 255) this.aSet(j * 32, k * 32, 4910, j * 32);
-		else if (i == 256) this.aSet(j * 32, k * 32, 5200, j * 32);
-		else if (i == 257) this.aSet(j * 32, k * 32, 5210, j * 32);
-		else if (i == 258) this.tSet(j * 32, k * 32, 1190, j * 32 - this.gg.di.width - 32 - 32);
-		else if (i == 259) this.tSet(j * 32, k * 32, 1191, j * 32 - this.gg.di.width - 32 - 32);
-		else if (i == 260) {
-			this.aSet(j * 32, k * 32, 5100, j * 32);
+		} else if (type == 254) this.aSet(blockX * 32, blockY * 32, 4900, blockX * 32);
+		else if (type == 255) this.aSet(blockX * 32, blockY * 32, 4910, blockX * 32);
+		else if (type == 256) this.aSet(blockX * 32, blockY * 32, 5200, blockX * 32);
+		else if (type == 257) this.aSet(blockX * 32, blockY * 32, 5210, blockX * 32);
+		else if (type == 258) this.tSet(blockX * 32, blockY * 32, 1190, blockX * 32 - this.gg.di.width - 32 - 32);
+		else if (type == 259) this.tSet(blockX * 32, blockY * 32, 1191, blockX * 32 - this.gg.di.width - 32 - 32);
+		else if (type == 260) {
+			this.aSet(blockX * 32, blockY * 32, 5100, blockX * 32);
 			word0 = 31;
-		} else if (i == 261) {
-			this.aSet(j * 32, k * 32, 5101, j * 32);
+		} else if (type == 261) {
+			this.aSet(blockX * 32, blockY * 32, 5101, blockX * 32);
 			word0 = 31;
-		} else if (i == 262) this.aSet(j * 32, k * 32, 5300, j * 32);
-		else if (i == 263) {
+		} else if (type == 262) this.aSet(blockX * 32, blockY * 32, 5300, blockX * 32);
+		else if (type == 263) {
 			word0 = 18;
-			this.map_data_option[j][k] = true;
-		} else if (i == 264) {
+			this.map_data_option[blockX][blockY] = true;
+		} else if (type == 264) {
 			word0 = 19;
-			this.map_data_option[j][k] = true;
-		} else if (i >= 1001 && i <= 1249) word0 = Math.floor(i - 1000);
+			this.map_data_option[blockX][blockY] = true;
+		} else if (type >= 1001 && type <= 1249) word0 = Math.floor(type - 1000);
 		else word0 = -99;
 		return word0;
 	}
@@ -5561,8 +5580,8 @@ class MainProgram {
 	 * * 1: jM100stgで読み込むとき
 	 * * 2: jMoveで読み込むとき
 	 *
-	 * @param {number} BGCode 自分の中心のマップコード
-	 * @param {number} mode
+	 * @param BGCode 自分の中心のマップコード
+	 * @param mode
 	 */
 	AwaMove(BGCode: number, mode: number) {
 		if (
@@ -10498,10 +10517,10 @@ class MainProgram {
 	 * * 3: 縦に潰れて死亡
 	 * * 4: 横に潰れて死亡
 	 * * 5: 強制スクロールで画面外に出て死亡
-	 * @param {number} [type=1] 死因
+	 * @param type 死因
 	 * @see {@link MasaoJSS#setMyMiss}
 	 */
-	jShinu(i: number) {
+	jShinu(type: number) {
 		this.co_j.c1 = 0;
 		this.co_j.c2 = 0;
 		this.j_zan_f = false;
@@ -10515,13 +10534,13 @@ class MainProgram {
 		this.setmyw_w = -1;
 		this.km.initAll();
 		this.km.mode = 10;
-		if (i == 1) this.co_j.c = 240;
-		else if (i == 2) {
+		if (type == 1) this.co_j.c = 240;
+		else if (type == 2) {
 			this.co_j.c = 200;
 			this.co_j.vy = -280;
-		} else if (i == 3) this.co_j.c = 220;
-		else if (i == 4) this.co_j.c = 230;
-		else if (i == 5) {
+		} else if (type == 3) this.co_j.c = 220;
+		else if (type == 4) this.co_j.c = 230;
+		else if (type == 5) {
 			this.co_j.c = 210;
 			this.co_j.y = this.ochiru_y + 64;
 			this.co_j.c1 = -8;
@@ -10537,11 +10556,11 @@ class MainProgram {
 	 * * 2: ポッピー・エアームズを踏んだときの高さ
 	 * * 3: ボスを踏んだときの高さ
 	 *
-	 * @param {number} [type=1] 高さ
+	 * @param type 高さ
 	 * @see {@link MasaoJSS#setMyPress}
-	 * @returns {boolean} 成功したかどうか
+	 * @returns 成功したかどうか
 	 */
-	jFumu(i: number) {
+	jFumu(type: number) {
 		if (this.co_j.c < 100 || this.co_j.c >= 200) return false;
 		this.gs.rsAddSound(8);
 		this.co_j.y = this.co_j.y - 10;
@@ -10550,53 +10569,53 @@ class MainProgram {
 		this.co_j.c = 110;
 		this.co_j.c1 = 0;
 		this.co_j.pt = 109;
-		if (i == 2) this.co_j.vy = -220;
-		else if (i == 3) this.co_j.vy = -320;
+		if (type == 2) this.co_j.vy = -220;
+		else if (type == 3) this.co_j.vy = -320;
 		return true;
 	}
 
 	/**
 	 * マップ上の座標をピクセル単位で指定し、そのタイルに坂道ブロックが存在した場合、与えたX座標におけるその坂道ブロックの床面のY座標を得ます
-	 * @param x {number} マップX座標(ピクセル単位)
-	 * @param y {number} マップY座標(ピクセル単位)
-	 * @returns {number} 坂道の床面のY座標(ピクセル単位) 坂道ブロックがない場合、(なぜか)y-31が返る
+	 * @param x マップX座標(ピクセル単位)
+	 * @param y マップY座標(ピクセル単位)
+	 * @returns 坂道の床面のY座標(ピクセル単位) 坂道ブロックがない場合、(なぜか)y-31が返る
 	 */
-	getSakamichiY(i: number, j: number) {
+	getSakamichiY(x: number, y: number) {
 		var k = 0;
-		var l = i - rightShiftIgnoreSign(i, 5) * 32;
-		var word0 = this.maps.map_bg[rightShiftIgnoreSign(i, 5)][rightShiftIgnoreSign(j, 5)];
+		var l = x - rightShiftIgnoreSign(x, 5) * 32;
+		var word0 = this.maps.map_bg[rightShiftIgnoreSign(x, 5)][rightShiftIgnoreSign(y, 5)];
 		if (word0 == 18) {
 			var i1 = 31 - l;
-			k = rightShiftIgnoreSign(j, 5) * 32 + i1 - 31;
+			k = rightShiftIgnoreSign(y, 5) * 32 + i1 - 31;
 		} else if (word0 == 19) {
 			var j1 = l;
-			k = rightShiftIgnoreSign(j, 5) * 32 + j1 - 31;
+			k = rightShiftIgnoreSign(y, 5) * 32 + j1 - 31;
 		} else {
-			k = j - 31;
+			k = y - 31;
 		}
 		return k;
 	}
 
 	/**
 	 * TODO: 加筆求む
-	 * @param x {number}
-	 * @param y {number}
-	 * @param type {number}
+	 * @param x
+	 * @param y
+	 * @param type
 	 */
-	jZutuki(i: number, j: number, k: number) {
+	jZutuki(x: number, y: number, type: number) {
 		for (var l = 0; l <= this.t_kazu; l++) {
 			if (this.co_t[l].c < 100) continue;
 			var characterobject = this.co_t[l];
 			var flag = false;
-			if (k == 1) {
+			if (type == 1) {
 				if (this.j_tokugi == 15 && (this.j_4_muki == 2 || this.j_4_muki == 3)) {
-					if (Math.abs(i - characterobject.x) < 25 && Math.abs(j - characterobject.y) < 23) flag = true;
-				} else if (Math.abs(i - characterobject.x) < 25 && Math.abs(j - characterobject.y) < 23) flag = true;
-			} else if (k == 2) {
-				if (Math.abs(i - characterobject.x) < 54 && j == characterobject.y) flag = true;
-			} else if (Math.abs(i - characterobject.x) < 34 && j == characterobject.y) flag = true;
+					if (Math.abs(x - characterobject.x) < 25 && Math.abs(y - characterobject.y) < 23) flag = true;
+				} else if (Math.abs(x - characterobject.x) < 25 && Math.abs(y - characterobject.y) < 23) flag = true;
+			} else if (type == 2) {
+				if (Math.abs(x - characterobject.x) < 54 && y == characterobject.y) flag = true;
+			} else if (Math.abs(x - characterobject.x) < 34 && y == characterobject.y) flag = true;
 			if (!flag) continue;
-			if (i > characterobject.x) {
+			if (x > characterobject.x) {
 				characterobject.pth = 1;
 				characterobject.vx = -7;
 			} else {
@@ -10624,33 +10643,33 @@ class MainProgram {
 					characterobject.c1 = 0;
 				}
 			}
-			if (k == 1) this.gs.rsAddSound(9);
+			if (type == 1) this.gs.rsAddSound(9);
 		}
 	}
 
 	/**
 	 * 指定したマップ上のピクセル座標の位置に水があるかどうかを調べる
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} Y座標(ピクセル座標)
-	 * @returns {boolean} 指定した座標が水かどうか
+	 * @param x X座標(ピクセル座標)
+	 * @param y Y座標(ピクセル座標)
+	 * @returns 指定した座標が水かどうか
 	 */
-	checkWater(i: number, j: number) {
-		var k = this.maps.getBGCode(i, j);
+	checkWater(x: number, y: number) {
+		var k = this.maps.getBGCode(x, y);
 		if (k == 4) return true;
 		if (k == 8 || k == 9) {
-			if (this.maps.getBGCode(i - 32, j) == 4) return true;
-		} else if (k >= 15 && k <= 19 && this.maps.getBGCode(i, j - 32) == 4) return true;
+			if (this.maps.getBGCode(x - 32, y) == 4) return true;
+		} else if (k >= 15 && k <= 19 && this.maps.getBGCode(x, y - 32) == 4) return true;
 		return false;
 	}
 
 	/**
 	 * 敵を追加する
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} Y座標(ピクセル座標)
-	 * @param teki_type {(string|number)} 敵の種類
-	 * @param l {number} その敵が出現するスクロール位置
+	 * @param x X座標(ピクセル座標)
+	 * @param y Y座標(ピクセル座標)
+	 * @param teki_type 敵の種類
+	 * @param l その敵が出現するスクロール位置
 	 */
-	tSet(x: number, y: number, teki_type: number, l: number) {
+	tSet(x: number, y: number, teki_type: string | number, l: number) {
 		// 敵の個数に関する後方互換性オプションがONのときは敵の数に上限設定
 		const t_limit = this.tdb.options["bc-enemy-number"] ? 219 : Infinity;
 
@@ -10665,7 +10684,7 @@ class MainProgram {
 				const characterobject = this.co_t[i];
 				characterobject.c = 10;
 				characterobject.c1 = l;
-				characterobject.c2 = teki_type;
+				characterobject.c2 = teki_type as number; // TODO: カスタムパーツ対応の型付け
 				characterobject.c3 = x;
 				characterobject.c4 = y;
 				characterobject.x = x;
@@ -10701,12 +10720,12 @@ class MainProgram {
 
 	/**
 	 * ボスなどによって投げられる敵を設置する
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} Y座標(ピクセル座標)
-	 * @param k {number} 敵コード
-	 * @param l {number} 初速（X軸方向）
+	 * @param x X座標(ピクセル座標)
+	 * @param y Y座標(ピクセル座標)
+	 * @param k 敵コード
+	 * @param l 初速（X軸方向）
 	 */
-	tSetBoss(i: number, j: number, k: number, l: number) {
+	tSetBoss(x: number, y: number, k: number, l: number) {
 		var t_limit, i1;
 		// 敵の個数に関する後方互換性オプション
 		if (this.tdb.options["bc-enemy-number"]) {
@@ -10725,10 +10744,10 @@ class MainProgram {
 				characterobject.c = k;
 				characterobject.c1 = 0;
 				characterobject.c2 = 0;
-				characterobject.c3 = i;
-				characterobject.c4 = j;
-				characterobject.x = i;
-				characterobject.y = j;
+				characterobject.c3 = x;
+				characterobject.c4 = y;
+				characterobject.x = x;
+				characterobject.y = y;
 				characterobject.vx = l;
 
 				var partsDefinition = this.getEnemyDefinition(k);
@@ -10746,8 +10765,8 @@ class MainProgram {
 
 	/**
 	 * 指定された敵コードの定義オブジェクトを返します。
-	 * @param code {(string|number)} 敵コード
-	 * @returns {PartsDefinition} 定義オブジェクト
+	 * @param code 敵コード
+	 * @returns 定義オブジェクト
 	 * @private
 	 */
 	getEnemyDefinition(code: string | number): Parts | null {
@@ -11191,20 +11210,20 @@ class MainProgram {
 
 	/**
 	 * 指定した座標に主人公の掘った穴が存在するか調べ、存在する場合はその配列インデックスを返します
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} y座標(ピクセル座標)
-	 * @returns {number} 穴のid 穴が指定した座標に存在しない場合は-1
+	 * @param x X座標(ピクセル座標)
+	 * @param y y座標(ピクセル座標)
+	 * @returns 穴のid 穴が指定した座標に存在しない場合は-1
 	 */
-	anaCheckNormal(i: number, j: number) {
+	anaCheckNormal(x: number, y: number) {
 		var l = -1;
 		var k = 0;
 		do {
 			if (k > 11) break;
 			if (
 				this.ana_c[k] > 0 &&
-				Math.abs(this.ana_x[k] * 32 - i) < 32 &&
-				j + 32 >= this.ana_y[k] * 32 &&
-				j + 16 <= this.ana_y[k] * 32
+				Math.abs(this.ana_x[k] * 32 - x) < 32 &&
+				y + 32 >= this.ana_y[k] * 32 &&
+				y + 16 <= this.ana_y[k] * 32
 			) {
 				l = k;
 				break;
@@ -11217,48 +11236,48 @@ class MainProgram {
 	/**
 	 * 特定のブロックの床面のY座標を得る(？)
 	 * TODO: 要調査
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} y座標(ピクセル座標)
-	 * @returns {*}
+	 * @param x X座標(ピクセル座標)
+	 * @param y y座標(ピクセル座標)
+	 * @returns TODO: 要調査
 	 * @see {@link getSakamichiY}
 	 */
-	sakamichiY(i: number, j: number) {
-		var k = rightShiftIgnoreSign(i + 15, 5);
-		var l = rightShiftIgnoreSign(j + 31, 5);
+	sakamichiY(x: number, y: number) {
+		var k = rightShiftIgnoreSign(x + 15, 5);
+		var l = rightShiftIgnoreSign(y + 31, 5);
 		var word0 = this.maps.map_bg[k][l];
-		var k2 = j;
+		var k2 = y;
 		switch (word0) {
 			default:
 				break;
 
 			case 10:
-				var i1 = l * 32 - ((i + 15) % 32);
-				if (i1 < j) k2 = i1;
+				var i1 = l * 32 - ((x + 15) % 32);
+				if (i1 < y) k2 = i1;
 				break;
 
 			case 11:
-				var j1 = l * 32 + ((i + 15) % 32) - 31;
-				if (j1 < j) k2 = j1;
+				var j1 = l * 32 + ((x + 15) % 32) - 31;
+				if (j1 < y) k2 = j1;
 				break;
 
 			case 12:
-				var k1 = l * 32 - rightShiftIgnoreSign((i + 15) % 32, 1);
-				if (k1 < j) k2 = k1;
+				var k1 = l * 32 - rightShiftIgnoreSign((x + 15) % 32, 1);
+				if (k1 < y) k2 = k1;
 				break;
 
 			case 13:
-				var l1 = l * 32 - rightShiftIgnoreSign((i + 15) % 32, 1) - 16;
-				if (l1 < j) k2 = l1;
+				var l1 = l * 32 - rightShiftIgnoreSign((x + 15) % 32, 1) - 16;
+				if (l1 < y) k2 = l1;
 				break;
 
 			case 14:
-				var i2 = l * 32 + rightShiftIgnoreSign((i + 15) % 32, 1) - 31;
-				if (i2 < j) k2 = i2;
+				var i2 = l * 32 + rightShiftIgnoreSign((x + 15) % 32, 1) - 31;
+				if (i2 < y) k2 = i2;
 				break;
 
 			case 15:
-				var j2 = l * 32 + rightShiftIgnoreSign((i + 15) % 32, 1) - 15;
-				if (j2 < j) k2 = j2;
+				var j2 = l * 32 + rightShiftIgnoreSign((x + 15) % 32, 1) - 15;
+				if (j2 < y) k2 = j2;
 				break;
 		}
 		return k2;
@@ -11266,22 +11285,22 @@ class MainProgram {
 
 	/**
 	 * 敵の攻撃やアイテムを発生させる
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} y座標(ピクセル座標)
-	 * @param type {number} 種類
+	 * @param x X座標(ピクセル座標)
+	 * @param y y座標(ピクセル座標)
+	 * @param type 種類
 	 */
-	mSet(i: number, j: number, k: number) {
+	mSet(x: number, y: number, type: number) {
 		var l = 0;
 		do {
 			if (l > 79) break;
 			if (this.co_m[l].c <= 0) {
 				var characterobject = this.co_m[l];
-				characterobject.c = k;
-				characterobject.x = i;
-				characterobject.y = j;
+				characterobject.c = type;
+				characterobject.x = x;
+				characterobject.y = y;
 				characterobject.c1 = 0;
 				this.m_kazu++;
-				switch (k) {
+				switch (type) {
 					case 90: // 水の波動
 						characterobject.c2 = 4;
 						characterobject.vx = 0;
@@ -11302,8 +11321,8 @@ class MainProgram {
 						break;
 
 					case 100: // 電撃
-						var k1 = this.co_j.x - i;
-						var i2 = this.co_j.y - j;
+						var k1 = this.co_j.x - x;
+						var i2 = this.co_j.y - y;
 						var i1 = Math.floor(Math.sqrt(k1 * k1 + i2 * i2));
 						if (i1 < 48) {
 							this.m_kazu--;
@@ -11325,8 +11344,8 @@ class MainProgram {
 						break;
 
 					case 150: // ヒノララシ シューティング時の電撃攻撃
-						var l1 = this.co_j.x - i;
-						var j2 = this.co_j.y - j;
+						var l1 = this.co_j.x - x;
+						var j2 = this.co_j.y - y;
 						var j1 = Math.floor(Math.sqrt(l1 * l1 + j2 * j2));
 						if (j1 < 32) {
 							this.m_kazu--;
@@ -11428,19 +11447,19 @@ class MainProgram {
 						break;
 
 					case 2000: // ？ブロックから出てくるコイン
-						characterobject.c3 = j;
+						characterobject.c3 = y;
 						characterobject.vy = -210;
 						break;
 
 					case 2010: // ？ブロックから出てくるコイン 2枚目
 						characterobject.c = 2000;
-						characterobject.c3 = j - 64;
+						characterobject.c3 = y - 64;
 						characterobject.vy = -280;
 						break;
 
 					case 2020: // ？ブロックから出てくるコイン 3枚目
 						characterobject.c = 2000;
-						characterobject.c3 = j - 32;
+						characterobject.c3 = y - 32;
 						characterobject.vy = -250;
 						break;
 
@@ -11536,47 +11555,47 @@ class MainProgram {
 
 	/**
 	 * ゲーム中に画面内に出現するコインやアイテムを追加する
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} y座標(ピクセル座標)
-	 * @param type {number} 種類
-	 * @param vx {number} X速度(ピクセル単位)
-	 * @param vy {number} Y速度(ピクセル単位)
+	 * @param x X座標(ピクセル座標)
+	 * @param y y座標(ピクセル座標)
+	 * @param type 種類
+	 * @param vx X速度(ピクセル単位)
+	 * @param vy Y速度(ピクセル単位)
 	 */
-	mSet2(i: number, j: number, k: number, l: number, i1: number) {
+	mSet2(x: number, y: number, type: number, vx: number, vy: number) {
 		var j1 = 0;
 		do {
 			if (j1 > 79) break;
 			if (this.co_m[j1].c <= 0) {
 				var characterobject = this.co_m[j1];
-				characterobject.c = k;
-				characterobject.x = i;
-				characterobject.y = j;
-				characterobject.vx = l;
-				characterobject.vy = i1;
+				characterobject.c = type;
+				characterobject.x = x;
+				characterobject.y = y;
+				characterobject.vx = vx;
+				characterobject.vy = vy;
 				characterobject.c1 = 0;
 				this.m_kazu++;
-				switch (k) {
+				switch (type) {
 					case 75:
 						// ソーラービーム 左へ発射
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						characterobject.vy = 96;
 						break;
 
 					case 77:
 						// 破壊光線 左へ発射
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						characterobject.vy = 96;
 						break;
 
 					case 85:
 						// ソーラービーム 右へ発射
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						characterobject.vy = 96;
 						break;
 
 					case 87:
 						// 破壊光線 右へ発射
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						characterobject.vy = 96;
 						break;
 
@@ -11604,8 +11623,8 @@ class MainProgram {
 						// カイオール バブル光線回転連射
 						characterobject.c = 700;
 						characterobject.c2 = 1;
-						characterobject.x = i + l * 3;
-						characterobject.y = j + i1 * 3;
+						characterobject.x = x + vx * 3;
+						characterobject.y = y + vy * 3;
 						break;
 
 					case 720:
@@ -11657,69 +11676,69 @@ class MainProgram {
 
 					case 900:
 						// バブル光線
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 0;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						break;
 
 					case 901:
 						// ボスのハリケンブラスト1
 						characterobject.c = 900;
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 0;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						characterobject.c3 = 1;
 						break;
 
 					case 910:
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 0;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						break;
 
 					case 911:
 						// ボスのハリケンブラスト2
 						characterobject.c = 910;
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 0;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						characterobject.c3 = 1;
 						break;
 
 					case 950:
 						// ハリケンブラスト1
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 0;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						break;
 
 					case 960:
 						// ハリケンブラスト2
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 0;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						break;
 
 					case 970:
 						// 左にうずしお
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 10;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						break;
 
 					case 980:
 						// 右にうずしお
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = x;
+						characterobject.vy = y;
 						characterobject.c1 = 10;
-						characterobject.c2 = l;
+						characterobject.c2 = vx;
 						break;
 				}
 				break;
@@ -12881,28 +12900,28 @@ class MainProgram {
 	/**
 	 * グレネード、ファイアボールといった主人公の攻撃を発生させる
 	 * このメソッドで追加する攻撃は同時に2個しか存在できない
-	 * @param x {number} X座標(ピクセル座標)
-	 * @param y {number} y座標(ピクセル座標)
-	 * @param type {number} 種類
+	 * @param x X座標(ピクセル座標)
+	 * @param y y座標(ピクセル座標)
+	 * @param type 種類
 	 */
-	jmSet(i: number, j: number, k: number) {
+	jmSet(x: number, y: number, type: number) {
 		var l = 0;
 		do {
 			if (l > 1) break;
 			if (this.co_jm[l].c <= 0) {
 				var characterobject = this.co_jm[l];
-				characterobject.c = k;
-				characterobject.x = i;
-				characterobject.y = j + 8;
+				characterobject.c = type;
+				characterobject.x = x;
+				characterobject.y = y + 8;
 				characterobject.c1 = 0;
 				characterobject.c2 = 0;
 				this.jm_kazu++;
-				switch (k) {
+				switch (type) {
 					case 60: // エネルギー砲 左に発射
 					case 65: // エネルギー砲 右に発射
-						characterobject.x = i + 16;
-						characterobject.y = j;
-						characterobject.vx = i + 16;
+						characterobject.x = x + 16;
+						characterobject.y = y;
+						characterobject.vx = x + 16;
 						characterobject.c4 = 8;
 						this.j_gr_kazu--;
 						this.gs.rsAddSound(23);
@@ -12915,13 +12934,13 @@ class MainProgram {
 						if (this.j_tokugi == 14) {
 							// シューティングモード
 							characterobject.c = 101;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = -16;
 							characterobject.vy = 0;
 						} else if (this.j_tokugi == 15) {
 							// 4方向移動
 							characterobject.c = 101;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = -16;
 							characterobject.vy = 0;
 							if (this.j_4_muki == 2) {
@@ -12936,13 +12955,13 @@ class MainProgram {
 						} else if (this.j_fire_type == 3) {
 							// 水平に飛ぶ 短射程
 							characterobject.c = 101;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = -20;
 							characterobject.vy = 0;
 						} else if (this.j_fire_type == 2) {
 							// 水平に飛ぶ
 							characterobject.c = 101;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = rounddown(this.co_j.vx / 10) - 12;
 							characterobject.vy = 0;
 							if (Math.abs(characterobject.vx) < 6) characterobject.vx = -6;
@@ -12956,12 +12975,12 @@ class MainProgram {
 						if (Math.abs(characterobject.vx) < 2) characterobject.vx = 2;
 						if (this.j_tokugi == 14) {
 							characterobject.c = 106;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = 16;
 							characterobject.vy = 0;
 						} else if (this.j_tokugi == 15) {
 							characterobject.c = 106;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = 16;
 							characterobject.vy = 0;
 							if (this.j_4_muki == 2) {
@@ -12973,12 +12992,12 @@ class MainProgram {
 							}
 						} else if (this.j_fire_type == 3) {
 							characterobject.c = 106;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = 20;
 							characterobject.vy = 0;
 						} else if (this.j_fire_type == 2) {
 							characterobject.c = 106;
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = rounddown(this.co_j.vx / 10) + 12;
 							characterobject.vy = 0;
 							if (Math.abs(characterobject.vx) < 6) characterobject.vx = 6;
@@ -12987,8 +13006,8 @@ class MainProgram {
 						break;
 
 					case 110: // ファイヤーボール ホーミングアミュレット 左に発射
-						characterobject.x = i;
-						characterobject.y = j;
+						characterobject.x = x;
+						characterobject.y = y;
 						characterobject.vx = -10;
 						characterobject.vy = -10;
 						this.gs.rsAddSound(23);
@@ -12996,8 +13015,8 @@ class MainProgram {
 
 					case 115: // ファイヤーボール ホーミングアミュレット 右に発射
 						characterobject.c = 110;
-						characterobject.x = i;
-						characterobject.y = j;
+						characterobject.x = x;
+						characterobject.y = y;
 						characterobject.vx = 10;
 						characterobject.vy = -10;
 						this.gs.rsAddSound(23);
@@ -13009,7 +13028,7 @@ class MainProgram {
 						if (Math.abs(characterobject.vx) < 2) characterobject.vx = -2;
 						if (this.grenade_type == 5 || this.grenade_type == 6) {
 							// エネルギー砲
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = -20;
 							characterobject.vy = 0;
 						}
@@ -13029,7 +13048,7 @@ class MainProgram {
 						}
 						if (this.grenade_type == 5 || this.grenade_type == 6) {
 							// エネルギー砲
-							characterobject.y = j;
+							characterobject.y = y;
 							characterobject.vx = 20;
 							characterobject.vy = 0;
 						}
@@ -13040,8 +13059,8 @@ class MainProgram {
 					case 1206: // ブロック１破壊砲 右に発射
 						characterobject.c = 200;
 						characterobject.c4 = 2;
-						characterobject.x = i + 16 - 10;
-						characterobject.y = j;
+						characterobject.x = x + 16 - 10;
+						characterobject.y = y;
 						characterobject.vx = 20;
 						characterobject.vy = 0;
 						this.j_gr_kazu--;
@@ -13051,8 +13070,8 @@ class MainProgram {
 					case 1207: // ブロック１破壊砲 左に発射
 						characterobject.c = 200;
 						characterobject.c4 = 2;
-						characterobject.x = i + 16 + 10;
-						characterobject.y = j;
+						characterobject.x = x + 16 + 10;
+						characterobject.y = y;
 						characterobject.vx = -20;
 						characterobject.vy = 0;
 						this.j_gr_kazu--;
@@ -13072,24 +13091,24 @@ class MainProgram {
 	 * @param type {number} 種類
 	 * @param i {number} 攻撃を配置するco_jmのインデックス(同インデックスを指定すると前に発生させた攻撃が消滅するまで次を出せない
 	 */
-	jmSet2(i: number, j: number, k: number, l: number) {
-		var i1 = l;
+	jmSet2(x: number, y: number, type: number, i: number) {
+		var i1 = i;
 		if (this.co_jm[i1].c > 0) return;
 		var characterobject = this.co_jm[i1];
-		characterobject.c = k;
-		characterobject.x = i;
-		characterobject.y = j + 8;
+		characterobject.c = type;
+		characterobject.x = x;
+		characterobject.y = y + 8;
 		characterobject.c1 = 0;
 		characterobject.c2 = 0;
 		characterobject.c4 = 0;
 		this.jm_kazu++;
-		switch (k) {
+		switch (type) {
 			default:
 				break;
 
 			case 50: // 夢想封印
-				characterobject.x = i;
-				characterobject.y = j;
+				characterobject.x = x;
+				characterobject.y = y;
 				characterobject.c = 50;
 				characterobject.c1 = 1;
 				characterobject.c2 = 20;
@@ -13098,18 +13117,18 @@ class MainProgram {
 				break;
 
 			case 60:
-				characterobject.x = i + 16;
-				characterobject.y = j;
-				characterobject.vx = i + 16;
+				characterobject.x = x + 16;
+				characterobject.y = y;
+				characterobject.vx = x + 16;
 				characterobject.c4 = 8;
 				this.j_gr_kazu--;
 				this.gs.rsAddSound(23);
 				break;
 
 			case 65:
-				characterobject.x = i + 16;
-				characterobject.y = j;
-				characterobject.vx = i + 16;
+				characterobject.x = x + 16;
+				characterobject.y = y;
+				characterobject.vx = x + 16;
 				characterobject.c4 = 8;
 				this.j_gr_kazu--;
 				this.gs.rsAddSound(23);
@@ -13121,12 +13140,12 @@ class MainProgram {
 				if (Math.abs(characterobject.vx) < 2) characterobject.vx = -2;
 				if (this.j_tokugi == 14) {
 					characterobject.c = 101;
-					characterobject.y = j;
+					characterobject.y = y;
 					characterobject.vx = -16;
 					characterobject.vy = 0;
 				} else if (this.j_tokugi == 15) {
 					characterobject.c = 101;
-					characterobject.y = j;
+					characterobject.y = y;
 					characterobject.vx = -16;
 					characterobject.vy = 0;
 					if (this.j_4_muki == 2) {
@@ -13146,12 +13165,12 @@ class MainProgram {
 				if (Math.abs(characterobject.vx) < 2) characterobject.vx = 2;
 				if (this.j_tokugi == 14) {
 					characterobject.c = 106;
-					characterobject.y = j;
+					characterobject.y = y;
 					characterobject.vx = 16;
 					characterobject.vy = 0;
 				} else if (this.j_tokugi == 15) {
 					characterobject.c = 106;
-					characterobject.y = j;
+					characterobject.y = y;
 					characterobject.vx = 16;
 					characterobject.vy = 0;
 					if (this.j_4_muki == 2) {
@@ -13170,7 +13189,7 @@ class MainProgram {
 				characterobject.vy = -35;
 				if (Math.abs(characterobject.vx) < 2) characterobject.vx = -2;
 				if (this.grenade_type == 5 || this.grenade_type == 6 || this.j_tokugi == 15) {
-					characterobject.y = j;
+					characterobject.y = y;
 					characterobject.vx = -20;
 					characterobject.vy = 0;
 					if (this.j_tokugi == 15)
@@ -13197,7 +13216,7 @@ class MainProgram {
 					if (Math.abs(characterobject.vx) < 2) characterobject.vx = 2;
 				}
 				if (this.grenade_type == 5 || this.grenade_type == 6 || this.j_tokugi == 15) {
-					characterobject.y = j;
+					characterobject.y = y;
 					characterobject.vx = 20;
 					characterobject.vy = 0;
 					if (this.j_tokugi == 15)
@@ -13216,8 +13235,8 @@ class MainProgram {
 			case 206: // 右にブロック１破壊砲発射
 				characterobject.c = 200;
 				characterobject.c4 = 2;
-				characterobject.x = i + 16;
-				characterobject.y = j;
+				characterobject.x = x + 16;
+				characterobject.y = y;
 				characterobject.vx = 16;
 				characterobject.vy = 0;
 				this.gs.rsAddSound(23);
@@ -13226,8 +13245,8 @@ class MainProgram {
 			case 207: // 左にブロック１破壊砲発射
 				characterobject.c = 200;
 				characterobject.c4 = 2;
-				characterobject.x = i - 16;
-				characterobject.y = j;
+				characterobject.x = x - 16;
+				characterobject.y = y;
 				characterobject.vx = -16;
 				characterobject.vy = 0;
 				this.gs.rsAddSound(23);
@@ -13236,7 +13255,7 @@ class MainProgram {
 			case 208: // 上にブロック１破壊砲発射
 				characterobject.c = 200;
 				characterobject.c4 = 2;
-				characterobject.y = j - 16;
+				characterobject.y = y - 16;
 				characterobject.vx = 0;
 				characterobject.vy = -16;
 				this.gs.rsAddSound(23);
@@ -13245,7 +13264,7 @@ class MainProgram {
 			case 209: // 下にブロック１破壊砲発射
 				characterobject.c = 200;
 				characterobject.c4 = 2;
-				characterobject.y = j + 24;
+				characterobject.y = y + 24;
 				characterobject.vx = 0;
 				characterobject.vy = 18;
 				this.gs.rsAddSound(23);
@@ -14134,17 +14153,17 @@ class MainProgram {
 
 	/**
 	 * 穴掘りモード時の主人公が掘った穴を追加
-	 * @param x {number} X座標(マップ座標)
-	 * @param y {number} Y座標(マップ座標)
+	 * @param x X座標(マップ座標)
+	 * @param y Y座標(マップ座標)
 	 */
-	anaSet(i: number, j: number) {
+	anaSet(x: number, y: number) {
 		var k = 0;
 		do {
 			if (k > 11) break;
 			if (this.ana_c[k] == 0) {
 				this.ana_c[k] = 136;
-				this.ana_x[k] = i;
-				this.ana_y[k] = j;
+				this.ana_x[k] = x;
+				this.ana_y[k] = y;
 				this.ana_kazu++;
 				break;
 			}
@@ -14155,17 +14174,17 @@ class MainProgram {
 	/**
 	 * 穴掘りモード時の主人公が掘った穴を追加 その2(？)
 	 * TODO: 要調査
-	 * @param x {number} X座標(マップ座標)
-	 * @param y {number} Y座標(マップ座標)
+	 * @param x X座標(マップ座標)
+	 * @param y Y座標(マップ座標)
 	 */
-	anaSet2(i: number, j: number) {
+	anaSet2(x: number, y: number) {
 		var k = 0;
 		do {
 			if (k > 11) break;
 			if (this.ana_c[k] == 0) {
 				this.ana_c[k] = 236;
-				this.ana_x[k] = i;
-				this.ana_y[k] = j;
+				this.ana_x[k] = x;
+				this.ana_y[k] = y;
 				this.ana_kazu++;
 				break;
 			}
@@ -14217,13 +14236,13 @@ class MainProgram {
 	/**
 	 * 指定座標(ピクセル単位)の位置に、指定したコードの仕掛けを設置します
 	 * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet} を参照
-	 * @param pixelX {number} X座標(ピクセル単位)
-	 * @param pixelY {number} Y座標(ピクセル単位)
-	 * @param code {number} 設置する仕掛けのコード
-	 * @param argValue {number} 仕掛けに使用する引数
+	 * @param pixelX X座標(ピクセル単位)
+	 * @param pixelY Y座標(ピクセル単位)
+	 * @param code 設置する仕掛けのコード
+	 * @param argValue 仕掛けに使用する引数
 	 * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.aSet}
 	 */
-	aSet(i: number, j: number, k: number, l: number) {
+	aSet(pixelX: number, pixelY: number, code: number, argValue: number) {
 		var i1 = 0;
 		do {
 			if (i1 > this.a_kazu) {
@@ -14233,12 +14252,12 @@ class MainProgram {
 			}
 			if (this.co_a[i1].c <= 0) {
 				var characterobject = this.co_a[i1];
-				characterobject.c = k;
-				characterobject.c1 = l - this.gg.di.width - 32;
-				characterobject.c2 = l + 128;
-				characterobject.x = i;
-				characterobject.y = j;
-				switch (k) {
+				characterobject.c = code;
+				characterobject.c1 = argValue - this.gg.di.width - 32;
+				characterobject.c2 = argValue + 128;
+				characterobject.x = pixelX;
+				characterobject.y = pixelY;
+				switch (code) {
 					case 60: // 水草
 						characterobject.pt = 200;
 						break;
@@ -14246,72 +14265,72 @@ class MainProgram {
 					case 70: // ファイヤーバー（左回り）
 						characterobject.vx = -3;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 71: // ファイヤーバー（右回り）
 						characterobject.c = 70;
 						characterobject.vx = 3;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 72: // ファイヤーバー２本またはファイヤーバー３本 左回り １本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 73: // ファイヤーバー２本 ２本目　またはファイヤーバー３本 右回り　１本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 74: // ファイヤーバー３本 左回り ２本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 120;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 75: // ファイヤーバー３本 右回り ２本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 120;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 76: // ファイヤーバー３本 左回り ３本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 240;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 77: // ファイヤーバー３本 右回り ３本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 240;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 78: // スウィングファイヤーバー 左
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 160;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						characterobject.c4 = 2;
 						break;
 
@@ -14319,8 +14338,8 @@ class MainProgram {
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 380;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						characterobject.c4 = 3;
 						break;
 
@@ -14373,112 +14392,112 @@ class MainProgram {
 						break;
 
 					case 90: // シーソー
-						characterobject.x = i + 16;
-						characterobject.y = j;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY;
 						characterobject.pt = 1200;
 						characterobject.vy = 0;
 						characterobject.c = 90;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 91: // シーソー 左が下
-						characterobject.x = i + 16;
-						characterobject.y = j;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY;
 						characterobject.pt = 1200;
 						characterobject.vy = -56;
 						characterobject.c = 90;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 92: // シーソー 右が下
-						characterobject.x = i + 16;
-						characterobject.y = j;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY;
 						characterobject.pt = 1200;
 						characterobject.vy = 56;
 						characterobject.c = 90;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 93: // ブランコ　ブランコ ２個連続 １個目
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 1300;
 						characterobject.vy = 90;
 						characterobject.vx = 30;
 						characterobject.c = 93;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256 + 384;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256 + 384;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 94: // ブランコ ２個連続 ２個目
-						characterobject.x = i + 16 + 384;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16 + 384;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 1300;
 						characterobject.vy = 90;
 						characterobject.vx = -30;
 						characterobject.c = 93;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256 + 384;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256 + 384;
 						characterobject.c3 = 0;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 95: // スウィングバー 左
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 1400;
 						characterobject.c3 = 1;
 						characterobject.vy = 180;
 						characterobject.vx = -26;
 						characterobject.c = 95;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 96: // スウィングバー 右
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 1400;
 						characterobject.c3 = 2;
 						characterobject.vy = 360;
 						characterobject.vx = 26;
 						characterobject.c = 95;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 100: // 動く床（上下移動）
 						characterobject.vy = 5;
-						characterobject.x = i + 8;
-						characterobject.y = j - 212;
-						characterobject.c3 = j - 212;
-						characterobject.c4 = j + 2;
+						characterobject.x = pixelX + 8;
+						characterobject.y = pixelY - 212;
+						characterobject.c3 = pixelY - 212;
+						characterobject.c4 = pixelY + 2;
 						characterobject.pt = 100;
 						break;
 
 					case 101:
 						characterobject.c = 100;
 						characterobject.vy = 5;
-						characterobject.x = i + 8;
-						characterobject.y = j - 212;
-						characterobject.c3 = j - 212;
-						characterobject.c4 = j + 2;
+						characterobject.x = pixelX + 8;
+						characterobject.y = pixelY - 212;
+						characterobject.c3 = pixelY - 212;
+						characterobject.c4 = pixelY + 2;
 						characterobject.pt = 100;
 						characterobject.c1 = 0;
 						characterobject.c2 = 6400;
@@ -14486,65 +14505,65 @@ class MainProgram {
 
 					case 110: // 動く床（左右移動）
 						characterobject.vx = -3;
-						characterobject.x = i + 208;
-						characterobject.c3 = i;
-						characterobject.c4 = i + 208;
+						characterobject.x = pixelX + 208;
+						characterobject.c3 = pixelX;
+						characterobject.c4 = pixelX + 208;
 						characterobject.pt = 100;
-						characterobject.c2 = l + 208 + 128 + 32;
+						characterobject.c2 = argValue + 208 + 128 + 32;
 						if (this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) {
-							characterobject.c3 = i + 4;
-							characterobject.c4 = i + 208 - 6;
+							characterobject.c3 = pixelX + 4;
+							characterobject.c4 = pixelX + 208 - 6;
 						}
 						break;
 
 					case 111:
 						characterobject.c = 110;
 						characterobject.vx = -3;
-						characterobject.x = i + 208;
-						characterobject.c3 = i;
-						characterobject.c4 = i + 208;
+						characterobject.x = pixelX + 208;
+						characterobject.c3 = pixelX;
+						characterobject.c4 = pixelX + 208;
 						characterobject.pt = 100;
 						characterobject.c1 = 0;
 						characterobject.c2 = 6400;
 						if (this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) {
-							characterobject.c3 = i + 4;
-							characterobject.c4 = i + 208 - 6;
+							characterobject.c3 = pixelX + 4;
+							characterobject.c4 = pixelX + 208 - 6;
 						}
 						break;
 
 					case 115: // 動く床（左右移動×2）左側
 						characterobject.c = 110;
 						characterobject.vx = -3;
-						characterobject.x = i + 208;
-						characterobject.c3 = i;
-						characterobject.c4 = i + 208;
+						characterobject.x = pixelX + 208;
+						characterobject.c3 = pixelX;
+						characterobject.c4 = pixelX + 208;
 						characterobject.pt = 100;
-						characterobject.c2 = l + 208 + 128 + 342 + 32;
+						characterobject.c2 = argValue + 208 + 128 + 342 + 32;
 						if (this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) {
-							characterobject.c3 = i + 4;
-							characterobject.c4 = i + 208 - 6;
+							characterobject.c3 = pixelX + 4;
+							characterobject.c4 = pixelX + 208 - 6;
 						}
 						break;
 
 					case 116: // 動く床（左右移動×2）右側
 						characterobject.c = 110;
 						characterobject.vx = 3;
-						characterobject.x = i + 320;
-						characterobject.c3 = i + 320;
-						characterobject.c4 = i + 208 + 320;
+						characterobject.x = pixelX + 320;
+						characterobject.c3 = pixelX + 320;
+						characterobject.c4 = pixelX + 208 + 320;
 						characterobject.pt = 100;
-						characterobject.c2 = l + 208 + 128 + 320 + 32;
+						characterobject.c2 = argValue + 208 + 128 + 320 + 32;
 						if (this.j_tokugi == 10 || this.j_tokugi == 12 || this.j_tokugi == 13) {
-							characterobject.c3 = i + 320 + 6;
-							characterobject.c4 = i + 208 + 320 - 4;
+							characterobject.c3 = pixelX + 320 + 6;
+							characterobject.c4 = pixelX + 208 + 320 - 4;
 						}
 						break;
 
 					case 120: // 動く床 左回り
-						characterobject.vx = i + 160;
-						characterobject.vy = j;
-						characterobject.x = i + 8;
-						characterobject.y = j;
+						characterobject.vx = pixelX + 160;
+						characterobject.vy = pixelY;
+						characterobject.x = pixelX + 8;
+						characterobject.y = pixelY;
 						characterobject.c3 = 0;
 						characterobject.muki = 1;
 						characterobject.c1 = characterobject.vx - this.gg.di.width - 32 - 130;
@@ -14554,10 +14573,10 @@ class MainProgram {
 
 					case 121: // 動く床 右回り
 						characterobject.c = 120;
-						characterobject.vx = i + 160;
-						characterobject.vy = j;
-						characterobject.x = i + 8;
-						characterobject.y = j;
+						characterobject.vx = pixelX + 160;
+						characterobject.vy = pixelY;
+						characterobject.x = pixelX + 8;
+						characterobject.y = pixelY;
 						characterobject.c3 = 0;
 						characterobject.muki = 0;
 						characterobject.c1 = characterobject.vx - this.gg.di.width - 32 - 130;
@@ -14566,8 +14585,8 @@ class MainProgram {
 						break;
 
 					case 150: // スイッチ式動く床 ＯＮで上
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = pixelX;
+						characterobject.vy = pixelY;
 						characterobject.x = characterobject.vx + 8;
 						characterobject.y = characterobject.vy + 8;
 						characterobject.c3 = 0;
@@ -14579,8 +14598,8 @@ class MainProgram {
 
 					case 151: // スイッチ式動く床 ＯＮで下
 						characterobject.c = 150;
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = pixelX;
+						characterobject.vy = pixelY;
 						characterobject.x = characterobject.vx + 8;
 						characterobject.y = characterobject.vy + 8;
 						characterobject.c3 = 0;
@@ -14592,8 +14611,8 @@ class MainProgram {
 
 					case 152: // スイッチ式長く動く床 ＯＮで上
 						characterobject.c = 150;
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = pixelX;
+						characterobject.vy = pixelY;
 						characterobject.x = characterobject.vx + 8;
 						characterobject.y = characterobject.vy + 8;
 						characterobject.c3 = 0;
@@ -14604,8 +14623,8 @@ class MainProgram {
 						break;
 
 					case 160: // スイッチ式動く床 ＯＮで右
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = pixelX;
+						characterobject.vy = pixelY;
 						characterobject.x = characterobject.vx + 8;
 						characterobject.y = characterobject.vy + 8;
 						characterobject.c3 = 0;
@@ -14617,8 +14636,8 @@ class MainProgram {
 
 					case 161: // スイッチ式動く床 ＯＮで左
 						characterobject.c = 160;
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = pixelX;
+						characterobject.vy = pixelY;
 						characterobject.x = characterobject.vx + 8;
 						characterobject.y = characterobject.vy + 8;
 						characterobject.c3 = 0;
@@ -14630,8 +14649,8 @@ class MainProgram {
 
 					case 162: // スイッチ式長く動く床 ＯＮで右
 						characterobject.c = 160;
-						characterobject.vx = i;
-						characterobject.vy = j;
+						characterobject.vx = pixelX;
+						characterobject.vy = pixelY;
 						characterobject.x = characterobject.vx + 8;
 						characterobject.y = characterobject.vy + 8;
 						characterobject.c3 = 0;
@@ -14791,34 +14810,34 @@ class MainProgram {
 					case 400: // ドッスンスン
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						break;
 
 					case 410: // 上ドッスンスン
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 1;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						break;
 
 					case 420: // 左ドッスンスン
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 2;
-						characterobject.vx = i;
+						characterobject.vx = pixelX;
 						characterobject.c = 410;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128;
 						break;
 
 					case 430: // 右ドッスンスン
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 3;
-						characterobject.vx = i;
+						characterobject.vx = pixelX;
 						characterobject.c = 410;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 128 + 256;
 						break;
 
 					case 440: // 跳ねるドッスンスン
@@ -14841,7 +14860,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 6;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14849,7 +14868,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 7;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14857,7 +14876,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 8;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14865,17 +14884,17 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 9;
-						characterobject.vx = i;
+						characterobject.vx = pixelX;
 						characterobject.c = 410;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256;
 						break;
 
 					case 482: // ロングレンジドッスンスン
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 10;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14883,7 +14902,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 11;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c1 = 0;
 						characterobject.c2 = (this.mapWidth + 1) * 32;
 						characterobject.c = 410;
@@ -14893,7 +14912,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 12;
-						characterobject.vx = i;
+						characterobject.vx = pixelX;
 						characterobject.c = 410;
 						characterobject.c1 = 0;
 						characterobject.c2 = (this.mapWidth + 1) * 32;
@@ -14903,7 +14922,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 13;
-						characterobject.vx = i;
+						characterobject.vx = pixelX;
 						characterobject.c = 410;
 						characterobject.c1 = 0;
 						characterobject.c2 = (this.mapWidth + 1) * 32;
@@ -14913,7 +14932,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 14;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14921,7 +14940,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 15;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14929,7 +14948,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 16;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.vx = 0;
 						characterobject.c1 = 0;
 						characterobject.c2 = (this.mapWidth + 1) * 32;
@@ -14940,7 +14959,7 @@ class MainProgram {
 						characterobject.pt = 400;
 						characterobject.c3 = 0;
 						characterobject.c4 = 17;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						characterobject.c = 410;
 						break;
 
@@ -14955,8 +14974,8 @@ class MainProgram {
 
 					case 500: // 乗ると落ちる
 						characterobject.vy = 0;
-						characterobject.x = i;
-						characterobject.y = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
 						characterobject.pt = 500;
@@ -14965,8 +14984,8 @@ class MainProgram {
 					case 510: // ずっと乗っていると落ちる
 						characterobject.c = 500;
 						characterobject.vy = 0;
-						characterobject.x = i;
-						characterobject.y = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
 						characterobject.c3 = 0;
 						characterobject.c4 = 1;
 						characterobject.pt = 500;
@@ -14977,7 +14996,7 @@ class MainProgram {
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
 						characterobject.vx = 0;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						break;
 
 					case 610: // 乗れるカイオール 方向キーで移動
@@ -14985,7 +15004,7 @@ class MainProgram {
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
 						characterobject.vx = 0;
-						characterobject.vy = j;
+						characterobject.vy = pixelY;
 						break;
 
 					case 700: // ジャンプ台
@@ -15019,8 +15038,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1001: // ファイヤーウォール 下へ伸びる
@@ -15028,8 +15047,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 1;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1002: // ファイヤーウォール 左へ伸びる
@@ -15037,8 +15056,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 2;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1003: // ファイヤーウォール 右へ伸びる
@@ -15046,8 +15065,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 3;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1005: // ファイヤーウォール 上へ速射
@@ -15055,8 +15074,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 10;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1006: // ファイヤーウォール 下へ速射
@@ -15064,8 +15083,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 11;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1007: // ファイヤーウォール 左へ速射
@@ -15073,8 +15092,8 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 12;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1008: // ファイヤーウォール 右へ速射
@@ -15082,16 +15101,16 @@ class MainProgram {
 						characterobject.vx = 18;
 						characterobject.c3 = 13;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1010: // ファイヤーウォール 壁まで上下
 						characterobject.vx = 0;
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1020: // ファイヤーウォール 壁まで左右
@@ -15106,65 +15125,65 @@ class MainProgram {
 						characterobject.vx = 0;
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1150: // 逆火山
 						characterobject.vx = 0;
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1200: // 動くＴ字型　動くＴ字型 ２個連続 １個目
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 1900;
 						characterobject.vy = 270;
 						characterobject.vx = -30;
 						characterobject.c = 1200;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256 + 416;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256 + 416;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 1201: // 動くＴ字型 ２個連続 ２個目
-						characterobject.x = i + 16 + 416;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16 + 416;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 1900;
 						characterobject.vy = 270;
 						characterobject.vx = 30;
 						characterobject.c = 1200;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256 + 416;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256 + 416;
 						characterobject.c3 = 0;
 						characterobject.c4 = this.newYuka(String(1), String(1), String(2), String(2), "line");
 						this.setYukaColor(String(characterobject.c4), "255", "255", "255", "255");
 						break;
 
 					case 1300: // ロープ　ロープ ２本連続 １本目
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 2000;
 						characterobject.vy = 90;
 						characterobject.vx = 30;
 						characterobject.c = 1300;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256 + 416;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256 + 416;
 						break;
 
 					case 1301: // ロープ ２本連続 ２本目
-						characterobject.x = i + 16 + 320;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16 + 320;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 2000;
 						characterobject.vy = 90;
 						characterobject.vx = -30;
 						characterobject.c = 1300;
-						characterobject.c1 = l - this.gg.di.width - 32 - 256;
-						characterobject.c2 = l + 128 + 256 + 416;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - 256;
+						characterobject.c2 = argValue + 128 + 256 + 416;
 						break;
 
 					case 1400: // 得点で開く扉
@@ -15196,25 +15215,25 @@ class MainProgram {
 
 					case 1500: // 人間大砲 右向き
 						characterobject.pt = 2200;
-						characterobject.y = j - 12;
+						characterobject.y = pixelY - 12;
 						characterobject.c3 = 0;
 						characterobject.c4 = 330;
 						characterobject.vx = 0;
-						characterobject.vy = j;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.vy = pixelY;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1501: // 人間大砲 左向き
 						characterobject.c = 1500;
 						characterobject.pt = 2200;
-						characterobject.y = j - 12;
+						characterobject.y = pixelY - 12;
 						characterobject.c3 = 1;
 						characterobject.c4 = 225;
 						characterobject.vx = 0;
-						characterobject.vy = j;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.vy = pixelY;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1502: // 人間大砲 天井
@@ -15223,9 +15242,9 @@ class MainProgram {
 						characterobject.c3 = 2;
 						characterobject.c4 = 30;
 						characterobject.vx = 0;
-						characterobject.vy = j;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.vy = pixelY;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1503: // 人間大砲 右の壁
@@ -15234,9 +15253,9 @@ class MainProgram {
 						characterobject.c3 = 3;
 						characterobject.c4 = 270;
 						characterobject.vx = 0;
-						characterobject.vy = j;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.vy = pixelY;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1504: // 人間大砲 左の壁
@@ -15245,9 +15264,9 @@ class MainProgram {
 						characterobject.c3 = 4;
 						characterobject.c4 = 300;
 						characterobject.vx = 0;
-						characterobject.vy = j;
-						characterobject.c1 = i - this.gg.di.width - 224;
-						characterobject.c2 = i + 224;
+						characterobject.vy = pixelY;
+						characterobject.c1 = pixelX - this.gg.di.width - 224;
+						characterobject.c2 = pixelX + 224;
 						break;
 
 					case 1600: // スポット処理 小
@@ -15282,8 +15301,8 @@ class MainProgram {
 						characterobject.c3 = 0;
 						characterobject.c4 = 0;
 						characterobject.vy = 100;
-						characterobject.c1 = i - this.gg.di.width - 192;
-						characterobject.c2 = i + 192;
+						characterobject.c1 = pixelX - this.gg.di.width - 192;
+						characterobject.c2 = pixelX + 192;
 						break;
 
 					case 1701: // 人食いワカメ 下へ拡大縮小
@@ -15292,8 +15311,8 @@ class MainProgram {
 						characterobject.c3 = 1;
 						characterobject.c4 = 0;
 						characterobject.vy = 100;
-						characterobject.c1 = i - this.gg.di.width - 192;
-						characterobject.c2 = i + 192;
+						characterobject.c1 = pixelX - this.gg.di.width - 192;
+						characterobject.c2 = pixelX + 192;
 						break;
 
 					case 1702: // 人食いワカメ 中央から拡大縮小
@@ -15302,13 +15321,13 @@ class MainProgram {
 						characterobject.c3 = 2;
 						characterobject.c4 = 0;
 						characterobject.vy = 100;
-						characterobject.c1 = i - this.gg.di.width - 192;
-						characterobject.c2 = i + 192;
+						characterobject.c1 = pixelX - this.gg.di.width - 192;
+						characterobject.c2 = pixelX + 192;
 						break;
 
 					case 1800: // 回転するドッスンスン 左回り
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 2500;
 						characterobject.vy = 0;
 						characterobject.vx = -3;
@@ -15326,8 +15345,8 @@ class MainProgram {
 
 					case 1801: // 回転するドッスンスン 右回り
 						characterobject.c = 1800;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 2500;
 						characterobject.vy = 0;
 						characterobject.vx = 3;
@@ -15344,8 +15363,8 @@ class MainProgram {
 						break;
 
 					case 1850: // 回転する巨大ドッスンスン 左回り
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 2600;
 						characterobject.vy = 0;
 						characterobject.vx = -2;
@@ -15363,8 +15382,8 @@ class MainProgram {
 
 					case 1851: // 回転する巨大ドッスンスン 右回り
 						characterobject.c = 1850;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 2600;
 						characterobject.vy = 0;
 						characterobject.vx = 2;
@@ -15493,8 +15512,8 @@ class MainProgram {
 						characterobject.pt = 2300;
 						characterobject.c3 = 12;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1913: // 自分が重なると上強制スクロール
@@ -15502,8 +15521,8 @@ class MainProgram {
 						characterobject.pt = 2300;
 						characterobject.c3 = 13;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1914: // 自分が重なると全方向スクロール
@@ -15511,8 +15530,8 @@ class MainProgram {
 						characterobject.pt = 2300;
 						characterobject.c3 = 14;
 						characterobject.c4 = 0;
-						characterobject.c1 = i - this.gg.di.width - 150;
-						characterobject.c2 = i + 150;
+						characterobject.c1 = pixelX - this.gg.di.width - 150;
+						characterobject.c2 = pixelX + 150;
 						break;
 
 					case 1915: // 画面内で横固定縦自由スクロール
@@ -15554,10 +15573,10 @@ class MainProgram {
 					case 2000: // 曲線による上り坂
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15571,10 +15590,10 @@ class MainProgram {
 					case 2001: // 曲線による下り坂
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15588,10 +15607,10 @@ class MainProgram {
 					case 2002: // 曲線による上り坂 線のみ
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15605,10 +15624,10 @@ class MainProgram {
 					case 2003: // 曲線による下り坂 線のみ
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15622,10 +15641,10 @@ class MainProgram {
 					case 2010: // 乗れる円
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15639,10 +15658,10 @@ class MainProgram {
 					case 2011: // 乗れる円 大
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j + 16;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY + 16;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15656,10 +15675,10 @@ class MainProgram {
 					case 2020: // 乗れる半円
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15673,10 +15692,10 @@ class MainProgram {
 					case 2021: // 乗れる半円 線のみ
 						characterobject.c = 2000;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c1 = l - this.gg.di.width - 32;
-						characterobject.c2 = l + 256;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c1 = argValue - this.gg.di.width - 32;
+						characterobject.c2 = argValue + 256;
 						characterobject.c4 = this.newYuka(
 							String(characterobject.x),
 							String(characterobject.y),
@@ -15690,88 +15709,88 @@ class MainProgram {
 					case 2100: // 人口太陽 中心
 						characterobject.c = 2100;
 						characterobject.pt = 2800;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2110: // 人口太陽 棒５本 左回り 棒１本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2111: // 人口太陽 棒５本 左回り 棒２本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 72;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2112: // 人口太陽 棒５本 左回り 棒３本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 144;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2113: // 人口太陽 棒５本 左回り 棒４本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 216;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2114: // 人口太陽 棒５本 左回り 棒５本目
 						characterobject.c = 70;
 						characterobject.vx = -2;
 						characterobject.c3 = 288;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2120: // 人口太陽 棒５本 右回り 棒１本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2121: // 人口太陽 棒５本 右回り 棒２本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 72;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2122: // 人口太陽 棒５本 右回り 棒３本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 144;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2123: // 人口太陽 棒５本 右回り 棒４本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 216;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2124: // 人口太陽 棒５本 右回り 棒５本目
 						characterobject.c = 70;
 						characterobject.vx = 2;
 						characterobject.c3 = 288;
-						characterobject.c1 = i - this.gg.di.width - 190;
-						characterobject.c2 = i + 190;
+						characterobject.c1 = pixelX - this.gg.di.width - 190;
+						characterobject.c2 = pixelX + 190;
 						break;
 
 					case 2200: // ファイヤーリング 左回り パーツ１
@@ -15889,8 +15908,8 @@ class MainProgram {
 					case 2300: // 上下移動する半円 下から
 						characterobject.c = 2300;
 						characterobject.pt = 3000;
-						characterobject.x = i;
-						characterobject.y = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
 						characterobject.c3 = characterobject.y;
 						characterobject.vy = -4;
 						characterobject.c1 = 0;
@@ -15908,9 +15927,9 @@ class MainProgram {
 					case 2301: // 上下移動する半円 上から
 						characterobject.c = 2300;
 						characterobject.pt = 3000;
-						characterobject.x = i;
-						characterobject.y = j - 160;
-						characterobject.c3 = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY - 160;
+						characterobject.c3 = pixelY;
 						characterobject.vy = 4;
 						characterobject.c1 = 0;
 						characterobject.c2 = (this.mapWidth + 1) * 32;
@@ -15927,9 +15946,9 @@ class MainProgram {
 					case 2400: // 乗ると上がる半円
 						characterobject.c = 2400;
 						characterobject.pt = 3000;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c3 = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c3 = pixelY;
 						characterobject.vy = 4;
 						characterobject.c5 = 0;
 						characterobject.c1 = 0;
@@ -15947,9 +15966,9 @@ class MainProgram {
 					case 2500: // 乗ると下がる半円
 						characterobject.c = 2500;
 						characterobject.pt = 3000;
-						characterobject.x = i;
-						characterobject.y = j - 160;
-						characterobject.c3 = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY - 160;
+						characterobject.c3 = pixelY;
 						characterobject.vy = 4;
 						characterobject.c5 = 0;
 						characterobject.c1 = 0;
@@ -15967,9 +15986,9 @@ class MainProgram {
 					case 2510: // 柱付きの半円
 						characterobject.c = 2500;
 						characterobject.pt = 3000;
-						characterobject.x = i;
-						characterobject.y = j;
-						characterobject.c3 = j;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY;
+						characterobject.c3 = pixelY;
 						characterobject.vy = 4;
 						characterobject.c5 = 1000;
 						characterobject.c1 = 0;
@@ -15987,9 +16006,9 @@ class MainProgram {
 					case 2600: // 乗ると下がる円
 						characterobject.c = 2600;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j + 16;
-						characterobject.c3 = j + 16;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY + 16;
+						characterobject.c3 = pixelY + 16;
 						characterobject.vy = 4;
 						characterobject.c5 = 0;
 						characterobject.c1 = 0;
@@ -16015,9 +16034,9 @@ class MainProgram {
 					case 2610: // 乗ると下がる円 降りると上がる
 						characterobject.c = 2610;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j + 16;
-						characterobject.c3 = j + 16;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY + 16;
+						characterobject.c3 = pixelY + 16;
 						characterobject.vy = 4;
 						characterobject.c5 = 0;
 						characterobject.c1 = 0;
@@ -16043,9 +16062,9 @@ class MainProgram {
 					case 2700: // 上下移動する円 上から
 						characterobject.c = 2700;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j + 16 + 24;
-						characterobject.c3 = j + 16 + 24;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY + 16 + 24;
+						characterobject.c3 = pixelY + 16 + 24;
 						characterobject.vy = 40;
 						characterobject.c5 = 0;
 						characterobject.c1 = 0;
@@ -16071,9 +16090,9 @@ class MainProgram {
 					case 2701: // 上下移動する円 下から
 						characterobject.c = 2700;
 						characterobject.pt = 2700;
-						characterobject.x = i;
-						characterobject.y = j + 16 + 24 + 106;
-						characterobject.c3 = j + 16 + 24;
+						characterobject.x = pixelX;
+						characterobject.y = pixelY + 16 + 24 + 106;
+						characterobject.c3 = pixelY + 16 + 24;
 						characterobject.vy = -40;
 						characterobject.c5 = 0;
 						characterobject.c1 = 0;
@@ -16097,8 +16116,8 @@ class MainProgram {
 						break;
 
 					case 2800: // 長いロープ
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 90;
 						characterobject.vx = 22;
@@ -16109,8 +16128,8 @@ class MainProgram {
 						break;
 
 					case 2801: // 長いロープ 右から
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 90;
 						characterobject.vx = -22;
@@ -16121,8 +16140,8 @@ class MainProgram {
 						break;
 
 					case 2802: // 長いロープ つかまると動く
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 90;
 						characterobject.vx = 22;
@@ -16133,8 +16152,8 @@ class MainProgram {
 						break;
 
 					case 2803: // 長いロープ つかまると左から動く
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 168;
 						characterobject.vx = 0;
@@ -16170,67 +16189,67 @@ class MainProgram {
 					case 3100: // 右へ一方通行
 						characterobject.pt = 3500;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3101: // 右へ一方通行 表示なし
 						characterobject.c = 3100;
 						characterobject.pt = 3500;
 						characterobject.c3 = 1;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3110: // 左へ一方通行
 						characterobject.pt = 3510;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3111: // 左へ一方通行 表示なし
 						characterobject.c = 3110;
 						characterobject.pt = 3510;
 						characterobject.c3 = 1;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3120: // 上へ一方通行
 						characterobject.pt = 3520;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3121: // 上へ一方通行 表示なし
 						characterobject.c = 3120;
 						characterobject.pt = 3520;
 						characterobject.c3 = 1;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3130: // 下へ一方通行
 						characterobject.pt = 3530;
 						characterobject.c3 = 0;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3131: // 下へ一方通行 表示なし
 						characterobject.c = 3130;
 						characterobject.pt = 3530;
 						characterobject.c3 = 1;
-						characterobject.c1 = i - this.gg.di.width - 160;
-						characterobject.c2 = i + 160;
+						characterobject.c1 = pixelX - this.gg.di.width - 160;
+						characterobject.c2 = pixelX + 160;
 						break;
 
 					case 3200: // ゆれる棒
 						characterobject.c = 3200;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 270;
 						characterobject.vx = 22;
@@ -16242,8 +16261,8 @@ class MainProgram {
 
 					case 3201: // ゆれる棒 左から
 						characterobject.c = 3200;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 270;
 						characterobject.vx = -22;
@@ -16255,8 +16274,8 @@ class MainProgram {
 
 					case 3202: // ゆれる棒 広角
 						characterobject.c = 3200;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 270;
 						characterobject.vx = 22;
@@ -16268,8 +16287,8 @@ class MainProgram {
 
 					case 3203: // ゆれる棒 広角 左から
 						characterobject.c = 3200;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.pt = 3100;
 						characterobject.vy = 270;
 						characterobject.vx = -22;
@@ -16282,9 +16301,9 @@ class MainProgram {
 					case 3300: // 跳ねる円
 						characterobject.c = 3300;
 						characterobject.pt = 2700;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
-						characterobject.c3 = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
+						characterobject.c3 = pixelY + 16;
 						characterobject.vy = 0;
 						characterobject.c5 = 96;
 						characterobject.c1 = 0;
@@ -16302,9 +16321,9 @@ class MainProgram {
 					case 3301: // 跳ねる円 大
 						characterobject.c = 3300;
 						characterobject.pt = 2700;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
-						characterobject.c3 = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
+						characterobject.c3 = pixelY + 16;
 						characterobject.vy = 0;
 						characterobject.c5 = 128;
 						characterobject.c1 = 0;
@@ -16637,8 +16656,8 @@ class MainProgram {
 						break;
 
 					case 4500: // スイッチ式動くＴ字型 ＯＮで左
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16652,8 +16671,8 @@ class MainProgram {
 
 					case 4501: // スイッチ式動くＴ字型 ＯＮで右
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16667,8 +16686,8 @@ class MainProgram {
 
 					case 4502: // スイッチ式速く動くＴ字型 ＯＮで左
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16682,8 +16701,8 @@ class MainProgram {
 
 					case 4503: // スイッチ式速く動くＴ字型 ＯＮで右
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16697,8 +16716,8 @@ class MainProgram {
 
 					case 4510: // スイッチ式動くＴ字型 ＯＮで左から上
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16712,8 +16731,8 @@ class MainProgram {
 
 					case 4511: // スイッチ式動くＴ字型 ＯＮで上から左
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16727,8 +16746,8 @@ class MainProgram {
 
 					case 4512: // スイッチ式動くＴ字型 ＯＮで右から上
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16742,8 +16761,8 @@ class MainProgram {
 
 					case 4513: // スイッチ式動くＴ字型 ＯＮで上から右
 						characterobject.c = 4500;
-						characterobject.x = i + 16;
-						characterobject.y = j + 16;
+						characterobject.x = pixelX + 16;
+						characterobject.y = pixelY + 16;
 						characterobject.c3 = 0;
 						characterobject.pt = 4000;
 						characterobject.c5 = 0;
@@ -16828,8 +16847,8 @@ class MainProgram {
 					case 5000: // 乗ると壊れるブロック
 						characterobject.c3 = 0;
 						characterobject.pt = 0;
-						characterobject.c1 = l - this.gg.di.width - 32 - this.gg.di.width;
-						characterobject.c2 = l + 128 + this.gg.di.width;
+						characterobject.c1 = argValue - this.gg.di.width - 32 - this.gg.di.width;
+						characterobject.c2 = argValue + 128 + this.gg.di.width;
 						break;
 
 					case 5100: // しっぽで破壊 ＯＮの動作 周囲１０ブロック以内に影響
@@ -21978,7 +21997,7 @@ class MainProgram {
 
 	/**
 	 * 仕掛けの更新処理のうち一部の仕掛けの処理を行う {@link MainProgram#aMove}から呼び出される
-	 * @param i {number} 更新する仕掛けのco_a内のインデックス
+	 * @param i 更新する仕掛けのco_a内のインデックス
 	 * @see {@link MainProgram#aMove}
 	 */
 	aMoveOption(i: number) {
@@ -23650,14 +23669,14 @@ class MainProgram {
 
 	/**
 	 * 範囲内に存在するスイッチ式の仕掛けをON状態にする
-	 * @param x1 {number} 始点X座標 (ブロック座標)
-	 * @param y1 {number} 始点Y座標 (プロック座標)
-	 * @param x2 {number} 終点X座標 (プロック座標)
-	 * @param y2 {number} 終点Y座標 (プロック座標)
-	 * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
+	 * @param x1 始点X座標 (ブロック座標)
+	 * @param y1 始点Y座標 (プロック座標)
+	 * @param x2 終点X座標 (プロック座標)
+	 * @param y2 終点Y座標 (プロック座標)
+	 * @param type ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
 	 */
-	onASwitch(i: number, j: number, k: number, l: number, i1?: number) {
-		if (arguments.length == 4) i1 = 1;
+	onASwitch(x1: number, y1: number, x2: number, y2: number, type?: number) {
+		if (arguments.length == 4) type = 1;
 		for (var j1 = 0; j1 <= this.a_kazu; j1++) {
 			var k2 = this.co_a[j1].c;
 			if (
@@ -23682,16 +23701,16 @@ class MainProgram {
 			) {
 				var k1 = rightShiftIgnoreSign(this.co_a[j1].x, 5);
 				var i2 = rightShiftIgnoreSign(this.co_a[j1].y, 5);
-				if (k1 >= i && k1 <= k && i2 >= j && i2 <= l) this.co_a[j1].c5 = 1;
+				if (k1 >= x1 && k1 <= x2 && i2 >= y1 && i2 <= y2) this.co_a[j1].c5 = 1;
 				continue;
 			}
 			if (k2 == 150 || k2 == 160) {
 				var l1 = rightShiftIgnoreSign(this.co_a[j1].vx, 5);
 				var j2 = rightShiftIgnoreSign(this.co_a[j1].vy, 5);
-				if (l1 >= i && l1 <= k && j2 >= j && j2 <= l) this.co_a[j1].c5 = 1;
+				if (l1 >= x1 && l1 <= x2 && j2 >= y1 && j2 <= y2) this.co_a[j1].c5 = 1;
 				continue;
 			}
-			if (i1 != 2 || (k2 != 3500 && k2 != 3600) || this.co_a[j1].c4 != 2) continue;
+			if (type != 2 || (k2 != 3500 && k2 != 3600) || this.co_a[j1].c4 != 2) continue;
 			// k2 == 3600 スイッチ ↑キーでON/OFF
 			this.co_a[j1].c3 = 100;
 			// k2 == 3500 スイッチ 重なるとON/OFF
@@ -23701,14 +23720,14 @@ class MainProgram {
 
 	/**
 	 * 範囲内に存在するスイッチ式の仕掛けをOFF状態にする
-	 * @param x1 {number} 始点X座標 (ブロック座標)
-	 * @param y1 {number} 始点Y座標 (プロック座標)
-	 * @param x2 {number} 終点X座標 (プロック座標)
-	 * @param y2 {number} 終点Y座標 (プロック座標)
-	 * @param [type=1] {number} ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
+	 * @param x1 始点X座標 (ブロック座標)
+	 * @param y1 始点Y座標 (プロック座標)
+	 * @param x2 終点X座標 (プロック座標)
+	 * @param y2 終点Y座標 (プロック座標)
+	 * @param type ON/OFFスイッチ専用の追加引数 2を指定すると追加の処理を行う
 	 */
-	offASwitch(i: number, j: number, k: number, l: number, i1?: number) {
-		if (arguments.length == 4) i1 = 1;
+	offASwitch(x1: number, y1: number, x2: number, y2: number, type?: number) {
+		if (arguments.length == 4) type = 1;
 		for (var j1 = 0; j1 <= this.a_kazu; j1++) {
 			var k2 = this.co_a[j1].c;
 			if (
@@ -23733,16 +23752,16 @@ class MainProgram {
 			) {
 				var k1 = rightShiftIgnoreSign(this.co_a[j1].x, 5);
 				var i2 = rightShiftIgnoreSign(this.co_a[j1].y, 5);
-				if (k1 >= i && k1 <= k && i2 >= j && i2 <= l) this.co_a[j1].c5 = 0;
+				if (k1 >= x1 && k1 <= x2 && i2 >= y1 && i2 <= y2) this.co_a[j1].c5 = 0;
 				continue;
 			}
 			if (k2 == 150 || k2 == 160) {
 				var l1 = rightShiftIgnoreSign(this.co_a[j1].vx, 5);
 				var j2 = rightShiftIgnoreSign(this.co_a[j1].vy, 5);
-				if (l1 >= i && l1 <= k && j2 >= j && j2 <= l) this.co_a[j1].c5 = 0;
+				if (l1 >= x1 && l1 <= x2 && j2 >= y1 && j2 <= y2) this.co_a[j1].c5 = 0;
 				continue;
 			}
-			if (i1 != 2 || (k2 != 3500 && k2 != 3600) || this.co_a[j1].c4 != 2) continue;
+			if (type != 2 || (k2 != 3500 && k2 != 3600) || this.co_a[j1].c4 != 2) continue;
 			this.co_a[j1].c3 = 0;
 			if (k2 == 3500) this.co_a[j1].c3 = 101;
 		}
@@ -23759,9 +23778,9 @@ class MainProgram {
 	 * 指定座標(ブロック単位)の位置に、指定したコードの？ブロックを設置します
 	 * 詳細は {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet} を参照
 	 * FXでは個数制限は80個
-	 * @param blockX {number} X座標(ブロック単位)
-	 * @param blockY {number} Y座標(ブロック単位)
-	 * @param code {number} 設置するブロックのコード
+	 * @param blockX X座標(ブロック単位)
+	 * @param blockY Y座標(ブロック単位)
+	 * @param code 設置するブロックのコード
 	 * @see {@link https://github.com/Ryo-9399/mc_canvas/wiki/メソッド-MainProgram.prototype.hSet}
 	 */
 	hSet(blockX: number, blockY: number, code: number) {
@@ -23778,87 +23797,87 @@ class MainProgram {
 
 	/**
 	 * ？ブロックを叩かれた後の状態にして無効化する 一度取った後の1UPブロックに使用
-	 * @param x {number} X座標(ブロック単位)
-	 * @param y {number} Y座標(ブロック単位)
+	 * @param x X座標(ブロック単位)
+	 * @param y Y座標(ブロック単位)
 	 * @param c 無効化対象のブロックのコード これとCaracterObject.cの値が一致していれば無効化される
 	 */
-	hDelete(i: number, j: number, k: number) {
+	hDelete(x: number, y: number, c: number) {
 		for (var l = 0; l <= 79; l++)
-			if (this.co_h[l].c == k && this.co_h[l].x == i && this.co_h[l].y == j) {
+			if (this.co_h[l].c == c && this.co_h[l].x == x && this.co_h[l].y == y) {
 				this.co_h[l].c = 0;
-				this.maps.putBGCode(i, j, 41);
+				this.maps.putBGCode(x, y, 41);
 			}
 	}
 
 	/**
 	 * ？ブロックを叩いたときの処理
-	 * @param x {number} X座標(ブロック単位)
-	 * @param y {number} Y座標(ブロック単位)
+	 * @param x X座標(ブロック単位)
+	 * @param y Y座標(ブロック単位)
 	 */
-	hAttack(i: number, j: number) {
+	hAttack(x: number, y: number) {
 		var k = 0;
 		do {
 			if (k > 79) break;
 			var characterobject = this.co_h[k];
-			if (characterobject.c != 0 && characterobject.x == i && characterobject.y == j) {
+			if (characterobject.c != 0 && characterobject.x == x && characterobject.y == y) {
 				switch (characterobject.c) {
 					default:
 						break;
 
 					case 100: // コインが1枚出る
-						this.mSet(i * 32, j * 32 - 32, 2000);
+						this.mSet(x * 32, y * 32 - 32, 2000);
 						this.gs.rsAddSound(6);
 						break;
 
 					case 200: // コインが3枚出る
-						this.mSet(i * 32, j * 32 - 32, 2010);
-						this.mSet(i * 32, j * 32 - 32, 2020);
-						this.mSet(i * 32, j * 32 - 32, 2000);
+						this.mSet(x * 32, y * 32 - 32, 2010);
+						this.mSet(x * 32, y * 32 - 32, 2020);
+						this.mSet(x * 32, y * 32 - 32, 2000);
 						this.gs.rsAddSound(6);
 						break;
 
 					case 300: // アイテム（ファイヤーボール）が出る
-						this.mSet(i * 32, j * 32 - 32, 2100);
+						this.mSet(x * 32, y * 32 - 32, 2100);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 400: // アイテム（バリア）が出る
-						this.mSet(i * 32, j * 32 - 32, 2110);
+						this.mSet(x * 32, y * 32 - 32, 2110);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 500: // アイテム（タイム）が出る
-						this.mSet(i * 32, j * 32 - 32, 2120);
+						this.mSet(x * 32, y * 32 - 32, 2120);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 600: // アイテム（ジェット）が出る
-						this.mSet(i * 32, j * 32 - 32, 2130);
+						this.mSet(x * 32, y * 32 - 32, 2130);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 700: // アイテム（ヘルメット）が出る
-						this.mSet(i * 32, j * 32 - 32, 2140);
+						this.mSet(x * 32, y * 32 - 32, 2140);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 800: // アイテム（しっぽ）が出る
-						this.mSet(i * 32, j * 32 - 32, 2150);
+						this.mSet(x * 32, y * 32 - 32, 2150);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 900: // アイテム（ドリル）が出る
-						this.mSet(i * 32, j * 32 - 32, 2160);
+						this.mSet(x * 32, y * 32 - 32, 2160);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 1000: // アイテム（グレネード）が出る
-						this.mSet(i * 32, j * 32 - 32, 2170);
+						this.mSet(x * 32, y * 32 - 32, 2170);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 1100: // アイテム（1UP）が出る
-						this.mSet(i * 32, j * 32 - 32, 2180);
+						this.mSet(x * 32, y * 32 - 32, 2180);
 						this.stage_1up_f[this.stage - 1] = false;
 						this.gs.rsAddSound(13);
 						break;
@@ -23867,9 +23886,9 @@ class MainProgram {
 						var l = 1;
 						do {
 							if (l > 10) break;
-							var k4 = i + l;
-							if (k4 > this.mapWidth || (this.maps.map_bg[k4][j] != 0 && this.maps.map_bg[k4][j] != 4)) break;
-							this.maps.putBGCode(k4, j, 20);
+							var k4 = x + l;
+							if (k4 > this.mapWidth || (this.maps.map_bg[k4][y] != 0 && this.maps.map_bg[k4][y] != 4)) break;
+							this.maps.putBGCode(k4, y, 20);
 							l++;
 						} while (true);
 						this.gs.rsAddSound(13);
@@ -23879,9 +23898,9 @@ class MainProgram {
 						var i1 = -1;
 						do {
 							if (i1 < -10) break;
-							var l4 = i + i1;
-							if (l4 < 1 || (this.maps.map_bg[l4][j] != 0 && this.maps.map_bg[l4][j] != 4)) break;
-							this.maps.putBGCode(l4, j, 20);
+							var l4 = x + i1;
+							if (l4 < 1 || (this.maps.map_bg[l4][y] != 0 && this.maps.map_bg[l4][y] != 4)) break;
+							this.maps.putBGCode(l4, y, 20);
 							i1--;
 						} while (true);
 						this.gs.rsAddSound(13);
@@ -23889,10 +23908,10 @@ class MainProgram {
 
 					case 2200: // 上にハシゴが10個出る
 						for (var l2 = -1; l2 >= -10; l2--) {
-							var i5 = j + l2;
-							if (i5 < 10 || (this.maps.map_bg[i][i5] != 0 && this.maps.map_bg[i][i5] != 4)) break;
-							this.maps.putBGCode(i, i5, 10);
-							if (this.gg.layer_mode == 2 && this.clear_type != 3) this.map_data_option[i][i5] = true;
+							var i5 = y + l2;
+							if (i5 < 10 || (this.maps.map_bg[x][i5] != 0 && this.maps.map_bg[x][i5] != 4)) break;
+							this.maps.putBGCode(x, i5, 10);
+							if (this.gg.layer_mode == 2 && this.clear_type != 3) this.map_data_option[x][i5] = true;
 						}
 
 						this.gs.rsAddSound(13);
@@ -23902,9 +23921,9 @@ class MainProgram {
 						var i3 = -1;
 						do {
 							if (i3 < -10) break;
-							var j5 = j + i3;
-							if (j5 < 10 || (this.maps.map_bg[i][j5] != 0 && this.maps.map_bg[i][j5] != 4)) break;
-							this.maps.putBGCode(i, j5, 20);
+							var j5 = y + i3;
+							if (j5 < 10 || (this.maps.map_bg[x][j5] != 0 && this.maps.map_bg[x][j5] != 4)) break;
+							this.maps.putBGCode(x, j5, 20);
 							i3--;
 						} while (true);
 						this.gs.rsAddSound(13);
@@ -23914,9 +23933,9 @@ class MainProgram {
 						var j3 = -1;
 						do {
 							if (j3 < -2) break;
-							var k5 = j + j3;
-							if (k5 < 10 || (this.maps.map_bg[i][k5] != 0 && this.maps.map_bg[i][k5] != 4)) break;
-							this.maps.putBGCode(i, k5, 20);
+							var k5 = y + j3;
+							if (k5 < 10 || (this.maps.map_bg[x][k5] != 0 && this.maps.map_bg[x][k5] != 4)) break;
+							this.maps.putBGCode(x, k5, 20);
 							j3--;
 						} while (true);
 						this.gs.rsAddSound(13);
@@ -23926,9 +23945,9 @@ class MainProgram {
 						var j1 = 1;
 						do {
 							if (j1 > 2) break;
-							var l5 = i + j1;
-							if (l5 > this.mapWidth || (this.maps.map_bg[l5][j] != 0 && this.maps.map_bg[l5][j] != 4)) break;
-							this.maps.putBGCode(l5, j, 20);
+							var l5 = x + j1;
+							if (l5 > this.mapWidth || (this.maps.map_bg[l5][y] != 0 && this.maps.map_bg[l5][y] != 4)) break;
+							this.maps.putBGCode(l5, y, 20);
 							j1++;
 						} while (true);
 						this.gs.rsAddSound(13);
@@ -23938,21 +23957,21 @@ class MainProgram {
 						var k1 = -1;
 						do {
 							if (k1 < -2) break;
-							var i6 = i + k1;
-							if (i6 < 1 || (this.maps.map_bg[i6][j] != 0 && this.maps.map_bg[i6][j] != 4)) break;
-							this.maps.putBGCode(i6, j, 20);
+							var i6 = x + k1;
+							if (i6 < 1 || (this.maps.map_bg[i6][y] != 0 && this.maps.map_bg[i6][y] != 4)) break;
+							this.maps.putBGCode(i6, y, 20);
 							k1--;
 						} while (true);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 2700: // ジャンプ台が出る
-						this.aSet(i * 32, j * 32 - 32, 700, i * 32);
+						this.aSet(x * 32, y * 32 - 32, 700, x * 32);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 2800: // トゲが出る
-						this.maps.putBGCode(i, j - 1, 5);
+						this.maps.putBGCode(x, y - 1, 5);
 						this.gs.rsAddSound(13);
 						break;
 
@@ -23960,13 +23979,13 @@ class MainProgram {
 						for (var k3 = -10; k3 <= 10; k3++) {
 							for (var l1 = -10; l1 <= 10; l1++)
 								if (
-									i + l1 >= 1 &&
-									i + l1 <= this.mapWidth &&
-									j + k3 >= 10 &&
-									j + k3 <= this.mapHeight + 9 &&
-									this.maps.map_bg[i + l1][j + k3] == 5
+									x + l1 >= 1 &&
+									x + l1 <= this.mapWidth &&
+									y + k3 >= 10 &&
+									y + k3 <= this.mapHeight + 9 &&
+									this.maps.map_bg[x + l1][y + k3] == 5
 								)
-									this.maps.putBGCode(i + l1, j + k3, 9);
+									this.maps.putBGCode(x + l1, y + k3, 9);
 						}
 
 						this.gs.rsAddSound(6);
@@ -23976,13 +23995,13 @@ class MainProgram {
 						for (var l3 = -10; l3 <= 10; l3++) {
 							for (var i2 = -10; i2 <= 10; i2++)
 								if (
-									i + i2 >= 1 &&
-									i + i2 <= this.mapWidth &&
-									j + l3 >= 10 &&
-									j + l3 <= this.mapHeight + 9 &&
-									this.maps.map_bg[i + i2][j + l3] == 5
+									x + i2 >= 1 &&
+									x + i2 <= this.mapWidth &&
+									y + l3 >= 10 &&
+									y + l3 <= this.mapHeight + 9 &&
+									this.maps.map_bg[x + i2][y + l3] == 5
 								)
-									this.maps.putBGCode(i + i2, j + l3, 20);
+									this.maps.putBGCode(x + i2, y + l3, 20);
 						}
 
 						this.gs.rsAddSound(13);
@@ -23992,13 +24011,13 @@ class MainProgram {
 						for (var i4 = -10; i4 <= 10; i4++) {
 							for (var j2 = -10; j2 <= 10; j2++)
 								if (
-									i + j2 >= 1 &&
-									i + j2 <= this.mapWidth &&
-									j + i4 >= 10 &&
-									j + i4 <= this.mapHeight + 9 &&
-									this.maps.map_bg[i + j2][j + i4] == 20
+									x + j2 >= 1 &&
+									x + j2 <= this.mapWidth &&
+									y + i4 >= 10 &&
+									y + i4 <= this.mapHeight + 9 &&
+									this.maps.map_bg[x + j2][y + i4] == 20
 								)
-									this.maps.putBGCode(i + j2, j + i4, 9);
+									this.maps.putBGCode(x + j2, y + i4, 9);
 						}
 
 						this.gs.rsAddSound(6);
@@ -24008,112 +24027,112 @@ class MainProgram {
 						for (var j4 = -10; j4 <= 10; j4++) {
 							for (var k2 = -10; k2 <= 10; k2++)
 								if (
-									i + k2 >= 1 &&
-									i + k2 <= this.mapWidth &&
-									j + j4 >= 10 &&
-									j + j4 <= this.mapHeight + 9 &&
-									this.maps.map_bg[i + k2][j + j4] == 23
+									x + k2 >= 1 &&
+									x + k2 <= this.mapWidth &&
+									y + j4 >= 10 &&
+									y + j4 <= this.mapHeight + 9 &&
+									this.maps.map_bg[x + k2][y + j4] == 23
 								)
-									this.maps.putBGCode(i + k2, j + j4, 0);
+									this.maps.putBGCode(x + k2, y + j4, 0);
 						}
 
 						this.gs.rsAddSound(7);
 						break;
 
 					case 3300: // アイテム（水平に飛ぶファイヤーボール）が出る
-						this.mSet(i * 32, j * 32 - 32, 2186);
+						this.mSet(x * 32, y * 32 - 32, 2186);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 3400: // アイテム（跳ねるファイヤーボール）が出る
-						this.mSet(i * 32, j * 32 - 32, 2187);
+						this.mSet(x * 32, y * 32 - 32, 2187);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 3500: // アイテム（ダブルファイヤーボール）が出る
-						this.mSet(i * 32, j * 32 - 32, 2188);
+						this.mSet(x * 32, y * 32 - 32, 2188);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 3600: // 右にブロック１破壊砲発射
 						if (this.co_jm[6].c == 0) {
-							this.jmSet2(i * 32, j * 32, 206, 6);
+							this.jmSet2(x * 32, y * 32, 206, 6);
 							break;
 						}
 						if (this.co_jm[7].c == 0) {
-							this.jmSet2(i * 32, j * 32, 206, 7);
+							this.jmSet2(x * 32, y * 32, 206, 7);
 							break;
 						}
-						if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 206, 8);
+						if (this.co_jm[8].c == 0) this.jmSet2(x * 32, y * 32, 206, 8);
 						break;
 
 					case 3700: // 左にブロック１破壊砲発射
 						if (this.co_jm[6].c == 0) {
-							this.jmSet2(i * 32, j * 32, 207, 6);
+							this.jmSet2(x * 32, y * 32, 207, 6);
 							break;
 						}
 						if (this.co_jm[7].c == 0) {
-							this.jmSet2(i * 32, j * 32, 207, 7);
+							this.jmSet2(x * 32, y * 32, 207, 7);
 							break;
 						}
-						if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 207, 8);
+						if (this.co_jm[8].c == 0) this.jmSet2(x * 32, y * 32, 207, 8);
 						break;
 
 					case 3800: // 上にブロック１破壊砲発射
 						if (this.co_jm[6].c == 0) {
-							this.jmSet2(i * 32, j * 32, 208, 6);
+							this.jmSet2(x * 32, y * 32, 208, 6);
 							break;
 						}
 						if (this.co_jm[7].c == 0) {
-							this.jmSet2(i * 32, j * 32, 208, 7);
+							this.jmSet2(x * 32, y * 32, 208, 7);
 							break;
 						}
-						if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 208, 8);
+						if (this.co_jm[8].c == 0) this.jmSet2(x * 32, y * 32, 208, 8);
 						break;
 
 					case 3900: // 下にブロック１破壊砲発射
 						if (this.co_jm[6].c == 0) {
-							this.jmSet2(i * 32, j * 32, 209, 6);
+							this.jmSet2(x * 32, y * 32, 209, 6);
 							break;
 						}
 						if (this.co_jm[7].c == 0) {
-							this.jmSet2(i * 32, j * 32, 209, 7);
+							this.jmSet2(x * 32, y * 32, 209, 7);
 							break;
 						}
-						if (this.co_jm[8].c == 0) this.jmSet2(i * 32, j * 32, 209, 8);
+						if (this.co_jm[8].c == 0) this.jmSet2(x * 32, y * 32, 209, 8);
 						break;
 
 					case 4000: // アイテム（グレネード5発）が出る
-						this.mSet(i * 32, j * 32 - 32, 2171);
+						this.mSet(x * 32, y * 32 - 32, 2171);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 4100: // アイテム（コンティニュー）が出る
-						this.mSet(i * 32, j * 32 - 32, 2172);
+						this.mSet(x * 32, y * 32 - 32, 2172);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 4200: // 周囲10マスにスイッチONの影響を与える
-						this.onASwitch(i - 10, j - 10, i + 10, j + 10);
+						this.onASwitch(x - 10, y - 10, x + 10, y + 10);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 4300: // 周囲10マスにスイッチOFFの影響を与える
-						this.offASwitch(i - 10, j - 10, i + 10, j + 10);
+						this.offASwitch(x - 10, y - 10, x + 10, y + 10);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 4400: // 周囲5マスにスイッチONの影響を与える
-						this.onASwitch(i - 5, j - 5, i + 5, j + 5);
+						this.onASwitch(x - 5, y - 5, x + 5, y + 5);
 						this.gs.rsAddSound(13);
 						break;
 
 					case 4500: // 周囲5マスにスイッチOFFの影響を与える
-						this.offASwitch(i - 5, j - 5, i + 5, j + 5);
+						this.offASwitch(x - 5, y - 5, x + 5, y + 5);
 						this.gs.rsAddSound(13);
 						break;
 				}
-				this.maps.putBGCode(i, j, 41);
+				this.maps.putBGCode(x, y, 41);
 				characterobject.c = 0;
 				break;
 			}
@@ -24147,33 +24166,33 @@ class MainProgram {
 	 * `circie`の場合は`x2`が円の半径となり、`y2`は無視されます。
 	 * その他の床は大きさが固定となり、`x2`も`y2`も無視されます。
 	 *
-	 * @param {number} x 床のX座標
-	 * @param {number} y 床のY座標
-	 * @param {number} x2 X方向大きさまたは右下の座標
-	 * @param {number} y2 Y方向大きさまたは右下の座標
-	 * @param {string} type 床の形
+	 * @param x 床のX座標
+	 * @param y 床のY座標
+	 * @param x2 X方向大きさまたは右下の座標
+	 * @param y2 Y方向大きさまたは右下の座標
+	 * @param type 床の形
 	 *
-	 * @returns {number} 床ID 失敗した場合は-1
+	 * @returns 床ID 失敗した場合は-1
 	 * @see {@link MasaoJSS#newYuka}
 	 */
-	newYuka(s: string | number, s1: string | number, s2: string | number, s3: string | number, s4: string) {
+	newYuka(x: string | number, y: string | number, x2: string | number, y2: string | number, type: string) {
 		var j = 32;
 		var k = 320;
 		var l = 96;
 		var i1 = 64;
 		if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 95) return -1;
 
-		j = parseInt(s as string);
-		k = parseInt(s1 as string);
-		l = parseInt(s2 as string);
-		i1 = parseInt(s3 as string);
+		j = parseInt(x as string);
+		k = parseInt(y as string);
+		l = parseInt(x2 as string);
+		i1 = parseInt(y2 as string);
 		if (isNaN(j) || isNaN(k) || isNaN(l) || isNaN(i1)) j = -9999;
 		if (j == -9999) return -1;
 		var i = 0;
 		do {
 			if (i > this.yuka_id_max) this.yo.push(new YukaObject());
 			if (this.yo[i].con == 0) {
-				if (s4 == "line") {
+				if (type == "line") {
 					this.yo[i].init();
 					this.yo[i].con = 200;
 					this.yo[i].x = j;
@@ -24181,7 +24200,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "triangle") {
+				} else if (type == "triangle") {
 					this.yo[i].init();
 					this.yo[i].con = 210;
 					this.yo[i].x = j;
@@ -24189,7 +24208,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "mount") {
+				} else if (type == "mount") {
 					this.yo[i].init();
 					this.yo[i].con = 220;
 					this.yo[i].x = j;
@@ -24197,7 +24216,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "circle") {
+				} else if (type == "circle") {
 					this.yo[i].init();
 					this.yo[i].con = 300;
 					this.yo[i].x = j;
@@ -24205,7 +24224,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "half_circle") {
+				} else if (type == "half_circle") {
 					this.yo[i].init();
 					this.yo[i].con = 350;
 					this.yo[i].x = j;
@@ -24213,7 +24232,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "half_circle_line") {
+				} else if (type == "half_circle_line") {
 					this.yo[i].init();
 					this.yo[i].con = 360;
 					this.yo[i].x = j;
@@ -24221,7 +24240,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "wave_up") {
+				} else if (type == "wave_up") {
 					this.yo[i].init();
 					this.yo[i].con = 400;
 					this.yo[i].x = j;
@@ -24229,7 +24248,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "wave_up_line") {
+				} else if (type == "wave_up_line") {
 					this.yo[i].init();
 					this.yo[i].con = 410;
 					this.yo[i].x = j;
@@ -24237,7 +24256,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "wave_down") {
+				} else if (type == "wave_down") {
 					this.yo[i].init();
 					this.yo[i].con = 450;
 					this.yo[i].x = j;
@@ -24245,7 +24264,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "wave_down_line") {
+				} else if (type == "wave_down_line") {
 					this.yo[i].init();
 					this.yo[i].con = 460;
 					this.yo[i].x = j;
@@ -24253,7 +24272,7 @@ class MainProgram {
 					this.yo[i].x2 = l;
 					this.yo[i].y2 = i1;
 					this.yo[i].color = Color.yellow;
-				} else if (s4 == "pattern") {
+				} else if (type == "pattern") {
 					this.yo[i].init();
 					this.yo[i].con = 120;
 					this.yo[i].x = j;
@@ -24262,7 +24281,7 @@ class MainProgram {
 					this.yo[i].height = i1;
 					this.yo[i].pt = 0;
 					this.yo[i].pth = 0;
-				} else if (s4 == "rect") {
+				} else if (type == "rect") {
 					this.yo[i].init();
 					this.yo[i].con = 110;
 					this.yo[i].x = j;
@@ -24277,7 +24296,7 @@ class MainProgram {
 					this.yo[i].y = k;
 					this.yo[i].width = l;
 					this.yo[i].height = i1;
-					this.yo[i].img = this.gg.loadImage(s4);
+					this.yo[i].img = this.gg.loadImage(type);
 				}
 				break;
 			}
@@ -24290,15 +24309,25 @@ class MainProgram {
 	 * {@link MainProgram#newYuka}で作った床の位置を変更します。
 	 * 引数が3つの場合位置のみ、5つの場合は床の大きさも変更します。
 	 *
-	 * @param {number} id 床ID
-	 * @param {number} x X座標
-	 * @param {number} y Y座標
-	 * @param {number} [x2] X方向大きさまたは右下の座標
-	 * @param {number} [y2] Y方向大きさまたは右下の座標
-	 * @returns {boolean} 成功したかどうか
+	 * @param id 床ID
+	 * @param x X座標
+	 * @param y Y座標
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaPosition}
 	 */
 	setYukaPosition(id: string | number, x: string | number, y: string | number): boolean;
+	/**
+	 * {@link MainProgram#newYuka}で作った床の位置を変更します。
+	 * 引数が3つの場合位置のみ、5つの場合は床の大きさも変更します。
+	 *
+	 * @param id 床ID
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param x2 X方向大きさまたは右下の座標
+	 * @param y2 Y方向大きさまたは右下の座標
+	 * @returns 成功したかどうか
+	 * @see {@link MasaoJSS#setYukaPosition}
+	 */
 	setYukaPosition(
 		id: string | number,
 		x: string | number,
@@ -24307,21 +24336,21 @@ class MainProgram {
 		y2: string | number
 	): boolean;
 	setYukaPosition(
-		s: string | number,
-		s1: string | number,
-		s2: string | number,
-		s3?: string | number,
-		s4?: string | number
+		id: string | number,
+		x: string | number,
+		y: string | number,
+		x2?: string | number,
+		y2?: string | number
 	) {
-		if (s3 === undefined || s4 === undefined) {
+		if (x2 === undefined || y2 === undefined) {
 			var i = 0;
 			var j = 32;
 			var k = 320;
 			if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-			i = parseInt(s as string);
-			j = parseInt(s1 as string);
-			k = parseInt(s2 as string);
+			i = parseInt(id as string);
+			j = parseInt(x as string);
+			k = parseInt(y as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k)) i = -1;
 			if (i < 0) return false;
 			if (i > this.yuka_id_max) return false;
@@ -24344,11 +24373,11 @@ class MainProgram {
 			var i1 = 320;
 			if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-			i = parseInt(s as string);
-			j = parseInt(s1 as string);
-			k = parseInt(s2 as string);
-			l = parseInt(s3 as string);
-			i1 = parseInt(s4 as string);
+			i = parseInt(id as string);
+			j = parseInt(x as string);
+			k = parseInt(y as string);
+			l = parseInt(x2 as string);
+			i1 = parseInt(y2 as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l) || isNaN(i1)) i = -1;
 			if (i < 0) return false;
 			if (i > this.yuka_id_max) return false;
@@ -24369,18 +24398,18 @@ class MainProgram {
 	 * {@link MainProgram#newYuka}で作った床の当たり判定を変更します。
 	 * `type`に2を与えると当たり判定がなくなり、その他の値だと当たり判定ありになります。
 	 *
-	 * @param {number} id 床ID
-	 * @param {number} type type値
-	 * @returns {boolean} 成功したかどうか
+	 * @param id 床ID
+	 * @param type type値
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaType}
 	 */
-	setYukaType(s: string | number, s1: string | number) {
+	setYukaType(id: string | number, type: string | number) {
 		var i = 0;
 		var j = 1;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
+		i = parseInt(id as string);
+		j = parseInt(type as string);
 		if (isNaN(i) || isNaN(j)) j = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24396,16 +24425,16 @@ class MainProgram {
 	/**
 	 * {@link MainProgram#newYuka}で作った床を消去します。
 	 *
-	 * @param {number} id 床ID
-	 * @returns {boolean} 成功したかどうか
+	 * @param id 床ID
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#disposeYuka}
 	 */
-	disposeYuka(s: string | number) {
+	disposeYuka(id: string | number) {
 		var i = 0;
 		var byte0 = 1;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
+		i = parseInt(id as string);
 		if (isNaN(i)) byte0 = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24421,12 +24450,12 @@ class MainProgram {
 	 * {@link MainProgram#newYuka}で作った床の色を設定します。
 	 * 色の各成分は0から255の整数で与えます。
 	 *
-	 * @param {number} id 床ID
-	 * @param {number} r R値
-	 * @param {number} g G値
-	 * @param {number} b B値
-	 * @param {number} alpha 不透明度
-	 * @returns {boolean} 成功したかどうか
+	 * @param id 床ID
+	 * @param r R値
+	 * @param g G値
+	 * @param b B値
+	 * @param alpha 不透明度
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaColor}
 	 */
 	setYukaColor(
@@ -24436,13 +24465,21 @@ class MainProgram {
 		b: string | number,
 		alpha: string | number
 	): boolean;
+	/**
+	 * {@link MainProgram#newYuka}で作った床の色を設定します。
+	 *
+	 * @param index 床ID
+	 * @param color 色オブジェクト
+	 * @returns 成功したかどうか
+	 * @see {@link MasaoJSS#setYukaColor}
+	 */
 	setYukaColor(index: number, color: Color): boolean;
 	setYukaColor(
-		a1: string | number,
-		a2: string | number | Color,
-		a3?: string | number,
-		a4?: string | number,
-		a5?: string | number
+		index: string | number,
+		r: string | number | Color,
+		g?: string | number,
+		b?: string | number,
+		alpha?: string | number
 	): boolean {
 		if (arguments.length == 5) {
 			var i = 0;
@@ -24452,11 +24489,11 @@ class MainProgram {
 			var i1 = 255;
 			if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-			i = parseInt(a1 as string);
-			j = parseInt(a2 as string);
-			k = parseInt(a3 as string);
-			l = parseInt(a4 as string);
-			i1 = parseInt(a5 as string);
+			i = parseInt(index as string);
+			j = parseInt(r as string);
+			k = parseInt(g as string);
+			l = parseInt(b as string);
+			i1 = parseInt(alpha as string);
 			if (isNaN(i) || isNaN(j) || isNaN(k) || isNaN(l) || isNaN(i1)) i = -1;
 			if (i < 0) return false;
 			if (i > this.yuka_id_max) return false;
@@ -24468,12 +24505,15 @@ class MainProgram {
 			}
 		} else {
 			if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 96) return false;
-			if (a1 < 0) return false;
-			if (a1 > this.yuka_id_max) return false;
-			if ((this.yo[a1 as number].con < 200 || this.yo[a1 as number].con >= 500) && this.yo[a1 as number].con != 110) {
+			if (index < 0) return false;
+			if (index > this.yuka_id_max) return false;
+			if (
+				(this.yo[index as number].con < 200 || this.yo[index as number].con >= 500) &&
+				this.yo[index as number].con != 110
+			) {
 				return false;
 			} else {
-				this.yo[a1 as number].color = a2 as Color;
+				this.yo[index as number].color = r as Color;
 				return true;
 			}
 		}
@@ -24483,21 +24523,21 @@ class MainProgram {
 	 * {@link MainProgram#newYuka}で作った床のパターン画像を設定します。
 	 * `type`が`"pattern"`の床に対して有効です。
 	 *
-	 * @param {number} id 床ID
-	 * @param {number} pattern パターンコード
-	 * @param {number} direction 向き（0ならそのまま、1なら左右逆
-	 * @returns {boolean} 成功したかどうか
+	 * @param id 床ID
+	 * @param pattern パターンコード
+	 * @param direction 向き（0ならそのまま、1なら左右逆
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaPattern}
 	 */
-	setYukaPattern(s: string | number, s1: string | number, s2: string | number) {
+	setYukaPattern(id: string | number, pattern: string | number, direction: string | number) {
 		var i = 0;
 		var j = 0;
 		var k = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
-		j = parseInt(s1 as string);
-		k = parseInt(s2 as string);
+		i = parseInt(id as string);
+		j = parseInt(pattern as string);
+		k = parseInt(direction as string);
 		if (isNaN(i) || isNaN(j) || isNaN(k)) i = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24517,16 +24557,16 @@ class MainProgram {
 	 * {@link MainProgram#newYuka}で作った床の画像を変更します。
 	 * `type`が`rect`, `pattern`及びその他で作成した床を対象にできます。
 	 *
-	 * @param {number} id 床ID
-	 * @param {String|ImageBuff} image ファイル名または画像オブジェクト
-	 * @returns {boolean} 成功したかどうか
+	 * @param id 床ID
+	 * @param image ファイル名または画像オブジェクト
+	 * @returns 成功したかどうか
 	 * @see {@link MasaoJSS#setYukaImage}
 	 */
-	setYukaImage(s: string | number, a2: string | ImageBuff | null) {
+	setYukaImage(id: string | number, image: string | ImageBuff | null) {
 		var i = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return false;
 
-		i = parseInt(s as string);
+		i = parseInt(id as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0) return false;
 		if (i > this.yuka_id_max) return false;
@@ -24534,8 +24574,8 @@ class MainProgram {
 			return false;
 		} else {
 			this.yo[i].con = 100;
-			if (typeof a2 == "string") this.yo[i].img = this.gg.loadImage(a2);
-			else this.yo[i].img = a2;
+			if (typeof image == "string") this.yo[i].img = this.gg.loadImage(image);
+			else this.yo[i].img = image;
 			return true;
 		}
 	}
@@ -24544,17 +24584,17 @@ class MainProgram {
 	 * 主人公がある床に乗っているかどうかを判定します。
 	 * 乗っていれば1、乗っていなければ0、それ以外の場合には-1が返ります。
 	 *
-	 * @param {number} id 床ID
+	 * @param id 床ID
 	 *
-	 * @returns {number}
+	 * @returns 指定IDの床に乗っているかどうかを表す整数
 	 * @see {@link MasaoJSS#isRideYuka}
 	 */
-	isRideYuka(s: string | number) {
+	isRideYuka(id: string | number) {
 		var i = 0;
 		if (this.ml_mode != 100 && this.ml_mode != 91 && this.ml_mode != 96) return -1;
 		if (this.co_j.c < 100 || this.co_j.c >= 200) return -1;
 
-		i = parseInt(s as string);
+		i = parseInt(id as string);
 		if (isNaN(i)) i = -1;
 		if (i < 0) return -1;
 		if (i > this.yuka_id_max) return -1;
@@ -24595,7 +24635,7 @@ class MainProgram {
 	 * 立っているなら1、いないなら0、それ以外の場合は-1を返します。
 	 * 地面ではなく床に乗っている場合は0になります。
 	 *
-	 * @returns {number} 地面に立っているか
+	 * @returns 地面に立っているか
 	 * @see {@link MasaoJSS#isRideGround}
 	 */
 	isRideGround() {
@@ -25496,7 +25536,7 @@ class MainProgram {
 
 	/**
 	 * 主人公と床オブジェクトとの当たり判定処理
-	 * @param direction {number} 判定を行う向き 0,1,2,3のいずれか
+	 * @param direction 判定を行う向き 0,1,2,3のいずれか
 	 */
 	atariYuka(i: number) {
 		if (this.yuka_id_max < 0) return;
@@ -25782,7 +25822,7 @@ class MainProgram {
 
 	/**
 	 * 床と主人公が重なった状態かどうかを判定する
-	 * @returns {boolean} 主人公に重なっている床オブジェクトが存在するならtrue
+	 * @returns 主人公に重なっている床オブジェクトが存在するならtrue
 	 */
 	isYukaCross() {
 		var flag = false;
@@ -25913,10 +25953,10 @@ class MainProgram {
 
 	/**
 	 * マップのパーツコードを受け取り、`maps.map_bg`に格納されるべき値を返すと同時にパーツの追加に必要な処理を行う
-	 * @param x {number} X座標(ブロック単位)
-	 * @param y {number} Y座標(ブロック単位)
+	 * @param x X座標(ブロック単位)
+	 * @param y Y座標(ブロック単位)
 	 * @param id パーツコード
-	 * @returns {number} `maps.map_bg`に格納されるべき値
+	 * @returns `maps.map_bg`に格納されるべき値
 	 */
 	setChipValue(x: number, y: number, id: number) {
 		var word1 = -1;
