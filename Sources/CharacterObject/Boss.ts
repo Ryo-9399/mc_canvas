@@ -53,15 +53,15 @@ export const PATTERN_BOSS3_ROTATE_RIGHT = 1256;
 
 /**
  * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
- * @param {number} degree
+ * @param degree
  */
 const normalizeDegree = (degree: number) => ((degree % 360) + 360) % 360;
 
 /**
  * 長さが同じ配列をまとめる
  * [1,2,3],[4,5,6]=>[[1,4],[2,5],[3,6]]
- * @param {Array} a
- * @param {Array} b
+ * @param a
+ * @param b
  */
 const zip = <T>(a: T[], b: T[]): [T, T][] => {
 	if (a.length !== b.length) throw new Error("The given arrays do not have the same length.");
@@ -80,7 +80,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * フレームごとの処理を行う
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	update(mp: MainProgram) {
 		if (this.x >= mp.maps.wx + 1024) return;
@@ -91,7 +91,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * ボスの行動処理
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	move(mp: MainProgram) {
 		// ボスが居座るX座標
@@ -362,7 +362,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * 当たり判定処理
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	checkCollision(mp: MainProgram) {
 		// 主人公とボスの当たり判定
@@ -419,8 +419,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * boss1の攻撃中の動作
-	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param mp
+	 * @param direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss1Attack(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
@@ -506,8 +506,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * boss2の攻撃中の動作
-	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param mp
+	 * @param direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss2Attack(mp: MainProgram, direction: Direction) {
 		mp.boss_attack_mode = true;
@@ -610,8 +610,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * バブル光線
-	 * @param {MainProgram} mp
-	 * @param {number} degree ずらす角度(度数法)
+	 * @param mp
+	 * @param degree ずらす角度(度数法)
 	 */
 	boss2BubbleBeam(mp: MainProgram, degree: number) {
 		for (let i = 0; i < 8; i++) {
@@ -626,8 +626,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * バブル光線回転連射
-	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param mp
+	 * @param direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss2Attack6(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
@@ -705,8 +705,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * boss3の攻撃中の動作(りゅうせいぐん・グレネード)
-	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param mp
+	 * @param direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss3Attack(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
@@ -794,8 +794,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * boss3の体当たり攻撃
-	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き
+	 * @param mp
+	 * @param direction ボスの向き 0:左向き 1:右向き
 	 */
 	boss3TackleAttack(mp: MainProgram, direction: Direction) {
 		// 左向きなら1 右向きなら-1
@@ -813,11 +813,11 @@ class Boss extends CharacterObject {
 		const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
 
 		/**
-		 * @param speed {number} ボスのX速度
-		 * @param left {number} 左側の境界
-		 * @param right {number} 右側の境界
-		 * @param fix_position {boolean} 境界外に出た場合にX座標を境界に合わせるかどうか
-		 * @param next_c1 {number} 境界外に出た際に移行するc1の値
+		 * @param speed ボスのX速度
+		 * @param left 左側の境界
+		 * @param right 右側の境界
+		 * @param fix_position 境界外に出た場合にX座標を境界に合わせるかどうか
+		 * @param next_c1 境界外に出た際に移行するc1の値
 		 */
 		const checkBorder = (speed: number, left: number, right: number, fix_position: boolean, next_c1: number) => {
 			if (speed <= 0 && this.x <= left) {
@@ -884,8 +884,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * 踏まれて潰れている最中のボスの処理
-	 * @param {MainProgram} mp
-	 * @param {number} return_state ダメージから回復後に復帰するボスの状態
+	 * @param mp
+	 * @param return_state ダメージから回復後に復帰するボスの状態
 	 */
 	updateDamage(mp: MainProgram, return_state: number) {
 		this.c1++;
@@ -911,7 +911,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * グレネードで吹き飛んでいる状態の処理
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	dyingByGrenade(mp: MainProgram) {
 		// 落下していく
@@ -938,8 +938,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * ボスが踏むことのできる状態かどうか判定します
-	 * @param {MainProgram} mp
-	 * @returns {boolean}
+	 * @param mp
+	 * @returns ボスを踏むことができるかどうか
 	 */
 	isFumuable(mp: MainProgram) {
 		if (mp.j_tokugi === 10 || (mp.j_tokugi >= 12 && mp.j_tokugi <= 15)) return false;
@@ -954,7 +954,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * ボスが主人公に踏まれてダメージを受けたときの処理をします
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	fumu(mp: MainProgram) {
 		this.c4--;
@@ -980,8 +980,8 @@ class Boss extends CharacterObject {
 
 	/**
 	 * グレネードとボスが接触した場合の処理を行います
-	 * @param {MainProgram} mp
-	 * @param {CharacterObject} characterobject グレネード
+	 * @param mp
+	 * @param characterobject グレネード
 	 */
 	hitWithGrenade(mp: MainProgram, characterobject: CharacterObject) {
 		// グレネードでないなら処理しない
@@ -1002,7 +1002,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * ファイヤーボールとボスが接触した場合の処理を行います
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	hitWithFireball(mp: MainProgram) {
 		// ボスがバリアを張っている場合はダメージを与えられない
@@ -1013,7 +1013,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * しっぽとボスが接触した場合の処理を行います
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	hitWithTail(mp: MainProgram) {
 		// しっぽでボスにダメージを与えられない場合は処理しない
@@ -1030,7 +1030,7 @@ class Boss extends CharacterObject {
 	/**
 	 * ボスを殺します
 	 * (ファイヤーボール・しっぽの攻撃で倒された場合の処理)
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	killNormalAttack(mp: MainProgram) {
 		// ファイヤーボール・しっぽの攻撃で倒される場合、ボスは常に左向き
@@ -1057,8 +1057,8 @@ class Boss extends CharacterObject {
 	/**
 	 * ボスを殺します
 	 * (グレネードで弾き飛ばされた場合の処理)
-	 * @param {MainProgram} mp
-	 * @param {number} direction ボスの向き 0:左向き 1:右向き ※向いている方向とは反対側に飛んでいく
+	 * @param mp
+	 * @param direction ボスの向き 0:左向き 1:右向き ※向いている方向とは反対側に飛んでいく
 	 */
 	killGrenade(mp: MainProgram, direction: Direction) {
 		this.vy = -24;
@@ -1084,9 +1084,9 @@ class Boss extends CharacterObject {
 
 	/**
 	 * ボスのHPを設定します
-	 * @param {MainProgram} mp
-	 * @param {number} hp 新しいHP
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param mp
+	 * @param hp 新しいHP
+	 * @returns 設定に成功したかどうか
 	 * @see {@link MasaoJSS#setBossHP}
 	 */
 	setHP(mp: MainProgram, hp: number) {
@@ -1124,7 +1124,7 @@ class Boss extends CharacterObject {
 	 * 2: カイオール
 	 * 3: センクウザ
 	 * -1: 不明
-	 * @returns {number}
+	 * @returns ボスの種類を表す整数
 	 */
 	getBossNumber() {
 		if (this.c >= 60 && this.c < 70) return 1;
@@ -1139,7 +1139,7 @@ class Boss extends CharacterObject {
 	/**
 	 * ボスのHPゲージを表示します
 	 * ただしボスのHPはmp.boss_hpとmp.boss_hp_maxの値が参照されます
-	 * @param {MainProgram} mp
+	 * @param mp
 	 */
 	showBossHPGauge(mp: MainProgram) {
 		const boss_number = this.getBossNumber();
@@ -1154,7 +1154,7 @@ class Boss extends CharacterObject {
 
 	/**
 	 * this.ptの値をもとにボスの向きを取得します
-	 * @returns {number} ボスの向き 0:左向き 1:右向き
+	 * @returns ボスの向き 0:左向き 1:右向き
 	 */
 	getBossDirectionFromPattern() {
 		switch (this.pt) {
