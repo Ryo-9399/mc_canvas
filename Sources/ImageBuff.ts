@@ -4,9 +4,6 @@
 
 /**
  * 画像管理クラス
- * @param w {number} 画像の横幅
- * @param h {number} 画像の高さ
- * @constructor
  */
 class ImageBuff implements ImageBuff {
 	_dat: HTMLCanvasElement | HTMLImageElement | null;
@@ -18,6 +15,10 @@ class ImageBuff implements ImageBuff {
 	_g_bk: GraphicsBk | null;
 
 	constructor();
+	/**
+	 * @param w 画像の横幅
+	 * @param h 画像の高さ
+	 */
 	constructor(w: number, h: number);
 	constructor(w?: number, h?: number) {
 		if (w !== undefined && h !== undefined) {
@@ -45,7 +46,7 @@ class ImageBuff implements ImageBuff {
 
 	/**
 	 * 画像を読み込む
-	 * @param url {string} 読み込む画像のパス(相対パス、URLともに可)
+	 * @param url 読み込む画像のパス(相対パス、URLともに可)
 	 */
 	load(url: string) {
 		this._loaded = false;
@@ -91,7 +92,7 @@ class ImageBuff implements ImageBuff {
 	/**
 	 * 画像バッファを編集するためのクラスGraphicsを返す
 	 * Canvasモードでないと使えない
-	 * @returns {Graphics} Graphicsオブジェクト
+	 * @returns Graphicsオブジェクト
 	 */
 	getGraphics() {
 		if (this._width < 0) return null;
@@ -101,7 +102,7 @@ class ImageBuff implements ImageBuff {
 
 	/**
 	 * getGraphicsの別名
-	 * @returns {Graphics}
+	 * @returns Graphicsオブジェクト
 	 */
 	createGraphics() {
 		return this.getGraphics();
@@ -109,7 +110,7 @@ class ImageBuff implements ImageBuff {
 
 	/**
 	 * JavaのGraphicsと互換を保ったGraphicsBkオブジェクトを作成（JS拡張との互換性のため）
-	 * @returns {GraphicsBk} GraphicsBkオブジェクト
+	 * @returns GraphicsBkオブジェクト
 	 */
 	getGraphicsBk() {
 		if (this._width < 0) return null;
@@ -127,14 +128,15 @@ function ImageBuff_onerror(obj: ImageBuff) {
 
 /**
  * 画像編集クラス
- * @param img {ImageBuff} もととなるImageBuffオブジェクト
- * @constructor
  */
 class Graphics {
 	_ctx: CanvasRenderingContext2D | null = null;
 	_color: Color;
 	_font: Font;
 
+	/**
+	 * @param img もととなるImageBuffオブジェクト
+	 */
 	constructor(img: ImageBuff) {
 		if (img._dat && !("src" in img._dat)) {
 			this._ctx = img._dat.getContext("2d");
@@ -149,11 +151,11 @@ class Graphics {
 
 	/**
 	 * 線分を描画する
-	 * @param x1 {number} 始点のX座標
-	 * @param y1 {number} 始点のY座標
-	 * @param x2 {number} 終点のX座標
-	 * @param y2 {number} 終点のY座標
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x1 始点のX座標
+	 * @param y1 始点のY座標
+	 * @param x2 終点のX座標
+	 * @param y2 終点のY座標
+	 * @returns 描画に成功したかどうか
 	 */
 	drawLine(x1: number, y1: number, x2: number, y2: number) {
 		if (this._ctx == null) return false;
@@ -170,10 +172,10 @@ class Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name drawImage
 	 * @variation 1
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param dx {number} 描画先X座標
-	 * @param dy {number} 描画先Y座標
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param img ImageBuffオブジェクト
+	 * @param dx 描画先X座標
+	 * @param dy 描画先Y座標
+	 * @returns 描画に成功したかどうか
 	 */
 	drawImage(img: ImageBuff, dx: number, dy: number, ap?: unknown): boolean;
 	/**
@@ -182,12 +184,12 @@ class Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name drawImage
 	 * @variation 2
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param dx {number} 描画先X座標
-	 * @param dy {number} 描画先Y座標
-	 * @param dw {number} 描画される横方向の幅
-	 * @param dh {number} 描画される縦方向の高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param img ImageBuffオブジェクト
+	 * @param dx 描画先X座標
+	 * @param dy 描画先Y座標
+	 * @param dw 描画される横方向の幅
+	 * @param dh 描画される縦方向の高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	drawImage(img: ImageBuff, dx: number, dy: number, dw: number, dh: number, ap?: unknown): boolean;
 	/**
@@ -196,16 +198,16 @@ class Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name drawImage
 	 * @variation 3
-	 * @param img {ImageBuff} ImageBuffオブジェクト
-	 * @param sx {number} imgから切り出すX座標
-	 * @param sy {number} imgから切り出すY座標
-	 * @param sw {number} 切り出してくる横方向の幅
-	 * @param sh {number} 切り出してくる縦方向の高さ
-	 * @param dx {number} 描画先X座標
-	 * @param dy {number} 描画先Y座標
-	 * @param dw {number} 描画される横方向の幅
-	 * @param dh {number} 描画される縦方向の高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param img ImageBuffオブジェクト
+	 * @param sx imgから切り出すX座標
+	 * @param sy imgから切り出すY座標
+	 * @param sw 切り出してくる横方向の幅
+	 * @param sh 切り出してくる縦方向の高さ
+	 * @param dx 描画先X座標
+	 * @param dy 描画先Y座標
+	 * @param dw 描画される横方向の幅
+	 * @param dh 描画される縦方向の高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	drawImage(
 		img: ImageBuff,
@@ -250,11 +252,11 @@ class Graphics {
 
 	/**
 	 * 矩形を描画する
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	drawRect(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
@@ -264,11 +266,11 @@ class Graphics {
 
 	/**
 	 * 矩形を塗りつぶし描画する
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	fillRect(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
@@ -278,10 +280,10 @@ class Graphics {
 
 	/**
 	 * 多角形を描画する
-	 * @param xa {number[]} 頂点のX座標を格納した配列
-	 * @param ya {number[]} 頂点のY座標を格納した配列
-	 * @param pn {number} 多角形の頂点数
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param xa 頂点のX座標を格納した配列
+	 * @param ya 頂点のY座標を格納した配列
+	 * @param pn 多角形の頂点数
+	 * @returns 描画に成功したかどうか
 	 */
 	drawPolygon(xa: number[], ya: number[], pn: number) {
 		if (this._ctx == null) return false;
@@ -297,10 +299,10 @@ class Graphics {
 
 	/**
 	 * 多角形を塗りつぶし描画する
-	 * @param xa {number[]} 頂点のX座標を格納した配列
-	 * @param ya {number[]} 頂点のY座標を格納した配列
-	 * @param pn {number} 多角形の頂点数
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param xa 頂点のX座標を格納した配列
+	 * @param ya 頂点のY座標を格納した配列
+	 * @param pn 多角形の頂点数
+	 * @returns 描画に成功したかどうか
 	 */
 	fillPolygon(xa: number[], ya: number[], pn: number) {
 		if (this._ctx == null) return false;
@@ -316,11 +318,11 @@ class Graphics {
 
 	/**
 	 * 楕円を描画する
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	drawOval(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
@@ -330,11 +332,11 @@ class Graphics {
 
 	/**
 	 * 楕円を塗りつぶし描画する
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @returns 描画に成功したかどうか
 	 */
 	fillOval(x: number, y: number, w: number, h: number) {
 		if (this._ctx == null) return false;
@@ -344,13 +346,13 @@ class Graphics {
 
 	/**
 	 * 円弧を描画する
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @param angle {number} 描画を開始するラジアン角
-	 * @param theta {number} 始点から終点までのラジアン角
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @param angle 描画を開始するラジアン角
+	 * @param theta 始点から終点までのラジアン角
+	 * @returns 描画に成功したかどうか
 	 */
 	drawArc(x: number, y: number, w: number, h: number, angle: number, theta: number) {
 		if (this._ctx == null) return false;
@@ -366,13 +368,13 @@ class Graphics {
 
 	/**
 	 * 円弧を描画する
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @param angle {number} 描画を開始するラジアン角
-	 * @param theta {number} 始点から終点までのラジアン角
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @param angle 描画を開始するラジアン角
+	 * @param theta 始点から終点までのラジアン角
+	 * @returns 描画に成功したかどうか
 	 */
 	fillArc(x: number, y: number, w: number, h: number, angle: number, theta: number) {
 		if (this._ctx == null) return false;
@@ -390,8 +392,8 @@ class Graphics {
 
 	/**
 	 * 広域アルファ値を設定する
-	 * @param a {number} 0から255までのアルファ値
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param a 0から255までのアルファ値
+	 * @returns 設定に成功したかどうか
 	 */
 	setGlobalAlpha(a: number) {
 		if (this._ctx == null) return false;
@@ -403,8 +405,8 @@ class Graphics {
 
 	/**
 	 * 描画色をColorオブジェクトで設定する
-	 * @param color {Color} 描画色
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param color 描画色
+	 * @returns 設定に成功したかどうか
 	 */
 	setColor(color: Color) {
 		if (this._ctx == null) return false;
@@ -417,8 +419,8 @@ class Graphics {
 
 	/**
 	 * 描画文字列フォントを設定する
-	 * @param font {Font} 設定するFontオブジェクト
-	 * @returns {boolean} 設定に成功したかどうか
+	 * @param font 設定するFontオブジェクト
+	 * @returns 設定に成功したかどうか
 	 */
 	setFont(font: Font) {
 		if (this._ctx == null) return false;
@@ -449,10 +451,10 @@ class Graphics {
 
 	/**
 	 * 文字列を描画する
-	 * @param str {string} 描画する文字列
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @returns {boolean} 描画に成功したかどうか
+	 * @param str 描画する文字列
+	 * @param x X座標
+	 * @param y Y座標
+	 * @returns 描画に成功したかどうか
 	 */
 	drawString(str: string, x: number, y: number) {
 		if (this._ctx == null) return false;
@@ -462,9 +464,9 @@ class Graphics {
 
 	/**
 	 * 座標軸を移動する
-	 * @param x {number} X方向の移動距離
-	 * @param y {number} Y方向の移動距離
-	 * @returns {boolean} 成功したかどうか
+	 * @param x X方向の移動距離
+	 * @param y Y方向の移動距離
+	 * @returns 成功したかどうか
 	 */
 	translate(x: number, y: number) {
 		if (this._ctx == null) return false;
@@ -474,14 +476,14 @@ class Graphics {
 
 	/**
 	 * 座標軸を回転させる
-	 * @param angle {number} 回転させるラジアン角
-	 * @param [x] {number} 回転の中心となるX座標
-	 * @param [y] {number} 回転の中心となるY座標
-	 * @returns {boolean} 成功したかどうか
+	 * @param angle 回転させるラジアン角
+	 * @param x 回転の中心となるX座標
+	 * @param y 回転の中心となるY座標
+	 * @returns 成功したかどうか
 	 */
-	rotate(angle: number, x: number, y: number) {
+	rotate(angle: number, x?: number, y?: number) {
 		if (this._ctx == null) return false;
-		if (arguments.length == 1) {
+		if (x === undefined || y === undefined) {
 			this._ctx.rotate(angle);
 		} else {
 			this._ctx.translate(x, y);
@@ -493,9 +495,9 @@ class Graphics {
 
 	/**
 	 * 座標軸を拡大縮小する
-	 * @param x {number} X方向の拡大倍率
-	 * @param y {number} Y方向の拡大倍率
-	 * @returns {boolean} 成功したかどうか
+	 * @param x X方向の拡大倍率
+	 * @param y Y方向の拡大倍率
+	 * @returns 成功したかどうか
 	 */
 	scale(x: number, y: number) {
 		if (this._ctx == null) return false;
@@ -509,12 +511,12 @@ class Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name setClip
 	 * @variation 1
-	 * @param pattern {"elipse"} パターン (円弧状)
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @returns {boolean}
+	 * @param pattern パターン (円弧状)
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @returns 成功したかどうか
 	 */
 	setClip(pattern: "ellipse", x: number, y: number, w: number, h: number): boolean;
 	/**
@@ -523,12 +525,12 @@ class Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name setClip
 	 * @variation 2
-	 * @param pattern {"rect"} パターン (矩形)
-	 * @param x {number} X座標
-	 * @param y {number} Y座標
-	 * @param w {number} 横幅
-	 * @param h {number} 高さ
-	 * @returns {boolean}
+	 * @param pattern パターン (矩形)
+	 * @param x X座標
+	 * @param y Y座標
+	 * @param w 横幅
+	 * @param h 高さ
+	 * @returns 成功したかどうか
 	 */
 	setClip(pattern: "rect", x: number, y: number, w: number, h: number): boolean;
 	/**
@@ -537,11 +539,11 @@ class Graphics {
 	 * @memberOf Graphics.prototype
 	 * @name setClip
 	 * @variation 3
-	 * @param pattern {"polygon"} パターン (多角形)
-	 * @param xa {number[]} 頂点のX座標を格納した配列
-	 * @param ya {number[]} 頂点のY座標を格納した配列
-	 * @param pn {number} 多角形の頂点数
-	 * @returns {boolean}
+	 * @param pattern パターン (多角形)
+	 * @param xa 頂点のX座標を格納した配列
+	 * @param ya 頂点のY座標を格納した配列
+	 * @param pn 多角形の頂点数
+	 * @returns 成功したかどうか
 	 */
 	setClip(pattern: "polygon", xa: number[], ya: number[], pn: number): boolean;
 	setClip(pattern: string, a1: number | number[], a2: number | number[], a3: number, a4?: number) {
@@ -575,13 +577,13 @@ class Graphics {
 
 	/**
 	 * 自身の画像の一部を別の座標にコピーする
-	 * @param x {number} 切り出すX座標
-	 * @param y {number} 切り出すY座標
-	 * @param width {number} 切り出す横幅
-	 * @param height {number} 切り出す高さ
-	 * @param dx {number} X方向の移動距離
-	 * @param dy {number} Y方向の移動距離
-	 * @returns {boolean}
+	 * @param x 切り出すX座標
+	 * @param y 切り出すY座標
+	 * @param width 切り出す横幅
+	 * @param height 切り出す高さ
+	 * @param dx X方向の移動距離
+	 * @param dy Y方向の移動距離
+	 * @returns 成功したかどうか
 	 */
 	copyArea(x: number, y: number, width: number, height: number, dx: number, dy: number) {
 		if (this._ctx == null) return false;
@@ -604,10 +606,10 @@ class Graphics {
  * JavaのGraphicsとの後方互換性を保つためのクラス (Graphicsを継承)
  */
 class GraphicsBk extends Graphics {
-  /**
-   * @param img もととなるImageBuffオブジェクト
-   */
-  constructor(img: ImageBuff) {
+	/**
+	 * @param img もととなるImageBuffオブジェクト
+	 */
+	constructor(img: ImageBuff) {
 		super(img);
 	}
 
@@ -754,13 +756,13 @@ class Color {
 	b: number;
 	a: number;
 
-  /**
-   * @param r R(0-255)
-   * @param g G(0-255)
-   * @param b B(0-255)
-   * @param [a=255] アルファ値(0-255)
-   */
-  constructor(r: number, g: number, b: number, a?: number) {
+	/**
+	 * @param r R(0-255)
+	 * @param g G(0-255)
+	 * @param b B(0-255)
+	 * @param [a=255] アルファ値(0-255)
+	 */
+	constructor(r: number, g: number, b: number, a?: number) {
 		if (r > 255) this.r = 255;
 		else if (r < 0) this.r = 0;
 		else this.r = r;
@@ -836,11 +838,11 @@ class Font {
 	_style: number;
 	_size: number;
 
-  /**
-   * @param name フォント名
-   * @param style フォントのスタイル指定 (0:通常 1:太字 2:イタリック)
-   * @param size フォントサイズ
-   */
+	/**
+	 * @param name フォント名
+	 * @param style フォントのスタイル指定 (0:通常 1:太字 2:イタリック)
+	 * @param size フォントサイズ
+	 */
 	constructor(name: string, style: number, size: number) {
 		this._name = name;
 		this._style = style;
