@@ -32,25 +32,7 @@ type Resource =
 	  };
 
 /**
- * 新しい正男のインスタンスを生成します。
- * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
- * 引数`id`なしで呼ばれた場合、その場所にdocument.writeで正男を設置します。
- *
- * @constructor
- * @param {Object} params paramの一覧
- * @param {string} [id] 正男を設置する要素のID
- * @param {Object} [options] オプション
- * @param {Object[]} [options.extensions] 拡張機能
- * @param {Function} [options.userJSCallback] 毎フレーム呼び出されるコールバック関数
- * @param {Function} [options.highscoreCallback] ハイスコア更新時に呼び出されるコールバック関数
- * @param {Object} [options."advance-map"] 第3版マップデータ
- * @param {boolean} [options."bc-enemy-number"] 敵の数制限の後方互換性を保つ
- * @param {boolean} [options."bc-loop-setinterval"] ループに必ずsetIntervalを使う
- * @param {boolean} [options."bc-no-webaudio"] Web Audio APIを使わない音声再生を行う
- * @param {boolean} [options."bc-no-overlap-sound"] Web Audio APIを使う場合でも同じ効果音を重複して再生しない
- * @param {boolean} [options."bc-case-insensitive"] 拡張JSのメソッドの大文字小文字を区別しない
- * @param {boolean} [options."bc-use-rounddown"] 小数切り捨て処理をJava版の挙動にする
- * @param {boolean} [options."custom-loop"] メインループを行うためのLoopクラスです。（テスト用）
+ * 正男インスタンス
  */
 class Game {
 	__boxID: string;
@@ -72,7 +54,16 @@ class Game {
 	__testDiv: HTMLDivElement | undefined;
 	__teo: { [key: string]: { val: unknown; t: number } } = {};
 
-	constructor(params: Params, id: string, options: Option) {
+	/**
+	 * 新しい正男のインスタンスを生成します。
+	 * 引数`id`ありで呼ばれた場合、そのIDを持つ要素の下に正男を設置します。
+	 * 引数`id`なしで呼ばれた場合、その場所にdocument.writeで正男を設置します。
+	 *
+	 * @param params paramの一覧
+	 * @param id 正男を設置する要素のID
+	 * @param options オプション
+	 */
+	constructor(params: Params, id?: string, options?: Option) {
 		var randomID = makeRandomString();
 
 		options = options || {};
@@ -272,9 +263,9 @@ class Game {
 	/**
 	 * ページ読み込み後、ページ内の全ての正男appletをcanvas正男に置換します。
 	 *
-	 * @param {Object} [options] オプション
+	 * @param options オプション
 	 */
-	static replaceAll(options: Option) {
+	static replaceAll(options?: Option) {
 		if (document.readyState == "complete") {
 			onload();
 		} else {
@@ -316,10 +307,10 @@ class Game {
 	/**
 	 * ページ読み込み後，指定されたidを持つ正男appletをcanvas正男に置換します。
 	 *
-	 * @param {string} id アプレットのID
-	 * @param {Object} [options] オプション
+	 * @param id アプレットのID
+	 * @param options オプション
 	 */
-	static replace(id: string, options: Option) {
+	static replace(id: string, options?: Option) {
 		if (document.readyState == "complete") {
 			// load済みの場合は即座に呼び出す
 			onload();
@@ -333,7 +324,7 @@ class Game {
 		}
 	}
 
-	static replaceByDom(paramScope: HTMLElement, options: Option) {
+	static replaceByDom(paramScope: HTMLElement, options?: Option) {
 		if (!paramScope.parentNode) return;
 		var paramTags = paramScope.getElementsByTagName("param");
 		var paramLength = paramTags.length;
@@ -788,11 +779,16 @@ function createNDimensionArray(...lengths: number[]) {
 
 /**
  * 小数切り捨て
- * @param {number} val 切り捨てを行いたい小数
- * @param {boolean} option option が true かつ bc-use-rounddown がfalseの時Canvasオリジナルに
- * @returns {number} 小数切り捨て後の値
+ * @param val 切り捨てを行いたい小数
+ * @returns 小数切り捨て後の値
  */
 function rounddown(val: number): number;
+/**
+ * 小数切り捨て
+ * @param val 切り捨てを行いたい小数
+ * @param option option が true かつ bc-use-rounddown がfalseの時Canvasオリジナルに
+ * @returns 小数切り捨て後の値
+ */
 function rounddown(val: number, option: true, mp: MainProgram): number;
 function rounddown(val: number, option?: boolean, mp?: MainProgram) {
 	if (val >= 0 || (option && mp && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
@@ -820,70 +816,65 @@ function concatString<S extends Placeholder[]>(...str: S): ConcatString<S> {
 
 /**
  * requestAnimationFrameまたはsetIntervalを用いたループを行うためのクラスです。
- * @constructor
- * @param {Game} game 持ち主のGameオブジェクトです。
- * @param {boolean} forceSetInterval 必ずsetIntervalを使用するフラグ
  */
 class Loop {
 	game: Game;
 	forceSetInterval: boolean;
+	/**
+	 * @private
+	 * 現在ループが回っているかどうかのフラグ。
+	 */
 	running: boolean;
+	/**
+	 * @private
+	 * 現在のループの間隔（ミリ秒）。
+	 */
 	interval: number | null;
+	/**
+	 * @private
+	 * ループごとに呼び出されるコールバック関数
+	 */
 	callback: (() => void) | null;
+	/**
+	 * @private
+	 * ループに何を使っているかのフラグ。
+	 * 0: setInterval
+	 * 1: requestAnimationFrame
+	 */
 	mode: number;
+	/**
+	 * @private
+	 * 前のルームが呼び出された時刻。
+	 */
 	prevTime: number | null;
+	/**
+	 * @private
+	 * 現在待機中のsetIntervalやrequestAnimationFrameの返り値。
+	 * ループを止めるとき用。
+	 */
 	timerid: number | null;
 	targetTime = 0;
 
+	/**
+	 * @param game 持ち主のGameオブジェクトです。
+	 * @param forceSetInterval 必ずsetIntervalを使用するフラグ
+	 */
 	constructor(game: Game, forceSetInterval: boolean) {
 		this.game = game;
 		this.forceSetInterval = forceSetInterval;
-		/**
-		 * @member {boolean}
-		 * @private
-		 * 現在ループが回っているかどうかのフラグ。
-		 */
 		this.running = false;
-		/**
-		 * @member {number}
-		 * @private
-		 * 現在のループの間隔（ミリ秒）。
-		 */
 		this.interval = null;
-		/**
-		 * @member {Function}
-		 * @private
-		 * ループごとに呼び出されるコールバック関数
-		 */
 		this.callback = null;
-		/**
-		 * @member {number}
-		 * @private
-		 * ループに何を使っているかのフラグ。
-		 * 0: setInterval
-		 * 1: requestAnimationFrame
-		 */
 		this.mode = 0;
-		/**
-		 * @member {number}
-		 * @private
-		 * 前のルームが呼び出された時刻。
-		 */
 		this.prevTime = null;
-		/**
-		 * @member {number}
-		 * @private
-		 * 現在待機中のsetIntervalやrequestAnimationFrameの返り値。
-		 * ループを止めるとき用。
-		 */
 		this.timerid = null;
 		this._loop = this._loop.bind(this);
 	}
 
 	/**
 	 * 指定した間隔（ミリ秒）でループを行います。
-	 * @param {number} interval ループの間隔
-	 * @param {Function} callback ループで呼び出される関数
+	 * @param interval ループの間隔
+	 * @param callback ループで呼び出される関数
 	 */
 	start(interval: number, callback: () => void) {
 		this.running = true;
@@ -1008,8 +999,7 @@ class Loop {
  * 現在時刻を返す関数です。
  * ただしperformance.nowの返す時刻はUNIX時間ではなく
  * およそページを開いてからの経過時間なので、かならず相対時刻で利用すること。
- * @function timestamp
- * @returns Number 現在時刻
+ * @returns 現在時刻
  */
 var timestamp =
 	window.performance && performance.now
@@ -1023,7 +1013,6 @@ var timestamp =
 /**
  * 処理を先送りにする関数です。
  * requestIdleCallbackを想定し、他はshimです。
- * @function idle
  */
 var idle: (...args: Parameters<typeof requestIdleCallback>) => void =
 	"function" === typeof requestIdleCallback
