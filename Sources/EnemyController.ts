@@ -8,7 +8,7 @@ export interface EnemyControllerFactory<T> {
 	controllerFactory(properties: T): (co: CharacterObject, mp: MainProgram, i: number) => void;
 }
 
-/*
+/**
  * フハハハハ！！　エネミーコントローラー！
  * ライフを1000払い　左 右 A B！
  * @namespace
@@ -5510,127 +5510,127 @@ namespace EnemyController {
 	 * 拡張可能なマップチップコードの一覧
 	 */
 	export const available = {
-		// 亀（向きを変える）
+		/** 亀（向きを変える） */
 		100: EnemyController.Turtle,
-		// 亀（落ちる）
+		/** 亀（落ちる） */
 		110: EnemyController.TurtleFall,
-		// 亀（ボスに投げられた亀）
+		/** 亀（ボスに投げられた亀） */
 		150: EnemyController.TurtleFall,
-		// ピカチー（電撃）
+		/** ピカチー（電撃） */
 		200: EnemyController.Pikachie,
-		// ピカチー（みずでっぽう 水平発射）
+		/** ピカチー（みずでっぽう 水平発射） */
 		201: EnemyController.Pikachie,
-		// ピカチー（みずでっぽう 電撃3発）
+		/** ピカチー（みずでっぽう 電撃3発） */
 		202: EnemyController.Pikachie,
-		// ピカチー（みずでっぽう プラズマ砲）
+		/** ピカチー（みずでっぽう プラズマ砲） */
 		203: EnemyController.Pikachie,
-		// チコリン（はっぱカッター）
+		/** チコリン（はっぱカッター） */
 		300: EnemyController.Chikorin,
-		// チコリン（はっぱカッター　地形で消える）
+		/** チコリン（はっぱカッター　地形で消える） */
 		301: EnemyController.Chikorin,
-		// チコリン（ヒノララシを8匹投げる）
+		/** チコリン（ヒノララシを8匹投げる） */
 		310: EnemyController.ChikorinThrower,
-		// チコリン（ヒノララシを無限に投げる）
+		/** チコリン（ヒノララシを無限に投げる） */
 		311: EnemyController.ChikorinThrower,
-		// チコリン（マリリを8匹投げる）
+		/** チコリン（マリリを8匹投げる） */
 		312: EnemyController.ChikorinThrower,
-		// チコリン（マリリを無限に投げる）
+		/** チコリン（マリリを無限に投げる） */
 		313: EnemyController.ChikorinThrower,
-		// チコリン（はっぱカッター 乱れ打ち）
+		/** チコリン（はっぱカッター 乱れ打ち） */
 		320: EnemyController.ChikorinMidareuchi,
-		// チコリン（ソーラービーム）
+		/** チコリン（ソーラービーム） */
 		330: EnemyController.ChikorinSolarBeam,
-		// チコリン（ソーラービーム　右へ発射）
+		/** チコリン（ソーラービーム　右へ発射） */
 		335: EnemyController.ChikorinSolarBeam,
-		// ヒノララシ
+		/** ヒノララシ */
 		400: EnemyController.Hinorarashi,
-		// ヒノララシ（落ちる）
+		/** ヒノララシ（落ちる） */
 		450: EnemyController.HinorarashiFall,
-		// ポッピー（上下移動）
+		/** ポッピー（上下移動） */
 		500: EnemyController.PoppieUpDown,
-		// ポッピー（左右移動）
+		/** ポッピー（左右移動） */
 		510: EnemyController.PoppieLeftRight,
-		// ポッピー（火の粉）
+		/** ポッピー（火の粉） */
 		520: EnemyController.PoppieFire,
-		// ポッピー（火の粉 3連射）
+		/** ポッピー（火の粉 3連射） */
 		530: EnemyController.PoppieFire3,
-		// ポッピー（バブル光線3発）
+		/** ポッピー（バブル光線3発） */
 		540: EnemyController.PoppieBubble3,
-		// ポッピー（バブル光線3発）
+		/** ポッピー（バブル光線3発） */
 		550: EnemyController.PoppieHurricaneBlast,
-		// マリリ（ジャンプで進む）
+		/** マリリ（ジャンプで進む） */
 		600: EnemyController.Mariri,
-		// マリリ（その場でジャンプ）
+		/** マリリ（その場でジャンプ） */
 		601: EnemyController.Mariri,
-		// マリリ（左右にジャンプ）
+		/** マリリ（左右にジャンプ） */
 		602: EnemyController.Mariri,
-		// マリリ（敵キャラクターに投げられたやつ）
+		/** マリリ（敵キャラクターに投げられたやつ） */
 		650: EnemyController.Mariri,
-		// マリリ（左右に移動）
+		/** マリリ（左右に移動） */
 		660: EnemyController.MaririLeftRight,
-		// マリリ（体当たり）
+		/** マリリ（体当たり） */
 		670: EnemyController.MaririTackle,
-		// ヤチャモ（火の粉で攻撃）
+		/** ヤチャモ（火の粉で攻撃） */
 		700: EnemyController.Yachamo,
-		// ヤチャモ（何もしない）
+		/** ヤチャモ（何もしない） */
 		701: EnemyController.Yachamo,
-		// ヤチャモ（グレネード）
+		/** ヤチャモ（グレネード） */
 		702: EnemyController.Yachamo,
-		// ヤチャモ（はっぱカッター3発）
+		/** ヤチャモ（はっぱカッター3発） */
 		703: EnemyController.Yachamo,
-		// ヤチャモ（プラズマ砲）
+		/** ヤチャモ（プラズマ砲） */
 		704: EnemyController.Yachamo,
-		// ヤチャモ（火の粉 速射）
+		/** ヤチャモ（火の粉 速射） */
 		710: EnemyController.YachamoFast,
-		// ヤチャモ（火の粉 3連射）
+		/** ヤチャモ（火の粉 3連射） */
 		711: EnemyController.YachamoFast,
-		// ヤチャモ（破壊光線）
+		/** ヤチャモ（破壊光線） */
 		720: EnemyController.YachamoHyperBeam,
-		// ヤチャモ（破壊光線 右へ発射）
+		/** ヤチャモ（破壊光線 右へ発射） */
 		725: EnemyController.YachamoHyperBeam,
-		// ミズタロウ（水鉄砲）
+		/** ミズタロウ（水鉄砲） */
 		800: EnemyController.Mizutaro,
-		// ミズタロウ（はっぱカッター3発）
+		/** ミズタロウ（はっぱカッター3発） */
 		801: EnemyController.Mizutaro,
-		// ミズタロウ（電撃）
+		/** ミズタロウ（電撃） */
 		802: EnemyController.Mizutaro,
-		// ミズタロウ（みずでっぽう 水平発射）
+		/** ミズタロウ（みずでっぽう 水平発射） */
 		803: EnemyController.Mizutaro,
-		// ミズタロウ（ハリケンブラスト）
+		/** ミズタロウ（ハリケンブラスト） */
 		804: EnemyController.Mizutaro,
-		// エアームズ（壁に当たると止まる）
+		/** エアームズ（壁に当たると止まる） */
 		900: EnemyController.AirmsStop,
-		// エアームズ（その場で爆弾投下）
+		/** エアームズ（その場で爆弾投下） */
 		920: EnemyController.AirmsStay,
-		// エアームズ（その場でグレネード投下）
+		/** エアームズ（その場でグレネード投下） */
 		921: EnemyController.AirmsStay,
-		// エアームズ（左右に動いて爆弾投下）
+		/** エアームズ（左右に動いて爆弾投下） */
 		930: EnemyController.AirmsLeftRight,
-		// エアームズ（壁に当たると向きを変える）
+		/** エアームズ（壁に当たると向きを変える） */
 		950: EnemyController.AirmsReturn,
-		// タイキング（左右移動　水中専用）
+		/** タイキング（左右移動　水中専用） */
 		1000: EnemyController.Taiking,
-		// タイキング（はねる）
+		/** タイキング（はねる） */
 		1050: EnemyController.TaikingJump,
-		// タイキング（縄張りをまもる）
+		/** タイキング（縄張りをまもる） */
 		1060: EnemyController.TaikingTerritory,
-		// タイキング（左回り）
+		/** タイキング（左回り） */
 		1070: EnemyController.TaikingLeft,
-		// タイキング（右回り）
+		/** タイキング（右回り） */
 		1080: EnemyController.TaikingRight,
-		// クラゲッソ（バブル光線 水中専用）
+		/** クラゲッソ（バブル光線 水中専用） */
 		1100: EnemyController.Kuragesso,
-		// クラゲッソ（近づくと落ちる）
+		/** クラゲッソ（近づくと落ちる） */
 		1150: EnemyController.KuragessoFall,
-		// クラゲッソ（縄張りをまもる）
+		/** クラゲッソ（縄張りをまもる） */
 		1160: EnemyController.KuragessoTerritory,
-		// クラゲッソ（左回り）
+		/** クラゲッソ（左回り） */
 		1170: EnemyController.KuragessoLeft,
-		// クラゲッソ（右回り）
+		/** クラゲッソ（右回り） */
 		1180: EnemyController.KuragessoRight,
-		// 追跡亀
+		/** 追跡亀 */
 		1200: EnemyController.TurtleChaser,
-		// 重力無視の追跡ピカチー等
+		/** 重力無視の追跡ピカチー等 */
 		1400: EnemyController.PikachieChaser,
 	};
 }
