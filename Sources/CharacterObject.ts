@@ -32,6 +32,9 @@ class CharacterObject {
 	score: number;
 	ss: number;
 	gf: boolean;
+	/**
+	 * このオブジェクトの動作を制御する関数
+	 */
 	controller: ReturnType<EnemyControllerFactory<unknown>["controllerFactory"]> | undefined;
 
 	constructor() {
@@ -60,10 +63,6 @@ class CharacterObject {
 		this.score = 0;
 		this.ss = 0;
 		this.gf = false;
-		/**
-		 * このオブジェクトの動作を制御する関数
-		 * @private
-		 */
 		this.controller = undefined;
 	}
 
