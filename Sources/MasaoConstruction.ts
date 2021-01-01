@@ -2241,7 +2241,7 @@ class MasaoConstruction {
 	 *
 	 * @param url 音声ファイルのURL
 	 * @param bgmflag ファイルがBGM用か
-	 * @returns
+	 * @returns 加工後の音声ファイルのURL
 	 */
 	getAudioURL(url: string | null, bgmflag?: boolean) {
 		var i1, i2;
