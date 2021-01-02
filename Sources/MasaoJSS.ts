@@ -3766,7 +3766,7 @@ class MasaoJSS {
 				};
 			// 関数名を集める
 			var functions = (Object.keys(this) as (keyof this)[]).filter((key) => {
-				return "string" === key && "function" === typeof this[key];
+				return "function" === typeof this[key];
 			}) as StringKeyOfThis[];
 			// 小文字化した関数を追加
 			functions.forEach((key) => {
