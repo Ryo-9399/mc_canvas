@@ -64,75 +64,75 @@ class GameKey {
 			this.codekey_f[this.key_code] = true;
 		}
 		switch (this.key_code) {
-			case 38:
+			case 38: // ↑
 				paramKeyEvent.preventDefault();
 				this.up_f = true;
 				break;
-			case 40:
+			case 40: // ↓
 				paramKeyEvent.preventDefault();
 				this.down_f = true;
 
 				this.tr2_f = true;
 
 				break;
-			case 37:
+			case 37: // ←
 				paramKeyEvent.preventDefault();
 				if (!this.left_right_lock) {
 					this.left_f = true;
 				}
 				break;
-			case 39:
+			case 39: // →
 				paramKeyEvent.preventDefault();
 				if (!this.left_right_lock) {
 					this.right_f = true;
 				}
 				break;
-			case 104:
+			case 104: // テンキーの8
 				paramKeyEvent.preventDefault();
 				this.up_f = true;
 				break;
-			case 98:
+			case 98: // テンキーの2
 				paramKeyEvent.preventDefault();
 				this.down_f = true;
 
 				this.tr2_f = true;
 
 				break;
-			case 100:
+			case 100: // テンキーの4
 				paramKeyEvent.preventDefault();
 				if (!this.left_right_lock) {
 					this.left_f = true;
 				}
 				break;
-			case 102:
+			case 102: // テンキーの6
 				paramKeyEvent.preventDefault();
 				if (!this.left_right_lock) {
 					this.right_f = true;
 				}
 				break;
-			case 90:
+			case 90: // Z
 				paramKeyEvent.preventDefault();
 				this.tr1_f = true;
 				this.z_f = true;
 
 				break;
-			case 88:
+			case 88: // X
 				paramKeyEvent.preventDefault();
 				this.tr2_f = true;
 				this.x_f = true;
 				break;
-			case 67:
+			case 67: // C（未使用）
 				paramKeyEvent.preventDefault();
 				this.tr3_f = true;
 				break;
-			case 32:
+			case 32: // スペース
 				paramKeyEvent.preventDefault();
 				this.tr1_f = true;
 				this.space_f = true;
 
 				this.tr1_c = 0;
 				break;
-			case 83:
+			case 83: // S（未使用）
 				paramKeyEvent.preventDefault();
 				this.start_f = true;
 		}
