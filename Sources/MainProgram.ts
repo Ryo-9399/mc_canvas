@@ -20368,7 +20368,7 @@ class MainProgram {
 						}
 					} else if (characterobject.c4 >= 500 && characterobject.c4 < 600) {
 						characterobject.c4++;
-						if (characterobject.c4 >= this.gg.di.width) characterobject.c4 = 0;
+						if (characterobject.c4 >= 512) characterobject.c4 = 0;
 					}
 					if (this.co_j.c >= 100 && this.co_j.c < 200 && this.j_v_c <= 0) {
 						var k74 = rounddown((characterobject.vy * 64) / 100) - 64;
