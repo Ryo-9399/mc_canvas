@@ -3604,7 +3604,7 @@ class MasaoJSS {
 		 *
 		 * @param {number} x X座標
 		 * @param {number} y Y座標
-		 * @param {number} type 敵の種類
+		 * @param {number} type アイテムの種類
 		 *
 		 * @since canvas正男
 		 */

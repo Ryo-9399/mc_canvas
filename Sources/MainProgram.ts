@@ -6208,6 +6208,7 @@ class MainProgram {
 				}
 			}
 		if (this.j_jdai_f) {
+			// ジャンプ台に乗っている
 			this.co_j.vx = 0;
 			this.co_j.pt = 100;
 			this.co_j.ac = 0;
@@ -7366,8 +7367,9 @@ class MainProgram {
 								} else if (this.co_j.muki == 0) this.jmSet(this.co_j.x, this.co_j.y, 100);
 								else this.jmSet(this.co_j.x, this.co_j.y, 105);
 							this.j_jet_kf = false;
-							var i27 = Math.abs(this.co_j.vx);
+							var i27 = Math.abs(this.co_j.vx); // 自分の横方向の速さ
 							if (this.j_jdai_f) {
+								// ジャンプ台に乗っている
 								this.co_j.y = rightShiftIgnoreSign(this.co_j.y, 5) * 32;
 								this.co_j.vy = -410;
 								this.j_jump_level = 5;
@@ -7442,18 +7444,22 @@ class MainProgram {
 								this.j_cannon_type = 5;
 								this.gs.rsAddSound(23);
 							} else if (this.jst_jump_level_fix == 1) {
+								// ジャンプの高さを固定 小
 								this.co_j.vy = -150;
 								this.j_jump_level = 1;
 								this.gs.rsAddSound(3);
 							} else if (this.jst_jump_level_fix == 2) {
+								// ジャンプの高さを固定 小中
 								this.co_j.vy = -190;
 								this.j_jump_level = 1;
 								this.gs.rsAddSound(3);
 							} else if (this.jst_jump_level_fix == 3) {
+								// ジャンプの高さを固定 中
 								this.co_j.vy = -230;
 								this.j_jump_level = 1;
 								this.gs.rsAddSound(3);
 							} else if (this.jst_jump_level_fix == 4) {
+								// ジャンプの高さを固定 大
 								this.co_j.vy = -260;
 								this.j_jump_level = 1;
 								this.gs.rsAddSound(3);
@@ -20362,7 +20368,7 @@ class MainProgram {
 						}
 					} else if (characterobject.c4 >= 500 && characterobject.c4 < 600) {
 						characterobject.c4++;
-						if (characterobject.c4 >= this.gg.di.width) characterobject.c4 = 0;
+						if (characterobject.c4 >= 512) characterobject.c4 = 0;
 					}
 					if (this.co_j.c >= 100 && this.co_j.c < 200 && this.j_v_c <= 0) {
 						var k74 = rounddown((characterobject.vy * 64) / 100) - 64;
