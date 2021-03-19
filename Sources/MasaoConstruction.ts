@@ -1,7 +1,7 @@
 import { GameGraphicsForApplet } from "./GameGraphicsForApplet";
 import { GameKey, GameKey_keyPressed, GameKey_keyReleased } from "./GameKey";
 import { GameMouse, GameMouse_mousePressed, GameMouse_mouseReleased } from "./GameMouse";
-import { GameSoundForApplet } from "./GameSoundForApplet";
+import { GameSoundBase, GameSoundForApplet } from "./GameSoundForApplet";
 import { AudioClip, Game, rightShiftIgnoreSign, waitFor, rounddown } from "./GlobalFunctions";
 import { Color, Font, ImageBuff, Graphics } from "./ImageBuff";
 import { MainProgram } from "./MainProgram";
@@ -63,7 +63,7 @@ class MasaoConstruction {
 	gg: GameGraphicsForApplet;
 	gm: GameMouse;
 	gk: GameKey;
-	gs: GameSoundForApplet;
+	gs: GameSoundBase<any>;
 	mp: MainProgram;
 	mph_title_lock_f: boolean;
 	mph_start_game_f: boolean;

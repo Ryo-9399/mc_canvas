@@ -19,7 +19,7 @@ import { InversionKind, GameGraphicsForApplet } from "./GameGraphicsForApplet";
 import { Option, MainLayer, MapchipLayer } from "./MasaoOption";
 import { GameMouse } from "./GameMouse";
 import { GameKey } from "./GameKey";
-import { GameSoundForApplet } from "./GameSoundForApplet";
+import { GameSoundBase } from "./GameSoundForApplet";
 import { TagDataBase } from "./TagDataBase";
 import { MasaoConstruction } from "./MasaoConstruction";
 
@@ -35,7 +35,7 @@ type Parts = {
  * @param gamegraphics {GameGraphicsForApplet}
  * @param gamemouse {GameMouse}
  * @param gamekey {GameKey}
- * @param gamesound {GameSoundForApplet}
+ * @param gamesound {GameSoundBase<any>}
  * @param tagdatabase {TagDataBase}
  * @constructor
  */
@@ -329,7 +329,7 @@ class MainProgram {
 	gg: GameGraphicsForApplet;
 	gm: GameMouse;
 	gk: GameKey;
-	gs: GameSoundForApplet;
+	gs: GameSoundBase<any>;
 	tdb: TagDataBase;
 	spot_img: ImageBuff;
 	spot_g: Graphics;
@@ -348,7 +348,7 @@ class MainProgram {
 		gamegraphics: GameGraphicsForApplet,
 		gamemouse: GameMouse,
 		gamekey: GameKey,
-		gamesound: GameSoundForApplet,
+		gamesound: GameSoundBase<any>,
 		tagdatabase: TagDataBase
 	) {
 		// マップの幅と高さ（ブロック単位）。将来はここを変数にする。
