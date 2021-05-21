@@ -1,6 +1,6 @@
 {
   "name": "mc_canvas",
-  "version": "5.2.8",
+  "version": "5.2.9",
   "description": "このプロジェクトは、福田直人氏の制作した「まさおコンストラクション」を、挙動をそのままに、 かつ全てのWebブラウザ上で動作するように改良するものです。",
   "main": "Outputs/CanvasMasao.js",
   "scripts": {
@@ -37,6 +37,7 @@
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "babel-loader": "^8.0.6",
+    "babel-plugin-transform-globalthis": "^1.0.0",
     "chai": "^4.2.0",
     "chai-karma-snapshot": "^0.8.0",
     "express": "^4.16.4",
