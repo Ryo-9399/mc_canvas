@@ -4233,7 +4233,7 @@ class MainProgram {
 		([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).forEach((j1) => {
 			this.shop_item_name[j1 - 1] = this.tdb.getValue(concatString("shop_item_name", j1));
 
-			let teika = this.tdb.getValueInt(concatString("shop_item_name", j1));
+			let teika = this.tdb.getValueInt(concatString("shop_item_teika", j1));
 			if (teika < 0) teika = 0;
 			this.shop_item_teika[j1 - 1] = teika;
 		});
