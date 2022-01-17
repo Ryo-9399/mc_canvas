@@ -1334,6 +1334,10 @@ export const drawBoss = function (this: MainProgram) {
 	 */
 	const boss_wy = this.co_b.y - wy;
 	if (boss_wx > this.gg.di.width + 48) return;
+
+	/**
+	 * {@link MasaoJSS#setBossObjectImage|setBossObjectImage}でボスの画像を設定した場合差し替える
+	 */
 	if (this.co_b.img !== null) {
 		this.hg.drawImage(this.co_b.img, boss_wx + this.co_b.zs_x, boss_wy + this.co_b.zs_y, this.ap);
 		return;
@@ -1373,26 +1377,32 @@ export const drawBoss = function (this: MainProgram) {
 		default:
 			break;
 
+		// グラーダ 左向き
 		case Boss.PATTERN_BOSS1_LEFT:
 			drawWide(186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// グラーダ 右向き
 		case Boss.PATTERN_BOSS1_RIGHT:
 			drawWideFlip(186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// グラーダ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS1_DAMAGE_LEFT:
 			drawWide(176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// グラーダ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS1_DAMAGE_RIGHT:
 			drawWideFlip(176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// カイオール 左向き
 		case Boss.PATTERN_BOSS2_LEFT:
 			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// カイオール バブル光線回転連射 左向き
 		case Boss.PATTERN_BOSS2_ROTATE_LEFT:
 			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
 			this.hg.dispose();
@@ -1401,10 +1411,12 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.dispose();
 			break;
 
+		// カイオール 右向き
 		case Boss.PATTERN_BOSS2_RIGHT:
 			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// カイオール バブル光線回転連射 右向き
 		case Boss.PATTERN_BOSS2_ROTATE_RIGHT:
 			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
 			this.hg.dispose();
@@ -1413,30 +1425,37 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.dispose();
 			break;
 
+		// カイオール つぶれ状態 左向き
 		case Boss.PATTERN_BOSS2_DAMAGE_LEFT:
 			drawWide(178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// カイオール つぶれ状態 右向き
 		case Boss.PATTERN_BOSS2_DAMAGE_RIGHT:
 			drawWideFlip(178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// センクウザ 左向き
 		case Boss.PATTERN_BOSS3_LEFT:
 			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// センクウザ 右向き
 		case Boss.PATTERN_BOSS3_RIGHT:
 			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// センクウザ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS3_DAMAGE_LEFT:
 			drawWide(228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// センクウザ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS3_DAMAGE_RIGHT:
 			drawWideFlip(228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// センクウザ バリア状態 左向き
 		case Boss.PATTERN_BOSS3_BARRIER_LEFT:
 			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
@@ -1460,6 +1479,7 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
+		// センクウザ 回転 左向き
 		case Boss.PATTERN_BOSS3_ROTATE_LEFT:
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
@@ -1467,6 +1487,7 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.dispose();
 			break;
 
+		// センクウザ バリア状態 右向き
 		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
 			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
@@ -1490,6 +1511,7 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
+		// センクウザ 回転 右向き
 		case Boss.PATTERN_BOSS3_ROTATE_RIGHT:
 			this.hg.dispose();
 			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
