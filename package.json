@@ -40,7 +40,7 @@
     "babel-plugin-transform-globalthis": "^1.0.0",
     "chai": "^4.2.0",
     "chai-karma-snapshot": "^0.8.0",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "globby": "^9.0.0",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
