@@ -36,7 +36,7 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "^8.3.0",
     "babel-plugin-transform-globalthis": "^1.0.0",
     "chai": "^4.2.0",
     "chai-karma-snapshot": "^0.8.0",
@@ -59,7 +59,7 @@
     "karma-mocha-snapshot": "^0.2.1",
     "karma-snapshot": "^0.6.0",
     "karma-sourcemap-loader": "^0.3.8",
-    "karma-webpack": "^4.0.2",
+    "karma-webpack": "^5.0.0",
     "mocha": "^8.2.1",
     "nunjucks": "^3.2.2",
     "opn": "^5.4.0",
@@ -67,9 +67,9 @@
     "pretty-quick": "^1.10.0",
     "typescript": "^4.1.2",
     "uglify-es": "^3.3.9",
-    "webpack": "^4.44.2",
+    "webpack": "^5.75.0",
     "webpack-cli": "^4.2.0",
-    "webpack-stream": "^6.1.1"
+    "webpack-stream": "^7.0.0"
   },
   "dependencies": {
     "core-js": "^3.1.3"
