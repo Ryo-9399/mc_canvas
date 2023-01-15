@@ -236,25 +236,30 @@ CanvasMasao.MasaoKani2 = function (mc) {
 
 	function moveBoss(g, i, j) {
 		if (boss_jyoutai == 30) {
+			// 出現前
 			if (i >= sl_x) boss_jyoutai = 100;
 			return;
 		}
 		if (boss_jyoutai == 20) {
+			// 星が出現せずにクリア
 			boss_bc = boss_bc - 1;
 			if (boss_bc <= 0) {
 				Applet1.setStageClear();
 				boss_jyoutai = 0;
 			}
 		} else if (boss_jyoutai == 50) {
+			// 倒された
 			boss_bc = boss_bc - 1;
 			if (boss_bc <= 0) {
 				boss_jyoutai = 0;
 				Applet1.hideGauge();
 				Applet1.addScore(1000);
 				if (boss_destroy == 2) {
+					// オリジナルボスを倒した時：ステージクリアーする
 					boss_jyoutai = 20;
 					boss_bc = 30;
 				} else {
+					// オリジナルボスを倒した時：星が出る
 					Applet1.setMapchip(
 						(i >> 5) - 1 + rounddown(mc.gg.di.width / 32 / 2) - 2,
 						(j >> 5) - 10 + rounddown(mc.gg.di.height / 32) - 6,
@@ -263,6 +268,7 @@ CanvasMasao.MasaoKani2 = function (mc) {
 				}
 			}
 		} else if (boss_jyoutai == 80) {
+			// 踏まれている
 			boss_bc = boss_bc - 1;
 			if (boss_bc <= 0) boss_jyoutai = boss_jyoutai_b;
 		} else if (boss_jyoutai >= 100) {
