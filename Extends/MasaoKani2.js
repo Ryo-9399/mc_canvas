@@ -1021,6 +1021,7 @@ CanvasMasao.MasaoKani2 = function (mc) {
 					flag1 = true;
 			if (flag1)
 				if (boss_fumeru_f == 2 && Applet1.getMyVY() > 10) {
+					// オリジナルボスが主人公と重なった場合：主人公に踏まれる
 					Applet1.setMyPress("3");
 					Applet1.setMyYReal(boss_y);
 					boss_hp = boss_hp - 1;
@@ -1033,8 +1034,10 @@ CanvasMasao.MasaoKani2 = function (mc) {
 						boss_bc = 10;
 					}
 				} else if (boss_fumeru_f == 4) {
+					// オリジナルボスが主人公と重なった場合：主人公が即死する
 					Applet1.setMyMiss("2");
 				} else {
+					// オリジナルボスが主人公と重なった場合：主人公がダメージを受ける
 					Applet1.setMyHPDamage("1");
 					if (Applet1.getMyHP() <= 0) Applet1.setMyMiss("2");
 				}
