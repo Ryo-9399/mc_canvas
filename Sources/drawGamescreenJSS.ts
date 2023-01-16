@@ -1539,7 +1539,7 @@ const drawBossLegacy = function (this: MainProgram) {
 	 * @type {number}
 	 */
 	const boss_wy = this.co_b.y - wy;
-	if (boss_wx >= 528) return;
+	if (boss_wx >= this.gg.di.width + 16) return;
 	/**
 	 * 複数枚のパターン画像を並べて描画します
 	 * @param code 左上のパターンコード
