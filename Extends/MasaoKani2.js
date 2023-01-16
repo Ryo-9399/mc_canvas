@@ -295,6 +295,7 @@ CanvasMasao.MasaoKani2 = function (mc) {
 							if (boss_x + (boss_width >> 1) < mc.mp.co_j.x + 15) boss_vx = boss_speed;
 							boss_vy = 0;
 						}
+						boss_jyoutai_b = boss_jyoutai;
 					}
 				} else if (boss_ugoki == 4 || boss_ugoki == 5 || boss_ugoki == 20 || boss_ugoki == 21) {
 					if (boss_x <= sl_x + mc.gg.di.width - 192) {
