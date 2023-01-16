@@ -1046,15 +1046,15 @@ export const drawGamescreenMy = function (this: MainProgram) {
 			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
-				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
+				this.vo_pa_x[i] = center_x + Math.floor(Math.cos(rad) * 38);
+				this.vo_pa_y[i] = center_y + Math.floor(Math.sin(rad) * 38);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = center_x + Math.cos(rad) * 38;
-				this.vo_pa_y[i] = center_y + Math.sin(rad) * 38;
+				this.vo_pa_x[i] = center_x + Math.floor(Math.cos(rad) * 38);
+				this.vo_pa_y[i] = center_y + Math.floor(Math.sin(rad) * 38);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -1465,15 +1465,15 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -1497,15 +1497,15 @@ export const drawBoss = function (this: MainProgram) {
 			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -1632,15 +1632,15 @@ const drawBossLegacy = function (this: MainProgram) {
 			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
@@ -1655,15 +1655,15 @@ const drawBossLegacy = function (this: MainProgram) {
 			this.hg.setColor(Color.white);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			for (let i = 0; i < 6; i++) {
 				const rad = ((360 - this.j_v_kakudo + i * 60) * Math.PI) / 180;
-				this.vo_pa_x[i] = boss_wx + 16 + Math.cos(rad) * 50;
-				this.vo_pa_y[i] = boss_wy + 16 + Math.sin(rad) * 50;
+				this.vo_pa_x[i] = boss_wx + 16 + Math.floor(Math.cos(rad) * 50);
+				this.vo_pa_y[i] = boss_wy + 16 + Math.floor(Math.sin(rad) * 50);
 			}
 
 			this.hg.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
