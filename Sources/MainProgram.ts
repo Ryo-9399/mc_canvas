@@ -3796,7 +3796,7 @@ class MainProgram {
 				returningTitle();
 				break;
 
-			case 95: // 地図画面時 ショップで購入したアイテムを反映
+			case 95: // 地図画面時 ステージ開始前　　ショップで購入したアイテムを反映
 				this.stage = this.ig.checkStage();
 				this.init3();
 				switch (this.ig.shop_kattaitem) {
@@ -3890,7 +3890,7 @@ class MainProgram {
 				this.gs.stopBGM();
 				break;
 
-			case 231:
+			case 231: // 地図画面からリンク土管で移動
 				drawBlack();
 				this.drawScore2();
 				this.ml_mode_c++;
@@ -4378,7 +4378,8 @@ class MainProgram {
 		if (this.j_tokugi == 15) this.j_fire_range = 9;
 		if (this.j_fire_type == 3 || this.j_fire_type == 4) this.j_fire_range = 10;
 		if (this.j_tokugi == 17) {
-			this.setMyMaxHP("3");
+			this.j_hp_max = 3;
+			this.j_hp = this.j_hp_max;
 			this.showMyHP("HP");
 		}
 		this.j_enemy_press = this.tdb.getValueInt("j_enemy_press");
@@ -4599,21 +4600,25 @@ class MainProgram {
 			if (this.ks_wx <= 128) this.ks_wx = 32;
 		}
 		if (this.scroll_area == 2) {
+			// スクロール範囲 左下１画面分
 			this.maps.wx_max = 32;
 			this.maps.wy_mini = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 			for (let i3 = 0; i3 <= this.maps.height - 1; i3++)
 				this.maps.map_bg[rounddown(this.gg.di.width / 32) + 1][i3] = 21;
 		} else if (this.scroll_area == 3) {
+			// スクロール範囲 左下横２画面分
 			this.maps.wx_max = this.gg.di.width + 32;
 			this.maps.wy_mini = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 			for (let k3 = 0; k3 <= this.maps.height - 1; k3++)
 				this.maps.map_bg[rounddown((this.gg.di.width * 2) / 32) + 1][k3] = 21;
 		} else if (this.scroll_area == 4) {
+			// スクロール範囲 左下縦２画面分
 			this.maps.wx_max = 32;
 			this.maps.wy_mini = (this.mapHeight - 10) * 32;
 			for (let i4 = 0; i4 <= this.maps.height - 1; i4++)
 				this.maps.map_bg[rounddown(this.gg.di.width / 32) + 1][i4] = 21;
 		} else if (this.scroll_area == 5) {
+			// スクロール範囲 左下４画面分
 			this.maps.wx_max = this.gg.di.width + 32;
 			this.maps.wy_mini = (this.mapHeight - 10) * 32;
 			for (let k4 = 0; k4 <= this.maps.height - 1; k4++)
@@ -10538,7 +10543,7 @@ class MainProgram {
 	}
 
 	/**
-	 * 主人公が敵を踏んだエフェクトを発生させます。引数でジャンプの高さを還ることができます。
+	 * 主人公が敵を踏んだエフェクトを発生させます。引数でジャンプの高さを変えることができます。
 	 * * 1: 亀などの敵を踏んだときの高さ
 	 * * 2: ポッピー・エアームズを踏んだときの高さ
 	 * * 3: ボスを踏んだときの高さ
