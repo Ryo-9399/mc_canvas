@@ -60,7 +60,7 @@
     "karma-snapshot": "^0.6.0",
     "karma-sourcemap-loader": "^0.3.8",
     "karma-webpack": "^4.0.2",
-    "mocha": "^8.2.1",
+    "mocha": "^10.2.0",
     "nunjucks": "^3.2.2",
     "opn": "^5.4.0",
     "prettier": "^2.2.1",
