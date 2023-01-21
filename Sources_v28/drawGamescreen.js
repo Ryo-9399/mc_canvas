@@ -1,7 +1,7 @@
 import { Color, Font } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
 
-export const drawGamescreen = function() {
+export const drawGamescreen = function () {
 	this.maps.drawMapScroll(this.g_ac2);
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
@@ -33,7 +33,7 @@ export const drawGamescreen = function() {
 /**
  * 敵を描画します
  */
-const drawGamescreenEnemy = function() {
+const drawGamescreenEnemy = function () {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.t_kazu; i++) {
@@ -48,7 +48,7 @@ const drawGamescreenEnemy = function() {
 /**
  * 仕掛けを描画します
  */
-const drawA = function() {
+const drawA = function () {
 	/**
 	 * 複数枚のパターン画像を並べて描画します
 	 * @param code 左上のパターンコード
@@ -208,7 +208,7 @@ const drawA = function() {
 /**
  * 敵の攻撃・アイテムを描画します
  */
-const drawM = function() {
+const drawM = function () {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 23; i++) {
@@ -243,7 +243,7 @@ const drawM = function() {
 /**
  * 主人公を描画します
  */
-const drawGamescreenMy = function() {
+const drawGamescreenMy = function () {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	// NOTE: drawGamescreenでも同じ代入をしているので、drawGamescreenから呼ばれた場合同じ処理が二回行われる
@@ -332,7 +332,7 @@ const drawGamescreenMy = function() {
 /**
  * 主人公の攻撃を描画します
  */
-export const drawMyAttack = function() {
+export const drawMyAttack = function () {
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= 1; i++) {
@@ -366,7 +366,7 @@ export const drawMyAttack = function() {
 /**
  * ボスを描画
  */
-const drawBoss = function() {
+const drawBoss = function () {
 	if (this.co_b.c <= 50) return;
 	const { wx, wy } = this.maps;
 	/**
@@ -415,54 +415,67 @@ const drawBoss = function() {
 		default:
 			break;
 
+		// グラーダ 左向き
 		case Boss.PATTERN_BOSS1_LEFT:
 			drawWide(186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// グラーダ 右向き
 		case Boss.PATTERN_BOSS1_RIGHT:
 			drawWideFlip(186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// グラーダ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS1_DAMAGE_LEFT:
 			drawWide(176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// グラーダ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS1_DAMAGE_RIGHT:
 			drawWideFlip(176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// カイオール 左向き
 		case Boss.PATTERN_BOSS2_LEFT:
 			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// カイオール 右向き
 		case Boss.PATTERN_BOSS2_RIGHT:
 			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// カイオール つぶれ状態 左向き
 		case Boss.PATTERN_BOSS2_DAMAGE_LEFT:
 			drawWide(178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// カイオール つぶれ状態 右向き
 		case Boss.PATTERN_BOSS2_DAMAGE_RIGHT:
 			drawWideFlip(178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// センクウザ 左向き
 		case Boss.PATTERN_BOSS3_LEFT:
 			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// センクウザ 右向き
 		case Boss.PATTERN_BOSS3_RIGHT:
 			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
+		// センクウザ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS3_DAMAGE_LEFT:
 			drawWide(228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// センクウザ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS3_DAMAGE_RIGHT:
 			drawWideFlip(228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
+		// センクウザ バリア状態 左向き
 		case Boss.PATTERN_BOSS3_BARRIER_LEFT:
 			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
@@ -486,6 +499,7 @@ const drawBoss = function() {
 			this.gg.os_g.drawPolygon(this.vo_pa_x, this.vo_pa_y, 6);
 			break;
 
+		// センクウザ バリア状態 右向き
 		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
 			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
@@ -514,7 +528,7 @@ const drawBoss = function() {
 /**
  * 一言メッセージを描画
  */
-const drawHitokotoMessage = function() {
+const drawHitokotoMessage = function () {
 	const box_x = 208;
 	const box_y = 56;
 	const box_width = 224;

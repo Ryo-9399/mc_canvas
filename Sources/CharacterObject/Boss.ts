@@ -115,54 +115,64 @@ class Boss extends CharacterObject {
 				this.pt = 0;
 				break;
 
+			// グラーダ つぶれ状態 左向き
 			case BOSS1_DAMAGE_LEFT:
 				this.updateDamage(mp, BOSS1_MOVING_LEFT);
 				this.pt = PATTERN_BOSS1_DAMAGE_LEFT;
 				break;
 
+			// グラーダ つぶれ状態 右向き
 			case BOSS1_DAMAGE_RIGHT:
 				this.updateDamage(mp, BOSS1_MOVING_RIGHT);
 				this.pt = PATTERN_BOSS1_DAMAGE_RIGHT;
 				break;
 
+			// グラーダ グレネードで飛ばされる
 			case BOSS1_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = PATTERN_BOSS1_RIGHT;
 				else this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
+			// カイオール つぶれ状態 左向き
 			case BOSS2_DAMAGE_LEFT:
 				this.updateDamage(mp, BOSS2_MOVING_LEFT);
 				this.pt = PATTERN_BOSS2_DAMAGE_LEFT;
 				break;
 
+			// カイオール つぶれ状態 右向き
 			case BOSS2_DAMAGE_RIGHT:
 				this.updateDamage(mp, BOSS2_MOVING_RIGHT);
 				this.pt = PATTERN_BOSS2_DAMAGE_RIGHT;
 				break;
 
+			// カイオール グレネードで飛ばされる
 			case BOSS2_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = PATTERN_BOSS2_RIGHT;
 				else this.pt = PATTERN_BOSS2_LEFT;
 				break;
 
+			// センクウザ つぶれ状態 左向き
 			case BOSS3_DAMAGE_LEFT:
 				this.updateDamage(mp, BOSS3_MOVING_LEFT);
 				this.pt = PATTERN_BOSS3_DAMAGE_LEFT;
 				break;
 
+			// センクウザ つぶれ状態 右向き
 			case BOSS3_DAMAGE_RIGHT:
 				this.updateDamage(mp, BOSS3_MOVING_RIGHT);
 				this.pt = PATTERN_BOSS3_DAMAGE_RIGHT;
 				break;
 
+			// センクウザ グレネードで飛ばされる
 			case BOSS3_DYING_BY_GRENADE:
 				this.dyingByGrenade(mp);
 				if (this.muki === 1) this.pt = PATTERN_BOSS3_RIGHT;
 				else this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
+			// グラーダ 待機中
 			case BOSS1_STANDBY:
 				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
@@ -183,16 +193,19 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
+			// グラーダ 攻撃中 左向き
 			case BOSS1_ATTACK_LEFT:
 				this.boss1Attack(mp, 0);
 				this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
+			// グラーダ 攻撃中 右向き
 			case BOSS1_ATTACK_RIGHT:
 				this.boss1Attack(mp, 1);
 				this.pt = PATTERN_BOSS1_RIGHT;
 				break;
 
+			// グラーダ 左に移動中
 			case BOSS1_MOVING_LEFT:
 				this.x -= 14;
 				if (this.x <= x_standby_left) {
@@ -203,6 +216,7 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS1_LEFT;
 				break;
 
+			// グラーダ 右に移動中
 			case BOSS1_MOVING_RIGHT:
 				this.x += 14;
 				if (this.x >= x_standby_right) {
@@ -213,6 +227,7 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS1_RIGHT;
 				break;
 
+			// カイオール 待機中
 			case BOSS2_STANDBY:
 				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
@@ -232,18 +247,21 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS2_LEFT;
 				break;
 
+			// カイオール 攻撃中 左向き
 			case BOSS2_ATTACK_LEFT:
 				this.boss2Attack(mp, 0);
 				this.pt = PATTERN_BOSS2_LEFT;
 				if (mp.boss2_type === 6) this.pt = PATTERN_BOSS2_ROTATE_LEFT;
 				break;
 
+			// カイオール 攻撃中 右向き
 			case BOSS2_ATTACK_RIGHT:
 				this.boss2Attack(mp, 1);
 				this.pt = PATTERN_BOSS2_RIGHT;
 				if (mp.boss2_type === 6) this.pt = PATTERN_BOSS2_ROTATE_RIGHT;
 				break;
 
+			// カイオール 左に移動中
 			case BOSS2_MOVING_LEFT:
 				this.x -= 14;
 				if (this.x <= x_standby_left) {
@@ -254,6 +272,7 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS2_LEFT;
 				break;
 
+			// カイオール 右に移動中
 			case BOSS2_MOVING_RIGHT:
 				this.x += 14;
 				if (this.x >= x_standby_right) {
@@ -264,6 +283,7 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS2_RIGHT;
 				break;
 
+			// センクウザ 待機中
 			case BOSS3_STANDBY:
 				if (mp.sl_step === 2 || mp.sl_step === 3) {
 					if (mp.boss_destroy_type === 2) {
@@ -295,16 +315,19 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
+			// センクウザ 攻撃中 左向き
 			case BOSS3_ATTACK_LEFT:
 				this.boss3Attack(mp, 0);
 				this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
+			// センクウザ 攻撃中 右向き
 			case BOSS3_ATTACK_RIGHT:
 				this.boss3Attack(mp, 1);
 				this.pt = PATTERN_BOSS3_RIGHT;
 				break;
 
+			// センクウザ 左に移動中
 			case BOSS3_MOVING_LEFT:
 				this.x -= 14;
 				if (this.x <= x_standby_left) {
@@ -320,6 +343,7 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS3_LEFT;
 				break;
 
+			// センクウザ 右に移動中
 			case BOSS3_MOVING_RIGHT:
 				this.x += 14;
 				if (this.x >= x_standby_right) {
@@ -335,6 +359,7 @@ class Boss extends CharacterObject {
 				this.pt = PATTERN_BOSS3_RIGHT;
 				break;
 
+			// センクウザ 左に体当たり
 			case BOSS3_TACKLE_ATTACK_LEFT: {
 				this.pt = PATTERN_BOSS3_LEFT;
 				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
@@ -346,6 +371,8 @@ class Boss extends CharacterObject {
 				this.boss3TackleAttack(mp, 0);
 				break;
 			}
+
+			// センクウザ 右に体当たり
 			case BOSS3_TACKLE_ATTACK_RIGHT: {
 				this.pt = PATTERN_BOSS3_RIGHT;
 				const flag_type_rotate = mp.boss3_type >= 6 && mp.boss3_type <= 8;
