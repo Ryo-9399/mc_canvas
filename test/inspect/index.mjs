@@ -3,13 +3,17 @@
  * 環境変数PORTでポートを指示可能
  */
 
-const path = require("path");
-const fs = require("fs");
-const globby = require("globby");
-const open = require("opn");
-const express = require("express");
-const nunjucks = require("nunjucks");
+import path from "path";
+import { fileURLToPath } from 'url';
+import fs from "fs";
+import { globby } from "globby";
+import open from "open";
+import express from "express";
+import nunjucks from "nunjucks";
 const PORT = parseInt(process.env.PORT, 10) || 8080;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
