@@ -2,6 +2,7 @@ node_modules/
 Outputs/
 Documents/
 doc/
+dist/
 Samples/
 Samples_v28/
 **/*.json
