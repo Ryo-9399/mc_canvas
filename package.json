@@ -10,7 +10,7 @@
     "build-v28": "gulp v28",
     "build-all": "gulp all",
     "reformat-all": "prettier --write \"**/*.js\"",
-    "inspect-test": "node test/inspect/index.js",
+    "inspect-test": "node test/inspect/index.mjs",
     "test": "karma start test/karma.conf.js --single-run",
     "doc": "jsdoc -r ./Sources/ -d ./doc -P ./package.json -R ./README.md -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template"
   },
@@ -62,7 +62,7 @@
     "karma-webpack": "^5.0.0",
     "mocha": "^10.2.0",
     "nunjucks": "^3.2.3",
-    "opn": "^6.0.0",
+    "open": "^8.4.0",
     "prettier": "^2.8.3",
     "pretty-quick": "^3.1.3",
     "typescript": "^4.9.4",
