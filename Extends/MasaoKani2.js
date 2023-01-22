@@ -236,25 +236,30 @@ CanvasMasao.MasaoKani2 = function (mc) {
 
 	function moveBoss(g, i, j) {
 		if (boss_jyoutai == 30) {
+			// 出現前
 			if (i >= sl_x) boss_jyoutai = 100;
 			return;
 		}
 		if (boss_jyoutai == 20) {
+			// 星が出現せずにクリア
 			boss_bc = boss_bc - 1;
 			if (boss_bc <= 0) {
 				Applet1.setStageClear();
 				boss_jyoutai = 0;
 			}
 		} else if (boss_jyoutai == 50) {
+			// 倒された
 			boss_bc = boss_bc - 1;
 			if (boss_bc <= 0) {
 				boss_jyoutai = 0;
 				Applet1.hideGauge();
 				Applet1.addScore(1000);
 				if (boss_destroy == 2) {
+					// オリジナルボスを倒した時：ステージクリアーする
 					boss_jyoutai = 20;
 					boss_bc = 30;
 				} else {
+					// オリジナルボスを倒した時：星が出る
 					Applet1.setMapchip(
 						(i >> 5) - 1 + rounddown(mc.gg.di.width / 32 / 2) - 2,
 						(j >> 5) - 10 + rounddown(mc.gg.di.height / 32) - 6,
@@ -263,6 +268,7 @@ CanvasMasao.MasaoKani2 = function (mc) {
 				}
 			}
 		} else if (boss_jyoutai == 80) {
+			// 踏まれている
 			boss_bc = boss_bc - 1;
 			if (boss_bc <= 0) boss_jyoutai = boss_jyoutai_b;
 		} else if (boss_jyoutai >= 100) {
@@ -289,6 +295,7 @@ CanvasMasao.MasaoKani2 = function (mc) {
 							if (boss_x + (boss_width >> 1) < mc.mp.co_j.x + 15) boss_vx = boss_speed;
 							boss_vy = 0;
 						}
+						boss_jyoutai_b = boss_jyoutai;
 					}
 				} else if (boss_ugoki == 4 || boss_ugoki == 5 || boss_ugoki == 20 || boss_ugoki == 21) {
 					if (boss_x <= sl_x + mc.gg.di.width - 192) {
@@ -1021,6 +1028,7 @@ CanvasMasao.MasaoKani2 = function (mc) {
 					flag1 = true;
 			if (flag1)
 				if (boss_fumeru_f == 2 && Applet1.getMyVY() > 10) {
+					// オリジナルボスが主人公と重なった場合：主人公に踏まれる
 					Applet1.setMyPress("3");
 					Applet1.setMyYReal(boss_y);
 					boss_hp = boss_hp - 1;
@@ -1033,8 +1041,10 @@ CanvasMasao.MasaoKani2 = function (mc) {
 						boss_bc = 10;
 					}
 				} else if (boss_fumeru_f == 4) {
+					// オリジナルボスが主人公と重なった場合：主人公が即死する
 					Applet1.setMyMiss("2");
 				} else {
+					// オリジナルボスが主人公と重なった場合：主人公がダメージを受ける
 					Applet1.setMyHPDamage("1");
 					if (Applet1.getMyHP() <= 0) Applet1.setMyMiss("2");
 				}
