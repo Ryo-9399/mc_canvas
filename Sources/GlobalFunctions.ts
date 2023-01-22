@@ -183,7 +183,7 @@ class Game {
 			//ss.bottom = "0px";
 			//ss.left = "0px";
 			//ss.textAlign = "right";
-			var __interval_id = setInterval(() => {
+			var __interval_id = window.setInterval(() => {
 				var w = innerWidth;
 				var h = innerHeight;
 				var rw = w < h ? w : h;
@@ -291,7 +291,7 @@ class Game {
 					code = applet.getAttribute("code") || "";
 				if (code.match(/masaoconstruction/i) || code.match(/masaokani/i)) {
 					// 正男であるようなら置換
-					Game.replaceByDom(applet, options);
+					Game.replaceByDom(<HTMLElement>applet, options);
 				}
 			}
 			var objects = document.getElementsByTagName("object");
@@ -339,7 +339,7 @@ class Game {
 		var paramLength = paramTags.length;
 		var params = {} as Params;
 		for (var i = 0; i < paramLength; i++) {
-			params[paramTags[i].name] = paramTags[i].value;
+			params[(<HTMLParamElement>paramTags[i]).name] = (<HTMLParamElement>paramTags[i]).value;
 		}
 		// 元のappletをdivで置き換える
 		var newDiv = document.createElement("div");
@@ -894,14 +894,14 @@ class Loop {
 		this.targetTime = now + interval;
 		this.prevTime = now;
 
-		if (window.requestAnimationFrame && !this.forceSetInterval) {
+		if (!this.forceSetInterval) {
 			this.mode = 1;
 		} else {
 			this.mode = 0;
 		}
 
 		if (this.mode === 0) {
-			this.timerid = setInterval(this._loop, interval);
+			this.timerid = window.setInterval(this._loop, interval);
 		}
 		this._next();
 	}

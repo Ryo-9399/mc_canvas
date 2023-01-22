@@ -4,6 +4,7 @@
         "outDir": "../dist/fx/",
         "target": "es6",
         "downlevelIteration": true,
-        "strict": true
+        "strict": true,
+        "moduleResolution": "node"
     }
 }
