@@ -4,6 +4,7 @@ module.exports = {
 	output: {
 		filename: "CanvasMasao.js"
 	},
+	target: ["web", "es5"],
 	module: {
 		rules: [
 			{
