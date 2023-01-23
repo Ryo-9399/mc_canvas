@@ -243,6 +243,7 @@ class MasaoJSS {
 	getKeyCount: (type: string | number) => number;
 	getPartsDefinition: (code: string | number) => Parts | null;
 	setItem: (x?: string | number, y?: string | number, type?: string | number) => boolean;
+	getVersion: () => string;
 
 	constructor(mc: MasaoConstruction, caseInsensitive: boolean) {
 		this.my_offscreen_img = null;
@@ -3732,6 +3733,10 @@ class MasaoJSS {
 				}
 				return flag;
 			} else return false;
+		};
+
+		this.getVersion = () => {
+			return <string>process.env.MC_CANVAS_VER;
 		};
 
 		/**
