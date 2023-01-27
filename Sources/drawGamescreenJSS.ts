@@ -1566,7 +1566,10 @@ export const drawHPGauge = function (this: MainProgram) {
 	this.hg.setColor(Color.yellow);
 	this.hg.fillRect(x, y, this.gauge_value, 8);
 	this.hg.setColor(Color.white);
-	this.hg.drawRect(x - 1, y - 1, 201, 9);
+	this.hg.fillRect(x - 1, y - 1, 202, 1);
+	this.hg.fillRect(x - 1, y, 1, 8);
+	this.hg.fillRect(x + 200, y, 1, 8);
+	this.hg.fillRect(x - 1, y + 8, 202, 1);
 };
 
 /**
