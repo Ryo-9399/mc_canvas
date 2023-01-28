@@ -244,6 +244,7 @@ class MasaoJSS {
 	getPartsDefinition: (code: string | number) => Parts | null;
 	setItem: (x?: string | number, y?: string | number, type?: string | number) => boolean;
 	getVersion: () => string;
+	setSystemColor: (type: string | number, r: string | number, g: string | number, b: string | number, a: string | number) => boolean;
 
 	constructor(mc: MasaoConstruction, caseInsensitive: boolean) {
 		this.my_offscreen_img = null;
@@ -3199,7 +3200,7 @@ class MasaoJSS {
 		 * @param {number} x X座標
 		 * @param {number} y Y座標
 		 * @param {number} code パターンコード
-		 * @param {Numbeer} dir 向き
+		 * @param {number} dir 向き
 		 */
 		this.drawPattern = function (s, s1, s2, s3) {
 			var j = 0;
@@ -3735,8 +3736,151 @@ class MasaoJSS {
 			} else return false;
 		};
 
+		/**
+		 * Canvas正男本体のバージョン情報を取得します。
+		 * 得られる値はCanvasMasao.versionで得られる値と同じです。
+		 *
+		 * @returns {string} バージョン情報
+		 * 
+		 * @since canvas正男
+		 */
 		this.getVersion = () => {
 			return <string>process.env.MC_CANVAS_VER;
+		};
+
+		/**
+		 * システムで使用する色を変更します。
+		 * 
+		 * 色の名前はパラメータ名から色名を除外したものに準じます。
+		 *
+		 * @param {number} type 変更する色の名前
+		 * @param {number} r R成分
+		 * @param {number} g G成分
+		 * @param {number} b B成分
+		 * @param {number} alpha 不透明度
+		 * 
+		 * @since canvas正男
+		 */
+		this.setSystemColor = function (type = 0, r = 0, g = 0, b = 0, a = 255) {
+			if (mc.mp) {
+				let _r = parseInt(r as string);
+				let _g = parseInt(g as string);
+				let _b = parseInt(b as string);
+				let _a = parseInt(a as string);
+				let _type = parseInt(type as string);
+				if (isNaN(_r) || isNaN(_g) || isNaN(_b) || isNaN(_a)) _type = 0;
+				if (_type <= 0) return false;
+
+				const checkValidNumber = (n: number) => {
+					let result: number = n;
+					if (result < 0) result = 0;
+					if (result > 255) result = 255;
+					return result;
+				};
+
+				_r = checkValidNumber(_r);
+				_g = checkValidNumber(_g);
+				_b = checkValidNumber(_b);
+				_a = checkValidNumber(_a);
+
+				switch (_type) {
+					default:
+						return false;
+						break;
+
+					case 1: // ステージ1のゲーム画面の背景色
+						mc.mp.gamecolor_back = new Color(_r, _g, _b);
+						return true;
+						break;
+
+					case 2: // ステージ2のゲーム画面の背景色
+						mc.mp.gamecolor_back_s = new Color(_r, _g, _b);
+						return true;
+						break;
+
+					case 3: // ステージ3のゲーム画面の背景色
+						mc.mp.gamecolor_back_t = new Color(_r, _g, _b);
+						return true;
+						break;
+
+					case 4: // ステージ4のゲーム画面の背景色
+						mc.mp.gamecolor_back_f = new Color(_r, _g, _b);
+						return true;
+						break;
+
+					case 5: // ステージ番号表示画面の背景色
+						mc.mp.gamecolor_kaishi = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 6: // スコアなどの文字の色
+						mc.mp.gamecolor_score = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 7: // グレネードの爆発などの色1
+						mc.mp.gamecolor_grenade1 = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 8: // グレネードの爆発などの色2
+						mc.mp.gamecolor_grenade2 = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 9: // 水の波動などの色
+						mc.mp.gamecolor_mizunohadou = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 10: // ファイヤーバーなどの色1
+						mc.mp.gamecolor_firebar1 = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 11: // ファイヤーバーなどの色2
+						mc.mp.gamecolor_firebar2 = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 12: // メッセージウィンドウの背景色
+						mc.mp.gamecolor_message_back = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 13: // メッセージウィンドウの枠色
+						mc.mp.gamecolor_message_border = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 14: // メッセージウィンドウの名前の文字色
+						mc.mp.gamecolor_message_name = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 15: // メッセージウィンドウの文字色
+						mc.mp.gamecolor_message_text = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 16: // ゲージの枠の色
+						mc.mp.gamecolor_gauge_border = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 17: // ゲージの背景色1
+						mc.mp.gamecolor_gauge_back1 = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+
+					case 18: // ゲージの背景色2
+						mc.mp.gamecolor_gauge_back2 = new Color(_r, _g, _b, _a);
+						return true;
+						break;
+				}
+			} else {
+				return false;
+			}
 		};
 
 		/**

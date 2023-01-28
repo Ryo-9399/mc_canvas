@@ -421,7 +421,7 @@ class KeyboardMenu {
 				case 100:
 					// active
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.message[i], this.x[i] + 24, this.y[i] + 6 + 12);
 					if (this.item_kazu[i] >= 1) {
 						for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
@@ -437,24 +437,30 @@ class KeyboardMenu {
 					}
 					break;
 				case 200:
-					this.hg.setColor(Color.white);
-					this.hg.fillRect(12, 12, 128, 58);
-					this.hg.setColor(Color.black);
+					this.hg.setColor(this.ap.mp.gamecolor_message_border);
+					this.hg.fillRect(12, 12, 128, 2);
+					this.hg.fillRect(12, 12 + 2, 2, 54);
+					this.hg.fillRect(12 + 2 + 124, 12 + 2, 2, 54);
+					this.hg.fillRect(12, 12 + 2 + 54, 128, 2);
+					this.hg.setColor(this.ap.mp.gamecolor_message_back);
 					this.hg.fillRect(14, 14, 124, 54);
-					this.hg.setColor(Color.cyan);
+					this.hg.setColor(this.ap.mp.gamecolor_message_name);
 					this.hg.drawString(this.item[14][0], 18, 30);
 					if (this.item_int[14][0] <= 0 || this.item_int[14][2] <= 0) {
 						this.hg.setColor(Color.red);
 						this.hg.drawString("戦闘不能", 82, 30);
 					}
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("HP	" + this.item_int[14][0] + " / " + this.item_int[14][1], 18, 48);
 					this.hg.drawString("PP	" + this.item_int[14][2] + " / " + this.item_int[14][3], 18, 62);
 					break;
 				case 210:
-					this.hg.setColor(Color.white);
-					this.hg.fillRect(160, 12, 128, 58);
-					this.hg.setColor(Color.black);
+					this.hg.setColor(this.ap.mp.gamecolor_message_border);
+					this.hg.fillRect(160, 12, 128, 2);
+					this.hg.fillRect(160, 12 + 2, 2, 54);
+					this.hg.fillRect(160 + 2 + 124, 12 + 2, 2, 54);
+					this.hg.fillRect(160, 12 + 2 + 54, 128, 2);
+					this.hg.setColor(this.ap.mp.gamecolor_message_back);
 					this.hg.fillRect(162, 14, 124, 54);
 					this.hg.setColor(Color.green);
 					this.hg.drawString(this.item[15][0], 166, 30);
@@ -462,29 +468,32 @@ class KeyboardMenu {
 						this.hg.setColor(Color.red);
 						this.hg.drawString("戦闘不能", 230, 30);
 					}
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("HP	" + this.item_int[15][0] + " / " + this.item_int[15][1], 166, 48);
 					this.hg.drawString("PP	" + this.item_int[15][2] + " / " + this.item_int[15][3], 166, 62);
 					break;
 				case 220:
-					this.hg.setColor(Color.white);
-					this.hg.fillRect(372, 12, 128, 58);
-					this.hg.setColor(Color.black);
+					this.hg.setColor(this.ap.mp.gamecolor_message_border);
+					this.hg.fillRect(372, 12, 128, 2);
+					this.hg.fillRect(372, 12 + 2, 2, 54);
+					this.hg.fillRect(372 + 2 + 124, 12 + 2, 2, 54);
+					this.hg.fillRect(372, 12 + 2 + 54, 128, 2);
+					this.hg.setColor(this.ap.mp.gamecolor_message_back);
 					this.hg.fillRect(374, 14, 124, 54);
-					this.hg.setColor(Color.cyan);
+					this.hg.setColor(this.ap.mp.gamecolor_message_name);
 					this.hg.drawString(this.item[15][0], 378, 30);
 					if (this.item_int[15][0] <= 0 || this.item_int[15][2] <= 0) {
 						this.hg.setColor(Color.red);
 						this.hg.drawString("戦闘不能", 442, 30);
 					}
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("HP	" + this.item_int[15][0] + " / " + this.item_int[15][1], 378, 48);
 					this.hg.drawString("PP	" + this.item_int[15][2] + " / " + this.item_int[15][3], 378, 62);
 					break;
 				case 300:
 					// activeIchigyou
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 40);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
 					if (this.c_fc <= 3) {
 						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 14 + 0 + 2, 201, 0);
@@ -495,7 +504,7 @@ class KeyboardMenu {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 58);
 					this.hg.setColor(this.item_color[i]);
 					this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 					if (this.c_fc <= 3) {
 						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 6 + 18 + 14 + 2, 71, 0);
@@ -506,11 +515,11 @@ class KeyboardMenu {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 66 + (this.item_kazu[i] - 3) * 14 + 14);
 					this.hg.setColor(Color.magenta);
 					this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 12);
-					this.hg.setColor(Color.cyan);
+					this.hg.setColor(this.ap.mp.gamecolor_message_name);
 					this.hg.drawString(this.item[i][2], this.x[i] + 6, this.y[i] + 6 + 36 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					for (let j = 0; j <= this.item_kazu[3] - 4; j++) {
 						this.hg.drawString(this.item[3][j + 3], this.x[3] + 6, this.y[3] + 6 + 54 + j * 14 + 12);
 					}
@@ -526,15 +535,15 @@ class KeyboardMenu {
 				case 321:
 					// activeYongyou2
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 108);
-					this.hg.setColor(Color.cyan);
+					this.hg.setColor(this.ap.mp.gamecolor_message_name);
 					this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 					this.hg.setColor(Color.magenta);
 					this.hg.drawString(this.item[i][2], this.x[i] + 6, this.y[i] + 6 + 36 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][3], this.x[i] + 6, this.y[i] + 6 + 54 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][4], this.x[i] + 6, this.y[i] + 6 + 54 + 14 + 12);
 					if (this.c_fc <= 3) {
 						this.gg.drawPT(
@@ -550,7 +559,7 @@ class KeyboardMenu {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + (this.item_kazu[i] + 1) * 14);
 					this.hg.setColor(this.item_color[i]);
 					this.hg.drawString(this.message[i], this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					if (this.item_kazu[i] >= 1) {
 						for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
 							this.hg.drawString(this.item[i][j], this.x[i] + 6, this.y[i] + 6 + 18 + j * 14 + 12);
@@ -581,7 +590,7 @@ class KeyboardMenu {
 						break;
 					}
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 26);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
 					this.item_int[i][0] -= 1;
 					if (this.item_int[i][0] <= 0) {
@@ -594,7 +603,7 @@ class KeyboardMenu {
 						this.drawWindowbox(this.x[i], this.y[i], this.width[i], 44);
 						this.hg.setColor(this.item_color[i]);
 						this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
-						this.hg.setColor(Color.white);
+						this.hg.setColor(this.ap.mp.gamecolor_message_text);
 						this.hg.drawString(this.item[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 					} else if (this.item_int[i][0] == 100) {
 						this.item_int[i][0] = 55;
@@ -602,7 +611,7 @@ class KeyboardMenu {
 						this.drawWindowbox(this.x[i], this.y[i], this.width[i], 44);
 						this.hg.setColor(this.item_color[i]);
 						this.hg.drawString(this.item[i][0], this.x[i] + 6, this.y[i] + 6 + 12);
-						this.hg.setColor(Color.white);
+						this.hg.setColor(this.ap.mp.gamecolor_message_text);
 						this.hg.drawString(this.item[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 						this.item_int[i][0] -= 1;
 						if (this.item_int[i][0] <= 0) {
@@ -615,7 +624,7 @@ class KeyboardMenu {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 128);
 					this.hg.setColor(Color.yellow);
 					this.hg.drawString(this.name_crys + "のステータス", this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(
 						"HP	" + this.item_int[14][0] + " / " + this.item_int[14][1],
 						this.x[i] + 6,
@@ -640,9 +649,9 @@ class KeyboardMenu {
 						this.item_int[i][2],
 						0
 					);
-					this.hg.setColor(Color.cyan);
+					this.hg.setColor(this.ap.mp.gamecolor_message_name);
 					this.hg.drawString(this.item[i][0], this.x[i] + 12, this.y[i] + 64 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("これからも、よろしくね！", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 					if (this.c_fc <= 3) {
 						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 28 + 2, 71, 0);
@@ -661,7 +670,7 @@ class KeyboardMenu {
 						);
 						this.hg.setColor(Color.yellow);
 						this.hg.drawString(this.item[i][0], this.x[i] + 12, this.y[i] + 64 + 12);
-						this.hg.setColor(Color.white);
+						this.hg.setColor(this.ap.mp.gamecolor_message_text);
 						this.hg.drawString("捕獲不可能", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 						if (this.c_fc <= 3) {
 							this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 28 + 2, 71, 0);
@@ -678,7 +687,7 @@ class KeyboardMenu {
 						);
 						this.hg.setColor(Color.yellow);
 						this.hg.drawString(this.item[i][0], this.x[i] + 12, this.y[i] + 64 + 12);
-						this.hg.setColor(Color.white);
+						this.hg.setColor(this.ap.mp.gamecolor_message_text);
 						this.hg.drawString("現在調査中", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 						if (this.c_fc <= 3) {
 							this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 68 + 28 + 2, 71, 0);
@@ -695,7 +704,7 @@ class KeyboardMenu {
 						);
 						this.hg.setColor(Color.yellow);
 						this.hg.drawString(this.item[i][0], this.x[i] + 12, this.y[i] + 64 + 12);
-						this.hg.setColor(Color.white);
+						this.hg.setColor(this.ap.mp.gamecolor_message_text);
 						this.hg.drawString("最大HP", this.x[i] + 12, this.y[i] + 68 + 14 + 12);
 						this.hg.drawString("" + this.item_int[i][0], this.x[i] + 56, this.y[i] + 68 + 28 + 12);
 						this.hg.drawString("最大PP", this.x[i] + 12, this.y[i] + 68 + 42 + 12);
@@ -729,16 +738,16 @@ class KeyboardMenu {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
 					this.hg.setColor(Color.yellow);
 					this.hg.drawString("モンスターずかん", this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("見つけた数	" + this.item_int[i][0], this.x[i] + 6, this.y[i] + 6 + 18 + 0 + 12);
 					this.hg.drawString("捕まえた数	" + this.item_int[i][1], this.x[i] + 6, this.y[i] + 6 + 18 + 14 + 12);
 					break;
 				case 700:
 					// activeSerifutuki
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14 + 18);
-					this.hg.setColor(Color.cyan);
+					this.hg.setColor(this.ap.mp.gamecolor_message_name);
 					this.hg.drawString(this.item[i][15], this.x[i] + 24, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.message[i], this.x[i] + 24, this.y[i] + 6 + 12 + 18);
 					if (this.item_kazu[i] >= 1) {
 						for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
@@ -758,13 +767,13 @@ class KeyboardMenu {
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 44);
 					this.hg.setColor(Color.yellow);
 					this.hg.drawString("おこづかい", this.x[i] + 6, this.y[i] + 6 + 12);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("" + this.item_int[i][0] + "円", this.x[i] + 6, this.y[i] + 6 + 18 + 12);
 					break;
 				case 900:
 					// activeKaimono
 					this.drawWindowbox(this.x[i], this.y[i], this.width[i], 30 + this.item_kazu[i] * 14);
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString(this.message[i], this.x[i] + 24, this.y[i] + 6 + 12);
 					if (this.item_kazu[i] >= 1) {
 						for (let j = 0; j <= this.item_kazu[i] - 1; j++) {
@@ -790,7 +799,7 @@ class KeyboardMenu {
 							this.gg.drawPT(this.x[i] + 12 + 8 + j * 40, this.y[i] + 12 + 8, this.item_int[i][j], 0);
 						}
 					}
-					this.hg.setColor(Color.white);
+					this.hg.setColor(this.ap.mp.gamecolor_message_text);
 					this.hg.drawString("みんな、元気になった。", this.x[i] + 12, this.y[i] + 64 + 12);
 					if (this.c_fc <= 3) {
 						this.gg.drawPT(this.x[i] + rightShiftIgnoreSign(this.width[i] - 14, 1), this.y[i] + 64 + 14 + 2, 71, 0);
@@ -802,9 +811,12 @@ class KeyboardMenu {
 	}
 
 	drawWindowbox(paramInt1: number, paramInt2: number, paramInt3: number, paramInt4: number) {
-		this.hg.setColor(Color.white);
-		this.hg.fillRect(paramInt1, paramInt2, paramInt3, paramInt4);
-		this.hg.setColor(Color.black);
+		this.hg.setColor(this.ap.mp.gamecolor_message_border);
+		this.hg.fillRect(paramInt1, paramInt2, paramInt3, 2);
+		this.hg.fillRect(paramInt1, paramInt2 + 2, 2, paramInt4 - 4);
+		this.hg.fillRect(paramInt1 + paramInt3 - 2, paramInt2 + 2, 2, paramInt4 - 4);
+		this.hg.fillRect(paramInt1, paramInt2 + paramInt4 - 2, paramInt3, 2);
+		this.hg.setColor(this.ap.mp.gamecolor_message_back);
 		this.hg.fillRect(paramInt1 + 2, paramInt2 + 2, paramInt3 - 4, paramInt4 - 4);
 	}
 }

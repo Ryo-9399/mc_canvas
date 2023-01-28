@@ -801,6 +801,14 @@ class Color {
 		return this.b;
 	}
 
+	/**
+	 * アルファ値を取得する
+	 * @returns {number|*}
+	 */
+	getAlpha() {
+		return this.a;
+	}
+
 	static white = new Color(255, 255, 255);
 	static WHITE = Color.white;
 	static lightGray = new Color(192, 192, 192);

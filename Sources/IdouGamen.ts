@@ -412,7 +412,7 @@ class IdouGamen {
 						rounddown((this.gg.di.width - 272) / 2),
 						rounddown(this.gg.di.height / 2),
 						272,
-						Color.cyan
+						this.mp.gamecolor_message_name
 					);
 					this.km.mode = 210;
 				}
@@ -437,7 +437,7 @@ class IdouGamen {
 						rounddown((this.gg.di.width - 272) / 2),
 						rounddown(this.gg.di.height / 2),
 						272,
-						Color.cyan
+						this.mp.gamecolor_message_name
 					);
 					this.km.mode = 210;
 				}
@@ -591,7 +591,7 @@ class IdouGamen {
 						rounddown((this.gg.di.width - 272) / 2) + 80,
 						rounddown(this.gg.di.height / 2) + 31,
 						272,
-						Color.cyan
+						this.mp.gamecolor_message_name
 					);
 					this.km.mode = 520;
 				}
@@ -779,7 +779,7 @@ class IdouGamen {
 						rounddown((this.gg.di.width - 272) / 2),
 						rounddown(this.gg.di.height / 2),
 						272,
-						Color.cyan
+						this.mp.gamecolor_message_name
 					);
 					this.km.mode = 200;
 					this.co_j.pt = 1010;
@@ -796,7 +796,7 @@ class IdouGamen {
 						rounddown((this.gg.di.width - 272) / 2),
 						rounddown(this.gg.di.height / 2),
 						272,
-						Color.cyan
+						this.mp.gamecolor_message_name
 					);
 					this.km.mode = 300;
 					this.co_j.pt = 1010;
@@ -814,7 +814,7 @@ class IdouGamen {
 							rounddown((this.gg.di.width - 272) / 2),
 							rounddown(this.gg.di.height / 2),
 							216,
-							Color.cyan
+							this.mp.gamecolor_message_name
 						);
 						this.km.mode = 400;
 					} else {
@@ -826,7 +826,7 @@ class IdouGamen {
 							rounddown((this.gg.di.width - 272) / 2),
 							rounddown(this.gg.di.height / 2),
 							216,
-							Color.cyan
+							this.mp.gamecolor_message_name
 						);
 						this.km.mode = 210;
 					}
@@ -844,7 +844,7 @@ class IdouGamen {
 						rounddown((this.gg.di.width - 272) / 2),
 						rounddown(this.gg.di.height / 2),
 						272,
-						Color.cyan
+						this.mp.gamecolor_message_name
 					);
 					this.km.mode = 500;
 					this.co_j.pt = 1010;
