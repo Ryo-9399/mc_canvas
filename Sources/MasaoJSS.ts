@@ -3199,7 +3199,7 @@ class MasaoJSS {
 		 * @param {number} x X座標
 		 * @param {number} y Y座標
 		 * @param {number} code パターンコード
-		 * @param {Numbeer} dir 向き
+		 * @param {number} dir 向き
 		 */
 		this.drawPattern = function (s, s1, s2, s3) {
 			var j = 0;
