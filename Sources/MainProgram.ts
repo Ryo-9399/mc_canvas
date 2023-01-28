@@ -3792,7 +3792,6 @@ class MainProgram {
 			case 91:
 				this.ml_mode_c++;
 				if (this.ml_mode_c > this.mode_wait_stagestart) this.ml_mode = 100;
-				drawStageStart(); // 2.8では呼び出されていなかったのでもしかしたら不要？
 				returningTitle();
 				break;
 
