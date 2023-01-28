@@ -327,6 +327,27 @@ export function makeKnownDefaultParameters() {
 		font_score: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
 		font_message: "Helvetica,Arial,ＭＳ ゴシック,HG ゴシックB Sun,HG ゴシックB,monospace",
 		mcs_screen_size: "2",
+		message_back_red: "0",
+		message_back_green: "0",
+		message_back_blue: "0",
+		message_border_red: "255",
+		message_border_green: "255",
+		message_border_blue: "255",
+		message_name_red: "0",
+		message_name_green: "255",
+		message_name_blue: "255",
+		message_text_red: "255",
+		message_text_green: "255",
+		message_text_blue: "255",
+		gauge_border_red: "255",
+		gauge_border_green: "255",
+		gauge_border_blue: "255",
+		gauge_back_red1: "255",
+		gauge_back_green1: "255",
+		gauge_back_blue1: "0",
+		gauge_back_red2: "255",
+		gauge_back_green2: "0",
+		gauge_back_blue2: "0"
 	};
 }
 

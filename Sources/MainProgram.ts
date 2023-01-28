@@ -56,6 +56,13 @@ class MainProgram {
 	gamecolor_firebar2: Color;
 	gamecolor_mizunohadou: Color;
 	gamecolor_kaishi: Color;
+	gamecolor_message_back: Color;
+	gamecolor_message_border: Color;
+	gamecolor_message_name: Color;
+	gamecolor_message_text: Color;
+	gamecolor_gauge_border: Color;
+	gamecolor_gauge_back1: Color;
+	gamecolor_gauge_back2: Color;
 	ana_kazu: number;
 	ochiru_y: number;
 	j_hashiru_f: boolean;
@@ -370,6 +377,13 @@ class MainProgram {
 		this.gamecolor_firebar2 = undefined!;
 		this.gamecolor_mizunohadou = undefined!;
 		this.gamecolor_kaishi = undefined!;
+		this.gamecolor_message_back = undefined!;
+		this.gamecolor_message_border = undefined!;
+		this.gamecolor_message_name = undefined!;
+		this.gamecolor_message_text = undefined!;
+		this.gamecolor_gauge_border = undefined!;
+		this.gamecolor_gauge_back1 = undefined!;
+		this.gamecolor_gauge_back2 = undefined!;
 		this.ana_kazu = undefined!;
 		this.ochiru_y = undefined!;
 		this.j_hashiru_f = undefined!;
@@ -4082,11 +4096,11 @@ class MainProgram {
 				concatString("gamecolor_back", stage)
 			);
 		});
-		(["kaishi", "mizunohadou"] as const).forEach((name) => {
+		(["kaishi", "mizunohadou", "message_back", "message_border", "message_name", "message_text", "gauge_border"] as const).forEach((name) => {
 			setColorParam(`${name}_red`, `${name}_green`, `${name}_blue`, concatString("gamecolor_", name));
 		});
 		setColorParam("scorecolor_red", "scorecolor_green", "scorecolor_blue", "gamecolor_score");
-		(["grenade", "firebar"] as const).forEach((name) => {
+		(["grenade", "firebar", "gauge_back"] as const).forEach((name) => {
 			([1, 2] as const).forEach((i) => {
 				setColorParam(`${name}_red${i}`, `${name}_green${i}`, `${name}_blue${i}`, concatString("gamecolor_", name, i));
 			});
@@ -17080,7 +17094,7 @@ class MainProgram {
 									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 									224,
-									Color.cyan
+									this.gamecolor_message_name
 								);
 								this.km.move();
 								this.km.mode = 400;
@@ -17347,7 +17361,7 @@ class MainProgram {
 										rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 										rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 										272,
-										Color.cyan
+										this.gamecolor_message_name
 									);
 									this.km.mode = 200;
 								} else {
@@ -17359,7 +17373,7 @@ class MainProgram {
 										rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 										rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 										272,
-										Color.cyan
+										this.gamecolor_message_name
 									);
 									this.km.mode = 250;
 								}
@@ -17457,7 +17471,7 @@ class MainProgram {
 									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 									272,
-									Color.cyan
+									this.gamecolor_message_name
 								);
 								this.km.mode = 250;
 							}
@@ -17500,7 +17514,7 @@ class MainProgram {
 										rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 										rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 										272,
-										Color.cyan
+										this.gamecolor_message_name
 									);
 									this.km.mode = 300;
 								} else {
@@ -17512,7 +17526,7 @@ class MainProgram {
 										rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 										rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 										272,
-										Color.cyan
+										this.gamecolor_message_name
 									);
 									this.km.mode = 350;
 								}
@@ -17610,7 +17624,7 @@ class MainProgram {
 									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 									272,
-									Color.cyan
+									this.gamecolor_message_name
 								);
 								this.km.mode = 350;
 							}
@@ -17652,7 +17666,7 @@ class MainProgram {
 									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 									272,
-									Color.cyan
+									this.gamecolor_message_name
 								);
 								this.km.mode = 200;
 								this.km.move();
@@ -23151,7 +23165,7 @@ class MainProgram {
 								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 								272,
-								Color.cyan
+								this.gamecolor_message_name
 							);
 							this.km.mode = 200;
 						} else {
@@ -23163,7 +23177,7 @@ class MainProgram {
 								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 								252,
-								Color.cyan
+								this.gamecolor_message_name
 							);
 							this.km.mode = 250;
 						}
@@ -23236,7 +23250,7 @@ class MainProgram {
 									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 160,
 									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
 									252,
-									Color.cyan
+									this.gamecolor_message_name
 								);
 								this.dkey_count[0] -= l2;
 								this.gs.rsAddSound(13);
@@ -23314,7 +23328,7 @@ class MainProgram {
 								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 								272,
-								Color.cyan
+								this.gamecolor_message_name
 							);
 							this.km.mode = 200;
 						} else {
@@ -23326,7 +23340,7 @@ class MainProgram {
 								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 								252,
-								Color.cyan
+								this.gamecolor_message_name
 							);
 							this.km.mode = 250;
 						}
@@ -23399,7 +23413,7 @@ class MainProgram {
 									rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40 - 160,
 									rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16 + 46,
 									252,
-									Color.cyan
+									this.gamecolor_message_name
 								);
 								this.dkey_count[1] -= i3;
 								this.gs.rsAddSound(13);
@@ -23514,7 +23528,7 @@ class MainProgram {
 								rounddown(this.gg.di.width * 0.625 - 224 / 2) - 40,
 								rounddown(this.gg.di.height * 0.2875 - (30 + 3 * 14) / 2) - 16,
 								272,
-								Color.cyan
+								this.gamecolor_message_name
 							);
 							this.km.mode = 200;
 							this.km.move();

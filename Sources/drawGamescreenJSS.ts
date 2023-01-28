@@ -958,7 +958,7 @@ export const drawM = function (this: MainProgram) {
 					this.gamecolor_mizunohadou.getRed(),
 					this.gamecolor_mizunohadou.getGreen(),
 					this.gamecolor_mizunohadou.getBlue(),
-					176
+					this.gamecolor_mizunohadou.getAlpha() === 255 ? 176 : this.gamecolor_mizunohadou.getAlpha()
 				)
 			);
 			const radius = characterobject.c2;
@@ -1561,11 +1561,11 @@ export const drawHPGauge = function (this: MainProgram) {
 	this.hg.setFont(new Font(Font.DIALOG, 1, 16));
 	this.hg.setColor(this.gamecolor_score);
 	this.hg.drawString(this.gauge_text, x, y - 6);
-	this.hg.setColor(Color.red);
-	this.hg.fillRect(x, y, 200, 8);
-	this.hg.setColor(Color.yellow);
+	this.hg.setColor(this.gamecolor_gauge_back2);
+	this.hg.fillRect(x + this.gauge_value, y, 200 - this.gauge_value, 8);
+	this.hg.setColor(this.gamecolor_gauge_back1);
 	this.hg.fillRect(x, y, this.gauge_value, 8);
-	this.hg.setColor(Color.white);
+	this.hg.setColor(this.gamecolor_gauge_border);
 	this.hg.fillRect(x - 1, y - 1, 202, 1);
 	this.hg.fillRect(x - 1, y, 1, 8);
 	this.hg.fillRect(x + 200, y, 1, 8);
@@ -1638,13 +1638,13 @@ export const drawHitokotoMessage = function (this: MainProgram) {
 	const beforeFont = this.hg._font;
 	this.hg.setFont(new Font(this.gg.font_message, 0, 12));
 	// 名前を描画
-	this.hg.setColor(Color.cyan);
+	this.hg.setColor(this.gamecolor_message_name);
 	const param_name = `hitokoto${this.hitokoto_num}_name`;
 	const name = this.hitokoto_num === 5 ? this.showm_data[0]! : this.tdb.getValue(param_name)!;
 	this.hg.drawString(name, box_x + 6, box_y + 6 + 12);
 
 	// メッセージ本文を描画
-	this.hg.setColor(Color.white);
+	this.hg.setColor(this.gamecolor_message_text);
 	for (const [i, message] of messages.entries()) {
 		const dy = 18 + i * 14 + 12;
 		this.hg.drawString(message, box_x + 6, box_y + 6 + dy);
