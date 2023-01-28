@@ -3873,7 +3873,7 @@ class MasaoJSS {
 						return true;
 						break;
 
-					case 18: // ゲージの背景色1
+					case 18: // ゲージの背景色2
 						mc.mp.gamecolor_gauge_back2 = new Color(_r, _g, _b, _a);
 						return true;
 						break;
