@@ -3735,6 +3735,14 @@ class MasaoJSS {
 			} else return false;
 		};
 
+		/**
+		 * Canvas正男本体のバージョン情報を取得します。
+		 * 得られる値はCanvasMasao.versionで得られる値と同じです。
+		 *
+		 * @returns {string} バージョン情報
+		 * 
+		 * @since canvas正男
+		 */
 		this.getVersion = () => {
 			return <string>process.env.MC_CANVAS_VER;
 		};
