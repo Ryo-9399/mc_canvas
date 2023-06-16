@@ -3897,7 +3897,7 @@ class MasaoJSS {
 				// カスタムパーツだ
 				return customParts[code];
 			}
-			if (5000 <= code && code < 10000) {
+			if (5000 <= (code as number) && (code as number) < 10000) {
 				// 敵コードだ
 				return mc.mp.getEnemyDefinition((code as number) - 5000);
 			}
