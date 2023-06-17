@@ -21,7 +21,7 @@ class MasaoConstruction {
 	// __appimg書き換え関数
 	__repaint() {
 		this.update(this.__appimg.getGraphics());
-		var ctx = this.__canvas.getContext("2d");
+		const ctx = this.__canvas.getContext("2d");
 		ctx.drawImage(this.__appimg._dat, 0, 0);
 	}
 	init() { }
@@ -29,7 +29,7 @@ class MasaoConstruction {
 		if (this.th == null) {
 			this.th = 1;
 		}
-		var s = this.getParameter("game_speed");
+		const s = this.getParameter("game_speed");
 		this.th_interval = parseInt(s);
 		if (isNaN(this.th_interval)) this.th_interval = 70;
 		if (this.th_interval < 1) this.th_interval = 1;
@@ -47,7 +47,7 @@ class MasaoConstruction {
 		this.paint(g);
 	}
 	run() {
-		var sleepTime;
+		let sleepTime;
 		if (this.th_jm == 10) {
 			this.init_j();
 
@@ -57,7 +57,7 @@ class MasaoConstruction {
 
 			sleepTime = 70;
 		} else if (this.th_jm == 6) {
-			var f1 = 0;
+			let f1 = 0;
 			if (this.gg.apt_img._loaded) f1 = 1;
 			else if (this.gg.apt_img._error) f1 = 2;
 			if (f1 != 0) this.th_jm -= 1;
@@ -83,24 +83,24 @@ class MasaoConstruction {
 	init_j() {
 		this.gg = new GameGraphics(this);
 		this.gg.setBackcolor(Color.black);
-		var s = this.getParameter("filename_title");
+		let s = this.getParameter("filename_title");
 		this.gg.addListImage(0, s);
 		s = this.getParameter("filename_ending");
 		this.gg.addListImage(1, s);
 		s = this.getParameter("filename_gameover");
 		this.gg.addListImage(2, s);
 		s = this.getParameter("stage_select");
-		var i;
+		let i;
 		i = parseInt(s);
 		if (isNaN(i)) i = -1;
 		if (i == 2) {
-			var s1 = this.getParameter("filename_chizu");
+			const s1 = this.getParameter("filename_chizu");
 			this.gg.addListImage(3, s1);
 		}
 		this.gg.loadImage();
 
 		this.gm = new GameMouse();
-		var _gm = this.gm;
+		const _gm = this.gm;
 		this.__canvas.addEventListener(
 			"mousedown",
 			function (e) {
@@ -114,8 +114,8 @@ class MasaoConstruction {
 		});
 
 		this.gk = new GameKey();
-		var _gk = this.gk;
-		var _handler = function (e) {
+		const _gk = this.gk;
+		let _handler = function (e) {
 			if (Game.focus.hasFocus(this)) GameKey_keyPressed(_gk, e);
 		}.bind(this);
 		document.addEventListener("keydown", _handler);
@@ -149,17 +149,17 @@ class MasaoConstruction {
 	userInit() { }
 	userSub(paramGraphics, paramImage) { }
 	getImage(url) {
-		var img = new ImageBuff();
+		const img = new ImageBuff();
 		img.load(url);
 		return img;
 	}
 	createImage(w, h) {
-		var img = new ImageBuff(w, h);
+		const img = new ImageBuff(w, h);
 		return img;
 	}
 	getParameter(name) {
-		var s = (name + "").toLowerCase();
-		var p = this.params[s];
+		const s = (name + "").toLowerCase();
+		const p = this.params[s];
 		if (typeof p === "undefined") return null;
 		return this.params[s] + "";
 	}

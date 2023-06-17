@@ -73,7 +73,7 @@ class Game {
 	__teo: { [key: string]: { val: unknown; t: number } } = {};
 
 	constructor(params: Params, id: string, options: Option) {
-		var randomID = makeRandomString();
+		const randomID = makeRandomString();
 
 		options = options || {};
 		//Extends内のものをここに入れると反映される
@@ -86,15 +86,15 @@ class Game {
 		} else {
 			// idが無ければ現在の場所に作る
 			// ドキュメント書き込み文
-			this.__boxID = "__mcdiv" + randomID;
+			this.__boxID = `__mcdiv${randomID}`;
 			document.write(`<div id='${this.__boxID}'></div>`);
 		}
 
 		// キャンバスID
-		this.__canvasID = "__mccanvas" + randomID;
+		this.__canvasID = `__mccanvas${randomID}`;
 
 		// ソフトパッドDivID
-		this.__padDivID = "__mcpaddiv" + randomID;
+		this.__padDivID = `__mcpaddiv${randomID}`;
 
 		// 要素格納Divエレメント
 		this.__box = document.getElementById(this.__boxID)!;
@@ -142,10 +142,10 @@ class Game {
 
 		// タッチスクリーン対応端末での処理
 		if (window.TouchEvent) {
-			var ss;
+			let ss;
 
 			// 表示/非表示切り替えボタン設定
-			var __pad_btn = document.createElement("input");
+			const __pad_btn = document.createElement("input");
 			__pad_btn.type = "button";
 			__pad_btn.value = "バーチャル操作パッド 表示 / 非表示";
 			ss = __pad_btn.style;
@@ -183,15 +183,15 @@ class Game {
 			//ss.bottom = "0px";
 			//ss.left = "0px";
 			//ss.textAlign = "right";
-			var __interval_id = window.setInterval(() => {
-				var w = innerWidth;
-				var h = innerHeight;
-				var rw = w < h ? w : h;
-				__pad.style.width = w + "px";
-				__pad.style.height = rw * Game.pad.style.rate + "px";
-				__pad.style.left = scrollX + "px";
-				if (Game.pad.avoidAD) __pad.style.top = scrollY + h - rw * Game.pad.style.rate - rw * 0.16 + "px";
-				else __pad.style.top = scrollY + h - rw * Game.pad.style.rate + "px";
+			const __interval_id = window.setInterval(() => {
+				const w = innerWidth;
+				const h = innerHeight;
+				const rw = w < h ? w : h;
+				__pad.style.width = `${w}px`;
+				__pad.style.height = `${rw * Game.pad.style.rate}px`;
+				__pad.style.left = `${scrollX}px`;
+				if (Game.pad.avoidAD) __pad.style.top = `${scrollY + h - rw * Game.pad.style.rate - rw * 0.16}px`;
+				else __pad.style.top = `${scrollY + h - rw * Game.pad.style.rate}px`;
 				this.__pad_update();
 			}, 500);
 			this.__resourceList.push({
@@ -205,14 +205,14 @@ class Game {
 			this.__pad_off = document.createElement("canvas");
 			this.__pad_off.width = 500;
 			this.__pad_off.height = 200;
-			var ctx = this.__pad_off.getContext("2d")!;
+			const ctx = this.__pad_off.getContext("2d")!;
 			ctx.font = "24px monospace";
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
 			ctx.lineWidth = 2;
 			ctx.lineCap = "round";
 			ctx.lineJoin = "round";
-			for (var i = 0; i < 8; i++) {
+			for (let i = 0; i < 8; i++) {
 				this.__pad_before[i] = false;
 				this.__pad_after[i] = false;
 			}
@@ -221,12 +221,9 @@ class Game {
 			// 画面タッチに反応してユーザーインタラクションによりサウンドを有効化
 			const touchendHandler = () => {
 				// バーチャル操作パッド表示に反応してサウンドを有効化
-				if (this.__mc.gs) {
-					this.__mc.gs.userInteract();
-					document.removeEventListener("touchend", touchendHandler, false);
-				}
+				this.__mc.gs?.userInteract();
 			};
-			document.addEventListener("touchend", touchendHandler, false);
+			document.addEventListener("touchend", touchendHandler, {once: true});
 		}
 
 		// __appimgはMasaoConstruction内へ移動
@@ -236,7 +233,7 @@ class Game {
 			options.extensions[i].inject(this.__mc, options);
 		}
 		this.__mc.start();
-		var __st;
+		let __st;
 		__st = this.__mc.getParameter("game_speed");
 		if (__st) {
 			__st = parseInt(__st);
@@ -254,8 +251,8 @@ class Game {
 
 		// メインループを作成
 		// カスタムメインループが提供されていたらそれを使用
-		var loopConstructor = options["custom-loop"] || Loop;
-		var __loop = new loopConstructor(this, !!options["bc-loop-setinterval"]);
+		const loopConstructor = options["custom-loop"] || Loop;
+		const __loop = new loopConstructor(this, !!options["bc-loop-setinterval"]);
 		__loop.start(__st, this.__loop.bind(this));
 		this.__resourceList.push({
 			type: "Loop",
@@ -281,27 +278,27 @@ class Game {
 			window.addEventListener("load", onload);
 		}
 		function onload() {
-			var applets = document.getElementsByTagName("applet");
-			var appletArray = [];
-			for (var i = 0; i < applets.length; i++) {
+			const applets = document.getElementsByTagName("applet");
+			let appletArray = [];
+			for (let i = 0; i < applets.length; i++) {
 				appletArray.push(applets[i]);
 			}
-			for (var i = 0; i < appletArray.length; i++) {
-				var applet = appletArray[i],
+			for (let i = 0; i < appletArray.length; i++) {
+				const applet = appletArray[i],
 					code = applet.getAttribute("code") || "";
 				if (code.match(/masaoconstruction/i) || code.match(/masaokani/i)) {
 					// 正男であるようなら置換
-					Game.replaceByDom(<HTMLElement>applet, options);
+					Game.replaceByDom(applet, options);
 				}
 			}
-			var objects = document.getElementsByTagName("object");
-			var objectArray = [];
-			for (var i = 0; i < objects.length; i++) {
+			const objects = document.getElementsByTagName("object");
+			const objectArray = [];
+			for (let i = 0; i < objects.length; i++) {
 				objectArray.push(objects[i]);
 			}
-			for (var i = 0; i < objectArray.length; i++) {
-				var object = objectArray[i];
-				var param = object.querySelectorAll("param[name=code]")[0] as HTMLParamElement;
+			for (let i = 0; i < objectArray.length; i++) {
+				const object = objectArray[i];
+				const param = object.querySelectorAll("param[name=code]")[0] as HTMLParamElement;
 				// name属性に"code"を持つparam要素が
 				// value属性に"masaoconstruction"または"masaokani"を含む時にまさおアプレットと判断する
 				if (param.tagName.match(/param/i)) {
@@ -335,15 +332,15 @@ class Game {
 
 	static replaceByDom(paramScope: HTMLElement, options: Option) {
 		if (!paramScope.parentNode) return;
-		var paramTags = paramScope.getElementsByTagName("param");
-		var paramLength = paramTags.length;
+		const paramTags = paramScope.getElementsByTagName("param");
+		const paramLength = paramTags.length;
 		var params = {} as Params;
 		for (var i = 0; i < paramLength; i++) {
-			params[(<HTMLParamElement>paramTags[i]).name] = (<HTMLParamElement>paramTags[i]).value;
+			params[paramTags[i].name] = paramTags[i].value;
 		}
 		// 元のappletをdivで置き換える
-		var newDiv = document.createElement("div");
-		var id = paramScope.id || makeRandomString();
+		const newDiv = document.createElement("div");
+		const id = paramScope.id || makeRandomString();
 		newDiv.id = id;
 		paramScope.parentNode.replaceChild(newDiv, paramScope);
 		//変換時に小数切り捨て処理をJava版にする
@@ -356,7 +353,7 @@ class Game {
 	// Game.focus.focus(obj) : このオブジェクトobjにフォーカスを当てる
 	// Game.focus.hasFocus(obj) : このオブジェクトobjにフォーカスが当たっているならばtrueを返す
 	static focus = (function () {
-		var focusedObject: unknown;
+		let focusedObject: unknown;
 		document.addEventListener("mousedown", function () {
 			focusedObject = null;
 		});
@@ -374,7 +371,7 @@ class Game {
 	// Game.padAccessor.append(pad) : パッドpadをリストに登録する
 	// Game.padAccessor.show(pad) : パッドpadを表示し、リストの他のパッドを非表示にする
 	static padAccessor = (function () {
-		var padArray: HTMLCanvasElement[] = [];
+		const padArray: HTMLCanvasElement[] = [];
 		return {
 			append: function (pad: HTMLCanvasElement) {
 				padArray.push(pad);
@@ -396,7 +393,7 @@ class Game {
 		//ゲームを止める
 		this.__mc.destroy();
 		//__resourceListの中身を全部後始末してあげる
-		for (var rl = this.__resourceList, i = 0, l = rl.length; i < l; i++) {
+		for (let rl = this.__resourceList, i = 0, l = rl.length; i < l; i++) {
 			const res = rl[i];
 			if (res.type === "setInterval") {
 				clearInterval(res.value);
@@ -417,18 +414,18 @@ class Game {
 	 * ゲームのメインループを1回実行する関数です。
 	 */
 	__loop() {
-		var pt = new Date().getTime();
+		const pt = new Date().getTime();
 		if (pt - this.__pt < this.__st) return;
 		this.__pt = pt - 10;
 
 		// デバッグ用キャンバス描画
 		if (this.__testCanvas) {
-			var ctx = this.__testCanvas.getContext("2d");
+			const ctx = this.__testCanvas.getContext("2d");
 			if (ctx) {
 				ctx.fillStyle = "rgb(128,0,128)";
 				ctx.fillRect(0, 0, 700, 700);
 				ctx.strokeStyle = "#f00";
-				var i;
+				let i;
 				if (this.__mc.gg) {
 					ctx.save();
 					ctx.scale(0.5, 0.5);
@@ -454,10 +451,10 @@ class Game {
 		// デバッグ用文字表示
 		if (this.__testDiv) {
 			if (this.__mc.mp) {
-				var mp = this.__mc.mp;
-				var str = "<div style='text-align:left'>";
-				var prop: keyof typeof mp;
-				var type;
+				const mp = this.__mc.mp;
+				let str = "<div style='text-align:left'>";
+				let prop: keyof typeof mp;
+				let type;
 				for (prop in mp) {
 					type = Object.prototype.toString.call(mp[prop]);
 					if (type != "[object Array]" && type != "[object Function]") {
@@ -492,12 +489,12 @@ class Game {
 	 */
 	__pad_update() {
 		if (!this.__pad || !this.__pad_off) return;
-		var r = this.__pad.getBoundingClientRect();
-		var dx = r.left;
-		var dy = r.top;
-		var c = this.__pad_off.getContext("2d");
-		var i, j, k, tmp, sx, sy;
-		var num = Game.pad.coords.length;
+		const r = this.__pad.getBoundingClientRect();
+		const dx = r.left;
+		const dy = r.top;
+		let c = this.__pad_off.getContext("2d");
+		let i, j, k, tmp, sx, sy;
+		const num = Game.pad.coords.length;
 		if (c) {
 			c.clearRect(0, 0, 500, 200);
 			c.fillStyle = Game.pad.style.back;
@@ -580,10 +577,10 @@ class Game {
 		(gx2, gy2) : 新しい三角形の重心
 		s2 : 新しい三角形の面積（質量と比例する）
 		*/
-			var i,
+			let i,
 				n = p.length >> 1;
-			var x1, y1, x2, y2, x3, y3;
-			var gx, gy, s, gx2, gy2, s2;
+			let x1, y1, x2, y2, x3, y3;
+			let gx, gy, s, gx2, gy2, s2;
 			x1 = p[0];
 			y1 = p[1];
 			gx = x1;
@@ -773,14 +770,14 @@ class Dimension {
 function createNDimensionArray(): null;
 function createNDimensionArray(len1: number, ...lengths: number[]): any[];
 function createNDimensionArray(...lengths: number[]) {
-	if (arguments.length == 0) return null;
-	var a = new Array(arguments.length);
-	for (var i = 0; i < arguments.length; i++) a[i] = arguments[i];
-	var r = (function F(an) {
-		var ary = new Array(an[0]);
+	if (lengths.length == 0) return null;
+	const a = new Array(lengths.length);
+	for (let i = 0; i < lengths.length; i++) a[i] = lengths[i];
+	const r = (function F(an) {
+		const ary = new Array(an[0]);
 		if (an.length == 1) return ary;
-		var an2 = an.slice(1);
-		for (var i = 0; i < an[0]; i++) ary[i] = F(an2);
+		const an2 = an.slice(1);
+		for (let i = 0; i < an[0]; i++) ary[i] = F(an2);
 		return ary;
 	})(a);
 	return r;
@@ -795,7 +792,7 @@ function createNDimensionArray(...lengths: number[]) {
 function rounddown(val: number): number;
 function rounddown(val: number, option: true, mp: MainProgram): number;
 function rounddown(val: number, option?: boolean, mp?: MainProgram) {
-	if (val >= 0 || (option && mp && !mp.tdb.options["bc-use-rounddown"])) return Math.floor(val);
+	if (val >= 0 || (option && !mp?.tdb.options["bc-use-rounddown"])) return Math.floor(val);
 	else return -Math.floor(-val);
 }
 
@@ -943,27 +940,27 @@ class Loop {
 		 * requestAnimationFrameのハンドラ内の時間の上限（ミリ秒）
 		 * @constant
 		 */
-		var FRAME_TIME = 2;
+		const FRAME_TIME = 2;
 		/**
 		 * 一時停止の判断の閾値（ミリ秒）
 		 * memo: game_speedの最大は300
 		 * @constant
 		 */
-		var STOP_LIMIT = 500;
+		const STOP_LIMIT = 500;
 		/**
 		 * requestIdleCallbackのコールバック呼び出し期限
 		 * @constant
 		 */
-		var IDLE_TIMEOUT = 1000;
+		const IDLE_TIMEOUT = 1000;
 
-		var n = timestamp();
+		const n = timestamp();
 		if (n - this.prevTime >= STOP_LIMIT) {
 			// 前回のループから閾値以上経過していたら一時停止があったと判断
 			// 経過時間分のループを放棄
 			this.targetTime = n - 1;
 		}
 		// 現在コールバックを呼ぶべき回数
-		var loop_count = Math.ceil((n - this.targetTime) / this.interval);
+		let loop_count = Math.ceil((n - this.targetTime) / this.interval);
 		this.targetTime += this.interval * loop_count;
 		while (loop_count > 0) {
 			this.callback();
@@ -978,7 +975,7 @@ class Loop {
 			// 処理が終わりきらなかった場合は残りは後回しにする
 			// requestIdleCallbackにより描画処理後に行われることを期待
 			// （描画処理を優先させてあげないとFPSが落ちるので）
-			var _this = this;
+			const _this = this;
 			idle(
 				function cb(deadline) {
 					// console.warn('idle', loop_count, deadline.timeRemaining());
@@ -1031,8 +1028,8 @@ var idle: (...args: Parameters<typeof requestIdleCallback>) => void =
 		: "function" === typeof setImmediate
 		? function (cb) {
 				setImmediate(function () {
-					var n = timestamp();
-					var deadline = {
+					const n = timestamp();
+					const deadline = {
 						didTimeout: false,
 						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
@@ -1044,8 +1041,8 @@ var idle: (...args: Parameters<typeof requestIdleCallback>) => void =
 		  }
 		: function (cb) {
 				setTimeout(function () {
-					var n = timestamp();
-					var deadline = {
+					const n = timestamp();
+					const deadline = {
 						didTimeout: false,
 						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
