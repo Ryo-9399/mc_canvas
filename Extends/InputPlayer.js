@@ -23,28 +23,28 @@
  * ... [A]のおわりのmasaoEventでframe = 0
  */
 
-CanvasMasao.InputPlayer = (function() {
-	var InputPlayer = function(mc, inputdata) {
+CanvasMasao.InputPlayer = (function () {
+	var InputPlayer = function (mc, inputdata) {
 		this.mc = mc;
 		this.inputdata = inputdata;
 
 		//キー番号とキーコードの表
 		this.keyTable = {
 			//LEFT
-			"1": 37,
+			1: 37,
 			//UP
-			"2": 38,
+			2: 38,
 			//RIGHT
-			"3": 39,
+			3: 39,
 			//DOWN
-			"4": 40,
+			4: 40,
 			//TR1
-			"5": 32, //暫定
+			5: 32, //暫定
 			//X
-			"6": 88
+			6: 88
 		};
 	};
-	InputPlayer.prototype.init = function() {
+	InputPlayer.prototype.init = function () {
 		//マウスを押したか
 		this.mouse_f = false;
 		//ステージの初期化フラグ
@@ -58,10 +58,10 @@ CanvasMasao.InputPlayer = (function() {
 		//GameKeyを乗っ取る
 		var gk = this.mc.gk;
 		(this._keyPressed = gk.keyPressed), (this._keyReleased = gk.keyReleased);
-		gk.keyPressed = function(paramKeyEvent) {};
-		gk.keyReleased = function(paramKeyEvent) {};
+		gk.keyPressed = function (paramKeyEvent) {};
+		gk.keyReleased = function (paramKeyEvent) {};
 	};
-	InputPlayer.prototype.initReader = function() {
+	InputPlayer.prototype.initReader = function () {
 		//データの読み取りを初期化
 		var buf = new Uint8Array(this.inputdata /*,0,12*/);
 		//console.log(buf);
@@ -79,7 +79,7 @@ CanvasMasao.InputPlayer = (function() {
 		}
 		this.head_idx = 12; //読み込み開始位置
 	};
-	InputPlayer.prototype.initStage = function() {
+	InputPlayer.prototype.initStage = function () {
 		//HEADERブロックを読んで備える(this.head_idxがHEADERブロックを指している)
 		if (this.inputdata.byteLength <= this.head_idx) {
 			//もうないのでは
@@ -118,7 +118,7 @@ CanvasMasao.InputPlayer = (function() {
 		var body_idx = 0;
 		this.body_idx = body_idx;
 	};
-	InputPlayer.prototype.masaoEvent = function(g, image) {
+	InputPlayer.prototype.masaoEvent = function (g, image) {
 		var mc = this.mc,
 			ml_mode = mc.mp.ml_mode;
 		if (this.mouse_f === true) {
@@ -140,7 +140,7 @@ CanvasMasao.InputPlayer = (function() {
 					target: mc.__canvas,
 					clientX: 0,
 					clientY: 0,
-					preventDefault: function() {}
+					preventDefault: function () {}
 				});
 				this.mouse_f = true;
 			}
@@ -162,7 +162,7 @@ CanvasMasao.InputPlayer = (function() {
 		}
 	};
 	//今のフレームのキー入力を入力
-	InputPlayer.prototype.playFrame = function() {
+	InputPlayer.prototype.playFrame = function () {
 		var gk = this.mc.gk;
 		var d = this.frame - this.base_frame,
 			body_buf = this.body_buf,
@@ -192,12 +192,12 @@ CanvasMasao.InputPlayer = (function() {
 					//押した
 					this._keyPressed.call(gk, {
 						keyCode: keyCode,
-						preventDefault: function() {}
+						preventDefault: function () {}
 					});
 				} else {
 					this._keyReleased.call(gk, {
 						keyCode: keyCode,
-						preventDefault: function() {}
+						preventDefault: function () {}
 					});
 				}
 			}
@@ -210,7 +210,7 @@ CanvasMasao.InputPlayer = (function() {
 			this.playing = false;
 		}
 	};
-	InputPlayer.inject = function(mc, options) {
+	InputPlayer.inject = function (mc, options) {
 		var _ui = mc.userInit,
 			_us = mc.userSub;
 		var o = options.InputPlayer || {};
@@ -218,12 +218,12 @@ CanvasMasao.InputPlayer = (function() {
 		if (o.inputdata instanceof ArrayBuffer) {
 			inputdata = o.inputdata;
 		}
-		mc.userInit = function() {
+		mc.userInit = function () {
 			_ui.apply(mc);
 			this.inputPlayer = new CanvasMasao.InputPlayer(this, inputdata);
 			this.inputPlayer.init();
 		};
-		mc.userSub = function(g, image) {
+		mc.userSub = function (g, image) {
 			_us.call(mc, g, image);
 			this.inputPlayer.masaoEvent(g, image);
 		};

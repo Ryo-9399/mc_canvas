@@ -224,14 +224,7 @@ class KeyboardMenu {
 
 		this.item_int[paramInt1][0] = 100;
 	}
-	activeJibun(paramInt1,
-		paramInt2,
-		paramInt3,
-		paramInt4,
-		paramInt5,
-		paramInt6,
-		paramInt7,
-		paramInt8) {
+	activeJibun(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7, paramInt8) {
 		this.c[paramInt1] = 400;
 		this.x[paramInt1] = paramInt2;
 		this.y[paramInt1] = paramInt3;
@@ -362,7 +355,12 @@ class KeyboardMenu {
 							);
 						}
 					} else {
-						this.hg.drawImage(this.hi[70], this.x[i] + 6, this.y[i] + 24 + this.selectedIndex[i] * 14, this.ap);
+						this.hg.drawImage(
+							this.hi[70],
+							this.x[i] + 6,
+							this.y[i] + 24 + this.selectedIndex[i] * 14,
+							this.ap
+						);
 					}
 					break;
 				case 200:
@@ -543,9 +541,17 @@ class KeyboardMenu {
 						this.y[i] + 6 + 18 + 0 + 12
 					);
 					this.hg.drawString("おこづかい	", this.x[i] + 6, this.y[i] + 6 + 18 + 28 + 12);
-					this.hg.drawString("" + this.item_int[14][2] + "円", this.x[i] + 6 + 72, this.y[i] + 6 + 18 + 42 + 12);
+					this.hg.drawString(
+						"" + this.item_int[14][2] + "円",
+						this.x[i] + 6 + 72,
+						this.y[i] + 6 + 18 + 42 + 12
+					);
 					this.hg.drawString("得点", this.x[i] + 6, this.y[i] + 6 + 18 + 56 + 12);
-					this.hg.drawString("" + this.item_int[14][3] + "点", this.x[i] + 6 + 72, this.y[i] + 6 + 18 + 70 + 12);
+					this.hg.drawString(
+						"" + this.item_int[14][3] + "点",
+						this.x[i] + 6 + 72,
+						this.y[i] + 6 + 18 + 70 + 12
+					);
 					if (this.c_fc <= 3) {
 						this.gg.drawPT(this.x[i] + ((this.width[i] - 14) >> 1), this.y[i] + 6 + 18 + 84 + 2, 71, 0);
 					}

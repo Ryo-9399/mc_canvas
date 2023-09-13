@@ -376,7 +376,10 @@ class IdouGamen {
 				} else if (this.km.kettei_c == 1) {
 					this.km.list_s = this.km.list_IDlist[this.km.selectedIndex[6]];
 					this.km.init1(7);
-					this.km.setMessage(7, this.mp.shop_item_name[this.km.list_s] + this.gg.ap.getParameter("shop_serifu2"));
+					this.km.setMessage(
+						7,
+						this.mp.shop_item_name[this.km.list_s] + this.gg.ap.getParameter("shop_serifu2")
+					);
 					this.km.addItem(7, this.gg.ap.getParameter("shop_serifu3"));
 					this.km.addItem(7, this.gg.ap.getParameter("shop_serifu4"));
 					this.km.activeSerifutuki(7, 48, 150, 236, this.mp.shop_name);
@@ -724,7 +727,12 @@ class IdouGamen {
 			}
 			if (cx % 32 == 0 && cy % 32 == 0) {
 				var bgz = this.getBGZ(cx, cy);
-				if (bgz == 220 || (bgz >= 223 && bgz <= 227) || (bgz >= 216 && bgz <= 219) || (bgz >= 206 && bgz <= 209)) {
+				if (
+					bgz == 220 ||
+					(bgz >= 223 && bgz <= 227) ||
+					(bgz >= 216 && bgz <= 219) ||
+					(bgz >= 206 && bgz <= 209)
+				) {
 					this.co_j.vx = 0;
 					this.co_j.vy = 0;
 					this.co_j.ac = 0;

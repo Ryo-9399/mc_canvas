@@ -37,8 +37,6 @@ class GameMouse {
 	}
 }
 
-
-
 /**
  * GameMouse.mousePressedの別名
  * TODO: 消せ

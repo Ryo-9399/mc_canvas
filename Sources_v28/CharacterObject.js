@@ -63,7 +63,7 @@ class CharacterObject {
 	/**
 	 * 未使用
 	 */
-	setPattern(paramString) { }
+	setPattern(paramString) {}
 }
 
 export { CharacterObject };

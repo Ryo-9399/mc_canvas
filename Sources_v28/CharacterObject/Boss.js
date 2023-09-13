@@ -50,7 +50,7 @@ export const PATTERN_BOSS3_BARRIER_RIGHT = 1255;
  * 度数法で表された角度を、[0,360)の範囲に収まるよう正規化する
  * @param {number} degree
  */
-const normalizeDegree = (degree) => ((degree % 360) + 360) % 360;
+const normalizeDegree = degree => ((degree % 360) + 360) % 360;
 
 /**
  * 長さが同じ配列をまとめる

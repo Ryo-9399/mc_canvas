@@ -148,7 +148,7 @@ class Game {
 			);
 			this.__resourceList.push({
 				type: "setInterval",
-				value: __interval_id,
+				value: __interval_id
 			});
 
 			// 表示リストにパッドを登録
@@ -199,7 +199,7 @@ class Game {
 		__loop.start(__st, this.__loop.bind(this));
 		this.__resourceList.push({
 			type: "Loop",
-			value: __loop,
+			value: __loop
 		});
 	}
 	/**
@@ -220,7 +220,8 @@ class Game {
 				appletArray.push(applets[i]);
 			}
 			for (let i = 0; i < appletArray.length; i++) {
-				const applet = appletArray[i], code = applet.getAttribute("code") || "";
+				const applet = appletArray[i],
+					code = applet.getAttribute("code") || "";
 				if (code.match(/masaoconstruction/i)) {
 					// 正男であるようなら置換
 					Game.replaceByDom(applet, options);
@@ -295,10 +296,10 @@ class Game {
 			},
 			hasFocus: function (obj) {
 				return focusedObject === obj;
-			},
+			}
 		};
 	})();
-	
+
 	// 仮装パッドの表示リストを管理するオブジェクト
 	// Game.padAccessor.append(pad) : パッドpadをリストに登録する
 	// Game.padAccessor.show(pad) : パッドpadを表示し、リストの他のパッドを非表示にする
@@ -313,7 +314,7 @@ class Game {
 					if (pad !== padArray[i]) padArray[i].style.display = "none";
 					else pad.style.display = "inline";
 				}
-			},
+			}
 		};
 	})();
 
@@ -505,7 +506,8 @@ class Game {
 			(gx2, gy2) : 新しい三角形の重心
 			s2 : 新しい三角形の面積（質量と比例する）
 			*/
-			let i, n = p.length >> 1;
+			let i,
+				n = p.length >> 1;
 			let x1, y1, x2, y2, x3, y3;
 			let gx, gy, s, gx2, gy2, s2;
 			x1 = p[0];
@@ -527,7 +529,10 @@ class Game {
 			s = Math.abs((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)) / 2;
 			gx = (x1 + x2 + x3) / 3;
 			gy = (y1 + y2 + y3) / 3;
-			for (i = 3; i < n; i++ // ４頂点以上からこのループに入る
+			for (
+				i = 3;
+				i < n;
+				i++ // ４頂点以上からこのループに入る
 			) {
 				x2 = x3;
 				y2 = y3;
@@ -548,7 +553,7 @@ class Game {
 			var co = Game.pad.codes[ch];
 			this.__mc.gk.keyPressed({
 				keyCode: co,
-				preventDefault: function () { },
+				preventDefault: function () {}
 			});
 		}
 	}
@@ -557,7 +562,7 @@ class Game {
 			var co = Game.pad.codes[ch];
 			this.__mc.gk.keyReleased({
 				keyCode: co,
-				preventDefault: function () { },
+				preventDefault: function () {}
 			});
 		}
 	}
@@ -579,7 +584,7 @@ class Game {
 			[5, 60, 87, 60, 87, 140, 5, 140],
 			[175, 60, 93, 60, 93, 140, 175, 140],
 			[30, 5, 30, 80, 150, 80, 150, 5],
-			[30, 195, 30, 120, 150, 120, 150, 195],
+			[30, 195, 30, 120, 150, 120, 150, 195]
 		],
 		chars: ["X", "Z", "T", "P", "←", "→", "↑", "↓"],
 		codes: [88, 90, 84, 80, 37, 39, 38, 40],
@@ -589,9 +594,9 @@ class Game {
 			button: "rgba(128, 128, 128, 0.5)",
 			active: "rgba(0, 0, 0, 0.5)",
 			text: "black",
-			border: "black",
+			border: "black"
 		},
-		avoidAD: false,
+		avoidAD: false
 	};
 }
 
@@ -840,7 +845,7 @@ class Loop {
 		 * requestIdleCallbackのコールバック呼び出し期限
 		 */
 		const IDLE_TIMEOUT = 1000;
-	
+
 		const n = timestamp();
 		if (n - this.prevTime >= STOP_LIMIT) {
 			// 前回のループから閾値以上経過していたら一時停止があったと判断
@@ -875,18 +880,18 @@ class Loop {
 						// まだ実行しきれていない場合は次のidleに回す
 						// （didTimeoutがtrueの場合は超高負荷なので諦める）
 						idle(cb, {
-							timeout: IDLE_TIMEOUT,
+							timeout: IDLE_TIMEOUT
 						});
 					}
 				},
 				{
-					timeout: IDLE_TIMEOUT,
+					timeout: IDLE_TIMEOUT
 				}
 			);
 		}
 		this._next();
 		this.prevTime = n;
-	};
+	}
 }
 
 /**
@@ -922,7 +927,7 @@ var idle =
 						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
 							return 50 + n - timestamp();
-						},
+						}
 					};
 					cb(deadline);
 				});
@@ -935,7 +940,7 @@ var idle =
 						timeRemaining: function () {
 							// 50ms is the maximum value recommended by Google
 							return 50 + n - timestamp();
-						},
+						}
 					};
 					cb(deadline);
 				}, 1);

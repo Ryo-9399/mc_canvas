@@ -224,10 +224,6 @@ class GameKey {
 	}
 }
 
-
-
-
-
 /*GameKey.prototype.getKeyChar = function()
 {
 	return this.key_char;

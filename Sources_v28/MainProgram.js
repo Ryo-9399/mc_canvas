@@ -279,10 +279,12 @@ class MainProgram {
 					if (this.co_j.x < this.ks_wx - 16) {
 						this.co_j.x = this.ks_wx - 16;
 						if (this.co_j.vx < 0) this.co_j.vx = 0;
-						if ((this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20 ||
-							this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20) &&
+						if (
+							(this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20 ||
+								this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 20) &&
 							this.co_j.c >= 100 &&
-							this.co_j.c < 200) {
+							this.co_j.c < 200
+						) {
 							this.co_j.c = 210;
 							this.co_j.y = this.maps.wy - 64;
 							this.co_j.c1 = 0;
@@ -641,7 +643,7 @@ class MainProgram {
 					"OS           WindowsXP",
 					"Browser      InternetExplorer 6.0",
 					"Programing   Fukuda Naoto",
-					"Date         2003/6",
+					"Date         2003/6"
 				].forEach((string, i) => {
 					this.hg.drawString(string, 50, 50 + i * 30);
 				});
@@ -1311,7 +1313,10 @@ class MainProgram {
 			this.j_mizu_awa_c++;
 			if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
 			else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-		} else if ((i9 == 8 || i9 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4) {
+		} else if (
+			(i9 == 8 || i9 == 9) &&
+			this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4
+		) {
 			this.j_mizu_f = true;
 			this.j_jet_c = 0;
 			this.j_mizu_awa_c++;
@@ -1489,50 +1494,62 @@ class MainProgram {
 					if (this.co_a[i4].gf) {
 						var characterobject = this.co_a[i4];
 						if (characterobject.c >= 100 && characterobject.c < 200) {
-							if (this.co_j.x + 15 >= characterobject.x &&
+							if (
+								this.co_j.x + 15 >= characterobject.x &&
 								this.co_j.x <= characterobject.x + 64 &&
 								this.co_j.y + 31 >= characterobject.y &&
-								this.co_j.y <= characterobject.y + 13) {
+								this.co_j.y <= characterobject.y + 13
+							) {
 								this.co_j.x = characterobject.x + 65;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject.c == 300) {
-							if (this.co_j.x + 15 >= characterobject.x &&
+							if (
+								this.co_j.x + 15 >= characterobject.x &&
 								this.co_j.x <= characterobject.x + 48 &&
 								this.co_j.y + 31 >= characterobject.y &&
-								this.co_j.y <= characterobject.y + 31) {
+								this.co_j.y <= characterobject.y + 31
+							) {
 								this.co_j.x = characterobject.x + 49;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject.c == 400) {
-							if (this.co_j.x + 15 >= characterobject.x &&
+							if (
+								this.co_j.x + 15 >= characterobject.x &&
 								this.co_j.x <= characterobject.x + 80 &&
 								this.co_j.y + 31 >= characterobject.y &&
-								this.co_j.y <= characterobject.y + 63) {
+								this.co_j.y <= characterobject.y + 63
+							) {
 								this.co_j.x = characterobject.x + 81;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject.c == 500) {
-							if (this.co_j.x + 15 >= characterobject.x &&
+							if (
+								this.co_j.x + 15 >= characterobject.x &&
 								this.co_j.x <= characterobject.x + 80 &&
 								this.co_j.y + 31 >= characterobject.y &&
-								this.co_j.y <= characterobject.y + 13) {
+								this.co_j.y <= characterobject.y + 13
+							) {
 								this.co_j.x = characterobject.x + 81;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject.c == 600) {
-							if (this.co_j.x + 15 >= characterobject.x &&
+							if (
+								this.co_j.x + 15 >= characterobject.x &&
 								this.co_j.x <= characterobject.x + 48 &&
 								this.co_j.y + 31 >= characterobject.y + 16 &&
-								this.co_j.y <= characterobject.y + 47) {
+								this.co_j.y <= characterobject.y + 47
+							) {
 								this.co_j.x = characterobject.x + 49;
 								this.co_j.vx = 0;
 							}
-						} else if (characterobject.c == 700 &&
+						} else if (
+							characterobject.c == 700 &&
 							this.co_j.x + 15 >= characterobject.x &&
 							this.co_j.x <= characterobject.x + 16 &&
 							this.co_j.y + 31 >= characterobject.y &&
-							this.co_j.y <= characterobject.y + 31) {
+							this.co_j.y <= characterobject.y + 31
+						) {
 							this.co_j.x = characterobject.x + 17;
 							this.co_j.vx = 0;
 						}
@@ -1553,50 +1570,62 @@ class MainProgram {
 					if (this.co_a[j4].gf) {
 						var characterobject1 = this.co_a[j4];
 						if (characterobject1.c >= 100 && characterobject1.c < 200) {
-							if (this.co_j.x + 15 >= characterobject1.x &&
+							if (
+								this.co_j.x + 15 >= characterobject1.x &&
 								this.co_j.x <= characterobject1.x + 64 &&
 								this.co_j.y + 31 >= characterobject1.y &&
-								this.co_j.y <= characterobject1.y + 13) {
+								this.co_j.y <= characterobject1.y + 13
+							) {
 								this.co_j.x = characterobject1.x - 16;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject1.c == 300) {
-							if (this.co_j.x + 15 >= characterobject1.x &&
+							if (
+								this.co_j.x + 15 >= characterobject1.x &&
 								this.co_j.x <= characterobject1.x + 48 &&
 								this.co_j.y + 31 >= characterobject1.y &&
-								this.co_j.y <= characterobject1.y + 31) {
+								this.co_j.y <= characterobject1.y + 31
+							) {
 								this.co_j.x = characterobject1.x - 16;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject1.c == 400) {
-							if (this.co_j.x + 15 >= characterobject1.x &&
+							if (
+								this.co_j.x + 15 >= characterobject1.x &&
 								this.co_j.x <= characterobject1.x + 80 &&
 								this.co_j.y + 31 >= characterobject1.y &&
-								this.co_j.y <= characterobject1.y + 63) {
+								this.co_j.y <= characterobject1.y + 63
+							) {
 								this.co_j.x = characterobject1.x - 16;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject1.c == 500) {
-							if (this.co_j.x + 15 >= characterobject1.x &&
+							if (
+								this.co_j.x + 15 >= characterobject1.x &&
 								this.co_j.x <= characterobject1.x + 80 &&
 								this.co_j.y + 31 >= characterobject1.y &&
-								this.co_j.y <= characterobject1.y + 13) {
+								this.co_j.y <= characterobject1.y + 13
+							) {
 								this.co_j.x = characterobject1.x - 16;
 								this.co_j.vx = 0;
 							}
 						} else if (characterobject1.c == 600) {
-							if (this.co_j.x + 15 >= characterobject1.x &&
+							if (
+								this.co_j.x + 15 >= characterobject1.x &&
 								this.co_j.x <= characterobject1.x + 48 &&
 								this.co_j.y + 31 >= characterobject1.y + 16 &&
-								this.co_j.y <= characterobject1.y + 47) {
+								this.co_j.y <= characterobject1.y + 47
+							) {
 								this.co_j.x = characterobject1.x - 16;
 								this.co_j.vx = 0;
 							}
-						} else if (characterobject1.c == 700 &&
+						} else if (
+							characterobject1.c == 700 &&
 							this.co_j.x + 15 >= characterobject1.x &&
 							this.co_j.x <= characterobject1.x + 16 &&
 							this.co_j.y + 31 >= characterobject1.y &&
-							this.co_j.y <= characterobject1.y + 31) {
+							this.co_j.y <= characterobject1.y + 31
+						) {
 							this.co_j.x = characterobject1.x - 16;
 							this.co_j.vx = 0;
 						}
@@ -1728,8 +1757,10 @@ class MainProgram {
 				var flag2 = false;
 				i9 = this.maps.map_bg[(this.co_j.x + 15) >> 5][((this.co_j.y + 15) >> 5) - 1];
 				if (i9 <= 9 && i9 != 4) flag2 = true;
-				if ((i9 == 8 || i9 == 9) &&
-					this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][((this.co_j.y + 15) >> 5) - 1] == 4)
+				if (
+					(i9 == 8 || i9 == 9) &&
+					this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][((this.co_j.y + 15) >> 5) - 1] == 4
+				)
 					flag2 = false;
 				if (flag2 && (this.co_j.y + 15) % 32 <= 8) {
 					this.j_jump_type = 0;
@@ -1795,7 +1826,10 @@ class MainProgram {
 				var i8 = this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 15);
 				var flag3 = false;
 				if (i8 <= 9 && i8 != 4) flag3 = true;
-				if ((i8 == 8 || i8 == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4)
+				if (
+					(i8 == 8 || i8 == 9) &&
+					this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4
+				)
 					flag3 = false;
 				if (flag3) {
 					this.co_j.y = ((this.co_j.y + 15) >> 5) * 32 + 17;
@@ -1807,50 +1841,62 @@ class MainProgram {
 					if (this.co_a[k4].gf) {
 						var characterobject2 = this.co_a[k4];
 						if (characterobject2.c >= 100 && characterobject2.c < 200) {
-							if (this.co_j.x + 15 >= characterobject2.x &&
+							if (
+								this.co_j.x + 15 >= characterobject2.x &&
 								this.co_j.x <= characterobject2.x + 64 &&
 								this.co_j.y + 31 >= characterobject2.y &&
-								this.co_j.y <= characterobject2.y + 13) {
+								this.co_j.y <= characterobject2.y + 13
+							) {
 								this.co_j.y = characterobject2.y + 14;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject2.c == 300) {
-							if (this.co_j.x + 15 >= characterobject2.x &&
+							if (
+								this.co_j.x + 15 >= characterobject2.x &&
 								this.co_j.x <= characterobject2.x + 48 &&
 								this.co_j.y + 31 >= characterobject2.y &&
-								this.co_j.y <= characterobject2.y + 31) {
+								this.co_j.y <= characterobject2.y + 31
+							) {
 								this.co_j.y = characterobject2.y + 32;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject2.c == 400) {
-							if (this.co_j.x + 15 >= characterobject2.x &&
+							if (
+								this.co_j.x + 15 >= characterobject2.x &&
 								this.co_j.x <= characterobject2.x + 80 &&
 								this.co_j.y + 31 >= characterobject2.y &&
-								this.co_j.y <= characterobject2.y + 63) {
+								this.co_j.y <= characterobject2.y + 63
+							) {
 								this.co_j.y = characterobject2.y + 64;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject2.c == 500) {
-							if (this.co_j.x + 15 >= characterobject2.x &&
+							if (
+								this.co_j.x + 15 >= characterobject2.x &&
 								this.co_j.x <= characterobject2.x + 80 &&
 								this.co_j.y + 31 >= characterobject2.y &&
-								this.co_j.y <= characterobject2.y + 13) {
+								this.co_j.y <= characterobject2.y + 13
+							) {
 								this.co_j.y = characterobject2.y + 14;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject2.c == 600) {
-							if (this.co_j.x + 15 >= characterobject2.x &&
+							if (
+								this.co_j.x + 15 >= characterobject2.x &&
 								this.co_j.x <= characterobject2.x + 48 &&
 								this.co_j.y + 31 >= characterobject2.y + 16 &&
-								this.co_j.y <= characterobject2.y + 47) {
+								this.co_j.y <= characterobject2.y + 47
+							) {
 								this.co_j.y = characterobject2.y + 48;
 								this.co_j.vy = 0;
 							}
-						} else if (characterobject2.c == 700 &&
+						} else if (
+							characterobject2.c == 700 &&
 							this.co_j.x + 15 >= characterobject2.x &&
 							this.co_j.x <= characterobject2.x + 16 &&
 							this.co_j.y + 31 >= characterobject2.y &&
-							this.co_j.y <= characterobject2.y + 31) {
+							this.co_j.y <= characterobject2.y + 31
+						) {
 							this.co_j.y = characterobject2.y + 32;
 							this.co_j.vy = 0;
 						}
@@ -1904,50 +1950,62 @@ class MainProgram {
 					if (this.co_a[l4].gf) {
 						var characterobject3 = this.co_a[l4];
 						if (characterobject3.c >= 100 && characterobject3.c < 200) {
-							if (this.co_j.x + 15 >= characterobject3.x &&
+							if (
+								this.co_j.x + 15 >= characterobject3.x &&
 								this.co_j.x <= characterobject3.x + 64 &&
 								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 13) {
+								this.co_j.y <= characterobject3.y + 13
+							) {
 								this.co_j.y = characterobject3.y - 32;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject3.c == 300) {
-							if (this.co_j.x + 15 >= characterobject3.x &&
+							if (
+								this.co_j.x + 15 >= characterobject3.x &&
 								this.co_j.x <= characterobject3.x + 48 &&
 								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 31) {
+								this.co_j.y <= characterobject3.y + 31
+							) {
 								this.co_j.y = characterobject3.y - 32;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject3.c == 400) {
-							if (this.co_j.x + 15 >= characterobject3.x &&
+							if (
+								this.co_j.x + 15 >= characterobject3.x &&
 								this.co_j.x <= characterobject3.x + 80 &&
 								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 63) {
+								this.co_j.y <= characterobject3.y + 63
+							) {
 								this.co_j.y = characterobject3.y - 32;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject3.c == 500) {
-							if (this.co_j.x + 15 >= characterobject3.x &&
+							if (
+								this.co_j.x + 15 >= characterobject3.x &&
 								this.co_j.x <= characterobject3.x + 80 &&
 								this.co_j.y + 31 >= characterobject3.y &&
-								this.co_j.y <= characterobject3.y + 13) {
+								this.co_j.y <= characterobject3.y + 13
+							) {
 								this.co_j.y = characterobject3.y - 32;
 								this.co_j.vy = 0;
 							}
 						} else if (characterobject3.c == 600) {
-							if (this.co_j.x + 15 >= characterobject3.x &&
+							if (
+								this.co_j.x + 15 >= characterobject3.x &&
 								this.co_j.x <= characterobject3.x + 48 &&
 								this.co_j.y + 31 >= characterobject3.y + 16 &&
-								this.co_j.y <= characterobject3.y + 47) {
+								this.co_j.y <= characterobject3.y + 47
+							) {
 								this.co_j.y = characterobject3.y + 16 - 32;
 								this.co_j.vy = 0;
 							}
-						} else if (characterobject3.c == 700 &&
+						} else if (
+							characterobject3.c == 700 &&
 							this.co_j.x + 15 >= characterobject3.x &&
 							this.co_j.x <= characterobject3.x + 16 &&
 							this.co_j.y + 31 >= characterobject3.y &&
-							this.co_j.y <= characterobject3.y + 31) {
+							this.co_j.y <= characterobject3.y + 31
+						) {
 							this.co_j.y = characterobject3.y - 32;
 							this.co_j.vy = 0;
 						}
@@ -1992,8 +2050,10 @@ class MainProgram {
 					this.j_mizu_awa_c = 38;
 					if (this.co_j.vx < -60) this.co_j.vx = -60;
 					else if (this.co_j.vx > 60) this.co_j.vx = 60;
-				} else if ((j8 == 8 || j8 == 9) &&
-					this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4) {
+				} else if (
+					(j8 == 8 || j8 == 9) &&
+					this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4
+				) {
 					this.mSet(this.co_j.x, ((this.co_j.y + 15) >> 5) * 32 - 32, 50);
 					this.j_mizu_awa_c = 38;
 					if (this.co_j.vx < -60) this.co_j.vx = -60;
@@ -2052,7 +2112,10 @@ class MainProgram {
 					if (this.co_j.muki == 1) j6 = (this.co_j.x + 40) >> 5;
 					else j6 = (this.co_j.x - 8) >> 5;
 					var l7 = (this.co_j.y + 15) >> 5;
-					if (this.maps.map_bg[j6][l7] == 20 || (this.maps.map_bg[j6][l7] == 69 && this.suberuyuka_hkf == 1)) {
+					if (
+						this.maps.map_bg[j6][l7] == 20 ||
+						(this.maps.map_bg[j6][l7] == 69 && this.suberuyuka_hkf == 1)
+					) {
 						if (this.maps.map_bg[j6 - 1][l7] == 4) this.maps.putBGCode(j6, l7, 4);
 						else this.maps.putBGCode(j6, l7, 0);
 						this.mSet2(j6 * 32, l7 * 32, 80, 12, -24);
@@ -2130,7 +2193,10 @@ class MainProgram {
 			this.j_mizu_awa_c++;
 			if (this.j_mizu_awa_c == 44 || this.j_mizu_awa_c == 54) this.mSet(this.co_j.x, this.co_j.y + 4, 60);
 			else if (this.j_mizu_awa_c > 54) this.j_mizu_awa_c = 0;
-		} else if ((k == 8 || k == 9) && this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4) {
+		} else if (
+			(k == 8 || k == 9) &&
+			this.maps.map_bg[((this.co_j.x + 15) >> 5) - 1][(this.co_j.y + 15) >> 5] == 4
+		) {
 			this.j_mizu_f = true;
 			this.j_jet_c = 0;
 			this.j_mizu_awa_c++;
@@ -2302,10 +2368,12 @@ class MainProgram {
 						this.co_j.c1 = 42;
 						var i;
 						for (i = 0; i <= this.a_kazu; i++) {
-							if (this.co_a[i].c != 300 ||
+							if (
+								this.co_a[i].c != 300 ||
 								this.co_a[i].c4 == 1 ||
 								this.co_j.c2 != this.co_a[i].c3 ||
-								(this.sl_step != 0 && this.sl_step != 1 && this.sl_step != 10 && this.sl_step != 11))
+								(this.sl_step != 0 && this.sl_step != 1 && this.sl_step != 10 && this.sl_step != 11)
+							)
 								continue;
 							this.co_j.x = this.co_a[i].x + 16;
 							this.co_j.y = this.co_a[i].y - 32;
@@ -2317,8 +2385,10 @@ class MainProgram {
 						for (var j = 0; j <= this.a_kazu; j++)
 							if (this.co_a[j].c >= 100 || this.co_a[j].c == 60) {
 								this.co_a[j].gf = true;
-								if (this.co_a[j].c == 300 &&
-									(this.co_j.x != this.co_a[j].x + 16 || this.co_j.y != this.co_a[j].y - 32))
+								if (
+									this.co_a[j].c == 300 &&
+									(this.co_j.x != this.co_a[j].x + 16 || this.co_j.y != this.co_a[j].y - 32)
+								)
 									this.co_a[j].c4 = 0;
 							}
 
@@ -2691,13 +2761,17 @@ class MainProgram {
 						break;
 
 					case 150:
-						if (characterobject.vx < 0 &&
-							(this.maps.getBGCode(j, k) >= 20 || this.maps.getBGCode(j, k + 31) >= 20)) {
+						if (
+							characterobject.vx < 0 &&
+							(this.maps.getBGCode(j, k) >= 20 || this.maps.getBGCode(j, k + 31) >= 20)
+						) {
 							j = (j >> 5) * 32 + 32;
 							characterobject.vx = 0;
 						}
-						if (characterobject.vx > 0 &&
-							(this.maps.getBGCode(j + 31, k) >= 20 || this.maps.getBGCode(j + 31, k + 31) >= 20)) {
+						if (
+							characterobject.vx > 0 &&
+							(this.maps.getBGCode(j + 31, k) >= 20 || this.maps.getBGCode(j + 31, k + 31) >= 20)
+						) {
 							j = ((j + 31) >> 5) * 32 - 32;
 							characterobject.vx = 0;
 						}
@@ -2753,10 +2827,12 @@ class MainProgram {
 					case 300:
 						if (characterobject.c1 > 0) {
 							characterobject.c1++;
-							if (characterobject.c1 == 2 ||
+							if (
+								characterobject.c1 == 2 ||
 								characterobject.c1 == 10 ||
 								characterobject.c1 == 18 ||
-								characterobject.c1 == 26) {
+								characterobject.c1 == 26
+							) {
 								if (j + 8 >= this.co_j.x) this.mSet(j, k, 200);
 								else this.mSet(j, k, 205);
 							} else if (characterobject.c1 > 86) characterobject.c1 = 0;
@@ -2889,13 +2965,17 @@ class MainProgram {
 						break;
 
 					case 450:
-						if (characterobject.vx < 0 &&
-							(this.maps.getBGCode(j, k) >= 20 || this.maps.getBGCode(j, k + 31) >= 20)) {
+						if (
+							characterobject.vx < 0 &&
+							(this.maps.getBGCode(j, k) >= 20 || this.maps.getBGCode(j, k + 31) >= 20)
+						) {
 							j = (j >> 5) * 32 + 32;
 							characterobject.vx = 0;
 						}
-						if (characterobject.vx > 0 &&
-							(this.maps.getBGCode(j + 31, k) >= 20 || this.maps.getBGCode(j + 31, k + 31) >= 20)) {
+						if (
+							characterobject.vx > 0 &&
+							(this.maps.getBGCode(j + 31, k) >= 20 || this.maps.getBGCode(j + 31, k + 31) >= 20)
+						) {
 							j = ((j + 31) >> 5) * 32 - 32;
 							characterobject.vx = 0;
 						}
@@ -3043,13 +3123,17 @@ class MainProgram {
 						break;
 
 					case 650:
-						if (characterobject.vx < 0 &&
-							(this.maps.getBGCode(j, k) >= 20 || this.maps.getBGCode(j, k + 31) >= 20)) {
+						if (
+							characterobject.vx < 0 &&
+							(this.maps.getBGCode(j, k) >= 20 || this.maps.getBGCode(j, k + 31) >= 20)
+						) {
 							j = (j >> 5) * 32 + 32;
 							characterobject.vx = 0;
 						}
-						if (characterobject.vx > 0 &&
-							(this.maps.getBGCode(j + 31, k) >= 20 || this.maps.getBGCode(j + 31, k + 31) >= 20)) {
+						if (
+							characterobject.vx > 0 &&
+							(this.maps.getBGCode(j + 31, k) >= 20 || this.maps.getBGCode(j + 31, k + 31) >= 20)
+						) {
 							j = ((j + 31) >> 5) * 32 - 32;
 							characterobject.vx = 0;
 						}
@@ -3080,7 +3164,11 @@ class MainProgram {
 									if (j + 8 >= this.co_j.x) this.mSet(j, k, 300);
 									else this.mSet(j, k, 305);
 								} else if (characterobject.c1 > 40) characterobject.c1 = 0;
-							} else if (this.co_j.x >= j - 256 && this.co_j.x <= j + 192 && Math.abs(this.co_j.x - j) >= 96)
+							} else if (
+								this.co_j.x >= j - 256 &&
+								this.co_j.x <= j + 192 &&
+								Math.abs(this.co_j.x - j) >= 96
+							)
 								characterobject.c1 = 1;
 						characterobject.pt = 158;
 						if (j + 8 >= this.co_j.x) characterobject.pth = 0;
@@ -3204,7 +3292,10 @@ class MainProgram {
 
 					case 1005:
 						if ((j += 3) >= characterobject.c3 + 16) characterobject.c = 1000;
-						if (this.maps.getBGCode(j + 31 + 16, k) >= 20 || this.maps.getBGCode(j + 31 + 16, k + 31) >= 20) {
+						if (
+							this.maps.getBGCode(j + 31 + 16, k) >= 20 ||
+							this.maps.getBGCode(j + 31 + 16, k + 31) >= 20
+						) {
 							j = ((j + 31 + 16) >> 5) * 32 - 32 - 16;
 							characterobject.c = 1000;
 						}
@@ -3252,8 +3343,10 @@ class MainProgram {
 								}
 								characterobject.c = 52;
 								characterobject.vy = -30;
-							} else if ((characterobject.c >= 400 && characterobject.c < 500) ||
-								(characterobject.c >= 1000 && characterobject.c < 1200))
+							} else if (
+								(characterobject.c >= 400 && characterobject.c < 500) ||
+								(characterobject.c >= 1000 && characterobject.c < 1200)
+							)
 								this.jShinu(2);
 							else if ((i4 < 27 && this.co_j.vy > 0 && !this.j_mizu_f) || flag) {
 								if (characterobject.c < 200) characterobject.pt = 142;
@@ -3356,9 +3449,11 @@ class MainProgram {
 						characterobject.x += rounddown((characterobject.vx * 16) / 14);
 						characterobject.y += rounddown((characterobject.vy * 16) / 14);
 					}
-					if (!this.dengeki_mkf &&
+					if (
+						!this.dengeki_mkf &&
 						characterobject.c > 0 &&
-						this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4) {
+						this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4
+					) {
 						this.m_kazu--;
 						characterobject.c = 0;
 					}
@@ -3531,7 +3626,10 @@ class MainProgram {
 						word0 = this.maps.map_bg[(characterobject.x + 20) >> 5][j2];
 						if (word0 <= 3 || word0 >= 20) characterobject.c = 0;
 						word0 = this.maps.map_bg[(characterobject.x + 15) >> 5][j2];
-						if ((word0 == 8 || word0 == 9) && this.maps.map_bg[((characterobject.x + 15) >> 5) - 1][j2] != 4)
+						if (
+							(word0 == 8 || word0 == 9) &&
+							this.maps.map_bg[((characterobject.x + 15) >> 5) - 1][j2] != 4
+						)
 							characterobject.c = 0;
 						if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512)
 							characterobject.c = 0;
@@ -3632,11 +3730,15 @@ class MainProgram {
 						} else {
 							characterobject.x += characterobject.vx;
 							characterobject.y += characterobject.vy;
-							if (characterobject.x <= this.maps.wx - 32 - 32 ||
-								characterobject.x >= this.maps.wx + 512 + 128 + 32)
+							if (
+								characterobject.x <= this.maps.wx - 32 - 32 ||
+								characterobject.x >= this.maps.wx + 512 + 128 + 32
+							)
 								characterobject.c = 0;
-							else if (characterobject.y <= this.maps.wy - 32 - 200 - 32 ||
-								characterobject.y >= this.maps.wy + 320 + 32)
+							else if (
+								characterobject.y <= this.maps.wy - 32 - 200 - 32 ||
+								characterobject.y >= this.maps.wy + 320 + 32
+							)
 								characterobject.c = 0;
 						}
 						if (this.co_j.c >= 100 && this.co_j.c < 200) {
@@ -3654,14 +3756,22 @@ class MainProgram {
 						characterobject.x += characterobject.vx;
 						characterobject.y += characterobject.vy;
 						var l1 = (characterobject.x + 15) >> 5;
-						if (this.maps.map_bg[l1][(characterobject.y + 12) >> 5] >= 20 ||
-							this.maps.map_bg[l1][(characterobject.y + 18) >> 5] >= 20)
+						if (
+							this.maps.map_bg[l1][(characterobject.y + 12) >> 5] >= 20 ||
+							this.maps.map_bg[l1][(characterobject.y + 18) >> 5] >= 20
+						)
 							characterobject.c = 0;
-						if (!this.dengeki_mkf && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
+						if (
+							!this.dengeki_mkf &&
+							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4
+						)
 							characterobject.c = 0;
 						if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 128)
 							characterobject.c = 0;
-						else if (characterobject.y <= this.maps.wy - 32 - 200 || characterobject.y >= this.maps.wy + 320)
+						else if (
+							characterobject.y <= this.maps.wy - 32 - 200 ||
+							characterobject.y >= this.maps.wy + 320
+						)
 							characterobject.c = 0;
 						if (this.g_c1 == 0) {
 							characterobject.pt = 120;
@@ -3703,8 +3813,10 @@ class MainProgram {
 					case 300:
 						characterobject.x += characterobject.vx;
 						var j3 = (characterobject.y + 15) >> 5;
-						if (this.maps.map_bg[(characterobject.x + 8) >> 5][j3] >= 20 ||
-							this.maps.map_bg[(characterobject.x + 23) >> 5][j3] >= 20)
+						if (
+							this.maps.map_bg[(characterobject.x + 8) >> 5][j3] >= 20 ||
+							this.maps.map_bg[(characterobject.x + 23) >> 5][j3] >= 20
+						)
 							characterobject.c = 0;
 						if (characterobject.x <= this.maps.wx - 32 || characterobject.x >= this.maps.wx + 512 + 128)
 							characterobject.c = 0;
@@ -3757,7 +3869,10 @@ class MainProgram {
 						}
 						if (characterobject.x <= this.maps.wx - 32 - 64 || characterobject.x >= this.maps.wx + 512 + 64)
 							characterobject.c = 0;
-						else if (characterobject.y <= this.maps.wy - 32 - 200 || characterobject.y >= this.maps.wy + 320)
+						else if (
+							characterobject.y <= this.maps.wy - 32 - 200 ||
+							characterobject.y >= this.maps.wy + 320
+						)
 							characterobject.c = 0;
 						if (characterobject.vx > 28) {
 							characterobject.pt = 171;
@@ -3842,7 +3957,8 @@ class MainProgram {
 
 					case 2200:
 						if (characterobject.x < this.maps.wx) characterobject.x = this.maps.wx;
-						else if (characterobject.x > this.maps.wx + 512 - 32) characterobject.x = this.maps.wx + 512 - 32;
+						else if (characterobject.x > this.maps.wx + 512 - 32)
+							characterobject.x = this.maps.wx + 512 - 32;
 						if (characterobject.y < this.maps.wy + 64) characterobject.y = this.maps.wy + 64;
 						else if (characterobject.y > this.maps.wy + 224) characterobject.y = this.maps.wy + 224;
 						if (this.stage_max >= 2 && this.stage >= this.stage_max) {
@@ -3856,9 +3972,11 @@ class MainProgram {
 				if (characterobject.c == 0) this.m_kazu--;
 				else if (this.co_j.c >= 100 && this.co_j.c < 200)
 					if (characterobject.c >= 2000) {
-						if (Math.abs(characterobject.x - this.co_j.x) <= 14 &&
+						if (
+							Math.abs(characterobject.x - this.co_j.x) <= 14 &&
 							characterobject.y <= this.co_j.y + 26 &&
-							characterobject.y + 15 >= this.co_j.y) {
+							characterobject.y + 15 >= this.co_j.y
+						) {
 							this.addScore(5);
 							if (characterobject.c == 2100) {
 								if (characterobject.c2 == 0) this.j_fire_f = true;
@@ -3881,9 +3999,11 @@ class MainProgram {
 							characterobject.c = 0;
 							this.m_kazu--;
 						}
-					} else if (characterobject.c >= 100 &&
+					} else if (
+						characterobject.c >= 100 &&
 						Math.abs(characterobject.x - this.co_j.x) <= 23 &&
-						Math.abs(characterobject.y - this.co_j.y) <= 28)
+						Math.abs(characterobject.y - this.co_j.y) <= 28
+					)
 						if (this.j_v_c > 0) {
 							characterobject.c = 0;
 							this.m_kazu--;
@@ -4061,9 +4181,11 @@ class MainProgram {
 						for (var k = 0; k <= this.t_kazu; k++)
 							if (this.co_t[k].c >= 100) {
 								var characterobject2 = this.co_t[k];
-								if (characterobject2.x > characterobject.x - 12 &&
+								if (
+									characterobject2.x > characterobject.x - 12 &&
 									characterobject2.x < characterobject.vx + 12 &&
-									Math.abs(characterobject2.y - characterobject.y) < 24) {
+									Math.abs(characterobject2.y - characterobject.y) < 24
+								) {
 									characterobject2.pth = 0;
 									characterobject2.vx = -3;
 									characterobject2.c = 52;
@@ -4071,11 +4193,13 @@ class MainProgram {
 								}
 							}
 
-						if (this.grenade_type == 3 &&
+						if (
+							this.grenade_type == 3 &&
 							this.co_b.c >= 100 &&
 							this.co_b.x > characterobject.x - 24 &&
 							this.co_b.x < characterobject.vx + 24 &&
-							Math.abs(this.co_b.y - characterobject.y) < 36) {
+							Math.abs(this.co_b.y - characterobject.y) < 36
+						) {
 							// 左向きエネルギー砲でボスを倒す
 							this.co_b.killGrenade(this, 1);
 						}
@@ -4097,9 +4221,11 @@ class MainProgram {
 						for (var l = 0; l <= this.t_kazu; l++)
 							if (this.co_t[l].c >= 100) {
 								var characterobject3 = this.co_t[l];
-								if (characterobject3.x > characterobject.vx - 12 &&
+								if (
+									characterobject3.x > characterobject.vx - 12 &&
 									characterobject3.x < characterobject.x + 12 &&
-									Math.abs(characterobject3.y - characterobject.y) < 24) {
+									Math.abs(characterobject3.y - characterobject.y) < 24
+								) {
 									characterobject3.pth = 0;
 									characterobject3.vx = 3;
 									characterobject3.c = 52;
@@ -4107,11 +4233,13 @@ class MainProgram {
 								}
 							}
 
-						if (this.grenade_type == 3 &&
+						if (
+							this.grenade_type == 3 &&
 							this.co_b.c >= 100 &&
 							this.co_b.x > characterobject.vx - 24 &&
 							this.co_b.x < characterobject.x + 24 &&
-							Math.abs(this.co_b.y - characterobject.y) < 36) {
+							Math.abs(this.co_b.y - characterobject.y) < 36
+						) {
 							// 右向きエネルギー砲でボスを倒す
 							this.co_b.killGrenade(this, 0);
 						}
@@ -4121,23 +4249,31 @@ class MainProgram {
 
 					case 100:
 						characterobject.x += characterobject.vx;
-						if (this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) >= 20) characterobject.c = 0;
+						if (this.maps.getBGCode(characterobject.x + 7, characterobject.y + 15) >= 20)
+							characterobject.c = 0;
 						characterobject.vy += 5;
 						if (characterobject.vy > 30) characterobject.vy = 30;
 						characterobject.y += characterobject.vy;
-						if (characterobject.vy < 0 &&
-							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 8) >= 20)
+						if (
+							characterobject.vy < 0 &&
+							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 8) >= 20
+						)
 							characterobject.c = 0;
 						if (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 23) >= 20) {
 							characterobject.y = ((characterobject.y + 23) >> 5) * 32 - 24;
 							characterobject.vy = -28;
 						}
-						if (!this.j_fire_mkf && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
+						if (
+							!this.j_fire_mkf &&
+							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4
+						)
 							characterobject.c = 0;
-						if (characterobject.x <= this.maps.wx - 24 ||
+						if (
+							characterobject.x <= this.maps.wx - 24 ||
 							characterobject.x >= this.maps.wx + 512 - 8 ||
 							characterobject.y <= this.maps.wy - 128 ||
-							characterobject.y >= this.maps.wy + 384)
+							characterobject.y >= this.maps.wy + 384
+						)
 							characterobject.c = 0;
 						characterobject.pt = 130 + this.g_c2;
 						characterobject.pth = 0;
@@ -4150,19 +4286,26 @@ class MainProgram {
 						characterobject.vy += 5;
 						if (characterobject.vy > 30) characterobject.vy = 30;
 						characterobject.y += characterobject.vy;
-						if (characterobject.vy < 0 &&
-							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 8) >= 20)
+						if (
+							characterobject.vy < 0 &&
+							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 8) >= 20
+						)
 							characterobject.c = 0;
 						if (this.maps.getBGCode(characterobject.x + 15, characterobject.y + 23) >= 20) {
 							characterobject.y = ((characterobject.y + 23) >> 5) * 32 - 24;
 							characterobject.vy = -28;
 						}
-						if (!this.j_fire_mkf && this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4)
+						if (
+							!this.j_fire_mkf &&
+							this.maps.getBGCode(characterobject.x + 15, characterobject.y + 15) == 4
+						)
 							characterobject.c = 0;
-						if (characterobject.x <= this.maps.wx - 24 ||
+						if (
+							characterobject.x <= this.maps.wx - 24 ||
 							characterobject.x >= this.maps.wx + 512 - 8 ||
 							characterobject.y <= this.maps.wy - 128 ||
-							characterobject.y >= this.maps.wy + 384)
+							characterobject.y >= this.maps.wy + 384
+						)
 							characterobject.c = 0;
 						characterobject.pt = 130 + this.g_c2;
 						characterobject.pth = 1;
@@ -4174,8 +4317,10 @@ class MainProgram {
 							characterobject.vy += 5;
 							if (characterobject.vy > 30) characterobject.vy = 30;
 							characterobject.y += characterobject.vy;
-							if (characterobject.vy > 0 &&
-								this.maps.getBGCode(characterobject.x + 15, characterobject.y + 31) >= 20) {
+							if (
+								characterobject.vy > 0 &&
+								this.maps.getBGCode(characterobject.x + 15, characterobject.y + 31) >= 20
+							) {
 								characterobject.c = 50;
 								characterobject.y = ((characterobject.y + 31) >> 5) * 32 - 16;
 								characterobject.c1 = 1;
@@ -4187,10 +4332,12 @@ class MainProgram {
 							characterobject.c1 = 1;
 							characterobject.c2 = 20;
 						}
-						if (characterobject.x <= this.maps.wx - 64 ||
+						if (
+							characterobject.x <= this.maps.wx - 64 ||
 							characterobject.x >= this.maps.wx + 512 + 64 ||
 							characterobject.y <= this.maps.wy - 128 ||
-							characterobject.y >= this.maps.wy + 384)
+							characterobject.y >= this.maps.wy + 384
+						)
 							characterobject.c = 0;
 						characterobject.pt = 137 + this.g_c1;
 						if (characterobject.vx < 0) characterobject.pth = 0;
@@ -4202,8 +4349,10 @@ class MainProgram {
 					for (var i1 = 0; i1 <= this.t_kazu; i1++) {
 						if (this.co_t[i1].c < 100) continue;
 						var characterobject4 = this.co_t[i1];
-						if (Math.abs(characterobject.x - characterobject4.x) >= 22 ||
-							Math.abs(characterobject.y - characterobject4.y) >= 22)
+						if (
+							Math.abs(characterobject.x - characterobject4.x) >= 22 ||
+							Math.abs(characterobject.y - characterobject4.y) >= 22
+						)
 							continue;
 						if (characterobject.vx < 0) {
 							characterobject4.pth = 1;
@@ -4427,10 +4576,12 @@ class MainProgram {
 					var l = characterobject.y;
 					switch (characterobject.c) {
 						case 60:
-							if (k > this.maps.wx - 80 &&
+							if (
+								k > this.maps.wx - 80 &&
 								k < this.maps.wx + 512 &&
 								l > this.maps.wy - 96 &&
-								l < this.maps.wy + 320) {
+								l < this.maps.wy + 320
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
 								if (this.g_c3 <= 3) characterobject.pt = 200;
@@ -4444,10 +4595,12 @@ class MainProgram {
 							characterobject.c3 += characterobject.vx;
 							if (characterobject.c3 < 0) characterobject.c3 += 360;
 							else if (characterobject.c3 >= 360) characterobject.c3 -= 360;
-							if (k > this.maps.wx - 150 &&
+							if (
+								k > this.maps.wx - 150 &&
 								k < this.maps.wx + 512 + 150 &&
 								l > this.maps.wy - 150 &&
-								l < this.maps.wy + 320 + 150) {
+								l < this.maps.wy + 320 + 150
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
 								characterobject.pt = 1100;
@@ -4498,10 +4651,12 @@ class MainProgram {
 							break;
 
 						case 80:
-							if (k > this.maps.wx - 32 &&
+							if (
+								k > this.maps.wx - 32 &&
 								k < this.maps.wx + 512 &&
 								l > this.maps.wy - 32 &&
-								l < this.maps.wy + 320) {
+								l < this.maps.wy + 320
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
 								if (this.co_j.x >= k - 80 && this.co_j.x <= k + 64 && Math.abs(l - this.co_j.y) < 32) {
@@ -4514,16 +4669,20 @@ class MainProgram {
 							break;
 
 						case 100:
-							if (k > this.maps.wx - 80 - 32 &&
+							if (
+								k > this.maps.wx - 80 - 32 &&
 								k < this.maps.wx + 512 + 32 &&
 								l > this.maps.wy - 16 &&
-								l < this.maps.wy + 320 + 32) {
+								l < this.maps.wy + 320 + 32
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
-									this.co_j.y == l - 32)
+									this.co_j.y == l - 32
+								)
 									this.j_a_id = i;
 							} else {
 								characterobject.gf = false;
@@ -4538,14 +4697,19 @@ class MainProgram {
 							l += characterobject.vy;
 							if (this.co_j.c == 100) {
 								if (this.j_a_id == i) this.co_j.y = l - 32;
-								if (characterobject.vy < 0 && this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20) {
+								if (
+									characterobject.vy < 0 &&
+									this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20
+								) {
 									this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
 									this.jShinu(3);
 								}
-								if (this.co_j.x + 15 >= k &&
+								if (
+									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
 									this.co_j.y + 31 >= l &&
-									this.co_j.y <= l + 13)
+									this.co_j.y <= l + 13
+								)
 									if (characterobject.vy > 0) {
 										this.co_j.y = l + 14;
 										if (this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18) {
@@ -4560,16 +4724,20 @@ class MainProgram {
 							break;
 
 						case 110:
-							if (k > this.maps.wx - 80 - 32 &&
+							if (
+								k > this.maps.wx - 80 - 32 &&
 								k < this.maps.wx + 512 + 32 &&
 								l > this.maps.wy - 16 &&
-								l < this.maps.wy + 320 + 32) {
+								l < this.maps.wy + 320 + 32
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
-									this.co_j.y == l - 32)
+									this.co_j.y == l - 32
+								)
 									this.j_a_id = i;
 							} else {
 								characterobject.gf = false;
@@ -4599,10 +4767,12 @@ class MainProgram {
 											this.co_j.x = j2 * 32 + 32 - 14;
 									}
 								}
-								if (this.co_j.x + 15 >= k &&
+								if (
+									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
 									this.co_j.y + 31 >= l &&
-									this.co_j.y <= l + 13)
+									this.co_j.y <= l + 13
+								)
 									if (characterobject.vx > 0) {
 										this.co_j.x = k + 65;
 										var k2 = (this.co_j.x + 15) >> 5;
@@ -4634,16 +4804,20 @@ class MainProgram {
 							break;
 
 						case 120:
-							if (k > this.maps.wx - 80 - 32 &&
+							if (
+								k > this.maps.wx - 80 - 32 &&
 								k < this.maps.wx + 512 + 32 &&
 								l > this.maps.wy - 16 &&
-								l < this.maps.wy + 320 + 32) {
+								l < this.maps.wy + 320 + 32
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
-									this.co_j.y == l - 32)
+									this.co_j.y == l - 32
+								)
 									this.j_a_id = i;
 							} else {
 								characterobject.gf = false;
@@ -4667,10 +4841,12 @@ class MainProgram {
 									this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
 									this.jShinu(3);
 								}
-								if (this.co_j.x + 15 >= k &&
+								if (
+									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
 									this.co_j.y + 31 >= l &&
-									this.co_j.y <= l + 13)
+									this.co_j.y <= l + 13
+								)
 									if (k13 > 0) {
 										this.co_j.y = l + 14;
 										if (this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18) {
@@ -4700,10 +4876,12 @@ class MainProgram {
 											this.co_j.x = j3 * 32 + 32 - 14;
 									}
 								}
-								if (this.co_j.x + 15 >= k &&
+								if (
+									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 64 &&
 									this.co_j.y + 31 >= l &&
-									this.co_j.y <= l + 13)
+									this.co_j.y <= l + 13
+								)
 									if (j13 > 0) {
 										this.co_j.x = k + 65;
 										var k3 = (this.co_j.x + 15) >> 5;
@@ -4735,18 +4913,23 @@ class MainProgram {
 							break;
 
 						case 300:
-							if (k > this.maps.wx - 96 &&
+							if (
+								k > this.maps.wx - 96 &&
 								k < this.maps.wx + 512 &&
 								l > this.maps.wy - 64 &&
-								l < this.maps.wy + 320) {
+								l < this.maps.wy + 320
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 48 &&
-									this.co_j.y == l - 32) {
+									this.co_j.y == l - 32
+								) {
 									this.j_a_id = i;
-									if (this.co_j.x + 15 >= k + 24 &&
+									if (
+										this.co_j.x + 15 >= k + 24 &&
 										this.co_j.x <= k + 48 - 24 &&
 										this.co_j.y == l - 32 &&
 										characterobject.c4 != 1 &&
@@ -4754,7 +4937,8 @@ class MainProgram {
 											this.sl_step == 1 ||
 											this.sl_step == 10 ||
 											this.sl_step == 11 ||
-											this.dokan_mode != 2)) {
+											this.dokan_mode != 2)
+									) {
 										this.co_j.c1 = -10;
 										this.co_j.c2 = characterobject.c3;
 										this.j_zan_f = false;
@@ -4775,16 +4959,20 @@ class MainProgram {
 							break;
 
 						case 400:
-							if (k > this.maps.wx - 96 &&
+							if (
+								k > this.maps.wx - 96 &&
 								k < this.maps.wx + 512 &&
 								l > this.maps.wy - 64 &&
-								l < this.maps.wy + 320) {
+								l < this.maps.wy + 320
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 80 &&
-									this.co_j.y == l - 32)
+									this.co_j.y == l - 32
+								)
 									this.j_a_id = i;
 							} else {
 								characterobject.gf = false;
@@ -4807,16 +4995,20 @@ class MainProgram {
 							if (this.co_j.c == 100) {
 								if (this.j_a_id == i) {
 									this.co_j.y = l - 32;
-									if (characterobject.c3 == 200 &&
-										this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20) {
+									if (
+										characterobject.c3 == 200 &&
+										this.maps.getBGCode(this.co_j.x + 15, this.co_j.y) >= 20
+									) {
 										this.co_j.y = (this.co_j.y >> 5) * 32 + 16;
 										this.jShinu(3);
 									}
 								}
-								if (this.co_j.x + 15 >= k &&
+								if (
+									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 80 &&
 									this.co_j.y + 31 >= l &&
-									this.co_j.y <= l + 63)
+									this.co_j.y <= l + 63
+								)
 									if (characterobject.c3 == 100) {
 										this.co_j.y = l + 64;
 										if (this.maps.getBGCode(this.co_j.x + 15, this.co_j.y + 31) >= 18) {
@@ -4835,16 +5027,20 @@ class MainProgram {
 							break;
 
 						case 500:
-							if (k > this.maps.wx - 96 - 32 &&
+							if (
+								k > this.maps.wx - 96 - 32 &&
 								k < this.maps.wx + 512 + 32 &&
 								l > this.maps.wy - 32 &&
-								l <= this.maps.wy + 368) {
+								l <= this.maps.wy + 368
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 80 &&
-									this.co_j.y == l - 32) {
+									this.co_j.y == l - 32
+								) {
 									this.j_a_id = i;
 									if (characterobject.c4 == 1) {
 										if (characterobject.c3 < 50)
@@ -4881,16 +5077,20 @@ class MainProgram {
 							break;
 
 						case 600:
-							if (k > this.maps.wx - 96 &&
+							if (
+								k > this.maps.wx - 96 &&
 								k < this.maps.wx + 512 &&
 								l > this.maps.wy - 64 &&
-								l < this.maps.wy + 320) {
+								l < this.maps.wy + 320
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
-								if (this.co_j.c == 100 &&
+								if (
+									this.co_j.c == 100 &&
 									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 48 &&
-									this.co_j.y == l + 16 - 32)
+									this.co_j.y == l + 16 - 32
+								)
 									this.j_a_id = i;
 							} else {
 								characterobject.gf = false;
@@ -4919,8 +5119,10 @@ class MainProgram {
 								characterobject.vx = 0;
 							}
 							k += characterobject.vx;
-							if (this.maps.getBGCode(k + 63 + 16, l) >= 20 ||
-								this.maps.getBGCode(k + 63 + 16, l + 32) >= 20) {
+							if (
+								this.maps.getBGCode(k + 63 + 16, l) >= 20 ||
+								this.maps.getBGCode(k + 63 + 16, l + 32) >= 20
+							) {
 								k = ((k + 63 + 16) >> 5) * 32 - 64 - 16;
 								characterobject.vx = k - characterobject.x;
 								characterobject.c3 = 200;
@@ -4936,31 +5138,43 @@ class MainProgram {
 											this.co_j.x = i4 * 32 - 16;
 									}
 								}
-								if (this.co_j.x + 15 >= k &&
+								if (
+									this.co_j.x + 15 >= k &&
 									this.co_j.x <= k + 48 &&
 									this.co_j.y + 31 >= l + 16 &&
-									this.co_j.y <= l + 47)
+									this.co_j.y <= l + 47
+								)
 									this.co_j.x = k + 49;
 							}
 							break;
 
 						case 700:
-							if (k > this.maps.wx - 96 &&
+							if (
+								k > this.maps.wx - 96 &&
 								k < this.maps.wx + 512 &&
 								l > this.maps.wy - 64 &&
-								l < this.maps.wy + 320) {
+								l < this.maps.wy + 320
+							) {
 								characterobject.gf = true;
 								this.a_hf = true;
 								if (this.co_j.c == 100 && this.co_j.x + 15 >= k && this.co_j.x <= k + 16)
-									if (characterobject.c3 >= 1 && characterobject.c3 <= 2 && this.co_j.y == l - 32 + 10)
+									if (
+										characterobject.c3 >= 1 &&
+										characterobject.c3 <= 2 &&
+										this.co_j.y == l - 32 + 10
+									)
 										this.j_a_id = i;
-									else if (characterobject.c3 >= 3 &&
+									else if (
+										characterobject.c3 >= 3 &&
 										characterobject.c3 <= 4 &&
-										this.co_j.y == l - 32 + 16)
+										this.co_j.y == l - 32 + 16
+									)
 										this.j_a_id = i;
-									else if (characterobject.c3 >= 5 &&
+									else if (
+										characterobject.c3 >= 5 &&
 										characterobject.c3 <= 6 &&
-										this.co_j.y == l - 32 + 10)
+										this.co_j.y == l - 32 + 10
+									)
 										this.j_a_id = i;
 									else if (this.co_j.y == l - 32) this.j_a_id = i;
 							} else {
@@ -5004,10 +5218,12 @@ class MainProgram {
 							if (this.co_jm[j].c >= 100) {
 								var characterobject1 = this.co_jm[j];
 								if (characterobject.c < 200) {
-									if (characterobject1.x + 15 >= k &&
+									if (
+										characterobject1.x + 15 >= k &&
 										characterobject1.x <= k + 64 &&
 										characterobject1.y + 29 >= l &&
-										characterobject1.y + 2 <= l + 13)
+										characterobject1.y + 2 <= l + 13
+									)
 										if (characterobject1.c == 200) {
 											characterobject1.c = 50;
 											characterobject1.y = l - 8;
@@ -5018,10 +5234,12 @@ class MainProgram {
 											this.jm_kazu--;
 										}
 								} else if (characterobject.c == 300) {
-									if (characterobject1.x + 15 >= k &&
+									if (
+										characterobject1.x + 15 >= k &&
 										characterobject1.x <= k + 48 &&
 										characterobject1.y + 29 >= l &&
-										characterobject1.y + 2 <= l + 31)
+										characterobject1.y + 2 <= l + 31
+									)
 										if (characterobject1.c == 200) {
 											characterobject1.c = 50;
 											characterobject1.c1 = 1;
@@ -5031,10 +5249,12 @@ class MainProgram {
 											this.jm_kazu--;
 										}
 								} else if (characterobject.c == 400) {
-									if (characterobject1.x + 15 >= k &&
+									if (
+										characterobject1.x + 15 >= k &&
 										characterobject1.x <= k + 80 &&
 										characterobject1.y + 29 >= l &&
-										characterobject1.y + 2 <= l + 63)
+										characterobject1.y + 2 <= l + 63
+									)
 										if (characterobject1.c == 200) {
 											characterobject1.c = 50;
 											characterobject1.c1 = 1;
@@ -5043,11 +5263,13 @@ class MainProgram {
 											characterobject1.c = 0;
 											this.jm_kazu--;
 										}
-								} else if (characterobject.c == 500 &&
+								} else if (
+									characterobject.c == 500 &&
 									characterobject1.x + 15 >= k &&
 									characterobject1.x <= k + 80 &&
 									characterobject1.y + 29 >= l &&
-									characterobject1.y + 2 <= l + 13)
+									characterobject1.y + 2 <= l + 13
+								)
 									if (characterobject1.c == 200) {
 										characterobject1.c = 50;
 										characterobject1.y = l - 8;

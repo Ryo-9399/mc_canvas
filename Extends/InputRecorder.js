@@ -29,8 +29,8 @@
  *   score: number このログ終了時点でのスコア
  */
 
-CanvasMasao.InputRecorder = (function() {
-	var InputRecorder = function(mc, inputdataCallback, requiresCallback) {
+CanvasMasao.InputRecorder = (function () {
+	var InputRecorder = function (mc, inputdataCallback, requiresCallback) {
 		this.mc = mc;
 		//ひとかたまりのデータが揃ったときにコールバックする
 		this.inputdataCallback = inputdataCallback;
@@ -61,20 +61,20 @@ CanvasMasao.InputRecorder = (function() {
 		//次のフレームでデータを出力するためのオブジェクト
 		this.next_emit = null;
 	};
-	InputRecorder.prototype.init = function() {
+	InputRecorder.prototype.init = function () {
 		// GameKeyをフック
 		var _this = this;
 		var gk = this.mc.gk,
 			_keyPressed = gk.keyPressed,
 			_keyReleased = gk.keyReleased;
-		gk.keyPressed = function(paramKeyEvent) {
+		gk.keyPressed = function (paramKeyEvent) {
 			_keyPressed.call(gk, paramKeyEvent);
 			//記録
 			if (_this.recording) {
 				_this.save(paramKeyEvent.keyCode, true);
 			}
 		};
-		gk.keyReleased = function(paramKeyEvent) {
+		gk.keyReleased = function (paramKeyEvent) {
 			_keyReleased.call(gk, paramKeyEvent);
 			if (_this.recording) {
 				_this.save(paramKeyEvent.keyCode, false);
@@ -83,12 +83,12 @@ CanvasMasao.InputRecorder = (function() {
 
 		this.reset();
 	};
-	InputRecorder.prototype.initBuffer = function() {
+	InputRecorder.prototype.initBuffer = function () {
 		//バッファを作成
 		this.current_buffer = new Uint8Array(4096);
 		this.current_buffer_size = 0;
 	};
-	InputRecorder.prototype.save = function(keyCode, pressed) {
+	InputRecorder.prototype.save = function (keyCode, pressed) {
 		//入力情報をバッファに保存
 		var frame = this.frame,
 			last_frame = this.last_frame;
@@ -102,7 +102,7 @@ CanvasMasao.InputRecorder = (function() {
 		this.pushData(pressed, sa, keyCode);
 		this.last_frame = frame;
 	};
-	InputRecorder.prototype.saveCurrentPressing = function() {
+	InputRecorder.prototype.saveCurrentPressing = function () {
 		//今のフレームを記録
 		var gk = this.mc.gk,
 			codekey_f = gk.codekey_f;
@@ -113,7 +113,7 @@ CanvasMasao.InputRecorder = (function() {
 			}
 		}
 	};
-	InputRecorder.prototype.pushData = function(pressed_flag, interval, keyCode) {
+	InputRecorder.prototype.pushData = function (pressed_flag, interval, keyCode) {
 		//3bitのキーコード
 		var k1 = this.keyBits(keyCode);
 		if (k1 !== 7) {
@@ -125,7 +125,7 @@ CanvasMasao.InputRecorder = (function() {
 			this.addToBuffer(keyCode);
 		}
 	};
-	InputRecorder.prototype.addToBuffer = function(char) {
+	InputRecorder.prototype.addToBuffer = function (char) {
 		//実際にbufferをいじる
 		if (this.current_buffer_size === this.current_buffer.length) {
 			//満杯なので次のバッファを作る
@@ -134,7 +134,7 @@ CanvasMasao.InputRecorder = (function() {
 		}
 		this.current_buffer[this.current_buffer_size++] = char;
 	};
-	InputRecorder.prototype.reset = function() {
+	InputRecorder.prototype.reset = function () {
 		//タイトル画面時の初期化
 		this.allbuf = [];
 		this.buffers = [];
@@ -143,7 +143,7 @@ CanvasMasao.InputRecorder = (function() {
 		this.prev_cpoint_x = 0;
 		this.prev_cpoint_y = 0;
 	};
-	InputRecorder.prototype.masaoEvent = function(g, image) {
+	InputRecorder.prototype.masaoEvent = function (g, image) {
 		var mc = this.mc,
 			mp = mc.mp,
 			ml_mode = mp.ml_mode;
@@ -161,7 +161,7 @@ CanvasMasao.InputRecorder = (function() {
 			);
 			//lengthを計算
 			var buffer_length = 0;
-			result_buffers.forEach(function(buf) {
+			result_buffers.forEach(function (buf) {
 				buffer_length += buf.length * buf.BYTES_PER_ELEMENT;
 			});
 			//種類(クリアした="clear", やられた="miss", 中断した="abort")
@@ -233,21 +233,10 @@ CanvasMasao.InputRecorder = (function() {
 					//新しいのが来たのでコールバックする
 					//METADATA blockを作る
 					var metadata = new Uint8Array([
-						0x4d,
-						0x0e,
-						0x50,
-						0x0a,
-						0x00,
-						0x00,
-						0x00,
-						0x02,
-						0x00,
-						0x00,
-						0x00,
-						0x0c
+						0x4d, 0x0e, 0x50, 0x0a, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0c
 					]);
 					setTimeout(
-						function(ne) {
+						function (ne) {
 							this.inputdataCallback({
 								stage: ne.stage,
 								continued: ne.continued,
@@ -315,7 +304,7 @@ CanvasMasao.InputRecorder = (function() {
 		}
 		this.prev_ml_mode = ml_mode;
 	};
-	InputRecorder.prototype.singlify = function(buffers) {
+	InputRecorder.prototype.singlify = function (buffers) {
 		//buffersはじつはTypedArrayの配列
 		//バッファのサイズを計算する
 		for (var sum = 0, i = 0, l = buffers.length; i < l; i++) {
@@ -337,7 +326,7 @@ CanvasMasao.InputRecorder = (function() {
 		}
 		return result;
 	};
-	InputRecorder.prototype.keyBits = function(keyCode) {
+	InputRecorder.prototype.keyBits = function (keyCode) {
 		//keyCodeをアレにする
 		if (keyCode === 0) {
 			//nop
@@ -377,7 +366,7 @@ CanvasMasao.InputRecorder = (function() {
 			return 7;
 		}
 	};
-	InputRecorder.inject = function(mc, options) {
+	InputRecorder.inject = function (mc, options) {
 		var _ui = mc.userInit,
 			_us = mc.userSub;
 		var inputdataCallback = null,
@@ -389,12 +378,12 @@ CanvasMasao.InputRecorder = (function() {
 		if ("function" === typeof o.requiresCallback) {
 			requiresCallback = o.requiresCallback;
 		}
-		mc.userInit = function() {
+		mc.userInit = function () {
 			_ui.apply(mc);
 			this.inputRecorder = new CanvasMasao.InputRecorder(this, inputdataCallback, requiresCallback);
 			this.inputRecorder.init();
 		};
-		mc.userSub = function(g, image) {
+		mc.userSub = function (g, image) {
 			_us.call(mc, g, image);
 			this.inputRecorder.masaoEvent(g, image);
 		};

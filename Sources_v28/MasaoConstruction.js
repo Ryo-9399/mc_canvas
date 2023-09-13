@@ -24,7 +24,7 @@ class MasaoConstruction {
 		const ctx = this.__canvas.getContext("2d");
 		ctx.drawImage(this.__appimg._dat, 0, 0);
 	}
-	init() { }
+	init() {}
 	start() {
 		if (this.th == null) {
 			this.th = 1;
@@ -39,7 +39,7 @@ class MasaoConstruction {
 	stop() {
 		if (this.th != null) this.th = null;
 	}
-	destroy() { }
+	destroy() {}
 	paint(g) {
 		g.drawImage(this.gg.os_img, 0, 0, this);
 	}
@@ -140,14 +140,13 @@ class MasaoConstruction {
 		this.mp = new MainProgram(this.gg, this.gm, this.gk);
 		(this.mp.tdb = {}).options = this.options; //FXと同じ名前でオプションを読み込むため
 
-
 		// ハイスコアイベント用のリスナ登録
 		this.mp.addHighscoreEvent(this.options.highscoreCallback);
 
 		this.userInit();
 	}
-	userInit() { }
-	userSub(paramGraphics, paramImage) { }
+	userInit() {}
+	userSub(paramGraphics, paramImage) {}
 	getImage(url) {
 		const img = new ImageBuff();
 		img.load(url);

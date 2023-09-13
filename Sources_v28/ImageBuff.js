@@ -91,17 +91,13 @@ class ImageBuff {
 	}
 }
 
-
 function ImageBuff_onload(obj) {
 	obj.onload();
 }
 
-
 function ImageBuff_onerror(obj) {
 	obj.onerror();
 }
-
-
 
 /**
  * 画像編集クラス
@@ -189,7 +185,7 @@ class Graphics {
 				this._ctx.drawImage(img._dat, a1, a2, a3, a4, a5, a6, a7, a8);
 				return true;
 			}
-		} catch (e) { }
+		} catch (e) {}
 		return false;
 	}
 	/**
@@ -524,26 +520,6 @@ class Graphics {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * 色を表現するクラス
  * @param r {number} R(0-255)
@@ -593,9 +569,6 @@ class Color {
 		return this.b;
 	}
 }
-
-
-
 
 Color.white = new Color(255, 255, 255);
 Color.WHITE = Color.white;
