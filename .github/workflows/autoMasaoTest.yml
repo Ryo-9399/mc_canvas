@@ -19,6 +19,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Git Fetch Latest tag
+      run: |
+        git fetch --prune --unshallow
+
     - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
