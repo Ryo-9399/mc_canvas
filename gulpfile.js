@@ -28,7 +28,7 @@ gulp.task(
 	)
 );
 
-gulp.task("kani2", function() {
+gulp.task("kani2", function () {
 	return gulp
 		.src(["./Extends/MasaoKani2.js", "Extends/pre.js"])
 		.pipe(concat("MasaoKani2.js"))
@@ -36,7 +36,7 @@ gulp.task("kani2", function() {
 		.pipe(gulp.dest("./Outputs/"));
 });
 
-gulp.task("kani2-manual", function() {
+gulp.task("kani2-manual", function () {
 	return gulp
 		.src("./Extends/MasaoKani2.js")
 		.pipe(rename("MasaoKani2_manual.js"))
@@ -46,7 +46,7 @@ gulp.task("kani2-manual", function() {
 
 gulp.task("kani2-all", gulp.parallel("kani2", "kani2-manual"));
 
-gulp.task("v28", function() {
+gulp.task("v28", function () {
 	webpackConfig.entry = "./Sources_v28/index.js";
 	webpackConfig.output.filename = "CanvasMasao_v28.js";
 	return webpackStream(webpackConfig, webpack).pipe(gulp.dest("./Outputs/"));

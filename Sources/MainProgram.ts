@@ -24492,8 +24492,8 @@ class MainProgram {
 			}
 		} else {
 			if (this.ml_mode != 100 && this.ml_mode != 90 && this.ml_mode != 91 && this.ml_mode != 96) return false;
-			if (a1 < 0) return false;
-			if (a1 > this.yuka_id_max) return false;
+			if (a1 as number < 0) return false;
+			if (a1 as number > this.yuka_id_max) return false;
 			if ((this.yo[a1 as number].con < 200 || this.yo[a1 as number].con >= 500) && this.yo[a1 as number].con != 110) {
 				return false;
 			} else {

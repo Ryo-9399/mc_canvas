@@ -1,5 +1,5 @@
 // Configuration for karma
-module.exports = function(config) {
+module.exports = function (config) {
 	config.set({
 		// logLevel: config.LOG_DEBUG,
 		browserNoActivityTimeout: 60000,

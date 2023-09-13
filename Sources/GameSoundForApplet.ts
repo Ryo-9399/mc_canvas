@@ -379,7 +379,7 @@ class GameSoundWebAudio extends GameSoundBase<AudioBuffer> {
 	_init() {
 		var ac = "undefined" !== typeof AudioContext ? AudioContext : webkitAudioContext;
 		this.context = new ac();
-		// DynamicComporessorをかませる
+		// DynamicCompressorをかませる
 		this.dest = this.context.createDynamicsCompressor();
 		this.dest.connect(this.context.destination);
 
