@@ -4398,7 +4398,7 @@ class MainProgram {
 		this.j_enemy_press = this.tdb.getValueInt("j_enemy_press");
 		if (this.j_enemy_press < 1 || this.j_enemy_press > 3) this.j_enemy_press = 1;
 		this.view_move_type = this.tdb.getValueInt("view_move_type");
-		if (this.view_move_type != 2) this.view_move_type = 1;
+		if (this.view_move_type < 1 || this.view_move_type > 3) this.view_move_type = 1;
 		if (this.view_move_type == 2) this.co_j.muki = 0; // 右進行用の視界の時自分の向きを右向きにする
 		this.jst_slow_down = 0;
 		this.jst_key_down = 0;
@@ -4733,7 +4733,7 @@ class MainProgram {
 		this.maps.wy_max = (this.mapHeight - rounddown((this.gg.di.height - this.maps.wy_mini) / 32)) * 32;
 
 		if (this.gg.system_screen_size === 1) {
-			if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
+			if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15 || this.view_move_type === 3) {
 				this.maps.my_wx_mini = 212;
 				this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
 				this.maps.my_wy_mini = 148;
@@ -4749,7 +4749,7 @@ class MainProgram {
 			}
 			this.maps.my_wy_max = 300; // 480 - 148 - 32
 		} else if (this.gg.system_screen_size === 2) {
-			if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15) {
+			if ((this.scroll_area >= 2 && this.scroll_area <= 5) || this.j_tokugi == 14 || this.j_tokugi == 15 || this.view_move_type === 3) {
 				this.maps.my_wx_mini = 176;
 				this.maps.my_wx_max = this.gg.di.width - this.maps.my_wx_mini - 32;
 				this.maps.my_wy_mini = 112;

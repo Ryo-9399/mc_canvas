@@ -3745,7 +3745,7 @@ class MasaoJSS {
 		 * @since canvas正男
 		 */
 		this.getVersion = () => {
-			return <string>process.env.MC_CANVAS_VER;
+			return process.env.MC_CANVAS_VER ?? "";
 		};
 
 		/**
