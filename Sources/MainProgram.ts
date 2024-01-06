@@ -20748,6 +20748,7 @@ class MainProgram {
 							l3 <= this.maps.wy + this.gg.di.height - 32
 						) {
 							if (this.view_move_type != 2) {
+								const tmp_view_move_type = this.view_move_type;
 								this.view_move_type = 2;
 								this.nkscroll_con = 200;
 								this.nkscroll_view_x = this.maps.wx;
@@ -20757,9 +20758,23 @@ class MainProgram {
 								this.nkscroll_vx = 1;
 								this.nkscroll_vy = 0;
 
-								const tmp = this.maps.my_wx_mini;
-								this.maps.my_wx_mini = this.maps.my_wx_max + 32;
-								this.maps.my_wx_max = this.gg.di.width - tmp - 32;
+								if((this.scroll_area >= 2 && this.scroll_area <= 5) || tmp_view_move_type === 3){
+									if (this.gg.system_screen_size === 1) {
+										this.maps.my_wx_mini = 252 + 32;
+										this.maps.my_wx_max = this.gg.di.width - 132 - 32;
+										this.maps.my_wy_mini = 116;
+									}
+									else{
+										this.maps.my_wx_mini = 224 + 32;
+										this.maps.my_wx_max = this.gg.di.width - 96 - 32;
+										this.maps.my_wy_mini = 78;
+									}
+								}
+								else{
+									const tmp = this.maps.my_wx_mini;
+									this.maps.my_wx_mini = this.maps.my_wx_max + 32;
+									this.maps.my_wx_max = this.gg.di.width - tmp - 32;
+								}
 							}
 							characterobject.c4 = 1;
 						}
@@ -20772,6 +20787,7 @@ class MainProgram {
 						l3 <= this.maps.wy + this.gg.di.height - 32
 					) {
 						if (this.view_move_type != 1) {
+							const tmp_view_move_type = this.view_move_type;
 							this.view_move_type = 1;
 							this.nkscroll_con = 200;
 							this.nkscroll_view_x = this.maps.wx;
@@ -20781,9 +20797,23 @@ class MainProgram {
 							this.nkscroll_vx = 1;
 							this.nkscroll_vy = 0;
 
-							const tmp = this.maps.my_wx_mini;
-							this.maps.my_wx_mini = this.gg.di.width - this.maps.my_wx_max - 32;
-							this.maps.my_wx_max = tmp - 32;
+							if((this.scroll_area >= 2 && this.scroll_area <= 5) || tmp_view_move_type === 3){
+								if (this.gg.system_screen_size === 1) {
+									this.maps.my_wx_mini = 132;
+									this.maps.my_wx_max = 252;
+									this.maps.my_wy_mini = 116;
+								}
+								else{
+									this.maps.my_wx_mini = 96;
+									this.maps.my_wx_max = 224;
+									this.maps.my_wy_mini = 78;
+								}
+							}
+							else{
+								const tmp = this.maps.my_wx_mini;
+								this.maps.my_wx_mini = this.gg.di.width - this.maps.my_wx_max - 32;
+								this.maps.my_wx_max = tmp - 32;
+							}
 						}
 						characterobject.c4 = 1;
 					}
