@@ -347,7 +347,8 @@ export function makeKnownDefaultParameters() {
 		gauge_back_blue1: "0",
 		gauge_back_red2: "255",
 		gauge_back_green2: "0",
-		gauge_back_blue2: "0"
+		gauge_back_blue2: "0",
+		boss_destroy: "1"
 	};
 }
 
