@@ -254,6 +254,7 @@ class MainProgram {
 	j_enemy_press: number;
 	boss_destroy_type: number;
 	boss_hp_max: number;
+	boss_destroy: number;
 	j_tail_ap_boss: number;
 	j_tokugi: number;
 	mu_ato_x: number[];
@@ -575,6 +576,7 @@ class MainProgram {
 		this.j_enemy_press = 1;
 		this.boss_destroy_type = 1;
 		this.boss_hp_max = 20;
+		this.boss_destroy = 1;
 		this.j_tail_ap_boss = 4;
 		this.j_tokugi = 1;
 		this.mu_ato_x = new Array(32);
@@ -4142,6 +4144,8 @@ class MainProgram {
 		if (this.grenade_type < 1 || this.grenade_type > 9) this.grenade_type = 1;
 		this.boss_destroy_type = this.tdb.getValueInt("boss_destroy_type");
 		if (this.boss_destroy_type != 2) this.boss_destroy_type = 1;
+		this.boss_destroy = this.tdb.getValueInt("boss_destroy");
+		if (this.boss_destroy != 2) this.boss_destroy = 1;
 		this.j_tail_ap_boss = this.tdb.getValueInt("j_tail_ap_boss");
 		if (this.j_tail_ap_boss < 0) this.j_tail_ap_boss = 4;
 		this.suberuyuka_hkf = this.tdb.getValueInt("suberuyuka_hkf");

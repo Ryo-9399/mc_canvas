@@ -103,8 +103,8 @@ class Boss extends CharacterObject {
 				// 消えてからしばらくして人面星が出現する
 				if (this.c1 < 20) this.c1++;
 				if (this.c1 === 15) {
-					if (mp.j_tokugi === 14 || mp.j_tokugi === 15) {
-						// シューティングモード、四方向移動モードの場合は直接クリアさせる
+					if (mp.j_tokugi === 14 || mp.j_tokugi === 15 || mp.boss_destroy === 2) {
+						// シューティングモード、四方向移動モード、ボスを倒してステージクリアの場合は直接クリアさせる
 						mp.setStageClear();
 					} else {
 						// 人面星を配置する
@@ -921,8 +921,8 @@ class Boss extends CharacterObject {
 			if (this.c1 >= 26) {
 				this.c = DYING;
 				this.c1 = 0;
-				// シューティングモード、四方向移動モードの場合は100点加算
-				if (mp.j_tokugi === 14 || mp.j_tokugi === 15) mp.addScore(100);
+				// シューティングモード、四方向移動モード、ボスを倒してステージクリアの場合は100点加算
+				if (mp.j_tokugi === 14 || mp.j_tokugi === 15 || mp.boss_destroy === 2) mp.addScore(100);
 				else mp.addScore(10);
 				// HPゲージを閉じる
 				if (mp.boss_destroy_type === 2) mp.hideGauge();
@@ -986,8 +986,8 @@ class Boss extends CharacterObject {
 	fumu(mp: MainProgram) {
 		this.c4--;
 		this.c1 = 0;
-		// HP1のときは右向き
-		const direction = this.c4 === 1 ? 1 : 0;
+		// HPを2で割った余りが1のときは右向き
+		const direction = this.c4 % 2;
 		switch (this.getBossNumber()) {
 			case 1:
 				this.c = direction ? BOSS1_DAMAGE_RIGHT : BOSS1_DAMAGE_LEFT;
