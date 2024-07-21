@@ -124,8 +124,8 @@ export const drawGamescreen = function (this: MainProgram) {
 			if (this.maps.second_gazou_x > 0) this.maps.second_gazou_x -= this.gg.di.width;
 			if (this.maps.second_gazou_y < -this.gg.di.height) this.maps.second_gazou_y += this.gg.di.height;
 			if (this.maps.second_gazou_y > 0) this.maps.second_gazou_y -= this.gg.di.height;
-			scroll_x = (this as any).second_gazou_x; // TODO: 型付け
-			scroll_y = (this as any).second_gazou_y; // TODO: 型付け
+			scroll_x = this.maps.second_gazou_x;
+			scroll_y = this.maps.second_gazou_y;
 			repeat_times = [2, 2];
 		} else if (this.second_gazou_scroll === 5) {
 			// 左右スクロール  速度３／２
