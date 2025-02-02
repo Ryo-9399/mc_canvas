@@ -4539,31 +4539,6 @@ class MainProgram {
 		this.setmyw_muki = 1;
 		this.attacktail_yf = true;
 		this.gauge_v = false;
-		let k5;
-		if (this.stage == 2) k5 = this.tdb.getValueInt("scroll_mode_s");
-		else if (this.stage == 3) k5 = this.tdb.getValueInt("scroll_mode_t");
-		else if (this.stage == 4) k5 = this.tdb.getValueInt("scroll_mode_f");
-		else k5 = this.tdb.getValueInt("scroll_mode");
-		if (k5 == 2) {
-			// 強制スクロール
-			this.sl_step = 10;
-			this.ks_wx = 32;
-			this.ks_wy = (this.mapHeight - rounddown((this.gg.di.height - 320) / 32)) * 32;
-			this.sl_speed = 2;
-		} else if (k5 == 3) {
-			// 高速強制スクロール
-			this.sl_step = 10;
-			this.ks_wx = 32;
-			this.ks_wy = (this.mapHeight - rounddown((this.gg.di.height - 320) / 32)) * 32;
-			this.sl_speed = 4;
-		}
-		this.nkscroll_con = 0;
-		this.nkscroll_view_x = 0;
-		this.nkscroll_view_y = 0;
-		this.nkscroll_speed_x = 2;
-		this.nkscroll_vx = 0;
-		this.nkscroll_vy = 0;
-		this.nkscroll_zsc = false;
 
 		this.co_a = [new CharacterObject()]; // 例外落ち回避用要素
 		this.vo_x = [[0, 0, 0, 0]];
@@ -4589,6 +4564,32 @@ class MainProgram {
 		for (let k2 = 0; k2 <= 11; k2++) this.ana_c[k2] = 0;
 
 		this.mapsMakeStageData(100 + this.stage);
+
+		let k5;
+		if (this.stage == 2) k5 = this.tdb.getValueInt("scroll_mode_s");
+		else if (this.stage == 3) k5 = this.tdb.getValueInt("scroll_mode_t");
+		else if (this.stage == 4) k5 = this.tdb.getValueInt("scroll_mode_f");
+		else k5 = this.tdb.getValueInt("scroll_mode");
+		if (k5 == 2) {
+			// 強制スクロール
+			this.sl_step = 10;
+			this.ks_wx = 32;
+			this.ks_wy = (this.mapHeight - rounddown((this.gg.di.height - 320) / 32)) * 32;
+			this.sl_speed = 2;
+		} else if (k5 == 3) {
+			// 高速強制スクロール
+			this.sl_step = 10;
+			this.ks_wx = 32;
+			this.ks_wy = (this.mapHeight - rounddown((this.gg.di.height - 320) / 32)) * 32;
+			this.sl_speed = 4;
+		}
+		this.nkscroll_con = 0;
+		this.nkscroll_view_x = 0;
+		this.nkscroll_view_y = 0;
+		this.nkscroll_speed_x = 2;
+		this.nkscroll_vx = 0;
+		this.nkscroll_vy = 0;
+		this.nkscroll_zsc = false;
 
 		// コンティニューアイテムを取った時
 		if (this.cpoint_con == 100) {
