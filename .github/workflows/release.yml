@@ -48,18 +48,32 @@ jobs:
         draft: true
         prerelease: false
 
-    - name: Upload release assets
+    - name: Upload CanvasMasao.js
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_paths: |
-          Outputs/CanvasMasao.js
-          Outputs/CanvasMasao_v28.js
-          Outputs/MasaoKani2.js
-        asset_names: |
-          CanvasMasao.js
-          CanvasMasao_v28.js
-          MasaoKani2.js
+        asset_path: Outputs/CanvasMasao.js
+        asset_name: CanvasMasao.js
+        asset_content_type: application/javascript
+
+    - name: Upload CanvasMasao_v28.js
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: Outputs/CanvasMasao_v28.js
+        asset_name: CanvasMasao_v28.js
+        asset_content_type: application/javascript
+
+    - name: Upload MasaoKani2.js
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: Outputs/MasaoKani2.js
+        asset_name: MasaoKani2.js
         asset_content_type: application/javascript
