@@ -30,8 +30,8 @@ jobs:
 
     - name: Commit build artifacts
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git config --local user.name 'GitHub Action'
+        git config --local user.email 'action@github.com'
         git checkout master
         git add Outputs/CanvasMasao.js Outputs/CanvasMasao_v28.js Outputs/MasaoKani2.js
         git commit -m "ビルド"
@@ -41,7 +41,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         tag_name: ${{ github.ref_name }}
         release_name: mc_canvas ${{ github.ref_name }}
@@ -51,7 +51,7 @@ jobs:
     - name: Upload CanvasMasao.js
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: Outputs/CanvasMasao.js
@@ -61,7 +61,7 @@ jobs:
     - name: Upload CanvasMasao_v28.js
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: Outputs/CanvasMasao_v28.js
@@ -71,7 +71,7 @@ jobs:
     - name: Upload MasaoKani2.js
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: Outputs/MasaoKani2.js
