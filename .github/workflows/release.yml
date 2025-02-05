@@ -32,10 +32,9 @@ jobs:
       run: |
         git config --local user.name 'GitHub Action'
         git config --local user.email 'action@github.com'
-        git checkout master
         git add Outputs/CanvasMasao.js Outputs/CanvasMasao_v28.js Outputs/MasaoKani2.js
         git commit -m "ビルド"
-        git push origin master
+        git push
 
     - name: Create Release
       id: create_release
