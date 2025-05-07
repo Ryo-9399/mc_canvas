@@ -141,27 +141,9 @@ class GameGraphicsForApplet {
 	 */
 	cut() {
 		// ■■■32x32にカットする処理
-		var i, j, n, m, localG;
-		for (n = 0; n <= this.spt_kazu_y - 1; n++) {
-			for (m = 0; m <= this.spt_kazu_x - 1; m++) {
-				j = n * 10 + m;
-				this.spt_img[0][j] = new ImageBuff(32, 32);
-				localG = this.spt_img[0][j].getGraphics();
-				if (localG) {
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
-				}
-				if (n >= this.spt_h_kijyun) {
-					this.spt_img[1][j] = new ImageBuff(32, 32);
-					localG = this.spt_img[1][j].getGraphics();
-					if (localG) {
-						localG.scale(-1, 1);
-						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
-					}
-				} else {
-					this.spt_img[1][j] = this.spt_img[0][j];
-				}
-			}
-		}
+		var j, n, m, localG;
+		this.cutPatternImage();
+		
 		this.hi = this.spt_img[0];
 		for (m = 0; m <= 9; m++) {
 			this.spt_option_img[m] = this.spt_img[0][10 + m];
@@ -199,33 +181,15 @@ class GameGraphicsForApplet {
 		}
 		// ■■■32x32にカットする処理(mapchip)
 		if (this.layer_mode == 2) {
-			for (n = 0; n <= 15; n++) {
-				for (m = 0; m <= 15; m++) {
-					i = n * 512 * 32 + m * 32;
-
-					j = n * 16 + m;
-
-					this.smapchip_img[j] = new ImageBuff(32, 32);
-					localG = this.smapchip_img[j].getGraphics();
-					if (localG && this.amapchip_img) {
-						localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
-					}
-				}
-			}
+			this.cutMapchipImage();
 		}
 	}
 
 	/**
-	 * 画像を読み込み、新たなパターン画像とする
-	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 * パターン画像を32x32ピクセルごとに切り分ける共通メソッド
+	 * @private
 	 */
-	setPatternImage(filename: string) {
-		this.apt_img = this.ap.getImage(filename);
-		// TODO: ap.getImageがnullを返すことはあるのか？
-		// イメージを読み込めなかったときは操作を無効化するハック
-		if (this.apt_img == null) return;
-
-		// ■■■32x32にカットする処理
+	private cutPatternImage() {
 		var j, n, m, localG;
 		for (n = 0; n <= this.spt_kazu_y - 1; n++) {
 			for (m = 0; m <= this.spt_kazu_x - 1; m++) {
@@ -250,6 +214,41 @@ class GameGraphicsForApplet {
 	}
 
 	/**
+	 * マップチップ画像を32x32ピクセルごとに切り分ける共通メソッド
+	 * @private
+	 */
+	private cutMapchipImage() {
+		if (this.layer_mode != 2 || !this.amapchip_img) return;
+
+		var n, m, j, localG;
+		for (n = 0; n <= 15; n++) {
+			for (m = 0; m <= 15; m++) {
+				j = n * 16 + m;
+
+				this.smapchip_img[j] = new ImageBuff(32, 32);
+				localG = this.smapchip_img[j].getGraphics();
+				if (localG) {
+					localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 画像を読み込み、新たなパターン画像とする
+	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 */
+	setPatternImage(filename: string) {
+		this.apt_img = this.ap.getImage(filename);
+		// TODO: ap.getImageがnullを返すことはあるのか？
+		// イメージを読み込めなかったときは操作を無効化するハック
+		if (this.apt_img == null) return;
+
+		// ■■■32x32にカットする処理
+		this.cutPatternImage();
+	}
+
+	/**
 	 * 画像を読み込み、新たなマップチップ画像とする
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
@@ -262,21 +261,8 @@ class GameGraphicsForApplet {
 		if (this.amapchip_img == null) return;
 
 		// ■■■32x32にカットする処理(mapchip)
-		var n, m, i, j, localG;
 		if (this.layer_mode == 2) {
-			for (n = 0; n <= 15; n++) {
-				for (m = 0; m <= 15; m++) {
-					i = n * 512 * 32 + m * 32;
-
-					j = n * 16 + m;
-
-					this.smapchip_img[j] = new ImageBuff(32, 32);
-					localG = this.smapchip_img[j].getGraphics();
-					if (localG) {
-						localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
-					}
-				}
-			}
+			this.cutMapchipImage();
 		}
 	}
 
