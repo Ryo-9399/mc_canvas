@@ -938,7 +938,7 @@ class MasaoJSS {
 		 * 主人公のY座標（px単位）を取得します。
 		 *
 		 * マップの上端は320です。
-		 * @returns {number} 主人公のX座標
+		 * @returns {number} 主人公のY座標
 		 */
 		this.getMyYReal = function () {
 			if (this.getMode() >= 100 && this.getMode() < 200 && mc.mp.co_j.c >= 100 && mc.mp.co_j.c < 200) {
