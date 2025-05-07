@@ -141,7 +141,7 @@ class GameGraphicsForApplet {
 	 */
 	cut() {
 		// ■■■32x32にカットする処理
-		var j, n, m, localG;
+		let j, n, m, localG;
 		this.cutPatternImage();
 		
 		this.hi = this.spt_img[0];
