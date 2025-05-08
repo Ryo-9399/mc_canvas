@@ -143,7 +143,6 @@ class GameGraphicsForApplet {
 		// ■■■32x32にカットする処理
 		this.cutPatternImage();
 		
-		// 左上の空欄画像
 		this.hi = this.spt_img[0];
 
 		// コンティニュー、スイッチ等番号が割り振られていない画像
