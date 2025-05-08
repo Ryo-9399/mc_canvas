@@ -141,12 +141,47 @@ class GameGraphicsForApplet {
 	 */
 	cut() {
 		// ■■■32x32にカットする処理
-		let j, n, m, localG;
 		this.cutPatternImage();
 		
+		// 左上の空欄画像
 		this.hi = this.spt_img[0];
-		for (m = 0; m <= 9; m++) {
+
+		// コンティニュー、スイッチ等番号が割り振られていない画像
+		for (let m = 0; m <= 9; m++) {
 			this.spt_option_img[m] = this.spt_img[0][10 + m];
+		}
+
+		// ■■■32x32にカットする処理(mapchip)
+		if (this.layer_mode == 2) {
+			this.cutMapchipImage();
+		}
+	}
+
+	/**
+	 * パターン画像を32x32ピクセルごとに切り分ける共通メソッド
+	 * @private
+	 */
+	private cutPatternImage() {
+		let j, n, m, localG;
+		for (n = 0; n <= this.spt_kazu_y - 1; n++) {
+			for (m = 0; m <= this.spt_kazu_x - 1; m++) {
+				j = n * 10 + m;
+				this.spt_img[0][j] = new ImageBuff(32, 32);
+				localG = this.spt_img[0][j].getGraphics();
+				if (localG) {
+					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+				}
+				if (n >= this.spt_h_kijyun) {
+					this.spt_img[1][j] = new ImageBuff(32, 32);
+					localG = this.spt_img[1][j].getGraphics();
+					if (localG) {
+						localG.scale(-1, 1);
+						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+					}
+				} else {
+					this.spt_img[1][j] = this.spt_img[0][j];
+				}
+			}
 		}
 		if (this.tdb.getValueInt("water_clear_switch") == 2) {
 			var i5 = this.tdb.getValueInt("water_clear_level");
@@ -176,38 +211,6 @@ class GameGraphicsForApplet {
 				if (localG) {
 					localG.setGlobalAlpha(i5);
 					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
-				}
-			}
-		}
-		// ■■■32x32にカットする処理(mapchip)
-		if (this.layer_mode == 2) {
-			this.cutMapchipImage();
-		}
-	}
-
-	/**
-	 * パターン画像を32x32ピクセルごとに切り分ける共通メソッド
-	 * @private
-	 */
-	private cutPatternImage() {
-		var j, n, m, localG;
-		for (n = 0; n <= this.spt_kazu_y - 1; n++) {
-			for (m = 0; m <= this.spt_kazu_x - 1; m++) {
-				j = n * 10 + m;
-				this.spt_img[0][j] = new ImageBuff(32, 32);
-				localG = this.spt_img[0][j].getGraphics();
-				if (localG) {
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
-				}
-				if (n >= this.spt_h_kijyun) {
-					this.spt_img[1][j] = new ImageBuff(32, 32);
-					localG = this.spt_img[1][j].getGraphics();
-					if (localG) {
-						localG.scale(-1, 1);
-						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
-					}
-				} else {
-					this.spt_img[1][j] = this.spt_img[0][j];
 				}
 			}
 		}
