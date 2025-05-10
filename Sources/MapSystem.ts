@@ -119,6 +119,169 @@ class MapSystem {
 	}
 
 	/**
+	 * セカンド画像を描画する
+	 * @param {number} xmod X方向のスクロールオフセット（バッファ描画時のみ使用）
+	 * @param {number} ymod Y方向のスクロールオフセット（バッファ描画時のみ使用）
+	 * @param {boolean} directDraw trueの場合は画面に直接描画、falseの場合はバッファに描画
+	 */
+	drawSecondImage(xmod: number = 0, ymod: number = 0, directDraw: boolean = false): void {
+		// 描画先に応じて描画関数を切り替え
+		const draw = directDraw 
+			? (x: number, y: number) => {
+				this.gg.os_g.drawImage(this.mp.second_gazou_img!, x, y);
+			  }
+			: (x: number, y: number) => {
+				// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
+				this.gg.os2_g.drawImage(this.mp.second_gazou_img!, x + xmod + 32, y + ymod + 32);
+			  };
+		
+		// [x方向の繰り返し回数, y方向の繰り返し回数]
+		let repeat_times = [1, 1];
+		let scroll_x = 0;
+		let scroll_y = 0;
+		let image_width = this.gg.di.width;
+		let image_height = this.gg.di.height;
+		if (this.mp.second_gazou_scroll === 2) {
+			// 左右スクロール  速度１／４
+			scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % image_width);
+			repeat_times[0] = 2;
+		} else if (this.mp.second_gazou_scroll === 3) {
+			// 左右スクロール  速度１／２
+			scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
+			repeat_times[0] = 2;
+		} else if (this.mp.second_gazou_scroll === 4) {
+			// 指定速度で強制スクロール
+			this.second_gazou_x += this.mp.second_gazou_scroll_speed_x;
+			this.second_gazou_y += this.mp.second_gazou_scroll_speed_y;
+			if (this.second_gazou_x < -this.gg.di.width) this.second_gazou_x += this.gg.di.width;
+			if (this.second_gazou_x > 0) this.second_gazou_x -= this.gg.di.width;
+			if (this.second_gazou_y < -this.gg.di.height) this.second_gazou_y += this.gg.di.height;
+			if (this.second_gazou_y > 0) this.second_gazou_y -= this.gg.di.height;
+			scroll_x = this.second_gazou_x;
+			scroll_y = this.second_gazou_y;
+			repeat_times = [2, 2];
+		} else if (this.mp.second_gazou_scroll === 5) {
+			// 左右スクロール  速度３／２
+			scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % image_width);
+			repeat_times[0] = 2;
+		} else if (this.mp.second_gazou_scroll === 6) {
+			// 画像サイズ  ５１２×９６０
+			image_height = 960;
+			scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % image_width);
+			scroll_y = -(this.wy - 320);
+			repeat_times[0] = 2;
+		} else if (this.mp.second_gazou_scroll === 7) {
+			// マップと同じ速度で全方向
+			scroll_x = -((this.wx - 32) % image_width);
+			scroll_y = -((this.wy - 320) % image_height);
+			repeat_times = [2, 2];
+		} else if (this.mp.second_gazou_scroll === 8) {
+			// マップの指定座標に設置  画像サイズは任意
+			scroll_x = this.mp.second_gazou_scroll_x + 32 - this.wx;
+			scroll_y = this.mp.second_gazou_scroll_y + 320 - this.wy;
+			if (scroll_x >= this.gg.di.width || scroll_y >= this.gg.di.height) {
+				repeat_times = [0, 0];
+			}
+		}
+		for (let i = 0; i < repeat_times[0]; i++) {
+			for (let j = 0; j < repeat_times[1]; j++) {
+				draw(scroll_x + i * image_width, scroll_y + j * image_height);
+			}
+		}
+	}
+
+	/**
+	 * 背景画像を描画する
+	 * @param {number} xmod X方向のスクロールオフセット
+	 * @param {number} ymod Y方向のスクロールオフセット
+	 * @param {number} gazou_scroll 背景画像のスクロール設定
+	 */
+	drawBackgroundImage(xmod: number, ymod: number, gazou_scroll: number): void {
+		const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
+		if (background_image != null) {
+			const draw = (x: number, y: number) => {
+				// 裏画面に背景画像を描画する際、スクロールに応じて描画位置をずらす
+				this.gg.os2_g.drawImage(background_image, x + xmod + 32, y + ymod + 32);
+			};
+			// [x方向の繰り返し回数, y方向の繰り返し回数]
+			let repeat_times = [1, 1];
+			let scroll_x = 0;
+			let scroll_y = 0;
+			let image_width = this.gg.di.width;
+			let image_height = this.gg.di.height;
+			if (gazou_scroll === 2) {
+				// 左右スクロール（速度はマップの１／４）
+				scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % image_width);
+				repeat_times[0] = 2;
+			} else if (gazou_scroll === 3) {
+				// 右へ強制スクロール
+				this.gazou_x -= 2;
+				if (this.gazou_x <= -this.gg.di.width) this.gazou_x += this.gg.di.width;
+				scroll_x = this.gazou_x;
+				repeat_times[0] = 2;
+			} else if (gazou_scroll === 4) {
+				// 指定速度で強制スクロール
+				this.gazou_x += this.mp.gazou_scroll_speed_x;
+				this.gazou_y += this.mp.gazou_scroll_speed_y;
+				if (this.gazou_x < -this.gg.di.width) this.gazou_x += this.gg.di.width;
+				if (this.gazou_x > 0) this.gazou_x -= this.gg.di.width;
+				if (this.gazou_y < -this.gg.di.height) this.gazou_y += this.gg.di.height;
+				if (this.gazou_y > 0) this.gazou_y -= this.gg.di.height;
+				scroll_x = this.gazou_x;
+				scroll_y = this.gazou_y;
+				repeat_times = [2, 2];
+			} else if (gazou_scroll === 5) {
+				// 上下スクロール
+				scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+				repeat_times[1] = 2;
+			} else if (gazou_scroll === 6) {
+				// 全方向スクロール（速度はマップの１／２）
+				scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
+				scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
+				repeat_times = [2, 2];
+			} else if (gazou_scroll === 7) {
+				// 全方向スクロール（速度はマップと同じ）
+				scroll_x = -((this.wx - 32) % image_width);
+				scroll_y = -((this.wy - 320) % image_height);
+				repeat_times = [2, 2];
+			} else if (gazou_scroll === 8) {
+				// 画像サイズ    ５１２×６４０専用
+				image_height = 640;
+				scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
+				scroll_y = -(
+					rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) % image_height
+				);
+				repeat_times[0] = 2;
+			} else if (gazou_scroll === 9) {
+				// 画像サイズ  １０２４×６４０専用
+				image_width = 1024;
+				image_height = 640;
+				scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
+				scroll_y = -(
+					rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) % image_height
+				);
+				repeat_times[0] = 2;
+			} else if (gazou_scroll === 10) {
+				// 左右スクロール（速度はマップの１／２）
+				scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
+				repeat_times[0] = 2;
+			} else if (gazou_scroll === 11) {
+				// マップの指定座標に設置  画像サイズは任意
+				scroll_x = this.mp.gazou_scroll_x + 32 - this.wx;
+				scroll_y = this.mp.gazou_scroll_y + 320 - this.wy;
+				if (scroll_x >= this.gg.di.width || scroll_y >= this.gg.di.height) {
+					repeat_times = [0, 0];
+				}
+			}
+			for (let i = 0; i < repeat_times[0]; i++) {
+				for (let j = 0; j < repeat_times[1]; j++) {
+					draw(scroll_x + i * image_width, scroll_y + j * image_height);
+				}
+			}
+		}
+	}
+
+	/**
 	 * マップや背景レイヤー、背景画像を描画する
 	 * @param {number} view_x 画面に描画される範囲の左上のX座標
 	 * @param {number} view_y 画面に描画される範囲の左上のY座標
@@ -138,153 +301,13 @@ class MapSystem {
 			this.gg.os2_g.drawImage(this.gg.os_img, 32 + xmod, 32 + ymod);
 		} else {
 			// 背景画像を描画する
-
 			this.gg.fill2();
 
-			// セカンド画像を背景画像の奥に描画
+			// セカンド画像と背景画像を描画
 			if (this.mp.second_gazou_visible && this.mp.second_gazou_priority === 1 && this.mp.second_gazou_img != null) {
-				const draw = (x: number, y: number) => {
-					// 裏画面にセカンド画像を描画する際、スクロールに応じて描画位置をずらす
-					this.gg.os2_g.drawImage(this.mp.second_gazou_img!, x + xmod + 32, y + ymod + 32);
-				};
-				// [x方向の繰り返し回数, y方向の繰り返し回数]
-				let repeat_times = [1, 1];
-				let scroll_x = 0;
-				let scroll_y = 0;
-				let image_width = this.gg.di.width;
-				let image_height = this.gg.di.height;
-				if (this.mp.second_gazou_scroll === 2) {
-					// 左右スクロール  速度１／４
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % image_width);
-					repeat_times[0] = 2;
-				} else if (this.mp.second_gazou_scroll === 3) {
-					// 左右スクロール  速度１／２
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					repeat_times[0] = 2;
-				} else if (this.mp.second_gazou_scroll === 4) {
-					// 指定速度で強制スクロール
-					this.second_gazou_x += this.mp.second_gazou_scroll_speed_x;
-					this.second_gazou_y += this.mp.second_gazou_scroll_speed_y;
-					if (this.second_gazou_x < -this.gg.di.width) this.second_gazou_x += this.gg.di.width;
-					if (this.second_gazou_x > 0) this.second_gazou_x -= this.gg.di.width;
-					if (this.second_gazou_y < -this.gg.di.height) this.second_gazou_y += this.gg.di.height;
-					if (this.second_gazou_y > 0) this.second_gazou_y -= this.gg.di.height;
-					scroll_x = this.second_gazou_x;
-					scroll_y = this.second_gazou_y;
-					repeat_times = [2, 2];
-				} else if (this.mp.second_gazou_scroll === 5) {
-					// 左右スクロール  速度３／２
-					scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % image_width);
-					repeat_times[0] = 2;
-				} else if (this.mp.second_gazou_scroll === 6) {
-					// 画像サイズ  ５１２×９６０
-					image_height = 960;
-					scroll_x = -(rightShiftIgnoreSign((this.wx - 32) * 3, 1) % image_width);
-					scroll_y = -(this.wy - 320);
-					repeat_times[0] = 2;
-				} else if (this.mp.second_gazou_scroll === 7) {
-					// マップと同じ速度で全方向
-					scroll_x = -((this.wx - 32) % image_width);
-					scroll_y = -((this.wy - 320) % image_height);
-					repeat_times = [2, 2];
-				} else if (this.mp.second_gazou_scroll === 8) {
-					// マップの指定座標に設置  画像サイズは任意
-					scroll_x = this.mp.second_gazou_scroll_x + 32 - this.wx;
-					scroll_y = this.mp.second_gazou_scroll_y + 320 - this.wy;
-					if (scroll_x >= this.gg.di.width || scroll_y >= this.gg.di.height) {
-						repeat_times = [0, 0];
-					}
-				}
-				for (let i = 0; i < repeat_times[0]; i++) {
-					for (let j = 0; j < repeat_times[1]; j++) {
-						draw(scroll_x + i * image_width, scroll_y + j * image_height);
-					}
-				}
+				this.drawSecondImage(xmod, ymod);
 			}
-
-			// 背景画像の描画
-			const background_image = this.mp.setbacki_f ? this.mp.setbacki_img : this.gg.li[3 + this.mp.stage_haikei];
-			if (background_image != null) {
-				const draw = (x: number, y: number) => {
-					// 裏画面に背景画像を描画する際、スクロールに応じて描画位置をずらす
-					this.gg.os2_g.drawImage(background_image, x + xmod + 32, y + ymod + 32);
-				};
-				// [x方向の繰り返し回数, y方向の繰り返し回数]
-				let repeat_times = [1, 1];
-				let scroll_x = 0;
-				let scroll_y = 0;
-				let image_width = this.gg.di.width;
-				let image_height = this.gg.di.height;
-				if (gazou_scroll === 2) {
-					// 左右スクロール（速度はマップの１／４）
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 2) % image_width);
-					repeat_times[0] = 2;
-				} else if (gazou_scroll === 3) {
-					// 右へ強制スクロール
-					this.gazou_x -= 2;
-					if (this.gazou_x <= -this.gg.di.width) this.gazou_x += this.gg.di.width;
-					scroll_x = this.gazou_x;
-					repeat_times[0] = 2;
-				} else if (gazou_scroll === 4) {
-					// 指定速度で強制スクロール
-					this.gazou_x += this.mp.gazou_scroll_speed_x;
-					this.gazou_y += this.mp.gazou_scroll_speed_y;
-					if (this.gazou_x < -this.gg.di.width) this.gazou_x += this.gg.di.width;
-					if (this.gazou_x > 0) this.gazou_x -= this.gg.di.width;
-					if (this.gazou_y < -this.gg.di.height) this.gazou_y += this.gg.di.height;
-					if (this.gazou_y > 0) this.gazou_y -= this.gg.di.height;
-					scroll_x = this.gazou_x;
-					scroll_y = this.gazou_y;
-					repeat_times = [2, 2];
-				} else if (gazou_scroll === 5) {
-					// 上下スクロール
-					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
-					repeat_times[1] = 2;
-				} else if (gazou_scroll === 6) {
-					// 全方向スクロール（速度はマップの１／２）
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(rightShiftIgnoreSign(this.wy - 320, 1) % image_height);
-					repeat_times = [2, 2];
-				} else if (gazou_scroll === 7) {
-					// 全方向スクロール（速度はマップと同じ）
-					scroll_x = -((this.wx - 32) % image_width);
-					scroll_y = -((this.wy - 320) % image_height);
-					repeat_times = [2, 2];
-				} else if (gazou_scroll === 8) {
-					// 画像サイズ    ５１２×６４０専用
-					image_height = 640;
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(
-						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) % image_height
-					);
-					repeat_times[0] = 2;
-				} else if (gazou_scroll === 9) {
-					// 画像サイズ  １０２４×６４０専用
-					image_width = 1024;
-					image_height = 640;
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					scroll_y = -(
-						rightShiftIgnoreSign(((this.wy - 320) * image_height) / (2 * this.gg.di.height), 1) % image_height
-					);
-					repeat_times[0] = 2;
-				} else if (gazou_scroll === 10) {
-					// 左右スクロール（速度はマップの１／２）
-					scroll_x = -(rightShiftIgnoreSign(this.wx - 32, 1) % image_width);
-					repeat_times[0] = 2;
-				} else if (gazou_scroll === 11) {
-					// マップの指定座標に設置  画像サイズは任意
-					scroll_x = this.mp.gazou_scroll_x + 32 - this.wx;
-					scroll_y = this.mp.gazou_scroll_y + 320 - this.wy;
-					if (scroll_x >= this.gg.di.width || scroll_y >= this.gg.di.height) {
-						repeat_times = [0, 0];
-					}
-				}
-				for (let i = 0; i < repeat_times[0]; i++) {
-					for (let j = 0; j < repeat_times[1]; j++) {
-						draw(scroll_x + i * image_width, scroll_y + j * image_height);
-					}
-				}
-			}
+			this.drawBackgroundImage(xmod, ymod, gazou_scroll);
 		}
 		if (mode === 2) {
 			// 背景のみを描画する
