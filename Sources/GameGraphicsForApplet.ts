@@ -240,8 +240,8 @@ class GameGraphicsForApplet {
 	 * 画像を読み込み、新たなパターン画像とする
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
-	setPatternImage(filename: string) {
-		this.apt_img = this.ap.getImage(filename);
+	async setPatternImage(filename: string) {
+		this.apt_img = await this.ap.getImageAsync(filename);
 		// TODO: ap.getImageがnullを返すことはあるのか？
 		// イメージを読み込めなかったときは操作を無効化するハック
 		if (this.apt_img == null) return;
@@ -254,11 +254,11 @@ class GameGraphicsForApplet {
 	 * 画像を読み込み、新たなマップチップ画像とする
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
-	setMapchipImage(filename: string) {
+	async setMapchipImage(filename: string) {
 		if (this.layer_mode != 2) {
 			return;
 		}
-		this.amapchip_img = this.ap.getImage(filename);
+		this.amapchip_img = await this.ap.getImageAsync(filename);
 		// ハック
 		if (this.amapchip_img == null) return;
 

@@ -2224,6 +2224,12 @@ class MasaoConstruction {
 		return img;
 	}
 
+	async getImageAsync(url: string) {
+		const img = new ImageBuff();
+		await img.loadAsync(url);
+		return img;
+	}
+
 	createImage(w: number, h: number) {
 		const img = new ImageBuff(w, h);
 		return img;
