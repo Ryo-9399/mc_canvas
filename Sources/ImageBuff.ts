@@ -81,17 +81,16 @@ class ImageBuff implements ImageBuff {
 			this._width = -1;
 			this._height = -1;
 			this._dat = new Image();
-			var _this = this;
 			this._dat.onload = () => {
-				ImageBuff_onload(_this);
+				ImageBuff_onload(this);
 				resolve(this);
 			};
 			this._dat.onerror = () => {
-				ImageBuff_onerror(_this);
+				ImageBuff_onerror(this);
 				reject(new Error(`画像の読み込みに失敗しました: ${url}`));
 			};
 			this._dat.onabort = () => {
-				ImageBuff_onerror(_this);
+				ImageBuff_onerror(this);
 				reject(new Error(`画像の読み込みが中断されました: ${url}`));
 			};
 			this._dat.src = url;
