@@ -70,6 +70,38 @@ class ImageBuff implements ImageBuff {
 	}
 
 	/**
+	 * 画像を非同期で読み込む
+	 * @param url {string} 読み込む画像のパス(相対パス、URLともに可)
+	 * @returns {Promise<ImageBuff>} 読み込み完了後にこのImageBuffインスタンスで解決されるPromise
+	 */
+	loadAsync(url: string): Promise<ImageBuff> {
+		return new Promise((resolve, reject) => {
+			this._loaded = false;
+			this._error = false;
+			this._width = -1;
+			this._height = -1;
+			this._dat = new Image();
+			this._dat.onload = () => {
+				ImageBuff_onload(this);
+				resolve(this);
+			};
+			this._dat.onerror = () => {
+				ImageBuff_onerror(this);
+				reject(new Error(`画像の読み込みに失敗しました: ${url}`));
+			};
+			this._dat.onabort = () => {
+				ImageBuff_onerror(this);
+				reject(new Error(`画像の読み込みが中断されました: ${url}`));
+			};
+			this._dat.src = url;
+			if (this._dat.complete) {
+				this.onload();
+				resolve(this);
+			}
+		});
+	}
+
+	/**
 	 * 画像のロード完了時に行われる処理
 	 */
 	onload() {

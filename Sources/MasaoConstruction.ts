@@ -222,7 +222,7 @@ class MasaoConstruction {
 						this.pushMessage(cur.type, cur.target, cur.parameters);
 					}
 				}
-				// makeReverseChipImagrメソッド呼び出し待ち
+				// makeReverseChipImageメソッド呼び出し待ち
 				else if (cur.type == "makeReverseChipImage") {
 					if (!cur.target._dat || (cur.target._dat instanceof Image && cur.target._dat.complete)) {
 						cur.parameters.chipimage.makeReverseChipImage();
@@ -2221,6 +2221,12 @@ class MasaoConstruction {
 	getImage(url: string) {
 		const img = new ImageBuff();
 		img.load(url);
+		return img;
+	}
+
+	async getImageAsync(url: string) {
+		const img = new ImageBuff();
+		await img.loadAsync(url);
 		return img;
 	}
 
