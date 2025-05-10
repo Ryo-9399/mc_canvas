@@ -282,6 +282,20 @@ class MapSystem {
 	}
 
 	/**
+	 * 背景レイヤーを描画する
+	 */
+	drawBackgroundLayer(): void {
+		for (let j = 0; j <= rounddown(this.gg.di.height / 32); j++) {
+			for (let i = 0; i <= rounddown(this.gg.di.width / 32); i++) {
+				const layer_code = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
+				if (layer_code > 0 && layer_code < 255) {
+					this.gg.drawMapchip2(32 + i * 32, 32 + j * 32, layer_code);
+				}
+			}
+		}
+	}
+
+	/**
 	 * マップや背景レイヤー、背景画像を描画する
 	 * @param {number} view_x 画面に描画される範囲の左上のX座標
 	 * @param {number} view_y 画面に描画される範囲の左上のY座標
@@ -316,14 +330,7 @@ class MapSystem {
 		}
 		if (mode !== 4 && this.gg.layer_mode === 2) {
 			// 背景レイヤーを描画する
-			for (let j = 0; j <= rounddown(this.gg.di.height / 32); j++) {
-				for (let i = 0; i <= rounddown(this.gg.di.width / 32); i++) {
-					const layer_code = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
-					if (layer_code > 0 && layer_code < 255) {
-						this.gg.drawMapchip2(32 + i * 32, 32 + j * 32, layer_code);
-					}
-				}
-			}
+			this.drawBackgroundLayer();
 		}
 		if (mode !== 3) {
 			//水の表示条件　レイヤー表示無し（背景画像は表示）　または　レイヤー表示ありかつ水を常に表示の時
