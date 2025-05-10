@@ -26,13 +26,15 @@ class GameGraphicsForApplet {
 	os32_img: ImageBuff;
 	os32_g: Graphics;
 	pg: unknown;
-	spt_img: ImageBuff[][];
 	hi: ImageBuff[] | undefined;
 	spt_option_img: ImageBuff[];
 	layer_mode: number;
-	amapchip_img: ImageBuff | undefined;
+	amapchip_img: Map<string, ImageBuff | undefined>;
+	amapchip_img_default_name: string = "";
 	smapchip_img: ImageBuff[];
-	apt_img: ImageBuff;
+	apt_img: Map<string, ImageBuff>;
+	apt_img_default_name: string;
+	spt_img: ImageBuff[][];
 	font_score: string;
 	font_message: string;
 	system_screen_size: number;
@@ -105,10 +107,11 @@ class GameGraphicsForApplet {
 		this.pg = undefined;
 		this.spt_img = createNDimensionArray(2, this.spt_kazu);
 		this.hi = undefined;
+		this.apt_img = new Map<string, ImageBuff>();
 		this.spt_option_img = new Array(10);
 		this.layer_mode = 2;
-		this.amapchip_img = undefined;
 		this.smapchip_img = new Array(256);
+		this.amapchip_img = new Map<string, ImageBuff | undefined>();
 
 		var str = this.tdb.getValue("layer_mode");
 		var i4;
@@ -120,16 +123,17 @@ class GameGraphicsForApplet {
 			this.layer_mode = 1;
 		}
 
-		str = this.tdb.getValue("filename_pattern");
-		this.apt_img = this.ap.getImage(str);
+		this.apt_img_default_name = this.tdb.getValue("filename_pattern");
+		this.apt_img.set(this.apt_img_default_name, this.ap.getImage(this.apt_img_default_name));
 		// イメージを読み込めなかったときのハック
-		//if(this.apt_img == null)
-		//this.apt_img = new ImageBuff(this.spt_kazu_x * 32, this.spt_kazu_y * 32);
+		//if(!this.apt_img.get(this.apt_img_default_name))
+		//this.apt_img.set(this.apt_img_default_name, new ImageBuff(this.spt_kazu_x * 32, this.spt_kazu_y * 32));
 		if (this.layer_mode == 2) {
-			str = this.tdb.getValue("filename_mapchip");
-			this.amapchip_img = this.ap.getImage(str);
+			this.amapchip_img_default_name = this.tdb.getValue("filename_mapchip");
+			this.amapchip_img.set(this.amapchip_img_default_name, this.ap.getImage(this.amapchip_img_default_name));
 			// ハック
-			if (this.amapchip_img == null) this.amapchip_img = new ImageBuff(512, 512);
+			if (!this.amapchip_img.get(this.amapchip_img_default_name)) 
+				this.amapchip_img.set(this.amapchip_img_default_name, new ImageBuff(512, 512));
 		}
 
 		this.font_score = "";
@@ -160,7 +164,7 @@ class GameGraphicsForApplet {
 	 * パターン画像を32x32ピクセルごとに切り分ける共通メソッド
 	 * @private
 	 */
-	private cutPatternImage() {
+	private cutPatternImage(img: ImageBuff = this.apt_img.get(this.apt_img_default_name)!) {
 		let j, n, m, localG;
 		for (n = 0; n <= this.spt_kazu_y - 1; n++) {
 			for (m = 0; m <= this.spt_kazu_x - 1; m++) {
@@ -168,14 +172,14 @@ class GameGraphicsForApplet {
 				this.spt_img[0][j] = new ImageBuff(32, 32);
 				localG = this.spt_img[0][j].getGraphics();
 				if (localG) {
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					localG.drawImage(img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 				}
 				if (n >= this.spt_h_kijyun) {
 					this.spt_img[1][j] = new ImageBuff(32, 32);
 					localG = this.spt_img[1][j].getGraphics();
 					if (localG) {
 						localG.scale(-1, 1);
-						localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
+						localG.drawImage(img, m * 32, n * 32, 32, 32, -32, 0, 32, 32, null);
 					}
 				} else {
 					this.spt_img[1][j] = this.spt_img[0][j];
@@ -209,7 +213,7 @@ class GameGraphicsForApplet {
 				localG = this.spt_img[0][j].getGraphics();
 				if (localG) {
 					localG.setGlobalAlpha(i5);
-					localG.drawImage(this.apt_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					localG.drawImage(img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 				}
 			}
 		}
@@ -219,8 +223,8 @@ class GameGraphicsForApplet {
 	 * マップチップ画像を32x32ピクセルごとに切り分ける共通メソッド
 	 * @private
 	 */
-	private cutMapchipImage() {
-		if (this.layer_mode != 2 || !this.amapchip_img) return;
+	private cutMapchipImage(img: ImageBuff = this.amapchip_img.get(this.amapchip_img_default_name)!) {
+		if (this.layer_mode != 2 || !this.amapchip_img.get(this.amapchip_img_default_name)) return;
 
 		var n, m, j, localG;
 		for (n = 0; n <= 15; n++) {
@@ -230,7 +234,7 @@ class GameGraphicsForApplet {
 				this.smapchip_img[j] = new ImageBuff(32, 32);
 				localG = this.smapchip_img[j].getGraphics();
 				if (localG) {
-					localG.drawImage(this.amapchip_img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
+					localG.drawImage(img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 				}
 			}
 		}
@@ -241,13 +245,15 @@ class GameGraphicsForApplet {
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
 	 */
 	async setPatternImage(filename: string) {
-		this.apt_img = await this.ap.getImageAsync(filename);
+		if(!this.apt_img.has(filename)) {
+			this.apt_img.set(filename, await this.ap.getImageAsync(filename));
+		}
 		// TODO: ap.getImageがnullを返すことはあるのか？
 		// イメージを読み込めなかったときは操作を無効化するハック
-		if (this.apt_img == null) return;
-
+		if (this.apt_img.get(filename) == null) return;
+	
 		// ■■■32x32にカットする処理
-		this.cutPatternImage();
+		this.cutPatternImage(this.apt_img.get(filename));
 	}
 
 	/**
@@ -258,13 +264,15 @@ class GameGraphicsForApplet {
 		if (this.layer_mode != 2) {
 			return;
 		}
-		this.amapchip_img = await this.ap.getImageAsync(filename);
+		if(!this.amapchip_img.has(filename)) {
+			this.amapchip_img.set(filename, await this.ap.getImageAsync(filename));
+		}
 		// ハック
-		if (this.amapchip_img == null) return;
+		if (this.amapchip_img.get(filename) == null) return;
 
 		// ■■■32x32にカットする処理(mapchip)
 		if (this.layer_mode == 2) {
-			this.cutMapchipImage();
+			this.cutMapchipImage(this.amapchip_img.get(filename));
 		}
 	}
 

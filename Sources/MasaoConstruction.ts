@@ -256,11 +256,11 @@ class MasaoConstruction {
 		} else if (this.th_jm == 6) {
 			let f1 = 0,
 				f2 = 0;
-			if (this.gg.apt_img._loaded) f1 = 1;
-			else if (this.gg.apt_img._error) f1 = 2;
+			if (this.gg.apt_img.get(this.gg.apt_img_default_name)!._loaded) f1 = 1;
+			else if (this.gg.apt_img.get(this.gg.apt_img_default_name)!._error) f1 = 2;
 			if (this.gg.layer_mode == 2) {
-				if (this.gg.amapchip_img!._loaded) f2 = 1;
-				else if (this.gg.amapchip_img!._error) f2 = 2;
+				if (this.gg.amapchip_img.get(this.gg.amapchip_img_default_name)!._loaded) f2 = 1;
+				else if (this.gg.amapchip_img.get(this.gg.amapchip_img_default_name)!._error) f2 = 2;
 			} else f2 = 1;
 			this.__repaint();
 			if (f1 != 0 && f2 != 0) this.th_jm -= 1;

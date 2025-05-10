@@ -4708,8 +4708,10 @@ class MainProgram {
 			for (const layer of stage.layers) {
 				if (layer.type === "main") {
 					mainLayer = layer;
+					this.setSystemImage(8, layer.src ?? this.tdb.getValue("filename_pattern"));
 				} else if (layer.type === "mapchip") {
 					mapchipLayer = layer;
+					this.setSystemImage(9, layer.src ?? this.tdb.getValue("filename_mapchip"));
 				}
 			}
 			// カスタムチップの定義を解析
