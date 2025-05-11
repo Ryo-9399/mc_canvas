@@ -4647,8 +4647,24 @@ class MainProgram {
 				for (let l4 = 1; l4 < this.maps.width; l4++) this.maps.map_bg[l4][19] = 21;
 			else for (let i5 = 1; i5 < this.maps.width; i5++) this.maps.map_bg[i5][40] = 21;
 		}
-		if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1)
-			this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
+		const advance_map = this.tdb.options["advanced-map"];
+		if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1) {
+			if (advance_map) {
+				const stage = advance_map.stages[this.stage - 1];
+				// 背景画像を描画
+				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 2);
+				for (const layer of [...stage.layers].reverse()) {
+					if (layer.type === "mapchip") {
+						this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
+					} else if (layer.type === "main") {
+						this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
+					}
+				}
+			}
+			else{
+				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
+			}
+		}
 		else this.maps.drawMap(this.maps.wx, this.maps.wy);
 		this.gs.rsInit();
 		if (this.clear_type == 2 || this.clear_type == 3) {
