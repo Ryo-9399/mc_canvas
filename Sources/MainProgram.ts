@@ -4648,24 +4648,25 @@ class MainProgram {
 				for (let l4 = 1; l4 < this.maps.width; l4++) this.maps.map_bg[l4][19] = 21;
 			else for (let i5 = 1; i5 < this.maps.width; i5++) this.maps.map_bg[i5][40] = 21;
 		}
-		const advance_map = this.tdb.options["advanced-map"];
-		let mapchipLayerIndex = this.maps.layer_count - 1;
+		// 画像ロードが終わってない状態で描画しようとするとエラーになるので一旦コメントアウト（従来の表示のまま）
+		// const advance_map = this.tdb.options["advanced-map"];
+		// let mapchipLayerIndex = this.maps.layer_count - 1;
 		if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1) {
-			if (advance_map) {
-				const stage = advance_map.stages[this.stage - 1];
-				// 背景画像を描画
-				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 2);
-				for (const layer of [...stage.layers].reverse()) {
-					if (layer.type === "mapchip") {
-						this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3, mapchipLayerIndex--);
-					} else if (layer.type === "main") {
-						this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
-					}
-				}
-			}
-			else{
+		// 	if (advance_map) {
+		// 		const stage = advance_map.stages[this.stage - 1];
+		// 		// 背景画像を描画
+		// 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 2);
+		// 		for (const layer of [...stage.layers].reverse()) {
+		// 			if (layer.type === "mapchip") {
+		// 				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3, mapchipLayerIndex--);
+		// 			} else if (layer.type === "main") {
+		// 				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
+		// 			}
+		// 		}
+		// 	}
+		// 	else{
 				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
-			}
+		// 	}
 		}
 		else this.maps.drawMap(this.maps.wx, this.maps.wy);
 		this.gs.rsInit();
