@@ -317,7 +317,7 @@ class MapSystem {
 			// 背景画像を描画する
 			this.gg.fill2();
 
-			// セカンド画像と背景画像を描画
+			// セカンド画像を背景画像の奥に描画
 			if (this.mp.second_gazou_visible && this.mp.second_gazou_priority === 1 && this.mp.second_gazou_img != null) {
 				this.drawSecondImage(xmod, ymod);
 			}
