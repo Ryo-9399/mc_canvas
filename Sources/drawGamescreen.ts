@@ -10,6 +10,7 @@ import { MainProgram } from "./MainProgram";
 export const drawGamescreen = function (this: MainProgram) {
 	const advance_map = this.tdb.options["advanced-map"];
     let mainLayerIndex = 0;
+	let mapchipLayerIndex = this.maps.layer_count - 1;
 	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1) {
 		// 背景レイヤーを使用している、または背景画像を使用している時にマップチップの描画
 		if (advance_map) {
@@ -21,7 +22,7 @@ export const drawGamescreen = function (this: MainProgram) {
 				const layer = layers[i];
 				if (layer.type === "mapchip") {
 					// mainレイヤーより背面のmapchipレイヤーを描画
-					this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
+					this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3, mapchipLayerIndex--);
 				} else if (layer.type === "main") {
 					// mainレイヤーを描画
 					this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
@@ -101,7 +102,7 @@ export const drawGamescreen = function (this: MainProgram) {
 		for (let i = mainLayerIndex - 1; i >= 0; i--) {
 			const layer = layers[i];
 			if (layer.type === "mapchip") {
-				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
+				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3, mapchipLayerIndex--);
 			}
 		}
 	}

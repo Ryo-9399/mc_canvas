@@ -9,7 +9,8 @@ class MapSystem {
 	gg: GameGraphicsForApplet;
 	mp: MainProgram;
 	map_bg: number[][];
-	map_bg_layer: number[][];
+	map_bg_layer: number[][][];
+	layer_count: number;
 	map_string: string[];
 	map_string_layer: string[];
 	wx: number;
@@ -36,7 +37,9 @@ class MapSystem {
 		this.gg = gamegraphics;
 		this.mp = mainprogram;
 		this.map_bg = createNDimensionArray(this.width, this.height);
-		this.map_bg_layer = createNDimensionArray(this.width, this.height);
+		const advance_map = this.mp.tdb.options["advanced-map"];
+		this.layer_count = advance_map?.stages[this.mp.stage - 1].layers.filter((layer) => layer.type === "mapchip").length ?? 1;
+		this.map_bg_layer = createNDimensionArray(this.layer_count, this.width, this.height);
 		this.map_string = new Array(this.height);
 		this.map_string_layer = new Array(this.height);
 		this.wx = 0;
@@ -70,7 +73,13 @@ class MapSystem {
 		for (let y = 0; y < this.height; y++) {
 			for (let x = 0; x < this.width; x++) {
 				this.map_bg[x][y] = 0;
-				this.map_bg_layer[x][y] = 0;
+			}
+		}
+		for (let i = 0; i < this.layer_count; i++) {
+			for (let y = 0; y < this.height; y++) {
+				for (let x = 0; x < this.width; x++) {
+					this.map_bg_layer[i][x][y] = 0;
+				}
 			}
 		}
 		const bg_space = ".".repeat(this.width + 1);
@@ -284,12 +293,12 @@ class MapSystem {
 	/**
 	 * 背景レイヤーを描画する
 	 */
-	drawBackgroundLayer(): void {
+	drawBackgroundLayer(index: number): void {
 		for (let j = 0; j <= rounddown(this.gg.di.height / 32); j++) {
 			for (let i = 0; i <= rounddown(this.gg.di.width / 32); i++) {
-				const layer_code = this.map_bg_layer[this.os2_wx + i][this.os2_wy + j];
+				const layer_code = this.map_bg_layer[index][this.os2_wx + i][this.os2_wy + j];
 				if (layer_code > 0 && layer_code < 255) {
-					this.gg.drawMapchip2(32 + i * 32, 32 + j * 32, layer_code);
+					this.gg.drawMapchip2(32 + i * 32, 32 + j * 32, layer_code, index);
 				}
 			}
 		}
@@ -302,8 +311,9 @@ class MapSystem {
 	 * @param {number} g_ac2 コインなどのアニメーションに使用するカウンター
 	 * @param {number} gazou_scroll 背景画像のスクロール設定
 	 * @param {number} mode 何を描画するかを指定する 1:すべて描画 2:背景のみ 3:背景レイヤーのみ 4:マップのみ
+	 * @param {number} index レイヤーのインデックス（デフォルトは0）
 	 */
-	drawMapLayer(view_x: number, view_y: number, g_ac2: number, gazou_scroll: number, mode: number) {
+	drawMapLayer(view_x: number, view_y: number, g_ac2: number, gazou_scroll: number, mode: number, index: number = 0) {
 		this.wx = view_x;
 		this.wy = view_y;
 		const xmod = this.wx % 32;
@@ -330,7 +340,7 @@ class MapSystem {
 		}
 		if (mode !== 4 && this.gg.layer_mode === 2) {
 			// 背景レイヤーを描画する
-			this.drawBackgroundLayer();
+			this.drawBackgroundLayer(index);
 		}
 		if (mode !== 3) {
 			//水の表示条件　レイヤー表示無し（背景画像は表示）　または　レイヤー表示ありかつ水を常に表示の時
