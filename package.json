@@ -33,15 +33,15 @@
     }
   },
   "devDependencies": {
-    "@babel/cli": "^7.26.4",
-    "@babel/core": "^7.26.7",
-    "@babel/preset-env": "^7.26.7",
-    "babel-loader": "^9.2.1",
+    "@babel/cli": "^7.27.2",
+    "@babel/core": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "babel-loader": "^10.0.0",
     "babel-plugin-transform-globalthis": "^1.0.0",
-    "chai": "^5.1.2",
+    "chai": "^5.2.0",
     "chai-karma-snapshot": "^0.8.0",
-    "express": "^4.21.2",
-    "globby": "^14.0.2",
+    "express": "^5.1.0",
+    "globby": "^14.1.0",
     "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^2.0.0",
@@ -60,18 +60,18 @@
     "karma-snapshot": "^0.6.0",
     "karma-sourcemap-loader": "^0.4.0",
     "karma-webpack": "^5.0.1",
-    "mocha": "^11.1.0",
+    "mocha": "^11.2.2",
     "nunjucks": "^3.2.4",
-    "open": "^10.1.0",
-    "prettier": "^3.4.2",
-    "pretty-quick": "^4.0.0",
-    "typescript": "^5.7.3",
+    "open": "^10.1.2",
+    "prettier": "^3.5.3",
+    "pretty-quick": "^4.1.1",
+    "typescript": "^5.8.3",
     "uglify-es": "^3.3.9",
-    "webpack": "^5.97.1",
+    "webpack": "^5.99.8",
     "webpack-cli": "^6.0.1",
     "webpack-stream": "^7.0.0"
   },
   "dependencies": {
-    "core-js": "^3.40.0"
+    "core-js": "^3.42.0"
   }
 }

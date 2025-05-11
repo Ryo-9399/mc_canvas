@@ -31,7 +31,7 @@ class GameGraphicsForApplet {
 	layer_mode: number;
 	amapchip_img: Map<string, ImageBuff | undefined>;
 	amapchip_img_default_name: string = "";
-	smapchip_img: ImageBuff[];
+	smapchip_img: ImageBuff[][];
 	apt_img: Map<string, ImageBuff>;
 	apt_img_default_name: string;
 	spt_img: ImageBuff[][];
@@ -110,7 +110,7 @@ class GameGraphicsForApplet {
 		this.apt_img = new Map<string, ImageBuff>();
 		this.spt_option_img = new Array(10);
 		this.layer_mode = 2;
-		this.smapchip_img = new Array(256);
+		this.smapchip_img = createNDimensionArray(1, 256);
 		this.amapchip_img = new Map<string, ImageBuff | undefined>();
 
 		var str = this.tdb.getValue("layer_mode");
@@ -223,16 +223,15 @@ class GameGraphicsForApplet {
 	 * マップチップ画像を32x32ピクセルごとに切り分ける共通メソッド
 	 * @private
 	 */
-	private cutMapchipImage(img: ImageBuff = this.amapchip_img.get(this.amapchip_img_default_name)!) {
+	private cutMapchipImage(img: ImageBuff = this.amapchip_img.get(this.amapchip_img_default_name)!, index: number = 0) {
 		if (this.layer_mode != 2 || !this.amapchip_img.get(this.amapchip_img_default_name)) return;
-
 		var n, m, j, localG;
 		for (n = 0; n <= 15; n++) {
 			for (m = 0; m <= 15; m++) {
 				j = n * 16 + m;
 
-				this.smapchip_img[j] = new ImageBuff(32, 32);
-				localG = this.smapchip_img[j].getGraphics();
+				this.smapchip_img[index][j] = new ImageBuff(32, 32);
+				localG = this.smapchip_img[index][j].getGraphics();
 				if (localG) {
 					localG.drawImage(img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 				}
@@ -259,8 +258,9 @@ class GameGraphicsForApplet {
 	/**
 	 * 画像を読み込み、新たなマップチップ画像とする
 	 * @param {string} filename ファイル名(または画像のURL,相対パス)
+	 * @param {number} index レイヤー番号
 	 */
-	async setMapchipImage(filename: string) {
+	async setMapchipImage(filename: string, index: number) {
 		if (this.layer_mode != 2) {
 			return;
 		}
@@ -272,7 +272,7 @@ class GameGraphicsForApplet {
 
 		// ■■■32x32にカットする処理(mapchip)
 		if (this.layer_mode == 2) {
-			this.cutMapchipImage(this.amapchip_img.get(filename));
+			this.cutMapchipImage(this.amapchip_img.get(filename), index);
 		}
 	}
 
@@ -453,9 +453,10 @@ class GameGraphicsForApplet {
 	 * @param {number} wx 画面上のX座標
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} code パターンコード
+	 * @param {number} index レイヤー番号
 	 */
-	drawMapchip(wx: number, wy: number, code: number) {
-		this.os_g.drawImage(this.smapchip_img[code], wx, wy, this.ap);
+	drawMapchip(wx: number, wy: number, code: number, index: number) {
+		this.os_g.drawImage(this.smapchip_img[index][code], wx, wy, this.ap);
 	}
 
 	/**
@@ -463,9 +464,10 @@ class GameGraphicsForApplet {
 	 * @param {number} wx 画面上のX座標
 	 * @param {number} wy 画面上のY座標
 	 * @param {number} code パターンコード
+	 * @param {number} index レイヤー番号
 	 */
-	drawMapchip2(wx: number, wy: number, code: number) {
-		this.os2_g.drawImage(this.smapchip_img[code], wx, wy, this.ap);
+	drawMapchip2(wx: number, wy: number, code: number, index: number) {
+		this.os2_g.drawImage(this.smapchip_img[index][code], wx, wy, this.ap);
 	}
 
 	/**

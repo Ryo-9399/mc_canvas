@@ -1359,9 +1359,10 @@ class MainProgram {
 	 *
 	 * @param {number} type 画像の種類
 	 * @param {string} filename ファイル名
+	 * @param {number} index レイヤーのインデックス
 	 * @see {@link MasaoJSS#setSystemImage}
 	 */
-	setSystemImage(s: string | number, s1: string) {
+	setSystemImage(s: string | number, s1: string, index: number = 0) {
 		let i;
 
 		i = parseInt(s as string);
@@ -1369,7 +1370,7 @@ class MainProgram {
 		if (i < 0 || i > 9) return false;
 		if (i == 8) this.gg.setPatternImage(s1);
 		else if (i == 9) {
-			this.gg.setMapchipImage(s1);
+			this.gg.setMapchipImage(s1, index);
 		} else {
 			if (this.gg.layer_mode != 2 && this.mcs_haikei_visible != 1 && i > 3) return false;
 			this.gg.li[i] = this.gg.loadImage(s1)!;
@@ -2462,7 +2463,7 @@ class MainProgram {
 		} else {
 			i++;
 			j += 10;
-			this.maps.map_bg_layer[i][j] = k;
+			this.maps.map_bg_layer[0][i][j] = k;
 			return true;
 		}
 	}
@@ -2491,7 +2492,7 @@ class MainProgram {
 		} else {
 			i++;
 			j += 10;
-			const word0 = this.maps.map_bg_layer[i][j];
+			const word0 = this.maps.map_bg_layer[0][i][j];
 			return word0;
 		}
 	}
@@ -4647,23 +4648,25 @@ class MainProgram {
 				for (let l4 = 1; l4 < this.maps.width; l4++) this.maps.map_bg[l4][19] = 21;
 			else for (let i5 = 1; i5 < this.maps.width; i5++) this.maps.map_bg[i5][40] = 21;
 		}
-		const advance_map = this.tdb.options["advanced-map"];
+		// 画像ロードが終わってない状態で描画しようとするとエラーになるので一旦コメントアウト（従来の表示のまま）
+		// const advance_map = this.tdb.options["advanced-map"];
+		// let mapchipLayerIndex = this.maps.layer_count - 1;
 		if (this.gg.layer_mode == 2 || this.mcs_haikei_visible == 1) {
-			if (advance_map) {
-				const stage = advance_map.stages[this.stage - 1];
-				// 背景画像を描画
-				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 2);
-				for (const layer of [...stage.layers].reverse()) {
-					if (layer.type === "mapchip") {
-						this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
-					} else if (layer.type === "main") {
-						this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
-					}
-				}
-			}
-			else{
+		// 	if (advance_map) {
+		// 		const stage = advance_map.stages[this.stage - 1];
+		// 		// 背景画像を描画
+		// 		this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 2);
+		// 		for (const layer of [...stage.layers].reverse()) {
+		// 			if (layer.type === "mapchip") {
+		// 				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3, mapchipLayerIndex--);
+		// 			} else if (layer.type === "main") {
+		// 				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
+		// 			}
+		// 		}
+		// 	}
+		// 	else{
 				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 1);
-			}
+		// 	}
 		}
 		else this.maps.drawMap(this.maps.wx, this.maps.wy);
 		this.gs.rsInit();
@@ -4712,8 +4715,9 @@ class MainProgram {
 		var advance_map = this.tdb.options["advanced-map"];
 		var stage = null;
 		var mainLayer: MainLayer | undefined = undefined;
-		var mapchipLayer: MapchipLayer | undefined = undefined;
+		var mapchipLayer: (MapchipLayer | undefined)[] = [];
 		var customParts = null;
+		let layer_count = 0
 
 		if (advance_map) {
 			// 現在のステージのサイズを取得
@@ -4726,8 +4730,9 @@ class MainProgram {
 					mainLayer = layer;
 					this.setSystemImage(8, layer.src ?? this.tdb.getValue("filename_pattern"));
 				} else if (layer.type === "mapchip") {
-					mapchipLayer = layer;
-					this.setSystemImage(9, layer.src ?? this.tdb.getValue("filename_mapchip"));
+					if(layer_count > 0) this.gg.smapchip_img.push(Array(256))
+					mapchipLayer[layer_count] = layer;
+					this.setSystemImage(9, layer.src ?? this.tdb.getValue("filename_mapchip"), layer_count++);
 				}
 			}
 			// カスタムチップの定義を解析
@@ -4885,43 +4890,45 @@ class MainProgram {
 			}
 		}
 		if (this.gg.layer_mode == 2) {
-			for (var j3 = 0; j3 < this.maps.height; j3++) {
-				for (var i1 = 0; i1 < this.maps.width; i1++) {
-					var word0 = 0;
-					if (mapchipLayer) {
-						word0 = mapchipLayer.map[j3 - 10] ? mapchipLayer.map[j3 - 10][i1 - 1] : 0;
-					} else {
-						var c = as1[j3].charAt(i1 * 2);
-						if (c == ".") continue;
-						var j = 0;
-						do {
-							if (j > 15) break;
-							if (c == s8.charAt(j)) {
-								word0 = Math.floor(j * 16);
-								break;
-							}
-							if (c == s9.charAt(j)) {
-								word0 = Math.floor(j * 16);
-								break;
-							}
-							j++;
-						} while (true);
-						c = as1[j3].charAt(i1 * 2 + 1);
-						j = 0;
-						do {
-							if (j > 15) break;
-							if (c == s8.charAt(j)) {
-								word0 += j;
-								break;
-							}
-							if (c == s9.charAt(j)) {
-								word0 += j;
-								break;
-							}
-							j++;
-						} while (true);
+			for (let index = 0; index < this.maps.layer_count; index++){
+				for (var j3 = 0; j3 < this.maps.height; j3++) {
+					for (var i1 = 0; i1 < this.maps.width; i1++) {
+						var word0 = 0;
+						if (mapchipLayer[index]) {
+							word0 = mapchipLayer[index]?.map[j3 - 10] ? mapchipLayer[index]?.map[j3 - 10][i1 - 1]! : 0;
+						} else {
+							var c = as1[j3].charAt(i1 * 2);
+							if (c == ".") continue;
+							var j = 0;
+							do {
+								if (j > 15) break;
+								if (c == s8.charAt(j)) {
+									word0 = Math.floor(j * 16);
+									break;
+								}
+								if (c == s9.charAt(j)) {
+									word0 = Math.floor(j * 16);
+									break;
+								}
+								j++;
+							} while (true);
+							c = as1[j3].charAt(i1 * 2 + 1);
+							j = 0;
+							do {
+								if (j > 15) break;
+								if (c == s8.charAt(j)) {
+									word0 += j;
+									break;
+								}
+								if (c == s9.charAt(j)) {
+									word0 += j;
+									break;
+								}
+								j++;
+							} while (true);
+						}
+						this.maps.map_bg_layer[index][i1][j3] = word0;
 					}
-					this.maps.map_bg_layer[i1][j3] = word0;
 				}
 			}
 		}
