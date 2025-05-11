@@ -9,27 +9,23 @@ import { MainProgram } from "./MainProgram";
  */
 export const drawGamescreen = function (this: MainProgram) {
 	const advance_map = this.tdb.options["advanced-map"];
-    const stageData = advance_map ? {
-        stage: advance_map.stages[this.stage - 1],
-        get reversedLayers() { 
-            return [...this.stage.layers].reverse();
-        }
-    } : null;
-    let mainLayerIndex = -1;
+    let mainLayerIndex = 0;
 	if (this.gg.layer_mode === 2 || this.mcs_haikei_visible === 1) {
 		// 背景レイヤーを使用している、または背景画像を使用している時にマップチップの描画
 		if (advance_map) {
 			// 背景画像を描画
 			this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 2);
 			// レイヤーを逆順にループ
-			for (mainLayerIndex = 0; mainLayerIndex < stageData!.reversedLayers.length; mainLayerIndex++) {
-				const layer = stageData!.reversedLayers[mainLayerIndex];
+			const layers = advance_map.stages[this.stage - 1].layers;
+			for (let i = layers.length - 1; i >= 0; i--) {
+				const layer = layers[i];
 				if (layer.type === "mapchip") {
 					// mainレイヤーより背面のmapchipレイヤーを描画
 					this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
 				} else if (layer.type === "main") {
 					// mainレイヤーを描画
 					this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 4);
+					mainLayerIndex = i;
 					break;
 				}
 			}
@@ -99,14 +95,13 @@ export const drawGamescreen = function (this: MainProgram) {
 	if (this.system_draw_mode < 2) drawGameScreenJSS.drawGamescreenMy.apply(this);
 	if (this.j_muteki_c > 0) this.j_muteki_c--;
 
-	if (this.gg.layer_mode === 2 && advance_map && mainLayerIndex !== -1) {
+	if (this.gg.layer_mode === 2 && advance_map && mainLayerIndex > 0) {
 		// mainレイヤーより前面のmapchipレイヤーを描画
-		if (mainLayerIndex + 1 < stageData!.reversedLayers.length) {
-			for (let i = mainLayerIndex + 1; i < stageData!.reversedLayers.length; i++) {
-				const layer = stageData!.reversedLayers[i];
-				if (layer.type === "mapchip") {
-					this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
-				}
+		const layers = advance_map.stages[this.stage - 1].layers;
+		for (let i = mainLayerIndex - 1; i >= 0; i--) {
+			const layer = layers[i];
+			if (layer.type === "mapchip") {
+				this.maps.drawMapLayer(this.maps.wx, this.maps.wy, this.g_ac2, this.gazou_scroll, 3);
 			}
 		}
 	}
