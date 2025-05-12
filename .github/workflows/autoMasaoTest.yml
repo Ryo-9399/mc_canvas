@@ -18,10 +18,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Git Fetch Latest tag
-      run: |
-        git fetch --prune --unshallow
+      with:
+        fetch-depth: 0
 
     - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
