@@ -396,6 +396,22 @@ class MasaoConstruction {
 			}
 		}
 
+		// JSONから各ステージ、レイヤーごとに画像をロード
+		if (this.options["advanced-map"] && typeof this.options["advanced-map"] === "object") {
+			const stages = this.options["advanced-map"].stages;
+			if (Array.isArray(stages) && stages.length > 0) {
+				for (const stage of stages) {
+					if (stage && stage.layers) {
+						stage.layers.forEach(layer => {
+							if (layer.src) {
+								this.getImage(layer.src);
+							}
+						});
+					}
+				}
+			}
+		}
+
 		this.th_interval = this.tdb.getValueInt("game_speed");
 		if (this.th_interval < 1) {
 			this.th_interval = 1;
