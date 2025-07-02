@@ -1,4 +1,4 @@
-import { Color, Font } from "./ImageBuff";
+import { Color, Font, ImageBuff } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
 import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
 import { MainProgram } from "./MainProgram";
@@ -1373,6 +1373,42 @@ export const drawBoss = function (this: MainProgram) {
 			}
 		}
 	};
+
+	/**
+	 * 指定したパターン画像を回転させて描画します
+	 * @param hihIndex 0:通常 1:反転
+	 * @param code 左上のパターンコード
+	 * @param nx 横方向タイル数
+	 * @param ny 縦方向タイル数
+	 * @param x 描画x座標
+	 * @param y 描画y座標
+	 * @param rad 回転ラジアン
+	 */
+	const drawWideRotated = (
+		hihIndex: 0 | 1,
+		code: number,
+		nx: number,
+		ny: number,
+		x: number,
+		y: number,
+		rad: number
+	) => {
+		const tmpImg = new ImageBuff(nx * 32, ny * 32);
+		const tmpG = tmpImg.getGraphics();
+		if (tmpG) {
+			for (let cy = 0; cy < ny; cy++) {
+				for (let cx = 0; cx < nx; cx++) {
+					const code_x = hihIndex === 0 ? cx : nx - 1 - cx;
+					tmpG.drawImage(this.hih[hihIndex][code + cy * 10 + code_x], cx * 32, cy * 32);
+				}
+			}
+		}
+		this.hg.dispose();
+		this.hg.rotate(rad, x + nx * 16, y + ny * 16);
+		this.hg.drawImage(tmpImg, x, y, this.ap);
+		this.hg.dispose();
+	};
+
 	switch (this.co_b.pt) {
 		default:
 			break;
@@ -1404,11 +1440,7 @@ export const drawBoss = function (this: MainProgram) {
 
 		// カイオール バブル光線回転連射 左向き
 		case Boss.PATTERN_BOSS2_ROTATE_LEFT:
-			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(0, 188, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 
 		// カイオール 右向き
@@ -1418,11 +1450,7 @@ export const drawBoss = function (this: MainProgram) {
 
 		// カイオール バブル光線回転連射 右向き
 		case Boss.PATTERN_BOSS2_ROTATE_RIGHT:
-			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(1, 188, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 
 		// カイオール つぶれ状態 左向き
@@ -1481,10 +1509,7 @@ export const drawBoss = function (this: MainProgram) {
 
 		// センクウザ 回転 左向き
 		case Boss.PATTERN_BOSS3_ROTATE_LEFT:
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(0, 238, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 
 		// センクウザ バリア状態 右向き
@@ -1513,10 +1538,7 @@ export const drawBoss = function (this: MainProgram) {
 
 		// センクウザ 回転 右向き
 		case Boss.PATTERN_BOSS3_ROTATE_RIGHT:
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(1, 238, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 	}
 };
