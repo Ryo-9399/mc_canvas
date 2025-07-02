@@ -8,7 +8,7 @@
  * @param h {number} 画像の高さ
  * @constructor
  */
-class ImageBuff implements ImageBuff {
+class ImageBuff {
 	_dat: HTMLCanvasElement | HTMLImageElement | null;
 	_width: number;
 	_height: number;
