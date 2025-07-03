@@ -147,6 +147,38 @@ const drawWideRotated = (mp: MainProgram,
 export const drawA = function (this: MainProgram) {
 	const ai = new Array(26); // ファイヤーリング表示用配列1
 	const ai1 = new Array(26); // ファイヤーリング表示用配列2
+
+	/**
+	 * 回転するドッスンスンを描画する
+	 * @param co_wx 描画X座標
+	 * @param co_wy 描画Y座標
+	 * @param angle 回転角度（度単位）
+	 * @param scale 拡大率
+	 */
+	const drawRotatingDossunsun = (
+		co_wx: number,
+		co_wy: number,
+		angle: number,
+		scale: number
+	) => {
+		const tmpImg = new ImageBuff(3 * 32, 2 * 32);
+		const tmpG = tmpImg.getGraphics();
+		if (tmpG) {
+			tmpG.drawImage(this.hi[183], 0, 0, this.ap);
+			tmpG.drawImage(this.hi[184], 32, 0, this.ap);
+			tmpG.drawImage(this.hi[185], 64, 0, this.ap);
+			tmpG.drawImage(this.hi[193], 0, 32, this.ap);
+			tmpG.drawImage(this.hi[194], 32, 32, this.ap);
+			tmpG.drawImage(this.hi[195], 64, 32, this.ap);
+		}
+		this.hg.dispose();
+		this.hg.translate(co_wx + 48, co_wy + 32);
+		this.hg.scale(scale, scale);
+		this.hg.rotate((angle * Math.PI) / 180, 0, 0);
+		this.hg.drawImage(tmpImg, -48, -32, this.ap);
+		this.hg.dispose();
+	};
+
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.a_kazu; i++) {
@@ -632,32 +664,12 @@ export const drawA = function (this: MainProgram) {
 
 				case 2500:
 					// 回転するドッスンスン
-					this.hg.dispose();
-					this.hg.translate(co_wx, co_wy);
-					this.hg.scale(1.5, 1.5);
-					this.hg.rotate((characterobject.vy * Math.PI) / 180, 0.0, 0.0);
-					this.hg.drawImage(this.hi[183], -48, -32, this.ap);
-					this.hg.drawImage(this.hi[184], -16, -32, this.ap);
-					this.hg.drawImage(this.hi[185], 16, -32, this.ap);
-					this.hg.drawImage(this.hi[193], -48, 0, this.ap);
-					this.hg.drawImage(this.hi[194], -16, 0, this.ap);
-					this.hg.drawImage(this.hi[195], 16, 0, this.ap);
-					this.hg.dispose();
+					drawRotatingDossunsun(co_wx, co_wy, characterobject.vy, 1.5);
 					break;
 
 				case 2600:
 					// 回転する巨大ドッスンスン
-					this.hg.dispose();
-					this.hg.translate(co_wx, co_wy);
-					this.hg.scale(2.5, 2.5);
-					this.hg.rotate((characterobject.vy * Math.PI) / 180, 0.0, 0.0);
-					this.hg.drawImage(this.hi[183], -48, -32, this.ap);
-					this.hg.drawImage(this.hi[184], -16, -32, this.ap);
-					this.hg.drawImage(this.hi[185], 16, -32, this.ap);
-					this.hg.drawImage(this.hi[193], -48, 0, this.ap);
-					this.hg.drawImage(this.hi[194], -16, 0, this.ap);
-					this.hg.drawImage(this.hi[195], 16, 0, this.ap);
-					this.hg.dispose();
+					drawRotatingDossunsun(co_wx, co_wy, characterobject.vy, 2.5);
 					break;
 
 				case 2800:
