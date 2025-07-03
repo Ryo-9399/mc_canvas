@@ -1,6 +1,7 @@
 import { Color, Font, ImageBuff } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
 import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { CharacterObject } from "./CharacterObject";
 import { MainProgram } from "./MainProgram";
 
 /**
@@ -139,6 +140,72 @@ const drawWideRotated = (mp: MainProgram,
 	mp.hg.rotate(rad, x + nx * 16, y + ny * 16);
 	mp.hg.drawImage(tmpImg, x, y, mp.ap);
 	mp.hg.dispose();
+};
+
+/**
+ * 人間大砲を描画します
+ * @param mp MainProgram
+ * @param characterobject 人間大砲のキャラクターオブジェクト
+ * @param co_wx 描画X座標
+ * @param co_wy 描画Y座標
+ */
+const drawNingentaihou = (
+	mp: MainProgram,
+	characterobject: CharacterObject,
+	co_wx: number,
+	co_wy: number
+) => {
+	const rad = (characterobject.c4 * Math.PI) / 180;
+	mp.hg.setColor(mp.gamecolor_mizunohadou);
+	mp.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
+	mp.vo_pa_x[0] = co_wx + 16 + Math.cos(rad + Math.PI / 2) * 20;
+	mp.vo_pa_y[0] = co_wy + 16 + Math.sin(rad + Math.PI / 2) * 20;
+	mp.vo_pa_x[1] = co_wx + 16 + Math.cos(rad - Math.PI / 2) * 20;
+	mp.vo_pa_y[1] = co_wy + 16 + Math.sin(rad - Math.PI / 2) * 20;
+	mp.vo_pa_x[2] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad - Math.PI / 2) * 20;
+	mp.vo_pa_y[2] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad - Math.PI / 2) * 20;
+	mp.vo_pa_x[3] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad + Math.PI / 2) * 20;
+	mp.vo_pa_y[3] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad + Math.PI / 2) * 20;
+	mp.hg.fillPolygon(mp.vo_pa_x, mp.vo_pa_y, 4);
+	mp.hg.setColor(mp.gamecolor_firebar2);
+	if (characterobject.c3 === 0 || characterobject.c3 === 1) {
+		mp.vo_pa_x[0] = co_wx + 16 - 6;
+		mp.vo_pa_y[0] = co_wy + 16 - 4;
+		mp.vo_pa_x[1] = co_wx + 16 + 6;
+		mp.vo_pa_y[1] = co_wy + 16 - 4;
+		mp.vo_pa_x[2] = co_wx + 16 + 12;
+		mp.vo_pa_y[2] = co_wy + 32 + 12;
+		mp.vo_pa_x[3] = co_wx + 16 - 12;
+		mp.vo_pa_y[3] = co_wy + 32 + 12;
+	} else if (characterobject.c3 === 2) {
+		mp.vo_pa_x[0] = co_wx + 16 - 6;
+		mp.vo_pa_y[0] = co_wy + 16 + 4;
+		mp.vo_pa_x[1] = co_wx + 16 + 6;
+		mp.vo_pa_y[1] = co_wy + 16 + 4;
+		mp.vo_pa_x[2] = co_wx + 16 + 12;
+		mp.vo_pa_y[2] = co_wy - 32;
+		mp.vo_pa_x[3] = co_wx + 16 - 12;
+		mp.vo_pa_y[3] = co_wy - 32;
+	} else if (characterobject.c3 === 3) {
+		mp.vo_pa_x[0] = co_wx + 16 - 4;
+		mp.vo_pa_y[0] = co_wy + 16 - 6;
+		mp.vo_pa_x[1] = co_wx + 16 - 4;
+		mp.vo_pa_y[1] = co_wy + 16 + 6;
+		mp.vo_pa_x[2] = co_wx + 64;
+		mp.vo_pa_y[2] = co_wy + 16 + 12;
+		mp.vo_pa_x[3] = co_wx + 64;
+		mp.vo_pa_y[3] = co_wy + 16 - 12;
+	} else {
+		mp.vo_pa_x[0] = co_wx + 16 + 4;
+		mp.vo_pa_y[0] = co_wy + 16 - 6;
+		mp.vo_pa_x[1] = co_wx + 16 + 4;
+		mp.vo_pa_y[1] = co_wy + 16 + 6;
+		mp.vo_pa_x[2] = co_wx - 32;
+		mp.vo_pa_y[2] = co_wy + 16 + 12;
+		mp.vo_pa_x[3] = co_wx - 32;
+		mp.vo_pa_y[3] = co_wy + 16 - 12;
+	}
+	mp.hg.fillPolygon(mp.vo_pa_x, mp.vo_pa_y, 4);
 };
 
 /**
@@ -526,72 +593,7 @@ export const drawA = function (this: MainProgram) {
 
 				case 2200:
 					// 人間大砲
-					this.hg.setColor(this.gamecolor_mizunohadou);
-					this.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
-					this.vo_pa_x[0] = co_wx + 16 + Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[0] = co_wy + 16 + Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.vo_pa_x[1] = co_wx + 16 + Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[1] = co_wy + 16 + Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_x[2] =
-						co_wx +
-						16 +
-						Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[2] =
-						co_wy +
-						16 +
-						Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_x[3] =
-						co_wx +
-						16 +
-						Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[3] =
-						co_wy +
-						16 +
-						Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-					this.hg.setColor(this.gamecolor_firebar2);
-					if (characterobject.c3 === 0 || characterobject.c3 === 1) {
-						this.vo_pa_x[0] = co_wx + 16 - 6;
-						this.vo_pa_y[0] = co_wy + 16 - 4;
-						this.vo_pa_x[1] = co_wx + 16 + 6;
-						this.vo_pa_y[1] = co_wy + 16 - 4;
-						this.vo_pa_x[2] = co_wx + 16 + 12;
-						this.vo_pa_y[2] = co_wy + 32 + 12;
-						this.vo_pa_x[3] = co_wx + 16 - 12;
-						this.vo_pa_y[3] = co_wy + 32 + 12;
-					} else if (characterobject.c3 === 2) {
-						this.vo_pa_x[0] = co_wx + 16 - 6;
-						this.vo_pa_y[0] = co_wy + 16 + 4;
-						this.vo_pa_x[1] = co_wx + 16 + 6;
-						this.vo_pa_y[1] = co_wy + 16 + 4;
-						this.vo_pa_x[2] = co_wx + 16 + 12;
-						this.vo_pa_y[2] = co_wy - 32;
-						this.vo_pa_x[3] = co_wx + 16 - 12;
-						this.vo_pa_y[3] = co_wy - 32;
-					} else if (characterobject.c3 === 3) {
-						this.vo_pa_x[0] = co_wx + 16 - 4;
-						this.vo_pa_y[0] = co_wy + 16 - 6;
-						this.vo_pa_x[1] = co_wx + 16 - 4;
-						this.vo_pa_y[1] = co_wy + 16 + 6;
-						this.vo_pa_x[2] = co_wx + 64;
-						this.vo_pa_y[2] = co_wy + 16 + 12;
-						this.vo_pa_x[3] = co_wx + 64;
-						this.vo_pa_y[3] = co_wy + 16 - 12;
-					} else {
-						this.vo_pa_x[0] = co_wx + 16 + 4;
-						this.vo_pa_y[0] = co_wy + 16 - 6;
-						this.vo_pa_x[1] = co_wx + 16 + 4;
-						this.vo_pa_y[1] = co_wy + 16 + 6;
-						this.vo_pa_x[2] = co_wx - 32;
-						this.vo_pa_y[2] = co_wy + 16 + 12;
-						this.vo_pa_x[3] = co_wx - 32;
-						this.vo_pa_y[3] = co_wy + 16 - 12;
-					}
-					this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+					drawNingentaihou(this, characterobject, co_wx, co_wy);
 					break;
 
 				case 2300:
@@ -1159,63 +1161,13 @@ export const drawGamescreenMy = function (this: MainProgram) {
 		if (this.co_j.img !== null) {
 			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
 		} else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c === 1500 && this.co_j.pt < 1000) {
-			// 人間砲台に入る
+			// 人間大砲に入る
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-			// 主人公を隠すために人間砲台を描画
+			// 主人公を隠すために人間大砲を描画
 			const characterobject = this.co_a[this.j_rope_id];
 			const co_wx = characterobject.x - view_x;
 			const co_wy = characterobject.y - view_y;
-			const rad = (characterobject.c4 * Math.PI) / 180;
-			this.hg.setColor(this.gamecolor_mizunohadou);
-			this.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
-			this.vo_pa_x[0] = co_wx + 16 + Math.cos(rad + Math.PI / 2) * 20;
-			this.vo_pa_y[0] = co_wy + 16 + Math.sin(rad + Math.PI / 2) * 20;
-			this.vo_pa_x[1] = co_wx + 16 + Math.cos(rad - Math.PI / 2) * 20;
-			this.vo_pa_y[1] = co_wy + 16 + Math.sin(rad - Math.PI / 2) * 20;
-			this.vo_pa_x[2] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad - Math.PI / 2) * 20;
-			this.vo_pa_y[2] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad - Math.PI / 2) * 20;
-			this.vo_pa_x[3] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad + Math.PI / 2) * 20;
-			this.vo_pa_y[3] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad + Math.PI / 2) * 20;
-			this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-			this.hg.setColor(this.gamecolor_firebar2);
-			if (characterobject.c3 === 0 || characterobject.c3 === 1) {
-				this.vo_pa_x[0] = co_wx + 16 - 6;
-				this.vo_pa_y[0] = co_wy + 16 - 4;
-				this.vo_pa_x[1] = co_wx + 16 + 6;
-				this.vo_pa_y[1] = co_wy + 16 - 4;
-				this.vo_pa_x[2] = co_wx + 16 + 12;
-				this.vo_pa_y[2] = co_wy + 32 + 12;
-				this.vo_pa_x[3] = co_wx + 16 - 12;
-				this.vo_pa_y[3] = co_wy + 32 + 12;
-			} else if (characterobject.c3 === 2) {
-				this.vo_pa_x[0] = co_wx + 16 - 6;
-				this.vo_pa_y[0] = co_wy + 16 + 4;
-				this.vo_pa_x[1] = co_wx + 16 + 6;
-				this.vo_pa_y[1] = co_wy + 16 + 4;
-				this.vo_pa_x[2] = co_wx + 16 + 12;
-				this.vo_pa_y[2] = co_wy - 32;
-				this.vo_pa_x[3] = co_wx + 16 - 12;
-				this.vo_pa_y[3] = co_wy - 32;
-			} else if (characterobject.c3 === 3) {
-				this.vo_pa_x[0] = co_wx + 16 - 4;
-				this.vo_pa_y[0] = co_wy + 16 - 6;
-				this.vo_pa_x[1] = co_wx + 16 - 4;
-				this.vo_pa_y[1] = co_wy + 16 + 6;
-				this.vo_pa_x[2] = co_wx + 64;
-				this.vo_pa_y[2] = co_wy + 16 + 12;
-				this.vo_pa_x[3] = co_wx + 64;
-				this.vo_pa_y[3] = co_wy + 16 - 12;
-			} else {
-				this.vo_pa_x[0] = co_wx + 16 + 4;
-				this.vo_pa_y[0] = co_wy + 16 - 6;
-				this.vo_pa_x[1] = co_wx + 16 + 4;
-				this.vo_pa_y[1] = co_wy + 16 + 6;
-				this.vo_pa_x[2] = co_wx - 32;
-				this.vo_pa_y[2] = co_wy + 16 + 12;
-				this.vo_pa_x[3] = co_wx - 32;
-				this.vo_pa_y[3] = co_wy + 16 - 12;
-			}
-			this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+			drawNingentaihou(this, characterobject, co_wx, co_wy);
 		} else if (this.co_j.pt < 1000) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
 		} else if (this.co_j.pt === 1000) {
