@@ -46,40 +46,44 @@ const drawGamescreenEnemy = function () {
 };
 
 /**
+ * 複数枚のパターン画像を並べて描画します
+ * @param mp MainProgram
+ * @param code 左上のパターンコード
+ * @param nx 横方向タイル数
+ * @param ny 縦方向タイル数
+ * @param x 描画x座標
+ * @param y 描画y座標
+ */
+const drawWide = (mp, code, nx, ny, x, y) => {
+	for (let cy = 0; cy < ny; cy++) {
+		for (let cx = 0; cx < nx; cx++) {
+			mp.hg.drawImage(mp.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, mp.ap);
+		}
+	}
+}
+
+/**
+ * 複数枚のパターン画像を並べて描画します 左右反転
+ * @param mp MainProgram
+ * @param code 左上のパターンコード (※反転する前の状態から見て左)
+ * @param nx 横方向タイル数
+ * @param ny 縦方向タイル数
+ * @param x 描画x座標
+ * @param y 描画y座標
+ */
+const drawWideFlip = (mp, code, nx, ny, x, y) => {
+	for (let cy = 0; cy < ny; cy++) {
+		for (let cx = 0; cx < nx; cx++) {
+			const code_x = nx - 1 - cx;
+			mp.hg.drawImage(mp.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, mp.ap);
+		}
+	}
+}
+
+/**
  * 仕掛けを描画します
  */
 const drawA = function () {
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.a_kazu; i++) {
@@ -93,57 +97,57 @@ const drawA = function () {
 
 				case 100:
 					// 動く床
-					drawWide(190, 3, 1, co_wx, co_wy);
+					drawWide(this, 190, 3, 1, co_wx, co_wy);
 					break;
 
 				case 200:
 					// 水草
-					drawWide(76, 2, 2, co_wx, co_wy);
+					drawWide(this, 76, 2, 2, co_wx, co_wy);
 					break;
 
 				case 210:
 					// 水草
-					drawWide(78, 2, 2, co_wx, co_wy);
+					drawWide(this, 78, 2, 2, co_wx, co_wy);
 					break;
 
 				case 300:
 					// リンク土管1
-					drawWide(60, 2, 1, co_wx, co_wy);
+					drawWide(this, 60, 2, 1, co_wx, co_wy);
 					break;
 
 				case 310:
 					// リンク土管2
-					drawWide(62, 2, 1, co_wx, co_wy);
+					drawWide(this, 62, 2, 1, co_wx, co_wy);
 					break;
 
 				case 320:
 					// リンク土管3
-					drawWide(64, 2, 1, co_wx, co_wy);
+					drawWide(this, 64, 2, 1, co_wx, co_wy);
 					break;
 
 				case 330:
 					// リンク土管4
-					drawWide(66, 2, 1, co_wx, co_wy);
+					drawWide(this, 66, 2, 1, co_wx, co_wy);
 					break;
 
 				case 400:
 					// ドッスンスン
-					drawWide(183, 3, 2, co_wx, co_wy);
+					drawWide(this, 183, 3, 2, co_wx, co_wy);
 					break;
 
 				case 500:
 					// 落ちる床
-					drawWide(180, 3, 1, co_wx, co_wy);
+					drawWide(this, 180, 3, 1, co_wx, co_wy);
 					break;
 
 				case 600:
 					// カイオール 左向き
-					drawWide(188, 2, 2, co_wx, co_wy);
+					drawWide(this, 188, 2, 2, co_wx, co_wy);
 					break;
 
 				case 605:
 					// カイオール 右向き
-					drawWideFlip(188, 2, 2, co_wx, co_wy);
+					drawWideFlip(this, 188, 2, 2, co_wx, co_wy);
 					break;
 
 				case 700:
@@ -380,104 +384,73 @@ const drawBoss = function () {
 	 */
 	const boss_wy = this.co_b.y - wy;
 	if (boss_wx >= 528) return;
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code, nx, ny, x, y) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
 	switch (this.co_b.pt) {
 		default:
 			break;
 
 		// グラーダ 左向き
 		case Boss.PATTERN_BOSS1_LEFT:
-			drawWide(186, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// グラーダ 右向き
 		case Boss.PATTERN_BOSS1_RIGHT:
-			drawWideFlip(186, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// グラーダ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS1_DAMAGE_LEFT:
-			drawWide(176, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWide(this, 176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// グラーダ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS1_DAMAGE_RIGHT:
-			drawWideFlip(176, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWideFlip(this, 176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// カイオール 左向き
 		case Boss.PATTERN_BOSS2_LEFT:
-			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// カイオール 右向き
 		case Boss.PATTERN_BOSS2_RIGHT:
-			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// カイオール つぶれ状態 左向き
 		case Boss.PATTERN_BOSS2_DAMAGE_LEFT:
-			drawWide(178, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWide(this, 178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// カイオール つぶれ状態 右向き
 		case Boss.PATTERN_BOSS2_DAMAGE_RIGHT:
-			drawWideFlip(178, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWideFlip(this, 178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// センクウザ 左向き
 		case Boss.PATTERN_BOSS3_LEFT:
-			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// センクウザ 右向き
 		case Boss.PATTERN_BOSS3_RIGHT:
-			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// センクウザ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS3_DAMAGE_LEFT:
-			drawWide(228, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWide(this, 228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// センクウザ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS3_DAMAGE_RIGHT:
-			drawWideFlip(228, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWideFlip(this, 228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// センクウザ バリア状態 左向き
 		case Boss.PATTERN_BOSS3_BARRIER_LEFT:
-			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
@@ -501,7 +474,7 @@ const drawBoss = function () {
 
 		// センクウザ バリア状態 右向き
 		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
-			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;

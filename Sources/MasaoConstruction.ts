@@ -529,7 +529,7 @@ class MasaoConstruction {
 					e !== "cursive" &&
 					e !== "fantasy" &&
 					e !== "system-ui" &&
-					!((e[0] === "'" && e[e.length - 1] === "'") || (e[0] === '"' && e.at(-1) === '"'))
+					!((e[0] === "'" && e[e.length - 1] === "'") || (e[0] === '"' && e[e.length - 1] === '"'))
 				)
 					a[i] = `'${e}'`;
 			});

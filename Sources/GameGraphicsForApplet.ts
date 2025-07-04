@@ -149,11 +149,6 @@ class GameGraphicsForApplet {
 		
 		this.hi = this.spt_img[0];
 
-		// コンティニュー、スイッチ等番号が割り振られていない画像
-		for (let m = 0; m <= 9; m++) {
-			this.spt_option_img[m] = this.spt_img[0][10 + m];
-		}
-
 		// ■■■32x32にカットする処理(mapchip)
 		if (this.layer_mode == 2) {
 			this.cutMapchipImage();
@@ -216,6 +211,11 @@ class GameGraphicsForApplet {
 					localG.drawImage(img, m * 32, n * 32, 32, 32, 0, 0, 32, 32, null);
 				}
 			}
+		}
+
+		// コンティニュー、スイッチ等番号が割り振られていない画像
+		for (let m = 0; m <= 9; m++) {
+			this.spt_option_img[m] = this.spt_img[0][10 + m];
 		}
 	}
 

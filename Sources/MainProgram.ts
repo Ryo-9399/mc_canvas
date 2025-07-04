@@ -26578,7 +26578,13 @@ class MainProgram {
 				}
 				if (id >= 1000 && id < 5000) {
 					// 1000 〜 4999 はアスレチックコードとして扱う
-					word1 = this.setAthleticOnMap(id - 1000, x, y);
+					if(id === 1001){
+						this.aSet(x * 32 + 16, y * 32 + 16, 70, x * 32);
+						word1 = 50;
+					}
+					else{
+						word1 = this.setAthleticOnMap(id - 1000, x, y);
+					}
 				} else if (id >= 5000 && id < 10000) {
 					// 5000 〜 9999 は敵コードとして扱う
 					this.tSet(x * 32, y * 32, id - 5000, x * 32 - this.gg.di.width - 32);

@@ -1,6 +1,7 @@
-import { Color, Font } from "./ImageBuff";
+import { Color, Font, ImageBuff } from "./ImageBuff";
 import * as Boss from "./CharacterObject/Boss";
 import { rightShiftIgnoreSign, rounddown } from "./GlobalFunctions";
+import { CharacterObject } from "./CharacterObject";
 import { MainProgram } from "./MainProgram";
 
 /**
@@ -74,42 +75,177 @@ export const drawAna = function (this: MainProgram) {
 };
 
 /**
+ * 複数枚のパターン画像を並べて描画します
+ * @param code 左上のパターンコード
+ * @param nx 横方向タイル数
+ * @param ny 縦方向タイル数
+ * @param x 描画x座標
+ * @param y 描画y座標
+ */
+const drawWide = (mp: MainProgram, code: number, nx: number, ny: number, x: number, y: number) => {
+	for (let cy = 0; cy < ny; cy++) {
+		for (let cx = 0; cx < nx; cx++) {
+			mp.hg.drawImage(mp.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, mp.ap);
+		}
+	}
+};
+
+/**
+ * 複数枚のパターン画像を並べて描画します 左右反転
+ * @param code 左上のパターンコード (※反転する前の状態から見て左)
+ * @param nx 横方向タイル数
+ * @param ny 縦方向タイル数
+ * @param x 描画x座標
+ * @param y 描画y座標
+ */
+const drawWideFlip = (mp: MainProgram, code: number, nx: number, ny: number, x: number, y: number) => {
+	for (let cy = 0; cy < ny; cy++) {
+		for (let cx = 0; cx < nx; cx++) {
+			const code_x = nx - 1 - cx;
+			mp.hg.drawImage(mp.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, mp.ap);
+		}
+	}
+};
+
+/**
+ * 指定したパターン画像を回転させて描画します
+ * @param hihIndex 0:通常 1:反転
+ * @param code 左上のパターンコード
+ * @param nx 横方向タイル数
+ * @param ny 縦方向タイル数
+ * @param x 描画x座標
+ * @param y 描画y座標
+ * @param rad 回転ラジアン
+ */
+const drawWideRotated = (mp: MainProgram,
+	hihIndex: 0 | 1,
+	code: number,
+	nx: number,
+	ny: number,
+	x: number,
+	y: number,
+	rad: number
+) => {
+	const tmpImg = new ImageBuff(nx * 32, ny * 32);
+	const tmpG = tmpImg.getGraphics();
+	if (tmpG) {
+		for (let cy = 0; cy < ny; cy++) {
+			for (let cx = 0; cx < nx; cx++) {
+				const code_x = hihIndex === 0 ? cx : nx - 1 - cx;
+				tmpG.drawImage(mp.hih[hihIndex][code + cy * 10 + code_x], cx * 32, cy * 32);
+			}
+		}
+	}
+	mp.hg.dispose();
+	mp.hg.rotate(rad, x + nx * 16, y + ny * 16);
+	mp.hg.drawImage(tmpImg, x, y, mp.ap);
+	mp.hg.dispose();
+};
+
+/**
+ * 人間大砲を描画します
+ * @param mp MainProgram
+ * @param characterobject 人間大砲のキャラクターオブジェクト
+ * @param co_wx 描画X座標
+ * @param co_wy 描画Y座標
+ */
+const drawNingentaihou = (
+	mp: MainProgram,
+	characterobject: CharacterObject,
+	co_wx: number,
+	co_wy: number
+) => {
+	const rad = (characterobject.c4 * Math.PI) / 180;
+	mp.hg.setColor(mp.gamecolor_mizunohadou);
+	mp.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
+	mp.vo_pa_x[0] = co_wx + 16 + Math.cos(rad + Math.PI / 2) * 20;
+	mp.vo_pa_y[0] = co_wy + 16 + Math.sin(rad + Math.PI / 2) * 20;
+	mp.vo_pa_x[1] = co_wx + 16 + Math.cos(rad - Math.PI / 2) * 20;
+	mp.vo_pa_y[1] = co_wy + 16 + Math.sin(rad - Math.PI / 2) * 20;
+	mp.vo_pa_x[2] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad - Math.PI / 2) * 20;
+	mp.vo_pa_y[2] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad - Math.PI / 2) * 20;
+	mp.vo_pa_x[3] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad + Math.PI / 2) * 20;
+	mp.vo_pa_y[3] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad + Math.PI / 2) * 20;
+	mp.hg.fillPolygon(mp.vo_pa_x, mp.vo_pa_y, 4);
+	mp.hg.setColor(mp.gamecolor_firebar2);
+	if (characterobject.c3 === 0 || characterobject.c3 === 1) {
+		mp.vo_pa_x[0] = co_wx + 16 - 6;
+		mp.vo_pa_y[0] = co_wy + 16 - 4;
+		mp.vo_pa_x[1] = co_wx + 16 + 6;
+		mp.vo_pa_y[1] = co_wy + 16 - 4;
+		mp.vo_pa_x[2] = co_wx + 16 + 12;
+		mp.vo_pa_y[2] = co_wy + 32 + 12;
+		mp.vo_pa_x[3] = co_wx + 16 - 12;
+		mp.vo_pa_y[3] = co_wy + 32 + 12;
+	} else if (characterobject.c3 === 2) {
+		mp.vo_pa_x[0] = co_wx + 16 - 6;
+		mp.vo_pa_y[0] = co_wy + 16 + 4;
+		mp.vo_pa_x[1] = co_wx + 16 + 6;
+		mp.vo_pa_y[1] = co_wy + 16 + 4;
+		mp.vo_pa_x[2] = co_wx + 16 + 12;
+		mp.vo_pa_y[2] = co_wy - 32;
+		mp.vo_pa_x[3] = co_wx + 16 - 12;
+		mp.vo_pa_y[3] = co_wy - 32;
+	} else if (characterobject.c3 === 3) {
+		mp.vo_pa_x[0] = co_wx + 16 - 4;
+		mp.vo_pa_y[0] = co_wy + 16 - 6;
+		mp.vo_pa_x[1] = co_wx + 16 - 4;
+		mp.vo_pa_y[1] = co_wy + 16 + 6;
+		mp.vo_pa_x[2] = co_wx + 64;
+		mp.vo_pa_y[2] = co_wy + 16 + 12;
+		mp.vo_pa_x[3] = co_wx + 64;
+		mp.vo_pa_y[3] = co_wy + 16 - 12;
+	} else {
+		mp.vo_pa_x[0] = co_wx + 16 + 4;
+		mp.vo_pa_y[0] = co_wy + 16 - 6;
+		mp.vo_pa_x[1] = co_wx + 16 + 4;
+		mp.vo_pa_y[1] = co_wy + 16 + 6;
+		mp.vo_pa_x[2] = co_wx - 32;
+		mp.vo_pa_y[2] = co_wy + 16 + 12;
+		mp.vo_pa_x[3] = co_wx - 32;
+		mp.vo_pa_y[3] = co_wy + 16 - 12;
+	}
+	mp.hg.fillPolygon(mp.vo_pa_x, mp.vo_pa_y, 4);
+};
+
+/**
  * 仕掛けを描画します
  */
 export const drawA = function (this: MainProgram) {
 	const ai = new Array(26); // ファイヤーリング表示用配列1
 	const ai1 = new Array(26); // ファイヤーリング表示用配列2
+
 	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
+	 * 回転するドッスンスンを描画する
+	 * @param co_wx 描画X座標
+	 * @param co_wy 描画Y座標
+	 * @param angle 回転角度（度単位）
+	 * @param scale 拡大率
 	 */
-	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
+	const drawRotatingDossunsun = (
+		co_wx: number,
+		co_wy: number,
+		angle: number,
+		scale: number
+	) => {
+		const tmpImg = new ImageBuff(3 * 32, 2 * 32);
+		const tmpG = tmpImg.getGraphics();
+		if (tmpG) {
+			tmpG.drawImage(this.hi[183], 0, 0, this.ap);
+			tmpG.drawImage(this.hi[184], 32, 0, this.ap);
+			tmpG.drawImage(this.hi[185], 64, 0, this.ap);
+			tmpG.drawImage(this.hi[193], 0, 32, this.ap);
+			tmpG.drawImage(this.hi[194], 32, 32, this.ap);
+			tmpG.drawImage(this.hi[195], 64, 32, this.ap);
 		}
+		this.hg.dispose();
+		this.hg.translate(co_wx + 48, co_wy + 32);
+		this.hg.scale(scale, scale);
+		this.hg.rotate((angle * Math.PI) / 180, 0, 0);
+		this.hg.drawImage(tmpImg, -48, -32, this.ap);
+		this.hg.dispose();
 	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
+
 	const view_x = this.maps.wx;
 	const view_y = this.maps.wy;
 	for (let i = 0; i <= this.a_kazu; i++) {
@@ -125,17 +261,17 @@ export const drawA = function (this: MainProgram) {
 
 				case 100:
 					// 動く床
-					drawWide(190, 3, 1, co_wx, co_wy);
+					drawWide(this, 190, 3, 1, co_wx, co_wy);
 					break;
 
 				case 200:
 					// 水草
-					drawWide(76, 2, 2, co_wx, co_wy);
+					drawWide(this, 76, 2, 2, co_wx, co_wy);
 					break;
 
 				case 210:
 					// 水草
-					drawWide(78, 2, 2, co_wx, co_wy);
+					drawWide(this, 78, 2, 2, co_wx, co_wy);
 					break;
 
 				case 300: // リンク土管1
@@ -149,22 +285,22 @@ export const drawA = function (this: MainProgram) {
 
 				case 400:
 					// ドッスンスン
-					drawWide(183, 3, 2, co_wx, co_wy);
+					drawWide(this, 183, 3, 2, co_wx, co_wy);
 					break;
 
 				case 500:
 					// 落ちる床
-					drawWide(180, 3, 1, co_wx, co_wy);
+					drawWide(this, 180, 3, 1, co_wx, co_wy);
 					break;
 
 				case 600:
 					// 乗れるカイオール 左向き
-					drawWide(188, 2, 2, co_wx, co_wy);
+					drawWide(this, 188, 2, 2, co_wx, co_wy);
 					break;
 
 				case 605:
 					// 乗れるカイオール 右向き
-					drawWideFlip(188, 2, 2, co_wx, co_wy);
+					drawWideFlip(this, 188, 2, 2, co_wx, co_wy);
 					break;
 
 				case 700:
@@ -457,72 +593,7 @@ export const drawA = function (this: MainProgram) {
 
 				case 2200:
 					// 人間大砲
-					this.hg.setColor(this.gamecolor_mizunohadou);
-					this.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
-					this.vo_pa_x[0] = co_wx + 16 + Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[0] = co_wy + 16 + Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.vo_pa_x[1] = co_wx + 16 + Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[1] = co_wy + 16 + Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_x[2] =
-						co_wx +
-						16 +
-						Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.cos(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[2] =
-						co_wy +
-						16 +
-						Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.sin(((characterobject.c4 - 90) * Math.PI) / 180) * 20;
-					this.vo_pa_x[3] =
-						co_wx +
-						16 +
-						Math.cos((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.cos(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.vo_pa_y[3] =
-						co_wy +
-						16 +
-						Math.sin((characterobject.c4 * Math.PI) / 180) * 68 +
-						Math.sin(((characterobject.c4 + 90) * Math.PI) / 180) * 20;
-					this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-					this.hg.setColor(this.gamecolor_firebar2);
-					if (characterobject.c3 === 0 || characterobject.c3 === 1) {
-						this.vo_pa_x[0] = co_wx + 16 - 6;
-						this.vo_pa_y[0] = co_wy + 16 - 4;
-						this.vo_pa_x[1] = co_wx + 16 + 6;
-						this.vo_pa_y[1] = co_wy + 16 - 4;
-						this.vo_pa_x[2] = co_wx + 16 + 12;
-						this.vo_pa_y[2] = co_wy + 32 + 12;
-						this.vo_pa_x[3] = co_wx + 16 - 12;
-						this.vo_pa_y[3] = co_wy + 32 + 12;
-					} else if (characterobject.c3 === 2) {
-						this.vo_pa_x[0] = co_wx + 16 - 6;
-						this.vo_pa_y[0] = co_wy + 16 + 4;
-						this.vo_pa_x[1] = co_wx + 16 + 6;
-						this.vo_pa_y[1] = co_wy + 16 + 4;
-						this.vo_pa_x[2] = co_wx + 16 + 12;
-						this.vo_pa_y[2] = co_wy - 32;
-						this.vo_pa_x[3] = co_wx + 16 - 12;
-						this.vo_pa_y[3] = co_wy - 32;
-					} else if (characterobject.c3 === 3) {
-						this.vo_pa_x[0] = co_wx + 16 - 4;
-						this.vo_pa_y[0] = co_wy + 16 - 6;
-						this.vo_pa_x[1] = co_wx + 16 - 4;
-						this.vo_pa_y[1] = co_wy + 16 + 6;
-						this.vo_pa_x[2] = co_wx + 64;
-						this.vo_pa_y[2] = co_wy + 16 + 12;
-						this.vo_pa_x[3] = co_wx + 64;
-						this.vo_pa_y[3] = co_wy + 16 - 12;
-					} else {
-						this.vo_pa_x[0] = co_wx + 16 + 4;
-						this.vo_pa_y[0] = co_wy + 16 - 6;
-						this.vo_pa_x[1] = co_wx + 16 + 4;
-						this.vo_pa_y[1] = co_wy + 16 + 6;
-						this.vo_pa_x[2] = co_wx - 32;
-						this.vo_pa_y[2] = co_wy + 16 + 12;
-						this.vo_pa_x[3] = co_wx - 32;
-						this.vo_pa_y[3] = co_wy + 16 - 12;
-					}
-					this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+					drawNingentaihou(this, characterobject, co_wx, co_wy);
 					break;
 
 				case 2300:
@@ -595,32 +666,12 @@ export const drawA = function (this: MainProgram) {
 
 				case 2500:
 					// 回転するドッスンスン
-					this.hg.dispose();
-					this.hg.translate(co_wx, co_wy);
-					this.hg.scale(1.5, 1.5);
-					this.hg.rotate((characterobject.vy * Math.PI) / 180, 0.0, 0.0);
-					this.hg.drawImage(this.hi[183], -48, -32, this.ap);
-					this.hg.drawImage(this.hi[184], -16, -32, this.ap);
-					this.hg.drawImage(this.hi[185], 16, -32, this.ap);
-					this.hg.drawImage(this.hi[193], -48, 0, this.ap);
-					this.hg.drawImage(this.hi[194], -16, 0, this.ap);
-					this.hg.drawImage(this.hi[195], 16, 0, this.ap);
-					this.hg.dispose();
+					drawRotatingDossunsun(co_wx, co_wy, characterobject.vy, 1.5);
 					break;
 
 				case 2600:
 					// 回転する巨大ドッスンスン
-					this.hg.dispose();
-					this.hg.translate(co_wx, co_wy);
-					this.hg.scale(2.5, 2.5);
-					this.hg.rotate((characterobject.vy * Math.PI) / 180, 0.0, 0.0);
-					this.hg.drawImage(this.hi[183], -48, -32, this.ap);
-					this.hg.drawImage(this.hi[184], -16, -32, this.ap);
-					this.hg.drawImage(this.hi[185], 16, -32, this.ap);
-					this.hg.drawImage(this.hi[193], -48, 0, this.ap);
-					this.hg.drawImage(this.hi[194], -16, 0, this.ap);
-					this.hg.drawImage(this.hi[195], 16, 0, this.ap);
-					this.hg.dispose();
+					drawRotatingDossunsun(co_wx, co_wy, characterobject.vy, 2.5);
 					break;
 
 				case 2800:
@@ -1110,63 +1161,13 @@ export const drawGamescreenMy = function (this: MainProgram) {
 		if (this.co_j.img !== null) {
 			this.hg.drawImage(this.co_j.img, this.co_j.wx + this.co_j.zs_x, this.co_j.wy + this.co_j.zs_y, this.ap);
 		} else if (this.j_cannon_c > 0 && this.co_a[this.j_rope_id].c === 1500 && this.co_j.pt < 1000) {
-			// 人間砲台に入る
+			// 人間大砲に入る
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
-			// 主人公を隠すために人間砲台を描画
+			// 主人公を隠すために人間大砲を描画
 			const characterobject = this.co_a[this.j_rope_id];
 			const co_wx = characterobject.x - view_x;
 			const co_wy = characterobject.y - view_y;
-			const rad = (characterobject.c4 * Math.PI) / 180;
-			this.hg.setColor(this.gamecolor_mizunohadou);
-			this.hg.fillOval(co_wx + 16 - 19, co_wy + 16 - 19, 38, 38);
-			this.vo_pa_x[0] = co_wx + 16 + Math.cos(rad + Math.PI / 2) * 20;
-			this.vo_pa_y[0] = co_wy + 16 + Math.sin(rad + Math.PI / 2) * 20;
-			this.vo_pa_x[1] = co_wx + 16 + Math.cos(rad - Math.PI / 2) * 20;
-			this.vo_pa_y[1] = co_wy + 16 + Math.sin(rad - Math.PI / 2) * 20;
-			this.vo_pa_x[2] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad - Math.PI / 2) * 20;
-			this.vo_pa_y[2] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad - Math.PI / 2) * 20;
-			this.vo_pa_x[3] = co_wx + 16 + Math.cos(rad) * 68 + Math.cos(rad + Math.PI / 2) * 20;
-			this.vo_pa_y[3] = co_wy + 16 + Math.sin(rad) * 68 + Math.sin(rad + Math.PI / 2) * 20;
-			this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
-			this.hg.setColor(this.gamecolor_firebar2);
-			if (characterobject.c3 === 0 || characterobject.c3 === 1) {
-				this.vo_pa_x[0] = co_wx + 16 - 6;
-				this.vo_pa_y[0] = co_wy + 16 - 4;
-				this.vo_pa_x[1] = co_wx + 16 + 6;
-				this.vo_pa_y[1] = co_wy + 16 - 4;
-				this.vo_pa_x[2] = co_wx + 16 + 12;
-				this.vo_pa_y[2] = co_wy + 32 + 12;
-				this.vo_pa_x[3] = co_wx + 16 - 12;
-				this.vo_pa_y[3] = co_wy + 32 + 12;
-			} else if (characterobject.c3 === 2) {
-				this.vo_pa_x[0] = co_wx + 16 - 6;
-				this.vo_pa_y[0] = co_wy + 16 + 4;
-				this.vo_pa_x[1] = co_wx + 16 + 6;
-				this.vo_pa_y[1] = co_wy + 16 + 4;
-				this.vo_pa_x[2] = co_wx + 16 + 12;
-				this.vo_pa_y[2] = co_wy - 32;
-				this.vo_pa_x[3] = co_wx + 16 - 12;
-				this.vo_pa_y[3] = co_wy - 32;
-			} else if (characterobject.c3 === 3) {
-				this.vo_pa_x[0] = co_wx + 16 - 4;
-				this.vo_pa_y[0] = co_wy + 16 - 6;
-				this.vo_pa_x[1] = co_wx + 16 - 4;
-				this.vo_pa_y[1] = co_wy + 16 + 6;
-				this.vo_pa_x[2] = co_wx + 64;
-				this.vo_pa_y[2] = co_wy + 16 + 12;
-				this.vo_pa_x[3] = co_wx + 64;
-				this.vo_pa_y[3] = co_wy + 16 - 12;
-			} else {
-				this.vo_pa_x[0] = co_wx + 16 + 4;
-				this.vo_pa_y[0] = co_wy + 16 - 6;
-				this.vo_pa_x[1] = co_wx + 16 + 4;
-				this.vo_pa_y[1] = co_wy + 16 + 6;
-				this.vo_pa_x[2] = co_wx - 32;
-				this.vo_pa_y[2] = co_wy + 16 + 12;
-				this.vo_pa_x[3] = co_wx - 32;
-				this.vo_pa_y[3] = co_wy + 16 - 12;
-			}
-			this.hg.fillPolygon(this.vo_pa_x, this.vo_pa_y, 4);
+			drawNingentaihou(this, characterobject, co_wx, co_wy);
 		} else if (this.co_j.pt < 1000) {
 			this.gg.drawPT(this.co_j.wx, this.co_j.wy, this.co_j.pt, this.co_j.muki);
 		} else if (this.co_j.pt === 1000) {
@@ -1342,122 +1343,84 @@ export const drawBoss = function (this: MainProgram) {
 		this.hg.drawImage(this.co_b.img, boss_wx + this.co_b.zs_x, boss_wy + this.co_b.zs_y, this.ap);
 		return;
 	}
-	/**
-	 * 複数枚のパターン画像を並べて描画します
-	 * @param code 左上のパターンコード
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWide = (code: number, nx: number, ny: number, x: number, y: number) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				this.hg.drawImage(this.hih[0][code + cy * 10 + cx], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
-	/**
-	 * 複数枚のパターン画像を並べて描画します 左右反転
-	 * @param code 左上のパターンコード (※反転する前の状態から見て左)
-	 * @param nx 横方向タイル数
-	 * @param ny 縦方向タイル数
-	 * @param x 描画x座標
-	 * @param y 描画y座標
-	 */
-	const drawWideFlip = (code: number, nx: number, ny: number, x: number, y: number) => {
-		for (let cy = 0; cy < ny; cy++) {
-			for (let cx = 0; cx < nx; cx++) {
-				const code_x = nx - 1 - cx;
-				this.hg.drawImage(this.hih[1][code + cy * 10 + code_x], x + cx * 32, y + cy * 32, this.ap);
-			}
-		}
-	};
+
 	switch (this.co_b.pt) {
 		default:
 			break;
 
 		// グラーダ 左向き
 		case Boss.PATTERN_BOSS1_LEFT:
-			drawWide(186, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// グラーダ 右向き
 		case Boss.PATTERN_BOSS1_RIGHT:
-			drawWideFlip(186, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 186, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// グラーダ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS1_DAMAGE_LEFT:
-			drawWide(176, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWide(this, 176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// グラーダ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS1_DAMAGE_RIGHT:
-			drawWideFlip(176, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWideFlip(this, 176, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// カイオール 左向き
 		case Boss.PATTERN_BOSS2_LEFT:
-			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// カイオール バブル光線回転連射 左向き
 		case Boss.PATTERN_BOSS2_ROTATE_LEFT:
-			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWide(188, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(this, 0, 188, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 
 		// カイオール 右向き
 		case Boss.PATTERN_BOSS2_RIGHT:
-			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 188, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// カイオール バブル光線回転連射 右向き
 		case Boss.PATTERN_BOSS2_ROTATE_RIGHT:
-			// TODO: 回転中にボスの画像に隙間にようなものが見えるので修正する
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWideFlip(188, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(this, 1, 188, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 
 		// カイオール つぶれ状態 左向き
 		case Boss.PATTERN_BOSS2_DAMAGE_LEFT:
-			drawWide(178, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWide(this, 178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// カイオール つぶれ状態 右向き
 		case Boss.PATTERN_BOSS2_DAMAGE_RIGHT:
-			drawWideFlip(178, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWideFlip(this, 178, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// センクウザ 左向き
 		case Boss.PATTERN_BOSS3_LEFT:
-			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// センクウザ 右向き
 		case Boss.PATTERN_BOSS3_RIGHT:
-			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			break;
 
 		// センクウザ つぶれ状態 左向き
 		case Boss.PATTERN_BOSS3_DAMAGE_LEFT:
-			drawWide(228, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWide(this, 228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// センクウザ つぶれ状態 右向き
 		case Boss.PATTERN_BOSS3_DAMAGE_RIGHT:
-			drawWideFlip(228, 2, 1, boss_wx - 16, boss_wy + 16);
+			drawWideFlip(this, 228, 2, 1, boss_wx - 16, boss_wy + 16);
 			break;
 
 		// センクウザ バリア状態 左向き
 		case Boss.PATTERN_BOSS3_BARRIER_LEFT:
-			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWide(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
@@ -1481,15 +1444,12 @@ export const drawBoss = function (this: MainProgram) {
 
 		// センクウザ 回転 左向き
 		case Boss.PATTERN_BOSS3_ROTATE_LEFT:
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWide(238, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(this, 0, 238, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 
 		// センクウザ バリア状態 右向き
 		case Boss.PATTERN_BOSS3_BARRIER_RIGHT:
-			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
+			drawWideFlip(this, 238, 2, 2, boss_wx - 16, boss_wy - 16);
 			if (this.j_v_c <= 0) {
 				this.j_v_kakudo += 2;
 				if (this.j_v_kakudo > 360) this.j_v_kakudo -= 360;
@@ -1513,10 +1473,7 @@ export const drawBoss = function (this: MainProgram) {
 
 		// センクウザ 回転 右向き
 		case Boss.PATTERN_BOSS3_ROTATE_RIGHT:
-			this.hg.dispose();
-			this.hg.rotate((this.co_b.c2 * Math.PI) / 180, boss_wx + 16, boss_wy + 16);
-			drawWideFlip(238, 2, 2, boss_wx - 16, boss_wy - 16);
-			this.hg.dispose();
+			drawWideRotated(this, 1, 238, 2, 2, boss_wx - 16, boss_wy - 16, (this.co_b.c2 * Math.PI) / 180);
 			break;
 	}
 };
