@@ -239,7 +239,7 @@ export const drawA = function (this: MainProgram) {
 			tmpG.drawImage(this.hi[195], 64, 32, this.ap);
 		}
 		this.hg.dispose();
-		this.hg.translate(co_wx + 48, co_wy + 32);
+		this.hg.translate(co_wx, co_wy);
 		this.hg.scale(scale, scale);
 		this.hg.rotate((angle * Math.PI) / 180, 0, 0);
 		this.hg.drawImage(tmpImg, -48, -32, this.ap);
